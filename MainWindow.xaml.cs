@@ -20,5 +20,10 @@ namespace 断面毛刺检测软件
         {
             InitializeComponent();
         }
+
+        private void MainWindow_Close(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.Close();
+        }
     }
 }

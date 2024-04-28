@@ -3,10 +3,96 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:断面毛刺检测软件"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Icon="/Resources/logo3.png" Topmost="True" WindowStartupLocation="CenterScreen" WindowStyle="None">
+        Title="MainWindow" Height="850" Width="1400" Icon="/Resources/logo3.png" Topmost="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="#FF1C1C26" Foreground="White">
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="75"/>
+            <RowDefinition/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+        <!--菜单栏-->
+        <Menu Grid.Row="0" Background="#FF6C7CFF" Foreground="White">
+            <MenuItem Header="工程管理" Foreground="White">
+                <MenuItem Header="新建工程" Width="150"/>
+                <MenuItem Header="打开工程" Width="150"/>
+                <MenuItem Header="保存工程" Width="150"/>
+                <MenuItem Header="另存工程" Width="150"/>
+                <MenuItem Header="修改工程" Width="150"/>
+                <MenuItem Header="最近打开" Width="150"/>
+            </MenuItem>
+            <MenuItem Header="图片管理" Foreground="White"/>
+            <MenuItem Header="相机与通讯" Foreground="White"/>
+        </Menu>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="－" Width="25" Height="25" FontSize="20" Padding="0" hc:BorderElement.CornerRadius="0" BorderThickness="0" Background="#FF9EA8FB"/>
+            <hc:Divider Width="1"/>
+            <Button Content="□" Width="25" Height="25" FontSize="17" Padding="0" hc:BorderElement.CornerRadius="0" BorderThickness="0" Background="#FF9EA8FB"/>
+            <hc:Divider Width="1"/>
+            <Button Content="✖" Width="25" Height="25" FontSize="10" Padding="0" hc:BorderElement.CornerRadius="0" BorderThickness="0" Background="#FF9EA8FB" Click="MainWindow_Close"/>
+        </StackPanel>
+        
+        <!--次菜单栏-->
+        <DockPanel  Grid.Row="1" Background="#FFC8CEFF" >
+            <DockPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </DockPanel.Resources>
+            <StackPanel Width="150" HorizontalAlignment="Left">
+                <Image Source="/Resources/组合-2.png" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Text="Version:1.0.0.0" HorizontalAlignment="Center" Foreground="Black"/>
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width ="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="系统时间" Margin="5,5,5,0"/>
+                    <TextBlock Text="09:50:59" HorizontalAlignment="Center"/>
+                    <TextBlock Text="运行时间" Margin="5,0"/>
+                    <TextBlock Text="01:20:01" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Width="80">
+                    <Button Background="#FF8BE2A0" Margin="5" Width="50" Height="50" BorderBrush="Red"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                       
+                        <TextBlock Text="99"/>
+                        <TextBlock Text="分钟"/>
+                        <TextBlock Text="59"/>
+                        <TextBlock Text="秒"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            
+        </DockPanel>
+        
+        <!--状态栏-->
+        <DockPanel  Grid.Row="3">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <TextBlock Text="算法:"/>
+                <TextBlock Text="50" Margin="2,0"/>
+                <TextBlock Text="ms"/>
+                <TextBlock Text="过滤:" Margin="10,0,0,0"/>
+                <TextBlock Text="50" Margin="2,0"/>
+                <TextBlock Text="ms"/>
+               
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width ="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="项目路径:" HorizontalAlignment="Right" Margin="5,0"/>
+                <TextBlock Grid.Column="1" Text="C:\User\AppData\..." HorizontalAlignment="Right" Foreground="SkyBlue"/>
+            </Grid>
+        </DockPanel>
+        
+       
     </Grid>
 </Window>
