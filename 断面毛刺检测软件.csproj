@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CameraModule\**" />
+    <EmbeddedResource Remove="CameraModule\**" />
+    <None Remove="CameraModule\**" />
+    <Page Remove="CameraModule\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\logo3.png" />
     <None Remove="Resources\组合-2.png" />
   </ItemGroup>

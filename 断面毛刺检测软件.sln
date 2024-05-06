@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "控件Controls", "控件Con
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "相机通讯", "相机通讯", "{E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraModule", "CameraModule\CameraModule.csproj", "{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,9 +21,16 @@ Global
 		{3D12C13B-0CCD-48C3-8712-8A09034D47C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D12C13B-0CCD-48C3-8712-8A09034D47C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D12C13B-0CCD-48C3-8712-8A09034D47C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7} = {E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
