@@ -22,8 +22,8 @@
             <RowDefinition Height="15" />
         </Grid.RowDefinitions>
         <!-- 菜单栏 -->
-        <Menu Grid.Row="0" Background="#FF6C7CFF" Foreground="White" MouseMove="Menu_MouseMove">
-            <MenuItem Header="工程管理" Foreground="White" >
+        <Menu Grid.Row="0" MouseMove="Menu_MouseMove">
+            <MenuItem Header="工程管理"  >
                 <MenuItem Width="100" Header="新建工程" />
                 <MenuItem Width="100" Header="打开工程" />
                 <MenuItem Width="100" Header="保存工程" />
@@ -31,25 +31,25 @@
                 <MenuItem Width="100" Header="修改工程" />
                 <MenuItem Width="100" Header="最近打开" />
             </MenuItem>
-            <MenuItem Header="图片管理" Foreground="White" >
+            <MenuItem Header="图片管理"  >
                 <MenuItem Width="100" Header="存图设置" />
                 <MenuItem Width="100" Header="截屏保存" />
             </MenuItem>
 
-            <MenuItem Header="相机与通讯" Foreground="White">
+            <MenuItem Header="相机与通讯" >
                 <MenuItem Width="100" Header="相机" />
                 <MenuItem Width="100" Header="通讯" />
             </MenuItem>
-            <MenuItem Header="系统设置" Foreground="White" />
-            <MenuItem Header="数据统计" Foreground="White" >
+            <MenuItem Header="系统设置"  />
+            <MenuItem Header="数据统计" >
                 <MenuItem Width="100" Header="数据统计" />
                 <MenuItem Width="100" Header="数据清空" />
             </MenuItem>
-            <MenuItem Header="工具" Foreground="White" >
+            <MenuItem Header="工具"  >
                 <MenuItem Width="100" Header="离线检测" />
                 <MenuItem Width="100" Header="光源控制" />
             </MenuItem>
-            <MenuItem Header="帮助" Foreground="White" >
+            <MenuItem Header="帮助" >
                 <MenuItem Width="100" Header="帮助文档" />
                 <MenuItem Width="100" Header="关于" />
             </MenuItem>
