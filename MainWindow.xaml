@@ -55,6 +55,27 @@
             </MenuItem>
         </Menu>
         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Grid.Column="1" Click="ButtonConfig_OnClick" Name="ButtonConfig" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource ConfigGeometry}"/>
+            <Popup AllowsTransparency="True" Grid.Column="1" PlacementTarget="{Binding ElementName=ButtonConfig}" Placement="Center"  Name="PopupConfig" VerticalOffset="80" StaysOpen="False">
+                <Border Background="{DynamicResource SecondaryRegionBrush}" CornerRadius="4" Margin="16" Effect="{StaticResource EffectShadow2}">
+                    <StackPanel Orientation="Horizontal">
+                        
+                        <hc:Divider LineStrokeDashArray="2,2" Orientation="Vertical" Margin="0,20" LineStrokeThickness="1"/>
+                        <StackPanel Button.Click="ButtonSkins_OnClick"  Margin="10,10,10,10">
+                            <Button Tag="{x:Static hc:SkinType.Default}" Style="{StaticResource ButtonCustom}">
+                                <Border Background="White" Width="32" Height="21" CornerRadius="2" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"/>
+                            </Button>
+                            <Button Tag="{x:Static hc:SkinType.Dark}" Style="{StaticResource ButtonCustom}" Margin="0,10,0,0">
+                                <Border Background="Black" Width="32" Height="21" CornerRadius="2" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"/>
+                            </Button>
+                            <Button Tag="{x:Static hc:SkinType.Violet}" Style="{StaticResource ButtonCustom}" Margin="0,10,0,0">
+                                <Border Background="DarkViolet" Width="32" Height="21" CornerRadius="2" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"/>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Popup>
+            <hc:Divider Width="1" />
             <Button Width="45"
                     Height="25"
                     Padding="0"
@@ -85,7 +106,7 @@
                    
                     Click="MainWindow_Close" />
         </StackPanel>
-        <TextBlock Grid.Row="0" d:Text="毛刺检测" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFC8CEFF"/>
+        <TextBlock Grid.Row="0" Text="毛刺检测" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
         <!-- 次菜单栏 -->
         <DockPanel Grid.Row="1">
            

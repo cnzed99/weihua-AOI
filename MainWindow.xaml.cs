@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +21,24 @@ namespace 断面毛刺检测软件
         public MainWindow()
         {
             InitializeComponent();
+        }
+        private void ButtonConfig_OnClick(object sender, RoutedEventArgs e) => PopupConfig.IsOpen = true;
+
+        private void ButtonSkins_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Button { Tag: SkinType skinType })
+            {
+                PopupConfig.IsOpen = false;
+                if (skinType.Equals(GlobalData.Config.Skin))
+                {
+                    return;
+                }
+
+                GlobalData.Config.Skin = skinType;
+                GlobalData.Save();
+                ((App)Application.Current).UpdateSkin(skinType);
+                //Messenger.Default.Send(skinType, MessageToken.SkinUpdated);
+            }
         }
 
         private void MainWindow_Close(object sender, RoutedEventArgs e)
