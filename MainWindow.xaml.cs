@@ -37,7 +37,7 @@ namespace 断面毛刺检测软件
                 GlobalData.Config.Skin = skinType;
                 GlobalData.Save();
                 ((App)Application.Current).UpdateSkin(skinType);
-                //Messenger.Default.Send(skinType, MessageToken.SkinUpdated);
+                Application.Current.MainWindow.ApplyTemplate();
             }
         }
 

@@ -29,7 +29,7 @@ namespace 断面毛刺检测软件
     {
 #pragma warning disable IDE0052
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        private static Mutex AppMutex;
+        private static Mutex? AppMutex;
 #pragma warning restore IDE0052
         public App()
         {
@@ -45,7 +45,7 @@ namespace 断面毛刺检测软件
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-            AppMutex = new Mutex(true, "HandyControlDemo", out var createdNew);
+            AppMutex = new Mutex(true, "Metal_Burr", out var createdNew);
 
             if (!createdNew)
             {
@@ -73,19 +73,13 @@ namespace 断面毛刺检测软件
                 ConfigHelper.Instance.SetLang(GlobalData.Config.Lang);
                 //LangProvider.Culture = new CultureInfo(GlobalData.Config.Lang);
 
-                if (GlobalData.Config.Skin != SkinType.Default)
+                if (GlobalData.Config.Skin != SkinType.Dark)//默认暗色系
                 {
                     UpdateSkin(GlobalData.Config.Skin);
                 }
-
                 ConfigHelper.Instance.SetWindowDefaultStyle();
                 ConfigHelper.Instance.SetNavigationWindowDefaultStyle();
-
-#if NET40
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-#else
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-#endif
             }
         }
         protected override void OnExit(ExitEventArgs e)
@@ -97,17 +91,25 @@ namespace 断面毛刺检测软件
         internal void UpdateSkin(SkinType skin)
         {
             var skins0 = Resources.MergedDictionaries[0];
+            skins0.Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml");
             skins0.MergedDictionaries.Clear();
-            skins0.MergedDictionaries.Add(new ResourceDictionary
-            {
-                Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml")
-            });
             skins0.MergedDictionaries.Add(new ResourceDictionary
             {
                 Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
             });
+            skins0.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml")
+            });
+            var skins1 = Resources.MergedDictionaries[1];
+            skins1.Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml");
+            //skins1.MergedDictionaries.Clear();
+            //skins1.MergedDictionaries.Add(new ResourceDictionary
+            //{
+            //    Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
+            //});
+
             Current.MainWindow?.OnApplyTemplate();
-            Current.MainWindow?.UpdateDefaultStyle();
         }
        
     }
