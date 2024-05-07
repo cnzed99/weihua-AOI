@@ -201,7 +201,7 @@
                     </hc:TabItem>
 
                 </hc:TabControl>
-
+                
             </Grid>
 
         </Grid>
@@ -231,7 +231,10 @@
                             />
             </Grid>
         </DockPanel>
-
+        <!--消息弹窗-->
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="2" Grid.RowSpan="2" MaxHeight="500">
+            <StackPanel hc:Growl.GrowlParent="True" VerticalAlignment="Bottom" Margin="0,10,0,20"/>
+        </ScrollViewer>
 
     </Grid>
 </hc:Window>

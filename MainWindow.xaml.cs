@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using HandyControl.Data;
 using System.Text;
 using System.Windows;
@@ -50,6 +51,15 @@ namespace 断面毛刺检测软件
         {
             if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
             else WindowState = WindowState.Maximized;
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
+            Growl.Success("文件保存成功！");
         }
 
         private void MainWindow_Minimum(object sender, RoutedEventArgs e)
