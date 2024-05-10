@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "控件Controls", "控件Controls", "{137396ED-F088-48E2-8054-A1AF7691511B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "相机通讯", "相机通讯", "{E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CameraModule", "CameraModule\CameraModule.csproj", "{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "断面毛刺检测软件", "断面毛刺检测软件\断面毛刺检测软件.csproj", "{8B349B3F-8C0A-4ABD-957E-2D856119D186}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget包版本管理", "Nuget包版本管理", "{C6D40DD2-9659-4967-B394-B45AD7E9059E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7} = {E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,165 @@
+﻿using HandyControl.Data;
+using HandyControl.Properties.Langs;
+using HandyControl.Tools;
+using Newtonsoft.Json;
+using System.Configuration;
+using System.Data;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Net;
+
+using System.Windows;
+using System;
+using System.Runtime.InteropServices;
+
+#if !NET40
+using System.Runtime;
+#endif
+using System.Threading;
+
+
+namespace 断面毛刺检测软件
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+#pragma warning disable IDE0052
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+        private static Mutex? AppMutex;
+#pragma warning restore IDE0052
+        public App()
+        {
+#if !NET40
+            var cachePath = $"{AppDomain.CurrentDomain.BaseDirectory}Cache";
+            if (!Directory.Exists(cachePath))
+            {
+                Directory.CreateDirectory(cachePath);
+            }
+            ProfileOptimization.SetProfileRoot(cachePath);
+            ProfileOptimization.StartProfile("Profile");
+#endif
+        }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            AppMutex = new Mutex(true, "Metal_Burr", out var createdNew);
+
+            if (!createdNew)
+            {
+                var current = Process.GetCurrentProcess();
+
+                foreach (var process in Process.GetProcessesByName(current.ProcessName))
+                {
+                    if (process.Id != current.Id)
+                    {
+                        Win32Helper.SetForegroundWindow(process.MainWindowHandle);
+                        break;
+                    }
+                }
+                Shutdown();
+            }
+            else
+            {
+
+                base.OnStartup(e);
+
+                //UpdateRegistry();
+
+                ShutdownMode = ShutdownMode.OnMainWindowClose;
+                GlobalData.Init();
+                ConfigHelper.Instance.SetLang(GlobalData.Config.Lang);
+                //LangProvider.Culture = new CultureInfo(GlobalData.Config.Lang);
+
+                if (GlobalData.Config.Skin != SkinType.Dark)//默认暗色系
+                {
+                    UpdateSkin(GlobalData.Config.Skin);
+                }
+                ConfigHelper.Instance.SetWindowDefaultStyle();
+                ConfigHelper.Instance.SetNavigationWindowDefaultStyle();
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            }
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            GlobalData.Save();
+        }
+
+        internal void UpdateSkin(SkinType skin)
+        {
+            var skins0 = Resources.MergedDictionaries[0];
+            skins0.Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml");
+            skins0.MergedDictionaries.Clear();
+            skins0.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
+            });
+            skins0.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml")
+            });
+            var skins1 = Resources.MergedDictionaries[1];
+            skins1.Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml");
+            //skins1.MergedDictionaries.Clear();
+            //skins1.MergedDictionaries.Add(new ResourceDictionary
+            //{
+            //    Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
+            //});
+
+            Current.MainWindow?.OnApplyTemplate();
+        }
+       
+    }
+    internal class GlobalData
+    {
+        public static void Init()
+        {
+            if (File.Exists(AppConfig.SavePath))
+            {
+                try
+                {
+                    var json = File.ReadAllText(AppConfig.SavePath);
+                    Config = (string.IsNullOrEmpty(json) ? new AppConfig() : JsonConvert.DeserializeObject<AppConfig>(json)) ?? new AppConfig();
+                }
+                catch
+                {
+                    Config = new AppConfig();
+                }
+            }
+            else
+            {
+                Config = new AppConfig();
+            }
+        }
+
+        public static void Save()
+        {
+            var json = JsonConvert.SerializeObject(Config);
+            File.WriteAllText(AppConfig.SavePath, json);
+        }
+
+        public static AppConfig Config { get; set; }
+
+        public static bool NotifyIconIsShow { get; set; }
+    }
+
+    internal class AppConfig
+    {
+        public static readonly string SavePath = $"{AppDomain.CurrentDomain.BaseDirectory}AppConfig.json";
+
+        public string Lang { get; set; } = "zh-cn";
+
+        public SkinType Skin { get; set; }
+    }
+    internal class Win32Helper
+    {
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Auto)]
+        public static extern int MciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
+    }
+}
