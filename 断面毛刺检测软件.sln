@@ -16,7 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget包版本管理", "Nug
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WH.Controls", "WH.Controls\WH.Controls.csproj", "{F8AD325B-4CAC-4424-BF03-5AE162718E20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WH.Controls", "WH.Controls\WH.Controls.csproj", "{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageWinCtrl", "ImageWinCtrl\ImageWinCtrl.csproj", "{CC3B5372-7A9D-458B-8EAC-2C3240145B2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,17 +34,21 @@ Global
 		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B349B3F-8C0A-4ABD-957E-2D856119D186}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8AD325B-4CAC-4424-BF03-5AE162718E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8AD325B-4CAC-4424-BF03-5AE162718E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8AD325B-4CAC-4424-BF03-5AE162718E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8AD325B-4CAC-4424-BF03-5AE162718E20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3B5372-7A9D-458B-8EAC-2C3240145B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3B5372-7A9D-458B-8EAC-2C3240145B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3B5372-7A9D-458B-8EAC-2C3240145B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3B5372-7A9D-458B-8EAC-2C3240145B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5D8A1C88-CB5E-4FF4-8996-6B1B9D1B06A7} = {E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}
-		{F8AD325B-4CAC-4424-BF03-5AE162718E20} = {137396ED-F088-48E2-8054-A1AF7691511B}
+		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13} = {137396ED-F088-48E2-8054-A1AF7691511B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
