@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\清理.png" />
     <None Remove="Resources\设置面板.svg" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\清理.png" />
     <Resource Include="Resources\设置面板.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
