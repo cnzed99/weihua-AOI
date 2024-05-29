@@ -1,155 +1,168 @@
 ﻿<hc:Window x:Class="断面毛刺检测软件.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
-        xmlns:local="clr-namespace:断面毛刺检测软件" 
-        xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
-        xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels" 
-        d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"
-        Title=""
-        Width="1400"
-        Height="850"
-        Icon="/Resources/logo1.png"
-
-        WindowStartupLocation="CenterScreen"
-
-        mc:Ignorable="d" Loaded="Window_Loaded">
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           xmlns:hc="https://handyorg.github.io/handycontrol"
+           xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
+           xmlns:local="clr-namespace:断面毛刺检测软件"
+           xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+           xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels"
+           Title=""
+           Width="1400"
+           Height="850"
+           d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"
+           Icon="/Resources/logo1.png"
+           WindowStartupLocation="CenterScreen"
+           Loaded="Window_Loaded"
+           mc:Ignorable="d">
     <!-- 菜单栏 -->
     <hc:Window.NonClientAreaContent>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Menu MouseMove="Menu_MouseMove" Grid.Column="0">
-                <MenuItem Header="工程管理">
+            <Menu Grid.Column="0" hc:MenuAttach.PopupHorizontalOffset="-125" MouseMove="Menu_MouseMove">
+                <MenuItem Header="{Binding [ProjManagement], Source={x:Static local:Lang.instance}}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem" BasedOn="{StaticResource MenuItemBaseStyle}">
-                            <Setter Property="HorizontalAlignment" Value="Left"/>
-                            <Setter Property="Width" Value="100"/>
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter Property="Width" Value="100" />
                         </Style>
                     </MenuItem.ItemContainerStyle>
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/主页.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/主页.svg" />
                     </MenuItem.Icon>
-                    <MenuItem  Header="新建工程" >
+                    <MenuItem Header="{Binding [NewProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/添加.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/添加.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem  Header="打开工程" >
+                    <MenuItem Header="{Binding [OpenProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/书籍.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/书籍.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem  Header="保存工程" >
+                    <MenuItem Header="{Binding [SaveProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/保存.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/保存.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem  Header="另存工程" >
+                    <MenuItem Header="{Binding [Saveas], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/复制另存.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/复制另存.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem  Header="修改工程" >
+                    <MenuItem Header="{Binding [ModifyProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/设置面板.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/设置面板.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem  Header="最近打开" ItemsSource="{Binding SystemSettings.RecentProjs}" MenuItem.Click="Recent_Click">
+                    <MenuItem Header="{Binding [RecentProj], Source={x:Static local:Lang.instance}}" ItemsSource="{Binding SystemSettings.RecentProjs}" MenuItem.Click="Recent_Click">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/最近打开.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/最近打开.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="图片管理"  >
+                <MenuItem Header="{Binding [ImageManagement], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/图片设置.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/图片设置.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="存图设置" >
+                    <MenuItem Width="100" Header="{Binding [ImageSave], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/图片.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/图片.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="截屏保存" >
+                    <MenuItem Width="100" Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/桌面.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/桌面.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
 
-                <MenuItem Header="相机与通讯" >
+                <MenuItem Header="{Binding [CamCom], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/拍照.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/拍照.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="相机" >
+                    <MenuItem Width="100" Header="{Binding [Camera], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/相机.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/相机.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="通讯" >
+                    <MenuItem Width="100" Header="{Binding [Communication], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/通讯.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/通讯.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="系统设置"  >
+                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/系统设置.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/系统设置.svg" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="数据统计" >
+                <MenuItem Header="{Binding [DataStatistics], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/政府银行.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/政府银行.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="数据统计" >
+                    <MenuItem Width="100" Header="{Binding [Statistics], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/实时监控.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/实时监控.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="数据清空" >
+                    <MenuItem Width="100" Header="{Binding [DataClear], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/垃圾桶.svg"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-                <MenuItem Header="工具"  >
-                    <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/工具.svg"/>
-                    </MenuItem.Icon>
-                    <MenuItem Width="100" Header="离线检测" >
-                        <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/离线检测.svg"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Width="100" Header="光源控制" >
-                        <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/光源.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/垃圾桶.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="帮助" >
+                <MenuItem Header="{Binding [Tools], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/微笑.svg"/>
+                        <svg1:SVGImage Source="/Resources/图标/工具.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="帮助文档" >
+                    <MenuItem Width="100" Header="{Binding [Offline], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/书本.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/离线检测.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="关于" >
+                    <MenuItem Width="100" Header="{Binding [LightControl], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/圆形问号.svg"/>
+                            <svg1:SVGImage Source="/Resources/图标/光源.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
+                </MenuItem>
+                <MenuItem Header="{Binding [Help], Source={x:Static local:Lang.instance}}">
+                    <MenuItem.Icon>
+                        <svg1:SVGImage Source="/Resources/图标/微笑.svg" />
+                    </MenuItem.Icon>
+                    <MenuItem Width="100" Header="{Binding [HelpDoc], Source={x:Static local:Lang.instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/书本.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Width="100" Header="{Binding [About], Source={x:Static local:Lang.instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/圆形问号.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="{Binding [Lang], Source={x:Static local:Lang.instance}}">
+                    <MenuItem.Icon>
+                        <svg1:SVGImage Source="/Resources/图标/地球.svg" />
+                    </MenuItem.Icon>
+                    <CheckBox Name="cbLang"
+                              Content="en_US"
+                              Checked="Lang_Checked"
+                              Unchecked="Lang_Checked" />
                 </MenuItem>
             </Menu>
-            <TextBlock Text="{Binding Name}" hc:WindowAttach.IsDragElement="True" Grid.Column="1" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       hc:WindowAttach.IsDragElement="True"
+                       Text="{Binding Name}"
+                       FontSize="20" />
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
                 <!--<Button Click="ButtonConfig_OnClick" Name="ButtonConfig" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource ConfigGeometry}"/>
                 <Popup AllowsTransparency="True" PlacementTarget="{Binding ElementName=ButtonConfig}" Placement="Center"  Name="PopupConfig" VerticalOffset="80" StaysOpen="False">
@@ -171,11 +184,14 @@
                         </StackPanel>
                     </Border>
                 </Popup>-->
-                <ToggleButton Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}" Checked="cbSkin_Checked" Unchecked="cbSkin_Checked"/>
+                <ToggleButton Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}"
+                              Checked="cbSkin_Checked"
+                              Unchecked="cbSkin_Checked"
+                              IsChecked="True" />
             </hc:SimplePanel>
         </Grid>
     </hc:Window.NonClientAreaContent>
-    <!--中间内容-->
+    <!-- 中间内容 -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
@@ -192,26 +208,35 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <!--启停按钮-->
-                <ToggleButton x:Name="Btn_StartStop" Grid.Column="1" Margin="10,0" Width="70" Height="70" Style="{DynamicResource ToggleButtonFlip}" IsChecked="{Binding StartStop,Mode=OneWayToSource}">
+                <!-- 启停按钮 -->
+                <ToggleButton x:Name="Btn_StartStop"
+                              Grid.Column="1"
+                              Width="70"
+                              Height="70"
+                              Margin="10,0"
+                              Style="{DynamicResource ToggleButtonFlip}"
+                              IsChecked="{Binding StartStop, Mode=OneWayToSource}">
                     <hc:StatusSwitchElement.CheckedElement>
-                        <Border Background="{DynamicResource DangerBrush}" Margin="-1">
-                            <TextBlock Text="停止" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Margin="-1" Background="{DynamicResource DangerBrush}">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding [Stop], Source={x:Static local:Lang.instance}}" />
                         </Border>
                     </hc:StatusSwitchElement.CheckedElement>
-                    <Border Background="{DynamicResource SuccessBrush}" Margin="-1">
-                        <TextBlock Text="启动" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Margin="-1" Background="{DynamicResource SuccessBrush}">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding [Start], Source={x:Static local:Lang.instance}}" />
                     </Border>
                 </ToggleButton>
                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                    <TextBlock Margin="5,5,5,0" HorizontalAlignment="Center" Text="系统时间" />
-                    <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding SystemTime}" d:Text="2024-04-02"/>
-                    <TextBlock Margin="5,0" TextAlignment="Center" Text="运行时间" />
-                    <TextBlock HorizontalAlignment="Center" Text="{Binding RuningTime}" d:Text="02:22:22"/>
+                    <TextBlock Margin="5,5,5,0" HorizontalAlignment="Center" Text="{Binding [SystemTime], Source={x:Static local:Lang.instance}}" />
+                    <TextBlock HorizontalAlignment="Center"
+                               d:Text="2024-04-02"
+                               TextAlignment="Center"
+                               Text="{Binding SystemTime}" />
+                    <TextBlock Margin="5,0" TextAlignment="Center" Text="{Binding [RunTime], Source={x:Static local:Lang.instance}}" />
+                    <TextBlock HorizontalAlignment="Center" d:Text="02:22:22" Text="{Binding RuningTime}" />
                 </StackPanel>
                 <StackPanel Grid.Column="3" Width="80">
                     <Button Width="50"
@@ -219,71 +244,83 @@
                             Margin="5"
                             BorderBrush="#FFC6C6C6">
                         <Button.Background>
-                            <ImageBrush ImageSource="/Resources/图片/风险盾牌安全.png"/>
+                            <ImageBrush ImageSource="/Resources/图片/风险盾牌安全.png" />
                         </Button.Background>
-                       
+
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
                         <TextBlock Text="99" />
-                        <TextBlock Text="分钟" />
+                        <TextBlock Text="{Binding [Minute], Source={x:Static local:Lang.instance}}" />
                         <TextBlock Text="59" />
-                        <TextBlock Text="秒" />
+                        <TextBlock Text="{Binding [Second], Source={x:Static local:Lang.instance}}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
 
         </DockPanel>
-        <!--中间内容-->
+        <!-- 中间内容 -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
             <UniformGrid Grid.Column="0" Rows="2">
                 <hc:SimplePanel Background="#FF181A1C">
-                    <wh:ImageView/>
+                    <wh:ImageView />
                 </hc:SimplePanel>
                 <hc:SimplePanel Background="#FF10100F">
-                    <wh:ImageView/>
+                    <wh:ImageView />
                 </hc:SimplePanel>
             </UniformGrid>
-            <!--中间设置栏-->
-            <hc:TabControl Grid.Column="1" SelectedIndex="0" IsAnimationEnabled="True" IsTabFillEnabled="True"  Style="{DynamicResource TabControlInLine}">
-                <hc:TabItem Header="检测区">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+            <!-- 中间设置栏 -->
+            <hc:TabControl Grid.Column="1"
+                           SelectedIndex="0"
+                           IsAnimationEnabled="True"
+                           IsTabFillEnabled="True"
+                           Style="{DynamicResource TabControlInLine}">
+                <hc:TabItem Header="{Binding [DetectArea], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="质量等级">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [Quality], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="检测设置">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [DetectConfig], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="报警设置">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [AlarmConfig], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="打标设置">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="运动控制">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
-                <hc:TabItem Header="回放">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabItem Header="{Binding [History], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
             </hc:TabControl>
-            <!--右侧统计栏 消息栏 离线-->
+            <!-- 右侧统计栏 消息栏 离线 -->
             <hc:SimplePanel Grid.Column="2">
-                <hc:TabControl Grid.Row="2"  SelectedIndex="0" IsAnimationEnabled="True" IsTabFillEnabled="True"  Style="{DynamicResource TabControlInLine}">
-                    <hc:TabItem Header="缺陷统计列表">
-                        <hc:SimplePanel Background="{DynamicResource RegionBrush}"/>
+                <hc:TabControl Grid.Row="2"
+                               SelectedIndex="0"
+                               IsAnimationEnabled="True"
+                               IsTabFillEnabled="True"
+                               Style="{DynamicResource TabControlInLine}">
+                    <hc:TabItem Header="{Binding [DefectList], Source={x:Static local:Lang.instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                     </hc:TabItem>
-                    <hc:TabItem Header="系统消息">
+                    <hc:TabItem Header="{Binding [Message], Source={x:Static local:Lang.instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                            <hc:TabControl Grid.Column="2"  SelectedIndex="0"  IsAnimationEnabled="True" IsTabFillEnabled="True"  Style="{DynamicResource TabControlInLine}">
-                                <hc:TabItem Header="运行日志" Background="{DynamicResource RegionBrush}"/>
-                                <hc:TabItem Header="报警日志" Background="{DynamicResource RegionBrush}"/>
+                            <hc:TabControl Grid.Column="2"
+                                           SelectedIndex="0"
+                                           IsAnimationEnabled="True"
+                                           IsTabFillEnabled="True"
+                                           Style="{DynamicResource TabControlInLine}">
+                                <hc:TabItem Header="{Binding [RuningLog], Source={x:Static local:Lang.instance}}" Background="{DynamicResource RegionBrush}" />
+                                <hc:TabItem Header="{Binding [WarningLog], Source={x:Static local:Lang.instance}}" Background="{DynamicResource RegionBrush}" />
                             </hc:TabControl>
                         </hc:SimplePanel>
                     </hc:TabItem>
@@ -291,7 +328,7 @@
                 </hc:TabControl>
 
             </hc:SimplePanel>
-           
+
         </Grid>
         <!--<hc:Drawer Dock="Right" ShowMode="Cover" IsOpen="{Binding ElementName=Btn_StartStop,Path=IsChecked}" ShowMask="False" MaskCanClose="False">
             <hc:SimplePanel  Width="300" Background="{DynamicResource RegionBrush}">
@@ -301,12 +338,12 @@
 
         </hc:Drawer>-->
         <!-- 状态栏 -->
-        <DockPanel Grid.Row="2" >
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,0">
-                <TextBlock Text="算法:" />
+        <DockPanel Grid.Row="2">
+            <StackPanel Margin="5,0" Orientation="Horizontal" DockPanel.Dock="Left">
+                <TextBlock Text="{Binding [Algorithm], Source={x:Static local:Lang.instance}}" />
                 <TextBlock Margin="2,0" Text="50" />
                 <TextBlock Text="ms" />
-                <TextBlock Margin="10,0,0,0" Text="过滤:" />
+                <TextBlock Margin="10,0,0,0" Text="{Binding [Filter], Source={x:Static local:Lang.instance}}" />
                 <TextBlock Margin="2,0" Text="50" />
                 <TextBlock Text="ms" />
 
@@ -319,16 +356,18 @@
                 <TextBlock Grid.Column="0"
                            Margin="5,0"
                            HorizontalAlignment="Right"
-                           Text="项目路径:" />
-                <TextBlock Grid.Column="1"
-                           HorizontalAlignment="Right"
-                           Text="{Binding ProjPath}"
-                            />
+                           Text="{Binding [ProjPath], Source={x:Static local:Lang.instance}}" />
+                <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding ProjPath}" />
             </Grid>
         </DockPanel>
-        <!--消息弹窗-->
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="1" Grid.RowSpan="2" MaxHeight="500">
-            <StackPanel hc:Growl.GrowlParent="True" VerticalAlignment="Bottom" Margin="0,10,0,20"/>
+        <!-- 消息弹窗 -->
+        <ScrollViewer Grid.Row="1"
+                      Grid.RowSpan="2"
+                      MaxHeight="500"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      VerticalScrollBarVisibility="Hidden">
+            <StackPanel Margin="0,10,0,20" VerticalAlignment="Bottom" hc:Growl.GrowlParent="True" />
         </ScrollViewer>
 
     </Grid>

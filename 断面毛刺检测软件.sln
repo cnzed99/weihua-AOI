@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget包版本管理", "Nug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WH.Controls", "WH.Controls\WH.Controls.csproj", "{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageManager", "LanguageManager\LanguageManager.csproj", "{1304557D-F38D-4ABA-9EBF-61213C00C501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1304557D-F38D-4ABA-9EBF-61213C00C501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1304557D-F38D-4ABA-9EBF-61213C00C501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1304557D-F38D-4ABA-9EBF-61213C00C501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1304557D-F38D-4ABA-9EBF-61213C00C501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 		{80F4A41F-5EC1-49CB-9A1E-E26EF5FD0B13} = {137396ED-F088-48E2-8054-A1AF7691511B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		RESX_NeutralResourcesLanguage = zh-CN
 		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
 	EndGlobalSection
 EndGlobal

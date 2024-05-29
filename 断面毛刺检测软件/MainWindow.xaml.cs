@@ -20,6 +20,7 @@ using 断面毛刺检测软件.ViewModels;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.Reactive.Linq;
 using System.Windows.Controls.Primitives;
+using System.Globalization;
 
 namespace 断面毛刺检测软件
 {
@@ -195,5 +196,18 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
+        #region 语言切换
+        private void Lang_Checked(object sender, RoutedEventArgs e)
+        {
+            var languageCode = "zh-CN";
+            if (cbLang.IsChecked??true)
+            {
+                languageCode = "en-US";
+            }
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+            LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+        }
+        #endregion
     }
 }

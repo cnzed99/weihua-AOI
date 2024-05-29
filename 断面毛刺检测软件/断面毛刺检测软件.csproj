@@ -415,6 +415,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
   </ItemGroup>
 
