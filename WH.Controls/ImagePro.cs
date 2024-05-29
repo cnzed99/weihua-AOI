@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace ImageWinCtrl
+namespace WH.Controls
 {
     public record SDrawLine(Pen pen, Brush brushPen, int thickness, Point pt1, Point pt2);
     public record SDrawEllipse(Brush brush, Pen pen, Brush brushPen, int thickness, Point center, double radiusX, double radiusY);

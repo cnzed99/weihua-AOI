@@ -6,6 +6,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
         xmlns:local="clr-namespace:断面毛刺检测软件" 
+        xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
         xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"
         Title=""
@@ -240,8 +241,12 @@
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
             <UniformGrid Grid.Column="0" Rows="2">
-                <hc:SimplePanel Background="#FF181A1C"/>
-                <hc:SimplePanel Background="#FF10100F"/>
+                <hc:SimplePanel Background="#FF181A1C">
+                    <wh:ImageView/>
+                </hc:SimplePanel>
+                <hc:SimplePanel Background="#FF10100F">
+                    <wh:ImageView/>
+                </hc:SimplePanel>
             </UniformGrid>
             <!--中间设置栏-->
             <hc:TabControl Grid.Column="1" SelectedIndex="0" IsAnimationEnabled="True" IsTabFillEnabled="True"  Style="{DynamicResource TabControlInLine}">

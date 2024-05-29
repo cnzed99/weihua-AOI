@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace ImageWinCtrl
+namespace WH.Controls
 {
     /// <summary>
     /// ImageView.xaml 的交互逻辑

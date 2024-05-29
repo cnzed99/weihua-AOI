@@ -148,13 +148,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="DotNetProjects.SVGImage" />
-    <PackageReference Include="HandyControl"/>
-    <PackageReference Include="Mapster"  />
+    <PackageReference Include="HandyControl" />
+    <PackageReference Include="Mapster" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="System.Reactive"  />
-    <PackageReference Include="System.Threading.Channels"  />
+    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="System.Threading.Channels" />
     <PackageReference Include="ValueConverters" />
   </ItemGroup>
 
@@ -412,6 +412,10 @@
 
   <ItemGroup>
     <Folder Include="Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
   </ItemGroup>
 
 </Project>
