@@ -19,6 +19,7 @@ using 断面毛刺检测软件.Models;
 using 断面毛刺检测软件.ViewModels;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.Reactive.Linq;
+using System.Windows.Controls.Primitives;
 
 namespace 断面毛刺检测软件
 {
@@ -54,25 +55,45 @@ namespace 断面毛刺检测软件
         }
 
         #region 主题色系
-        private void ButtonConfig_OnClick(object sender, RoutedEventArgs e) => PopupConfig.IsOpen = true;
+        //private void ButtonConfig_OnClick(object sender, RoutedEventArgs e) => PopupConfig.IsOpen = true;
 
-        private void ButtonSkins_OnClick(object sender, RoutedEventArgs e)
+        //private void ButtonSkins_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is Button { Tag: SkinType skinType })
+        //    {
+        //        PopupConfig.IsOpen = false;
+        //        if (skinType.Equals(GlobalData.Config.Skin))
+        //        {
+        //            return;
+        //        }
+
+        //        GlobalData.Config.Skin = skinType;
+        //        GlobalData.Save();
+        //        ((App)Application.Current).UpdateSkin(skinType);
+        //        Application.Current.MainWindow.ApplyTemplate();
+        //    }
+        //}
+        private void cbSkin_Checked(object sender, RoutedEventArgs e)
         {
-            if (e.OriginalSource is Button { Tag: SkinType skinType })
+            if (e.OriginalSource is ToggleButton toggle)
             {
-                PopupConfig.IsOpen = false;
-                if (skinType.Equals(GlobalData.Config.Skin))
-                {
-                    return;
-                }
 
-                GlobalData.Config.Skin = skinType;
+                if (toggle.IsChecked ?? true)
+                {
+                    GlobalData.Config.Skin = SkinType.Dark;
+
+                    ((App)Application.Current).UpdateSkin(SkinType.Dark);
+
+                }
+                else
+                {
+                    GlobalData.Config.Skin = SkinType.Default;
+                    ((App)Application.Current).UpdateSkin(SkinType.Default);
+                }
                 GlobalData.Save();
-                ((App)Application.Current).UpdateSkin(skinType);
                 Application.Current.MainWindow.ApplyTemplate();
             }
         }
-
         #endregion
 
         #region 最大最小拖动 关闭
@@ -136,6 +157,7 @@ namespace 断面毛刺检测软件
 
         #endregion
 
+        #region 最近打开
         private void Recent_Click(object sender, RoutedEventArgs e)
         {
             if(e.OriginalSource is MenuItem { Header:string header })
@@ -171,7 +193,7 @@ namespace 断面毛刺检测软件
                 
             }
         }
+        #endregion
 
-     
     }
 }

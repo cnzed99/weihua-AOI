@@ -151,7 +151,7 @@
             </Menu>
             <TextBlock Text="{Binding Name}" hc:WindowAttach.IsDragElement="True" Grid.Column="1" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
-                <Button Click="ButtonConfig_OnClick" Name="ButtonConfig" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource ConfigGeometry}"/>
+                <!--<Button Click="ButtonConfig_OnClick" Name="ButtonConfig" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource ConfigGeometry}"/>
                 <Popup AllowsTransparency="True" PlacementTarget="{Binding ElementName=ButtonConfig}" Placement="Center"  Name="PopupConfig" VerticalOffset="80" StaysOpen="False">
                     <Border Background="{DynamicResource SecondaryRegionBrush}" CornerRadius="4" Margin="16" Effect="{StaticResource EffectShadow2}">
                         <StackPanel Orientation="Horizontal">
@@ -170,7 +170,8 @@
                             </StackPanel>
                         </StackPanel>
                     </Border>
-                </Popup>
+                </Popup>-->
+                <ToggleButton Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}" Checked="cbSkin_Checked" Unchecked="cbSkin_Checked"/>
             </hc:SimplePanel>
         </Grid>
     </hc:Window.NonClientAreaContent>
