@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UserName" xml:space="preserve">
-    <value>用户名</value>
+    <value>Name</value>
   </data>
   <data name="PassWord" xml:space="preserve">
-    <value>密码</value>
+    <value>PassW</value>
   </data>
   <data name="LoginPeriod" xml:space="preserve">
-    <value>有效时间</value>
+    <value>Period</value>
   </data>
   <data name="Minute" xml:space="preserve">
-    <value>分钟</value>
+    <value>Min</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>登录</value>
+    <value>Login</value>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>注销</value>
+    <value>Logout</value>
   </data>
   <data name="LoginTitle" xml:space="preserve">
-    <value>用户登录</value>
+    <value>Login Page</value>
   </data>
   <data name="UserManagement" xml:space="preserve">
-    <value>用户设置</value>
+    <value>Users Management</value>
   </data>
   <data name="Adjust" xml:space="preserve">
-    <value>修改</value>
+    <value>Adjust</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>删除</value>
+    <value>Delete</value>
   </data>
   <data name="Permission" xml:space="preserve">
-    <value>权限</value>
+    <value>Permission</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>注册</value>
+    <value>Register</value>
   </data>
   <data name="Administrator" xml:space="preserve">
-    <value>管理员</value>
+    <value>Administrator</value>
   </data>
   <data name="Craftman" xml:space="preserve">
-    <value>工艺员</value>
+    <value>Craftman</value>
   </data>
   <data name="Engineer" xml:space="preserve">
-    <value>工程师</value>
+    <value>Engineer</value>
   </data>
   <data name="Operator" xml:space="preserve">
-    <value>操作员</value>
+    <value>Operator</value>
   </data>
 </root>

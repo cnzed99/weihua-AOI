@@ -15,6 +15,7 @@
            Icon="/Resources/logo1.png"
            WindowStartupLocation="CenterScreen"
            Loaded="Window_Loaded"
+           Closing="Window_Closing"
            mc:Ignorable="d">
     <!-- 菜单栏 -->
     <hc:Window.NonClientAreaContent>
@@ -24,7 +25,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Menu Grid.Column="0" hc:MenuAttach.PopupHorizontalOffset="-125" MouseMove="Menu_MouseMove">
+            <Menu Grid.Column="0" hc:MenuAttach.PopupHorizontalOffset="-125" hc:WindowAttach.IsDragElement="True">
                 <MenuItem Header="{Binding [ProjManagement], Source={x:Static local:Lang.instance}}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem" BasedOn="{StaticResource MenuItemBaseStyle}">
@@ -239,20 +240,21 @@
                     <TextBlock HorizontalAlignment="Center" d:Text="02:22:22" Text="{Binding RuningTime}" />
                 </StackPanel>
                 <StackPanel Grid.Column="3" Width="80">
-                    <Button Width="50"
+                    <Button x:Name="btn_UserLogin" Width="50"
                             Height="50"
                             Margin="5"
-                            BorderBrush="#FFC6C6C6">
+                            BorderBrush="#FFC6C6C6"
+                            Click="btn_UserLogin_Click">
                         <Button.Background>
-                            <ImageBrush ImageSource="/Resources/图片/风险盾牌安全.png" />
+                            <ImageBrush x:Name="btn_UserLoginImg" ImageSource="/Resources/图片/风险盾牌安全.png" />
                         </Button.Background>
 
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                        <TextBlock Text="99" />
+                        <TextBlock Text="{Binding MinuteLeft}" />
                         <TextBlock Text="{Binding [Minute], Source={x:Static local:Lang.instance}}" />
-                        <TextBlock Text="59" />
+                        <TextBlock Text="{Binding SecondLeft}" />
                         <TextBlock Text="{Binding [Second], Source={x:Static local:Lang.instance}}" />
                     </StackPanel>
                 </StackPanel>

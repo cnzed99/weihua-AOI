@@ -141,9 +141,9 @@ namespace 断面毛刺检测软件
             File.WriteAllText(AppConfig.SavePath, json);
         }
 
-        public static AppConfig Config { get; set; }
+        public static AppConfig Config { get; set; } = new AppConfig();
 
-        public static bool NotifyIconIsShow { get; set; }
+        public static bool NotifyIconIsShow { get; set; } = true;
     }
 
     internal class AppConfig

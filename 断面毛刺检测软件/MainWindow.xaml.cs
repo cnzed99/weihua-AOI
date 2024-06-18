@@ -21,6 +21,7 @@ using MessageBox = HandyControl.Controls.MessageBox;
 using System.Reactive.Linq;
 using System.Windows.Controls.Primitives;
 using System.Globalization;
+using WH.Controls;
 
 namespace 断面毛刺检测软件
 {
@@ -35,6 +36,15 @@ namespace 断面毛刺检测软件
         {
             InitializeComponent();
             this.DataContext = mainVM;
+
+            LoginPage.UserChangeEvent += () =>
+            {
+                btn_UserLoginImg.ImageSource = LoginPage.UserImg;
+
+                btn_UserLogin.Background = Brushes.Chartreuse;
+                btn_UserLogin.ToolTip = LoginPage.UserName + ":" + LoginPage.LoginCode.ToString();
+
+            };
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -55,25 +65,19 @@ namespace 断面毛刺检测软件
                 );
         }
 
+        #region 用户登录
+        private void btn_UserLogin_Click(object sender, RoutedEventArgs e)
+        {
+            LoginPage UserInfoFrm = new LoginPage();
+
+            UserInfoFrm.ShowDialog();
+            //PreDllConfig.PreConfigLog.Info(Properties.Resources.CurrentUser + LoginPage.UserName);
+        }
+
+        #endregion
+
         #region 主题色系
-        //private void ButtonConfig_OnClick(object sender, RoutedEventArgs e) => PopupConfig.IsOpen = true;
 
-        //private void ButtonSkins_OnClick(object sender, RoutedEventArgs e)
-        //{
-        //    if (e.OriginalSource is Button { Tag: SkinType skinType })
-        //    {
-        //        PopupConfig.IsOpen = false;
-        //        if (skinType.Equals(GlobalData.Config.Skin))
-        //        {
-        //            return;
-        //        }
-
-        //        GlobalData.Config.Skin = skinType;
-        //        GlobalData.Save();
-        //        ((App)Application.Current).UpdateSkin(skinType);
-        //        Application.Current.MainWindow.ApplyTemplate();
-        //    }
-        //}
         private void cbSkin_Checked(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is ToggleButton toggle)
@@ -97,16 +101,16 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 最大最小拖动 关闭
+        #region 窗体关闭
 
-        private void MainWindow_Close(object sender, RoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
-                var result = MessageBox.Show("是否需要保存项目？\r\n Do you want to save it ?", "提示|Tips",MessageBoxButton.YesNoCancel,MessageBoxImage.Question,MessageBoxResult.OK);
+                var result = MessageBox.Show("是否需要保存项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.OK);
                 if (result == MessageBoxResult.Cancel)
                 {
-                    e.Handled = true;
+                    e.Cancel = true;
                     Growl.Success("取消操作！");
                     return;
                 }
@@ -121,7 +125,7 @@ namespace 断面毛刺检测软件
                         fs.Flush();
                     }
                 }
-
+                Environment.Exit(0);
             }
             catch (Exception exception)
             {
@@ -132,28 +136,7 @@ namespace 断面毛刺检测软件
             {
                 //CLoading.Close();
             }
-            Application.Current.MainWindow.Close();
-        }
-
-        private void MainWindow_Maxmum(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
-            else WindowState = WindowState.Maximized;
-            //Growl.Success("文件保存成功！");
             
-        }
-
-        private void MainWindow_Minimum(object sender, RoutedEventArgs e)
-        {
-            Application.Current.MainWindow.WindowState = WindowState.Minimized;
-        }
-
-        private void Menu_MouseMove(object sender, MouseEventArgs e)
-        {
-            if(e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove();
-            }
         }
 
         #endregion
@@ -209,5 +192,7 @@ namespace 断面毛刺检测软件
             LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
         #endregion
+
+       
     }
 }

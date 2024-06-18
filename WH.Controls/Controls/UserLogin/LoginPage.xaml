@@ -1,0 +1,193 @@
+﻿<Window
+    x:Class="WH.Controls.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:WH.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prop="clr-namespace:WH.Controls.Properties"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" d:DataContext="{d:DesignInstance Type=local:LoginViewModel}"
+    x:Name="window"
+    Title="{Binding [LoginTitle], Source={x:Static prop:LangManager.instance}}"
+    Width="350"
+    Height="500"
+    AllowsTransparency="True"
+    Background="{x:Null}"
+    Foreground="White"
+    MouseLeftButtonDown="WinMove_LeftButtonDown"
+    ResizeMode="NoResize"
+    Topmost="True"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    Visibility="{Binding IsVisible,Converter={StaticResource Boolean2VisibilityConverter}}"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WH.Controls;component/ControlDictionary.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource lbText}"/>
+            <Style TargetType="Button" BasedOn="{StaticResource PageButton}"/>
+        </ResourceDictionary>
+
+
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}"  />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="btn_Close">
+            <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="btn_Close">
+            <BeginStoryboard x:Name="OnMouseLeave1_BeginStoryboard" Storyboard="{StaticResource OnMouseLeave1}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid x:Name="grid">
+        <Grid.Background>
+            <ImageBrush ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/登录页面黑.png" />
+        </Grid.Background>
+
+
+        <Button
+            x:Name="btn_Close"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{x:Null}"
+            BorderThickness="0"
+            Click="btn_Close_Click"
+            Content="✖"
+            FontSize="12.5"
+            Foreground="Cyan"
+            RenderTransformOrigin="0.5,0.5"
+            Style="{StaticResource CloseButton}">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+
+        <TextBlock
+            Width="50"
+            Margin="69,160,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
+        <ComboBox
+            Height="25"
+            Margin="129,154,75,0"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            FontSize="14"
+            ItemsSource="{Binding ItemList}"
+            SelectedIndex="0"
+            SelectedItem="{Binding LoginPerson.UserName}" Style="{StaticResource comboxStyle}"/>
+        <TextBlock
+            Width="50"
+            Margin="69,222,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
+        <TextBlock
+            Width="50"
+            Margin="69,287,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontFamily="Yu Gothic UI Semibold"
+            Foreground="#43FFFFFF"
+            Text="{Binding [LoginPeriod], Source={x:Static prop:LangManager.instance}}" />
+        <hc:PasswordBox
+            Height="25"
+            Margin="129,216,75,0"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="Transparent"
+            BorderBrush="DarkCyan"
+            FontSize="14"
+            Foreground="White"
+            IsSafeEnabled="false"
+            UnsafePassword="{Binding LoginPerson.PassWord}"
+            ShowEyeButton="True">
+            <hc:PasswordBox.InputBindings>
+                <KeyBinding
+                    Key="Enter"
+                    Command="{Binding LoginButtonCommand}"
+                     />
+            </hc:PasswordBox.InputBindings>
+        </hc:PasswordBox>
+
+        <!--<TextBox Margin="50,205,0,0" VerticalAlignment="Top" Width="150" Height="25" Background="Transparent" FontSize="14" Text="{Binding LoginPerson.PassWord}"/>-->
+        <TextBox
+            Height="25"
+            Margin="129,279,75,0"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="Transparent"
+            BorderBrush="DarkCyan"
+            FontSize="13"
+            Foreground="#FFE3ECEC"
+            Style="{DynamicResource TextBoxExtend}"
+            Text="{Binding LoginLeftTimeMinute, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox.InputBindings>
+                <KeyBinding
+                    Key="Enter"
+                    Command="{Binding LoginButtonCommand}"
+                    />
+            </TextBox.InputBindings>
+        </TextBox>
+        <TextBlock
+            Width="34"
+            Height="16"
+            Margin="276,287,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [Minute], Source={x:Static prop:LangManager.instance}}" />
+        <Button
+            Name="btn_LoginButton"
+            Width="178"
+            Height="29"
+            Margin="82,339,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding LoginButtonCommand}"
+            Content="{Binding [Login], Source={x:Static prop:LangManager.instance}}"/>
+        <Button
+            Name="btn_Exit"
+            Width="178"
+            Height="29"
+            Margin="82,382,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding LogoutButtonCommand}"
+            Content="{Binding [Logout], Source={x:Static prop:LangManager.instance}}" />
+        <Image
+            Height="40"
+            Margin="70,62,44,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Source="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" />
+
+        <TextBlock
+            Width="200"
+            Margin="0,0,40,40"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Foreground="Cyan"
+            LineHeight="22"
+            Text="{Binding ErrorMsg}"
+            TextAlignment="Right"
+            TextWrapping="Wrap" />
+
+
+    </Grid>
+</Window>
