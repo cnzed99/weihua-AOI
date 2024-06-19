@@ -7,11 +7,12 @@
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:WH.Controls.Properties"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" d:DataContext="{d:DesignInstance Type=local:LoginViewModel}"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
     x:Name="window"
     Title="{Binding [LoginTitle], Source={x:Static prop:LangManager.instance}}"
     Width="350"
     Height="500"
+    d:DataContext="{d:DesignInstance Type=local:LoginViewModel}"
     AllowsTransparency="True"
     Background="{x:Null}"
     Foreground="White"
@@ -20,29 +21,25 @@
     Topmost="True"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
-    Visibility="{Binding IsVisible,Converter={StaticResource Boolean2VisibilityConverter}}"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/WH.Controls;component/ControlDictionary.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="TextBlock" BasedOn="{StaticResource lbText}"/>
-            <Style TargetType="Button" BasedOn="{StaticResource PageButton}"/>
+            <Style BasedOn="{StaticResource lbText}" TargetType="TextBlock" />
+            <Style BasedOn="{StaticResource PageButton}" TargetType="Button" />
         </ResourceDictionary>
-
-
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}"  />
+            <BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}" />
         </EventTrigger>
         <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="btn_Close">
-            <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}"/>
+            <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}" />
         </EventTrigger>
         <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="btn_Close">
-            <BeginStoryboard x:Name="OnMouseLeave1_BeginStoryboard" Storyboard="{StaticResource OnMouseLeave1}"/>
+            <BeginStoryboard x:Name="OnMouseLeave1_BeginStoryboard" Storyboard="{StaticResource OnMouseLeave1}" />
         </EventTrigger>
     </Window.Triggers>
 
@@ -88,8 +85,8 @@
             HorizontalContentAlignment="Center"
             FontSize="14"
             ItemsSource="{Binding ItemList}"
-            SelectedIndex="0"
-            SelectedItem="{Binding LoginPerson.UserName}" Style="{StaticResource comboxStyle}"/>
+            SelectedItem="{Binding LoginPerson.UserName}"
+            Style="{StaticResource comboxStyle}" />
         <TextBlock
             Width="50"
             Margin="69,222,0,0"
@@ -115,13 +112,10 @@
             FontSize="14"
             Foreground="White"
             IsSafeEnabled="false"
-            UnsafePassword="{Binding LoginPerson.PassWord}"
-            ShowEyeButton="True">
+            ShowEyeButton="True"
+            UnsafePassword="{Binding LoginPerson.PassWord}">
             <hc:PasswordBox.InputBindings>
-                <KeyBinding
-                    Key="Enter"
-                    Command="{Binding LoginButtonCommand}"
-                     />
+                <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
             </hc:PasswordBox.InputBindings>
         </hc:PasswordBox>
 
@@ -139,10 +133,7 @@
             Style="{DynamicResource TextBoxExtend}"
             Text="{Binding LoginLeftTimeMinute, UpdateSourceTrigger=PropertyChanged}">
             <TextBox.InputBindings>
-                <KeyBinding
-                    Key="Enter"
-                    Command="{Binding LoginButtonCommand}"
-                    />
+                <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
             </TextBox.InputBindings>
         </TextBox>
         <TextBlock
@@ -160,7 +151,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding LoginButtonCommand}"
-            Content="{Binding [Login], Source={x:Static prop:LangManager.instance}}"/>
+            Content="{Binding [Login], Source={x:Static prop:LangManager.instance}}" />
         <Button
             Name="btn_Exit"
             Width="178"

@@ -92,6 +92,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Background="{x:Null}"
+                BorderBrush="{x:Null}"
                 Click="btn_Close_Click"
                 Content="✖"
                 Foreground="#33FFFFFF"

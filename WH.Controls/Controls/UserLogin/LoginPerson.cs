@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace WH.Controls
@@ -26,9 +27,9 @@ namespace WH.Controls
         /// <summary>
         /// 权限等级
         /// </summary>
-        /// 
+       
         private PRIVILEGE _privileageLevel;
-
+        
         public PRIVILEGE PrivileageLevel
         {
             get { return _privileageLevel; }
@@ -61,11 +62,12 @@ namespace WH.Controls
                         break;
                 }
                 SetProperty(ref _privileageLevel, value);
+                OnPropertyChanged(nameof(LogoImage));
             }
         }
 
 
-        public BitmapImage LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
+        public ImageSource LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
 
     }
 

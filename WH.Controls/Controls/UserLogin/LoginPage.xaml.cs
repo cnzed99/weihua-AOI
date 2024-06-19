@@ -15,6 +15,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Timers;
 using System.Drawing;
+using CommunityToolkit.Mvvm.Messaging;
 
 
 namespace WH.Controls
@@ -24,7 +25,7 @@ namespace WH.Controls
     /// </summary>
     public partial class LoginPage : Window
     {
-        LoginViewModel viewModel = new LoginViewModel();
+        public static LoginViewModel viewModel { get; set; } = new LoginViewModel();
         /// <summary>
         /// 用户名
         /// </summary>
@@ -37,7 +38,7 @@ namespace WH.Controls
         /// <summary>
         /// logo图片
         /// </summary>
-        public static BitmapImage UserImg = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
+        public static ImageSource UserImg = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
         /// <summary>
         /// 是否登录成功
         /// </summary>
@@ -85,7 +86,7 @@ namespace WH.Controls
         public LoginPage()
         {
             InitializeComponent();
-            viewModel = new LoginViewModel();
+            
             viewModel.UserChangeAction = new Action<LoginPerson,bool>(getPerson);
             this.DataContext = viewModel;
 
@@ -95,7 +96,7 @@ namespace WH.Controls
                 loginLeftTimeSecond = s;
                 LoggedSuccess = b;
             });
-
+            WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
         }
 
 
@@ -122,7 +123,7 @@ namespace WH.Controls
             {
                 viewModel.LoginPerson.PassWord = "";
             }
-            this.Hide();
+            this.Close();
 
         }
     }

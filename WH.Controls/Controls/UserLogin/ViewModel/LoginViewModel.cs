@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,8 +27,7 @@ namespace WH.Controls
 
         [ObservableProperty]
         private string errorMsg = "";
-        [ObservableProperty]
-        bool isVisible = true;
+       
 
 
         private List<string> _itemList = new List<string>();
@@ -117,7 +117,7 @@ namespace WH.Controls
             {
                 ErrorMsg = "读取用户登录文件失败,请检查文件User.WH";
             }
-
+            
         }
 
         private void TmrCheckAuthorizationLeftTime_Tick(object? sender, EventArgs e)
@@ -138,7 +138,7 @@ namespace WH.Controls
 
                     if (0 >= iLoginLeftTimeMinute && 0 >= iLoginLeftTimeSecond)
                     {
-                        LoginButton();
+                        LogoutButton();
                     }
                     TimeRemainingAction?.Invoke(iLoginLeftTimeMinute, iLoginLeftTimeSecond, LoggedSuccess);
                 }
@@ -186,13 +186,15 @@ namespace WH.Controls
                     return;
                 }
                 LoggedSuccess = true;
-                UserChangeAction?.Invoke(person, LoggedSuccess);
+                LoginPerson.PrivileageLevel = person.PrivileageLevel;
+               
+                UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
                 ErrorMsg = "登陆成功";
               
                 iLoginLeftTimeMinute = LoginLeftTimeMinute;
                 if (LoggedSuccess)
                 {
-                    IsVisible = false;
+                    WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this)});
                     if (LoginPerson != null)
                     {
                         LoginPerson.PassWord = "";
@@ -213,7 +215,7 @@ namespace WH.Controls
                     LogoutButton();
                     LoginPerson.PassWord = "";
                 }
-                IsVisible = false;
+                
              
             }
             catch (Exception ex)
@@ -228,11 +230,11 @@ namespace WH.Controls
         [RelayCommand]
         private void LogoutButton()
         {
-            LoginPerson P = new LoginPerson();
-            P.UserName = "未登录";
-            P.PrivileageLevel = PRIVILEGE.无权限;
+            //LoginPerson P = new LoginPerson();
+            LoginPerson.UserName = "未登录";
+            LoginPerson.PrivileageLevel = PRIVILEGE.无权限;
             LoggedSuccess = false;
-            UserChangeAction?.Invoke(P, LoggedSuccess);
+            UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
             iLoginLeftTimeMinute = 0;
             iLoginLeftTimeSecond = 0;
       

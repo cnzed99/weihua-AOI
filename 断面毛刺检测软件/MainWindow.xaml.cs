@@ -41,7 +41,7 @@ namespace 断面毛刺检测软件
             {
                 btn_UserLoginImg.ImageSource = LoginPage.UserImg;
 
-                btn_UserLogin.Background = Brushes.Chartreuse;
+                //btn_UserLogin.Background = Brushes.Chartreuse;
                 btn_UserLogin.ToolTip = LoginPage.UserName + ":" + LoginPage.LoginCode.ToString();
 
             };

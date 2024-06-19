@@ -8,6 +8,7 @@
            xmlns:local="clr-namespace:断面毛刺检测软件"
            xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
            xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels"
+          
            Title=""
            Width="1400"
            Height="850"
@@ -243,10 +244,11 @@
                     <Button x:Name="btn_UserLogin" Width="50"
                             Height="50"
                             Margin="5"
+                            Padding="0"
                             BorderBrush="#FFC6C6C6"
                             Click="btn_UserLogin_Click">
                         <Button.Background>
-                            <ImageBrush x:Name="btn_UserLoginImg" ImageSource="/Resources/图片/风险盾牌安全.png" />
+                            <ImageBrush x:Name="btn_UserLoginImg" Stretch="Uniform" ImageSource="/Resources/图片/风险盾牌安全.png" />
                         </Button.Background>
 
                     </Button>
