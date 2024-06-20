@@ -191,11 +191,12 @@ namespace AlgorithmDll
         public List<SRegion> ThickRegions { get; set; } = new();
 
         /// <summary>
+        /// 2024.6.20 李焕彬
         /// 检测图像
         /// </summary>
         /// <param name="width">图像宽度</param>
         /// <param name="height">图像高度</param>
-        /// <param name="stride">stride</param>
+        /// <param name="stride">一行宽度</param>
         /// <param name="data">图像指针</param>
         public DetectResult DetectImage(int width, int height, int stride, IntPtr data, SDetectParam detectParam)
         {
@@ -211,11 +212,12 @@ namespace AlgorithmDll
         }
 
         /// <summary>
+        /// 2024.6.20 李焕彬
         /// 检测Fpga
         /// </summary>
         /// <param name="width">图像宽度</param>
         /// <param name="height">图像高度</param>
-        /// <param name="stride">stride</param>
+        /// <param name="stride">一行宽度</param>
         /// <param name="data">图像指针</param>
         public DetectResult DetectFpga(int width, int height, int stride, IntPtr data, SDetectParamFpga detectParamFpga)
         {
