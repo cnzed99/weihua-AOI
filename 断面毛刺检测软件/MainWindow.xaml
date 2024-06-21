@@ -83,7 +83,7 @@
                             <svg1:SVGImage Source="/Resources/图标/图片.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Width="100" Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}" Click="Screenshot_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/桌面.svg" />
                         </MenuItem.Icon>

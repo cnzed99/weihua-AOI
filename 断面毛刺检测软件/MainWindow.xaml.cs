@@ -22,6 +22,7 @@ using System.Reactive.Linq;
 using System.Windows.Controls.Primitives;
 using System.Globalization;
 using WH.Controls;
+using Microsoft.Win32;
 
 namespace 断面毛刺检测软件
 {
@@ -192,8 +193,41 @@ namespace 断面毛刺检测软件
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
+
         #endregion
 
+        #region 截屏保存
+
+        private void Screenshot_Click(object sender, RoutedEventArgs e)
+        {
+            TakeScreenshotButton_Click(sender, e);
+        }
        
+        private void TakeScreenshotButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取屏幕图像
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(this);
+
+            // 处理截图
+            CroppedBitmap croppedBitmap = new CroppedBitmap(renderTargetBitmap, new Int32Rect(0, 0, (int)this.Width, (int)this.Height));
+
+            // 保存截图
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(croppedBitmap));
+            SaveFileDialog savefile = new SaveFileDialog();
+            savefile.Filter = ".bmp|*.bmp";
+            if(savefile.ShowDialog() is true)
+            {
+                using (FileStream stream = new FileStream(savefile.FileName, FileMode.Create))
+                {
+                    encoder.Save(stream);
+                }
+
+                MessageBox.Show($"截图已保存至 {savefile.FileName}","提示：",MessageBoxButton.OK,MessageBoxImage.Information);
+            }
+            
+        }
+        #endregion
     }
 }
