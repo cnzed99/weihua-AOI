@@ -25,77 +25,15 @@ namespace WH.Controls
     /// </summary>
     public partial class LoginPage : Window
     {
-        public static LoginViewModel viewModel { get; set; } = new LoginViewModel();
-        /// <summary>
-        /// 用户名
-        /// </summary>
-        public static string UserName="未登录";
-        /// <summary>
-        /// 权限等级
-        /// </summary>
-        public static PRIVILEGE LoginCode = PRIVILEGE.无权限;
-
-        /// <summary>
-        /// logo图片
-        /// </summary>
-        public static ImageSource UserImg = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
-        /// <summary>
-        /// 是否登录成功
-        /// </summary>
-        public static bool LoggedSuccess = false;
+       public LoginViewModel? viewModel { get; set; }
 
 
-        private static int loginLeftTimeMinute;
-        /// <summary>
-        /// 登录剩余有效时间【分钟】
-        /// </summary>
-        public static int LoginLeftTimeMinute
-        {
-            get
-            {
-                if (loginLeftTimeMinute <= 0)
-                {
-                    return 0;
-                }
-                return loginLeftTimeMinute - 1;
-            }
-        }
-
-
-        public static int loginLeftTimeSecond;
-        /// <summary>
-        /// 登录剩余有效时间【秒钟】
-        /// </summary>
-        public static int LoginLeftTimeSecond
-        {
-            get
-            {
-                if (60 - loginLeftTimeSecond >= 60)
-                {
-                    return 0;
-                }
-                return 60 - loginLeftTimeSecond;
-            }
-        }
-        /// <summary>
-        /// 用户变动触发事件
-        /// </summary>
-        public static Action? UserChangeEvent;
-
-
-        public LoginPage()
+        public LoginPage(LoginViewModel vm)
         {
             InitializeComponent();
             
-            viewModel.UserChangeAction = new Action<LoginPerson,bool>(getPerson);
+            viewModel = vm;
             this.DataContext = viewModel;
-
-            viewModel.TimeRemainingAction = new Action<int, int,bool>((m, s,b) =>
-            {
-                loginLeftTimeMinute = m;
-                loginLeftTimeSecond = s;
-                LoggedSuccess = b;
-            });
             WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
         }
 
@@ -108,20 +46,14 @@ namespace WH.Controls
             }
         }
 
-        private void getPerson(LoginPerson person, bool loggedSuccess)
-        {
-            UserName = person.UserName;
-            LoginCode = person.PrivileageLevel;
-            UserImg = person.LogoImage;
-            LoggedSuccess=loggedSuccess;
-            UserChangeEvent?.Invoke();
-        }
+       
 
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
             if (viewModel != null)
             {
-                viewModel.LoginPerson.PassWord = "";
+
+                if (!viewModel.LoggedSuccess) viewModel.LoginPerson.Init();
             }
             this.Close();
 

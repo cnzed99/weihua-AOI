@@ -37,14 +37,15 @@ namespace 断面毛刺检测软件
             InitializeComponent();
             this.DataContext = mainVM;
 
-            LoginPage.UserChangeEvent += () =>
-            {
-                btn_UserLoginImg.ImageSource = LoginPage.UserImg;
+            //LoginPage.UserChangeEvent += () =>
+            //{
+            //    //btn_UserLoginImg.ImageSource = LoginPage.viewModel.LoginPerson.LogoImage;
+            //    lb_UserName.Text = LoginPage.viewModel.LoginPerson.UserName;
+            //    lb_UserPrivalige.Text = LoginPage.viewModel.LoginPerson.PrivileageLevel.ToString();
+            //    //btn_UserLogin.Background = Brushes.Chartreuse;
+            //    btn_UserLogin.ToolTip = LoginPage.UserName + ":" + LoginPage.LoginCode.ToString();
 
-                //btn_UserLogin.Background = Brushes.Chartreuse;
-                btn_UserLogin.ToolTip = LoginPage.UserName + ":" + LoginPage.LoginCode.ToString();
-
-            };
+            //};
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -68,7 +69,7 @@ namespace 断面毛刺检测软件
         #region 用户登录
         private void btn_UserLogin_Click(object sender, RoutedEventArgs e)
         {
-            LoginPage UserInfoFrm = new LoginPage();
+            LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
 
             UserInfoFrm.ShowDialog();
             //PreDllConfig.PreConfigLog.Info(Properties.Resources.CurrentUser + LoginPage.UserName);

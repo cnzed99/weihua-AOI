@@ -16,6 +16,8 @@ namespace 断面毛刺检测软件.ViewModels
     /// </summary>
     public partial class MainVM:MainModel
     {
+        [ObservableProperty]
+        LoginViewModel loginViewModel = new LoginViewModel();
         /// <summary>
         /// 系统配置
         /// </summary>
@@ -41,10 +43,7 @@ namespace 断面毛刺检测软件.ViewModels
         static DateTime StartTime = DateTime.Now;
         [ObservableProperty]
         static string runingTime = DateTime.Now.ToString("T");
-        [ObservableProperty]
-        string minuteLeft = "00";
-        [ObservableProperty]
-        string secondLeft = "00";
+      
         /// <summary>
         /// 是否启动 后台使用此变量判断用户是否启动软件
         /// </summary>
@@ -59,8 +58,7 @@ namespace 断面毛刺检测软件.ViewModels
             SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
             var runTimeSpan = DateTime.Now - StartTime;
             RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
-            MinuteLeft = LoginPage.LoginLeftTimeMinute.ToString();
-            SecondLeft = LoginPage.LoginLeftTimeSecond.ToString();
+           
         }
         
         /// <summary>

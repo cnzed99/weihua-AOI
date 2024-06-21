@@ -55,7 +55,7 @@ namespace WH.Controls
         /// <summary>
         /// 已登录(true)
         /// </summary>
-        bool LoggedSuccess = false;
+        public bool LoggedSuccess = false;
 
 
         private int leftTimeMinute=30;
@@ -66,15 +66,15 @@ namespace WH.Controls
         {
             get 
             {
-                iLoginLeftTimeMinute = leftTimeMinute;
-                iLoginLeftTimeSecond = 0;
+                //ILoginLeftTimeMinute = leftTimeMinute;
+               // ILoginLeftTimeSecond = 0;
                 return leftTimeMinute; 
             }
             set
             {
                 leftTimeMinute= value;
-                iLoginLeftTimeMinute = value;
-                iLoginLeftTimeSecond = 0;
+                ILoginLeftTimeMinute = value;
+                ILoginLeftTimeSecond = 0;
                 //DoNotify();
             }
         }
@@ -83,10 +83,12 @@ namespace WH.Controls
         /// <summary>
         /// 登录时间【分钟】
         /// </summary>
+        [ObservableProperty]
         private int iLoginLeftTimeMinute = 0;
         /// <summary>
         /// 登录剩余时间【秒钟】
         /// </summary>
+        [ObservableProperty]
         private  int iLoginLeftTimeSecond = 0;
 
         /// <summary>
@@ -126,21 +128,21 @@ namespace WH.Controls
             {
                 if (LoggedSuccess)
                 {
-                    iLoginLeftTimeSecond += 1;
-                    if (iLoginLeftTimeSecond == 60)
+                    ILoginLeftTimeSecond -= 1;
+                    if (ILoginLeftTimeSecond == -1)
                     {
-                        if (iLoginLeftTimeMinute > 0)
+                        if (ILoginLeftTimeMinute > 0)
                         {
-                            iLoginLeftTimeMinute -= 1;
+                            ILoginLeftTimeMinute -= 1;
                         }
-                        iLoginLeftTimeSecond = 0;
+                        ILoginLeftTimeSecond = 59;
                     }
 
-                    if (0 >= iLoginLeftTimeMinute && 0 >= iLoginLeftTimeSecond)
+                    if (0 >= ILoginLeftTimeMinute && 0 >= ILoginLeftTimeSecond)
                     {
                         LogoutButton();
                     }
-                    TimeRemainingAction?.Invoke(iLoginLeftTimeMinute, iLoginLeftTimeSecond, LoggedSuccess);
+                    TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
                 }
 
 
@@ -191,7 +193,8 @@ namespace WH.Controls
                 UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
                 ErrorMsg = "登陆成功";
               
-                iLoginLeftTimeMinute = LoginLeftTimeMinute;
+                ILoginLeftTimeMinute = LoginLeftTimeMinute-1;
+                ILoginLeftTimeSecond = 59;
                 if (LoggedSuccess)
                 {
                     WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this)});
@@ -235,10 +238,10 @@ namespace WH.Controls
             LoginPerson.PrivileageLevel = PRIVILEGE.无权限;
             LoggedSuccess = false;
             UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
-            iLoginLeftTimeMinute = 0;
-            iLoginLeftTimeSecond = 0;
+            ILoginLeftTimeMinute = 0;
+            ILoginLeftTimeSecond = 0;
       
-            TimeRemainingAction?.Invoke(iLoginLeftTimeMinute, iLoginLeftTimeSecond, LoggedSuccess);
+            TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
             ErrorMsg = "已注销";
 
         }

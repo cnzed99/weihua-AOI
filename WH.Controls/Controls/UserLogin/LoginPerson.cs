@@ -22,7 +22,12 @@ namespace WH.Controls
         [ObservableProperty]
         private string passWord = string.Empty;
 
-
+        public void Init()
+        {
+            UserName = string.Empty;
+            PassWord = string.Empty;
+            PrivileageLevel = 0;
+        }
 
         /// <summary>
         /// 权限等级
@@ -67,7 +72,7 @@ namespace WH.Controls
         }
 
 
-        public ImageSource LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
+        public ImageSource LogoImage { get; set; } = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
 
     }
 
