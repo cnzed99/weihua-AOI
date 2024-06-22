@@ -217,14 +217,14 @@
                     IsChecked="{Binding StartStop, Mode=OneWayToSource}"
                     Style="{DynamicResource ToggleButtonFlip}">
                     <hc:StatusSwitchElement.CheckedElement>
-                        <Border Margin="-1" Background="{DynamicResource DangerBrush}">
+                        <Border Margin="-2" Background="{DynamicResource DangerBrush}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Text="{Binding [Stop], Source={x:Static local:Lang.instance}}" />
                         </Border>
                     </hc:StatusSwitchElement.CheckedElement>
-                    <Border Margin="-1" Background="{DynamicResource SuccessBrush}">
+                    <Border Margin="-2" Background="{DynamicResource SuccessBrush}">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
