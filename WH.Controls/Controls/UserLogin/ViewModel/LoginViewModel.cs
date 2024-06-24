@@ -19,11 +19,11 @@ namespace WH.Controls
         /// <summary>
         /// 选择用户改变时传出委托
         /// </summary>
-        public Action<LoginPerson,bool>? UserChangeAction { get; set; }
+        public Action<LoginPerson,bool> UserChangeAction { get; set; }
         /// <summary>
         /// 剩余登录时间传出委托
         /// </summary>
-        public Action<int,int, bool>? TimeRemainingAction { get; set; }
+        public Action<int,int, bool> TimeRemainingAction { get; set; }
 
         [ObservableProperty]
         private string errorMsg = "";
@@ -122,7 +122,7 @@ namespace WH.Controls
             
         }
 
-        private void TmrCheckAuthorizationLeftTime_Tick(object? sender, EventArgs e)
+        private void TmrCheckAuthorizationLeftTime_Tick(object sender, EventArgs e)
         {
             try
             {

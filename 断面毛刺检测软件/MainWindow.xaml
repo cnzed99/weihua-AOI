@@ -38,31 +38,31 @@
                         </Style>
                     </MenuItem.ItemContainerStyle>
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/主页.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/文件/主页.svg" />
                     </MenuItem.Icon>
                     <MenuItem Header="{Binding [NewProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/添加.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/新建工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding [OpenProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/书籍.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/打开工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding [SaveProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/保存.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/保存工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding [Saveas], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/复制另存.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/另存工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding [ModifyProj], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/设置面板.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/修改工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
@@ -70,94 +70,94 @@
                         ItemsSource="{Binding SystemSettings.RecentProjs}"
                         MenuItem.Click="Recent_Click">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/最近打开.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/文件/最近打开.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [ImageManagement], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/图片设置.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/图片设置/图片设置.svg" />
                     </MenuItem.Icon>
                     <MenuItem Width="100" Header="{Binding [ImageSave], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/图片.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/图片设置/图片.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Width="100" Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}" Click="Screenshot_Click">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/桌面.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/图片设置/截屏保存.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="{Binding [CamCom], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/拍照.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
                     <MenuItem Width="100" Header="{Binding [Camera], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/相机.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/相机通讯/相机.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Width="100" Header="{Binding [Communication], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/通讯.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/相机通讯/通讯.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:Lang.instance}}">
+                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:Lang.instance}}" Click="SystemSetting_Click">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/系统设置.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="{Binding [DataStatistics], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/政府银行.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/数据统计/数据统计.svg" />
                     </MenuItem.Icon>
                     <MenuItem Width="100" Header="{Binding [Statistics], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/实时监控.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Width="100" Header="{Binding [DataClear], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/垃圾桶.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据清空.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [Tools], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/工具.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/工具/工具.svg" />
                     </MenuItem.Icon>
                     <MenuItem Width="100" Header="{Binding [Offline], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/离线检测.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/工具/离线检测.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Width="100" Header="{Binding [LightControl], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/光源.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [Help], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/微笑.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/帮助/帮助.svg" />
                     </MenuItem.Icon>
                     <MenuItem Width="100" Header="{Binding [HelpDoc], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/书本.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/帮助/帮助文档.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Width="100" Header="{Binding [About], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/圆形问号.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/帮助/关于.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [Lang], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/地球.svg" />
+                        <svg1:SVGImage Source="/Resources/图标/语言/语言.svg" />
                     </MenuItem.Icon>
                     <CheckBox
                         Name="cbLang"

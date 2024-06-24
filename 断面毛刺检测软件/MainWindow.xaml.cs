@@ -23,6 +23,7 @@ using System.Windows.Controls.Primitives;
 using System.Globalization;
 using WH.Controls;
 using Microsoft.Win32;
+using 断面毛刺检测软件.Views;
 
 namespace 断面毛刺检测软件
 {
@@ -31,40 +32,58 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class MainWindow : HandyControl.Controls.Window
     {
-        IObservable<Unit>? StartStopSource;
+        IObservable<Unit> StartStopSource;
         MainVM mainVM = new MainVM();
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = mainVM;
-
-            //LoginPage.UserChangeEvent += () =>
-            //{
-            //    //btn_UserLoginImg.ImageSource = LoginPage.viewModel.LoginPerson.LogoImage;
-            //    lb_UserName.Text = LoginPage.viewModel.LoginPerson.UserName;
-            //    lb_UserPrivalige.Text = LoginPage.viewModel.LoginPerson.PrivileageLevel.ToString();
-            //    //btn_UserLogin.Background = Brushes.Chartreuse;
-            //    btn_UserLogin.ToolTip = LoginPage.UserName + ":" + LoginPage.LoginCode.ToString();
-
-            //};
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //半秒之内防止多次点击
-            StartStopSource = Observable
-                .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(h => Btn_StartStop.Click += h, h => Btn_StartStop.Click -= h)
-                .Select(x => Unit.Default)
-                .StartWith(Unit.Default);
+            try
+            {
+                //半秒之内防止多次点击
+                StartStopSource = Observable
+                    .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(h => Btn_StartStop.Click += h, h => Btn_StartStop.Click -= h)
+                    .Select(x => Unit.Default)
+                    .StartWith(Unit.Default);
 
-            StartStopSource
-                .Throttle(TimeSpan.FromMilliseconds(500))
-                .Subscribe(_ => 
+                StartStopSource
+                    .Throttle(TimeSpan.FromMilliseconds(500))
+                    .Subscribe(_ =>
+                    {
+                        if (mainVM.isStart == mainVM.StartStop) return;
+                        mainVM.isStart = mainVM.StartStop;
+
+                    }
+                    );
+                #region 读取主配置文件
+                SystemSettingsModel.LoadParameter();
+                if (SystemSettingsModel.SystemSetParam != null)
                 {
-                    if (mainVM.isStart == mainVM.StartStop) return;
-                    mainVM.isStart = mainVM.StartStop;
+                    //CLogRec.Info("读取主配置文件成功!");
+                    //CLoading.DispText("读取系统配置成功...", 10);
                 }
-                );
+                else
+                {
+                    //CUpdateRecords.AddLogToListBox("读取主配置文件失败!", LOG.LOG_WARN);
+
+                    //CLoading.DispText("读取系统配置失败...", 10);
+                }
+
+                if (SystemSettingsModel.SystemSetParam.IsEnglish)
+                {
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+
+                //throw;
+            }
         }
 
         #region 用户登录
@@ -127,6 +146,7 @@ namespace 断面毛刺检测软件
                         fs.Flush();
                     }
                 }
+                SystemSettingsModel.SaveParameter();
                 Environment.Exit(0);
             }
             catch (Exception exception)
@@ -165,12 +185,12 @@ namespace 断面毛刺检测软件
                     }
                     mainVM.Model = JsonConvert.DeserializeObject<MainModel>(File.ReadAllText(header))??new MainModel();
                     mainVM.SystemSettings.RecentProjs.Remove(header);
-                    mainVM.SystemSettings.RecentProjs.Insert(0, header);
+                    mainVM.SystemSettings.RecentProjs.Add(header);
                 }
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception);
-                    //CLogRec.Error(exception.Message);
+                    Growl.Warning("打开失败！");
                 }
                 finally
                 {
@@ -227,6 +247,16 @@ namespace 断面毛刺检测软件
                 MessageBox.Show($"截图已保存至 {savefile.FileName}","提示：",MessageBoxButton.OK,MessageBoxImage.Information);
             }
             
+        }
+        #endregion
+
+        #region 系统设置
+
+        private void SystemSetting_Click(object sender, RoutedEventArgs e)
+        {
+            SystemSettingWindow SysSetWindow = new SystemSettingWindow();
+            SysSetWindow.DataContext = mainVM.SystemSettings;
+            SysSetWindow.Show();
         }
         #endregion
     }

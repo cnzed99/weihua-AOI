@@ -29,7 +29,7 @@ namespace 断面毛刺检测软件
     {
 #pragma warning disable IDE0052
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        private static Mutex? AppMutex;
+        private static Mutex AppMutex;
 #pragma warning restore IDE0052
         public App()
         {
