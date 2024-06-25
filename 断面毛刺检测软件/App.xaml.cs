@@ -29,7 +29,7 @@ namespace 断面毛刺检测软件
     {
 #pragma warning disable IDE0052
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-        private static Mutex? AppMutex;
+        private static Mutex AppMutex;
 #pragma warning restore IDE0052
         public App()
         {
@@ -103,11 +103,11 @@ namespace 断面毛刺检测软件
             });
             var skins1 = Resources.MergedDictionaries[1];
             skins1.Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml");
-            //skins1.MergedDictionaries.Clear();
-            //skins1.MergedDictionaries.Add(new ResourceDictionary
-            //{
-            //    Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
-            //});
+            skins1.MergedDictionaries.Clear();
+            skins1.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/HandyControl;component/Themes/Theme.xaml")
+            });
 
             Current.MainWindow?.OnApplyTemplate();
         }

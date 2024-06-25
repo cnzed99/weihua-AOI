@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>False</UseWindowsForms>
@@ -57,92 +57,64 @@
     <None Remove="Resources\图标\bijibendiannao.png" />
     <None Remove="Resources\图标\shishijiankong.png" />
     <None Remove="Resources\图标\wenbenwendangwenjian.png" />
-    <None Remove="Resources\图标\三角警告.svg" />
-    <None Remove="Resources\图标\上传.svg" />
-    <None Remove="Resources\图标\下载.svg" />
-    <None Remove="Resources\图标\不可见.svg" />
     <None Remove="Resources\图标\主页.svg" />
-    <None Remove="Resources\图标\书本.svg" />
     <None Remove="Resources\图标\书本知识教育.png" />
-    <None Remove="Resources\图标\书籍.svg" />
-    <None Remove="Resources\图标\二维码.svg" />
-    <None Remove="Resources\图标\五角星.svg" />
-    <None Remove="Resources\图标\保存.svg" />
-    <None Remove="Resources\图标\修改.svg" />
+    <None Remove="Resources\图标\保存工程.svg" />
+    <None Remove="Resources\图标\修改工程.svg" />
     <None Remove="Resources\图标\光源.svg" />
-    <None Remove="Resources\图标\光盘磁带.svg" />
     <None Remove="Resources\图标\全景照片.png" />
-    <None Remove="Resources\图标\全景照片.svg" />
-    <None Remove="Resources\图标\删除.svg" />
-    <None Remove="Resources\图标\删除标签.svg" />
+    <None Remove="Resources\图标\关于.svg" />
     <None Remove="Resources\图标\副本复制.png" />
-    <None Remove="Resources\图标\可见.svg" />
+    <None Remove="Resources\图标\另存工程.svg" />
     <None Remove="Resources\图标\图片.svg" />
     <None Remove="Resources\图标\图片设置.svg" />
-    <None Remove="Resources\图标\圆形警告.svg" />
-    <None Remove="Resources\图标\圆形问号.svg" />
-    <None Remove="Resources\图标\圆锁.svg" />
-    <None Remove="Resources\图标\地球.svg" />
-    <None Remove="Resources\图标\垃圾桶.svg" />
-    <None Remove="Resources\图标\备注.svg" />
-    <None Remove="Resources\图标\复制另存.svg" />
     <None Remove="Resources\图标\太阳亮度天气.png" />
-    <None Remove="Resources\图标\定位.svg" />
-    <None Remove="Resources\图标\实时监控.svg" />
-    <None Remove="Resources\图标\层顺序.svg" />
     <None Remove="Resources\图标\工具.svg" />
-    <None Remove="Resources\图标\工牌.svg" />
-    <None Remove="Resources\图标\开关.svg" />
-    <None Remove="Resources\图标\微笑.svg" />
-    <None Remove="Resources\图标\徽章.svg" />
+    <None Remove="Resources\图标\帮助.svg" />
+    <None Remove="Resources\图标\帮助文档.svg" />
+    <None Remove="Resources\图标\截屏保存.svg" />
+    <None Remove="Resources\图标\打开工程.svg" />
     <None Remove="Resources\图标\拍摄拍照.png" />
-    <None Remove="Resources\图标\拍照.svg" />
     <None Remove="Resources\图标\排列方式.png" />
-    <None Remove="Resources\图标\插件.svg" />
-    <None Remove="Resources\图标\摄像头.svg" />
-    <None Remove="Resources\图标\政府银行.svg" />
     <None Remove="Resources\图标\政府银行税务.png" />
-    <None Remove="Resources\图标\文件.svg" />
-    <None Remove="Resources\图标\文件2.svg" />
-    <None Remove="Resources\图标\文件目录.svg" />
-    <None Remove="Resources\图标\文档.svg" />
-    <None Remove="Resources\图标\方形问号.svg" />
-    <None Remove="Resources\图标\日历面板.svg" />
+    <None Remove="Resources\图标\数据清空.svg" />
+    <None Remove="Resources\图标\数据监控.svg" />
+    <None Remove="Resources\图标\数据监控.svg.ldenc" />
+    <None Remove="Resources\图标\数据统计.svg" />
+    <None Remove="Resources\图标\新建工程.svg" />
     <None Remove="Resources\图标\最近打开.svg" />
-    <None Remove="Resources\图标\标签.svg" />
-    <None Remove="Resources\图标\标签标记.svg" />
-    <None Remove="Resources\图标\桌面.svg" />
-    <None Remove="Resources\图标\添加.svg" />
-    <None Remove="Resources\图标\添加标签.svg" />
-    <None Remove="Resources\图标\清理.svg" />
-    <None Remove="Resources\图标\火箭.svg" />
-    <None Remove="Resources\图标\爱心.svg" />
-    <None Remove="Resources\图标\电话.svg" />
-    <None Remove="Resources\图标\监控.svg" />
     <None Remove="Resources\图标\相机.svg" />
-    <None Remove="Resources\图标\盾牌安全.svg" />
-    <None Remove="Resources\图标\票据.svg" />
+    <None Remove="Resources\图标\相机通讯.svg" />
     <None Remove="Resources\图标\离线检测.svg" />
     <None Remove="Resources\图标\笑脸满意乐意.png" />
-    <None Remove="Resources\图标\算术.svg" />
     <None Remove="Resources\图标\系统设置.svg" />
-    <None Remove="Resources\图标\红旗摇摆.svg" />
-    <None Remove="Resources\图标\红旗飘扬.svg" />
-    <None Remove="Resources\图标\红绿灯.svg" />
-    <None Remove="Resources\图标\菜单列表.svg" />
-    <None Remove="Resources\图标\设置.svg" />
-    <None Remove="Resources\图标\设置面板.svg" />
-    <None Remove="Resources\图标\过滤.svg" />
+    <None Remove="Resources\图标\语言.svg" />
     <None Remove="Resources\图标\通讯.svg" />
-    <None Remove="Resources\图标\错误警告.svg" />
-    <None Remove="Resources\图标\镜头.svg" />
-    <None Remove="Resources\图标\面包.svg" />
-    <None Remove="Resources\图标\音乐.svg" />
-    <None Remove="Resources\图标\风车.svg" />
-    <None Remove="Resources\图标\风险盾牌.svg" />
     <None Remove="Resources\图标\风险盾牌安全.svg" />
+    <None Remove="Resources\图片\图片管理\图片管理.png" />
+    <None Remove="Resources\图片\图片管理\存图设置.png" />
+    <None Remove="Resources\图片\图片管理\截屏保存.png" />
+    <None Remove="Resources\图片\工具\光源.png" />
+    <None Remove="Resources\图片\工具\工具.png" />
+    <None Remove="Resources\图片\工具\离线检测.png" />
     <None Remove="Resources\图片\工牌职位身份.png" />
+    <None Remove="Resources\图片\工程管理\主页.png" />
+    <None Remove="Resources\图片\工程管理\保存工程.png" />
+    <None Remove="Resources\图片\工程管理\另存工程.png" />
+    <None Remove="Resources\图片\工程管理\打开工程.png" />
+    <None Remove="Resources\图片\工程管理\新建工程.png" />
+    <None Remove="Resources\图片\工程管理\最近打开.png" />
+    <None Remove="Resources\图片\帮助\关于.png" />
+    <None Remove="Resources\图片\帮助\帮助.png" />
+    <None Remove="Resources\图片\帮助\帮助文档.png" />
+    <None Remove="Resources\图片\数据统计\数据清空.png" />
+    <None Remove="Resources\图片\数据统计\数据监控.png" />
+    <None Remove="Resources\图片\数据统计\数据统计.png" />
+    <None Remove="Resources\图片\相机通讯\相机.png" />
+    <None Remove="Resources\图片\相机通讯\相机通讯.png" />
+    <None Remove="Resources\图片\相机通讯\通讯.png" />
     <None Remove="Resources\图片\盾牌安全风险.png" />
+    <None Remove="Resources\图片\系统设置\系统设置.png" />
     <None Remove="Resources\图片\风险盾牌安全.png" />
     <None Remove="Resources\组合-2.png" />
   </ItemGroup>
@@ -152,6 +124,7 @@
     <PackageReference Include="DotNetProjects.SVGImage" />
     <PackageReference Include="HandyControl" />
     <PackageReference Include="Mapster" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="System.Threading.Channels" />
@@ -162,233 +135,102 @@
     <Resource Include="Resources\logo1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\三角警告.svg">
+    <Resource Include="Resources\图标\文件\主页.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\上传.svg">
+    <Resource Include="Resources\图标\文件\打开工程.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\下载.svg">
+    <Resource Include="Resources\图标\文件\保存工程.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\不可见.svg">
+    <Resource Include="Resources\图标\工具\光源.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\主页.svg">
+    <Resource Include="Resources\图标\图片设置\图片.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\书本.svg">
+    <Resource Include="Resources\图标\图片设置\图片设置.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\书籍.svg">
+    <Resource Include="Resources\图标\帮助\关于.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\二维码.svg">
+    <Resource Include="Resources\图标\语言\语言.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\五角星.svg">
+    <Resource Include="Resources\图标\数据统计\数据清空.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\保存.svg">
+    <Resource Include="Resources\图标\文件\另存工程.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\修改.svg">
+    <Resource Include="Resources\图标\数据统计\数据监控.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\光源.svg">
+    <Resource Include="Resources\图标\工具\工具.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\光盘磁带.svg">
+    <Resource Include="Resources\图标\帮助\帮助.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\全景照片.svg">
+    <Resource Include="Resources\图标\相机通讯\相机通讯.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\删除.svg">
+    <Resource Include="Resources\图标\数据统计\数据统计.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\删除标签.svg">
+    <Resource Include="Resources\图标\帮助\帮助文档.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\可见.svg">
+    <Resource Include="Resources\图标\文件\最近打开.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\图片.svg">
+    <Resource Include="Resources\图标\图片设置\截屏保存.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\图片设置.svg">
+    <Resource Include="Resources\图标\文件\新建工程.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\圆形警告.svg">
+    <Resource Include="Resources\图标\相机通讯\相机.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\圆形问号.svg">
+    <Resource Include="Resources\图标\工具\离线检测.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\圆锁.svg">
+    <Resource Include="Resources\图标\系统设置\系统设置.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\地球.svg">
+    <Resource Include="Resources\图标\文件\修改工程.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\垃圾桶.svg">
+    <Resource Include="Resources\图标\相机通讯\通讯.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\图标\备注.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\复制另存.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\定位.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\实时监控.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\层顺序.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\工具.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\工牌.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\开关.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\微笑.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\徽章.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\拍照.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\插件.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\摄像头.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\政府银行.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\文件.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\文件2.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\文件目录.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\文档.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\方形问号.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\日历面板.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\最近打开.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\标签.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\标签标记.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\桌面.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\添加.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\添加标签.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\清理.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\火箭.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\爱心.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\电话.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\监控.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\相机.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\盾牌安全.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\票据.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\离线检测.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\算术.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\系统设置.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\红旗摇摆.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\红旗飘扬.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\红绿灯.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\菜单列表.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\设置.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\设置面板.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\过滤.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\通讯.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\错误警告.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\镜头.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\面包.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\音乐.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\风车.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\图标\风险盾牌.svg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\图片\图片管理\图片管理.png" />
+    <Resource Include="Resources\图片\图片管理\存图设置.png" />
+    <Resource Include="Resources\图片\图片管理\截屏保存.png" />
+    <Resource Include="Resources\图片\工具\光源.png" />
+    <Resource Include="Resources\图片\工具\工具.png" />
+    <Resource Include="Resources\图片\工具\离线检测.png" />
     <Resource Include="Resources\图片\工牌职位身份.png" />
+    <Resource Include="Resources\图片\工程管理\主页.png" />
+    <Resource Include="Resources\图片\工程管理\保存工程.png" />
+    <Resource Include="Resources\图片\工程管理\另存工程.png" />
+    <Resource Include="Resources\图片\工程管理\打开工程.png" />
+    <Resource Include="Resources\图片\工程管理\新建工程.png" />
+    <Resource Include="Resources\图片\工程管理\最近打开.png" />
+    <Resource Include="Resources\图片\帮助\关于.png" />
+    <Resource Include="Resources\图片\帮助\帮助.png" />
+    <Resource Include="Resources\图片\帮助\帮助文档.png" />
+    <Resource Include="Resources\图片\数据统计\数据清空.png" />
+    <Resource Include="Resources\图片\数据统计\数据监控.png" />
+    <Resource Include="Resources\图片\数据统计\数据统计.png" />
+    <Resource Include="Resources\图片\相机通讯\相机.png" />
+    <Resource Include="Resources\图片\相机通讯\相机通讯.png" />
+    <Resource Include="Resources\图片\相机通讯\通讯.png" />
     <Resource Include="Resources\图片\盾牌安全风险.png" />
+    <Resource Include="Resources\图片\系统设置\系统设置.png" />
     <Resource Include="Resources\图片\风险盾牌安全.png" />
     <Resource Include="Resources\组合-2.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -411,12 +253,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+    <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
   </ItemGroup>
 
 </Project>

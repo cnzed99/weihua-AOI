@@ -8,6 +8,6 @@ namespace WH.Controls
 {
     public class CloseWindowMessage
     {
-        public WeakReference? Sender { get; set; }
+        public WeakReference Sender { get; set; }
     }
 }

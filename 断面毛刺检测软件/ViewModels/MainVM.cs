@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Mapster;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace 断面毛刺检测软件.ViewModels
             timer.Start();
         }
         [ObservableProperty]
-        static string? systemTime;
+        static string systemTime;
 
         static DateTime StartTime = DateTime.Now;
         [ObservableProperty]
@@ -53,7 +54,7 @@ namespace 断面毛刺检测软件.ViewModels
         /// </summary>
         [ObservableProperty]
         bool startStop = false;
-        private void Timer_Tick(object? sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
             var runTimeSpan = DateTime.Now - StartTime;
@@ -69,5 +70,6 @@ namespace 断面毛刺检测软件.ViewModels
         /// 丢弃当前工程的修改
         /// </summary>
         public void DiscardChanges()=>_model.Adapt(this);
+       
     }
 }

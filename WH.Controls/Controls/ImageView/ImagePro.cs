@@ -36,7 +36,7 @@ namespace WH.Controls
             ImageOne = this;
         }
 
-        private BitmapSource? bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
+        private BitmapSource bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
 
         public ScaleTransform scaleTransform { get; set; } = new ScaleTransform();
         public TranslateTransform translateTransform { get; set; } = new TranslateTransform();

@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "运行需要实现", "运�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WH.RunCell", "WH.RunCell\WH.RunCell.csproj", "{A33C3599-9CF0-4DBA-BFDD-27919A96D449}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WH.Entity", "WH.Entity\WH.Entity.csproj", "{4CECD165-81E5-46BE-B789-BEBF1930BB91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{A33C3599-9CF0-4DBA-BFDD-27919A96D449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A33C3599-9CF0-4DBA-BFDD-27919A96D449}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A33C3599-9CF0-4DBA-BFDD-27919A96D449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CECD165-81E5-46BE-B789-BEBF1930BB91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CECD165-81E5-46BE-B789-BEBF1930BB91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CECD165-81E5-46BE-B789-BEBF1930BB91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CECD165-81E5-46BE-B789-BEBF1930BB91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
