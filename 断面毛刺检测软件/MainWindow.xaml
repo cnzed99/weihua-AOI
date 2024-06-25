@@ -83,7 +83,10 @@
                             <svg1:SVGImage Source="/Resources/图标/图片设置/图片.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}" Click="Screenshot_Click">
+                    <MenuItem
+                        Width="100"
+                        Click="Screenshot_Click"
+                        Header="{Binding [ScreenShot], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/图片设置/截屏保存.svg" />
                         </MenuItem.Icon>
@@ -105,7 +108,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:Lang.instance}}" Click="SystemSetting_Click">
+                <MenuItem Click="SystemSetting_Click" Header="{Binding [SystemSettings], Source={x:Static local:Lang.instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
@@ -174,7 +177,7 @@
                 FontSize="20"
                 Text="{Binding Name}" />
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
-              
+
                 <ToggleButton
                     Checked="cbSkin_Checked"
                     IsChecked="True"
@@ -262,22 +265,22 @@
                         <Button.Background>
                             <ImageBrush
                                 x:Name="btn_UserLoginImg"
-                                ImageSource="{Binding LoginViewModel.LoginPerson.LogoImage}"
                                 d:ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"
+                                ImageSource="{Binding LoginViewModel.LoginPerson.LogoImage}"
                                 Stretch="Uniform" />
                         </Button.Background>
                         <Button.ToolTip>
                             <StackPanel>
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}"/>
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}"/>
+                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}" />
+                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}" />
                             </StackPanel>
                         </Button.ToolTip>
                     </Button>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                        <TextBlock Text="{Binding LoginViewModel.ILoginLeftTimeMinute}" d:Text="00"/>
+                        <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeMinute}" />
                         <TextBlock Text="{Binding [Minute], Source={x:Static local:Lang.instance}}" />
-                        <TextBlock Text="{Binding LoginViewModel.ILoginLeftTimeSecond}" d:Text="00"/>
+                        <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeSecond}" />
                         <TextBlock Text="{Binding [Second], Source={x:Static local:Lang.instance}}" />
                     </StackPanel>
                 </StackPanel>
@@ -292,12 +295,13 @@
                 <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
             <UniformGrid Grid.Column="0" Rows="2">
-                <hc:SimplePanel Background="#FF181A1C">
+                <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <wh:ImageView />
-                </hc:SimplePanel>
-                <hc:SimplePanel Background="#FF10100F">
+                </Border>
+                <Border Background="{DynamicResource RegionBrush}"  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <wh:ImageView />
-                </hc:SimplePanel>
+                </Border>
+               
             </UniformGrid>
             <!--  中间设置栏  -->
             <hc:TabControl
@@ -380,19 +384,28 @@
 
             </StackPanel>
             <DockPanel LastChildFill="True">
-               
+
                 <TextBlock
+                    Margin="5,0"
                     DockPanel.Dock="Right"
-                   Margin="5,0"
-                    Text="{Binding ProjPath}" Foreground="{StaticResource DarkInfoBrush}"/>
+                    Foreground="{StaticResource DarkInfoBrush}"
+                    Text="{Binding ProjPath}" />
                 <TextBlock
                     Margin="5,0"
                     DockPanel.Dock="Right"
                     Text="{Binding [ProjPath], Source={x:Static local:Lang.instance}}" />
-                <TextBlock x:Name="lb_UserName" Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}" DockPanel.Dock="Right" Foreground="{StaticResource InfoBrush}"/>
-                <hc:Divider DockPanel.Dock="Right" Width="5" />
-                <TextBlock x:Name="lb_UserPrivalige" Text="{Binding LoginViewModel.LoginPerson.UserName}" DockPanel.Dock="Right" Foreground="{StaticResource InfoBrush}"/>
-                <TextBlock Text="当前用户：" DockPanel.Dock="Right"/>
+                <TextBlock
+                    x:Name="lb_UserName"
+                    DockPanel.Dock="Right"
+                    Foreground="{StaticResource InfoBrush}"
+                    Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}" />
+                <hc:Divider Width="5" DockPanel.Dock="Right" />
+                <TextBlock
+                    x:Name="lb_UserPrivalige"
+                    DockPanel.Dock="Right"
+                    Foreground="{StaticResource InfoBrush}"
+                    Text="{Binding LoginViewModel.LoginPerson.UserName}" />
+                <TextBlock DockPanel.Dock="Right" Text="当前用户：" />
                 <hc:SimplePanel DockPanel.Dock="Left" />
             </DockPanel>
 

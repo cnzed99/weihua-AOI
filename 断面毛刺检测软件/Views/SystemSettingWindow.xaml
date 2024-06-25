@@ -18,7 +18,6 @@
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
-    Closing="Window_Closing"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource GroupBoxTab}" TargetType="GroupBox" />
