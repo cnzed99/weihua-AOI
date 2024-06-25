@@ -22,7 +22,7 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 系统配置
         /// </summary>
-        public SystemSettingsModel SystemSettings { get; set; } = new SystemSettingsModel();
+        public SystemSettingsVM SystemSettings { get; set; } = new SystemSettingsVM();
         private MainModel _model = new MainModel();
         /// <summary>
         /// 当前工程 禁止直接修改其属性
