@@ -4,9 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using WH.Controls;
-using WH.Entity;
+
 using WH.Entity.Attribute;
 
 namespace 断面毛刺检测软件.Models
@@ -17,7 +15,7 @@ namespace 断面毛刺检测软件.Models
         /// 系统参数保存的路径
         /// </summary>
         public static string ParameterPath =  "..\\SystemConfig\\SystemSetting.Json";
-        public static SystemSettingsModel SystemSetParam = new SystemSettingsModel();
+        
         public ObservableCollection<string> RecentProjs { get; set; } = new ObservableCollection<string>() { "C:\\Users\\Mainvm.Json", "C:\\Users\\Mainvm233.Json" };
 
         [ObservableProperty]
@@ -228,58 +226,7 @@ namespace 断面毛刺检测软件.Models
         #endregion
 
 
-        #region 保存参数
-
-        public static void SaveParameter()
-        {
-            try
-            {
-                ConfigAPI.Save(SystemSetParam, ParameterPath);
-            }
-            catch (Exception)
-            {
-            }
-        }
-        #endregion
-
-        #region 读取参数
-
-        public static void LoadParameter()
-        {
-
-            try
-            {
-                if (File.Exists(ParameterPath))
-                {
-                    SystemSetParam = ConfigAPI.Load<SystemSettingsModel>(ParameterPath);
-                    if (SystemSetParam == null)
-                    {
-                        SystemSetParam = new SystemSettingsModel();
-                    }
-                }
-                else
-                {
-                    SystemSetParam = new SystemSettingsModel();
-                }
-            }
-            catch (Exception)
-            {
-                SystemSetParam = new SystemSettingsModel();
-            }
-            
-        }
-
-        #endregion
-
-        [RelayCommand]
-        private void Close(System.ComponentModel.CancelEventArgs e)
-        {
-            if (HasErrors)
-            {
-
-                e.Cancel = true;
-            }
-        }
+        
     }
    
 }

@@ -61,8 +61,8 @@ namespace 断面毛刺检测软件
                     }
                     );
                 #region 读取主配置文件
-                SystemSettingsModel.LoadParameter();
-                if (SystemSettingsModel.SystemSetParam != null)
+                SystemSettingsVM.LoadParameter();
+                if (SystemSettingsVM.SystemSetParam != null)
                 {
                     mainVM.SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
                     
@@ -74,7 +74,7 @@ namespace 断面毛刺检测软件
                     //CLoading.DispText("读取系统配置失败...", 10);
                 }
 
-                if (SystemSettingsModel.SystemSetParam.IsEnglish)
+                if (SystemSettingsVM.SystemSetParam.IsEnglish)
                 {
                     Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
                 }
