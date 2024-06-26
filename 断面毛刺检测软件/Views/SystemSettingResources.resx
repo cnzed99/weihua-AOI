@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,94 +117,44 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UserName" xml:space="preserve">
-    <value>Name</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="PassWord" xml:space="preserve">
-    <value>PassW</value>
+  <data name="组合-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\组合-2.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="LoginPeriod" xml:space="preserve">
-    <value>Period</value>
+  <data name="SavePicAtOfflineMode" xml:space="preserve">
+    <value>离线存图和数据</value>
   </data>
-  <data name="Minute" xml:space="preserve">
-    <value>Min</value>
+  <data name="IsSaveDetectData" xml:space="preserve">
+    <value>是否存数据库</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Login</value>
+  <data name="CommonSettings" xml:space="preserve">
+    <value>通用设置</value>
   </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Logout</value>
+  <data name="DataClearSet" xml:space="preserve">
+    <value>数据清零设置</value>
   </data>
-  <data name="LoginTitle" xml:space="preserve">
-    <value>Login Page</value>
+  <data name="AutoClear" xml:space="preserve">
+    <value>启用自动清零</value>
   </data>
-  <data name="UserManagement" xml:space="preserve">
-    <value>Users Management</value>
+  <data name="Day" xml:space="preserve">
+    <value>白班</value>
   </data>
-  <data name="Adjust" xml:space="preserve">
-    <value>Adjust</value>
+  <data name="Night" xml:space="preserve">
+    <value>夜班</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+  <data name="Shift" xml:space="preserve">
+    <value>每班次</value>
   </data>
-  <data name="Permission" xml:space="preserve">
-    <value>Permission</value>
+  <data name="EachDay" xml:space="preserve">
+    <value>每天</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Register</value>
+  <data name="EachWeek" xml:space="preserve">
+    <value>每周</value>
   </data>
-  <data name="Administrator" xml:space="preserve">
-    <value>Administrator</value>
-  </data>
-  <data name="Craftman" xml:space="preserve">
-    <value>Craftman</value>
-  </data>
-  <data name="Engineer" xml:space="preserve">
-    <value>Engineer</value>
-  </data>
-  <data name="Operator" xml:space="preserve">
-    <value>Operator</value>
-  </data>
-  <data name="PleaseSelectUser" xml:space="preserve">
-    <value>Please Select User</value>
-  </data>
-  <data name="PleaseInputPassword" xml:space="preserve">
-    <value>Please Input Password</value>
-  </data>
-  <data name="UserNotExist" xml:space="preserve">
-    <value>User Not Exist</value>
-  </data>
-  <data name="PasswordError" xml:space="preserve">
-    <value>Invalid Password</value>
-  </data>
-  <data name="LoginSucceed" xml:space="preserve">
-    <value>Login Succeed</value>
-  </data>
-  <data name="Unlogin" xml:space="preserve">
-    <value>Log out</value>
-  </data>
-  <data name="InvalidUsername" xml:space="preserve">
-    <value>Invalid UserName</value>
-  </data>
-  <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid Password</value>
-  </data>
-  <data name="UserAlreadyExist" xml:space="preserve">
-    <value>User already exist</value>
-  </data>
-  <data name="PleaseSelectRights" xml:space="preserve">
-    <value>Please select Permission</value>
-  </data>
-  <data name="RegisterUser" xml:space="preserve">
-    <value>Register user:</value>
-  </data>
-  <data name="Succeed" xml:space="preserve">
-    <value>Succeed</value>
-  </data>
-  <data name="ManagerCanNotbeRemoved" xml:space="preserve">
-    <value>Manager Can Not be Removed</value>
-  </data>
-  <data name="ModifyError" xml:space="preserve">
-    <value>Modify Error:</value>
+  <data name="NextClearTime" xml:space="preserve">
+    <value>下次清零时间</value>
   </data>
 </root>

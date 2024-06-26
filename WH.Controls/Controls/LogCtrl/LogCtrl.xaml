@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:WH.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <RichTextBox x:Name="LogBox" Style="{DynamicResource RichTextBoxBaseStyle}">
+    <RichTextBox x:Name="LogBox" Style="{DynamicResource RichTextBoxBaseStyle}" hc:BorderElement.CornerRadius="0">
             
     </RichTextBox>
 </UserControl>

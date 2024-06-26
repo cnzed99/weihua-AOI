@@ -22,7 +22,7 @@ namespace 断面毛刺检测软件.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace 断面毛刺检测软件.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("断面毛刺检测软件.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace 断面毛刺检测软件.Properties {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 关于 的本地化字符串。
         /// </summary>
-        internal static string About {
+        public static string About {
             get {
                 return ResourceManager.GetString("About", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 报警设置 的本地化字符串。
         /// </summary>
-        internal static string AlarmConfig {
+        public static string AlarmConfig {
             get {
                 return ResourceManager.GetString("AlarmConfig", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 算法: 的本地化字符串。
         /// </summary>
-        internal static string Algorithm {
+        public static string Algorithm {
             get {
                 return ResourceManager.GetString("Algorithm", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 相机与通讯 的本地化字符串。
         /// </summary>
-        internal static string CamCom {
+        public static string CamCom {
             get {
                 return ResourceManager.GetString("CamCom", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 相机 的本地化字符串。
         /// </summary>
-        internal static string Camera {
+        public static string Camera {
             get {
                 return ResourceManager.GetString("Camera", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 通讯 的本地化字符串。
         /// </summary>
-        internal static string Communication {
+        public static string Communication {
             get {
                 return ResourceManager.GetString("Communication", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 数据清空 的本地化字符串。
         /// </summary>
-        internal static string DataClear {
+        public static string DataClear {
             get {
                 return ResourceManager.GetString("DataClear", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 数据统计 的本地化字符串。
         /// </summary>
-        internal static string DataStatistics {
+        public static string DataStatistics {
             get {
                 return ResourceManager.GetString("DataStatistics", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 缺陷统计列表 的本地化字符串。
         /// </summary>
-        internal static string DefectList {
+        public static string DefectList {
             get {
                 return ResourceManager.GetString("DefectList", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 检测区 的本地化字符串。
         /// </summary>
-        internal static string DetectArea {
+        public static string DetectArea {
             get {
                 return ResourceManager.GetString("DetectArea", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 检测设置 的本地化字符串。
         /// </summary>
-        internal static string DetectConfig {
+        public static string DetectConfig {
             get {
                 return ResourceManager.GetString("DetectConfig", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 关闭软件 的本地化字符串。
         /// </summary>
-        internal static string EnvironmentExit {
+        public static string EnvironmentExit {
             get {
                 return ResourceManager.GetString("EnvironmentExit", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 过滤: 的本地化字符串。
         /// </summary>
-        internal static string Filter {
+        public static string Filter {
             get {
                 return ResourceManager.GetString("Filter", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 帮助 的本地化字符串。
         /// </summary>
-        internal static string Help {
+        public static string Help {
             get {
                 return ResourceManager.GetString("Help", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 帮助文档 的本地化字符串。
         /// </summary>
-        internal static string HelpDoc {
+        public static string HelpDoc {
             get {
                 return ResourceManager.GetString("HelpDoc", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 回看 的本地化字符串。
         /// </summary>
-        internal static string History {
+        public static string History {
             get {
                 return ResourceManager.GetString("History", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 图片管理 的本地化字符串。
         /// </summary>
-        internal static string ImageManagement {
+        public static string ImageManagement {
             get {
                 return ResourceManager.GetString("ImageManagement", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 存图设置 的本地化字符串。
         /// </summary>
-        internal static string ImageSave {
+        public static string ImageSave {
             get {
                 return ResourceManager.GetString("ImageSave", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 语言 的本地化字符串。
         /// </summary>
-        internal static string Lang {
+        public static string Lang {
             get {
                 return ResourceManager.GetString("Lang", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 切换语言 的本地化字符串。
         /// </summary>
-        internal static string LanguageChanged {
+        public static string LanguageChanged {
             get {
                 return ResourceManager.GetString("LanguageChanged", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 光源控制 的本地化字符串。
         /// </summary>
-        internal static string LightControl {
+        public static string LightControl {
             get {
                 return ResourceManager.GetString("LightControl", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
-        internal static byte[] logo1 {
+        public static byte[] logo1 {
             get {
                 object obj = ResourceManager.GetObject("logo1", resourceCulture);
                 return ((byte[])(obj));
@@ -262,7 +262,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 打标设置 的本地化字符串。
         /// </summary>
-        internal static string MarkConfig {
+        public static string MarkConfig {
             get {
                 return ResourceManager.GetString("MarkConfig", resourceCulture);
             }
@@ -271,7 +271,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 系统消息 的本地化字符串。
         /// </summary>
-        internal static string Message {
+        public static string Message {
             get {
                 return ResourceManager.GetString("Message", resourceCulture);
             }
@@ -280,7 +280,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 分钟 的本地化字符串。
         /// </summary>
-        internal static string Minute {
+        public static string Minute {
             get {
                 return ResourceManager.GetString("Minute", resourceCulture);
             }
@@ -289,7 +289,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 修改工程 的本地化字符串。
         /// </summary>
-        internal static string ModifyProj {
+        public static string ModifyProj {
             get {
                 return ResourceManager.GetString("ModifyProj", resourceCulture);
             }
@@ -298,7 +298,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 运动控制 的本地化字符串。
         /// </summary>
-        internal static string MotionControl {
+        public static string MotionControl {
             get {
                 return ResourceManager.GetString("MotionControl", resourceCulture);
             }
@@ -307,7 +307,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 新建工程 的本地化字符串。
         /// </summary>
-        internal static string NewProj {
+        public static string NewProj {
             get {
                 return ResourceManager.GetString("NewProj", resourceCulture);
             }
@@ -316,7 +316,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 离线检测 的本地化字符串。
         /// </summary>
-        internal static string Offline {
+        public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
             }
@@ -325,7 +325,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 打开用户登录界面 的本地化字符串。
         /// </summary>
-        internal static string OpenedUserLogin {
+        public static string OpenedUserLogin {
             get {
                 return ResourceManager.GetString("OpenedUserLogin", resourceCulture);
             }
@@ -334,7 +334,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 打开失败 的本地化字符串。
         /// </summary>
-        internal static string OpenFailed {
+        public static string OpenFailed {
             get {
                 return ResourceManager.GetString("OpenFailed", resourceCulture);
             }
@@ -343,16 +343,25 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 打开工程 的本地化字符串。
         /// </summary>
-        internal static string OpenProj {
+        public static string OpenProj {
             get {
                 return ResourceManager.GetString("OpenProj", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   查找类似 打开软件 的本地化字符串。
+        /// </summary>
+        public static string OpenSoftware {
+            get {
+                return ResourceManager.GetString("OpenSoftware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 操作记录 的本地化字符串。
         /// </summary>
-        internal static string OperateRecord {
+        public static string OperateRecord {
             get {
                 return ResourceManager.GetString("OperateRecord", resourceCulture);
             }
@@ -361,7 +370,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 工程管理 的本地化字符串。
         /// </summary>
-        internal static string ProjManagement {
+        public static string ProjManagement {
             get {
                 return ResourceManager.GetString("ProjManagement", resourceCulture);
             }
@@ -370,7 +379,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 项目路径: 的本地化字符串。
         /// </summary>
-        internal static string ProjPath {
+        public static string ProjPath {
             get {
                 return ResourceManager.GetString("ProjPath", resourceCulture);
             }
@@ -379,7 +388,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 质量等级 的本地化字符串。
         /// </summary>
-        internal static string Quality {
+        public static string Quality {
             get {
                 return ResourceManager.GetString("Quality", resourceCulture);
             }
@@ -388,7 +397,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 最近打开 的本地化字符串。
         /// </summary>
-        internal static string RecentProj {
+        public static string RecentProj {
             get {
                 return ResourceManager.GetString("RecentProj", resourceCulture);
             }
@@ -397,7 +406,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 运行日志 的本地化字符串。
         /// </summary>
-        internal static string RuningLog {
+        public static string RuningLog {
             get {
                 return ResourceManager.GetString("RuningLog", resourceCulture);
             }
@@ -406,7 +415,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 运行时间 的本地化字符串。
         /// </summary>
-        internal static string RunTime {
+        public static string RunTime {
             get {
                 return ResourceManager.GetString("RunTime", resourceCulture);
             }
@@ -415,7 +424,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 另存工程 的本地化字符串。
         /// </summary>
-        internal static string Saveas {
+        public static string Saveas {
             get {
                 return ResourceManager.GetString("Saveas", resourceCulture);
             }
@@ -424,7 +433,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 保存工程 的本地化字符串。
         /// </summary>
-        internal static string SaveProj {
+        public static string SaveProj {
             get {
                 return ResourceManager.GetString("SaveProj", resourceCulture);
             }
@@ -433,7 +442,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 截屏保存 的本地化字符串。
         /// </summary>
-        internal static string ScreenShot {
+        public static string ScreenShot {
             get {
                 return ResourceManager.GetString("ScreenShot", resourceCulture);
             }
@@ -442,7 +451,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 秒 的本地化字符串。
         /// </summary>
-        internal static string Second {
+        public static string Second {
             get {
                 return ResourceManager.GetString("Second", resourceCulture);
             }
@@ -451,7 +460,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 启动 的本地化字符串。
         /// </summary>
-        internal static string Start {
+        public static string Start {
             get {
                 return ResourceManager.GetString("Start", resourceCulture);
             }
@@ -460,7 +469,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 数据统计 的本地化字符串。
         /// </summary>
-        internal static string Statistics {
+        public static string Statistics {
             get {
                 return ResourceManager.GetString("Statistics", resourceCulture);
             }
@@ -469,7 +478,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 停止 的本地化字符串。
         /// </summary>
-        internal static string Stop {
+        public static string Stop {
             get {
                 return ResourceManager.GetString("Stop", resourceCulture);
             }
@@ -478,7 +487,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 系统设置 的本地化字符串。
         /// </summary>
-        internal static string SystemSettings {
+        public static string SystemSettings {
             get {
                 return ResourceManager.GetString("SystemSettings", resourceCulture);
             }
@@ -487,7 +496,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 读取系统配置文件失败！ 的本地化字符串。
         /// </summary>
-        internal static string SystemSettingsReadFailed {
+        public static string SystemSettingsReadFailed {
             get {
                 return ResourceManager.GetString("SystemSettingsReadFailed", resourceCulture);
             }
@@ -496,7 +505,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 读取系统配置文件成功！ 的本地化字符串。
         /// </summary>
-        internal static string SystemSettingsReadSuccess {
+        public static string SystemSettingsReadSuccess {
             get {
                 return ResourceManager.GetString("SystemSettingsReadSuccess", resourceCulture);
             }
@@ -505,7 +514,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 系统时间 的本地化字符串。
         /// </summary>
-        internal static string SystemTime {
+        public static string SystemTime {
             get {
                 return ResourceManager.GetString("SystemTime", resourceCulture);
             }
@@ -514,7 +523,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 工具 的本地化字符串。
         /// </summary>
-        internal static string Tools {
+        public static string Tools {
             get {
                 return ResourceManager.GetString("Tools", resourceCulture);
             }
@@ -523,7 +532,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找类似 报警日志 的本地化字符串。
         /// </summary>
-        internal static string WarningLog {
+        public static string WarningLog {
             get {
                 return ResourceManager.GetString("WarningLog", resourceCulture);
             }
@@ -532,7 +541,7 @@ namespace 断面毛刺检测软件.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
-        internal static byte[] 组合_2 {
+        public static byte[] 组合_2 {
             get {
                 object obj = ResourceManager.GetObject("组合-2", resourceCulture);
                 return ((byte[])(obj));

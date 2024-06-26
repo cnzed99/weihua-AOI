@@ -23,13 +23,13 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 系统配置
         /// </summary>
-        public SystemSettingsModel SystemSettings { get; set; } = new SystemSettingsModel();
+        public SystemSettingsVM SystemSettings { get; set; } = new SystemSettingsVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
         public CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
         public CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
-        public SystemSettingsVM SystemSettings { get; set; } = new SystemSettingsVM();
+       
         private MainModel _model = new MainModel();
         /// <summary>
         /// 当前工程 禁止直接修改其属性

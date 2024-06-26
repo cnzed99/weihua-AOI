@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:断面毛刺检测软件.ViewModels"
-    Title="系统设置"
+    Title="{Binding [SystemSettings], Source={x:Static local:Lang.systemSettings}}"
     Width="650"
     Height="330"
     d:DataContext="{d:DesignInstance Type=vm:SystemSettingsVM}"
@@ -52,43 +52,43 @@
         <GroupBox
             Width="250"
             DockPanel.Dock="Left"
-            Header="通用设置">
+            Header="{Binding [CommonSettings], Source={x:Static local:Lang.systemSettings}}">
             <StackPanel>
 
-                <ToggleButton Content="离线存图和数据" IsChecked="{Binding OfflineSave}" />
-                <ToggleButton Content="是否存数据库" IsChecked="{Binding IsToMysql}" />
+                <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding OfflineSave}" />
+                <ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding IsToMysql}" />
 
 
             </StackPanel>
 
         </GroupBox>
-        <GroupBox Header="数据清零设置">
+        <GroupBox Header="{Binding [DataClearSet], Source={x:Static local:Lang.systemSettings}}">
             <StackPanel>
                 <hc:ElementGroup>
-                    <CheckBox Content="启用自动清零" IsChecked="{Binding AutoClearEnable}" />
+                    <CheckBox Content="{Binding [AutoClear], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding AutoClearEnable}" />
                     <TextBlock d:Text="2024年3月27日 白班" Text="{Binding NowShift}" />
                 </hc:ElementGroup>
                 <DockPanel>
                     <hc:TimePicker
                         Name="ucdpe_DayShift"
-                        hc:TitleElement.Title="白班"
+                        hc:TitleElement.Title="{Binding [Day], Source={x:Static local:Lang.systemSettings}}"
                         DockPanel.Dock="Left"
                         SelectedTime="{Binding DayShift}"
                         TimeFormat="HH:mm" />
                     <hc:ElementGroup>
                         <RadioButton
                             x:Name="ucrb_EveryShift"
-                            Content="每班次"
+                            Content="{Binding [Shift], Source={x:Static local:Lang.systemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=1}" />
                         <RadioButton
                             x:Name="ucrb_EveryDay"
-                            Content="每天"
+                            Content="{Binding [EachDay], Source={x:Static local:Lang.systemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=2}" />
                         <RadioButton
                             x:Name="ucrb_EveryWeeks"
-                            Content="每周"
+                            Content="{Binding [EachWeek], Source={x:Static local:Lang.systemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=3}" />
                     </hc:ElementGroup>
@@ -96,11 +96,11 @@
                 <DockPanel>
                     <hc:TimePicker
                         Name="ucdpe_NightShift"
-                        hc:TitleElement.Title="夜班"
+                        hc:TitleElement.Title="{Binding [Night], Source={x:Static local:Lang.systemSettings}}"
                         SelectedTime="{Binding NightShift}"
                         TimeFormat="HH:mm" />
                     <TextBox
-                        hc:TitleElement.Title="下次清零时间"
+                        hc:TitleElement.Title="{Binding [NextClearTime], Source={x:Static local:Lang.systemSettings}}"
                         hc:TitleElement.TitlePlacement="Left"
                         IsReadOnly="True"
                         Style="{StaticResource TextBoxExtend}"

@@ -165,4 +165,46 @@
   <data name="Operator" xml:space="preserve">
     <value>操作员</value>
   </data>
+  <data name="PleaseSelectUser" xml:space="preserve">
+    <value>请选择用户</value>
+  </data>
+  <data name="PleaseInputPassword" xml:space="preserve">
+    <value>请输入密码</value>
+  </data>
+  <data name="UserNotExist" xml:space="preserve">
+    <value>当前用户名不存在</value>
+  </data>
+  <data name="PasswordError" xml:space="preserve">
+    <value>密码不正确</value>
+  </data>
+  <data name="LoginSucceed" xml:space="preserve">
+    <value>登陆成功</value>
+  </data>
+  <data name="Unlogin" xml:space="preserve">
+    <value>未登录</value>
+  </data>
+  <data name="InvalidUsername" xml:space="preserve">
+    <value>用户名不能为空,请输入用户名</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>密码不能为空,请正确输入密码</value>
+  </data>
+  <data name="UserAlreadyExist" xml:space="preserve">
+    <value>当前用户名已存在</value>
+  </data>
+  <data name="PleaseSelectRights" xml:space="preserve">
+    <value>请选择用户名拥有的权限</value>
+  </data>
+  <data name="RegisterUser" xml:space="preserve">
+    <value>添加用户:</value>
+  </data>
+  <data name="Succeed" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="ManagerCanNotbeRemoved" xml:space="preserve">
+    <value>管理员不可删除</value>
+  </data>
+  <data name="ModifyError" xml:space="preserve">
+    <value>修改出错:</value>
+  </data>
 </root>

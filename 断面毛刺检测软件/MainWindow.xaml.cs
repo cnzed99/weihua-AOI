@@ -38,6 +38,7 @@ namespace 断面毛刺检测软件
         {
             InitializeComponent();
             this.DataContext = mainVM;
+            mainVM.SysLog.Info(Properties.Resources.OpenSoftware);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -147,7 +148,7 @@ namespace 断面毛刺检测软件
                         fs.Flush();
                     }
                 }
-                SystemSettingsModel.SaveParameter();
+                SystemSettingsVM.SaveParameter();
                 mainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
@@ -210,8 +211,9 @@ namespace 断面毛刺检测软件
             if (cbLang.IsChecked??true)
             {
                 languageCode = "en-US";
-                mainVM.OperateLog.Info(Properties.Resources.LanguageChanged+languageCode);
+                
             }
+            mainVM.OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));

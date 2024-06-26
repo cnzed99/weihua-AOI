@@ -107,10 +107,10 @@
             VerticalAlignment="Top"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
-            Background="Transparent"
+            
             BorderBrush="DarkCyan"
             FontSize="14"
-            Foreground="White"
+            
             IsSafeEnabled="false"
             ShowEyeButton="True"
             UnsafePassword="{Binding LoginPerson.PassWord}">

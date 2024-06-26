@@ -106,6 +106,24 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 密码不能为空,请正确输入密码 的本地化字符串。
+        /// </summary>
+        public static string InvalidPassword {
+            get {
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用户名不能为空,请输入用户名 的本地化字符串。
+        /// </summary>
+        public static string InvalidUsername {
+            get {
+                return ResourceManager.GetString("InvalidUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 登录 的本地化字符串。
         /// </summary>
         public static string Login {
@@ -120,6 +138,15 @@ namespace WH.Controls.Properties {
         public static string LoginPeriod {
             get {
                 return ResourceManager.GetString("LoginPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 登陆成功 的本地化字符串。
+        /// </summary>
+        public static string LoginSucceed {
+            get {
+                return ResourceManager.GetString("LoginSucceed", resourceCulture);
             }
         }
         
@@ -142,11 +169,29 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 管理员不可删除 的本地化字符串。
+        /// </summary>
+        public static string ManagerCanNotbeRemoved {
+            get {
+                return ResourceManager.GetString("ManagerCanNotbeRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 分钟 的本地化字符串。
         /// </summary>
         public static string Minute {
             get {
                 return ResourceManager.GetString("Minute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 修改出错: 的本地化字符串。
+        /// </summary>
+        public static string ModifyError {
+            get {
+                return ResourceManager.GetString("ModifyError", resourceCulture);
             }
         }
         
@@ -169,6 +214,15 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 密码不正确 的本地化字符串。
+        /// </summary>
+        public static string PasswordError {
+            get {
+                return ResourceManager.GetString("PasswordError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 权限 的本地化字符串。
         /// </summary>
         public static string Permission {
@@ -178,11 +232,74 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 请输入密码 的本地化字符串。
+        /// </summary>
+        public static string PleaseInputPassword {
+            get {
+                return ResourceManager.GetString("PleaseInputPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 请选择用户名拥有的权限 的本地化字符串。
+        /// </summary>
+        public static string PleaseSelectRights {
+            get {
+                return ResourceManager.GetString("PleaseSelectRights", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 请选择用户 的本地化字符串。
+        /// </summary>
+        public static string PleaseSelectUser {
+            get {
+                return ResourceManager.GetString("PleaseSelectUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 注册 的本地化字符串。
         /// </summary>
         public static string Register {
             get {
                 return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 添加用户: 的本地化字符串。
+        /// </summary>
+        public static string RegisterUser {
+            get {
+                return ResourceManager.GetString("RegisterUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 成功 的本地化字符串。
+        /// </summary>
+        public static string Succeed {
+            get {
+                return ResourceManager.GetString("Succeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 未登录 的本地化字符串。
+        /// </summary>
+        public static string Unlogin {
+            get {
+                return ResourceManager.GetString("Unlogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 当前用户名已存在 的本地化字符串。
+        /// </summary>
+        public static string UserAlreadyExist {
+            get {
+                return ResourceManager.GetString("UserAlreadyExist", resourceCulture);
             }
         }
         
@@ -201,6 +318,15 @@ namespace WH.Controls.Properties {
         public static string UserName {
             get {
                 return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 当前用户名不存在 的本地化字符串。
+        /// </summary>
+        public static string UserNotExist {
+            get {
+                return ResourceManager.GetString("UserNotExist", resourceCulture);
             }
         }
     }

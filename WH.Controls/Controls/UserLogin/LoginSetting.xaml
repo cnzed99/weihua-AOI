@@ -77,7 +77,7 @@
 
             <TextBlock
                 Grid.Row="0"
-                Width="100"
+               
                 Height="30"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
@@ -129,10 +129,10 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Background="Transparent"
+               
                 BorderBrush="DarkCyan"
                 FontSize="14"
-                Foreground="#FFFFFFFF"
+                
                 IsSafeEnabled="False"
                 ShowEyeButton="True"
                 UnsafePassword="{Binding _loginPerson.PassWord}" />
@@ -153,7 +153,7 @@
                 Name="btn_ChangeButton"
                 Grid.Row="0"
                 Width="75"
-                Height="25"
+                Height="30"
                 Margin="60,170,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
@@ -163,7 +163,7 @@
                 Name="btn_DeleteButton"
                 Grid.Row="0"
                 Width="75"
-                Height="25"
+                Height="30"
                 Margin="200,170,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
@@ -266,7 +266,7 @@
                 Name="btn_register"
                 Grid.Row="1"
                 Width="150"
-                Height="25"
+                Height="30"
                 Margin="20,0,0,20"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"

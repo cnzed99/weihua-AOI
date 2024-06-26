@@ -106,9 +106,9 @@
                 x:Key="comboxStyle"
                 BasedOn="{StaticResource ComboBoxExtend}"
                 TargetType="ComboBox">
-                <Setter Property="Background" Value="Transparent" />
+                
                 <Setter Property="BorderBrush" Value=" DarkCyan" />
-
+                
             </Style>
             <Style
                 x:Key="lbText"

@@ -165,33 +165,33 @@ namespace WH.Controls
             {
                 if (string.IsNullOrEmpty(LoginPerson.UserName))
                 {
-                    ErrorMsg = "请选择用户";
+                    ErrorMsg = Properties.Resources.PleaseSelectUser;
                     return;
                 }
 
                 if (string.IsNullOrEmpty(LoginPerson.PassWord))
                 {
-                    ErrorMsg = "请输入密码";
+                    ErrorMsg = Properties.Resources.PleaseInputPassword;
                     return;
                 }
 
                 if (!LoginLoad.useNamesDictionary.Keys.Contains(LoginPerson.UserName))
                 {
-                    ErrorMsg = "当前用户名不存在";
+                    ErrorMsg = Properties.Resources.UserNotExist;
                     return;
                 }
 
                 LoginPerson person = LoginLoad.useNamesDictionary[LoginPerson.UserName];
                 if (person.PassWord != LoginPerson.PassWord)
                 {
-                    ErrorMsg = "密码不正确";
+                    ErrorMsg = Properties.Resources.PasswordError;
                     return;
                 }
                 LoggedSuccess = true;
                 LoginPerson.PrivileageLevel = person.PrivileageLevel;
                
                 UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
-                ErrorMsg = "登陆成功";
+                ErrorMsg = Properties.Resources.LoginSucceed;
               
                 ILoginLeftTimeMinute = LoginLeftTimeMinute-1;
                 ILoginLeftTimeSecond = 59;
@@ -234,7 +234,7 @@ namespace WH.Controls
         private void LogoutButton()
         {
             //LoginPerson P = new LoginPerson();
-            LoginPerson.UserName = "未登录";
+            LoginPerson.UserName = Properties.Resources.Logout;
             LoginPerson.PrivileageLevel = PRIVILEGE.无权限;
             LoggedSuccess = false;
             UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
@@ -242,7 +242,7 @@ namespace WH.Controls
             ILoginLeftTimeSecond = 0;
       
             TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
-            ErrorMsg = "已注销";
+            ErrorMsg = Properties.Resources.Logout;
 
         }
 

@@ -270,4 +270,7 @@
   <data name="LanguageChanged" xml:space="preserve">
     <value>Language Changed</value>
   </data>
+  <data name="OpenSoftware" xml:space="preserve">
+    <value>Open Software</value>
+  </data>
 </root>

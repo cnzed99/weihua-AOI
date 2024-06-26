@@ -138,23 +138,23 @@ namespace WH.Controls
             {
                 if (string.IsNullOrWhiteSpace(AddUserName))
                 {
-                    ErrorMsg = "用户名不能为空,请输入用户名";
+                    ErrorMsg = Properties.Resources.InvalidUsername;
                     return;
                 }
                 if (string.IsNullOrWhiteSpace(AddPassword))
                 {
-                    ErrorMsg = "密码不能为空,请正确输入密码";
+                    ErrorMsg = Properties.Resources.InvalidPassword;
                     return;
                 }
 
                 if (LoginLoad.useNamesDictionary.Keys.Contains(AddUserName))
                 {
-                    ErrorMsg = "当前用户名已存在";
+                    ErrorMsg = Properties.Resources.UserAlreadyExist;
                     return;
                 }
                 if (string.IsNullOrEmpty(AddPrivlege.ToString()))
                 {
-                    ErrorMsg = "请选择用户名拥有的权限";
+                    ErrorMsg = Properties.Resources.PleaseSelectRights;
                     return;
                 }
                 LoginPerson p = new LoginPerson();
@@ -171,11 +171,11 @@ namespace WH.Controls
                 }
                 ItemList = tempList;
                 LoginLoad.SaveUsers();
-                ErrorMsg = "添加用户:" + p.UserName+"成功";
+                ErrorMsg = Properties.Resources.RegisterUser + p.UserName+Properties.Resources.Succeed;
             }
             catch (Exception ex)
             {
-                ErrorMsg = "修改出错:" + ex.Message;
+                ErrorMsg = Properties.Resources.ModifyError + ex.Message;
             }
 
 
@@ -188,17 +188,17 @@ namespace WH.Controls
             {
                 if (string.IsNullOrEmpty(_loginPerson.UserName))
                 {
-                    ErrorMsg = "请选择用户";
+                    ErrorMsg = Properties.Resources.PleaseSelectUser;
                     return;
                 }
                 if (!LoginLoad.useNamesDictionary.Keys.Contains(_loginPerson.UserName))
                 {
-                    ErrorMsg = "当前用户名不存在";
+                    ErrorMsg = Properties.Resources.UserNotExist;
                     return;
                 }
                 if (_loginPerson.UserName == "管理员")
                 {
-                    ErrorMsg = "管理员不可删除";
+                    ErrorMsg = Properties.Resources.ManagerCanNotbeRemoved;
                     return;
                 }
                 LoginLoad.useNamesDictionary.Remove(_loginPerson.UserName);
@@ -209,7 +209,7 @@ namespace WH.Controls
                     tempList.Add(key);
                 }
                 ItemList = tempList;
-                ErrorMsg = "删除用户:" + _loginPerson.UserName;
+                ErrorMsg = Properties.Resources.Delete + _loginPerson.UserName;
                 _loginPerson.UserName = "";
                 _loginPerson.PassWord = "";
                 _loginPerson.PrivileageLevel = PRIVILEGE.无权限;
@@ -219,7 +219,7 @@ namespace WH.Controls
             }
             catch (Exception ex)
             {
-                ErrorMsg = "修改出错:" + ex.Message;
+                ErrorMsg = Properties.Resources.ModifyError + ex.Message;
             }
         }
 
@@ -230,36 +230,36 @@ namespace WH.Controls
             {
                 if (string.IsNullOrEmpty(_loginPerson.UserName))
                 {
-                    ErrorMsg = "请选择用户";
+                    ErrorMsg = Properties.Resources.PleaseSelectUser;
                     return;
                 }
 
                 if (string.IsNullOrEmpty(_loginPerson.PassWord))
                 {
-                    ErrorMsg = "请输入密码";
+                    ErrorMsg = Properties.Resources.PleaseInputPassword;
                     return;
                 }
 
                 if (!LoginLoad.useNamesDictionary.Keys.Contains(_loginPerson.UserName))
                 {
-                    ErrorMsg = "当前用户名不存在";
+                    ErrorMsg = Properties.Resources.UserNotExist;
                     return;
                 }
                 if (string.IsNullOrEmpty(_loginPerson.PrivileageLevel.ToString()))
                 {
-                    ErrorMsg = "请选择用户名拥有的权限";
+                    ErrorMsg = Properties.Resources.PleaseSelectRights;
                     return;
                 }
 
                 var selectUser = LoginLoad.useNamesDictionary[_loginPerson.UserName];
                 selectUser.PassWord = _loginPerson.PassWord;
                 selectUser.PrivileageLevel = _loginPerson.PrivileageLevel;
-                ErrorMsg = "修改成功";
+                ErrorMsg = Properties.Resources.Succeed;
                 LoginLoad.SaveUsers();
             }
             catch (Exception ex)
             {
-                ErrorMsg = "修改出错:" + ex.Message;
+                ErrorMsg = Properties.Resources.ModifyError + ex.Message;
             }
 
         }

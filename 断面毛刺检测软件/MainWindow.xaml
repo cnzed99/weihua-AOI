@@ -295,13 +295,19 @@
                 <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
             <UniformGrid Grid.Column="0" Rows="2">
-                <Border Background="{DynamicResource RegionBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Border
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1">
                     <wh:ImageView />
                 </Border>
-                <Border Background="{DynamicResource RegionBrush}"  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Border
+                    Background="{DynamicResource RegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1">
                     <wh:ImageView />
                 </Border>
-               
+
             </UniformGrid>
             <!--  中间设置栏  -->
             <hc:TabControl
@@ -352,16 +358,16 @@
                                 SelectedIndex="0"
                                 Style="{DynamicResource TabControlInLine}">
                                 <!--  运行日志  -->
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:Lang.instance}}" >
-                                    <wh:LogCtrl LogMessage="{Binding SysLog.InfoMessage}"/>
+                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:Lang.instance}}">
+                                    <wh:LogCtrl LogMessage="{Binding SysLog.InfoMessage}" />
                                 </hc:TabItem>
                                 <!--  报警错误日志  -->
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:Lang.instance}}" >
-                                    <wh:LogCtrl LogMessage="{Binding SysLog.ErrorMessage}"/>
+                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:Lang.instance}}">
+                                    <wh:LogCtrl LogMessage="{Binding SysLog.ErrorMessage}" />
                                 </hc:TabItem>
                                 <!--  操作记录  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:Lang.instance}}">
-                                    <wh:LogCtrl LogMessage="{Binding OperateLog.AllMessage}"/>
+                                    <wh:LogCtrl LogMessage="{Binding OperateLog.AllMessage}" />
                                 </hc:TabItem>
                             </hc:TabControl>
                         </hc:SimplePanel>
@@ -415,7 +421,7 @@
                     DockPanel.Dock="Right"
                     Foreground="{StaticResource InfoBrush}"
                     Text="{Binding LoginViewModel.LoginPerson.UserName}" />
-                <TextBlock DockPanel.Dock="Right" Text="当前用户：" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding [CurrentUser], Source={x:Static local:Lang.instance}}" />
                 <hc:SimplePanel DockPanel.Dock="Left" />
             </DockPanel>
 
