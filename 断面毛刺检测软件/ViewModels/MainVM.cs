@@ -78,5 +78,37 @@ namespace 断面毛刺检测软件.ViewModels
         /// </summary>
         public void DiscardChanges()=>_model.Adapt(this);
        
+        public Task LoadAsync(IProgress<double> progress)
+        {
+            
+            return Task.Run(async () => 
+            {
+                #region 读取主配置文件
+                try
+                {
+                    SystemSettingsVM.LoadParameter();
+                    if (SystemSettingsVM.SystemSetParam != null)
+                    {
+                        SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
+                        
+                        //CLoading.DispText("读取系统配置成功...", 10);
+                    }
+                    else
+                    {
+                        SysLog.Error(Properties.Resources.SystemSettingsReadFailed);
+                        //CLoading.DispText("读取系统配置失败...", 10);
+                    }
+                    progress.Report(10);
+                }
+                catch (Exception)
+                {
+
+                }
+                #endregion
+
+            });
+            
+            
+        }
     }
 }

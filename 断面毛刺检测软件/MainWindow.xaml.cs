@@ -24,6 +24,7 @@ using System.Globalization;
 using WH.Controls;
 using Microsoft.Win32;
 using 断面毛刺检测软件.Views;
+using WH.Entity.Progress;
 
 namespace 断面毛刺检测软件
 {
@@ -34,6 +35,7 @@ namespace 断面毛刺检测软件
     {
         IObservable<Unit> StartStopSource;
         MainVM mainVM = new MainVM();
+        #region 初始化 加载
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +43,7 @@ namespace 断面毛刺检测软件
             mainVM.SysLog.Info(Properties.Resources.OpenSoftware);
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -61,25 +63,21 @@ namespace 断面毛刺检测软件
                         else mainVM.OperateLog.Info(Properties.Resources.Stop);
                     }
                     );
-                #region 读取主配置文件
-                SystemSettingsVM.LoadParameter();
-                if (SystemSettingsVM.SystemSetParam != null)
+                this.IsEnabled = false;
+                var progress = new CProgress<double>(value => LoadProgressBar.Value = value,
+                ()=>
                 {
-                    mainVM.SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
-                    
-                    //CLoading.DispText("读取系统配置成功...", 10);
-                }
-                else
-                {
-                    mainVM.SysLog.Error(Properties.Resources.SystemSettingsReadFailed);
-                    //CLoading.DispText("读取系统配置失败...", 10);
-                }
-
+                    this.IsEnabled = true;
+                    LoadProgressBar.Visibility = Visibility.Hidden;
+                    this.Activate();
+                },100);
+                await mainVM.LoadAsync(progress);
                 if (SystemSettingsVM.SystemSetParam.IsEnglish)
                 {
                     Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
                 }
-                #endregion
+
+
             }
             catch (Exception ex)
             {
@@ -87,6 +85,8 @@ namespace 断面毛刺检测软件
                 //throw;
             }
         }
+
+        #endregion
 
         #region 用户登录
         private void btn_UserLogin_Click(object sender, RoutedEventArgs e)

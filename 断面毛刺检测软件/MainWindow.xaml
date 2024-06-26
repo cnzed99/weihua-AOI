@@ -378,6 +378,16 @@
             </hc:SimplePanel>
 
         </Grid>
+        <hc:CircleProgressBar
+            Name="LoadProgressBar"
+            Grid.Row="1"
+            Width="200"
+            Height="200"
+            FontSize="20"
+            Style="{DynamicResource ProgressBarInfoCircle}"
+            Value="50"
+             ArcThickness="10"
+            />
         <!--<hc:Drawer Dock="Right" ShowMode="Cover" IsOpen="{Binding ElementName=Btn_StartStop,Path=IsChecked}" ShowMask="False" MaskCanClose="False">
             <hc:SimplePanel  Width="300" Background="{DynamicResource RegionBrush}">
                 <TextBlock Text="抽屉窗口"/>
