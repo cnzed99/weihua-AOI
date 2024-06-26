@@ -249,4 +249,25 @@
   <data name="ProjPath" xml:space="preserve">
     <value>ProjectPath:</value>
   </data>
+  <data name="OperateRecord" xml:space="preserve">
+    <value>OperatingRecord</value>
+  </data>
+  <data name="SystemSettingsReadSuccess" xml:space="preserve">
+    <value>SystemSettings has Read!</value>
+  </data>
+  <data name="SystemSettingsReadFailed" xml:space="preserve">
+    <value>SystemSetting load Failed!</value>
+  </data>
+  <data name="OpenedUserLogin" xml:space="preserve">
+    <value>Opened User Login Page</value>
+  </data>
+  <data name="EnvironmentExit" xml:space="preserve">
+    <value>Software Exit</value>
+  </data>
+  <data name="OpenFailed" xml:space="preserve">
+    <value>Project open failed</value>
+  </data>
+  <data name="LanguageChanged" xml:space="preserve">
+    <value>Language Changed</value>
+  </data>
 </root>

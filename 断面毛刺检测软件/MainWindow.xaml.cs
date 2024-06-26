@@ -56,20 +56,21 @@ namespace 断面毛刺检测软件
                     {
                         if (mainVM.isStart == mainVM.StartStop) return;
                         mainVM.isStart = mainVM.StartStop;
-
+                        if(mainVM.isStart) mainVM.OperateLog.Info(Properties.Resources.Start);
+                        else mainVM.OperateLog.Info(Properties.Resources.Stop);
                     }
                     );
                 #region 读取主配置文件
                 SystemSettingsModel.LoadParameter();
                 if (SystemSettingsModel.SystemSetParam != null)
                 {
-                    //CLogRec.Info("读取主配置文件成功!");
+                    mainVM.SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
+                    
                     //CLoading.DispText("读取系统配置成功...", 10);
                 }
                 else
                 {
-                    //CUpdateRecords.AddLogToListBox("读取主配置文件失败!", LOG.LOG_WARN);
-
+                    mainVM.SysLog.Error(Properties.Resources.SystemSettingsReadFailed);
                     //CLoading.DispText("读取系统配置失败...", 10);
                 }
 
@@ -92,7 +93,7 @@ namespace 断面毛刺检测软件
             LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
 
             UserInfoFrm.ShowDialog();
-            //PreDllConfig.PreConfigLog.Info(Properties.Resources.CurrentUser + LoginPage.UserName);
+            mainVM.OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 
         #endregion
@@ -132,7 +133,7 @@ namespace 断面毛刺检测软件
                 if (result == MessageBoxResult.Cancel)
                 {
                     e.Cancel = true;
-                    Growl.Success("取消操作！");
+                   
                     return;
                 }
                 else if (result == MessageBoxResult.Yes)
@@ -147,6 +148,7 @@ namespace 断面毛刺检测软件
                     }
                 }
                 SystemSettingsModel.SaveParameter();
+                mainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
             catch (Exception exception)
@@ -189,8 +191,8 @@ namespace 断面毛刺检测软件
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
-                    Growl.Warning("打开失败！");
+                    mainVM.SysLog.Error(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
+                    Growl.Warning(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
                 }
                 finally
                 {
@@ -208,6 +210,7 @@ namespace 断面毛刺检测软件
             if (cbLang.IsChecked??true)
             {
                 languageCode = "en-US";
+                mainVM.OperateLog.Info(Properties.Resources.LanguageChanged+languageCode);
             }
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
@@ -243,8 +246,9 @@ namespace 断面毛刺检测软件
                 {
                     encoder.Save(stream);
                 }
+                mainVM.OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
+                MessageBox.Show(Properties.Resources.ScreenShot+$":{savefile.FileName}","提示|Tips：",MessageBoxButton.OK,MessageBoxImage.Information);
 
-                MessageBox.Show($"截图已保存至 {savefile.FileName}","提示：",MessageBoxButton.OK,MessageBoxImage.Information);
             }
             
         }
@@ -257,6 +261,7 @@ namespace 断面毛刺检测软件
             SystemSettingWindow SysSetWindow = new SystemSettingWindow();
             SysSetWindow.DataContext = mainVM.SystemSettings;
             SysSetWindow.Show();
+            mainVM.OperateLog.Info(Properties.Resources.SystemSettings);
         }
         #endregion
     }

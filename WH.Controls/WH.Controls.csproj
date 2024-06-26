@@ -30,12 +30,14 @@
   <ItemGroup>
     <PackageReference Include="DotNetProjects.SVGImage" />
     <PackageReference Include="HandyControl" />
+	  <PackageReference Include="log4net" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

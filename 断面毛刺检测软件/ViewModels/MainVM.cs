@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using WH.Controls;
+using WH.Entity.LogRecord;
 using 断面毛刺检测软件.Models;
 
 namespace 断面毛刺检测软件.ViewModels
@@ -15,7 +16,7 @@ namespace 断面毛刺检测软件.ViewModels
     /// <summary>
     /// 主界面视图模型
     /// </summary>
-    public partial class MainVM:MainModel
+    public partial class MainVM : MainModel
     {
         [ObservableProperty]
         LoginViewModel loginViewModel = new LoginViewModel();
@@ -23,6 +24,11 @@ namespace 断面毛刺检测软件.ViewModels
         /// 系统配置
         /// </summary>
         public SystemSettingsModel SystemSettings { get; set; } = new SystemSettingsModel();
+        /// <summary>
+        /// 运行日志和报警日志
+        /// </summary>
+        public CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
+        public CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
         private MainModel _model = new MainModel();
         /// <summary>
         /// 当前工程 禁止直接修改其属性
@@ -48,7 +54,7 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 是否启动 后台使用此变量判断用户是否启动软件
         /// </summary>
-        public bool? isStart = false;
+        public bool isStart = false;
         /// <summary>
         /// 界面绑定变量，勿用此变量判断用户是否启动软件
         /// </summary>

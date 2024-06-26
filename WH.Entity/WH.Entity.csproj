@@ -10,6 +10,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
+		<PackageReference Include="log4net" />
 		<PackageReference Include="Mapster" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="ValueConverters" />

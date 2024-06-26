@@ -351,8 +351,18 @@
                                 IsTabFillEnabled="True"
                                 SelectedIndex="0"
                                 Style="{DynamicResource TabControlInLine}">
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:Lang.instance}}" />
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:Lang.instance}}" />
+                                <!--  运行日志  -->
+                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:Lang.instance}}" >
+                                    <wh:LogCtrl LogMessage="{Binding SysLog.InfoMessage}"/>
+                                </hc:TabItem>
+                                <!--  报警错误日志  -->
+                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:Lang.instance}}" >
+                                    <wh:LogCtrl LogMessage="{Binding SysLog.ErrorMessage}"/>
+                                </hc:TabItem>
+                                <!--  操作记录  -->
+                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:Lang.instance}}">
+                                    <wh:LogCtrl LogMessage="{Binding OperateLog.AllMessage}"/>
+                                </hc:TabItem>
                             </hc:TabControl>
                         </hc:SimplePanel>
                     </hc:TabItem>

@@ -160,6 +160,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 关闭软件 的本地化字符串。
+        /// </summary>
+        internal static string EnvironmentExit {
+            get {
+                return ResourceManager.GetString("EnvironmentExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 过滤: 的本地化字符串。
         /// </summary>
         internal static string Filter {
@@ -219,6 +228,15 @@ namespace 断面毛刺检测软件.Properties {
         internal static string Lang {
             get {
                 return ResourceManager.GetString("Lang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 切换语言 的本地化字符串。
+        /// </summary>
+        internal static string LanguageChanged {
+            get {
+                return ResourceManager.GetString("LanguageChanged", resourceCulture);
             }
         }
         
@@ -305,11 +323,38 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 打开用户登录界面 的本地化字符串。
+        /// </summary>
+        internal static string OpenedUserLogin {
+            get {
+                return ResourceManager.GetString("OpenedUserLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开失败 的本地化字符串。
+        /// </summary>
+        internal static string OpenFailed {
+            get {
+                return ResourceManager.GetString("OpenFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 打开工程 的本地化字符串。
         /// </summary>
         internal static string OpenProj {
             get {
                 return ResourceManager.GetString("OpenProj", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 操作记录 的本地化字符串。
+        /// </summary>
+        internal static string OperateRecord {
+            get {
+                return ResourceManager.GetString("OperateRecord", resourceCulture);
             }
         }
         
@@ -436,6 +481,24 @@ namespace 断面毛刺检测软件.Properties {
         internal static string SystemSettings {
             get {
                 return ResourceManager.GetString("SystemSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 读取系统配置文件失败！ 的本地化字符串。
+        /// </summary>
+        internal static string SystemSettingsReadFailed {
+            get {
+                return ResourceManager.GetString("SystemSettingsReadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 读取系统配置文件成功！ 的本地化字符串。
+        /// </summary>
+        internal static string SystemSettingsReadSuccess {
+            get {
+                return ResourceManager.GetString("SystemSettingsReadSuccess", resourceCulture);
             }
         }
         
