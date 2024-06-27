@@ -25,6 +25,8 @@ using WH.Controls;
 using Microsoft.Win32;
 using 断面毛刺检测软件.Views;
 using WH.Entity.Progress;
+using System;
+using System.Reflection.PortableExecutable;
 
 namespace 断面毛刺检测软件
 {
@@ -35,6 +37,7 @@ namespace 断面毛刺检测软件
     {
         IObservable<Unit> StartStopSource;
         MainVM mainVM = new MainVM();
+        CProgress<double> progress;
         #region 初始化 加载
         public MainWindow()
         {
@@ -45,6 +48,13 @@ namespace 断面毛刺检测软件
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            progress = new CProgress<double>(value => LoadProgressBar.Value = value,
+                () =>
+                {
+                    this.IsEnabled = true;
+                    mainVM.IsLoading = false;
+                    this.Activate();
+                }, 100);
             try
             {
                 //半秒之内防止多次点击
@@ -64,13 +74,7 @@ namespace 断面毛刺检测软件
                     }
                     );
                 this.IsEnabled = false;
-                var progress = new CProgress<double>(value => LoadProgressBar.Value = value,
-                ()=>
-                {
-                    this.IsEnabled = true;
-                    LoadProgressBar.Visibility = Visibility.Hidden;
-                    this.Activate();
-                },100);
+                
                 await mainVM.LoadAsync(progress);
                 if (SystemSettingsVM.SystemSetParam.IsEnglish)
                 {
@@ -83,6 +87,10 @@ namespace 断面毛刺检测软件
             {
 
                 //throw;
+            }
+            finally
+            {
+                ((IProgress<double>)progress).Report(100);
             }
         }
 
@@ -139,14 +147,8 @@ namespace 断面毛刺检测软件
                 }
                 else if (result == MessageBoxResult.Yes)
                 {
-                    mainVM.ApplyChanges();
-                    string json = JsonConvert.SerializeObject(mainVM.Model);
-                    using (FileStream fs = new FileStream(mainVM.ProjPath, FileMode.Create, FileAccess.ReadWrite))
-                    {
-                        byte[] bytes = Encoding.UTF8.GetBytes(json);
-                        fs.Write(bytes, 0, bytes.Length);
-                        fs.Flush();
-                    }
+                    mainVM.SaveCurrentProj();
+                   
                 }
                 SystemSettingsVM.SaveParameter();
                 mainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
@@ -166,41 +168,137 @@ namespace 断面毛刺检测软件
 
         #endregion
 
+        #region 打开 最近打开 另存
+
+        #region 打开
+        private async void OpenProj_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = mainVM.projFilter;
+                //openFileDialog.DefaultDirectory = "D:/";
+                if (openFileDialog.ShowDialog() is true)
+                {
+                    await OpenProjAsync(openFileDialog.FileName);
+
+                }
+            }
+            catch (Exception exception)
+            {
+                mainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+            }
+            finally
+            {
+                progress.Report(100);
+            }
+        }
+        #endregion
+
         #region 最近打开
-        private void Recent_Click(object sender, RoutedEventArgs e)
+        private async void Recent_Click(object sender, RoutedEventArgs e)
         {
             if(e.OriginalSource is MenuItem { Header:string header })
             {
                 try
                 {
-                    var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-                    if (result == MessageBoxResult.Yes)
+                    if (!string.IsNullOrEmpty(mainVM.ProjPath))
                     {
-                        mainVM.ApplyChanges();
-                        string json = JsonConvert.SerializeObject(mainVM.Model);
-                        using (FileStream fs = new FileStream(mainVM.ProjPath, FileMode.Create, FileAccess.ReadWrite))
+                        var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        if (result == MessageBoxResult.Yes)
                         {
-                            byte[] bytes = Encoding.UTF8.GetBytes(json);
-                            fs.Write(bytes, 0, bytes.Length);
-                            fs.Flush();
+                            mainVM.SaveCurrentProj();
+                            mainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
                         }
-                        Growl.Success("已保存："+mainVM.Name);
                     }
-                    mainVM.Model = JsonConvert.DeserializeObject<MainModel>(File.ReadAllText(header))??new MainModel();
-                    mainVM.SystemSettings.RecentProjs.Remove(header);
-                    mainVM.SystemSettings.RecentProjs.Add(header);
+                    await OpenProjAsync(header);
+                   
                 }
                 catch (Exception exception)
                 {
-                    mainVM.SysLog.Error(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
+                    mainVM.OperateLog.Error(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
                     Growl.Warning(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
                 }
                 finally
                 {
-                    //CLoading.Close();
+                    progress.Report(100);
                 }
                 
             }
+        }
+        #endregion
+
+        #region 另存为
+        private async void SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
+                SaveFileDialog savefile = new SaveFileDialog();
+                savefile.Filter = mainVM.projFilter;
+                //savefile.DefaultDirectory = "D:/";
+                if (savefile.ShowDialog() is true)
+                {
+                    mainVM.ProjPath = savefile.FileName;
+                    SaveProj();
+                    await OpenProjAsync(mainVM.ProjPath);
+
+                }
+            }
+            catch (Exception exception)
+            {
+                mainVM.OperateLog.Error(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
+                Growl.Warning(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
+            }
+            finally
+            {
+                progress.Report(100);
+            }
+        }
+        #endregion
+
+        #region 保存
+        private void SaveCurrentProj_Click(object sender, RoutedEventArgs e)
+        {
+            SaveProj();
+        }
+        #endregion
+
+        private async Task OpenProjAsync(string header)
+        {
+            try
+            {
+                this.IsEnabled = false;
+                progress.Reset();
+                progress.Report(0);
+                await mainVM.OpenProj(progress, header);
+                Growl.Success(Properties.Resources.OpenProj + "\r\n" + mainVM.ProjPath);
+                mainVM.OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
+            }
+            catch (Exception exception)
+            {
+                mainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+            }
+        }
+        private void SaveProj()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
+                mainVM.SaveCurrentProj();
+                Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                mainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+            }
+            catch (Exception exception)
+            {
+                mainVM.OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
+                Growl.Warning(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
+            }
+           
         }
         #endregion
 
@@ -265,6 +363,10 @@ namespace 断面毛刺检测软件
             SysSetWindow.Show();
             mainVM.OperateLog.Info(Properties.Resources.SystemSettings);
         }
+
+
         #endregion
+
+        
     }
 }

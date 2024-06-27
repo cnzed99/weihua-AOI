@@ -273,4 +273,10 @@
   <data name="OpenSoftware" xml:space="preserve">
     <value>Open Software</value>
   </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Save Failed</value>
+  </data>
+  <data name="SaveasFailed" xml:space="preserve">
+    <value>Save as Failed</value>
+  </data>
 </root>

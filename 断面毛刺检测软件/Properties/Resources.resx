@@ -280,4 +280,10 @@
   <data name="OpenSoftware" xml:space="preserve">
     <value>打开软件</value>
   </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>保存失败</value>
+  </data>
+  <data name="SaveasFailed" xml:space="preserve">
+    <value>另存失败</value>
+  </data>
 </root>

@@ -13,8 +13,7 @@ namespace 断面毛刺检测软件.Models
     /// </summary>
     public partial class MainModel:ObservableObject
     {
-        [ObservableProperty]
-        string projPath = "C:\\Users\\Mainvm.Json";
+       
         [ObservableProperty]
         string name  = "毛刺检测";
 

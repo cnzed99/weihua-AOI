@@ -12,7 +12,7 @@ namespace WH.Entity.Progress
     /// <typeparam name="T"></typeparam>
     public class CProgress<T> : Progress<T> where T : notnull
     {
-        private readonly Action? _complete;
+        private readonly Action _complete;
         private readonly T _maximum;
         private bool _isCompleted;
 
@@ -39,6 +39,15 @@ namespace WH.Entity.Progress
                 _isCompleted = true;
                 _complete?.Invoke();
             }
+        }
+        public void Reset()
+        {
+            _isCompleted = false;
+        }
+        public void Report(T value)
+        {
+            
+            this.OnReport(value);
         }
     }
 }

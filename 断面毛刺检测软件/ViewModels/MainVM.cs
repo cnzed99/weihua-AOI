@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mapster;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -28,8 +31,13 @@ namespace 断面毛刺检测软件.ViewModels
         /// 运行日志和报警日志
         /// </summary>
         public CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
+        /// <summary>
+        /// 操作日志
+        /// </summary>
         public CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
-       
+       /// <summary>
+       /// 当前工程
+       /// </summary>
         private MainModel _model = new MainModel();
         /// <summary>
         /// 当前工程 禁止直接修改其属性
@@ -38,6 +46,9 @@ namespace 断面毛刺检测软件.ViewModels
                 SetProperty(ref _model, value);
                 _model.Adapt(this);
             } }
+        [ObservableProperty]
+        string projPath ;
+        public string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
         public MainVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
@@ -45,13 +56,24 @@ namespace 断面毛刺检测软件.ViewModels
             timer.Tick += Timer_Tick;
             timer.Start();
         }
+        #region 时间相关
         [ObservableProperty]
         static string systemTime;
 
         static DateTime StartTime = DateTime.Now;
         [ObservableProperty]
         static string runingTime = DateTime.Now.ToString("T");
-      
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
+            var runTimeSpan = DateTime.Now - StartTime;
+            RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
+           
+        }
+        #endregion
+
+        #region 启停 状态
         /// <summary>
         /// 是否启动 后台使用此变量判断用户是否启动软件
         /// </summary>
@@ -61,14 +83,12 @@ namespace 断面毛刺检测软件.ViewModels
         /// </summary>
         [ObservableProperty]
         bool startStop = false;
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
-            var runTimeSpan = DateTime.Now - StartTime;
-            RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
-           
-        }
-        
+
+        [ObservableProperty]
+        bool isLoading = false;
+        #endregion
+
+        #region 应用或丢弃当前工程变更
         /// <summary>
         /// 保存当前工程的修改
         /// </summary>
@@ -77,11 +97,18 @@ namespace 断面毛刺检测软件.ViewModels
         /// 丢弃当前工程的修改
         /// </summary>
         public void DiscardChanges()=>_model.Adapt(this);
-       
-        public Task LoadAsync(IProgress<double> progress)
+        #endregion
+
+        #region 软件加载
+        /// <summary>
+        /// 软件加载
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        public async Task LoadAsync(IProgress<double> progress)
         {
-            
-            return Task.Run(async () => 
+            IsLoading = true;
+            await Task.Run(async () => 
             {
                 #region 读取主配置文件
                 try
@@ -99,6 +126,7 @@ namespace 断面毛刺检测软件.ViewModels
                         //CLoading.DispText("读取系统配置失败...", 10);
                     }
                     progress.Report(10);
+                    await longtimefunc(progress);
                 }
                 catch (Exception)
                 {
@@ -109,6 +137,58 @@ namespace 断面毛刺检测软件.ViewModels
             });
             
             
+        }
+
+        #endregion
+
+        #region 打开工程文件
+        /// <summary>
+        /// 软件加载
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        public async Task OpenProj(IProgress<double> progress,string header)
+        {
+            IsLoading = true;
+            #region 打开工程
+            try
+            {
+                ProjPath = header;
+                Model = JsonConvert.DeserializeObject<MainModel>(File.ReadAllText(header)) ?? new MainModel();
+                SystemSettings.RecentProjs.Remove(header);
+                SystemSettings.RecentProjs.Insert(0, header);
+                progress.Report(50);
+                await longtimefunc(progress);
+            }
+            catch (Exception)
+            {
+
+            }
+            #endregion
+        }
+        async Task longtimefunc(IProgress<double> progress)
+        {
+            for (int i = 0; i <= 100; i++)
+            {
+                await Task.Delay(50);
+                progress.Report(i);
+            }
+        }
+        #endregion
+
+
+        
+        public void SaveCurrentProj()
+        {
+            if (string.IsNullOrEmpty(ProjPath)) return;
+            ApplyChanges();
+            string json = JsonConvert.SerializeObject(Model);
+            using (FileStream fs = new FileStream(ProjPath, FileMode.Create, FileAccess.ReadWrite))
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(json);
+                fs.Write(bytes, 0, bytes.Length);
+                fs.Flush();
+            }
         }
     }
 }

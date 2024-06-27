@@ -45,17 +45,17 @@
                             <svg1:SVGImage Source="/Resources/图标/文件/新建工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{Binding [OpenProj], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Header="{Binding [OpenProj], Source={x:Static local:Lang.instance}}" Click="OpenProj_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/打开工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{Binding [SaveProj], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Header="{Binding [SaveProj], Source={x:Static local:Lang.instance}}" Click="SaveCurrentProj_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/保存工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{Binding [Saveas], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Header="{Binding [Saveas], Source={x:Static local:Lang.instance}}" Click="SaveAs_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/另存工程.svg" />
                         </MenuItem.Icon>
@@ -378,16 +378,7 @@
             </hc:SimplePanel>
 
         </Grid>
-        <hc:CircleProgressBar
-            Name="LoadProgressBar"
-            Grid.Row="1"
-            Width="200"
-            Height="200"
-            FontSize="20"
-            Style="{DynamicResource ProgressBarInfoCircle}"
-            Value="50"
-             ArcThickness="10"
-            />
+
         <!--<hc:Drawer Dock="Right" ShowMode="Cover" IsOpen="{Binding ElementName=Btn_StartStop,Path=IsChecked}" ShowMask="False" MaskCanClose="False">
             <hc:SimplePanel  Width="300" Background="{DynamicResource RegionBrush}">
                 <TextBlock Text="抽屉窗口"/>
@@ -449,6 +440,15 @@
                 VerticalAlignment="Bottom"
                 hc:Growl.GrowlParent="True" />
         </ScrollViewer>
-
+        <hc:CircleProgressBar
+            Name="LoadProgressBar"
+            Grid.Row="1"
+            Width="200"
+            Height="200"
+            ArcThickness="10"
+            FontSize="20"
+            Style="{DynamicResource ProgressBarInfoCircle}"
+            Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
+            Value="50" />
     </Grid>
 </hc:Window>

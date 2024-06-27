@@ -431,6 +431,24 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 另存失败 的本地化字符串。
+        /// </summary>
+        public static string SaveasFailed {
+            get {
+                return ResourceManager.GetString("SaveasFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存失败 的本地化字符串。
+        /// </summary>
+        public static string SaveFailed {
+            get {
+                return ResourceManager.GetString("SaveFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 保存工程 的本地化字符串。
         /// </summary>
         public static string SaveProj {
