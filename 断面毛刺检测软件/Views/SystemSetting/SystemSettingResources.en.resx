@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,44 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="组合-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\组合-2.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="SavePicAtOfflineMode" xml:space="preserve">
-    <value>离线存图和数据</value>
+    <value>Save IMG&amp;Data at offline mode</value>
   </data>
   <data name="IsSaveDetectData" xml:space="preserve">
-    <value>是否存数据库</value>
+    <value>Save Detection Data</value>
   </data>
   <data name="CommonSettings" xml:space="preserve">
-    <value>通用设置</value>
+    <value>Common Settings</value>
   </data>
   <data name="DataClearSet" xml:space="preserve">
-    <value>数据清零设置</value>
+    <value>Data Clear Settings</value>
   </data>
   <data name="AutoClear" xml:space="preserve">
-    <value>启用自动清零</value>
+    <value>Auto Clear</value>
   </data>
   <data name="Day" xml:space="preserve">
-    <value>白班</value>
+    <value>Day</value>
   </data>
   <data name="Night" xml:space="preserve">
-    <value>夜班</value>
+    <value>Night</value>
   </data>
   <data name="Shift" xml:space="preserve">
-    <value>每班次</value>
+    <value>When Shift</value>
   </data>
   <data name="EachDay" xml:space="preserve">
-    <value>每天</value>
+    <value>Every Day</value>
   </data>
   <data name="EachWeek" xml:space="preserve">
-    <value>每周</value>
+    <value>Every Week</value>
   </data>
   <data name="NextClearTime" xml:space="preserve">
-    <value>下次清零时间</value>
+    <value>Next Clear Time</value>
+  </data>
+  <data name="SystemSettings" xml:space="preserve">
+    <value>SystemSettings</value>
   </data>
 </root>

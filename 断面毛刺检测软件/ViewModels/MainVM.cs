@@ -23,18 +23,16 @@ namespace 断面毛刺检测软件.ViewModels
     {
         [ObservableProperty]
         LoginViewModel loginViewModel = new LoginViewModel();
-        /// <summary>
-        /// 系统配置
-        /// </summary>
-        public SystemSettingsVM SystemSettings { get; set; } = new SystemSettingsVM();
+        [ObservableProperty]
+        SystemSettingsVM systemSettings = new SystemSettingsVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
-        public CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
+        public static CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
         /// <summary>
         /// 操作日志
         /// </summary>
-        public CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
+        public static CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
        /// <summary>
        /// 当前工程
        /// </summary>
@@ -48,7 +46,7 @@ namespace 断面毛刺检测软件.ViewModels
             } }
         [ObservableProperty]
         string projPath ;
-        public string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
+        public static string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
         public MainVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
@@ -113,8 +111,8 @@ namespace 断面毛刺检测软件.ViewModels
                 #region 读取主配置文件
                 try
                 {
-                    SystemSettingsVM.LoadParameter();
-                    if (SystemSettingsVM.SystemSetParam != null)
+                    SystemSettings = SysSet.LoadParameter();
+                    if (SystemSettings != null)
                     {
                         SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
                         
@@ -158,6 +156,10 @@ namespace 断面毛刺检测软件.ViewModels
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);
+                while(SystemSettings.RecentProjs.Count>10)
+                {
+                    SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
+                }
                 await longtimefunc(progress);
             }
             catch (Exception)
@@ -170,7 +172,7 @@ namespace 断面毛刺检测软件.ViewModels
         {
             for (int i = 0; i <= 100; i++)
             {
-                await Task.Delay(50);
+                await Task.Delay(10);
                 progress.Report(i);
             }
         }

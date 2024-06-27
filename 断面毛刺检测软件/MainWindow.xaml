@@ -40,7 +40,7 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/文件/主页.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Header="{Binding [NewProj], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Header="{Binding [NewProj], Source={x:Static local:Lang.instance}}" Click="NewProj_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/新建工程.svg" />
                         </MenuItem.Icon>
@@ -60,7 +60,7 @@
                             <svg1:SVGImage Source="/Resources/图标/文件/另存工程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{Binding [ModifyProj], Source={x:Static local:Lang.instance}}">
+                    <MenuItem Header="{Binding [ModifyProj], Source={x:Static local:Lang.instance}}" Click="ModifyProj_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/修改工程.svg" />
                         </MenuItem.Icon>

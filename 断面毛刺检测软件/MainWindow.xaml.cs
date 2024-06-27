@@ -43,7 +43,7 @@ namespace 断面毛刺检测软件
         {
             InitializeComponent();
             this.DataContext = mainVM;
-            mainVM.SysLog.Info(Properties.Resources.OpenSoftware);
+            MainVM.SysLog.Info(Properties.Resources.OpenSoftware);
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -69,14 +69,14 @@ namespace 断面毛刺检测软件
                     {
                         if (mainVM.isStart == mainVM.StartStop) return;
                         mainVM.isStart = mainVM.StartStop;
-                        if(mainVM.isStart) mainVM.OperateLog.Info(Properties.Resources.Start);
-                        else mainVM.OperateLog.Info(Properties.Resources.Stop);
+                        if(mainVM.isStart) MainVM.OperateLog.Info(Properties.Resources.Start);
+                        else MainVM.OperateLog.Info(Properties.Resources.Stop);
                     }
                     );
                 this.IsEnabled = false;
                 
                 await mainVM.LoadAsync(progress);
-                if (SystemSettingsVM.SystemSetParam.IsEnglish)
+                if (mainVM.SystemSettings.IsEnglish)
                 {
                     Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
                 }
@@ -102,7 +102,7 @@ namespace 断面毛刺检测软件
             LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
 
             UserInfoFrm.ShowDialog();
-            mainVM.OperateLog.Info(Properties.Resources.OpenedUserLogin);
+            MainVM.OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 
         #endregion
@@ -150,8 +150,8 @@ namespace 断面毛刺检测软件
                     mainVM.SaveCurrentProj();
                    
                 }
-                SystemSettingsVM.SaveParameter();
-                mainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
+                mainVM.SystemSettings.SaveParameter();
+                MainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
             catch (Exception exception)
@@ -168,7 +168,18 @@ namespace 断面毛刺检测软件
 
         #endregion
 
-        #region 打开 最近打开 另存
+        #region 新建 打开 最近打开 另存 保存
+
+        #region 新建工程
+
+        private void NewProj_Click(object sender, RoutedEventArgs e)
+        {
+            NewProjWindow newProj = new NewProjWindow(new NewProjVM(mainVM));
+            MainVM.OperateLog.Info(Properties.Resources.NewProj);
+            newProj.ShowDialog();
+            
+        }
+        #endregion
 
         #region 打开
         private async void OpenProj_Click(object sender, RoutedEventArgs e)
@@ -177,7 +188,7 @@ namespace 断面毛刺检测软件
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = mainVM.projFilter;
+                openFileDialog.Filter = MainVM.projFilter;
                 //openFileDialog.DefaultDirectory = "D:/";
                 if (openFileDialog.ShowDialog() is true)
                 {
@@ -187,7 +198,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception exception)
             {
-                mainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
             }
             finally
@@ -197,37 +208,12 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 最近打开
-        private async void Recent_Click(object sender, RoutedEventArgs e)
+
+
+        #region 保存
+        private void SaveCurrentProj_Click(object sender, RoutedEventArgs e)
         {
-            if(e.OriginalSource is MenuItem { Header:string header })
-            {
-                try
-                {
-                    if (!string.IsNullOrEmpty(mainVM.ProjPath))
-                    {
-                        var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            mainVM.SaveCurrentProj();
-                            mainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                        }
-                    }
-                    await OpenProjAsync(header);
-                   
-                }
-                catch (Exception exception)
-                {
-                    mainVM.OperateLog.Error(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
-                    Growl.Warning(Properties.Resources.OpenFailed+"\r\n"+exception.Message);
-                }
-                finally
-                {
-                    progress.Report(100);
-                }
-                
-            }
+            SaveProj();
         }
         #endregion
 
@@ -238,7 +224,7 @@ namespace 断面毛刺检测软件
             {
                 if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
                 SaveFileDialog savefile = new SaveFileDialog();
-                savefile.Filter = mainVM.projFilter;
+                savefile.Filter = MainVM.projFilter;
                 //savefile.DefaultDirectory = "D:/";
                 if (savefile.ShowDialog() is true)
                 {
@@ -250,7 +236,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception exception)
             {
-                mainVM.OperateLog.Error(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
+                MainVM.OperateLog.Error(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
             }
             finally
@@ -260,10 +246,47 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 保存
-        private void SaveCurrentProj_Click(object sender, RoutedEventArgs e)
+        #region 修改工程
+        private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
-            SaveProj();
+            if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
+            ModifyProjWindow modifyProj = new ModifyProjWindow(new ModifyProjVM(mainVM));
+            MainVM.OperateLog.Info(Properties.Resources.ModifyProj);
+            modifyProj.ShowDialog();
+        }
+        #endregion
+
+        #region 最近打开
+        private async void Recent_Click(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is MenuItem { Header: string header })
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(mainVM.ProjPath))
+                    {
+                        var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            mainVM.SaveCurrentProj();
+                            MainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                        }
+                    }
+                    await OpenProjAsync(header);
+
+                }
+                catch (Exception exception)
+                {
+                    MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                    Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                }
+                finally
+                {
+                    progress.Report(100);
+                }
+
+            }
         }
         #endregion
 
@@ -276,11 +299,11 @@ namespace 断面毛刺检测软件
                 progress.Report(0);
                 await mainVM.OpenProj(progress, header);
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + mainVM.ProjPath);
-                mainVM.OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
+                MainVM.OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
             catch (Exception exception)
             {
-                mainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
             }
         }
@@ -291,11 +314,11 @@ namespace 断面毛刺检测软件
                 if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
                 mainVM.SaveCurrentProj();
                 Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                mainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                MainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
             }
             catch (Exception exception)
             {
-                mainVM.OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
+                MainVM.OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
             }
            
@@ -311,7 +334,7 @@ namespace 断面毛刺检测软件
                 languageCode = "en-US";
                 
             }
-            mainVM.OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            MainVM.OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
@@ -346,7 +369,7 @@ namespace 断面毛刺检测软件
                 {
                     encoder.Save(stream);
                 }
-                mainVM.OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
+                MainVM.OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
                 MessageBox.Show(Properties.Resources.ScreenShot+$":{savefile.FileName}","提示|Tips：",MessageBoxButton.OK,MessageBoxImage.Information);
 
             }
@@ -361,12 +384,13 @@ namespace 断面毛刺检测软件
             SystemSettingWindow SysSetWindow = new SystemSettingWindow();
             SysSetWindow.DataContext = mainVM.SystemSettings;
             SysSetWindow.Show();
-            mainVM.OperateLog.Info(Properties.Resources.SystemSettings);
+            MainVM.OperateLog.Info(Properties.Resources.SystemSettings);
         }
 
 
-        #endregion
 
-        
+
+        #endregion
+       
     }
 }

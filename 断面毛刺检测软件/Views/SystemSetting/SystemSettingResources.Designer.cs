@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace 断面毛刺检测软件.Views {
+namespace 断面毛刺检测软件.Views.SystemSetting {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace 断面毛刺检测软件.Views {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("断面毛刺检测软件.Views.SystemSettingResources", typeof(SystemSettingResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("断面毛刺检测软件.Views.SystemSetting.SystemSettingResources", typeof(SystemSettingResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -124,16 +124,6 @@ namespace 断面毛刺检测软件.Views {
         }
         
         /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] logo1 {
-            get {
-                object obj = ResourceManager.GetObject("logo1", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 下次清零时间 的本地化字符串。
         /// </summary>
         internal static string NextClearTime {
@@ -170,12 +160,11 @@ namespace 断面毛刺检测软件.Views {
         }
         
         /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
+        ///   查找类似 系统设置 的本地化字符串。
         /// </summary>
-        internal static byte[] 组合_2 {
+        internal static string SystemSettings {
             get {
-                object obj = ResourceManager.GetObject("组合-2", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("SystemSettings", resourceCulture);
             }
         }
     }

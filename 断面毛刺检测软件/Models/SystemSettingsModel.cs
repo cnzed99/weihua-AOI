@@ -11,10 +11,7 @@ namespace 断面毛刺检测软件.Models
 {
     public partial class SystemSettingsModel:ObservableValidator
     {
-        /// <summary>
-        /// 系统参数保存的路径
-        /// </summary>
-        public static string ParameterPath =  "..\\SystemConfig\\SystemSetting.Json";
+        
         
         public ObservableCollection<string> RecentProjs { get; set; } = new ObservableCollection<string>() { "C:\\Users\\Mainvm.Json", "C:\\Users\\Mainvm233.Json" };
 

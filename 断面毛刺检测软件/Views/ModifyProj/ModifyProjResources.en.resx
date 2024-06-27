@@ -117,37 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SavePicAtOfflineMode" xml:space="preserve">
-    <value>Save IMG&amp;Data at offline mode</value>
+  <data name="Title" xml:space="preserve">
+    <value>Modify Project</value>
   </data>
-  <data name="IsSaveDetectData" xml:space="preserve">
-    <value>Save Detection Data</value>
+  <data name="Name" xml:space="preserve">
+    <value>Name：</value>
   </data>
-  <data name="CommonSettings" xml:space="preserve">
-    <value>Common Settings</value>
+  <data name="Path" xml:space="preserve">
+    <value>Path：</value>
   </data>
-  <data name="DataClearSet" xml:space="preserve">
-    <value>Data Clear Settings</value>
+  <data name="SelectPath" xml:space="preserve">
+    <value>Click and Select Path</value>
   </data>
-  <data name="AutoClear" xml:space="preserve">
-    <value>Auto Clear</value>
+  <data name="Sure" xml:space="preserve">
+    <value>Sure</value>
   </data>
-  <data name="Day" xml:space="preserve">
-    <value>Day</value>
-  </data>
-  <data name="Night" xml:space="preserve">
-    <value>Night</value>
-  </data>
-  <data name="Shift" xml:space="preserve">
-    <value>When Shift</value>
-  </data>
-  <data name="EachDay" xml:space="preserve">
-    <value>Every Day</value>
-  </data>
-  <data name="EachWeek" xml:space="preserve">
-    <value>Every Week</value>
-  </data>
-  <data name="NextClearTime" xml:space="preserve">
-    <value>Next Clear Time</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
   </data>
 </root>

@@ -34,7 +34,7 @@ namespace WH.Entity
         /// <typeparam name="T"></typeparam>
         /// <param name="directory"></param>
         /// <returns>文件不存在时返回new 对象</returns>
-        public static T Load<T>(string fileName)
+        public static T Load<T>(string fileName) where T : new()
         {
             if (File.Exists(fileName) || File.Exists(fileName = fileName.Replace(".whrecipe", ".Json")))
             {
@@ -45,7 +45,12 @@ namespace WH.Entity
                     {
                         //byte[] bytes = Convert.FromBase64String(bt64);
                         //bt64 = Encoding.UTF8.GetString(bytes);
-                        T config = JsonConvert.DeserializeObject<T>(bt64);
+                        JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+                        {
+                            ObjectCreationHandling = ObjectCreationHandling.Replace,
+                        };
+                        T config = new T();
+                        JsonConvert.PopulateObject(bt64,config, serializerSettings);
                         return config;
                     }
                     catch (Exception)

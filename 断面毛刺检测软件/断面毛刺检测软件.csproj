@@ -243,7 +243,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\SystemSettingResources.Designer.cs">
+    <Compile Update="Views\ModifyProj\ModifyProjResources.Designer.cs">
+      <DependentUpon>ModifyProjResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Views\ModifyProj\ModifyProjWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\NewProj\NewProjResources.Designer.cs">
+      <DependentUpon>NewProjResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Views\SystemSetting\SystemSettingResources.Designer.cs">
       <DependentUpon>SystemSettingResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -255,7 +268,16 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\SystemSettingResources.resx">
+    <EmbeddedResource Update="Views\ModifyProj\ModifyProjResources.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>ModifyProjResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\NewProj\NewProjResources.resx">
+      <LastGenOutput>NewProjResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\SystemSetting\SystemSettingResources.resx">
       <LastGenOutput>SystemSettingResources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

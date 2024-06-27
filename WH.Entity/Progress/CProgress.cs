@@ -16,7 +16,7 @@ namespace WH.Entity.Progress
         private readonly T _maximum;
         private bool _isCompleted;
 
-        public CProgress(Action<T> handler, Action? complete, T maximum)
+        public CProgress(Action<T> handler, Action complete, T maximum)
             : base(handler)
         {
             _complete = complete;
@@ -32,7 +32,7 @@ namespace WH.Entity.Progress
             base.OnReport(value);
         }
 
-        private void CheckCompletion(object? sender, T e)
+        private void CheckCompletion(object sender, T e)
         {
             if (e.Equals(_maximum) && !_isCompleted)
             {

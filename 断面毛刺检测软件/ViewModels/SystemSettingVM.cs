@@ -13,49 +13,6 @@ namespace 断面毛刺检测软件.ViewModels
 {
     public partial class SystemSettingsVM:SystemSettingsModel
     {
-        public static SystemSettingsModel SystemSetParam = new SystemSettingsModel();
-        #region 保存参数
-
-        public static void SaveParameter()
-        {
-            try
-            {
-                ConfigAPI.Save(SystemSetParam, ParameterPath);
-            }
-            catch (Exception)
-            {
-            }
-        }
-        #endregion
-
-        #region 读取参数
-
-        public static void LoadParameter()
-        {
-
-            try
-            {
-                if (File.Exists(ParameterPath))
-                {
-                    SystemSetParam = ConfigAPI.Load<SystemSettingsModel>(ParameterPath);
-                    if (SystemSetParam == null)
-                    {
-                        SystemSetParam = new SystemSettingsModel();
-                    }
-                }
-                else
-                {
-                    SystemSetParam = new SystemSettingsModel();
-                }
-            }
-            catch (Exception)
-            {
-                SystemSetParam = new SystemSettingsModel();
-            }
-
-        }
-
-        #endregion
 
         [RelayCommand]
         private void Close(System.ComponentModel.CancelEventArgs e)
@@ -66,5 +23,56 @@ namespace 断面毛刺检测软件.ViewModels
                 e.Cancel = true;
             }
         }
+    }
+
+    public static class SysSet
+    {
+        /// <summary>
+        /// 系统参数保存的路径
+        /// </summary>
+        public static string ParameterPath = "..\\SystemConfig\\SystemSetting.Json";
+        #region 保存参数
+
+        public static void SaveParameter(this SystemSettingsModel settingsModel)
+        {
+            try
+            {
+                ConfigAPI.Save(settingsModel, ParameterPath);
+            }
+            catch (Exception)
+            {
+            }
+        }
+        #endregion
+
+        #region 读取参数
+
+        public static SystemSettingsVM LoadParameter()
+        {
+            SystemSettingsVM settingsModel = new SystemSettingsVM();
+            try
+            {
+                
+                if (File.Exists(ParameterPath))
+                {
+                    settingsModel = ConfigAPI.Load<SystemSettingsVM>(ParameterPath);
+                    if (settingsModel == null)
+                    {
+                        settingsModel = new SystemSettingsVM();
+                    }
+                }
+                else
+                {
+                    settingsModel = new SystemSettingsVM();
+                }
+            }
+            catch (Exception)
+            {
+                settingsModel = new SystemSettingsVM();
+            }
+            return settingsModel;
+        }
+
+        #endregion
     }
 }
