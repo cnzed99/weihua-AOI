@@ -17,6 +17,9 @@ using 断面毛刺检测软件.ViewModels;
 using Autofac;
 using WH.Entity.LogRecord;
 using 断面毛刺检测软件.Views;
+using WH.Controls.SingleInstance;
+
+
 
 
 
@@ -51,7 +54,7 @@ namespace 断面毛刺检测软件
             ProfileOptimization.SetProfileRoot(cachePath);
             ProfileOptimization.StartProfile("Profile");
 #endif
-            ConfigureServices();
+            
         }
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -124,26 +127,28 @@ namespace 断面毛刺检测软件
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            ConfigureServices();
             var mainWindow = Container.Resolve<MainWindow>();
             mainWindow.DataContext = Container.Resolve<MainVM>();
             mainWindow?.Show();
+            
         }
 
         public static IContainer Container { get; set; }
         private static void ConfigureServices()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance<CLogRec>(new CLogRec("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
-            builder.RegisterInstance<CLogRec>(new CLogRec("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance() ;
+            builder.RegisterInstance(CLogRec.Create("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
+            builder.RegisterInstance(CLogRec.Create("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance() ;
             builder.RegisterType<MainVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
 
-            builder.RegisterType<SystemSettingWindow>().SingleInstance();
+            builder.Register(c=>SingleInstance.Create<Lazy<SystemSettingWindow>,SystemSettingWindow>()).InstancePerDependency();
             //新建
-           
-            builder.RegisterType<NewProjWindow>().SingleInstance().InstancePerDependency();
+
+            builder.Register(c=>SingleInstance.Create< Lazy<NewProjWindow>, NewProjWindow>()).SingleInstance().InstancePerDependency();
             //修改
-            builder.RegisterType<ModifyProjWindow>().SingleInstance().InstancePerDependency();
+            builder.Register(c=>SingleInstance.Create< Lazy<ModifyProjWindow>, ModifyProjWindow>()).SingleInstance().InstancePerDependency();
            
 
             Container = builder.Build();

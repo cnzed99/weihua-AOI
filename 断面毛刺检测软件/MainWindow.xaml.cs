@@ -180,7 +180,7 @@ namespace 断面毛刺检测软件
 
         private void NewProj_Click(object sender, RoutedEventArgs e)
         {
-            NewProjWindow newProj = App.Container.Resolve<NewProjWindow>();
+            NewProjWindow newProj = App.Container.Resolve<Lazy<NewProjWindow>>().Value;
            
             OperateLog.Info(Properties.Resources.NewProj);
             newProj.ShowDialog();
@@ -257,7 +257,7 @@ namespace 断面毛刺检测软件
         private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
-            ModifyProjWindow modifyProj = App.Container.Resolve<ModifyProjWindow>();
+            ModifyProjWindow modifyProj = App.Container.Resolve<Lazy<ModifyProjWindow>>().Value;
             OperateLog.Info(Properties.Resources.ModifyProj);
             modifyProj.ShowDialog();
         }
@@ -388,7 +388,7 @@ namespace 断面毛刺检测软件
 
         private void SystemSetting_Click(object sender, RoutedEventArgs e)
         {
-            SystemSettingWindow SysSetWindow = App.Container.Resolve<SystemSettingWindow>();
+            SystemSettingWindow SysSetWindow = App.Container.Resolve<Lazy< SystemSettingWindow>>().Value;
             SysSetWindow.DataContext = mainVM.SystemSettings;
             SysSetWindow.Show();
             OperateLog.Info(Properties.Resources.SystemSettings);

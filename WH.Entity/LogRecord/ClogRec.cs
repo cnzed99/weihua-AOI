@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using log4net;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace WH.Entity.LogRecord
     /// </summary>
     public partial class CLogRec:ObservableObject
     {
-       
+        static Hashtable s_logList = new Hashtable();
         SlogMessage infoMessage;
         public SlogMessage InfoMessage
         {
@@ -68,14 +69,23 @@ namespace WH.Entity.LogRecord
         /// <param name="logName">日志名</param>
         /// <param name="pathDir">日志保存路径</param>
         /// <param name="errorLog">错误日志名</param>
-        public CLogRec(string logName,string pathDir,string errorLog = null)
+        private CLogRec(string logName,string pathDir,string errorLog = null)
         {
 
             _InfoLog = new ClogSetting(logName,logName) { RootDir = pathDir }.Create();
             if (string.IsNullOrEmpty(errorLog)) _ErrorLog = _InfoLog;
             else _ErrorLog = new ClogSetting(errorLog, errorLog) { RootDir = pathDir }.Create();
         }
-
+        public static CLogRec Create(string logName, string pathDir, string errorLog = null)
+        {
+            if(s_logList.ContainsKey(logName)) return (CLogRec)s_logList[logName];
+            else
+            {
+                var log = new CLogRec(logName,pathDir,errorLog);
+                s_logList.Add(logName,log);
+                return log;
+            }
+        }
         void UpdateMessage(string msg,LOG logType)
         {
             var logInfo = new SlogMessage() { Message = msg, Log = logType };
