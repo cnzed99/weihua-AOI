@@ -27,6 +27,8 @@ using 断面毛刺检测软件.Views;
 using WH.Entity.Progress;
 using System;
 using System.Reflection.PortableExecutable;
+using Autofac;
+using WH.Entity.LogRecord;
 
 namespace 断面毛刺检测软件
 {
@@ -36,14 +38,18 @@ namespace 断面毛刺检测软件
     public partial class MainWindow : HandyControl.Controls.Window
     {
         IObservable<Unit> StartStopSource;
-        MainVM mainVM = new MainVM();
+        MainVM mainVM;
         CProgress<double> progress;
+        CLogRec SysLog;
+        CLogRec OperateLog;
         #region 初始化 加载
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = mainVM;
-            MainVM.SysLog.Info(Properties.Resources.OpenSoftware);
+            mainVM = App.Container.Resolve<MainVM>();
+            SysLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
+            OperateLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+            SysLog.Info(Properties.Resources.OpenSoftware);
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -69,8 +75,8 @@ namespace 断面毛刺检测软件
                     {
                         if (mainVM.isStart == mainVM.StartStop) return;
                         mainVM.isStart = mainVM.StartStop;
-                        if(mainVM.isStart) MainVM.OperateLog.Info(Properties.Resources.Start);
-                        else MainVM.OperateLog.Info(Properties.Resources.Stop);
+                        if(mainVM.isStart) OperateLog.Info(Properties.Resources.Start);
+                        else OperateLog.Info(Properties.Resources.Stop);
                     }
                     );
                 this.IsEnabled = false;
@@ -102,7 +108,7 @@ namespace 断面毛刺检测软件
             LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
 
             UserInfoFrm.ShowDialog();
-            MainVM.OperateLog.Info(Properties.Resources.OpenedUserLogin);
+            OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 
         #endregion
@@ -151,7 +157,7 @@ namespace 断面毛刺检测软件
                    
                 }
                 mainVM.SystemSettings.SaveParameter();
-                MainVM.OperateLog.Info(Properties.Resources.EnvironmentExit);
+                OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
             catch (Exception exception)
@@ -174,8 +180,9 @@ namespace 断面毛刺检测软件
 
         private void NewProj_Click(object sender, RoutedEventArgs e)
         {
-            NewProjWindow newProj = new NewProjWindow(new NewProjVM(mainVM));
-            MainVM.OperateLog.Info(Properties.Resources.NewProj);
+            NewProjWindow newProj = App.Container.Resolve<NewProjWindow>();
+           
+            OperateLog.Info(Properties.Resources.NewProj);
             newProj.ShowDialog();
             
         }
@@ -198,7 +205,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception exception)
             {
-                MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
             }
             finally
@@ -236,7 +243,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception exception)
             {
-                MainVM.OperateLog.Error(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
+                OperateLog.Error(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.SaveasFailed + "\r\n" + exception.Message);
             }
             finally
@@ -250,8 +257,8 @@ namespace 断面毛刺检测软件
         private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
-            ModifyProjWindow modifyProj = new ModifyProjWindow(new ModifyProjVM(mainVM));
-            MainVM.OperateLog.Info(Properties.Resources.ModifyProj);
+            ModifyProjWindow modifyProj = App.Container.Resolve<ModifyProjWindow>();
+            OperateLog.Info(Properties.Resources.ModifyProj);
             modifyProj.ShowDialog();
         }
         #endregion
@@ -269,7 +276,7 @@ namespace 断面毛刺检测软件
                         if (result == MessageBoxResult.Yes)
                         {
                             mainVM.SaveCurrentProj();
-                            MainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                            OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
                             Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
                         }
                     }
@@ -278,7 +285,7 @@ namespace 断面毛刺检测软件
                 }
                 catch (Exception exception)
                 {
-                    MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                    OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                     Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                 }
                 finally
@@ -299,11 +306,11 @@ namespace 断面毛刺检测软件
                 progress.Report(0);
                 await mainVM.OpenProj(progress, header);
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + mainVM.ProjPath);
-                MainVM.OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
+                OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
             catch (Exception exception)
             {
-                MainVM.OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
+                OperateLog.Error(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
             }
         }
@@ -314,11 +321,11 @@ namespace 断面毛刺检测软件
                 if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
                 mainVM.SaveCurrentProj();
                 Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                MainVM.OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
             }
             catch (Exception exception)
             {
-                MainVM.OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
+                OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
             }
            
@@ -334,7 +341,7 @@ namespace 断面毛刺检测软件
                 languageCode = "en-US";
                 
             }
-            MainVM.OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
@@ -369,7 +376,7 @@ namespace 断面毛刺检测软件
                 {
                     encoder.Save(stream);
                 }
-                MainVM.OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
+                OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
                 MessageBox.Show(Properties.Resources.ScreenShot+$":{savefile.FileName}","提示|Tips：",MessageBoxButton.OK,MessageBoxImage.Information);
 
             }
@@ -381,10 +388,10 @@ namespace 断面毛刺检测软件
 
         private void SystemSetting_Click(object sender, RoutedEventArgs e)
         {
-            SystemSettingWindow SysSetWindow = new SystemSettingWindow();
+            SystemSettingWindow SysSetWindow = App.Container.Resolve<SystemSettingWindow>();
             SysSetWindow.DataContext = mainVM.SystemSettings;
             SysSetWindow.Show();
-            MainVM.OperateLog.Info(Properties.Resources.SystemSettings);
+            OperateLog.Info(Properties.Resources.SystemSettings);
         }
 
 

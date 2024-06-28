@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Autofac;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mapster;
 using Newtonsoft.Json;
@@ -28,14 +29,14 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
-        public static CLogRec SysLog { get; set; } = new CLogRec("Info","./Log","Error");
+        public CLogRec SysLog { get;} = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
         /// <summary>
         /// 操作日志
         /// </summary>
-        public static CLogRec OperateLog { get; set; } = new CLogRec("Operate", "D:/Data");
-       /// <summary>
-       /// 当前工程
-       /// </summary>
+        public CLogRec OperateLog { get;} = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+        /// <summary>
+        /// 当前工程
+        /// </summary>
         private MainModel _model = new MainModel();
         /// <summary>
         /// 当前工程 禁止直接修改其属性

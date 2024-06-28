@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using Autofac;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WH.Controls;
+using WH.Entity.Messages;
 using 断面毛刺检测软件.ViewModels;
 using 断面毛刺检测软件.Views.ModifyProj;
 
@@ -25,11 +26,10 @@ namespace 断面毛刺检测软件.Views
     public partial class ModifyProjWindow : HandyControl.Controls.Window
     {
        
-        public ModifyProjWindow(ModifyProjVM ProjVM)
+        public ModifyProjWindow()
         {
             InitializeComponent();
-            this.DataContext = ProjVM;
-           
+            this.DataContext = new ModifyProjVM( App.Container.Resolve<MainVM>());
             WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
         }
 

@@ -70,20 +70,20 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
-        ///   查找类似 名称： 的本地化字符串。
-        /// </summary>
-        internal static string Name {
-            get {
-                return ResourceManager.GetString("Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 路径： 的本地化字符串。
         /// </summary>
         internal static string Path {
             get {
                 return ResourceManager.GetString("Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 名称： 的本地化字符串。
+        /// </summary>
+        internal static string ProjName {
+            get {
+                return ResourceManager.GetString("ProjName", resourceCulture);
             }
         }
         

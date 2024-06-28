@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Timers;
 using System.Drawing;
 using CommunityToolkit.Mvvm.Messaging;
+using WH.Entity.Messages;
 
 
 namespace WH.Controls

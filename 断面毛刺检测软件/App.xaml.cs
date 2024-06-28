@@ -13,6 +13,15 @@ using System.Net;
 using System.Windows;
 using System;
 using System.Runtime.InteropServices;
+using 断面毛刺检测软件.ViewModels;
+using Autofac;
+using WH.Entity.LogRecord;
+using 断面毛刺检测软件.Views;
+
+
+
+
+
 
 #if !NET40
 using System.Runtime;
@@ -42,6 +51,7 @@ namespace 断面毛刺检测软件
             ProfileOptimization.SetProfileRoot(cachePath);
             ProfileOptimization.StartProfile("Profile");
 #endif
+            ConfigureServices();
         }
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -111,7 +121,33 @@ namespace 断面毛刺检测软件
 
             Current.MainWindow?.OnApplyTemplate();
         }
-       
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            var mainWindow = Container.Resolve<MainWindow>();
+            mainWindow.DataContext = Container.Resolve<MainVM>();
+            mainWindow?.Show();
+        }
+
+        public static IContainer Container { get; set; }
+        private static void ConfigureServices()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance<CLogRec>(new CLogRec("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
+            builder.RegisterInstance<CLogRec>(new CLogRec("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance() ;
+            builder.RegisterType<MainVM>().SingleInstance();
+            builder.RegisterType<MainWindow>().SingleInstance();
+
+            builder.RegisterType<SystemSettingWindow>().SingleInstance();
+            //新建
+           
+            builder.RegisterType<NewProjWindow>().SingleInstance().InstancePerDependency();
+            //修改
+            builder.RegisterType<ModifyProjWindow>().SingleInstance().InstancePerDependency();
+           
+
+            Container = builder.Build();
+        }
     }
     internal class GlobalData
     {
@@ -161,5 +197,11 @@ namespace 断面毛刺检测软件
 
         [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Auto)]
         public static extern int MciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
+    }
+
+    public enum LOGTYPE
+    {
+        LOGTYPE_SYS,
+        LOGTYPE_OPERATE
     }
 }

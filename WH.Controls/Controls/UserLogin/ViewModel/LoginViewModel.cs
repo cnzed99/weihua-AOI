@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
+using WH.Entity.Messages;
 
 namespace WH.Controls
 {

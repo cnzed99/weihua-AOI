@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using Autofac;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WH.Controls;
+using WH.Entity.Messages;
 using 断面毛刺检测软件.ViewModels;
 using 断面毛刺检测软件.Views.NewProj;
 
@@ -25,12 +26,12 @@ namespace 断面毛刺检测软件.Views
     public partial class NewProjWindow : HandyControl.Controls.Window
     {
        
-        public NewProjWindow(NewProjVM newProjVM)
+        public NewProjWindow()
         {
             InitializeComponent();
-            this.DataContext = newProjVM;
-           
+            this.DataContext = new NewProjVM(App.Container.Resolve<MainVM>());
             WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
+            
         }
 
         private void SelectPath_DoubleClick(object sender, MouseButtonEventArgs e)

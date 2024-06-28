@@ -28,7 +28,7 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10">
-            <TextBox hc:TitleElement.Title="{Binding [Name], Source={x:Static local:Lang.newProj}}" Text="{Binding Name}" />
+            <TextBox hc:TitleElement.Title="{Binding [ProjName], Source={x:Static local:Lang.newProj}}" Text="{Binding Name}" />
             <TextBox
                 x:Name="tb_path"
                 hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:Lang.newProj}}"
