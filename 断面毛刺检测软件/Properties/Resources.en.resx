@@ -279,4 +279,7 @@
   <data name="SaveasFailed" xml:space="preserve">
     <value>Save as Failed</value>
   </data>
+  <data name="AlgorParam" xml:space="preserve">
+    <value>AlgorParam</value>
+  </data>
 </root>

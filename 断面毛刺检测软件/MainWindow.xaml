@@ -9,6 +9,9 @@
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:al="clr-namespace:AlgorithmDll;assembly=AlgorithmDll"
+    xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
+    xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     Title=""
     Width="1400"
     Height="850"
@@ -317,13 +320,24 @@
                 SelectedIndex="0"
                 Style="{DynamicResource TabControlInLine}">
                 <hc:TabItem Header="{Binding [DetectArea], Source={x:Static local:Lang.instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <filter:FilterResultCtrl DataContext="{Binding SDFilterCtrlVM}"/>
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [Quality], Source={x:Static local:Lang.instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" >
+                        <qua:QualityGradeCtrl DataContext="{Binding QualityCtrlVM}"/>
+                    </hc:SimplePanel>
+                </hc:TabItem>
+                <hc:TabItem Header="{Binding [AlgorParam], Source={x:Static local:Lang.instance}}">
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <al:MaociAlgorParamCtrl DataContext="{Binding MaociAlgorParamCtrlVm}"/>
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [DetectConfig], Source={x:Static local:Lang.instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <filter:SDFilterCtrl DataContext="{Binding SDFilterCtrlVM}"/>
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [AlarmConfig], Source={x:Static local:Lang.instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}" />

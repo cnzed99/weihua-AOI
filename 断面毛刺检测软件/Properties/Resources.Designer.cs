@@ -88,6 +88,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 算法参数 的本地化字符串。
+        /// </summary>
+        public static string AlgorParam {
+            get {
+                return ResourceManager.GetString("AlgorParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 相机与通讯 的本地化字符串。
         /// </summary>
         public static string CamCom {

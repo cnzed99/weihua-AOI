@@ -285,7 +285,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
+    <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
   </ItemGroup>

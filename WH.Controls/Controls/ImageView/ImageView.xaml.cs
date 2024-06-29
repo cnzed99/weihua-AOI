@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace WH.Controls
 {
@@ -25,13 +14,6 @@ namespace WH.Controls
         public ImageView()
         {
             InitializeComponent();
-            this.Loaded += ImageView_Loaded;
-        }
-
-        private void ImageView_Loaded(object sender, RoutedEventArgs e)
-        {
-            ImageDraw = this.Image;
-            WinDraw = this.Canvas;
         }
 
         public BitmapSource Source
@@ -52,35 +34,130 @@ namespace WH.Controls
                 }
             }));
 
-
-
-        public ImagePro ImageDraw
-        {
-            get { return (ImagePro)GetValue(ImageDrawProperty); }
-            set { SetValue(ImageDrawProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ImageDrawProperty =
-            DependencyProperty.Register("ImageDraw", typeof(ImagePro), typeof(ImageView), new PropertyMetadata(null));
-
-
-
-        public CanvasPro WinDraw
-        {
-            get { return (CanvasPro)GetValue(WinDrawProperty); }
-            set { SetValue(WinDrawProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for WinDraw.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty WinDrawProperty =
-            DependencyProperty.Register("WinDraw", typeof(CanvasPro), typeof(ImageView), new PropertyMetadata(null));
-
+        public int ImageWidth => Source == null ? 0 : Source.PixelWidth;
+        public int ImageHeight => Source == null ? 0 : Source.PixelHeight;
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
-            ImageDraw.Clear();
-            WinDraw.Clear();
+            Clear();
+        }
+
+        public void SetPen(Brush brush, double thickness)
+        {
+            this.Image.SetPen(brush, thickness);
+            this.Canvas.SetPen(brush, thickness);
+        }
+
+        public void SetFontFamily(FontFamily fontFamily)
+        {
+            this.Image.SetFontFamily(fontFamily);
+            this.Canvas.SetFontFamily(fontFamily);
+        }
+
+        public void SetFontStyle(FontStyle fontStyle)
+        {
+            this.Image.SetFontStyle(fontStyle);
+            this.Canvas.SetFontStyle(fontStyle);
+        }
+
+        public void SetFontWeight(FontWeight fontWeight)
+        {
+            this.Image.SetFontWeight(fontWeight);
+            this.Canvas.SetFontWeight(fontWeight);
+        }
+
+        public void SetFontSize(int fontSize)
+        {
+            this.Image.SetFontSize(fontSize);
+            this.Canvas.SetFontSize(fontSize);
+        }
+
+        public void SetFontBrush(Brush fontBrush)
+        {
+            this.Image.SetFontBrush(fontBrush);
+            this.Canvas.SetFontBrush(fontBrush);
+        }
+
+        public void ImgDrawRegion(List<Point> points, bool isRender = true)
+        {
+            this.Image.DrawRegion(points, isRender);
+        }
+
+        public void ImgDrawPoints(List<Point> points, bool isRender = true)
+        {
+            this.Image.DrawPoints(points, isRender);
+        }
+
+        public void ImgDrawLine(Point pt1, Point pt2, bool isRender = true)
+        {
+            this.Image.DrawLine(pt1, pt2, isRender);
+        }
+
+        public void ImgDrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
+        {
+            this.Image.DrawEllipse(center, radiusX, radiusY, isRender);
+        }
+
+        public void ImgDrawRectangle(Rect rectangle, bool isRender = true)
+        {
+            this.Image.DrawRectangle(rectangle, isRender);
+        }
+
+        public void ImgDrawText(string text, Point origin, bool isRender = true)
+        {
+            this.Image.DrawText(text, origin, isRender);
+        }
+
+        public void ImgDrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
+        {
+            this.Image.DrawText(text, alignmentX, alignmentY, isRender);
+        }
+
+        public void WinDrawRegion(List<Point> points, bool isRender = true)
+        {
+            this.Canvas.DrawRegion(points, isRender);
+        }
+
+        public void WinDrawPoints(List<Point> points, bool isRender = true)
+        {
+            this.Canvas.DrawPoints(points, isRender);
+        }
+
+        public void WinDrawLine(Point pt1, Point pt2, bool isRender = true)
+        {
+            this.Canvas.DrawLine(pt1, pt2, isRender);
+        }
+
+        public void WinDrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
+        {
+            this.Canvas.DrawEllipse(center, radiusX, radiusY, isRender);
+        }
+
+        public void WinDrawRectangle(Rect rectangle, bool isRender = true)
+        {
+            this.Canvas.DrawRectangle(rectangle, isRender);
+        }
+
+        public void WinDrawText(string text, Point origin, bool isRender = true)
+        {
+            this.Canvas.DrawText(text, origin, isRender);
+        }
+
+        public void WinDrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
+        {
+            this.Canvas.DrawText(text, alignmentX, alignmentY, isRender);
+        }
+
+        public void Clear()
+        {
+            this.Image.Clear();
+            this.Canvas.Clear();
+        }
+
+        public void Invalidate()
+        {
+            this.Image.InvalidateVisual();
+            this.Canvas.InvalidateVisual();
         }
     }
 }

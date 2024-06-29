@@ -1,7 +1,10 @@
-﻿using Autofac;
+﻿using AlgorithmDll;
+using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mapster;
+using QualityGrade;
+using SDFilter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -193,5 +196,14 @@ namespace 断面毛刺检测软件.ViewModels
                 fs.Flush();
             }
         }
+
+        [ObservableProperty]
+        private MaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new MaociAlgorParamCtrlVm();
+
+        [ObservableProperty]
+        private SDFilterCtrlVM sDFilterCtrlVM = new SDFilterCtrlVM();
+
+        [ObservableProperty]
+        private QualityCtrlVM qualityCtrlVM = new QualityCtrlVM();
     }
 }

@@ -7,12 +7,12 @@ using System.Windows.Media.Imaging;
 
 namespace WH.Controls
 {
-    public record SDrawLine(Pen pen, Brush brushPen, int thickness, Point pt1, Point pt2);
-    public record SDrawEllipse(Brush brush, Pen pen, Brush brushPen, int thickness, Point center, double radiusX, double radiusY);
-    public record SDrawRectangle(Brush brush, Pen pen, Brush brushPen, int thickness, Rect rectangle);
+    public record SDrawLine(Pen pen, Point pt1, Point pt2);
+    public record SDrawEllipse(Pen pen, Point center, double radiusX, double radiusY);
+    public record SDrawRectangle(Pen pen, Rect rectangle);
     public record SDrawText(FormattedText formattedText, int thickness, Point origin);
     public record SDrawTextAlignment(FormattedText formattedText, int thickness, AlignmentX alignmentX, AlignmentY alignmentY);
-    public record SDrawRegion(Brush brush, Pen pen, Brush brushPen, int thickness, List<Point> points);
+    public record SDrawRegion(Pen pen, List<Point> points);
     public class ImagePro : Image
     {
         public ImagePro() : base()
@@ -28,41 +28,38 @@ namespace WH.Controls
             this.MouseWheel += ImagePro_MouseWheel;
             this.MouseLeftButtonUp += ImagePro_MouseLeftButtonUp;
             this.MouseLeftButtonDown += ImagePro_MouseLeftButtonDown;
-            this.Loaded += ImagePro_Loaded;
         }
 
-        private void ImagePro_Loaded(object sender, RoutedEventArgs e)
-        {
-            ImageOne = this;
-        }
-
-        private BitmapSource bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
-
+        private BitmapSource? bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
+        public int ImageWidth => bitmapImage == null ? 0 : bitmapImage.PixelWidth;
+        public int ImageHeight => bitmapImage == null ? 0 : bitmapImage.PixelHeight;
         public ScaleTransform scaleTransform { get; set; } = new ScaleTransform();
         public TranslateTransform translateTransform { get; set; } = new TranslateTransform();
         public DateTime LBtnDownTime { get; set; }
         public Point LastPos { get; set; }
-
         public List<SDrawLine> Lines { get; set; } = new List<SDrawLine>();
         public List<SDrawEllipse> Ellipses { get; set; } = new List<SDrawEllipse>();
         public List<SDrawRectangle> Rectangles { get; set; } = new List<SDrawRectangle>();
         public List<SDrawText> Texts { get; set; } = new List<SDrawText>();
         public List<SDrawTextAlignment> TextAlignments { get; set; } = new List<SDrawTextAlignment>();
         public List<SDrawRegion> Regions { get; set; } = new List<SDrawRegion>();
+        private Pen _Pen { get; set; } = new Pen(Brushes.Red, 1);
+        private List<(Pen, double)> _Pens { get; set; } = new List<(Pen, double)>();
+        private FontFamily _FontFamily { get; set; } = new FontFamily("宋体");
+        private FontStyle _FontStyle { get; set; } = FontStyles.Normal;
+        private FontWeight _FontWeight { get; set; } = FontWeights.Normal;
+        private int _FontSize { get; set; } = 15;
+        private Brush _FontBrush { get; set; } = Brushes.Red;
 
-        public int ImageWidth => bitmapImage == null ? 0 : bitmapImage.PixelWidth;
-
-        public int ImageHeight => bitmapImage == null ? 0 : bitmapImage.PixelHeight;
-
-        public ImagePro ImageOne
+        public bool FillEdge
         {
-            get { return (ImagePro)GetValue(ImageOneProperty); }
-            set { SetValue(ImageOneProperty, value); }
+            get { return (bool)GetValue(FillEdgeProperty); }
+            set { SetValue(FillEdgeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ImageOne.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ImageOneProperty =
-            DependencyProperty.Register("ImageOne", typeof(ImagePro), typeof(ImagePro), new PropertyMetadata(null));
+        // Using a DependencyProperty as the backing store for FillEdge.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FillEdgeProperty =
+            DependencyProperty.Register("FillEdge", typeof(bool), typeof(ImagePro), new PropertyMetadata(false));
 
         public double MinScale
         {
@@ -134,6 +131,7 @@ namespace WH.Controls
         public static readonly DependencyProperty YProperty =
             DependencyProperty.Register("Y", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
 
+
         private void ImagePro_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var image = (Image)sender;
@@ -148,6 +146,7 @@ namespace WH.Controls
                 scaleTransform.ScaleY = 1;
                 translateTransform.X = 0;
                 translateTransform.Y = 0;
+                OnScaleChanged();
             }
             LBtnDownTime = DateTime.Now;
         }
@@ -171,6 +170,8 @@ namespace WH.Controls
             double dOffestY = (scaleTransform.CenterY - oldScaleCenterY) * (oldScale - 1);
             translateTransform.X += dOffestX;
             translateTransform.Y += dOffestY;
+
+            OnScaleChanged();
         }
 
         private void ImagePro_MouseMove1(object sender, MouseEventArgs e)
@@ -214,33 +215,47 @@ namespace WH.Controls
         {
             base.OnRender(dc);
 
+            foreach (var item in _Pens)
+            {
+                item.Item1.Thickness = item.Item2 / scaleTransform.ScaleX;
+            }
+
             double dRatio = this.ActualWidth / ImageWidth;
             foreach (var line in Lines)
             {
-                line.pen.Brush = line.brushPen;
-                line.pen.Thickness = line.thickness * dRatio;
                 dc.DrawLine(line.pen, new Point(line.pt1.X * dRatio, line.pt1.Y * dRatio), new Point(line.pt2.X * dRatio, line.pt2.Y * dRatio));
             }
             foreach (var ellipse in Ellipses)
             {
-                ellipse.pen.Brush = ellipse.brushPen;
-                ellipse.pen.Thickness = ellipse.thickness * dRatio;
-                dc.DrawEllipse(ellipse.brush, ellipse.pen, new Point(ellipse.center.X * dRatio, ellipse.center.Y * dRatio), ellipse.radiusX * dRatio, ellipse.radiusY * dRatio);
+                dc.DrawEllipse(FillEdge ? ellipse.pen.Brush : Brushes.Transparent, ellipse.pen, new Point(ellipse.center.X * dRatio, ellipse.center.Y * dRatio), ellipse.radiusX * dRatio, ellipse.radiusY * dRatio);
             }
             foreach (var rect in Rectangles)
             {
-                rect.pen.Brush = rect.brushPen;
-                rect.pen.Thickness = rect.thickness * dRatio;
-                dc.DrawRectangle(rect.brush, rect.pen, new Rect(rect.rectangle.X * dRatio, rect.rectangle.Y * dRatio, rect.rectangle.Width * dRatio, rect.rectangle.Height * dRatio));
+                dc.DrawRectangle(FillEdge ? rect.pen.Brush : Brushes.Transparent, rect.pen, new Rect(rect.rectangle.X * dRatio, rect.rectangle.Y * dRatio, rect.rectangle.Width * dRatio, rect.rectangle.Height * dRatio));
+            }
+            foreach (var region in Regions)
+            {
+                List<Point> tmp = new List<Point>();
+                foreach (var item in region.points)
+                {
+                    tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                }
+                PathGeometry geometry = new PathGeometry();
+                PolyLineSegment polyLineSegment = new PolyLineSegment();
+                polyLineSegment.Points = new PointCollection(tmp);
+                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
+                geometry.Figures.Add(figure);
+
+                dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
             }
             foreach (var text in Texts)
             {
-                text.formattedText.SetFontSize(text.thickness * dRatio);
+                text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
                 dc.DrawText(text.formattedText, new Point(text.origin.X * dRatio, text.origin.Y * dRatio));
             }
             foreach (var text in TextAlignments)
             {
-                text.formattedText.SetFontSize(text.thickness * dRatio);
+                text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
                 double x = 20, y = 20;
                 switch (text.alignmentX)
                 {
@@ -262,70 +277,121 @@ namespace WH.Controls
                 }
                 dc.DrawText(text.formattedText, new Point(x * dRatio, y * dRatio));
             }
-            foreach (var region in Regions)
-            {
-                region.pen.Brush = region.brushPen;
-                region.pen.Thickness = region.thickness * dRatio;
-                List<Point> tmp = new List<Point>();
-                foreach (var item in region.points)
-                {
-                    tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
-                }
-                PathGeometry geometry = new PathGeometry();
-                PolyLineSegment polyLineSegment = new PolyLineSegment();
-                polyLineSegment.Points = new PointCollection(tmp);
-                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
-                geometry.Figures.Add(figure);
-
-                dc.DrawGeometry(region.brush, region.pen, geometry);
-            }
         }
 
-        public void DrawText(string text, Point origin, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight, int fontSize, Brush fontBrush, bool isRender = true)
+        public void SetPen(Brush brush, double thickness)
+        {
+            _Pen = new Pen(brush, thickness);
+        }
+
+        public void SetFontFamily(FontFamily fontFamily)
+        {
+            _FontFamily = fontFamily;
+        }
+
+        public void SetFontStyle(FontStyle fontStyle)
+        {
+            _FontStyle = fontStyle;
+        }
+
+        public void SetFontWeight(FontWeight fontWeight)
+        {
+            _FontWeight = fontWeight;
+        }
+
+        public void SetFontSize(int fontSize)
+        {
+            _FontSize = fontSize;
+        }
+
+        public void SetFontBrush(Brush fontBrush)
+        {
+            _FontBrush = fontBrush;
+        }
+
+        public void DrawText(string text, Point origin, bool isRender = true)
         {
             if (bitmapImage != null)
             {
                 Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(fontFamily, fontStyle, fontWeight, FontStretches.Normal), fontSize, fontBrush, bitmapImage.DpiX / 96f), fontSize, origin));
+                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
                 if (isRender) this.InvalidateVisual();
             }
 
         }
 
-        public void DrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight, int fontSize, Brush fontBrush, bool isRender = true)
+        public void DrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
         {
             if (bitmapImage != null)
             {
                 TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(fontFamily, fontStyle, fontWeight, FontStretches.Normal), fontSize, fontBrush, bitmapImage.DpiX / 96f), fontSize, alignmentX, alignmentY));
+                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
                 if (isRender) this.InvalidateVisual();
             }
         }
 
-        public void DrawRegion(List<Point> points, Brush brush, Brush brushPen, int thicknessPen, bool isRender = true)
+        public void DrawRegion(List<Point> points, bool isRender = true)
         {
             if (points.Count == 0) return;
-            Regions.Add(new SDrawRegion(brush, new Pen(), brushPen, thicknessPen, points));
+
+            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+            Regions.Add(new SDrawRegion(_Pen, points));
 
             if (isRender) this.InvalidateVisual();
         }
 
-        public void DrawLine(Brush brushPen, int thicknessPen, Point pt1, Point pt2, bool isRender = true)
+        public void DrawPoints(List<Point> points, bool isRender = true)
         {
-            Lines.Add(new SDrawLine(new Pen(), brushPen, thicknessPen, pt1, pt2));
+            if (points.Count == 0) return;
+
+            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+            List<Point> region = new List<Point>();
+            foreach (var item in points)
+            {
+                if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                {
+                    Regions.Add(new SDrawRegion(_Pen, region));
+                    region = new List<Point>();
+                }
+                region.Add(item);
+            }
+            if (region.Count > 0)
+            {
+                Regions.Add(new SDrawRegion(_Pen, region));
+            }
+
             if (isRender) this.InvalidateVisual();
         }
 
-        public void DrawEllipse(Brush brush, Brush brushPen, int thicknessPen, Point center, double radiusX, double radiusY, bool isRender = true)
+        public void DrawLine(Point pt1, Point pt2, bool isRender = true)
         {
-            Ellipses.Add(new SDrawEllipse(brush, new Pen(), brushPen, thicknessPen, center, radiusX, radiusY));
+            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+            Lines.Add(new SDrawLine(_Pen, pt1, pt2));
             if (isRender) this.InvalidateVisual();
         }
 
-        public void DrawRectangle(Brush brush, Brush brushPen, int thicknessPen, Rect rectangle, bool isRender = true)
+        public void DrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
         {
-            Rectangles.Add(new SDrawRectangle(brush, new Pen(), brushPen, thicknessPen, rectangle));
+            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+            Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
             if (isRender) this.InvalidateVisual();
+        }
+
+        public void DrawRectangle(Rect rectangle, bool isRender = true)
+        {
+            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+            Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+            if (isRender) this.InvalidateVisual();
+        }
+
+        public void OnScaleChanged()
+        {
+            this.InvalidateVisual();
         }
 
         public void Clear()
@@ -336,6 +402,7 @@ namespace WH.Controls
             Texts.Clear();
             TextAlignments.Clear();
             Regions.Clear();
+            _Pens.Clear();
 
             this.InvalidateVisual();
         }

@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="QualityGrade.QualityGradeCtrl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:local="clr-namespace:QualityGrade"
+             xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+             xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="550">
+    <d:UserControl.DataContext>
+        <local:QualityCtrlVM/>
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <Style x:Key="Textbox1" TargetType="TextBox" BasedOn="{StaticResource TextBoxExtend.Small}">
+                <Setter Property="Margin" Value="5,0"/>
+                <Setter Property="hc:InfoElement.TitlePlacement" Value="Left"/>
+                <Setter Property="hc:InfoElement.TitleWidth" Value="70"/>
+            </Style>
+            <Style TargetType="GridViewColumnHeader">
+                <Setter Property="IsHitTestVisible"  Value="False"/>
+            </Style>
+            <entity:KnownColorConverter x:Key="KnownColorConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Row="2" Grid.Column="0" Content="{Binding [Add], Source={x:Static local:Lang.instance}}" Style="{StaticResource ButtonPrimary}" Margin="10,2" Width="80"
+                Command="{Binding AddCommand}"/>
+        <Button Grid.Row="2" Grid.Column="1"  Content="{Binding [Delete], Source={x:Static local:Lang.instance}}" Style="{StaticResource ButtonDanger}" Margin="10,2" Width="80"
+                Command="{Binding RemoveCommand}"/>
+        <Button Grid.Row="2" Grid.Column="2"  Content="{Binding [Edit], Source={x:Static local:Lang.instance}}" Style="{StaticResource ButtonPrimary}" Margin="10,2" Width="80"
+                Command="{Binding EditCommand}"/>
+        <TextBox hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" Style="{StaticResource Textbox1}" 
+                 Text="{Binding QualitySet.Name}"/>
+        <TextBox Grid.Column="1" hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" Style="{StaticResource Textbox1}" IsReadOnly="True"
+                 Text="{Binding QualitySet.Priority}"/>
+        <Grid Grid.Column="2" Margin="5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" VerticalAlignment="Center"/>
+            <wh:ColorComboBox Grid.Column="1" SelectColor="{Binding QualitySet.ColorBrush, Mode=TwoWay}"/>
+        </Grid>
+        <TextBox Grid.Row="1" hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" Style="{StaticResource Textbox1}" 
+                 Text="{Binding QualitySet.Signal}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" hc:InfoElement.Title="{Binding [Description], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" 
+                 Style="{StaticResource Textbox1}" Text="{Binding QualitySet.Description}"/>
+        <ListView Grid.Row="3" Grid.ColumnSpan="3" ItemsSource="{Binding QualityConfig.Qualities}" SelectionMode="Single" SelectedItem="{Binding QualitySelect}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="Bd" Background="{TemplateBinding Background}" HorizontalAlignment="Stretch">
+                                    <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="3"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Background" Value="#FF0078D7"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Panel.Background" Value="#FF0078D7"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Width="80" Header="{Binding [QualityGrade], Source={x:Static local:Lang.instance}}" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Width="80" Header="{Binding [Priority], Source={x:Static local:Lang.instance}}" DisplayMemberBinding="{Binding Priority}"/>
+                    <GridViewColumn Width="80" Header="{Binding [ShowColor], Source={x:Static local:Lang.instance}}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding ColorBrush, Converter={StaticResource KnownColorConverter}}" 
+                                       Width="80" HorizontalAlignment="Center"  Background="{Binding ColorBrush}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="80" Header="{Binding [QualitySignal], Source={x:Static local:Lang.instance}}" DisplayMemberBinding="{Binding Signal}"/>
+                    <GridViewColumn Width="200" Header="{Binding [Description], Source={x:Static local:Lang.instance}}" DisplayMemberBinding="{Binding Description}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

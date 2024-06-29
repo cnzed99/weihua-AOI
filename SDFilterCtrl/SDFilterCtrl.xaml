@@ -1,0 +1,272 @@
+﻿<UserControl x:Class="SDFilter.SDFilterCtrl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SDFilter"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="550">
+    <d:UserControl.DataContext>
+        <local:SDFilterCtrlVM/>
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <local:Boolean2BrushConverter x:Key="Boolean2BrushConverter" />
+            <local:ExpanderConverter x:Key="ExpanderConverter" />
+            <local:OneSelectParamsConverter x:Key="OneSelectParamsConverter" />
+            <local:ColoectionIndexConverter x:Key="ColoectionIndexConverter" />
+            <entity:CommMultiParamConverter x:Key="CommMultiParamConverter"/>
+            <Style x:Key="Button" TargetType="Button" BasedOn="{StaticResource ButtonPrimary}">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Padding" Value="8,5,8,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            </Style>
+            <Style x:Key="DelButton" TargetType="Button" BasedOn="{StaticResource ButtonDanger}">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Padding" Value="8,5,8,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            </Style>
+            <Style x:Key="TextBlock1" TargetType="TextBlock">
+                <!--<Setter Property="Foreground" Value="Cyan" />-->
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="TextBlock2" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Padding" Value="10,7,10,7" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="SelectConfig" TargetType="ItemsControl">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="10,7,10,7" />
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource ColoectionIndexConverter}" ConverterParameter="or">
+                                            <Binding />
+                                            <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ItemsSource" />
+                                            <Binding Path="SelectParams.Count" />
+                                            <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ItemsSource.Count" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <ItemsControl ItemsSource="{Binding SelectParams}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <WrapPanel Orientation="Horizontal">
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding Converter="{StaticResource ColoectionIndexConverter}" ConverterParameter="and">
+                                                            <Binding />
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ItemsSource" />
+                                                            <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ItemsSource.Count" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding Converter="{StaticResource OneSelectParamsConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                            <Binding Path="Character" />
+                                                            <Binding Path="Min" />
+                                                            <Binding Path="Max" />
+                                                            <Binding Path="MaxLimit" />
+                                                            <Binding Path="MinLimit" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </WrapPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" DataContext="{Binding FilterConfig}">
+        <ItemsControl ItemsSource="{Binding SpeciesFilters}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Expander hc:BorderElement.CornerRadius="0"
+                              IsExpanded="True"
+                              Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background}"
+                              BorderThickness="1"
+                              BorderBrush="Transparent">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock  Style="{StaticResource TextBlock1}" Foreground="Cyan" 
+                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource ExpanderConverter}}"/>
+                                <TextBlock Grid.Column="1" Style="{StaticResource TextBlock1}" Foreground="Cyan" Text="{Binding Name}"/>
+                                <Button Grid.Column="2"
+                                        Margin="2"
+                                        Content="{Binding [AddDefect], Source={x:Static local:Lang.instance}}"
+                                        Style="{DynamicResource Button}"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AddFilterCommand}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </Expander.Header>
+                        <ItemsControl ItemsSource="{Binding RecipeDefects}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ItemsControl ItemsSource="{Binding DefectFilters}" Margin="15,0,2,3">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition MinHeight="15" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="100"/>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="70" />
+                                                            <ColumnDefinition Width="70" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{DynamicResource TextBlock1}" Margin="5,0" />
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <TextBlock Margin="15,0,0,0" HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="Gray" >      
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding StringFormat="{}{0}:{1}">
+                                                                        <Binding Source="{x:Static local:Lang.instance}" Path="[Algorithm]"/>
+                                                                        <Binding Path="DataContext.Name" RelativeSource="{RelativeSource AncestorType=ItemsControl}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+                                                            </TextBlock>
+                                                            <TextBlock Margin="15,0,0,0" HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="Gray" >
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding StringFormat="{}{0}:{1}">
+                                                                        <Binding Source="{x:Static local:Lang.instance}" Path="[QualityLevel]"/>
+                                                                        <Binding Path="QualityLevel"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+                                                            </TextBlock>
+                                                            <TextBlock Margin="15,0,0,0" HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="Gray" >
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding StringFormat="{}{0}:{1}">
+                                                                        <Binding Source="{x:Static local:Lang.instance}" Path="[Priority]"/>
+                                                                        <Binding Path="Priority"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+                                                            </TextBlock>
+                                                            <Label Margin="15,0,0,0" Background="{Binding ShowColor}" Width="40"/>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2"
+                                                                Width="55"
+                                                                Margin="5,2,0,0"
+                                                                Content="{Binding [Edit], Source={x:Static local:Lang.instance}}"
+                                                                Style="{DynamicResource Button}"
+                                                                Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.EditFilterCommand}">
+                                                            <Button.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                                    <Binding/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl, AncestorLevel=2}" Path="DataContext"/>
+                                                                </MultiBinding>
+                                                            </Button.CommandParameter>
+                                                        </Button>
+                                                        <Button Grid.Column="3"
+                                                                Width="55"
+                                                                Margin="5,2,5,0"
+                                                                Content="{Binding [Delete], Source={x:Static local:Lang.instance}}"
+                                                                Style="{DynamicResource DelButton}"
+                                                                Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl},  Path=DataContext.RemoveFilterCommand}">
+                                                            <Button.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                                    <Binding/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext"/>
+                                                                </MultiBinding>
+                                                            </Button.CommandParameter>
+                                                        </Button>
+                                                    </Grid>
+                                                    <Border Grid.Row="1" Margin="10,0,10,5" Padding="0.5">
+                                                        <ItemsControl ItemsSource="{Binding FilterList}" AlternationCount="10000">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <Border Grid.Column="0"
+                                                                                BorderThickness="1"
+                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                BorderBrush="DarkCyan">
+                                                                            <TextBlock Style="{DynamicResource TextBlock2}" FontSize="12">
+                                                                                <TextBlock.Text>
+                                                                                    <MultiBinding StringFormat="{}{0}{1}">
+                                                                                        <Binding Path="[DefectFilter]" Source="{x:Static local:Lang.instance}"/>
+                                                                                        <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                                                                    </MultiBinding>
+                                                                                </TextBlock.Text>
+                                                                            </TextBlock>
+                                                                        </Border>
+                                                                        <Border Grid.Column="1"
+                                                                                BorderThickness="1"
+                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                BorderBrush="DarkCyan">
+                                                                            <ItemsControl ItemsSource="{Binding Filter}" Style="{DynamicResource SelectConfig}" FontSize="12" />
+                                                                        </Border>
+                                                                        <Border Grid.Column="2"
+                                                                                BorderThickness="1"
+                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                BorderBrush="DarkCyan">
+                                                                            <ItemsControl ItemsSource="{Binding SelectList}" Style="{DynamicResource SelectConfig}" FontSize="12" />
+                                                                        </Border>
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

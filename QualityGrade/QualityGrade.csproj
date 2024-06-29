@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Newtonsoft.Json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Resource1.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource1.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resource1.en.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Properties\Resource1.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>
