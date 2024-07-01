@@ -19,13 +19,6 @@ using WH.Entity.LogRecord;
 using 断面毛刺检测软件.Views;
 using WH.Controls.SingleInstance;
 
-
-
-
-
-
-
-
 #if !NET40
 using System.Runtime;
 #endif

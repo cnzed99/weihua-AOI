@@ -30,7 +30,7 @@ namespace WH.Controls
             this.MouseLeftButtonDown += ImagePro_MouseLeftButtonDown;
         }
 
-        private BitmapSource? bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
+        private BitmapSource bitmapImage => this.Source is BitmapSource ? (BitmapSource)this.Source : null;
         public int ImageWidth => bitmapImage == null ? 0 : bitmapImage.PixelWidth;
         public int ImageHeight => bitmapImage == null ? 0 : bitmapImage.PixelHeight;
         public ScaleTransform scaleTransform { get; set; } = new ScaleTransform();

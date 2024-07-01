@@ -7,6 +7,9 @@ using System.Text;
 namespace WH.Entity.CommonLib
 {
     public record OperateMessage(object obj, string message);
+    /// <summary>
+    /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
+    /// </summary>
     public abstract class ObservableLog : ObservableObject
     {
         private object oldValue = "";

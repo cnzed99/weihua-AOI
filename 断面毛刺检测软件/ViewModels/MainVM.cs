@@ -47,6 +47,9 @@ namespace 断面毛刺检测软件.ViewModels
         public MainModel Model { get => _model; set{
                 SetProperty(ref _model, value);
                 _model.Adapt(this);
+                SDFilterCtrlVM.FilterConfig = MaociFilter;
+                QualityCtrlVM.QualityConfig = MaociQuality;
+                //MaociAlgorParamCtrlVm
             } }
         [ObservableProperty]
         string projPath ;

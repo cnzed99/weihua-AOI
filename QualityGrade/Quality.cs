@@ -10,11 +10,13 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
+using Newtonsoft.Json;
 
 namespace QualityGrade
 {
     public partial class QualityConfig : ObservableLog, IRecipient<OperateMessage>
     {
+        [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         public QualityConfig()

@@ -1,14 +1,16 @@
-﻿<UserControl x:Class="AlgorithmDll.MaociAlgorParamCtrl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:AlgorithmDll"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="AlgorithmDll.MaociAlgorParamCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:AlgorithmDll"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <local:MaociAlgorParamCtrlVm/>
+        <local:MaociAlgorParamCtrlVm />
     </d:UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,67 +18,99 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>-->
-            <local:GridHeigth2ExpanderHeight x:Key="GridHeigth2ExpanderHeight"/>
+            <local:GridHeigth2ExpanderHeight x:Key="GridHeigth2ExpanderHeight" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <GroupBox Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="PC参数" VerticalAlignment="Center"/>
-                    <ComboBox DockPanel.Dock="Left" Name="cmb_pcParam" Width="150" Margin="5,3" ItemsSource="{Binding PcParams}" >
+                    <TextBlock VerticalAlignment="Center" Text="PC参数" />
+                    <ComboBox
+                        Name="cmb_pcParam"
+                        Width="150"
+                        Margin="5,3"
+                        DockPanel.Dock="Left"
+                        ItemsSource="{Binding PcParams}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <ComboBox.SelectedItem>
                             <MultiBinding>
                                 <MultiBinding.Converter>
-                                    <local:string2ComboxSelectItemPc/>
+                                    <local:string2ComboxSelectItemPc />
                                 </MultiBinding.Converter>
-                                <Binding Path="PcSelect"/>
-                                <Binding Path="PcParams"/>
+                                <Binding Path="PcSelect" />
+                                <Binding Path="PcParams" />
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
-                    <Button Content="新增" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddPcParamCommand}"/>
-                    <Button Content="删除"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemovePcParamCommand}"
-                            CommandParameter="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"/>
+                    <Button
+                        Width="70"
+                        Margin="10,0"
+                        Command="{Binding AddPcParamCommand}"
+                        Content="新增"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonPrimary}" />
+                    <Button
+                        Width="70"
+                        Command="{Binding RemovePcParamCommand}"
+                        CommandParameter="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"
+                        Content="删除"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonDanger}" />
                 </StackPanel>
             </GroupBox.Header>
-            <hc:PropertyGrid SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"/>
+            <hc:PropertyGrid SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}" />
         </GroupBox>
         <GroupBox Grid.Row="2" Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="FPGA参数" VerticalAlignment="Center"/>
-                    <ComboBox DockPanel.Dock="Left" Name="cmb_fpgaParam" Width="150" Margin="5,3" ItemsSource="{Binding FpgaParams}" >
+                    <TextBlock VerticalAlignment="Center" Text="FPGA参数" />
+                    <ComboBox
+                        Name="cmb_fpgaParam"
+                        Width="150"
+                        Margin="5,3"
+                        DockPanel.Dock="Left"
+                        ItemsSource="{Binding FpgaParams}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <ComboBox.SelectedItem>
                             <MultiBinding>
                                 <MultiBinding.Converter>
-                                    <local:string2ComboxSelectItemFpga/>
+                                    <local:string2ComboxSelectItemFpga />
                                 </MultiBinding.Converter>
-                                <Binding Path="FpgaSelect"/>
-                                <Binding Path="FpgaParams"/>
+                                <Binding Path="FpgaSelect" />
+                                <Binding Path="FpgaParams" />
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
-                    <Button Content="新增" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddFpgaParamCommand}"/>
-                    <Button Content="删除"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemoveFpgaParamCommand}"
-                            CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
+                    <Button
+                        Width="70"
+                        Margin="10,0"
+                        Command="{Binding AddFpgaParamCommand}"
+                        Content="新增"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonPrimary}" />
+                    <Button
+                        Width="70"
+                        Command="{Binding RemoveFpgaParamCommand}"
+                        CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"
+                        Content="删除"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonDanger}" />
                 </StackPanel>
             </GroupBox.Header>
-            <hc:PropertyGrid SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
+            <hc:PropertyGrid SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}" />
         </GroupBox>
     </Grid>
 </UserControl>

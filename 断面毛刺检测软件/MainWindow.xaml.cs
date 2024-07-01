@@ -84,7 +84,11 @@ namespace 断面毛刺检测软件
                 await mainVM.LoadAsync(progress);
                 if (mainVM.SystemSettings.IsEnglish)
                 {
-                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
+                    var languageCode = "en-US";
+                  
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+                    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+                    LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
 
 
@@ -339,7 +343,7 @@ namespace 断面毛刺检测软件
             if (cbLang.IsChecked??true)
             {
                 languageCode = "en-US";
-                
+               
             }
             OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);

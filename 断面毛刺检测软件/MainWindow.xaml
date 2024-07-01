@@ -169,6 +169,7 @@
                         Name="cbLang"
                         Checked="Lang_Checked"
                         Content="en_US"
+                        IsChecked="{Binding SystemSettings.IsEnglish}"
                         Unchecked="Lang_Checked" />
                 </MenuItem>
             </Menu>
@@ -461,6 +462,7 @@
             Height="200"
             ArcThickness="10"
             FontSize="20"
+            d:Visibility="Hidden"
             Style="{DynamicResource ProgressBarInfoCircle}"
             Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
             Value="50" />

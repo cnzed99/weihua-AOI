@@ -120,7 +120,7 @@ namespace SDFilter
             var objArr = obj as object[];
             if (objArr != null && objArr.Length == 2)
             {
-                SelectConfig? selectConfig = objArr[0] as SelectConfig;
+                SelectConfig selectConfig = objArr[0] as SelectConfig;
                 ObservableCollection<SelectConfig> selectConfigs = objArr[1] as ObservableCollection<SelectConfig>;
                 if(selectConfigs != null && selectConfig != null) selectConfigs.Remove(selectConfig);
             }
@@ -138,7 +138,7 @@ namespace SDFilter
             var objArr = obj as object[];
             if (objArr != null && objArr.Length == 2)
             {
-                OneSelectParams? oneSelectParams = objArr[0] as OneSelectParams;
+                OneSelectParams oneSelectParams = objArr[0] as OneSelectParams;
                 ObservableCollection<OneSelectParams> lsSelectParams = objArr[1] as ObservableCollection<OneSelectParams>;
                 if (oneSelectParams != null && lsSelectParams != null) lsSelectParams.Remove(oneSelectParams);
             }     

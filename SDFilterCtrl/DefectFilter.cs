@@ -25,6 +25,7 @@ namespace SDFilter
     /// </summary>
     public partial class FilterConfig : ObservableLog, IRecipient<OperateMessage>
     {
+        [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         public FilterConfig()
