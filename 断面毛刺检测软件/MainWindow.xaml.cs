@@ -29,6 +29,7 @@ using System;
 using System.Reflection.PortableExecutable;
 using Autofac;
 using WH.Entity.LogRecord;
+using Mapster;
 
 namespace 断面毛刺检测软件
 {
@@ -85,13 +86,15 @@ namespace 断面毛刺检测软件
                 if (mainVM.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
-                  
+
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
                     Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
                     LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
-
-
+                ((IProgress<double>)progress).Report(100);
+                WelComePage welComePage = new WelComePage(mainVM.SystemSettings.RecentProjs.ToList(), "断面毛刺检测软件");
+                welComePage.useraction = async (c) => await userActionFun(c);
+                welComePage.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -103,7 +106,30 @@ namespace 断面毛刺检测软件
                 ((IProgress<double>)progress).Report(100);
             }
         }
-
+        /// <summary>
+        /// 欢迎页事件处理
+        /// </summary>
+        /// <param name="act"></param>
+        private async Task userActionFun(string act)
+        {
+            switch (act)
+            {
+                case "mainform"://打开主界面
+                    ((IProgress<double>)progress).Report(100);
+                    //this.Visible = true;
+                    //新建项目ToolStripMenuItem_Click(null, null);
+                    break;
+                case "openfile"://打开项目
+                    //this.Visible = true;
+                    OpenProj_Click(null, null);
+                    break;
+                default://默认 打开最近项目
+                    
+                    await OpenProjAsync(act);
+                    break;
+            }
+            //this.WindowState = WindowState.Normal;
+        }
         #endregion
 
         #region 用户登录

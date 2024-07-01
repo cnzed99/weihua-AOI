@@ -303,13 +303,13 @@
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1">
-                    <wh:ImageView />
+                    <wh:ImageView Source="{Binding ModelImage}"/>
                 </Border>
                 <Border
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1">
-                    <wh:ImageView />
+                    <wh:ImageView Source="{Binding LastImage}" d:Source="D://铝极.png"/>
                 </Border>
 
             </UniformGrid>
@@ -408,10 +408,10 @@
                 DockPanel.Dock="Left"
                 Orientation="Horizontal">
                 <TextBlock Text="{Binding [Algorithm], Source={x:Static local:Lang.instance}}" />
-                <TextBlock Margin="2,0" Text="50" />
+                <TextBlock Text="{Binding AlgorithmTime}" Margin="2,0"/>
                 <TextBlock Text="ms" />
                 <TextBlock Margin="10,0,0,0" Text="{Binding [Filter], Source={x:Static local:Lang.instance}}" />
-                <TextBlock Margin="2,0" Text="50" />
+                <TextBlock Text="{Binding FilterTime}" Margin="2,0"/>
                 <TextBlock Text="ms" />
 
             </StackPanel>

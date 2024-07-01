@@ -1,0 +1,141 @@
+﻿<Window
+    x:Class="WH.Controls.WelComePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WH.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prop="clr-namespace:WH.Controls.Properties"
+    x:Name="window"
+    Title="WelComePage"
+    Width="344.417"
+    Height="257.333"
+    AllowsTransparency="True"
+    Background="{x:Null}"
+    Foreground="White"
+    Icon="/WH.Controls;component/Controls/UserLogin/Imgs/欢迎页标.png"
+    MouseLeftButtonDown="window_MouseLeftButtonDown"
+    Topmost="True"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WH.Controls;component/ControlDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoaded1_BeginStoryboard" Storyboard="{StaticResource OnLoaded1}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="btn_Close">
+            <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="btn_Close">
+            <BeginStoryboard x:Name="OnMouseLeave1_BeginStoryboard" Storyboard="{StaticResource OnMouseLeave1}" />
+        </EventTrigger>
+    </Window.Triggers>
+    <Grid x:Name="grid">
+        <Grid.Background>
+            <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/欢迎页.png" />
+        </Grid.Background>
+        <TextBlock
+            Margin="19.333,15,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [Welcome], Source = {x:Static prop:LangManager.welPage}}"
+            FontFamily="Yu Gothic UI Semibold"
+            FontSize="20"
+            Foreground="#43FFFFFF" />
+        <Button
+            x:Name="btn_Close"
+            Width="26.333"
+            Height="20.667"
+            Margin="0,9.667,20,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            VerticalContentAlignment="Top"
+            Background="{x:Null}"
+            BorderBrush="{x:Null}"
+            Click="button_Click"
+            Content="✖"
+            Foreground="#33FFFFFF"
+            RenderTransformOrigin="0.5,0.5"
+            Style="{DynamicResource CloseButton}">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <TextBlock
+            Name="lb_Title"
+            Width="304.751"
+            Height="36.666"
+            Margin="19.333,45.333,17.666,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            TextAlignment="Center"
+            Text="标题"
+            FontSize="20"
+            Foreground="White" />
+        <TextBlock
+            Margin="64.666,81.999,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [Startup], Source = {x:Static prop:LangManager.welPage}}"
+            FontFamily="Yu Gothic UI Semibold"
+            FontSize="16"
+            Foreground="#43FFFFFF" />
+        <TextBlock
+            Margin="64.666,168.576,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding [Recent], Source = {x:Static prop:LangManager.welPage}}"
+            FontFamily="Yu Gothic UI Semibold"
+            FontSize="16"
+            Foreground="#43FFFFFF" />
+        <Button
+            Name="btn_MainFrm"
+            Width="100"
+            Height="25"
+            Margin="0,112.666,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Click="btn_MainFrm_Click"
+            Content="{Binding [Main], Source = {x:Static prop:LangManager.welPage}}"
+            Style="{DynamicResource PageButton}" />
+        <Button
+            Name="btn_OpenProj"
+            Width="100"
+            Height="25"
+            Margin="0,140.333,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Click="btnOpen_Click"
+            Content="{Binding [OpenProj], Source = {x:Static prop:LangManager.welPage}}"
+            Style="{DynamicResource PageButton}" />
+        <Label
+            Width="254"
+            Height="42"
+            Margin="46,0,44,10"
+            VerticalAlignment="Bottom"
+            BorderThickness="0"
+            Content=""
+            Foreground="{x:Null}">
+            <Label.Background>
+                <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" Stretch="Uniform" />
+            </Label.Background>
+        </Label>
+        <Grid
+            Name="ProjContainer"
+            Height="1"
+            Margin="46,200,44,0"
+            VerticalAlignment="Top" />
+    </Grid>
+</Window>

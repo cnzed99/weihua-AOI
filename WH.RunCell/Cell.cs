@@ -1,5 +1,6 @@
 
 using System.Diagnostics;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WH.RecipeCellRootBase;
 
@@ -219,7 +220,7 @@ namespace WH.RunCell
         /// <summary>
         /// 缺陷等级颜色
         /// </summary>
-        //  public Color QualityColor { get; set; } = System.Drawing.Color.White;
+        public Brush QualityColor { get; set; } = Brushes.White;
 
         /// <summary>
         /// 缺陷等级颜色名称

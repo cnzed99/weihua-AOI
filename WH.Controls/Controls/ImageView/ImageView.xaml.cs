@@ -31,6 +31,7 @@ namespace WH.Controls
                     ImageView view = (ImageView)d;
                     view.Image.Source = (BitmapSource)e.NewValue;
                     view.Canvas.Source = (BitmapSource)e.NewValue;
+                    
                 }
             }));
 
