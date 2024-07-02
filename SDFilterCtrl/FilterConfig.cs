@@ -159,7 +159,7 @@ namespace SDFilter
         /// 过滤分选，结果输出在cell里面
         ///</summary>
         /// <param name="cell"></param>
-        public void Excetu(Cell cell)
+        public void Excute(Cell cell)
         {
             if (cell._skipthis)
             {
@@ -339,6 +339,10 @@ namespace SDFilter
     /// </summary>
     public partial class SpeciesFilter : ObservableLog
     {
+        public SpeciesFilter()
+        {
+            
+        }
         public SpeciesFilter(string name) 
         {
             this.Name = name;
@@ -375,6 +379,10 @@ namespace SDFilter
     /// </summary>
     public partial class RecipeDefect : ObservableLog
     {
+        public RecipeDefect()
+        {
+            
+        }
         public RecipeDefect(string name)
         {
             this.Name = name;
@@ -408,6 +416,10 @@ namespace SDFilter
     /// </summary>
     public partial class DefectFilter : ObservableLog
     {
+        public DefectFilter()
+        {
+            
+        }
         public DefectFilter(string name)
         {
             this.Name = name;
@@ -617,6 +629,10 @@ namespace SDFilter
 
     public partial class FilterResult : ObservableObject
     {
+        public FilterResult()
+        {
+            
+        }
         public FilterResult(DetectFeature detectFeature) 
         {
             feature = detectFeature;

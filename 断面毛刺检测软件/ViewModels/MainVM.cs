@@ -81,7 +81,7 @@ namespace 断面毛刺检测软件.ViewModels
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;
             timer.Start();
-            TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => new SolidColorBrush(Colors.White));
+            TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
         }
         #region 时间相关
         [ObservableProperty]
@@ -193,7 +193,7 @@ namespace 断面毛刺检测软件.ViewModels
             try
             {
                 ProjPath = header;
-                Model = JsonConvert.DeserializeObject<MainModel>(File.ReadAllText(header)) ?? new MainModel();
+                Model = ConfigAPI.Load<MainModel>(header);
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);

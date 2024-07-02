@@ -76,6 +76,10 @@ namespace AlgorithmDll
     /// </summary>
     public partial class MaociAlgorParam : ObservableLog
     {
+        public MaociAlgorParam()
+        {
+            
+        }
         public MaociAlgorParam(string name)
         {
             Name = name;
@@ -140,6 +144,10 @@ namespace AlgorithmDll
     /// </summary>
     public partial class MaociAlgorParamFpga : ObservableLog
     {
+        public MaociAlgorParamFpga()
+        {
+            
+        }
         public MaociAlgorParamFpga(string name)
         {
             Name = name;

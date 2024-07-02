@@ -14,6 +14,10 @@ namespace WH.Entity.CommonLib
     /// </summary>
     public class KnownColor
     {
+        public KnownColor()
+        {
+            
+        }
         public KnownColor(string name, Brush brush)
         {
             this.name = name;

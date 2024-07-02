@@ -37,7 +37,7 @@ namespace SDFilter
         {
             if ((string)parameter == "Background")
             {
-                return (value != null && (bool)value) ? ResourceHelper.GetResource<Brush>(ResourceToken.InfoBrush) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
+                return (value != null && (bool)value) ? ResourceHelper.GetResource<Brush>(ResourceToken.ThirdlyRegionBrush) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
             }
             else if ((string)parameter == "Background2")
             {
