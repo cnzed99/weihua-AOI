@@ -1,8 +1,10 @@
-﻿using System;
+﻿using AlgorithmDll;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell
@@ -13,6 +15,10 @@ namespace WH.RunCell
         {
 
         }
+        /// <summary>
+        /// 输出区域
+        /// </summary>
+        public List<SRegion> regionOut { get; set; }
         /// <summary>
         /// 缺陷顺序
         /// </summary>
@@ -35,7 +41,7 @@ namespace WH.RunCell
         /// <summary>
         /// 缺陷颜色
         /// </summary>
-        public string ShowColor { get; set; }
+        public KnownColor ShowColor { get; set; }
         /// <summary>
         /// 优先级
         /// </summary>

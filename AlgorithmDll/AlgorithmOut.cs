@@ -16,13 +16,21 @@ namespace AlgorithmDll
     {
         public static AlgorithmOut instance = new AlgorithmOut();
 
+        public const string spMaoci = "铝层缺陷类";
+
+        public const string spThick = "料区缺陷类";
+
+        public const string deMaoci = "毛刺";
+
+        public const string deThick = "掉料";
+
         public AlgorithmOut()
         {
-            SpeciesOut species1 = new SpeciesOut("铝层缺陷类");
-            species1.Recipes.Add(new RecipeOut("毛刺"));
+            SpeciesOut species1 = new SpeciesOut(spMaoci);
+            species1.Recipes.Add(new RecipeOut(deMaoci));
 
-            SpeciesOut species2 = new SpeciesOut("料区缺陷类");
-            species2.Recipes.Add(new RecipeOut("掉料"));
+            SpeciesOut species2 = new SpeciesOut(spThick);
+            species2.Recipes.Add(new RecipeOut(deThick));
 
             specises.Add(species1);
             specises.Add(species2);
@@ -30,6 +38,14 @@ namespace AlgorithmDll
 
         [ObservableProperty]
         private ObservableCollection<SpeciesOut> specises = new ObservableCollection<SpeciesOut>();
+
+        public SpeciesOut this[string name]
+        {
+            get
+            {
+                return Specises.FirstOrDefault(o => o.Name == name);
+            }
+        }
     }
 
     /// <summary>
@@ -48,6 +64,14 @@ namespace AlgorithmDll
 
         [ObservableProperty]
         private ObservableCollection<RecipeOut> recipes = new ObservableCollection<RecipeOut>();
+
+        public RecipeOut this[string name]
+        {
+            get
+            {
+                return Recipes.FirstOrDefault(o => o.Name == name);
+            }
+        }
     }
 
     /// <summary>
@@ -64,6 +88,6 @@ namespace AlgorithmDll
         [ObservableProperty]
         private string name;
 
-        public List<SRegion> region;
+        public List<SRegion> Region { get; set; }
     }
 }

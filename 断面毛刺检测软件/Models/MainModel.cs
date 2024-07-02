@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AlgorithmDll;
+using CommunityToolkit.Mvvm.ComponentModel;
 using QualityGrade;
 using SDFilter;
 using System;
@@ -21,6 +22,7 @@ namespace 断面毛刺检测软件.Models
         [ObservableProperty]
         List<string> testImgFiles = new List<string>();
 
+        public MaociAlgorParamConfig MaociAlgorParamConfig { get; set; } = new MaociAlgorParamConfig();
         public FilterConfig MaociFilter { get; set; } = new FilterConfig();
         public QualityConfig MaociQuality { get; set; } = new QualityConfig();
     }

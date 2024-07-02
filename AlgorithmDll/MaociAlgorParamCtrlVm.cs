@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using WH.Entity.LogRecord;
 
 namespace AlgorithmDll
 {
@@ -13,68 +15,66 @@ namespace AlgorithmDll
     {
         private const string paramName = "分组";
 
-        private const string paramName1 = "分组1";
+        [JsonIgnore]
+        public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         [ObservableProperty]
-        private ObservableCollection<MaociAlgorParam> pcParams = new ObservableCollection<MaociAlgorParam>() {new MaociAlgorParam(paramName1) };
-
-        [ObservableProperty]
-        private string pcSelect = paramName1;
-
-        [ObservableProperty]
-        private ObservableCollection<MaociAlgorParamFpga> fpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(paramName1) };
-
-        [ObservableProperty]
-        private string fpgaSelect = paramName1;
+        private MaociAlgorParamConfig config = new MaociAlgorParamConfig();
 
         [RelayCommand]
         public void AddPcParam()
         {
             int index = 1;
-            for (int i = PcParams.Count - 1; i >= 0; i--)
+            for (int i = Config.PcParams.Count - 1; i >= 0; i--)
             {
-                var match = Regex.Match(PcParams[i].Name, paramName+"[0-9]+");
+                var match = Regex.Match(Config.PcParams[i].Name, paramName+"[0-9]+");
                 if (match.Success)
                 {
                     index = int.Parse(match.Value.Substring(2)) + 1;
                     break;
                 }
             }
-            PcParams.Add(new MaociAlgorParam(paramName + index));
-            PcSelect = paramName + index;
+            Config.PcParams.Add(new MaociAlgorParam(paramName + index));
+            Config.PcSelect = paramName + index;
         }
 
         [RelayCommand]
         public void RemovePcParam(MaociAlgorParam maociAlgorParam)
         {
-            int index = Math.Max(PcParams.IndexOf(maociAlgorParam)-1, 0);
-            if(PcParams.Count > 1) PcParams.Remove(maociAlgorParam);
-            PcSelect = PcParams[index].Name;
+            int index = Math.Max(Config.PcParams.IndexOf(maociAlgorParam)-1, 0);
+            if(Config.PcParams.Count > 1) Config.PcParams.Remove(maociAlgorParam);
+            Config.PcSelect = Config.PcParams[index].Name;
         }
 
         [RelayCommand]
         public void AddFpgaParam()
         {
             int index = 1;
-            for (int i = FpgaParams.Count - 1; i >= 0; i--)
+            for (int i = Config.FpgaParams.Count - 1; i >= 0; i--)
             {
-                var match = Regex.Match(FpgaParams[i].Name, paramName + "[0-9]+");
+                var match = Regex.Match(Config.FpgaParams[i].Name, paramName + "[0-9]+");
                 if (match.Success)
                 {
                     index = int.Parse(match.Value.Substring(2)) + 1;
                     break;
                 }
             }
-            FpgaParams.Add(new MaociAlgorParamFpga(paramName + index));
-            FpgaSelect = paramName + index;
+            Config.FpgaParams.Add(new MaociAlgorParamFpga(paramName + index));
+            Config.FpgaSelect = paramName + index;
         }
 
         [RelayCommand]
         public void RemoveFpgaParam(MaociAlgorParamFpga maociAlgorParamFpga)
         {
-            int index = Math.Max(FpgaParams.IndexOf(maociAlgorParamFpga) - 1, 0);
-            if (FpgaParams.Count > 1) FpgaParams.Remove(maociAlgorParamFpga);
-            FpgaSelect = FpgaParams[index].Name;
+            int index = Math.Max(Config.FpgaParams.IndexOf(maociAlgorParamFpga) - 1, 0);
+            if (Config.FpgaParams.Count > 1) Config.FpgaParams.Remove(maociAlgorParamFpga);
+            Config.FpgaSelect = Config.FpgaParams[index].Name;
+        }
+
+        [RelayCommand]
+        public void WriteFpga(MaociAlgorParamFpga maociAlgorParamFpga)
+        {
+
         }
     }
 }

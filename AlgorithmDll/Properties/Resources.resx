@@ -97,7 +97,82 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Name" xml:space="preserve">
-    <value>名称</value>
+  <data name="GroupName" xml:space="preserve">
+    <value>分组名</value>
+  </data>
+  <data name="PCParam" xml:space="preserve">
+    <value>PC参数</value>
+  </data>
+  <data name="FPGAParam" xml:space="preserve">
+    <value>FPGA参数</value>
+  </data>
+  <data name="Algorithm" xml:space="preserve">
+    <value>算法参数</value>
+  </data>
+  <data name="Judge" xml:space="preserve">
+    <value>判定参数</value>
+  </data>
+  <data name="AdaptiveSize" xml:space="preserve">
+    <value>自适应阈值邻域大小</value>
+  </data>
+  <data name="AdaptiveAddGray" xml:space="preserve">
+    <value>自适应阈值增加值</value>
+  </data>
+  <data name="NeighbSize" xml:space="preserve">
+    <value>过滤矩阵邻域大小</value>
+  </data>
+  <data name="NeighbLightPoint" xml:space="preserve">
+    <value>过滤矩阵邻域点数量限制</value>
+  </data>
+  <data name="DarkThresh" xml:space="preserve">
+    <value>料区阈值</value>
+  </data>
+  <data name="LightThresh" xml:space="preserve">
+    <value>铝层阈值</value>
+  </data>
+  <data name="LightThick" xml:space="preserve">
+    <value>铝层厚度</value>
+  </data>
+  <data name="DarkThickLimit" xml:space="preserve">
+    <value>料区厚度限制</value>
+  </data>
+  <data name="DarkThickContinueLen" xml:space="preserve">
+    <value>料区厚度NG连续长度限制</value>
+  </data>
+  <data name="DarkThick" xml:space="preserve">
+    <value>料区厚度</value>
+  </data>
+  <data name="LightThickLimit" xml:space="preserve">
+    <value>铝层厚度限制</value>
+  </data>
+  <data name="LightThickContinueLen" xml:space="preserve">
+    <value>铝层厚度NG连续长度限制</value>
+  </data>
+  <data name="PosLimitT" xml:space="preserve">
+    <value>铝层在料区中心位置限制上</value>
+  </data>
+  <data name="PosLimitB" xml:space="preserve">
+    <value>铝层在料区中心位置限制下</value>
+  </data>
+  <data name="LightPosOffest" xml:space="preserve">
+    <value>铝层位置偏移值</value>
+  </data>
+  <data name="1.GroupName" xml:space="preserve">
+    <value>1.分组名</value>
+  </data>
+  <data name="2.Algorithm" xml:space="preserve">
+    <value>2.算法参数</value>
+  </data>
+  <data name="3.Judge" xml:space="preserve">
+    <value>3.判定参数</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="WriteFpga" xml:space="preserve">
+    <value>写入FPGA</value>
   </data>
 </root>

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HandyControl.Controls;
 using HandyControl.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -95,7 +96,7 @@ namespace QualityGrade
                 {
                     QualitySelect.Name = QualitySet.Name;
                     QualitySelect.Priority = QualitySet.Priority;
-                    QualitySelect.ColorBrush = QualitySet.ColorBrush;
+                    QualitySelect.ShowColor = QualitySet.ShowColor;
                     QualitySelect.Signal = QualitySet.Signal;
                     QualitySelect.Description = QualitySet.Description;
                 }

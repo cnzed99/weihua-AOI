@@ -61,11 +61,236 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
-        ///   查找类似 名称 的本地化字符串。
+        ///   查找类似 1.分组名 的本地化字符串。
         /// </summary>
-        public static string Name {
+        public static string _1_GroupName {
             get {
-                return ResourceManager.GetString("Name", resourceCulture);
+                return ResourceManager.GetString("1.GroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.算法参数 的本地化字符串。
+        /// </summary>
+        public static string _2_Algorithm {
+            get {
+                return ResourceManager.GetString("2.Algorithm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 3.判定参数 的本地化字符串。
+        /// </summary>
+        public static string _3_Judge {
+            get {
+                return ResourceManager.GetString("3.Judge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自适应阈值增加值 的本地化字符串。
+        /// </summary>
+        public static string AdaptiveAddGray {
+            get {
+                return ResourceManager.GetString("AdaptiveAddGray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自适应阈值邻域大小 的本地化字符串。
+        /// </summary>
+        public static string AdaptiveSize {
+            get {
+                return ResourceManager.GetString("AdaptiveSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增 的本地化字符串。
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 算法参数 的本地化字符串。
+        /// </summary>
+        public static string Algorithm {
+            get {
+                return ResourceManager.GetString("Algorithm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区厚度 的本地化字符串。
+        /// </summary>
+        public static string DarkThick {
+            get {
+                return ResourceManager.GetString("DarkThick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区厚度NG连续长度限制 的本地化字符串。
+        /// </summary>
+        public static string DarkThickContinueLen {
+            get {
+                return ResourceManager.GetString("DarkThickContinueLen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区厚度限制 的本地化字符串。
+        /// </summary>
+        public static string DarkThickLimit {
+            get {
+                return ResourceManager.GetString("DarkThickLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区阈值 的本地化字符串。
+        /// </summary>
+        public static string DarkThresh {
+            get {
+                return ResourceManager.GetString("DarkThresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 删除 的本地化字符串。
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 FPGA参数 的本地化字符串。
+        /// </summary>
+        public static string FPGAParam {
+            get {
+                return ResourceManager.GetString("FPGAParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 分组名 的本地化字符串。
+        /// </summary>
+        public static string GroupName {
+            get {
+                return ResourceManager.GetString("GroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 判定参数 的本地化字符串。
+        /// </summary>
+        public static string Judge {
+            get {
+                return ResourceManager.GetString("Judge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层位置偏移值 的本地化字符串。
+        /// </summary>
+        public static string LightPosOffest {
+            get {
+                return ResourceManager.GetString("LightPosOffest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层厚度 的本地化字符串。
+        /// </summary>
+        public static string LightThick {
+            get {
+                return ResourceManager.GetString("LightThick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层厚度NG连续长度限制 的本地化字符串。
+        /// </summary>
+        public static string LightThickContinueLen {
+            get {
+                return ResourceManager.GetString("LightThickContinueLen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层厚度限制 的本地化字符串。
+        /// </summary>
+        public static string LightThickLimit {
+            get {
+                return ResourceManager.GetString("LightThickLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层阈值 的本地化字符串。
+        /// </summary>
+        public static string LightThresh {
+            get {
+                return ResourceManager.GetString("LightThresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 过滤矩阵邻域点数量限制 的本地化字符串。
+        /// </summary>
+        public static string NeighbLightPoint {
+            get {
+                return ResourceManager.GetString("NeighbLightPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 过滤矩阵邻域大小 的本地化字符串。
+        /// </summary>
+        public static string NeighbSize {
+            get {
+                return ResourceManager.GetString("NeighbSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 PC参数 的本地化字符串。
+        /// </summary>
+        public static string PCParam {
+            get {
+                return ResourceManager.GetString("PCParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层在料区中心位置限制下 的本地化字符串。
+        /// </summary>
+        public static string PosLimitB {
+            get {
+                return ResourceManager.GetString("PosLimitB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层在料区中心位置限制上 的本地化字符串。
+        /// </summary>
+        public static string PosLimitT {
+            get {
+                return ResourceManager.GetString("PosLimitT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入FPGA 的本地化字符串。
+        /// </summary>
+        public static string WriteFpga {
+            get {
+                return ResourceManager.GetString("WriteFpga", resourceCulture);
             }
         }
     }

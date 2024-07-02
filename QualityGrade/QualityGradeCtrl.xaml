@@ -31,7 +31,6 @@
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="IsHitTestVisible" Value="False" />
             </Style>
-            <entity:KnownColorConverter x:Key="KnownColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -86,7 +85,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center" Text="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" />
-            <wh:ColorComboBox Grid.Column="1" SelectColor="{Binding QualitySet.ColorBrush, Mode=TwoWay}" />
+            <wh:ColorComboBox Grid.Column="1" SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}" />
         </Grid>
         <TextBox
             Grid.Row="1"
@@ -151,8 +150,8 @@
                                 <Label
                                     Width="80"
                                     HorizontalAlignment="Center"
-                                    Background="{Binding ColorBrush}"
-                                    Content="{Binding ColorBrush, Converter={StaticResource KnownColorConverter}}" />
+                                    Background="{Binding ShowColor.brush}"
+                                    Content="{Binding ShowColor.name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

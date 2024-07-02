@@ -1,4 +1,5 @@
 
+using AlgorithmDll;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -36,6 +37,12 @@ namespace WH.RunCell
             this.Stopwatch = new Stopwatch();
             this.Stopwatch.Start();
         }
+
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 算法输出管理，含输出区域
+        /// </summary>
+        public MaociTest AlgorithmOut { get; set; }
 
         /// <summary>
         /// 是否是OK产品

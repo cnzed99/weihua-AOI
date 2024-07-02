@@ -26,7 +26,7 @@ namespace WH.Entity.CommonLib
             sb.Append("=>");
             sb.Append(newValue.ToString());
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()));
+            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), this.GetType().Namespace);
         }
 
         protected override void OnPropertyChanging(PropertyChangingEventArgs e)
@@ -51,7 +51,7 @@ namespace WH.Entity.CommonLib
                 sb.Append(e.OldItems[0].ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()));
+            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), this.GetType().Namespace);
         }
     }
 }

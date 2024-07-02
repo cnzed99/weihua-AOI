@@ -33,27 +33,20 @@ namespace WH.Controls
             this.CmbColor.ItemsSource = BrushPro.instance.KnownColors;
         }
 
-        public Brush SelectColor
+        public KnownColor SelectColor
         {
-            get { return (Brush)GetValue(SelectBrushProperty); }
+            get { return (KnownColor)GetValue(SelectBrushProperty); }
             set { SetValue(SelectBrushProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for SelectColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectBrushProperty =
-            DependencyProperty.Register("SelectColor", typeof(Brush), typeof(ColorComboBox), new PropertyMetadata(default(Brush), (d, e) =>
+            DependencyProperty.Register("SelectColor", typeof(KnownColor), typeof(ColorComboBox), new PropertyMetadata(default(KnownColor), (d, e) =>
             {
                 if (e.NewValue != null)
                 {
                     ColorComboBox cmb = (ColorComboBox)d;
-                    foreach (var item in BrushPro.instance.KnownColors)
-                    {
-                        if (item.brush == ((Brush)e.NewValue))
-                        {
-                            cmb.CmbColor.SelectedItem = item;
-                            break;
-                        }
-                    }
+                    cmb.CmbColor.SelectedItem = e.NewValue;
                 }
             }));
 
@@ -61,10 +54,10 @@ namespace WH.Controls
         {
             if (e.AddedItems.Count > 0)
             {
-                KnownColor colorObject = e.AddedItems[0] as KnownColor;
-                if (colorObject != null)
+                KnownColor knownColor = e.AddedItems[0] as KnownColor;
+                if (knownColor != null)
                 {
-                    SelectColor = colorObject.brush;
+                    SelectColor = knownColor;
                 }
             }
         }

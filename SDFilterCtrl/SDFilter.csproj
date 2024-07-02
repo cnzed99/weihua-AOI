@@ -19,6 +19,7 @@
 	  <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
 	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	  <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

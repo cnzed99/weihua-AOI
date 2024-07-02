@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
+using WH.RunCell;
 
 namespace SDFilter
 {
@@ -42,11 +43,19 @@ namespace SDFilter
 
             SpeciesFilters.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(SpeciesFilters)); };
 
-            WeakReferenceMessenger.Default.Register(this);
+            WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
 
         [ObservableProperty]
         private ObservableCollection<SpeciesFilter> speciesFilters = new ObservableCollection<SpeciesFilter>();
+
+        public SpeciesFilter this[string name]
+        {
+            get
+            {
+                return SpeciesFilters.FirstOrDefault(s => s.Name == name);
+            }
+        }
 
         public void Receive(OperateMessage message)
         {
@@ -144,6 +153,184 @@ namespace SDFilter
                 }
             }
         }
+
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 过滤分选，结果输出在cell里面
+        ///</summary>
+        /// <param name="cell"></param>
+        public void Excetu(Cell cell)
+        {
+            if (cell._skipthis)
+            {
+                return;
+            }
+            var AlgorithmOut = cell.AlgorithmOut.AlgorithmOut;
+
+            foreach (var sp in AlgorithmOut.Specises)
+            {
+                foreach (var rp in sp.Recipes)
+                {
+                    foreach (var de in this[sp.Name][rp.Name].DefectFilters)//缺陷
+                    {
+                        CellDetection detection = new CellDetection();
+                        detection.Name = de.Name;
+                        detection.Type = sp.Name;
+                        detection.RecipeDefectName = rp.Name;
+                        detection.Priority = de.Priority;
+                        detection.QualityLevel = de.QualityLevel;
+                        detection.ShowColor = de.ShowColor;
+                        if (cell.CancelSource.IsCancellationRequested) return;//任务取消时退出
+                        foreach (var filter in de.FilterList)//过滤分选器
+                        {
+                            List<SRegion> detectRegion = AlgorithmOut[sp.Name][rp.Name].Region;
+                            switch (filter.UnionOrConnect)
+                            {
+                                case "区域合并":
+                                    SRegionInfo regionInfo = new SRegionInfo();
+                                    regionInfo.nWidth = detectRegion.Select(o => o.regionInfo.nWidth).Sum();
+                                    regionInfo.nHeight = detectRegion.Select(o => o.regionInfo.nHeight).Sum();
+                                    regionInfo.dPeakHeight = detectRegion.Select(o => o.regionInfo.dPeakHeight).Sum();
+                                    regionInfo.dLongLen = detectRegion.Select(o => o.regionInfo.dLongLen).Sum();
+                                    regionInfo.dShorLen = detectRegion.Select(o => o.regionInfo.dShorLen).Sum();
+                                    regionInfo.dPhi = detectRegion.Select(o => o.regionInfo.dPhi).Max();
+                                    regionInfo.dContLen = detectRegion.Select(o => o.regionInfo.dContLen).Sum();
+                                    regionInfo.nArea = detectRegion.Select(o => o.regionInfo.nArea).Sum();
+                                    foreach (SRegion region in detectRegion)
+                                    {
+                                        region.regionInfo.Copy(regionInfo);
+                                    }
+                                    break;
+                            }
+
+                            List<SRegion> filterOuts = new List<SRegion>();//过滤后的区域
+                            foreach (var select in filter.Filter)//过滤
+                            {
+                                List<SRegion> selRegion = detectRegion;
+                                foreach (var selParam in select.SelectParams)
+                                {
+                                    selParam.Excute(selRegion, out selRegion);//&&
+                                }
+                                filterOuts.AddRange(selRegion);//||
+                            }
+                            foreach (var select in filter.SelectList)//分选
+                            {
+                                List<SRegion> selRegion = filterOuts;
+                                bool bResult = true;
+                                OneSelectParams oneSelectParams = null;//若有数量判断，则留到分选完后
+                                foreach (var selParam in select.SelectParams)
+                                {
+                                    if (selParam.Character == DetectFeature.数量)
+                                        oneSelectParams = selParam;
+                                    else
+                                        bResult = selParam.Excute(selRegion, out selRegion);//&&
+                                }
+                                if (oneSelectParams != null) bResult = oneSelectParams.Excute(selRegion, out selRegion);//数量判断
+                                if (!bResult)
+                                {
+                                    detection.regionOut = selRegion;
+                                    detection.DetectLog.AppendLine(detection.Name);
+                                    detection.DetectLog.AppendLine($"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}");
+                                    detection.Result = false;
+                                    break;//有一个分选不合格就跳出，不执行剩下的分选（||）
+                                }
+                            }
+                            //有一个过滤分选器不合格就跳出，不执行剩下的过滤分选器（||）
+                            if (!detection.Result)
+                            {
+                                filter.Result = false;
+                                this[sp.Name].Result = false;
+                                break;
+                            }
+                        }
+
+                        //DetectLog增加分选的类型
+                        List<DetectFeature> lsParam = new List<DetectFeature>();
+                        foreach (var filter in de.FilterList)
+                        {
+                            foreach (var select in filter.SelectList)
+                            {
+                                foreach (var selParam in select.SelectParams)
+                                {
+                                    if (!lsParam.Contains(selParam.Character))
+                                    {
+                                        detection.DetectLog.AppendLine($"{selParam.Character}:");
+                                        lsParam.Add(selParam.Character);
+                                    }
+                                }
+                            }
+                        }
+
+                        //检测区显示
+                        for (int i = de.ResultList.Count - 1; i >= 0; i--)
+                        {
+                            if (lsParam.Contains(de.ResultList[i].Feature))
+                            {
+                                switch (de.ResultList[i].Feature)
+                                {
+                                    case DetectFeature.顶点高度:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dPeakHeight).Max();
+                                        break;
+                                    case DetectFeature.面积:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nArea).Max();
+                                        break;
+                                    case DetectFeature.长边:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dLongLen).Max();
+                                        break;
+                                    case DetectFeature.短边:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dShorLen).Max();
+                                        break;
+                                    case DetectFeature.角度:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dPhi).Max();
+                                        break;
+                                    case DetectFeature.周长:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dContLen).Max();
+                                        break;
+                                    case DetectFeature.宽度:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nWidth).Max();
+                                        break;
+                                    case DetectFeature.高度:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nHeight).Max();
+                                        break;
+                                    case DetectFeature.数量:
+                                        de.ResultList[i].Value = detection.regionOut.Count;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                de.ResultList.RemoveAt(i);
+                            }
+                        }
+                        if (!detection.Result)
+                        {
+                            var qualityLevel = detection.QualityLevel;
+                            if (cell.Detection == null)
+                            {
+                                cell.Detection = detection;
+                                cell.QualityLevel = detection.QualityLevel;
+                            }
+                            else
+                            {
+                                if (cell.QualityLevel < detection.QualityLevel)//质量等级 还需判断优先级
+                                {
+                                    cell.Detection = detection;
+                                    cell.QualityLevel = detection.QualityLevel;
+                                }
+                                else if (cell.QualityLevel == detection.QualityLevel && cell.Detection?.Priority < detection.Priority)//质量等级相等时 判断优先级
+                                {
+                                    cell.Detection = detection;
+                                    cell.QualityLevel = detection.QualityLevel;
+                                }
+                            }
+                        }
+                        cell.Detections.Add(detection);
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -152,14 +339,10 @@ namespace SDFilter
     /// </summary>
     public partial class SpeciesFilter : ObservableLog
     {
-        public SpeciesFilter()
-        {
-            recipeDefects.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(recipeDefects)); };
-        }
-        public SpeciesFilter(string name) :this()
+        public SpeciesFilter(string name) 
         {
             this.Name = name;
-            
+            recipeDefects.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(recipeDefects)); };
         }
 
         [ObservableProperty]
@@ -171,6 +354,14 @@ namespace SDFilter
 
         [ObservableProperty]
         private ObservableCollection<RecipeDefect> recipeDefects = new ObservableCollection<RecipeDefect>();
+
+        public RecipeDefect this[string name]
+        {
+            get
+            {
+                return RecipeDefects.FirstOrDefault(x => x.Name == name);
+            }
+        }
 
         public override string ToString()
         {
@@ -184,11 +375,7 @@ namespace SDFilter
     /// </summary>
     public partial class RecipeDefect : ObservableLog
     {
-        public RecipeDefect()
-        {
-            
-        }
-        public RecipeDefect(string name):this()
+        public RecipeDefect(string name)
         {
             this.Name = name;
             DefectFilters.Add(new DefectFilter(Name + "0"));
@@ -200,6 +387,14 @@ namespace SDFilter
 
         [ObservableProperty]
         private ObservableCollection<DefectFilter> defectFilters = new ObservableCollection<DefectFilter>();
+
+        public DefectFilter this[string name]
+        {
+            get
+            {
+                return DefectFilters.FirstOrDefault(x => x.Name == name);
+            }
+        }
 
         public override string ToString()
         {
@@ -213,10 +408,6 @@ namespace SDFilter
     /// </summary>
     public partial class DefectFilter : ObservableLog
     {
-        public DefectFilter()
-        {
-           
-        }
         public DefectFilter(string name)
         {
             this.Name = name;
@@ -224,7 +415,7 @@ namespace SDFilter
             {
                 ResultList.Add(new FilterResult(item));
             }
-            ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)].brush;
+            ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)];
 
             filterList.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(filterList)); };
             resultList.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(resultList)); };
@@ -237,7 +428,7 @@ namespace SDFilter
         private int priority = 0;
 
         [ObservableProperty]
-        private Brush showColor = Brushes.White;
+        private KnownColor showColor = null;
 
         [ObservableProperty]
         private int qualityLevel = 0;
@@ -426,10 +617,6 @@ namespace SDFilter
 
     public partial class FilterResult : ObservableObject
     {
-        public FilterResult()
-        {
-            
-        }
         public FilterResult(DetectFeature detectFeature) 
         {
             feature = detectFeature;

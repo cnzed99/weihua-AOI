@@ -14,6 +14,10 @@ using Newtonsoft.Json;
 
 namespace QualityGrade
 {
+    /// <summary>
+    /// 2024.6.28 李焕彬
+    /// 质量等级配置类
+    /// </summary>
     public partial class QualityConfig : ObservableLog, IRecipient<OperateMessage>
     {
         [JsonIgnore]
@@ -21,8 +25,8 @@ namespace QualityGrade
 
         public QualityConfig()
         {
-            WeakReferenceMessenger.Default.Register<OperateMessage>(this);
             Qualities.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(Qualities)); };
+            WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
 
         [ObservableProperty]
@@ -44,13 +48,14 @@ namespace QualityGrade
                         OperateLog.Info($"质量等级-{qua.Name}-{message.message}");
                         return;
                     }
+                    continue;
                 }
             }
         }
     }
     /// <summary>
     /// 2024.6.26 李焕彬
-    /// 质量等级配置类
+    /// 质量
     /// </summary>
     public partial class Quality : ObservableLog
     {
@@ -61,6 +66,7 @@ namespace QualityGrade
         public Quality(string name)
         {
             this.Name = name;
+            ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)];
         }
         /// <summary>
         /// 等级名 A\B\C\D
@@ -72,7 +78,7 @@ namespace QualityGrade
         /// 显示颜色
         /// </summary>
         [ObservableProperty]
-        private Brush colorBrush = Brushes.Red;
+        private KnownColor showColor = null;
         
         /// <summary>
         /// 说明
@@ -96,7 +102,7 @@ namespace QualityGrade
         {
             var quality = new Quality(this.Name);
             quality.Name = this.Name;
-            quality.ColorBrush = this.ColorBrush;
+            quality.ShowColor = this.ShowColor;
             quality.Description = this.Description;
             quality.Priority = this.Priority;
             quality.Signal = this.Signal;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HandyControl.Data;
+using HandyControl.Tools;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -33,12 +35,7 @@ namespace SDFilter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool isChecked = (bool)value;
-            if (isChecked)
-            {
-                return Brushes.Cyan;
-            }
-            return Brushes.Red;
+            return (bool)value ? ResourceHelper.GetResource<Brush>(ResourceToken.InfoBrush) : Brushes.Red;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

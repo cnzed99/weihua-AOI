@@ -50,6 +50,18 @@ namespace AlgorithmDll
         {
 
         }
+
+        public void Copy(SRegionInfo regionInfo)
+        {
+            nWidth = regionInfo.nWidth;
+            nHeight = regionInfo.nHeight;
+            dPeakHeight = regionInfo.dPeakHeight;
+            dLongLen = regionInfo.dLongLen;
+            dShorLen = regionInfo.dShorLen;
+            dPhi = regionInfo.dPhi;
+            dContLen = regionInfo.dContLen;
+            nArea = regionInfo.nArea;
+        }
     };
 
     /// <summary>
@@ -246,7 +258,7 @@ namespace AlgorithmDll
         /// </summary>
         public List<SRegion> ThickRegions { get; set; } = new();
 
-        public AlgorithmOut AlgorithmOut { get; set; } = new AlgorithmOut();
+        public AlgorithmOut AlgorithmOut { get; set; } = new();
         /// <summary>
         /// 2024.6.20 ¿Óª¿±Ú
         /// ºÏ≤‚ÕºœÒ
@@ -264,6 +276,9 @@ namespace AlgorithmDll
             LightBotRegion = MaociTest.GetRegion(RegionType.RT_LightBot);
             MaociRegions = MaociTest.GetRegions(RegionType.RT_MaociRegion);
             ThickRegions = MaociTest.GetRegions(RegionType.RT_ThickRegion);
+
+            AlgorithmOut[AlgorithmOut.spMaoci][AlgorithmOut.deMaoci].Region = MaociRegions;
+            AlgorithmOut[AlgorithmOut.spThick][AlgorithmOut.deThick].Region = ThickRegions;
 
             return result;
         }
@@ -285,6 +300,9 @@ namespace AlgorithmDll
             LightBotRegion = MaociTest.GetRegion(RegionType.RT_LightBot);
             MaociRegions = MaociTest.GetRegions(RegionType.RT_MaociRegion);
             ThickRegions = MaociTest.GetRegions(RegionType.RT_ThickRegion);
+
+            AlgorithmOut[AlgorithmOut.spMaoci][AlgorithmOut.deMaoci].Region = MaociRegions;
+            AlgorithmOut[AlgorithmOut.spThick][AlgorithmOut.deThick].Region = ThickRegions;
 
             return result;
         }

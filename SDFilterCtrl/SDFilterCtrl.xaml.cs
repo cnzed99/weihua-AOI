@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HandyControl.Data;
+using HandyControl.Tools;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -35,11 +37,11 @@ namespace SDFilter
         {
             if ((string)parameter == "Background")
             {
-                return (value != null && (bool)value) ? new SolidColorBrush(Color.FromArgb(255, 4, 63, 60)) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
+                return (value != null && (bool)value) ? ResourceHelper.GetResource<Brush>(ResourceToken.InfoBrush) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
             }
             else if ((string)parameter == "Background2")
             {
-                return (value != null && (bool)value) ? new SolidColorBrush(Color.FromArgb(255, 32, 32, 44)) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
+                return (value != null && (bool)value) ? Brushes.Transparent : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
             }
             else if ((string)parameter == "Background3")
             {

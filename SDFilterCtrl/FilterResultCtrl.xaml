@@ -23,6 +23,7 @@
             <entity:Enum2CmbConverter x:Key="Enum2CmbConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
+            <local:Boolean2BrushConverter x:Key="Boolean2BrushConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -33,9 +34,9 @@
                         <Expander
                             Margin="0,0,0,1"
                             hc:BorderElement.CornerRadius="0"
-                            Background="#FF043F3C"
+                            Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background}"
                             BorderThickness="0"
-                            Foreground="{Binding Result, Converter={StaticResource R2C}}"
+                            Foreground="White"
                             Header="{Binding Name}"
                             IsExpanded="True">
                             <ItemsControl ItemsSource="{Binding RecipeDefects}">
@@ -59,7 +60,7 @@
                                                         hc:BorderElement.CornerRadius="0"
                                                         Background="Transparent"
                                                         BorderThickness="0"
-                                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=Foreground}">
+                                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=DataContext.Result, Converter={StaticResource R2C}}">
                                                         <Expander.Header>
                                                             <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Expander}}">
                                                                 <Grid.ColumnDefinitions>

@@ -60,7 +60,7 @@ namespace 断面毛刺检测软件.ViewModels
                 _model.Adapt(this);
                 SDFilterCtrlVM.FilterConfig = MaociFilter;
                 QualityCtrlVM.QualityConfig = MaociQuality;
-                //MaociAlgorParamCtrlVm
+                MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
             } }
         [ObservableProperty]
         string projPath ;
