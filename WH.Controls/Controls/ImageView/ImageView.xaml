@@ -31,14 +31,14 @@
                 Click="btnClear_Click"
                 DockPanel.Dock="Right"
                 Style="{StaticResource ButtonCustom}">
-                <Image Source="/ImageWinCtrl;component/Images/清理.png" Stretch="Uniform" />
+                <Image Source="/WH.Controls;component/Images/清理.png" Stretch="Uniform" />
             </Button>
             <TextBlock
                 Margin="5,0"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right">
                 <TextBlock.Text>
-                    <MultiBinding StringFormat="R:{0} G:{1} B:{2}">
+                    <MultiBinding StringFormat="{}{0} {1} {2}">
                         <Binding ElementName="Image" Path="R" />
                         <Binding ElementName="Image" Path="G" />
                         <Binding ElementName="Image" Path="B" />

@@ -81,35 +81,35 @@ namespace WH.Controls
         public static readonly DependencyProperty MaxScaleProperty =
             DependencyProperty.Register("MaxScale", typeof(double), typeof(ImagePro), new PropertyMetadata(100.0d));
 
-        public int R
+        public string R
         {
-            get { return (int)GetValue(RProperty); }
+            get { return (string)GetValue(RProperty); }
             set { SetValue(RProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for G.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RProperty =
-            DependencyProperty.Register("R", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
+            DependencyProperty.Register("R", typeof(string), typeof(ImagePro));
 
-        public int G
+        public string G
         {
-            get { return (int)GetValue(GProperty); }
+            get { return (string)GetValue(GProperty); }
             set { SetValue(GProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for G.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty GProperty =
-            DependencyProperty.Register("G", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
+            DependencyProperty.Register("G", typeof(string), typeof(ImagePro));
 
-        public int B
+        public string B
         {
-            get { return (int)GetValue(BProperty); }
+            get { return (string)GetValue(BProperty); }
             set { SetValue(BProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for B.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty BProperty =
-            DependencyProperty.Register("B", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
+            DependencyProperty.Register("B", typeof(string), typeof(ImagePro));
 
         public int X
         {
@@ -196,17 +196,17 @@ namespace WH.Controls
                 var bits = bitmapImage.Format.BitsPerPixel / 8;
                 byte[] data = new byte[bits];
                 bitmapImage.CopyPixels(new Int32Rect(x, y, 1, 1), data, bits, 0);
-                if (bits == 3)
+                if (bits >= 3)
                 {
-                    R = data[0];
-                    G = data[1];
-                    B = data[2];
+                    B = data[0].ToString("B: 0");
+                    G = data[1].ToString("G: 0");
+                    R = data[2].ToString("R: 0");
                 }
                 else
                 {
-                    R = data[0];
-                    G = data[0];
-                    B = data[0];
+                    R = data[0].ToString();
+                    G = string.Empty;
+                    B = string.Empty;
                 }
             }
         }
