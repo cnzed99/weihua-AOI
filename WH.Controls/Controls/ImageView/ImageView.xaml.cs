@@ -28,16 +28,22 @@ namespace WH.Controls
             {
                 if (e.NewValue != null)
                 {
-                    ImageView view = (ImageView)d;
-                    view.Image.Source = (BitmapSource)e.NewValue;
-                    view.Canvas.Source = (BitmapSource)e.NewValue;
                     
+                    ImageView view = (ImageView)d;
+                    //view.Image.Source = (BitmapSource)e.NewValue;
+                    //view.Canvas.Source = (BitmapSource)e.NewValue;
+                    view.updateImg((BitmapSource)e.NewValue);
                 }
             }));
 
         public int ImageWidth => Source == null ? 0 : Source.PixelWidth;
         public int ImageHeight => Source == null ? 0 : Source.PixelHeight;
 
+        public void updateImg(BitmapSource img)
+        {
+            Image.Source = img;
+            Canvas.Source = img;
+        }
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             Clear();

@@ -301,7 +301,7 @@ namespace WH.RunCell
             cell.ID = this.ID;
             cell.IsOK = this.IsOK;
             cell.IsEmpty = this.IsEmpty;
-            cell.Image = this.Image?.Clone();
+            this.Image.WriteTo(cell.Image);
             cell.DownImage = this.DownImage?.Clone();
             // cell.QualityColorStr = this.QualityColorStr;
             cell.SmallImage = this.SmallImage?.Clone();

@@ -1,5 +1,6 @@
 
 using System.Collections.Concurrent;
+using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
 
@@ -8,8 +9,8 @@ namespace WH.RecipeCellRootBase
     public class CellRootBase<C, T> where T : CellDetectionBase<T>, IwhClone<T>, new() where C : CellRootBase<C, T>, new()
     {
        // public PreVariable PreVal { get; set; } = new PreVariable();
-        private BitmapSource _image;
-        public BitmapSource Image
+        private MemoryStream _image;
+        public MemoryStream Image
         {
             get => _image;
             set
@@ -34,9 +35,9 @@ namespace WH.RecipeCellRootBase
 
         public virtual void Dispose()
         {
-            if (this.Image != null&&this.Image.CanFreeze)
+            if (this.Image != null)
             {
-                this.Image.Freeze();
+                this.Image.Dispose();
             }
             //if (this.ColorImage != null)
             //{
@@ -56,7 +57,7 @@ namespace WH.RecipeCellRootBase
             C Cell = new C();
             if (this.Image != null)
             {
-                Cell.Image = this.Image.Clone();
+                this.Image.WriteTo(Cell.Image);
             }
             Cell.Detection = this.Detection?.Clone();
             foreach (T detection in this.Detections)
