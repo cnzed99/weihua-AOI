@@ -135,7 +135,10 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/工具/工具.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [Offline], Source={x:Static local:Lang.instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="OffLineTest_Click"
+                        Header="{Binding [Offline], Source={x:Static local:Lang.instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/离线检测.svg" />
                         </MenuItem.Icon>

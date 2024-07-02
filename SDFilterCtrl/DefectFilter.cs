@@ -152,10 +152,14 @@ namespace SDFilter
     /// </summary>
     public partial class SpeciesFilter : ObservableLog
     {
-        public SpeciesFilter(string name) 
+        public SpeciesFilter()
+        {
+            recipeDefects.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(recipeDefects)); };
+        }
+        public SpeciesFilter(string name) :this()
         {
             this.Name = name;
-            recipeDefects.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(recipeDefects)); };
+            
         }
 
         [ObservableProperty]
@@ -180,7 +184,11 @@ namespace SDFilter
     /// </summary>
     public partial class RecipeDefect : ObservableLog
     {
-        public RecipeDefect(string name)
+        public RecipeDefect()
+        {
+            
+        }
+        public RecipeDefect(string name):this()
         {
             this.Name = name;
             DefectFilters.Add(new DefectFilter(Name + "0"));
@@ -205,6 +213,10 @@ namespace SDFilter
     /// </summary>
     public partial class DefectFilter : ObservableLog
     {
+        public DefectFilter()
+        {
+           
+        }
         public DefectFilter(string name)
         {
             this.Name = name;
@@ -225,7 +237,7 @@ namespace SDFilter
         private int priority = 0;
 
         [ObservableProperty]
-        private Brush showColor = null;
+        private Brush showColor = Brushes.White;
 
         [ObservableProperty]
         private int qualityLevel = 0;
@@ -414,6 +426,10 @@ namespace SDFilter
 
     public partial class FilterResult : ObservableObject
     {
+        public FilterResult()
+        {
+            
+        }
         public FilterResult(DetectFeature detectFeature) 
         {
             feature = detectFeature;

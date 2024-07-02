@@ -54,6 +54,10 @@ namespace QualityGrade
     /// </summary>
     public partial class Quality : ObservableLog
     {
+        public Quality()
+        {
+
+        }
         public Quality(string name)
         {
             this.Name = name;

@@ -97,6 +97,15 @@
     <None Remove="Resources\图片\工具\光源.png" />
     <None Remove="Resources\图片\工具\工具.png" />
     <None Remove="Resources\图片\工具\离线检测.png" />
+    <None Remove="Resources\图片\工具\离线测试\右播放.png" />
+    <None Remove="Resources\图片\工具\离线测试\图片.png" />
+    <None Remove="Resources\图片\工具\离线测试\左播放.png" />
+    <None Remove="Resources\图片\工具\离线测试\当前.png" />
+    <None Remove="Resources\图片\工具\离线测试\循环.png" />
+    <None Remove="Resources\图片\工具\离线测试\播放2.png" />
+    <None Remove="Resources\图片\工具\离线测试\文件夹.png" />
+    <None Remove="Resources\图片\工具\离线测试\暂停.png" />
+    <None Remove="Resources\图片\工具\离线测试\火.png" />
     <None Remove="Resources\图片\工牌职位身份.png" />
     <None Remove="Resources\图片\工程管理\主页.png" />
     <None Remove="Resources\图片\工程管理\保存工程.png" />
@@ -214,6 +223,15 @@
     <Resource Include="Resources\图片\工具\光源.png" />
     <Resource Include="Resources\图片\工具\工具.png" />
     <Resource Include="Resources\图片\工具\离线检测.png" />
+    <Resource Include="Resources\图片\工具\离线测试\右播放.png" />
+    <Resource Include="Resources\图片\工具\离线测试\图片.png" />
+    <Resource Include="Resources\图片\工具\离线测试\左播放.png" />
+    <Resource Include="Resources\图片\工具\离线测试\当前.png" />
+    <Resource Include="Resources\图片\工具\离线测试\循环.png" />
+    <Resource Include="Resources\图片\工具\离线测试\播放2.png" />
+    <Resource Include="Resources\图片\工具\离线测试\文件夹.png" />
+    <Resource Include="Resources\图片\工具\离线测试\暂停.png" />
+    <Resource Include="Resources\图片\工具\离线测试\火.png" />
     <Resource Include="Resources\图片\工牌职位身份.png" />
     <Resource Include="Resources\图片\工程管理\主页.png" />
     <Resource Include="Resources\图片\工程管理\保存工程.png" />
@@ -257,6 +275,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="Views\OfflineTest\OfflineTestResources.Designer.cs">
+      <DependentUpon>OfflineTestResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Views\SystemSetting\SystemSettingResources.Designer.cs">
       <DependentUpon>SystemSettingResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -276,6 +299,10 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewProj\NewProjResources.resx">
       <LastGenOutput>NewProjResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\OfflineTest\OfflineTestResources.resx">
+      <LastGenOutput>OfflineTestResources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\SystemSetting\SystemSettingResources.resx">

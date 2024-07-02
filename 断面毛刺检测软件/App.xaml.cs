@@ -139,10 +139,11 @@ namespace 断面毛刺检测软件
             builder.Register(c=>SingleInstance.Create<Lazy<SystemSettingWindow>,SystemSettingWindow>()).InstancePerDependency();
             //新建
 
-            builder.Register(c=>SingleInstance.Create< Lazy<NewProjWindow>, NewProjWindow>()).SingleInstance().InstancePerDependency();
+            builder.Register(c=>SingleInstance.Create< Lazy<NewProjWindow>, NewProjWindow>()).InstancePerDependency();
             //修改
-            builder.Register(c=>SingleInstance.Create< Lazy<ModifyProjWindow>, ModifyProjWindow>()).SingleInstance().InstancePerDependency();
-           
+            builder.Register(c=>SingleInstance.Create< Lazy<ModifyProjWindow>, ModifyProjWindow>()).InstancePerDependency();
+            //离线测试
+            builder.Register(c => SingleInstance.Create<Lazy<OffLineTestWindow>, OffLineTestWindow>()).InstancePerDependency();
 
             Container = builder.Build();
         }

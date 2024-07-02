@@ -1,0 +1,150 @@
+﻿<UserControl
+    x:Class="断面毛刺检测软件.Views.OffLineTestCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:断面毛刺检测软件.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DataContext="{Binding Self}"
+    d:DesignHeight="100"
+    d:DesignWidth="700"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource GroupBoxTab}" TargetType="GroupBox" />
+            <x:Array x:Key="RotateAngle" Type="sys:Int32">
+                <sys:Int32>0</sys:Int32>
+                <sys:Int32>90</sys:Int32>
+                <sys:Int32>180</sys:Int32>
+                <sys:Int32>270</sys:Int32>
+            </x:Array>
+            <!--<local:Camserial2StationNameConverter x:Key="Camserial2StationNameConverter" />-->
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <hc:SimplePanel>
+        <StackPanel Orientation="Horizontal">
+            <GroupBox
+                Width="350"
+                d:Header="调试"
+                Header="{Binding MMainVM.Name}">
+                <!--<GroupBox.Header>
+                    <MultiBinding Converter="{StaticResource Camserial2StationNameConverter}">
+                        <Binding Path="_projConfig.CamSerial" />
+                        <Binding Path="_projConfig.Recipe" />
+                    </MultiBinding>
+                </GroupBox.Header>-->
+                <StackPanel Orientation="Vertical">
+                    <hc:ButtonGroup Margin="0,2">
+                        <Button x:Name="BtnPreImg" Click="BtnPreImg_Click">
+                            <Button.Content>
+                                <Image Source="/Resources/图片/工具/离线测试/左播放.png" />
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="BtnStopOffLine" Click="BtnStopOffLine_Click">
+                            <Button.Content>
+                                <Image Source="/Resources/图片/工具/离线测试/暂停.png" />
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="BtnStartCircle" Click="BtnStartCircle_Click">
+                            <Button.Content>
+                                <Image Source="/Resources/图片/工具/离线测试/播放2.png" />
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="BtnNextImg" Click="BtnNextImg_Click">
+                            <Button.Content>
+                                <Image Source="/Resources/图片/工具/离线测试/右播放.png" />
+                            </Button.Content>
+                        </Button>
+                    </hc:ButtonGroup>
+                    <hc:ButtonGroup Margin="0,2">
+                        <Button x:Name="BtnStartOnce" Click="BtnStartOnce_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/图片/工具/离线测试/循环.png" />
+                                    <TextBlock
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding [RunOnce], Source={x:Static local:Lang.offLineTest}}" />
+                                </StackPanel>
+
+                            </Button.Content>
+                        </Button>
+
+                    </hc:ButtonGroup>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Width="350" Header="{Binding [Images], Source={x:Static local:Lang.offLineTest}}">
+                <StackPanel Orientation="Vertical">
+                    <hc:ButtonGroup Margin="0,2">
+                        <Button x:Name="btn_ImgFiles" Click="btn_ImgFiles_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/图片/工具/离线测试/图片.png" />
+                                    <TextBlock
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding [Images], Source={x:Static local:Lang.offLineTest}}" />
+                                </StackPanel>
+
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="btn_ImgDir" Click="btn_ImgDir_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/图片/工具/离线测试/文件夹.png" />
+                                    <TextBlock
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding [ImageDir], Source={x:Static local:Lang.offLineTest}}" />
+                                </StackPanel>
+
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="btn_FromCam" Click="btn_FromCam_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/图片/工具/离线测试/当前.png" />
+                                    <TextBlock
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding [CamImage], Source={x:Static local:Lang.offLineTest}}" />
+                                </StackPanel>
+
+                            </Button.Content>
+                        </Button>
+                    </hc:ButtonGroup>
+                    <DockPanel Margin="0,2">
+
+                        <ComboBox
+                            Name="cb_RoAngle"
+                            Width="100"
+                            hc:TitleElement.Title="{Binding [Rotate], Source={x:Static local:Lang.offLineTest}}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            DockPanel.Dock="Right"
+                            Visibility="Collapsed"
+                            ItemsSource="{StaticResource RotateAngle}"
+                            SelectedItem="{Binding _projConfig.ProcessSet.Angle}"
+                            Style="{StaticResource ComboBoxExtend}" />
+
+                        <ComboBox
+                            Name="cb_CurImgFile"
+                            hc:TitleElement.Title="{Binding [Current], Source={x:Static local:Lang.offLineTest}}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            DockPanel.Dock="Left"
+                            ItemsSource="{Binding ImgNames}"
+                            SelectedIndex="{Binding ImgIndex}"
+                            SelectionChanged="cb_CurImgFile_SelectedIndexChanged"
+                            Style="{StaticResource ComboBoxExtend}" />
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </hc:SimplePanel>
+</UserControl>

@@ -18,8 +18,10 @@ namespace 断面毛刺检测软件.Models
        
         [ObservableProperty]
         string name  = "毛刺检测";
+        [ObservableProperty]
+        List<string> testImgFiles = new List<string>();
 
-        public FilterConfig MaociFilter = new FilterConfig();
-        public QualityConfig MaociQuality = new QualityConfig();
+        public FilterConfig MaociFilter { get; set; } = new FilterConfig();
+        public QualityConfig MaociQuality { get; set; } = new QualityConfig();
     }
 }
