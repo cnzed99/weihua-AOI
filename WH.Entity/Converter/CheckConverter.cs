@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace WH.Entity.Converter
 {
+    /// <summary>
+    /// radiobutton 转换器，check为true时，返回Parameter
+    /// </summary>
     public class CheckConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

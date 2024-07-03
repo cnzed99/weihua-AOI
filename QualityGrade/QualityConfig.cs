@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace QualityGrade
 {
@@ -25,13 +26,13 @@ namespace QualityGrade
 
         public QualityConfig()
         {
-            Qualities.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(Qualities)); };
+            Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
-
+        [property: DisplayName("等级列表")]
         [ObservableProperty]
-        private ObservableCollection<Quality> qualities = new ObservableCollection<Quality>() { new Quality("G1") };
-
+        private ObservableCollection<Quality> qualities;
+       
         public void Receive(OperateMessage message)
         {
             if (message.obj.GetType() == typeof(QualityConfig))
@@ -57,6 +58,7 @@ namespace QualityGrade
     /// 2024.6.26 李焕彬
     /// 质量
     /// </summary>
+    [DisplayName("等级")]
     public partial class Quality : ObservableLog
     {
         public Quality()
@@ -72,30 +74,35 @@ namespace QualityGrade
         /// 等级名 A\B\C\D
         /// </summary>
         [ObservableProperty]
+        [property: DisplayName("名称")]
         private string name;
 
         /// <summary>
         /// 显示颜色
         /// </summary>
         [ObservableProperty]
+        [property: DisplayName("颜色")]
         private KnownColor showColor = null;
         
         /// <summary>
         /// 说明
         /// </summary>
         [ObservableProperty]
+        [property: DisplayName("说明")]
         private string description;
 
         /// <summary>
         /// 等级水平 越高越差
         /// </summary>
         [ObservableProperty]
+        [property: DisplayName("优先级")]
         private int priority = 0;
 
         /// <summary>
         /// 质量信号
         /// </summary>
         [ObservableProperty]
+        [property: DisplayName("信号")]
         private int signal = 0;
 
         public Quality Clone()

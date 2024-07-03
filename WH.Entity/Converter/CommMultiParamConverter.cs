@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace WH.Entity.Converter
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CommMultiParamConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

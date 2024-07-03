@@ -31,6 +31,7 @@ namespace SDFilter
 
         public FilterConfig()
         {
+            var SpFilters = new ObservableCollection<SpeciesFilter>();
             foreach (var specie in AlgorithmOut.instance.Specises)
             {
                 SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
@@ -38,16 +39,15 @@ namespace SDFilter
                 {
                     speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name));
                 }
-                SpeciesFilters.Add(speciesFilter);
+                SpFilters.Add(speciesFilter);
             }
-
-            SpeciesFilters.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(SpeciesFilters)); };
-
+            SpeciesFilters = SpFilters;
+           
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
-
+        [property: DisplayName("类别列表")]
         [ObservableProperty]
-        private ObservableCollection<SpeciesFilter> speciesFilters = new ObservableCollection<SpeciesFilter>();
+        private ObservableCollection<SpeciesFilter> speciesFilters;
 
         public SpeciesFilter this[string name]
         {
@@ -61,7 +61,7 @@ namespace SDFilter
         {
             if (message.obj.GetType() == typeof(FilterConfig))
             {
-                OperateLog.Info($"过滤分选-{message.message}");
+                OperateLog.Info($"检测设置：{message.message}");
                 return;
             }
             foreach (var sp in SpeciesFilters)
@@ -70,7 +70,7 @@ namespace SDFilter
                 {
                     if (sp == message.obj)
                     {
-                        OperateLog.Info($"过滤分选-{sp.Name}-{message.message}");
+                        OperateLog.Info($"类别：{sp.Name}-{message.message}");
                         return;
                     }
                     continue;
@@ -81,7 +81,7 @@ namespace SDFilter
                     {
                         if(re == message.obj)
                         {
-                            OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{message.message}");
+                            OperateLog.Info($"类别：{sp.Name}-{re.Name}-{message.message}");
                             return;
                         }
                         continue;
@@ -92,7 +92,7 @@ namespace SDFilter
                         {
                             if (de == message.obj)
                             {
-                                OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-{message.message}");
+                                OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-{message.message}");
                                 return;
                             }
                             continue;
@@ -103,7 +103,7 @@ namespace SDFilter
                             {
                                 if (fis == message.obj)
                                 {
-                                    OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}");
+                                    OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}");
                                     return;
                                 }
                                 continue;
@@ -114,7 +114,7 @@ namespace SDFilter
                                 {
                                     if (se == message.obj)
                                     {
-                                        OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}");
+                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}");
                                         return;
                                     }
                                     continue;
@@ -123,7 +123,7 @@ namespace SDFilter
                                 {
                                     if (pa == message.obj)
                                     {
-                                        OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}");
+                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}");
                                         return;
                                     }
                                 }
@@ -134,7 +134,7 @@ namespace SDFilter
                                 {
                                     if (fi == message.obj)
                                     {
-                                        OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}");
+                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}");
                                         return;
                                     }
                                     continue;
@@ -143,7 +143,7 @@ namespace SDFilter
                                 {
                                     if (pa == message.obj)
                                     {
-                                        OperateLog.Info($"过滤分选-{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}");
+                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}");
                                         return;
                                     }
                                 }
@@ -341,23 +341,23 @@ namespace SDFilter
     {
         public SpeciesFilter()
         {
-            
+            RecipeDefects = new ObservableCollection<RecipeDefect>();
         }
-        public SpeciesFilter(string name) 
+        public SpeciesFilter(string name) :this()
         {
             this.Name = name;
-            recipeDefects.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(recipeDefects)); };
+           
         }
-
+        [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
 
         [JsonIgnore]
         [ObservableProperty]
         private bool result = true;
-
+        [property: DisplayName("缺陷列表")]
         [ObservableProperty]
-        private ObservableCollection<RecipeDefect> recipeDefects = new ObservableCollection<RecipeDefect>();
+        private ObservableCollection<RecipeDefect> recipeDefects;
 
         public RecipeDefect this[string name]
         {
@@ -381,20 +381,20 @@ namespace SDFilter
     {
         public RecipeDefect()
         {
-            
+            DefectFilters = new ObservableCollection<DefectFilter>();
         }
-        public RecipeDefect(string name)
+        public RecipeDefect(string name):this()
         {
             this.Name = name;
             DefectFilters.Add(new DefectFilter(Name + "0"));
-            defectFilters.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(defectFilters)); };
+          
         }
-
+        [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
-
+        [property: DisplayName("缺陷列表")]
         [ObservableProperty]
-        private ObservableCollection<DefectFilter> defectFilters = new ObservableCollection<DefectFilter>();
+        private ObservableCollection<DefectFilter> defectFilters;
 
         public DefectFilter this[string name]
         {
@@ -418,9 +418,9 @@ namespace SDFilter
     {
         public DefectFilter()
         {
-            
+            FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
         }
-        public DefectFilter(string name)
+        public DefectFilter(string name):this()
         {
             this.Name = name;
             foreach (DetectFeature item in Enum.GetValues(typeof(DetectFeature)))
@@ -429,24 +429,23 @@ namespace SDFilter
             }
             ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)];
 
-            filterList.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(filterList)); };
-            resultList.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(resultList)); };
+           
         }
-
+        [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
-
+        [property: DisplayName("优先级")]
         [ObservableProperty]
         private int priority = 0;
-
+        [property: DisplayName("颜色")]
         [ObservableProperty]
         private KnownColor showColor = null;
-
+        [property: DisplayName("质量等级")]
         [ObservableProperty]
         private int qualityLevel = 0;
-
+        [property: DisplayName("过滤列表")]
         [ObservableProperty]
-        private ObservableCollection<FilterAndSelect> filterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
+        private ObservableCollection<FilterAndSelect> filterList;
 
         [JsonIgnore]
         [ObservableProperty]
@@ -466,22 +465,22 @@ namespace SDFilter
     {
         public FilterAndSelect()
         {
-            filter.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(filter)); };
-            selectList.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(selectList)); };
+            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig() };
+            SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig() };
         }
 
         [JsonIgnore]
         [ObservableProperty]
         private bool result = true;
-
+        [property: DisplayName("输入操作")]
         [ObservableProperty]
         private string unionOrConnect = "不打散不合并";
-
+        [property: DisplayName("过滤器")]
         [ObservableProperty]
-        private ObservableCollection<SelectConfig> filter = new ObservableCollection<SelectConfig>() { new SelectConfig()};
-
+        private ObservableCollection<SelectConfig> filter;
+        [property: DisplayName("分选器")]
         [ObservableProperty]
-        private ObservableCollection<SelectConfig> selectList= new ObservableCollection<SelectConfig>() { new SelectConfig()};
+        private ObservableCollection<SelectConfig> selectList;
 
         public override string ToString()
         {
@@ -497,11 +496,12 @@ namespace SDFilter
     {
         public SelectConfig()
         {
-            selectParams.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(selectParams)); };
+            SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams() };
+           
         }
-
+        [property: DisplayName("筛选条目")]
         [ObservableProperty]
-        private ObservableCollection<OneSelectParams> selectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams()};
+        private ObservableCollection<OneSelectParams> selectParams;
 
         public override string ToString()
         {
@@ -514,18 +514,21 @@ namespace SDFilter
     /// </summary>
     public partial class OneSelectParams : ObservableLog
     {
+        [property: DisplayName("特征")]
         [ObservableProperty]
         private DetectFeature character = DetectFeature.顶点高度;
-
+        [property: DisplayName("最小值")]
         [ObservableProperty]
         private double min = 1.0;
-
+        [property: DisplayName("最大值")]
         [ObservableProperty]
         private double max = double.PositiveInfinity;
 
+        [property: DisplayName("上限")]
         [ObservableProperty]
         private bool maxLimit = true;
 
+        [property:DisplayName("下限")]
         [ObservableProperty]
         private bool minLimit = true;
 

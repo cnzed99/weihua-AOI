@@ -17,8 +17,8 @@ namespace AlgorithmDll
 
         public MaociAlgorParamConfig() 
         {
-            PcParams.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(PcParams)); };
-            FpgaParams.CollectionChanged += (s, e) => { base.CollectionChanged(e, nameof(FpgaParams)); };
+            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(paramName1) };
+            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(paramName1) };
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
 
@@ -56,16 +56,17 @@ namespace AlgorithmDll
         }
 
         private const string paramName1 = "分组1";
-
+        [property: DisplayName("参数列表")]
         [ObservableProperty]
-        private ObservableCollection<MaociAlgorParam> pcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(paramName1) };
+        private ObservableCollection<MaociAlgorParam> pcParams;
 
+        [property: DisplayName("当前算法参数组")]
         [ObservableProperty]
         private string pcSelect = paramName1;
-
+        [property: DisplayName("预处理参数列表")]
         [ObservableProperty]
-        private ObservableCollection<MaociAlgorParamFpga> fpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(paramName1) };
-
+        private ObservableCollection<MaociAlgorParamFpga> fpgaParams;
+        [property: DisplayName("当前预处理参数组")]
         [ObservableProperty]
         private string fpgaSelect = paramName1;
     }

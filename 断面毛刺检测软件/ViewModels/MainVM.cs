@@ -51,7 +51,7 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 当前工程
         /// </summary>
-        private MainModel _model = new MainModel();
+        private MainModel _model;
         /// <summary>
         /// 当前工程 禁止直接修改其属性
         /// </summary>

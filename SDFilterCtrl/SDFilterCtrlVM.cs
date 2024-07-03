@@ -18,7 +18,7 @@ namespace SDFilter
     public partial class SDFilterCtrlVM : ObservableObject
     {
         [ObservableProperty]
-        private FilterConfig filterConfig = new FilterConfig();
+        private FilterConfig filterConfig;
 
         [RelayCommand]
         public void AddFilter(SpeciesFilter speciesFilter)

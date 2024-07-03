@@ -20,7 +20,7 @@ namespace QualityGrade
     /// 2024.6.26 李焕彬
     /// 质量等级控件VM
     /// </summary>
-    public partial class QualityCtrlVM : ObservableLog, IRecipient<RequestMessage<ObservableCollection<Quality>>>
+    public partial class QualityCtrlVM :ObservableObject, IRecipient<RequestMessage<ObservableCollection<Quality>>>
     {
         public QualityCtrlVM() 
         {

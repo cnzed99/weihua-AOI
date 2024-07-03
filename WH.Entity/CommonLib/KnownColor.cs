@@ -12,7 +12,7 @@ namespace WH.Entity.CommonLib
     /// 2024.7.1 李焕彬
     /// Known颜色类，含颜色和颜色名
     /// </summary>
-    public class KnownColor
+    public class KnownColor:IEquatable<KnownColor>
     {
         public KnownColor()
         {
@@ -27,6 +27,14 @@ namespace WH.Entity.CommonLib
         public string name { get; set; }
 
         public Brush brush { get; set; }
+
+        public bool Equals(KnownColor other)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            var kcolor = (KnownColor)other;
+            if (kcolor.name == name) return true;
+            else return false;
+        }
 
         public override string ToString()
         {
