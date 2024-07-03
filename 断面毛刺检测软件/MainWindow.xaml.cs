@@ -438,6 +438,7 @@ namespace 断面毛刺检测软件
             SystemSettingWindow SysSetWindow = App.Container.Resolve<Lazy< SystemSettingWindow>>().Value;
             SysSetWindow.DataContext = mainVM.SystemSettings;
             SysSetWindow.Show();
+            SysSetWindow.Activate();
             OperateLog.Info(Properties.Resources.SystemSettings);
         }
 
@@ -454,6 +455,7 @@ namespace 断面毛刺检测软件
             OffLineTestWindow offLine = App.Container.Resolve<Lazy<OffLineTestWindow>>().Value;
 
             offLine.Show();
+            offLine.Activate();
             OperateLog.Info(Properties.Resources.Offline);
         }
         #endregion
