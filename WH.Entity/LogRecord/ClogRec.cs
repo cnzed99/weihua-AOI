@@ -30,6 +30,7 @@ namespace WH.Entity.LogRecord
     public partial class CLogRec:ObservableObject
     {
         static Hashtable s_logList = new Hashtable();
+        public string UserName { get; set; }
         SlogMessage infoMessage;
         public SlogMessage InfoMessage
         {
@@ -102,34 +103,59 @@ namespace WH.Entity.LogRecord
         }
         public  void Info(string message)
         {
-            _InfoLog.Info(message);
-            UpdateMessage(message,LOG.LOG_INFO);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+            _InfoLog.Info(msg);
+            UpdateMessage(msg, LOG.LOG_INFO);
         }
         public  void Warn(string message)
         {
-            _InfoLog.Info(message);
-            UpdateMessage(message,LOG.LOG_WARN);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+            _InfoLog.Info(msg);
+            UpdateMessage(msg,LOG.LOG_WARN);
         }
         public  void Error(string message)
         {
-            _ErrorLog.Error(message);
-            UpdateMessage(message, LOG.LOG_ERROR);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+           
+            _ErrorLog.Error(msg);
+            UpdateMessage(msg, LOG.LOG_ERROR);
         }
 
         public void OK(string message)
         {
-            _InfoLog.Info(message);
-            UpdateMessage(message, LOG.LOG_OK);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+            _InfoLog.Info(msg);
+            UpdateMessage(msg, LOG.LOG_OK);
         }
         public void NG(string message)
         {
-            _InfoLog.Info(message);
-            UpdateMessage(message, LOG.LOG_NG);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+            _InfoLog.Info(msg);
+            UpdateMessage(msg, LOG.LOG_NG);
         }
         public void Tip(string message)
         {
-            _InfoLog.Info(message);
-            UpdateMessage(message, LOG.LOG_TIP);
+            StringBuilder sb = new StringBuilder(UserName);
+            sb.Append(":");
+            sb.Append(message);
+            string msg = sb.ToString();
+            _InfoLog.Info(msg);
+            UpdateMessage(msg, LOG.LOG_TIP);
         }
 
 

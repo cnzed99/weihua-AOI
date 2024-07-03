@@ -153,9 +153,9 @@ namespace 断面毛刺检测软件
         private void btn_UserLogin_Click(object sender, RoutedEventArgs e)
         {
             LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
-
             UserInfoFrm.ShowDialog();
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
+            
         }
 
         #endregion

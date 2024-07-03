@@ -81,6 +81,11 @@ namespace 断面毛刺检测软件.ViewModels
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;
             timer.Start();
+            LoginViewModel.UserChangeAction += (user, success) =>
+            {
+                SysLog.UserName = user.UserName;
+                OperateLog.UserName = user.UserName;
+            };
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
         }
         #region 时间相关
