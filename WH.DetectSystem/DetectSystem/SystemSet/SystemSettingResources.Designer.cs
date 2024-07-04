@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WH.DetectSystem.DetectSystem {
+namespace WH.DetectSystem.DetectSystem.SystemSet {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WH.DetectSystem.DetectSystem {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WH.DetectSystem.DetectSystem.SystemSettingResources", typeof(SystemSettingResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WH.DetectSystem.DetectSystem.SystemSet.SystemSettingResources", typeof(SystemSettingResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -29,7 +29,7 @@ using MapsterMapper;
 using WH.Entity;
 using ProjProduceData;
 using WH.DetectSystem.Models;
-using WH.DetectSystem.DetectSystem;
+using WH.DetectSystem.DetectSystem.SystemSet;
 
 namespace WH.DetectSystem.ViewModels
 {

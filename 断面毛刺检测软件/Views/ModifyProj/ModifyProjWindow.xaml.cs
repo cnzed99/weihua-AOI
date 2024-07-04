@@ -16,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.Messages;
-using 断面毛刺检测软件.ViewModels;
 using 断面毛刺检测软件.Views.ModifyProj;
 
 namespace 断面毛刺检测软件.Views

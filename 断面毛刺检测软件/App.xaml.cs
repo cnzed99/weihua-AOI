@@ -13,7 +13,6 @@ using System.Net;
 using System.Windows;
 using System;
 using System.Runtime.InteropServices;
-using 断面毛刺检测软件.ViewModels;
 using Autofac;
 using WH.Entity.LogRecord;
 using 断面毛刺检测软件.Views;

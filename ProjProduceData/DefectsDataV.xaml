@@ -1,14 +1,16 @@
-﻿<UserControl x:Class="ProjProduceData.DefectsDataV"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ProjProduceData"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="ProjProduceData.DefectsDataV"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:ProjProduceData"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <UserControl.DataContext>
-        <local:DefectsDataVM/>
+        <local:DefectsDataVM />
     </UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -17,49 +19,66 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>-->
             <Style TargetType="DataGridCell">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="BorderBrush" Value="Gray"/>
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Height" Value="24"/>
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="BorderBrush" Value="Gray" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Height" Value="24" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="DataGridCell">
-                            <TextBlock TextAlignment="Center" VerticalAlignment="Center">
-                                <ContentPresenter/>
+                            <TextBlock VerticalAlignment="Center" TextAlignment="Center">
+                                <ContentPresenter />
                             </TextBlock>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
             <Style TargetType="DataGridColumnHeader">
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
             </Style>
             <Style TargetType="DataGridRow">
                 <Style.Triggers>
                     <Trigger Property="AlternationIndex" Value="0">
-                        <Setter Property="Background" Value="{DynamicResource RegionBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
                     </Trigger>
                     <Trigger Property="AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="#FF0078D7"/>
+                        <Setter Property="Background" Value="#FF0078D7" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <ScrollViewer  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="True" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-        <DataGrid ItemsSource="{Binding DefectsProduce.DefectNumbersList}" AlternationCount="2" AutoGenerateColumns="False" IsReadOnly="True"
-          RowHeaderWidth="0" Style="{x:Null}" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Background="{DynamicResource RegionBrush}">
+    <ScrollViewer
+        CanContentScroll="True"
+        HorizontalScrollBarVisibility="Auto"
+        PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
+        VerticalScrollBarVisibility="Auto">
+        <DataGrid
+            AlternationCount="2"
+            AutoGenerateColumns="False"
+            Background="{DynamicResource RegionBrush}"
+            IsReadOnly="True"
+            ItemsSource="{Binding DefectsProduce.DefectNumbersList}"
+            PreviewMouseWheel="DataGrid_PreviewMouseWheel"
+            RowHeaderWidth="0"
+            Style="{x:Null}">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="80" Header="{Binding [Name], Source={x:Static local:Lang.instance}}" Binding="{Binding Name}"/>
-                <DataGridTextColumn Width="50" Header="{Binding [Num], Source={x:Static local:Lang.instance}}" Binding="{Binding Number}"/>
-                <DataGridTextColumn  Header="{Binding [Percent], Source={x:Static local:Lang.instance}}" Binding="{Binding Percent, StringFormat={}{0:P2}}"/>
-                <DataGridTextColumn  Header="{Binding [PercentOfAll], Source={x:Static local:Lang.instance}}" Binding="{Binding PercentofAll, StringFormat={}{0:P2}}"/>
+                <DataGridTextColumn
+                    Width="80"
+                    Binding="{Binding Name}"
+                    Header="{Binding [Name], Source={x:Static local:Lang.instance}}" />
+                <DataGridTextColumn
+                    Width="50"
+                    Binding="{Binding Number}"
+                    Header="{Binding [Num], Source={x:Static local:Lang.instance}}" />
+                <DataGridTextColumn Binding="{Binding Percent, StringFormat={}{0:P2}}" Header="{Binding [Percent], Source={x:Static local:Lang.instance}}" />
+                <DataGridTextColumn Binding="{Binding PercentofAll, StringFormat={}{0:P2}}" Header="{Binding [PercentOfAll], Source={x:Static local:Lang.instance}}" />
             </DataGrid.Columns>
         </DataGrid>
     </ScrollViewer>

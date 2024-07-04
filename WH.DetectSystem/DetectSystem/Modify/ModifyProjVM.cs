@@ -13,7 +13,7 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.Messages;
 
 
-namespace 断面毛刺检测软件.ViewModels
+namespace WH.DetectSystem.ViewModels
 {
     public partial class ModifyProjVM : ObservableValidator
     {

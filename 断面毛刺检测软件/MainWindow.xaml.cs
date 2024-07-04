@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using 断面毛刺检测软件.ViewModels;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.Reactive.Linq;
 using System.Windows.Controls.Primitives;

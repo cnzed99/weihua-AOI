@@ -1,65 +1,65 @@
-﻿<UserControl x:Class="ProjProduceData.ProduceData"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ProjProduceData"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="ProjProduceData.ProduceData"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:ProjProduceData"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <local:DefectsDataVM/>
+        <local:DefectsDataVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
-        <ResourceDictionary>
-            
-        </ResourceDictionary>
+        <ResourceDictionary />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <UniformGrid Rows="2" DataContext="{Binding DefectsProduce}">
-            <TextBlock Text="All" Style="{StaticResource TextBlockDefault}"/>
-            <TextBlock Text="{Binding Total}"  Style="{StaticResource TextBlockDefaultBold}"/>
-            <TextBlock Text="OK"  Style="{StaticResource TextBlockDefault}"/>
-            <TextBlock  Style="{StaticResource TextBlockDefaultBold}">
+        <UniformGrid DataContext="{Binding DefectsProduce}" Rows="2">
+            <TextBlock Style="{StaticResource TextBlockDefault}" Text="All" />
+            <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Total}" />
+            <TextBlock Style="{StaticResource TextBlockDefault}" Text="OK" />
+            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
                 <TextBlock.Text>
                     <MultiBinding ConverterParameter="OK" StringFormat="{}{0}">
                         <MultiBinding.Converter>
-                            <local:MultiCalcConverter/>
+                            <local:MultiCalcConverter />
                         </MultiBinding.Converter>
-                        <Binding Path="Total"/>
-                        <Binding Path="Ng"/>
+                        <Binding Path="Total" />
+                        <Binding Path="Ng" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
-            <TextBlock Text="NG"  Style="{StaticResource TextBlockDefault}"/>
-            <TextBlock Text="{Binding Ng}"  Style="{StaticResource TextBlockDefaultBold}"/>
-            <TextBlock/>
-            <TextBlock/>
-            <TextBlock Text="OK%"  Style="{StaticResource TextBlockDefault}"/>
-            <TextBlock  Style="{StaticResource TextBlockDefaultBold}">
+            <TextBlock Style="{StaticResource TextBlockDefault}" Text="NG" />
+            <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Ng}" />
+            <TextBlock />
+            <TextBlock />
+            <TextBlock Style="{StaticResource TextBlockDefault}" Text="OK%" />
+            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
                 <TextBlock.Text>
                     <MultiBinding ConverterParameter="OK%" StringFormat="{}{0:P2}">
                         <MultiBinding.Converter>
-                            <local:MultiCalcConverter/>
+                            <local:MultiCalcConverter />
                         </MultiBinding.Converter>
-                        <Binding Path="Total"/>
-                        <Binding Path="Ng"/>
+                        <Binding Path="Total" />
+                        <Binding Path="Ng" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
-            <TextBlock Text="NG%"  Style="{StaticResource TextBlockDefault}"/>
-            <TextBlock  Style="{StaticResource TextBlockDefaultBold}">
+            <TextBlock Style="{StaticResource TextBlockDefault}" Text="NG%" />
+            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
                 <TextBlock.Text>
                     <MultiBinding ConverterParameter="NG%" StringFormat="{}{0:P2}">
                         <MultiBinding.Converter>
-                            <local:MultiCalcConverter/>
+                            <local:MultiCalcConverter />
                         </MultiBinding.Converter>
-                        <Binding Path="Total"/>
-                        <Binding Path="Ng"/>
+                        <Binding Path="Total" />
+                        <Binding Path="Ng" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
@@ -67,14 +67,17 @@
         <ItemsControl Grid.Column="1" ItemsSource="{Binding DefectsProduce.QualityNumbersList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="3"/>
+                    <UniformGrid Columns="3" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <UniformGrid Rows="1">
-                        <TextBlock Text="{Binding Name}" Foreground="{Binding ShowColor.brush}" Style="{StaticResource TextBlockDefault}"/>
-                        <TextBlock Text="{Binding Number}" Style="{StaticResource TextBlockDefaultBold}"/>
+                        <TextBlock
+                            Foreground="{Binding ShowColor.brush}"
+                            Style="{StaticResource TextBlockDefault}"
+                            Text="{Binding Name}" />
+                        <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Number}" />
                     </UniformGrid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

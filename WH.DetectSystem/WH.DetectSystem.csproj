@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -25,14 +25,14 @@
 	
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="DetectSystem\SystemSettingResources.Designer.cs">
+	  <Compile Update="DetectSystem\SystemSet\SystemSettingResources.Designer.cs">
 	    <DependentUpon>SystemSettingResources.resx</DependentUpon>
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Update="DetectSystem\SystemSettingResources.resx">
+	  <EmbeddedResource Update="DetectSystem\SystemSet\SystemSettingResources.resx">
 	    <LastGenOutput>SystemSettingResources.Designer.cs</LastGenOutput>
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	  </EmbeddedResource>
