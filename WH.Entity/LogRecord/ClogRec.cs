@@ -25,6 +25,7 @@ namespace WH.Entity.LogRecord
     }
 
     /// <summary>
+    /// 20240704 TCG
     /// Log文本操作 不显示至控件
     /// </summary>
     public partial class CLogRec:ObservableObject
@@ -160,6 +161,10 @@ namespace WH.Entity.LogRecord
 
 
     }
+    /// <summary>
+    /// 20240704 TCG
+    /// 日志消息封装
+    /// </summary>
     public struct SlogMessage
     {
         public LOG Log;

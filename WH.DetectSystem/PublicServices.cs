@@ -11,6 +11,7 @@ using WH.Entity.LogRecord;
 namespace WH.DetectSystem
 {
     /// <summary>
+    /// 20240704 TCG
     /// IOC容器 管理各种实例 类型
     /// </summary>
     public class CPublicServices
@@ -26,6 +27,7 @@ namespace WH.DetectSystem
         }
     }
     /// <summary>
+    /// 20240704 TCG
     /// 日志类型，目前两类 系统日志和操作日志
     /// </summary>
     public enum LOGTYPE

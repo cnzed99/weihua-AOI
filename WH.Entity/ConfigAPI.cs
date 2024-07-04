@@ -5,6 +5,10 @@ using Newtonsoft.Json;
 
 namespace WH.Entity
 {
+    /// <summary>
+    /// 20240704 TCG
+    /// 配置文件 保存加载
+    /// </summary>
     public static class ConfigAPI
     {
         /// <summary>

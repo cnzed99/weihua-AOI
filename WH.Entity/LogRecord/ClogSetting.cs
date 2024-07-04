@@ -16,7 +16,10 @@ using System.Windows.Media;
 
 namespace WH.Entity.LogRecord;
 
-
+/// <summary>
+/// 20240704 TCG
+/// 日志配置类
+/// </summary>
 public class ClogSetting
 {
     private const int c_SIZE_CONTENT = 10485760;
@@ -50,7 +53,9 @@ public class ClogSetting
 
     }
 }
-
+/// <summary>
+/// 日志扩展方法
+/// </summary>
 public static class ClogHepler
 {
     private static ConcurrentDictionary<Guid, ClogHepler.PairLogItem> logPairDictionary;

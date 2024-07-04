@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace WH.Entity.Progress
 {
     /// <summary>
+    /// 20240704 TCG
     /// 用于异步汇报进度
     /// </summary>
     /// <typeparam name="T"></typeparam>

@@ -11,6 +11,10 @@ using System.Windows;
 
 namespace WH.Controls
 {
+    /// <summary>
+    /// 20240704 TCG
+    /// 用户管理视图模型
+    /// </summary>
     public partial class CSettingViewModel : ObservableObject
     {
         #region 修改

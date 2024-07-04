@@ -11,7 +11,9 @@ using Newtonsoft.Json;
 
 namespace WH.Controls
 {
-
+    /// <summary>
+    /// 静态用户信息容器，提供加载保存方法
+    /// </summary>
     public class LoginLoad
     {
 
@@ -110,7 +112,10 @@ namespace WH.Controls
         }
       
     }
-
+    /// <summary>
+    /// 20240704 TCG
+    /// 加密解密
+    /// </summary>
     public static class CEncryption
     {
         //默认密钥向量

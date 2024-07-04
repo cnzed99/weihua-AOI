@@ -14,6 +14,10 @@ using WH.Entity.Messages;
 
 namespace WH.Controls
 {
+    /// <summary>
+    /// 20240704 TCG
+    /// 用户登录 视图模型
+    /// </summary>
     public partial class CLoginViewModel : ObservableObject
     {
       
@@ -122,7 +126,11 @@ namespace WH.Controls
             }
             
         }
-
+        /// <summary>
+        /// 登录时间倒计时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TmrCheckAuthorizationLeftTime_Tick(object sender, EventArgs e)
         {
             try

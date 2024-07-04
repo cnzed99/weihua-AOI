@@ -12,6 +12,10 @@ using WH.Entity.Attribute;
 
 namespace WH.Controls
 {
+    /// <summary>
+    /// 20240704 TCG
+    /// 用户 包含用户名、密码、权限
+    /// </summary>
     public partial class CLoginPerson : ObservableObject
     {
         [ObservableProperty]
@@ -77,7 +81,10 @@ namespace WH.Controls
         public ImageSource LogoImage { get; set; } = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
 
     }
-
+    /// <summary>
+    /// 20240704 TCG
+    /// 权限枚举
+    /// </summary>
     public enum PRIVILEGE
     {
         /// <summary>
