@@ -276,7 +276,7 @@ namespace WH.DetectSystem.ViewModels
         /// <summary>
         /// 消息队列
         /// </summary>
-        private readonly Channel<string> m_InfoChannel = Channel.CreateBounded<string>(s_SaveImgchannelOptions);
+        private readonly Channel<string> m_InfoChannel = Channel.CreateBounded<string>(s_channelOptions);
         /// <summary>
         /// 取图队列 目前没有相机，先改静态类离线测试用
         /// </summary>
@@ -316,7 +316,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         string msg = await m_InfoChannel.Reader.ReadAsync();
-                        await Task.Delay(10);
+                        //await Task.Delay(10);
                         SysLog.Info(msg);
 
 
@@ -342,7 +342,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     #region test
 
-                    await Task.Delay(100);
+                    await Task.Delay(20);
                     if (!isStart) continue;
                     if (!imgitor.MoveNext())
                     {
@@ -491,7 +491,7 @@ namespace WH.DetectSystem.ViewModels
                     WeakReferenceMessenger.Default.Send<MemoryStream>(cell.Image);
                    
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
-                    await Task.Delay(50);
+                    //await Task.Delay(50);
                     //try
                     //{
                     //    Cell cell = await CCameraBase.WaitGetImageChannel.Reader.ReadAsync();
@@ -542,11 +542,11 @@ namespace WH.DetectSystem.ViewModels
                         Cell cell = await m_AlgorithmChannel.Reader.ReadAsync();
                         StringBuilder strbuilder = new StringBuilder("[");
 
-                        strbuilder.Append("算法");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   开始执行配方");
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        //strbuilder.Append("算法");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   开始执行配方");
+                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         MaociAlgorParamConfig.PcParams[0].MaociExcute(cell);
                         //SystemStatic.RecipeList[cell.ProjGuid].RecipeExcute(cell);
 
@@ -554,7 +554,7 @@ namespace WH.DetectSystem.ViewModels
                         //{
                         //    SetBadCell(cell); //默认是一个最差的片
                         //}
-                        await Task.Delay(30);
+                        //await Task.Delay(30);
 
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
@@ -599,12 +599,12 @@ namespace WH.DetectSystem.ViewModels
                         Cell cell = await m_FilterChannel.Reader.ReadAsync();
                         StringBuilder strbuilder = new StringBuilder("[");
 
-                        strbuilder.Append("筛选");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   开始筛选");
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        await Task.Delay(30);
+                        //strbuilder.Append("筛选");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   开始筛选");
+                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        //await Task.Delay(30);
                         MaociFilter.FilterExute(cell);
                         //SystemStatic.SysConfigList[cell.ProjGuid].Config.FilterConfig.FilterExcute(cell);
                         //ColorGradeGroupConfig colorConfig = null;
@@ -618,14 +618,14 @@ namespace WH.DetectSystem.ViewModels
                         cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Stop();
                         //CCommunicationManagement.SendDetectionFinishSignal(cell.CamSerial, cell.ID, cell.QualitySignal, cell.ColorSignel, cell.OtherInfoSend);
-                        strbuilder.Clear();
-                        strbuilder.Append("[");
-                        strbuilder.Append("筛选");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   筛选执行完成,耗时:");
-                        strbuilder.Append(cell.FilterTime.TotalMilliseconds.ToString("F2"));
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        //strbuilder.Clear();
+                        //strbuilder.Append("[");
+                        //strbuilder.Append("筛选");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   筛选执行完成,耗时:");
+                        //strbuilder.Append(cell.FilterTime.TotalMilliseconds.ToString("F2"));
+                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         // _infoLog.Enqueue($"{$"[{_waitFilterImageQueue.Name}]",-10}{cell.ID,-8}{"筛选执行完成",-20}耗时 {cell.FilterTime.TotalMilliseconds:0.00}");
                         //cell.Stopwatch.Restart();
                         cell.ProcessTime = DateTime.Now - cell.CreateTime;
@@ -637,7 +637,7 @@ namespace WH.DetectSystem.ViewModels
                         strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
                         FilterTime = cell.ProcessTime.TotalMilliseconds;
                         await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        cell.Stopwatch.Restart();
+                        //cell.Stopwatch.Stop();
                         //if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning)//如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
                         //{
                         //    this.Invoke(new Action(() =>
@@ -688,6 +688,7 @@ namespace WH.DetectSystem.ViewModels
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
                         }
+                        DefectsDataVM.DefectsProduce.CellResultExcute(cell);
                         //if (!cell.IsOK) //如果质量OK 颜色不OK 
                         //{
                         //    showcolor = cell.q.ShowColor;
