@@ -40,6 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "检测软件组件", "检�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjProduceData", "ProjProduceData\ProjProduceData.csproj", "{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WH.DetectSystem", "WH.DetectSystem\WH.DetectSystem.csproj", "{2C921592-C73D-4114-8162-91BADB67DE96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C921592-C73D-4114-8162-91BADB67DE96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C921592-C73D-4114-8162-91BADB67DE96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C921592-C73D-4114-8162-91BADB67DE96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C921592-C73D-4114-8162-91BADB67DE96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

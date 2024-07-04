@@ -7,7 +7,7 @@ using System.Globalization;
 
 using WH.Entity.Attribute;
 
-namespace 断面毛刺检测软件.Models
+namespace WH.DetectSystem.Models
 {
     public partial class SystemSettingsModel:ObservableValidator
     {

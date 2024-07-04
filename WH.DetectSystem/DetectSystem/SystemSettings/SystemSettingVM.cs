@@ -7,9 +7,9 @@ using System.IO;
 using WH.Controls;
 using WH.Entity;
 using CommunityToolkit.Mvvm.Input;
-using 断面毛刺检测软件.Models;
+using WH.DetectSystem.Models;
 
-namespace 断面毛刺检测软件.ViewModels
+namespace WH.DetectSystem.ViewModels
 {
     public partial class SystemSettingsVM:SystemSettingsModel
     {

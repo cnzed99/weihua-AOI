@@ -13,10 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RunCell;
-using 断面毛刺检测软件.ViewModels;
 
 
 namespace 断面毛刺检测软件.Views

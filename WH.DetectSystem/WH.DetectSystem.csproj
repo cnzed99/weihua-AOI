@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
+    <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
+    <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
+    <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+	
+		<PackageReference Include="Mapster" />
+	
+		<PackageReference Include="Newtonsoft.Json" />
+	
+		<PackageReference Include="System.Threading.Channels" />
+	
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="DetectSystem\SystemSettingResources.Designer.cs">
+	    <DependentUpon>SystemSettingResources.resx</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="DetectSystem\SystemSettingResources.resx">
+	    <LastGenOutput>SystemSettingResources.Designer.cs</LastGenOutput>
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>

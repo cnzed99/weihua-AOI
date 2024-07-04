@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using 断面毛刺检测软件.Models;
 using 断面毛刺检测软件.ViewModels;
 using MessageBox = HandyControl.Controls.MessageBox;
 using System.Reactive.Linq;
@@ -33,6 +32,8 @@ using Mapster;
 using WH.RunCell;
 using System.Threading.Channels;
 using WH.Entity.CommonLib;
+using WH.DetectSystem.ViewModels;
+using WH.DetectSystem;
 
 namespace 断面毛刺检测软件
 {

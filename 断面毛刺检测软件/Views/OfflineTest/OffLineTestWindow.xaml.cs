@@ -12,7 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using 断面毛刺检测软件.ViewModels;
+using WH.DetectSystem.ViewModels;
+
 
 namespace 断面毛刺检测软件.Views
 {

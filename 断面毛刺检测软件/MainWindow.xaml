@@ -11,7 +11,7 @@
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
-    xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels"
+    xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     Title=""
     Width="1400"

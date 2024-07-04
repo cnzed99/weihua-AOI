@@ -8,8 +8,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WH.DetectSystem.Models;
+using WH.DetectSystem.ViewModels;
 using WH.Entity.Messages;
-using 断面毛刺检测软件.Models;
+
 
 namespace 断面毛刺检测软件.ViewModels
 {

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace 断面毛刺检测软件.Models
+namespace WH.DetectSystem.Models
 {
     /// <summary>
     /// 工程配置文件

@@ -318,8 +318,13 @@
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+    <ProjectReference Include="..\WH.DetectSystem\WH.DetectSystem.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

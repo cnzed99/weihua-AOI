@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using WH.Controls;
 using WH.Entity.LogRecord;
-using 断面毛刺检测软件.Models;
 using System.Threading.Channels;
 using WH.RunCell;
 using System.Runtime.CompilerServices;
@@ -29,8 +28,10 @@ using WH.Entity.Messages;
 using MapsterMapper;
 using WH.Entity;
 using ProjProduceData;
+using WH.DetectSystem.Models;
+using WH.DetectSystem.DetectSystem;
 
-namespace 断面毛刺检测软件.ViewModels
+namespace WH.DetectSystem.ViewModels
 {
     /// <summary>
     /// 主界面视图模型
@@ -44,11 +45,11 @@ namespace 断面毛刺检测软件.ViewModels
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
-        public CLogRec SysLog { get;} = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
+        public CLogRec SysLog { get;} = PublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
         /// <summary>
         /// 操作日志
         /// </summary>
-        public CLogRec OperateLog { get;} = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+        public CLogRec OperateLog { get;} = PublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
         /// <summary>
         /// 当前工程
         /// </summary>
@@ -161,13 +162,13 @@ namespace 断面毛刺检测软件.ViewModels
                     SystemSettings = SysSet.LoadParameter();
                     if (SystemSettings != null)
                     {
-                        SysLog.Info(Properties.Resources.SystemSettingsReadSuccess);
+                        SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
                         
                         //CLoading.DispText("读取系统配置成功...", 10);
                     }
                     else
                     {
-                        SysLog.Error(Properties.Resources.SystemSettingsReadFailed);
+                        SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
                         //CLoading.DispText("读取系统配置失败...", 10);
                     }
                     progress.Report(10);
@@ -530,7 +531,7 @@ namespace 断面毛刺检测软件.ViewModels
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   开始执行配方");
                         await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-
+                        MaociAlgorParamConfig.PcParams[0].MaociExcute(cell);
                         //SystemStatic.RecipeList[cell.ProjGuid].RecipeExcute(cell);
 
                         //if (cell._skipthis)
@@ -588,6 +589,7 @@ namespace 断面毛刺检测软件.ViewModels
                         strbuilder.Append("   开始筛选");
                         await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         await Task.Delay(30);
+                        MaociFilter.FilterExute(cell);
                         //SystemStatic.SysConfigList[cell.ProjGuid].Config.FilterConfig.FilterExcute(cell);
                         //ColorGradeGroupConfig colorConfig = null;
                         //if (SystemStatic.SysConfigList[cell.ProjGuid].Config.ColorConfig.SelectedParam != null)

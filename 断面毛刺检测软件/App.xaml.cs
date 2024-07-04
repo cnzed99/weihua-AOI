@@ -18,6 +18,10 @@ using Autofac;
 using WH.Entity.LogRecord;
 using 断面毛刺检测软件.Views;
 using WH.Controls.SingleInstance;
+using WH.DetectSystem;
+using WH.DetectSystem.ViewModels;
+
+
 
 #if !NET40
 using System.Runtime;
@@ -130,10 +134,7 @@ namespace 断面毛刺检测软件
         public static IContainer Container { get; set; }
         private static void ConfigureServices()
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(CLogRec.Create("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
-            builder.RegisterInstance(CLogRec.Create("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance() ;
-            builder.RegisterType<MainVM>().SingleInstance();
+            var builder = PublicServices.ConfigureServices();
             builder.RegisterType<MainWindow>().SingleInstance();
 
             builder.Register(c=>SingleInstance.Create<Lazy<SystemSettingWindow>,SystemSettingWindow>()).InstancePerDependency();
@@ -146,6 +147,7 @@ namespace 断面毛刺检测软件
             builder.Register(c => SingleInstance.Create<Lazy<OffLineTestWindow>, OffLineTestWindow>()).InstancePerDependency();
 
             Container = builder.Build();
+            PublicServices.Container = Container;
         }
     }
     internal class GlobalData
@@ -198,9 +200,5 @@ namespace 断面毛刺检测软件
         public static extern int MciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
     }
 
-    public enum LOGTYPE
-    {
-        LOGTYPE_SYS,
-        LOGTYPE_OPERATE
-    }
+   
 }

@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WH.DetectSystem.ViewModels;
 using WH.Entity.Messages;
 using 断面毛刺检测软件.ViewModels;
 using 断面毛刺检测软件.Views.NewProj;
