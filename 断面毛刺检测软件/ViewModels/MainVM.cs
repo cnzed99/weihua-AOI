@@ -28,6 +28,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using WH.Entity.Messages;
 using MapsterMapper;
 using WH.Entity;
+using ProjProduceData;
 
 namespace 断面毛刺检测软件.ViewModels
 {
@@ -58,9 +59,10 @@ namespace 断面毛刺检测软件.ViewModels
         public MainModel Model { get => _model; set{
                 SetProperty(ref _model, value);
                 _model.Adapt(this);
-                SDFilterCtrlVM.FilterConfig = MaociFilter;
-                QualityCtrlVM.QualityConfig = MaociQuality;
-                MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
+                this.SDFilterCtrlVM.FilterConfig = MaociFilter;
+                this.QualityCtrlVM.QualityConfig = MaociQuality;
+                this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
+                this.DefectsDataVM.SetDefectsProduce(DefectsProduce, MaociFilter, MaociQuality);
             } }
         [ObservableProperty]
         string projPath ;
@@ -244,6 +246,9 @@ namespace 断面毛刺检测软件.ViewModels
         [AdaptIgnore]
         [ObservableProperty]
         private QualityCtrlVM qualityCtrlVM = new QualityCtrlVM();
+        [AdaptIgnore]
+        [ObservableProperty]
+        private DefectsDataVM defectsDataVM = new DefectsDataVM();
 
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();

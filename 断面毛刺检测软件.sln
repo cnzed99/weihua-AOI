@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QualityGrade", "QualityGrad
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "检测软件组件", "检测软件组件", "{C0478B8A-D16E-4A03-9EDC-908867DE3AEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjProduceData", "ProjProduceData\ProjProduceData.csproj", "{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,10 @@ Global
 		{F22B2D83-99EE-42EB-B502-1331707BA100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F22B2D83-99EE-42EB-B502-1331707BA100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F22B2D83-99EE-42EB-B502-1331707BA100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,9 +102,10 @@ Global
 		{35AFFE18-701B-4597-AF32-7DF7ABEFFD04} = {C0478B8A-D16E-4A03-9EDC-908867DE3AEE}
 		{B96A570F-C6C5-4548-897A-24224035FFF5} = {C0478B8A-D16E-4A03-9EDC-908867DE3AEE}
 		{F22B2D83-99EE-42EB-B502-1331707BA100} = {C0478B8A-D16E-4A03-9EDC-908867DE3AEE}
+		{6E4AD7F6-8883-4CE5-8CF4-0CF506F3D3BB} = {C0478B8A-D16E-4A03-9EDC-908867DE3AEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		RESX_NeutralResourcesLanguage = zh-CN
 		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
+		RESX_NeutralResourcesLanguage = zh-CN
 	EndGlobalSection
 EndGlobal

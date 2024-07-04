@@ -7,6 +7,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:SDFilter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
     d:DesignHeight="450"
     d:DesignWidth="550"
     mc:Ignorable="d">
@@ -19,11 +20,11 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>-->
-            <local:Result2Color x:Key="R2C" />
             <entity:Enum2CmbConverter x:Key="Enum2CmbConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
-            <local:Boolean2BrushConverter x:Key="Boolean2BrushConverter" />
+            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ThirdlyRegionBrush}" FalseValue="Red"/>
+            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterText" TrueValue="{DynamicResource InfoBrush}" FalseValue="Red"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -34,7 +35,7 @@
                         <Expander
                             Margin="0,0,0,1"
                             hc:BorderElement.CornerRadius="0"
-                            Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background}"
+                            Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
                             BorderThickness="0"
                             Foreground="White"
                             Header="{Binding Name}"
@@ -60,7 +61,7 @@
                                                         hc:BorderElement.CornerRadius="0"
                                                         Background="Transparent"
                                                         BorderThickness="0"
-                                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=DataContext.Result, Converter={StaticResource R2C}}">
+                                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=DataContext.Result, Converter={StaticResource BoolToBrushConverterText}}">
                                                         <Expander.Header>
                                                             <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Expander}}">
                                                                 <Grid.ColumnDefinitions>

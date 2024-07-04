@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
+    xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:断面毛刺检测软件.ViewModels"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
@@ -217,6 +218,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <pro:ProduceData DataContext="{Binding DefectsDataVM}"/>
                 <!--  启停按钮  -->
                 <ToggleButton
                     x:Name="Btn_StartStop"
@@ -365,7 +367,9 @@
                     SelectedIndex="0"
                     Style="{DynamicResource TabControlInLine}">
                     <hc:TabItem Header="{Binding [DefectList], Source={x:Static local:Lang.instance}}">
-                        <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <pro:DefectsDataV DataContext="{Binding DefectsDataVM}"/>
+                        </hc:SimplePanel>
                     </hc:TabItem>
                     <hc:TabItem Header="{Binding [Message], Source={x:Static local:Lang.instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">

@@ -48,7 +48,11 @@ namespace SDFilter
             get => defectName;
             set
             {
-                SetProperty(ref defectName, value, true);
+                var oldValue = defectName;
+                if(SetProperty(ref defectName, value, true))
+                {
+                    WeakReferenceMessenger.Default.Send<PropertyChangedMessage<string>, string>(new PropertyChangedMessage<string>(this, nameof(DefectName), oldValue, defectName), nameof(DefectName));
+                }
                 if (GetErrors(nameof(DefectName)).Count() == 0)
                 {
                     DefectFilter.Name = defectName;

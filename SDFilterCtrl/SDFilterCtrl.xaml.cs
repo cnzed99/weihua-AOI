@@ -31,31 +31,6 @@ namespace SDFilter
         }
     }
 
-    public class Boolean2BrushConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((string)parameter == "Background")
-            {
-                return (value != null && (bool)value) ? ResourceHelper.GetResource<Brush>(ResourceToken.ThirdlyRegionBrush) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
-            }
-            else if ((string)parameter == "Background2")
-            {
-                return (value != null && (bool)value) ? Brushes.Transparent : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
-            }
-            else if ((string)parameter == "Background3")
-            {
-                return (value != null && (bool)value) ? new SolidColorBrush(Color.FromArgb(255, 50, 75, 100)) : new SolidColorBrush(Color.FromArgb(255, 179, 9, 12));
-            }
-            return Binding.DoNothing;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
     public class OneSelectParamsConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

@@ -314,6 +314,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />

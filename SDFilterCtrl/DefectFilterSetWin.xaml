@@ -8,6 +8,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
         xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+        xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
         mc:Ignorable="d"
         Title="参数设置"
         Width="810"
@@ -27,9 +28,8 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <local:IsFocusedConverter x:Key="IsFocusedConverter" />
-            <local:Boolean2BrushConverter x:Key="Boolean2BrushConverter" />
-            <local:ExpanderConverter x:Key="ExpanderConverter" />
+            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="#FF324B64" FalseValue="Red"/>
+            <conv:BoolToStringConverter x:Key="BoolToStringConverter" TrueValue="-" FalseValue="+"/>
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
             <local:CmbCharacterConverter x:Key="CmbCharacterConverter" />
@@ -80,7 +80,7 @@
                                 <ColumnDefinition Width="650" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource ExpanderConverter}}"/>
+                            <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}"/>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}{1}">
@@ -292,7 +292,7 @@
             <ItemsControl ItemsSource="{Binding DefectFilter.FilterList}" AlternationCount="10000">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Expander hc:BorderElement.CornerRadius="0" IsExpanded="True" Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background3}">
+                        <Expander hc:BorderElement.CornerRadius="0" IsExpanded="True" Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}">
                             <Expander.Header>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -301,7 +301,7 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="77" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource ExpanderConverter}}"/>
+                                    <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}"/>
                                     <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0}{1}">

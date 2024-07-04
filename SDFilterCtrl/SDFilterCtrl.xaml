@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:SDFilter"
              xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+             xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="550">
     <d:UserControl.DataContext>
@@ -17,8 +18,9 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>-->
-            <local:Boolean2BrushConverter x:Key="Boolean2BrushConverter" />
-            <local:ExpanderConverter x:Key="ExpanderConverter" />
+            <cov:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ThirdlyRegionBrush}" FalseValue="Red"/>
+            <cov:BoolToBrushConverter x:Key="BoolToBrushConverterBd" TrueValue="Transparent"  FalseValue="Red"/>
+            <cov:BoolToStringConverter x:Key="BoolToStringConverter" TrueValue="-" FalseValue="+"/>
             <local:OneSelectParamsConverter x:Key="OneSelectParamsConverter" />
             <local:ColoectionIndexConverter x:Key="ColoectionIndexConverter" />
             <entity:CommMultiParamConverter x:Key="CommMultiParamConverter"/>
@@ -115,7 +117,7 @@
                 <DataTemplate>
                     <Expander hc:BorderElement.CornerRadius="0"
                               IsExpanded="True"
-                              Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background}"
+                              Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
                               BorderThickness="1"
                               BorderBrush="Transparent">
                         <Expander.Header>
@@ -126,7 +128,7 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock  Style="{StaticResource TextBlock1}"
-                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource ExpanderConverter}}"/>
+                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}"/>
                                 <TextBlock Grid.Column="1" Style="{StaticResource TextBlock1}" Text="{Binding Name}"/>
                                 <Button Grid.Column="2"
                                         Margin="2"
@@ -223,12 +225,12 @@
                                                                     <Grid>
                                                                         <Grid.ColumnDefinitions>
                                                                             <ColumnDefinition Width="Auto" />
-                                                                            <ColumnDefinition Width="Auto" />
+                                                                            <ColumnDefinition />
                                                                             <ColumnDefinition/>
                                                                         </Grid.ColumnDefinitions>
                                                                         <Border Grid.Column="0"
                                                                                 BorderThickness="1"
-                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                Background="{Binding Result, Converter={StaticResource BoolToBrushConverterBd}}"
                                                                                 BorderBrush="{DynamicResource SecondaryBorderBrush}">
                                                                             <TextBlock Style="{DynamicResource TextBlock2}" FontSize="12">
                                                                                 <TextBlock.Text>
@@ -241,13 +243,13 @@
                                                                         </Border>
                                                                         <Border Grid.Column="1"
                                                                                 BorderThickness="1"
-                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                Background="{Binding Result, Converter={StaticResource BoolToBrushConverterBd}}"
                                                                                 BorderBrush="{DynamicResource SecondaryBorderBrush}">
                                                                             <ItemsControl ItemsSource="{Binding Filter}" Style="{DynamicResource SelectConfig}" FontSize="12" />
                                                                         </Border>
                                                                         <Border Grid.Column="2"
                                                                                 BorderThickness="1"
-                                                                                Background="{Binding Result, Converter={StaticResource Boolean2BrushConverter}, ConverterParameter=Background2}"
+                                                                                Background="{Binding Result, Converter={StaticResource BoolToBrushConverterBd}}"
                                                                                 BorderBrush="{DynamicResource SecondaryBorderBrush}">
                                                                             <ItemsControl ItemsSource="{Binding SelectList}" Style="{DynamicResource SelectConfig}" FontSize="12" />
                                                                         </Border>

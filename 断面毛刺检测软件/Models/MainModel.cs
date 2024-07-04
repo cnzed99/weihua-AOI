@@ -1,5 +1,6 @@
 ﻿using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ProjProduceData;
 using QualityGrade;
 using SDFilter;
 using System;
@@ -25,5 +26,6 @@ namespace 断面毛刺检测软件.Models
         public MaociAlgorParamConfig MaociAlgorParamConfig { get; set; } = new MaociAlgorParamConfig();
         public FilterConfig MaociFilter { get; set; } = new FilterConfig();
         public QualityConfig MaociQuality { get; set; } = new QualityConfig();
+        public DefectsProduce DefectsProduce { get; set; } = new DefectsProduce();
     }
 }

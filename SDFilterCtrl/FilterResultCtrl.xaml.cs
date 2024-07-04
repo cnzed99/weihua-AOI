@@ -31,19 +31,6 @@ namespace SDFilter
         }
     }
 
-    public class Result2Color : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (bool)value ? ResourceHelper.GetResource<Brush>(ResourceToken.InfoBrush) : Brushes.Red;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class ValueHalfConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

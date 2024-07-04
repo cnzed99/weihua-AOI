@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -9,35 +9,33 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="HandyControl" />		
+		<PackageReference Include="HandyControl" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
-	  <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 	  <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
-	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
-	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	  <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
 	  <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\Resource1.Designer.cs">
+	  <Compile Update="Properties\Resources.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resource1.resx</DependentUpon>
+	    <DependentUpon>Resources.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Properties\Resource1.en.resx">
+	  <EmbeddedResource Update="Properties\Resources.en.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Properties\Resource1.resx">
+	  <EmbeddedResource Update="Properties\Resources.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
+
 </Project>

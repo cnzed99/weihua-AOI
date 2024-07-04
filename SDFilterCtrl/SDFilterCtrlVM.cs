@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,6 +37,7 @@ namespace SDFilter
                 }
             }
             recipeDefect.DefectFilters.Add(new DefectFilter(recipeDefect.Name + index));
+            WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
         }
 
         [RelayCommand]
@@ -47,6 +49,7 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
                 recipeDefect.DefectFilters.Remove(defectFilter);
+                WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
             }
         }
 
