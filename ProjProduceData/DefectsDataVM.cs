@@ -13,6 +13,10 @@ using System.Threading.Tasks;
 
 namespace ProjProduceData
 {
+    /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 产量统计、缺陷统计控件ViewModel
+    /// </summary>
     public partial class DefectsDataVM : ObservableObject,IRecipient<PropertyChangedMessage<string>>, IRecipient<PropertyChangedMessage<Quality>>,
         IRecipient<FilterConfig>, IRecipient<QualityConfig>
     {
@@ -24,6 +28,13 @@ namespace ProjProduceData
             WeakReferenceMessenger.Default.Register<QualityConfig>(this);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初始化缺陷统计VM
+        /// </summary>
+        /// <param name="defectsProduce"></param>
+        /// <param name="filterConfig"></param>
+        /// <param name="qualityConfig"></param>
         public void SetDefectsProduce(DefectsProduce defectsProduce, FilterConfig filterConfig, QualityConfig qualityConfig) 
         {
             this.DefectsProduce = defectsProduce;
@@ -31,9 +42,18 @@ namespace ProjProduceData
             Receive(qualityConfig);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷统计配置
+        /// </summary>
         [ObservableProperty]
         private DefectsProduce defectsProduce;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷名字修改消息处理
+        /// </summary>
+        /// <param name="message">缺陷名字修改消息</param>
         public void Receive(PropertyChangedMessage<string> message)
         {
             var de = DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
@@ -43,6 +63,11 @@ namespace ProjProduceData
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 质量等级修改消息处理
+        /// </summary>
+        /// <param name="message">质量等级修改消息</param>
         public void Receive(PropertyChangedMessage<Quality> message)
         {
             var qua = DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
@@ -53,6 +78,11 @@ namespace ProjProduceData
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 检测设置配置修改消息处理
+        /// </summary>
+        /// <param name="filter">检测设置配置</param>
         public void Receive(FilterConfig filter)
         {
             List<string> strings = new List<string>();
@@ -79,6 +109,11 @@ namespace ProjProduceData
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 质量等级配置修改消息处理
+        /// </summary>
+        /// <param name="message">质量等级配置</param>
         public void Receive(QualityConfig message)
         {
             List<string> strings = new List<string>();

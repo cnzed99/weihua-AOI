@@ -13,12 +13,12 @@
                 <StackPanel Orientation="Horizontal">
                     <Rectangle
                         Width="20"
-                        Fill="{Binding brush}"
+                        Fill="{Binding Brush}"
                         Stroke="Black" />
                     <TextBlock
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
-                        Text="{Binding name}" />
+                        Text="{Binding Name}" />
                 </StackPanel>
             </DataTemplate>
         </ComboBox.ItemTemplate>

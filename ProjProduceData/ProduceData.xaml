@@ -13,11 +13,11 @@
         <local:DefectsDataVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1.4*" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <UniformGrid DataContext="{Binding DefectsProduce}" Rows="2">
@@ -74,7 +74,7 @@
                 <DataTemplate>
                     <UniformGrid Rows="1">
                         <TextBlock
-                            Foreground="{Binding ShowColor.brush}"
+                            Foreground="{Binding ShowColor.Brush}"
                             Style="{StaticResource TextBlockDefault}"
                             Text="{Binding Name}" />
                         <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Number}" />

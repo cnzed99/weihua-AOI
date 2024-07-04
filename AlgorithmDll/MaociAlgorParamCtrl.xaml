@@ -28,7 +28,7 @@
         <GroupBox Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding [PCParam], Source={x:Static local:Lang.instance}}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding [PCParam], Source={x:Static local:Lang.s_Instance}}" VerticalAlignment="Center"/>
                     <ComboBox DockPanel.Dock="Left" Name="cmb_pcParam" Width="150" Margin="5,3" DataContext="{Binding Config}" ItemsSource="{Binding PcParams}" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -45,17 +45,17 @@
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
-                    <Button Content="{Binding [Add], Source={x:Static local:Lang.instance}}" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddPcParamCommand}"/>
-                    <Button Content="{Binding [Delete], Source={x:Static local:Lang.instance}}"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemovePcParamCommand}"
+                    <Button Content="{Binding [Add], Source={x:Static local:Lang.s_Instance}}" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddPcParamCommand}"/>
+                    <Button Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemovePcParamCommand}"
                             CommandParameter="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"/>
                 </StackPanel>
             </GroupBox.Header>
-            <wh:PropertyGridLang Lang="{x:Static local:Lang.instance}" SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"/>
+            <wh:PropertyGridLang lang="{x:Static local:Lang.s_Instance}" SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"/>
         </GroupBox>
         <GroupBox Grid.Row="2" Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding [FPGAParam], Source={x:Static local:Lang.instance}}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding [FPGAParam], Source={x:Static local:Lang.s_Instance}}" VerticalAlignment="Center"/>
                     <ComboBox DockPanel.Dock="Left" Name="cmb_fpgaParam" Width="150" Margin="5,3" DataContext="{Binding Config}" ItemsSource="{Binding FpgaParams}" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -72,14 +72,14 @@
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
-                    <Button Content="{Binding [Add], Source={x:Static local:Lang.instance}}" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddFpgaParamCommand}"/>
-                    <Button Content="{Binding [Delete], Source={x:Static local:Lang.instance}}"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemoveFpgaParamCommand}"
+                    <Button Content="{Binding [Add], Source={x:Static local:Lang.s_Instance}}" DockPanel.Dock="Right" Margin="10,0" Width="70" Style="{DynamicResource ButtonPrimary}" Command="{Binding AddFpgaParamCommand}"/>
+                    <Button Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"  DockPanel.Dock="Right" Width="70" Style="{DynamicResource ButtonDanger}" Command="{Binding RemoveFpgaParamCommand}"
                             CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
-                    <Button Content="{Binding [WriteFpga], Source={x:Static local:Lang.instance}}" DockPanel.Dock="Right" Margin="10,0" Width="100" Style="{DynamicResource ButtonWarning}"
+                    <Button Content="{Binding [WriteFpga], Source={x:Static local:Lang.s_Instance}}" DockPanel.Dock="Right" Margin="10,0" Width="100" Style="{DynamicResource ButtonWarning}"
                             Command="{Binding WriteFpgaCommand}" CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
                 </StackPanel>
             </GroupBox.Header>
-            <wh:PropertyGridLang Lang="{x:Static local:Lang.instance}" SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
+            <wh:PropertyGridLang lang="{x:Static local:Lang.s_Instance}" SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"/>
         </GroupBox>
     </Grid>
 </UserControl>

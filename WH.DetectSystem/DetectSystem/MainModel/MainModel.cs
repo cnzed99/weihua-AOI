@@ -24,9 +24,24 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         List<string> testImgFiles = new List<string>();
 
+        /// <summary>
+        /// 算法参数
+        /// </summary>
         public MaociAlgorParamConfig MaociAlgorParamConfig { get; set; } = new MaociAlgorParamConfig();
+
+        /// <summary>
+        /// 检测设置
+        /// </summary>
         public FilterConfig MaociFilter { get; set; } = new FilterConfig();
+
+        /// <summary>
+        /// 质量等级
+        /// </summary>
         public QualityConfig MaociQuality { get; set; } = new QualityConfig();
+
+        /// <summary>
+        /// 缺陷数据
+        /// </summary>
         public DefectsProduce DefectsProduce { get; set; } = new DefectsProduce();
     }
 }

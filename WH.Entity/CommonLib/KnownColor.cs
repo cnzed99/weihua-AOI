@@ -20,25 +20,44 @@ namespace WH.Entity.CommonLib
         }
         public KnownColor(string name, Brush brush)
         {
-            this.name = name;
-            this.brush = brush;
+            this.Name = name;
+            this.Brush = brush;
         }
 
-        public string name { get; set; }
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 颜色名
+        /// </summary>
+        public string Name { get; set; }
 
-        public Brush brush { get; set; }
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 颜色画刷
+        /// </summary>
+        public Brush Brush { get; set; }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 重载等于
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public bool Equals(KnownColor other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
             var kcolor = (KnownColor)other;
-            if (kcolor.name == name) return true;
+            if (kcolor.Name == Name) return true;
             else return false;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 
@@ -48,9 +67,22 @@ namespace WH.Entity.CommonLib
     /// </summary>
     public class BrushPro
     {
-        public static BrushPro instance = new BrushPro();
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// Known颜色实例
+        /// </summary>
+        public static BrushPro s_Instance = new BrushPro();
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// Known颜色集
+        /// </summary>
         public List<KnownColor> KnownColors { get; set; } = new List<KnownColor>();
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初始化Known颜色集
+        /// </summary>
         public BrushPro()
         {
             PropertyInfo[] properties = typeof(Brushes).GetProperties();

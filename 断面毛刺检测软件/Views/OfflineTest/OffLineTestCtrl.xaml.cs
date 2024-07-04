@@ -294,7 +294,7 @@ namespace 断面毛刺检测软件.Views
                     {
                         ID = "002",
                         isOnce = once,
-                        QualityColor = brushes.Current.brush,
+                        QualityColor = brushes.Current.Brush,
                         ImageFile = ImgFiles[ImgIndex],
                         CancelSource = this.cancelToken,
                         ProjGuid = "001",

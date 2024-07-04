@@ -9,14 +9,28 @@ using System.Text;
 
 namespace WH.Entity.CommonLib
 {
-    public record OperateMessage(object obj, string message);
     /// <summary>
+    /// 2024.7.2 李焕彬
+    /// 操作消息
+    /// </summary>
+    /// <param name="obj">对象实例</param>
+    /// <param name="message">消息</param>
+    public record OperateMessage(object obj, string message);
+
+    /// <summary>
+    /// 2024.7.2 李焕彬
     /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
     public abstract class ObservableLog : ObservableObject
     {
-        private object oldValue = "";
         /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 属性旧值
+        /// </summary>
+        private object oldValue = "";
+
+        /// <summary>
+        /// 2024.7.2 李焕彬
         /// 属性更改时发生，如果是集合，集合成员更改绑定到CollectionChanged
         /// </summary>
         /// <param name="e"></param>
@@ -44,12 +58,23 @@ namespace WH.Entity.CommonLib
             WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), this.GetType().Namespace);
         }
 
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 重载属性改变
+        /// </summary>
+        /// <param name="e">属性名</param>
         protected override void OnPropertyChanging(PropertyChangingEventArgs e)
         {
             base.OnPropertyChanging(e);
             oldValue = this.GetType().GetProperty(e.PropertyName).GetValue(this);
         }
 
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 集合改变事件
+        /// </summary>
+        /// <param name="e">事件</param>
+        /// <param name="PropertyName">属性名</param>
         protected void CollectionChanged(NotifyCollectionChangedEventArgs e, string PropertyName)
         {
             var sb = new StringBuilder();

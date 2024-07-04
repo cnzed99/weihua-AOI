@@ -18,6 +18,8 @@ using System.Windows.Shapes;
 namespace ProjProduceData
 {
     /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 缺陷统计控件
     /// DefectsDataV.xaml 的交互逻辑
     /// </summary>
     public partial class DefectsDataV : UserControl
@@ -25,18 +27,6 @@ namespace ProjProduceData
         public DefectsDataV()
         {
             InitializeComponent();
-        }
-
-        private void DataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            e.Handled = false;
-        }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            e.Handled = true;
-            var srollViewer = (ScrollViewer)sender;
-            srollViewer.ScrollToVerticalOffset(srollViewer.VerticalOffset - e.Delta);
         }
     }
 

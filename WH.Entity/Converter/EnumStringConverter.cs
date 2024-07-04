@@ -55,47 +55,14 @@ namespace WH.Entity.Converter
         {
             if(value is Enum item)
             {
-                var attr = (EnumStringAttribute)item.GetType().GetField(item.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
-                if (attr != null)
-                {
-                    switch (CultureInfo.CurrentCulture.Name)
-                    {
-                        case "zh-CN":
-                            return attr.ZhName;
-                            break;
-                        default:
-                            return attr.EnName;
-                            break;
-                    }
-                }
-               
+                return EnumStringAttribute.GetEnumName((Enum)value) ?? value.ToString();
             }
             return value.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var fieldInfo = targetType.GetFields().FirstOrDefault(finfo =>
-            {
-
-                var atr = ((EnumStringAttribute)finfo.GetCustomAttribute(typeof(EnumStringAttribute)));
-                if (atr is null) return false;
-                switch (CultureInfo.CurrentCulture.Name)
-                {
-                    case "zh-CN":
-                        if (atr.ZhName == value.ToString())
-                            return true;
-                        else return false;
-                      
-                    default:
-                        if (atr.EnName == value.ToString())
-                            return true;
-                        else return false;
-                       
-                }
-               
-            });
-            return fieldInfo.GetValue(null);
+            return EnumStringAttribute.GetEnumValue((string)value, targetType) ?? value.ToString();
         }
     }
 }

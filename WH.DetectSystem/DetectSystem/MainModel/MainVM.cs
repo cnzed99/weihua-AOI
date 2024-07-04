@@ -239,16 +239,30 @@ namespace WH.DetectSystem.ViewModels
         }
         #endregion
 
-
+        /// <summary>
+        /// 算法参数控件VM
+        /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
         private MaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new MaociAlgorParamCtrlVm();
+
+        /// <summary>
+        /// 检测设置控件VM
+        /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
         private SDFilterCtrlVM sDFilterCtrlVM = new SDFilterCtrlVM();
+
+        /// <summary>
+        /// 质量等级控件VM
+        /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
         private QualityCtrlVM qualityCtrlVM = new QualityCtrlVM();
+
+        /// <summary>
+        /// 缺陷数据VM
+        /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
         private DefectsDataVM defectsDataVM = new DefectsDataVM();
@@ -353,7 +367,7 @@ namespace WH.DetectSystem.ViewModels
                         ProjGuid = "001",
                         ComGuid = "001",
                         CamSerial = "whcam001",
-                        QualityColor = brushes.Current.brush
+                        QualityColor = brushes.Current.Brush
                     };
                     if (random.Next(10) > 5) cell.IsOK = true;
                     StringBuilder strbuilder = new StringBuilder("[");

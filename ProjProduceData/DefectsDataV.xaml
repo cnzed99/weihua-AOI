@@ -54,32 +54,25 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <ScrollViewer
-        CanContentScroll="True"
-        HorizontalScrollBarVisibility="Auto"
-        PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
-        VerticalScrollBarVisibility="Auto">
-        <DataGrid
-            AlternationCount="2"
-            AutoGenerateColumns="False"
-            Background="{DynamicResource RegionBrush}"
-            IsReadOnly="True"
-            ItemsSource="{Binding DefectsProduce.DefectNumbersList}"
-            PreviewMouseWheel="DataGrid_PreviewMouseWheel"
-            RowHeaderWidth="0"
-            Style="{x:Null}">
-            <DataGrid.Columns>
-                <DataGridTextColumn
-                    Width="80"
-                    Binding="{Binding Name}"
-                    Header="{Binding [Name], Source={x:Static local:Lang.instance}}" />
-                <DataGridTextColumn
-                    Width="50"
-                    Binding="{Binding Number}"
-                    Header="{Binding [Num], Source={x:Static local:Lang.instance}}" />
-                <DataGridTextColumn Binding="{Binding Percent, StringFormat={}{0:P2}}" Header="{Binding [Percent], Source={x:Static local:Lang.instance}}" />
-                <DataGridTextColumn Binding="{Binding PercentofAll, StringFormat={}{0:P2}}" Header="{Binding [PercentOfAll], Source={x:Static local:Lang.instance}}" />
-            </DataGrid.Columns>
-        </DataGrid>
-    </ScrollViewer>
+    <DataGrid
+    AlternationCount="2"
+    AutoGenerateColumns="False"
+    Background="{DynamicResource RegionBrush}"
+    IsReadOnly="True"
+    ItemsSource="{Binding DefectsProduce.DefectNumbersList}"
+    RowHeaderWidth="0"
+    Style="{x:Null}">
+        <DataGrid.Columns>
+            <DataGridTextColumn
+            Width="80"
+            Binding="{Binding Name}"
+            Header="{Binding [Name], Source={x:Static local:Lang.s_Instance}}" />
+            <DataGridTextColumn
+            Width="50"
+            Binding="{Binding Number}"
+            Header="{Binding [Num], Source={x:Static local:Lang.s_Instance}}" />
+            <DataGridTextColumn Binding="{Binding Percent, StringFormat={}{0:P2}}" Header="{Binding [Percent], Source={x:Static local:Lang.s_Instance}}" />
+            <DataGridTextColumn Binding="{Binding PercentofAll, StringFormat={}{0:P2}}" Header="{Binding [PercentOfAll], Source={x:Static local:Lang.s_Instance}}" />
+        </DataGrid.Columns>
+    </DataGrid>
 </UserControl>

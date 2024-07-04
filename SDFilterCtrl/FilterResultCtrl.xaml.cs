@@ -21,6 +21,7 @@ namespace SDFilter
 {
     /// <summary>
     /// 2024.6.28 李焕彬
+    /// 检测结果控件
     /// FilterResultCtrl.xaml 的交互逻辑
     /// </summary>
     public partial class FilterResultCtrl : UserControl
@@ -31,8 +32,21 @@ namespace SDFilter
         }
     }
 
+    /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 值一半转换器
+    /// </summary>
     public class ValueHalfConverter : IValueConverter
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 值一半转换器
+        /// </summary>
+        /// <param name="value">目标值</param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns>一半后</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (double)value/2-1;

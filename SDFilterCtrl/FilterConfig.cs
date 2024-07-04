@@ -14,6 +14,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
+using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RunCell;
@@ -26,13 +27,17 @@ namespace SDFilter
     /// </summary>
     public partial class FilterConfig : ObservableLog, IRecipient<OperateMessage>
     {
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 操作日志
+        /// </summary>
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         public FilterConfig()
         {
             var SpFilters = new ObservableCollection<SpeciesFilter>();
-            foreach (var specie in AlgorithmOut.instance.Specises)
+            foreach (var specie in AlgorithmOut.s_Instance.Specises)
             {
                 SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
                 foreach (var recipe in specie.Recipes)
@@ -45,10 +50,21 @@ namespace SDFilter
            
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
+
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 类别列表
+        /// </summary>
         [property: DisplayName("类别列表")]
         [ObservableProperty]
         private ObservableCollection<SpeciesFilter> speciesFilters;
 
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 索引器
+        /// </summary>
+        /// <param name="name">类名</param>
+        /// <returns></returns>
         public SpeciesFilter this[string name]
         {
             get
@@ -57,6 +73,11 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 日志消息处理
+        /// </summary>
+        /// <param name="message">消息</param>
         public void Receive(OperateMessage message)
         {
             if (message.obj.GetType() == typeof(FilterConfig))
@@ -188,17 +209,17 @@ namespace SDFilter
                             {
                                 case "区域合并":
                                     SRegionInfo regionInfo = new SRegionInfo();
-                                    regionInfo.nWidth = detectRegion.Select(o => o.regionInfo.nWidth).Sum();
-                                    regionInfo.nHeight = detectRegion.Select(o => o.regionInfo.nHeight).Sum();
-                                    regionInfo.dPeakHeight = detectRegion.Select(o => o.regionInfo.dPeakHeight).Sum();
-                                    regionInfo.dLongLen = detectRegion.Select(o => o.regionInfo.dLongLen).Sum();
-                                    regionInfo.dShorLen = detectRegion.Select(o => o.regionInfo.dShorLen).Sum();
-                                    regionInfo.dPhi = detectRegion.Select(o => o.regionInfo.dPhi).Max();
-                                    regionInfo.dContLen = detectRegion.Select(o => o.regionInfo.dContLen).Sum();
-                                    regionInfo.nArea = detectRegion.Select(o => o.regionInfo.nArea).Sum();
+                                    regionInfo.Width = detectRegion.Select(o => o.RegionInfo.Width).Sum();
+                                    regionInfo.Height = detectRegion.Select(o => o.RegionInfo.Height).Sum();
+                                    regionInfo.PeakHeight = detectRegion.Select(o => o.RegionInfo.PeakHeight).Sum();
+                                    regionInfo.LongLen = detectRegion.Select(o => o.RegionInfo.LongLen).Sum();
+                                    regionInfo.ShorLen = detectRegion.Select(o => o.RegionInfo.ShorLen).Sum();
+                                    regionInfo.Phi = detectRegion.Select(o => o.RegionInfo.Phi).Max();
+                                    regionInfo.ContLen = detectRegion.Select(o => o.RegionInfo.ContLen).Sum();
+                                    regionInfo.Area = detectRegion.Select(o => o.RegionInfo.Area).Sum();
                                     foreach (SRegion region in detectRegion)
                                     {
-                                        region.regionInfo.Copy(regionInfo);
+                                        region.RegionInfo.Copy(regionInfo);
                                     }
                                     break;
                             }
@@ -220,7 +241,7 @@ namespace SDFilter
                                 OneSelectParams oneSelectParams = null;//若有数量判断，则留到分选完后
                                 foreach (var selParam in select.SelectParams)
                                 {
-                                    if (selParam.Character == DetectFeature.数量)
+                                    if (selParam.Character == EMFILTER.EMFILTER_NUM)
                                         oneSelectParams = selParam;
                                     else
                                         bResult = selParam.Excute(selRegion, out selRegion);//&&
@@ -245,7 +266,7 @@ namespace SDFilter
                         }
 
                         //DetectLog增加分选的类型
-                        List<DetectFeature> lsParam = new List<DetectFeature>();
+                        List<EMFILTER> lsParam = new List<EMFILTER>();
                         foreach (var filter in de.FilterList)
                         {
                             foreach (var select in filter.SelectList)
@@ -268,31 +289,31 @@ namespace SDFilter
                             {
                                 switch (de.ResultList[i].Feature)
                                 {
-                                    case DetectFeature.顶点高度:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dPeakHeight).Max();
+                                    case EMFILTER.EMFILTER_PEAKHEI:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.PeakHeight).Max();
                                         break;
-                                    case DetectFeature.面积:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nArea).Max();
+                                    case EMFILTER.EMFILTER_AREA:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.Area).Max();
                                         break;
-                                    case DetectFeature.长边:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dLongLen).Max();
+                                    case EMFILTER.EMFILTER_LONGLEN:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.LongLen).Max();
                                         break;
-                                    case DetectFeature.短边:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dShorLen).Max();
+                                    case EMFILTER.EMFILTER_SHORTLEN:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.ShorLen).Max();
                                         break;
-                                    case DetectFeature.角度:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dPhi).Max();
+                                    case EMFILTER.EMFILTER_PHI:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.Phi).Max();
                                         break;
-                                    case DetectFeature.周长:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.dContLen).Max();
+                                    case EMFILTER.EMFILTER_CONTLEN:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.ContLen).Max();
                                         break;
-                                    case DetectFeature.宽度:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nWidth).Max();
+                                    case EMFILTER.EMFILTER_WIDTH:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.Width).Max();
                                         break;
-                                    case DetectFeature.高度:
-                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.regionInfo.nHeight).Max();
+                                    case EMFILTER.EMFILTER_HEIGHT:
+                                        de.ResultList[i].Value = detection.regionOut.Select(o => o.RegionInfo.Height).Max();
                                         break;
-                                    case DetectFeature.数量:
+                                    case EMFILTER.EMFILTER_NUM:
                                         de.ResultList[i].Value = detection.regionOut.Count;
                                         break;
                                     default:
@@ -348,17 +369,37 @@ namespace SDFilter
             this.Name = name;
            
         }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 名称
+        /// </summary>
         [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 检测结果
+        /// </summary>
         [JsonIgnore]
         [ObservableProperty]
         private bool result = true;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷列表
+        /// </summary>
         [property: DisplayName("缺陷列表")]
         [ObservableProperty]
         private ObservableCollection<RecipeDefect> recipeDefects;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 索引器
+        /// </summary>
+        /// <param name="name">算法名</param>
+        /// <returns></returns>
         public RecipeDefect this[string name]
         {
             get
@@ -367,6 +408,10 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
@@ -389,13 +434,29 @@ namespace SDFilter
             DefectFilters.Add(new DefectFilter(Name + "0"));
           
         }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 名称
+        /// </summary>
         [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷列表
+        /// </summary>
         [property: DisplayName("缺陷列表")]
         [ObservableProperty]
         private ObservableCollection<DefectFilter> defectFilters;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 索引器
+        /// </summary>
+        /// <param name="name">缺陷名</param>
+        /// <returns></returns>
         public DefectFilter this[string name]
         {
             get
@@ -404,6 +465,10 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
@@ -423,34 +488,65 @@ namespace SDFilter
         public DefectFilter(string name):this()
         {
             this.Name = name;
-            foreach (DetectFeature item in Enum.GetValues(typeof(DetectFeature)))
+            foreach (EMFILTER item in Enum.GetValues(typeof(EMFILTER)))
             {
                 ResultList.Add(new FilterResult(item));
             }
-            ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)];
-
-           
+            ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
         }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 名称
+        /// </summary>
         [property: DisplayName("名称")]
         [ObservableProperty]
         private string name;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 优先级
+        /// </summary>
         [property: DisplayName("优先级")]
         [ObservableProperty]
         private int priority = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 颜色
+        /// </summary>
         [property: DisplayName("颜色")]
         [ObservableProperty]
         private KnownColor showColor = null;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 质量等级
+        /// </summary>
         [property: DisplayName("质量等级")]
         [ObservableProperty]
         private int qualityLevel = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤列表
+        /// </summary>
         [property: DisplayName("过滤列表")]
         [ObservableProperty]
         private ObservableCollection<FilterAndSelect> filterList;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 结果列表
+        /// </summary>
         [JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<FilterResult> resultList = new ObservableCollection<FilterResult>() { };
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
@@ -469,19 +565,42 @@ namespace SDFilter
             SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig() };
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 检测结果
+        /// </summary>
         [JsonIgnore]
         [ObservableProperty]
         private bool result = true;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 输入操作
+        /// </summary>
         [property: DisplayName("输入操作")]
         [ObservableProperty]
         private string unionOrConnect = "不打散不合并";
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤器
+        /// </summary>
         [property: DisplayName("过滤器")]
         [ObservableProperty]
         private ObservableCollection<SelectConfig> filter;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 分选器
+        /// </summary>
         [property: DisplayName("分选器")]
         [ObservableProperty]
         private ObservableCollection<SelectConfig> selectList;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"过滤分选器->过滤：{string.Join("||",Filter)}，分选：{string.Join("||", SelectList)}";
@@ -499,10 +618,19 @@ namespace SDFilter
             SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams() };
            
         }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 筛选条目
+        /// </summary>
         [property: DisplayName("筛选条目")]
         [ObservableProperty]
         private ObservableCollection<OneSelectParams> selectParams;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "条件集->" + string.Join("&&", SelectParams);
@@ -514,41 +642,69 @@ namespace SDFilter
     /// </summary>
     public partial class OneSelectParams : ObservableLog
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 特征
+        /// </summary>
         [property: DisplayName("特征")]
         [ObservableProperty]
-        private DetectFeature character = DetectFeature.顶点高度;
+        private EMFILTER character = EMFILTER.EMFILTER_PEAKHEI;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 最小值
+        /// </summary>
         [property: DisplayName("最小值")]
         [ObservableProperty]
         private double min = 1.0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 最大值
+        /// </summary>
         [property: DisplayName("最大值")]
         [ObservableProperty]
         private double max = double.PositiveInfinity;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 上限
+        /// </summary>
         [property: DisplayName("上限")]
         [ObservableProperty]
         private bool maxLimit = true;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 下限
+        /// </summary>
         [property:DisplayName("下限")]
         [ObservableProperty]
         private bool minLimit = true;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
+            string characterName = EnumStringAttribute.GetEnumName(Character);
+
             if (MaxLimit && MinLimit)
             {
-                return $"{Min}≤{Character}≤{Max}";
+                return $"{Min}≤{characterName}≤{Max}";
             }
             else if (MinLimit)//限制最小
             {
-                return $"{Min}≤{Character}≤{double.PositiveInfinity}";
+                return $"{Min}≤{characterName}≤{double.PositiveInfinity}";
             }
             else if (MaxLimit)//限制最大
             {
-                return $"{double.NegativeInfinity}≤{Character}≤{Max}";
+                return $"{double.NegativeInfinity}≤{characterName}≤{Max}";
             }
             else//都不限制
             {
-                return $"{double.NegativeInfinity}≤{Character}≤{double.PositiveInfinity}";
+                return $"{double.NegativeInfinity}≤{characterName}≤{double.PositiveInfinity}";
             }
         }
 
@@ -597,31 +753,31 @@ namespace SDFilter
             sRegionOut = new List<SRegion>();
             switch (Character)
             {
-                case DetectFeature.顶点高度:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.dPeakHeight));
+                case EMFILTER.EMFILTER_PEAKHEI:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.PeakHeight));
                     break;
-                case DetectFeature.面积:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.nArea));
+                case EMFILTER.EMFILTER_AREA:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Area));
                     break;
-                case DetectFeature.长边:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.dLongLen));
+                case EMFILTER.EMFILTER_LONGLEN:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.LongLen));
                     break;
-                case DetectFeature.短边:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.dShorLen));
+                case EMFILTER.EMFILTER_SHORTLEN:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ShorLen));
                     break;
-                case DetectFeature.角度:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.dPhi));
+                case EMFILTER.EMFILTER_PHI:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Phi));
                     break;
-                case DetectFeature.周长:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.dContLen));
+                case EMFILTER.EMFILTER_CONTLEN:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ContLen));
                     break;
-                case DetectFeature.宽度:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.nWidth));
+                case EMFILTER.EMFILTER_WIDTH:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Width));
                     break;
-                case DetectFeature.高度:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.nHeight));
+                case EMFILTER.EMFILTER_HEIGHT:
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Height));
                     break;
-                case DetectFeature.数量:
+                case EMFILTER.EMFILTER_NUM:
                     if (Excute(sRegionIn.Count)) sRegionOut = sRegionIn;
                     break;
             }
@@ -630,34 +786,95 @@ namespace SDFilter
 
     }
 
+    /// <summary>
+    /// 2024.6.27 李焕彬
+    /// 检测结果
+    /// </summary>
     public partial class FilterResult : ObservableObject
     {
         public FilterResult()
         {
             
         }
-        public FilterResult(DetectFeature detectFeature) 
+        public FilterResult(EMFILTER detectFeature) 
         {
             feature = detectFeature;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 特征
+        /// </summary>
         [ObservableProperty]
-        private DetectFeature feature;
+        private EMFILTER feature;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 检测结果值
+        /// </summary>
         [ObservableProperty]
         private double value;
     }
 
-    public enum DetectFeature
+    /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 特征类型
+    /// </summary>
+    public enum EMFILTER
     {
-        顶点高度,
-        面积,
-        长边,
-        短边,
-        角度,
-        周长,
-        宽度,
-        高度,
-        数量
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 顶点高度
+        /// </summary>
+        [EnumString("顶点高度","PeakHeight")]
+        EMFILTER_PEAKHEI,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 面积
+        /// </summary>
+        [EnumString("面积", "Area")]
+        EMFILTER_AREA,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 长边
+        /// </summary>
+        [EnumString("长边", "LongLength")]
+        EMFILTER_LONGLEN,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 短边
+        /// </summary>
+        [EnumString("短边", "ShortLength")]
+        EMFILTER_SHORTLEN,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 角度
+        /// </summary>
+        [EnumString("角度", "Angle")]
+        EMFILTER_PHI,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 周长
+        /// </summary>
+        [EnumString("周长", "ContLength")]
+        EMFILTER_CONTLEN,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 宽度
+        /// </summary>
+        [EnumString("宽度", "Width")]
+        EMFILTER_WIDTH,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 高度
+        /// </summary>
+        [EnumString("高度", "Height")]
+        EMFILTER_HEIGHT,
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 数量
+        /// </summary>
+        [EnumString("数量", "Num")]
+        EMFILTER_NUM
     }
 }

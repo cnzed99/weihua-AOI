@@ -18,9 +18,18 @@ namespace SDFilter
     /// </summary>
     public partial class SDFilterCtrlVM : ObservableObject
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤分选配置
+        /// </summary>
         [ObservableProperty]
         private FilterConfig filterConfig;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加过滤器
+        /// </summary>
+        /// <param name="speciesFilter">目标类别</param>
         [RelayCommand]
         public void AddFilter(SpeciesFilter speciesFilter)
         {
@@ -40,6 +49,11 @@ namespace SDFilter
             WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除过滤器
+        /// </summary>
+        /// <param name="obj">删除目标、所属算法缺陷</param>
         [RelayCommand]
         public void RemoveFilter(object obj)
         {
@@ -53,6 +67,11 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 编辑过滤器
+        /// </summary>
+        /// <param name="obj">编辑目标、所属检测类</param>
         [RelayCommand]
         public void EditFilter(object obj) 
         {

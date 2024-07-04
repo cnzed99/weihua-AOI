@@ -10,18 +10,31 @@ using WH.Entity.LogRecord;
 
 namespace AlgorithmDll
 {
+    /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 算法参数配置管理类
+    /// </summary>
     public partial class MaociAlgorParamConfig : ObservableLog, IRecipient<OperateMessage>
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 操作日志
+        /// </summary>
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         public MaociAlgorParamConfig() 
         {
-            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(paramName1) };
-            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(paramName1) };
+            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
+            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName) };
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 日志消息处理
+        /// </summary>
+        /// <param name="message">消息</param>
         public void Receive(OperateMessage message)
         {
             if (message.obj.GetType() == typeof(MaociAlgorParamConfig))
@@ -55,20 +68,43 @@ namespace AlgorithmDll
             }
         }
 
-        private const string paramName1 = "分组1";
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 默认分组名
+        /// </summary>
+        private const string c_ParamName = "分组1";
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 参数列表
+        /// </summary>
         [property: DisplayName("参数列表")]
         [ObservableProperty]
         private ObservableCollection<MaociAlgorParam> pcParams;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 当前算法参数组
+        /// </summary>
         [property: DisplayName("当前算法参数组")]
         [ObservableProperty]
-        private string pcSelect = paramName1;
+        private string pcSelect = c_ParamName;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 预处理参数列表
+        /// </summary>
         [property: DisplayName("预处理参数列表")]
         [ObservableProperty]
         private ObservableCollection<MaociAlgorParamFpga> fpgaParams;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 当前预处理参数组
+        /// </summary>
         [property: DisplayName("当前预处理参数组")]
         [ObservableProperty]
-        private string fpgaSelect = paramName1;
+        private string fpgaSelect = c_ParamName;
     }
 
     /// <summary>
@@ -86,54 +122,90 @@ namespace AlgorithmDll
             Name = name;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 分组名
+        /// </summary>
         [ObservableProperty]
         [property: Category("1.GroupName")]
-        [property: DisplayName("GroupName")]
-        [property: Description("GroupName")]
+        [property: DisplayName("分组名")]
+        [property: Description("分组名")]
         private string name = "";
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值邻域大小
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("AdaptiveSize")]
-        [property: Description("AdaptiveSize")]
-        private uint adaptiveSize = 14;//自适应阈值邻域大小
+        [property: DisplayName("自适应阈值邻域大小")]
+        [property: Description("自适应阈值邻域大小")]
+        private uint adaptiveSize = 14;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值增加值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("AdaptiveAddGray")]
-        [property: Description("AdaptiveAddGray")]
-        private int adaptiveAddGray = 20;//自适应阈值增加值
+        [property: DisplayName("自适应阈值增加值")]
+        [property: Description("自适应阈值增加值")]
+        private int adaptiveAddGray = 20;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域大小
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("NeighbSize")]
-        [property: Description("NeighbSize")]
-        private uint neighbSize = 5;//过滤矩阵邻域大小
+        [property: DisplayName("过滤矩阵邻域大小")]
+        [property: Description("过滤矩阵邻域大小")]
+        private uint neighbSize = 5;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域点数量限制
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("NeighbLightPoint")]
-        [property: Description("NeighbLightPoint")]
-        private uint neighbLightPoint = 30;//过滤矩阵邻域点数量限制
+        [property: DisplayName("过滤矩阵邻域点数量限制")]
+        [property: Description("过滤矩阵邻域点数量限制")]
+        private uint neighbLightPoint = 30;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区阈值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("DarkThresh")]
-        [property: Description("DarkThresh")]
-        private uint darkThresh = 30;//料区阈值
+        [property: DisplayName("料区阈值")]
+        [property: Description("料区阈值")]
+        private uint darkThresh = 30;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层阈值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("LightThresh")]
-        [property: Description("LightThresh")]
-        private uint lightThresh = 80;//铝层阈值
+        [property: DisplayName("铝层阈值")]
+        [property: Description("铝层阈值")]
+        private uint lightThresh = 80;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("LightThick")]
-        [property: Description("LightThick")]
-        private uint lightThick = 6;//铝层厚度
+        [property: DisplayName("铝层厚度")]
+        [property: Description("铝层厚度")]
+        private uint lightThick = 6;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
@@ -154,102 +226,171 @@ namespace AlgorithmDll
             Name = name;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 分组名
+        /// </summary>
         [ObservableProperty]
         [property: Category("1.GroupName")]
-        [property: DisplayName("GroupName")]
-        [property: Description("GroupName")]
+        [property: DisplayName("分组名")]
+        [property: Description("分组名")]
         private string name = "";
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值邻域大小
+        /// </summary>
+        [ObservableProperty]
+        [property: EditorAttribute()]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("自适应阈值邻域大小")]
+        [property: Description("自适应阈值邻域大小")]
+        private uint adaptiveSize = 14;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值增加值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("AdaptiveSize")]
-        [property: Description("AdaptiveSize")]
-        private uint adaptiveSize = 14;//自适应阈值邻域大小
+        [property: DisplayName("自适应阈值增加值")]
+        [property: Description("自适应阈值增加值")]
+        private int adaptiveAddGray = 20;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域大小
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("AdaptiveAddGray")]
-        [property: Description("AdaptiveAddGray")]
-        private int adaptiveAddGray = 20;//自适应阈值增加值
+        [property: DisplayName("过滤矩阵邻域大小")]
+        [property: Description("过滤矩阵邻域大小")]
+        private uint neighbSize = 5;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域点数量限制
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("NeighbSize")]
-        [property: Description("NeighbSize")]
-        private uint neighbSize = 5;//过滤矩阵邻域大小
+        [property: DisplayName("过滤矩阵邻域点数量限制")]
+        [property: Description("过滤矩阵邻域点数量限制")]
+        private uint neighbLightPoint = 30;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区阈值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("NeighbLightPoint")]
-        [property: Description("NeighbLightPoint")]
-        private uint neighbLightPoint = 30;//过滤矩阵邻域点数量限制
+        [property: DisplayName("料区阈值")]
+        [property: Description("料区阈值")]
+        private uint darkThresh = 30;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层阈值
+        /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("DarkThresh")]
-        [property: Description("DarkThresh")]
-        private uint darkThresh = 30;//料区阈值
+        [property: DisplayName("铝层阈值")]
+        [property: Description("铝层阈值")]
+        private uint lightThresh = 80;
 
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("LightThresh")]
-        [property: Description("LightThresh")]
-        private uint lightThresh = 80;//铝层阈值
-
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度限制，掉料检测
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("DarkThickLimit")]
-        [property: Description("DarkThickLimit")]
-        private uint darkThickLimit = 30;//料区厚度限制，掉料检测
+        [property: DisplayName("料区厚度限制")]
+        [property: Description("料区厚度限制")]
+        private uint darkThickLimit = 30;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度NG连续长度限制
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("DarkThickContinueLen")]
-        [property: Description("DarkThickContinueLen")]
-        private uint darkThickContinueLen = 5;//料区厚度NG连续长度限制
+        [property: DisplayName("料区厚度NG连续长度限制")]
+        [property: Description("料区厚度NG连续长度限制")]
+        private uint darkThickContinueLen = 5;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("DarkThick")]
-        [property: Description("DarkThick")]
-        private uint darkThick = 84;//料区厚度
+        [property: DisplayName("料区厚度")]
+        [property: Description("料区厚度")]
+        private uint darkThick = 84;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度限制，毛刺检测
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("LightThickLimit")]
-        [property: Description("LightThickLimit")]
-        private uint lightThickLimit = 7;//铝层厚度限制，毛刺检测
+        [property: DisplayName("铝层厚度限制")]
+        [property: Description("铝层厚度限制")]
+        private uint lightThickLimit = 7;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度NG连续长度限制
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("LightThickContinueLen")]
-        [property: Description("LightThickContinueLen")]
-        private uint lightThickContinueLen = 0;//铝层厚度NG连续长度限制
+        [property: DisplayName("铝层厚度NG连续长度限制")]
+        [property: Description("铝层厚度NG连续长度限制")]
+        private uint lightThickContinueLen = 0;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("LightThick")]
-        [property: Description("LightThick")]
-        private uint lightThick = 6;//铝层厚度
+        [property: DisplayName("铝层厚度")]
+        [property: Description("铝层厚度")]
+        private uint lightThick = 6;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层在料区中心位置限制上
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("PosLimitT")]
-        [property: Description("PosLimitT")]
-        private uint posLimitT = 20;//铝层在料区中心位置限制上
+        [property: DisplayName("铝层在料区中心位置限制上")]
+        [property: Description("铝层在料区中心位置限制上")]
+        private uint posLimitT = 20;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层在料区中心位置限制下
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("PosLimitB")]
-        [property: Description("PosLimitB")]
-        private uint posLimitB = 20;//铝层在料区中心位置限制下
+        [property: DisplayName("铝层在料区中心位置限制下")]
+        [property: Description("铝层在料区中心位置限制下")]
+        private uint posLimitB = 20;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层位置偏移值
+        /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("LightPosOffest")]
-        [property: Description("LightPosOffest")]
-        private int lightPosOffest = 0;//铝层位置偏移值
+        [property: DisplayName("铝层位置偏移值")]
+        [property: Description("铝层位置偏移值")]
+        private int lightPosOffest = 0;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;

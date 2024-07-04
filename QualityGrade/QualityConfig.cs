@@ -21,6 +21,10 @@ namespace QualityGrade
     /// </summary>
     public partial class QualityConfig : ObservableLog, IRecipient<OperateMessage>
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 操作日志
+        /// </summary>
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
@@ -29,10 +33,20 @@ namespace QualityGrade
             Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
         }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 等级列表
+        /// </summary>
         [property: DisplayName("等级列表")]
         [ObservableProperty]
         private ObservableCollection<Quality> qualities;
-       
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 操作日志消息处理
+        /// </summary>
+        /// <param name="message">操作消息</param>
         public void Receive(OperateMessage message)
         {
             if (message.obj.GetType() == typeof(QualityConfig))
@@ -68,8 +82,9 @@ namespace QualityGrade
         public Quality(string name)
         {
             this.Name = name;
-            ShowColor = BrushPro.instance.KnownColors[new Random().Next(BrushPro.instance.KnownColors.Count - 1)];
+            ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
         }
+
         /// <summary>
         /// 等级名 A\B\C\D
         /// </summary>
@@ -105,6 +120,11 @@ namespace QualityGrade
         [property: DisplayName("信号")]
         private int signal = 0;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 复制
+        /// </summary>
+        /// <returns>质量</returns>
         public Quality Clone()
         {
             var quality = new Quality(this.Name);
@@ -116,6 +136,10 @@ namespace QualityGrade
             return quality;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;

@@ -20,7 +20,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>-->
-            <entity:Enum2CmbConverter x:Key="Enum2CmbConverter" />
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
             <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ThirdlyRegionBrush}" FalseValue="Red"/>
@@ -115,7 +115,7 @@
                                                                                 HorizontalContentAlignment="Center"
                                                                                 Background="Transparent"
                                                                                 BorderThickness="0"
-                                                                                Content="{Binding Feature, Converter={StaticResource Enum2CmbConverter}}" />
+                                                                                Content="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
                                                                             <Label
                                                                                 Grid.Column="1"
                                                                                 Margin="0,0"

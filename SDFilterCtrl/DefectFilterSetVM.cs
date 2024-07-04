@@ -20,6 +20,12 @@ namespace SDFilter
     public partial class DefectFilterSetVM : ObservableValidator
     {
         public DefectFilterSetVM() { }
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 构造
+        /// </summary>
+        /// <param name="defectFilter">过滤器</param>
+        /// <param name="speciesFilter">类别</param>
         public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter) 
         {
             this.DefectFilter = defectFilter;
@@ -31,14 +37,28 @@ namespace SDFilter
             Qualities = res.Response;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 质量等级
+        /// </summary>
         [ObservableProperty]
         private ObservableCollection<Quality> qualities;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤器
+        /// </summary>
         [ObservableProperty]
         private DefectFilter defectFilter;
 
-        private string defectName;
         /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷名
+        /// </summary>
+        private string defectName;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// 缺陷名
         /// </summary>
         [Required]
@@ -60,28 +80,53 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 字符串验证
+        /// </summary>
+        /// <param name="input">输入名</param>
+        /// <returns></returns>
         bool IsValidString(string input)
         {
             string pattern = @"^(?:[\u4e00-\u9fa5a-zA-Z_])[\w\u4e00-\u9fa5]*$";
             return System.Text.RegularExpressions.Regex.IsMatch(input, pattern);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 缺陷名验证
+        /// </summary>
+        /// <param name="name">输入名</param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static ValidationResult ValidateDefectName(string name, ValidationContext context)
         {
-            DefectFilterSetVM instance = (DefectFilterSetVM)context.ObjectInstance;
+            DefectFilterSetVM s_Instance = (DefectFilterSetVM)context.ObjectInstance;
             if (name == string.Empty)
                 return new ValidationResult(Properties.Resource1.NameNotNull);
-            if (!instance.IsValidString(name))
+            if (!s_Instance.IsValidString(name))
                 return new ValidationResult(Properties.Resource1.NameInValid);
-            if (instance.RecipeDefects.Exists(o => o.DefectFilters.ToList().Exists(o => o != instance.DefectFilter && o.Name == name)))
+            if (s_Instance.RecipeDefects.Exists(o => o.DefectFilters.ToList().Exists(o => o != s_Instance.DefectFilter && o.Name == name)))
                 return new ValidationResult(Properties.Resource1.NameRepeat);
             return ValidationResult.Success;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 算法缺陷集
+        /// </summary>
         public List<RecipeDefect> RecipeDefects { get; set; }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 当前算法
+        /// </summary>
         private RecipeDefect recipeDefect;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 当前算法
+        /// </summary>
         public RecipeDefect RecipeDefect
         {
             get { return recipeDefect; }
@@ -93,31 +138,54 @@ namespace SDFilter
         }
 
 
-
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加过滤分选
+        /// </summary>
         [RelayCommand]
         public void AddFilterConfig()
         {
             DefectFilter?.FilterList.Add(new FilterAndSelect());
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除过滤分选
+        /// </summary>
+        /// <param name="filterConfig">目标</param>
         [RelayCommand]
         public void DeleteFilterConfig(FilterAndSelect filterConfig)
         {
             DefectFilter?.FilterList.Remove(filterConfig);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加过滤项
+        /// </summary>
+        /// <param name="filterConfig">所属过滤分选器</param>
         [RelayCommand]
         public void AddSelectConfig(FilterAndSelect filterConfig)
         {
             filterConfig.Filter.Add(new SelectConfig());
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加分选项
+        /// </summary>
+        /// <param name="filterConfig">所属过滤分选器</param>
         [RelayCommand]
         public void AddSelectConfig2(FilterAndSelect filterConfig)
         {
             filterConfig.SelectList.Add(new SelectConfig());
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除过滤/分选
+        /// </summary>
+        /// <param name="obj">删除目标、目标所属容器</param>
         [RelayCommand]
         public void DeleteSelectConfig(object obj)
         {
@@ -130,12 +198,22 @@ namespace SDFilter
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加条件
+        /// </summary>
+        /// <param name="selectConfig">所属过滤/分选</param>
         [RelayCommand]
         public void AddOneSelectParam(SelectConfig selectConfig)
         {
             selectConfig.SelectParams.Add(new OneSelectParams());
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除条件
+        /// </summary>
+        /// <param name="obj">删除目标、目标所属容器</param>
         [RelayCommand]
         public void DeleteOneSelectParam(object obj)
         {

@@ -51,7 +51,7 @@
             Width="80"
             Margin="10,2"
             Command="{Binding AddCommand}"
-            Content="{Binding [Add], Source={x:Static local:Lang.instance}}"
+            Content="{Binding [Add], Source={x:Static local:Lang.s_Instance}}"
             Style="{StaticResource ButtonPrimary}" />
         <Button
             Grid.Row="2"
@@ -59,7 +59,7 @@
             Width="80"
             Margin="10,2"
             Command="{Binding RemoveCommand}"
-            Content="{Binding [Delete], Source={x:Static local:Lang.instance}}"
+            Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"
             Style="{StaticResource ButtonDanger}" />
         <Button
             Grid.Row="2"
@@ -67,15 +67,15 @@
             Width="80"
             Margin="10,2"
             Command="{Binding EditCommand}"
-            Content="{Binding [Edit], Source={x:Static local:Lang.instance}}"
+            Content="{Binding [Edit], Source={x:Static local:Lang.s_Instance}}"
             Style="{StaticResource ButtonPrimary}" />
         <TextBox
-            hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}"
+            hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:Lang.s_Instance}, StringFormat={}{0}:}"
             Style="{StaticResource Textbox1}"
             Text="{Binding QualitySet.Name}" />
         <TextBox
             Grid.Column="1"
-            hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}"
+            hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:Lang.s_Instance}, StringFormat={}{0}:}"
             IsReadOnly="True"
             Style="{StaticResource Textbox1}"
             Text="{Binding QualitySet.Priority}" />
@@ -84,19 +84,19 @@
                 <ColumnDefinition Width="70" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Text="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:Lang.instance}, StringFormat={}{0}:}" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:Lang.s_Instance}, StringFormat={}{0}:}" />
             <wh:ColorComboBox Grid.Column="1" SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}" />
         </Grid>
         <TextBox
             Grid.Row="1"
-            hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}"
+            hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:Lang.s_Instance}, StringFormat={}{0}:}"
             Style="{StaticResource Textbox1}"
             Text="{Binding QualitySet.Signal}" />
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            hc:InfoElement.Title="{Binding [Description], Source={x:Static local:Lang.instance}, StringFormat={}{0}:}"
+            hc:InfoElement.Title="{Binding [Description], Source={x:Static local:Lang.s_Instance}, StringFormat={}{0}:}"
             Style="{StaticResource Textbox1}"
             Text="{Binding QualitySet.Description}" />
         <ListView
@@ -139,30 +139,30 @@
                     <GridViewColumn
                         Width="80"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="{Binding [QualityGrade], Source={x:Static local:Lang.instance}}" />
+                        Header="{Binding [QualityGrade], Source={x:Static local:Lang.s_Instance}}" />
                     <GridViewColumn
                         Width="80"
                         DisplayMemberBinding="{Binding Priority}"
-                        Header="{Binding [Priority], Source={x:Static local:Lang.instance}}" />
-                    <GridViewColumn Width="80" Header="{Binding [ShowColor], Source={x:Static local:Lang.instance}}">
+                        Header="{Binding [Priority], Source={x:Static local:Lang.s_Instance}}" />
+                    <GridViewColumn Width="80" Header="{Binding [ShowColor], Source={x:Static local:Lang.s_Instance}}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Label
                                     Width="80"
                                     HorizontalAlignment="Center"
-                                    Background="{Binding ShowColor.brush}"
-                                    Content="{Binding ShowColor.name}" />
+                                    Background="{Binding ShowColor.Brush}"
+                                    Content="{Binding ShowColor.Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn
                         Width="80"
                         DisplayMemberBinding="{Binding Signal}"
-                        Header="{Binding [QualitySignal], Source={x:Static local:Lang.instance}}" />
+                        Header="{Binding [QualitySignal], Source={x:Static local:Lang.s_Instance}}" />
                     <GridViewColumn
                         Width="200"
                         DisplayMemberBinding="{Binding Description}"
-                        Header="{Binding [Description], Source={x:Static local:Lang.instance}}" />
+                        Header="{Binding [Description], Source={x:Static local:Lang.s_Instance}}" />
                 </GridView>
             </ListView.View>
         </ListView>

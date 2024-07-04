@@ -11,14 +11,14 @@ namespace LanguageManager
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private ResourceManager ResourceManager;
+        private ResourceManager resourceManager;
 
-        private static List<LanguageManager> LanguageManagers = new List<LanguageManager>();
+        private static List<LanguageManager> s_LanguageManagers = new List<LanguageManager>();
 
         public LanguageManager(string resourcePath, Assembly assembly)
         {
-            ResourceManager = new ResourceManager(resourcePath, assembly);
-            LanguageManagers.Add(this);
+            resourceManager = new ResourceManager(resourcePath, assembly);
+            s_LanguageManagers.Add(this);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace LanguageManager
                 {
                     throw new ArgumentNullException(nameof(name));
                 }
-                return ResourceManager?.GetString(name)??string.Empty;
+                return resourceManager?.GetString(name)??string.Empty;
             }
         }
 
@@ -43,8 +43,7 @@ namespace LanguageManager
         {
             CultureInfo.CurrentCulture = cultureInfo;
             CultureInfo.CurrentUICulture = cultureInfo;
-            
-            foreach (var item in LanguageManagers)
+            foreach (var item in s_LanguageManagers)
             {
                 item.PropertyChanged?.Invoke(item, new PropertyChangedEventArgs(""));
             }

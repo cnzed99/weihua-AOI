@@ -21,6 +21,7 @@ namespace SDFilter
 {
     /// <summary>
     /// 2024.6.25 李焕彬
+    /// 检测设置控件
     /// SDFilterCtrl.xaml 的交互逻辑
     /// </summary>
     public partial class SDFilterCtrl : UserControl
@@ -31,46 +32,21 @@ namespace SDFilter
         }
     }
 
-    public class OneSelectParamsConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values.Length >= 5 && values.All(obj => obj != null)
-                && values[0] is DetectFeature && values[1] is double && values[2] is double && values[3] is bool && values[4] is bool)
-            {
-                string Character = values[0].ToString();
-                double Min = (double)values[1];
-                double Max = (double)values[2];
-                bool MaxLimit = (bool)values[3];
-                bool MinLimit = (bool)values[4];
-                if (MaxLimit && MinLimit)
-                {
-                    return $"{Min}≤{Character}≤{Max}";
-                }
-                else if (MinLimit)//限制最小
-                {
-                    return $"{Min}≤{Character}≤{double.PositiveInfinity}";
-                }
-                else if (MaxLimit)//限制最大
-                {
-                    return $"{double.NegativeInfinity}≤{Character}≤{Max}";
-                }
-                else//都不限制
-                {
-                    return $"{double.NegativeInfinity}≤ {Character} ≤{double.PositiveInfinity}";
-                }
-            }
-            return Binding.DoNothing;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
+    /// <summary>
+    /// 2024.7.4 李焕彬
+    /// 过滤分选条件&&||转换器
+    /// </summary>
     public class ColoectionIndexConverter : IMultiValueConverter
     {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 判断是否要加&& ||
+        /// </summary>
+        /// <param name="values">目标条件、目标条件所属容器</param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns>&&/||</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length >= 2 && values.All(obj => obj != null) && values[1] is IList items)

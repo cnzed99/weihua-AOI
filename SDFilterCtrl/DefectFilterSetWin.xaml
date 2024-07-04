@@ -32,8 +32,8 @@
             <conv:BoolToStringConverter x:Key="BoolToStringConverter" TrueValue="-" FalseValue="+"/>
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
-            <local:CmbCharacterConverter x:Key="CmbCharacterConverter" />
-            <entity:Enum2CmbConverter x:Key="Enum2CmbConverter"/>
+            <local:ItemSourceCharacterConverter x:Key="ItemSourceCharacterConverter" />
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter"/>
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -118,34 +118,34 @@
                                 </Grid.ColumnDefinitions>
                                 <Button Margin="12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Content="{Binding [Add], Source={x:Static local:Lang.instance}}"
+                                        Content="{Binding [Add], Source={x:Static local:Lang.s_Instance}}"
                                         Style="{DynamicResource AddNewButton}"
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddOneSelectParamCommand}"
                                         CommandParameter="{Binding}" />
                                 <TextBlock Grid.Column="0"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [Type], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [Type], Source={x:Static local:Lang.s_Instance}}" />
                                 <TextBlock Grid.Column="1"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [Unit], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [Unit], Source={x:Static local:Lang.s_Instance}}" />
                                 <TextBlock Grid.Column="2"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [UseLow], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [UseLow], Source={x:Static local:Lang.s_Instance}}" />
                                 <TextBlock Grid.Column="3"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [LowLimit], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [LowLimit], Source={x:Static local:Lang.s_Instance}}" />
                                 <TextBlock Grid.Column="4"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [UseUp], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [UseUp], Source={x:Static local:Lang.s_Instance}}" />
                                 <TextBlock Grid.Column="5"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="{Binding [UpLimit], Source={x:Static local:Lang.instance}}" />
+                                           Text="{Binding [UpLimit], Source={x:Static local:Lang.s_Instance}}" />
                             </Grid>
                             <ItemsControl Grid.Row="1" ItemsSource="{Binding SelectParams}">
                                 <ItemsControl.ItemTemplate>
@@ -168,9 +168,9 @@
                                             <ComboBox Name="CmbCharacter"
                                                       Grid.Column="1"
                                                       Margin="10,3,10,3"
-                                                      SelectedItem="{Binding Character, Converter={StaticResource Enum2CmbConverter}}">
+                                                      SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}">
                                                 <ComboBox.ItemsSource>
-                                                    <MultiBinding Converter="{StaticResource CmbCharacterConverter}">
+                                                    <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
                                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" Path="Tag" />
                                                     </MultiBinding>
                                                 </ComboBox.ItemsSource>
@@ -187,7 +187,7 @@
                                                 <TextBox.Text>
                                                     <Binding Path="Min" UpdateSourceTrigger="PropertyChanged">
                                                         <Binding.ValidationRules>
-                                                            <local:MinMaxValidation isGreater="False">
+                                                            <local:MinMaxValidation IsGreater="False">
                                                                 <local:MinMaxValidation.ValidationParams>
                                                                     <local:ValidationParams Data="{StaticResource BindingProxy}"/>
                                                                 </local:MinMaxValidation.ValidationParams>
@@ -204,7 +204,7 @@
                                                 <TextBox.Text>
                                                     <Binding Path="Max" UpdateSourceTrigger="PropertyChanged">
                                                         <Binding.ValidationRules>
-                                                            <local:MinMaxValidation isGreater="True">
+                                                            <local:MinMaxValidation IsGreater="True">
                                                                 <local:MinMaxValidation.ValidationParams>
                                                                     <local:ValidationParams Data="{StaticResource BindingProxy}"/>
                                                                 </local:MinMaxValidation.ValidationParams>
@@ -244,13 +244,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <UniformGrid Rows="2" Margin="0,0,30,0">
-            <TextBlock Text="{Binding [DefectName], Source={x:Static local:Lang.instance}}"/>
+            <TextBlock Text="{Binding [DefectName], Source={x:Static local:Lang.s_Instance}}"/>
             <TextBox Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding [Priority], Source={x:Static local:Lang.instance}}"/>
+            <TextBlock Text="{Binding [Priority], Source={x:Static local:Lang.s_Instance}}"/>
             <TextBox Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock/>
             <TextBlock/>
-            <TextBlock Text="{Binding [Algorithm], Source={x:Static local:Lang.instance}}"/>
+            <TextBlock Text="{Binding [Algorithm], Source={x:Static local:Lang.s_Instance}}"/>
             <ComboBox ItemsSource="{Binding RecipeDefects}" SelectedItem="{Binding RecipeDefect}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -258,7 +258,7 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [QualityLevel], Source={x:Static local:Lang.instance}}" />
+            <TextBlock Text="{Binding [QualityLevel], Source={x:Static local:Lang.s_Instance}}" />
             <ComboBox ItemsSource="{Binding Qualities}">
                 <ComboBox.SelectedItem>
                     <MultiBinding>
@@ -275,7 +275,7 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [ShowColor], Source={x:Static local:Lang.instance}}" />
+            <TextBlock Text="{Binding [ShowColor], Source={x:Static local:Lang.s_Instance}}" />
             <wh:ColorComboBox SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}"/>
         </UniformGrid>
         <Border Grid.Row="1"
@@ -284,7 +284,7 @@
                 BorderThickness="1">
             <Button Margin="5,0,0,0"
                     HorizontalAlignment="Left"
-                    Content="{Binding [AddSelect],Source={x:Static local:Lang.instance}}"
+                    Content="{Binding [AddSelect],Source={x:Static local:Lang.s_Instance}}"
                     Style="{DynamicResource AddNewButton}"
                     Command="{Binding AddFilterConfigCommand}" />
         </Border>
@@ -305,7 +305,7 @@
                                     <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0}{1}">
-                                                <Binding Source="{x:Static local:Lang.instance}" Path="[DefectFilter]" />
+                                                <Binding Source="{x:Static local:Lang.s_Instance}" Path="[DefectFilter]" />
                                                 <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="(ItemsControl.AlternationIndex)" />
                                             </MultiBinding>
                                         </TextBlock.Text>
@@ -321,7 +321,7 @@
                                             Grid.Column="3"
                                             Margin="5,0,5,0"
                                             HorizontalAlignment="Right"
-                                            Content="{Binding [Delete], Source={x:Static local:Lang.instance}}"
+                                            Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"
                                             Style="{DynamicResource Button}"
                                             Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteFilterConfigCommand}"
                                             CommandParameter="{Binding}" />
@@ -336,7 +336,7 @@
                                             <RowDefinition Height="15" />
                                         </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Filter], Source={x:Static local:Lang.instance}}" Foreground="Cyan" />
+                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Filter], Source={x:Static local:Lang.s_Instance}}" Foreground="Cyan" />
                                             <Button Padding="8,2,8,2"
                                                     Content="+"
                                                     Style="{DynamicResource AddNewButton}"
@@ -346,7 +346,7 @@
                                         <ItemsControl Grid.Row="1"
                                                       Margin="15,0,0,0"
                                                       ItemsSource="{Binding Filter}"
-                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000"  Tag="{Binding [Filter], Source={x:Static local:Lang.instance}}"/>
+                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000"  Tag="{Binding [Filter], Source={x:Static local:Lang.s_Instance}}"/>
                                     </Grid>
                                 </Border>
                                 <Border Margin="0,10,0,0" BorderBrush="#FF3F3F45" BorderThickness="1">
@@ -357,7 +357,7 @@
                                             <RowDefinition Height="15" />
                                         </Grid.RowDefinitions>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Select], Source={x:Static local:Lang.instance}}" Foreground="Cyan" />
+                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Select], Source={x:Static local:Lang.s_Instance}}" Foreground="Cyan" />
                                             <Button Padding="8,2,8,2"
                                                     Content="+"
                                                     Style="{DynamicResource AddNewButton}"
@@ -367,7 +367,7 @@
                                         <ItemsControl Grid.Row="1"
                                                       Margin="15,0,0,0"
                                                       ItemsSource="{Binding SelectList}"
-                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000" Tag="{Binding [Select], Source={x:Static local:Lang.instance}}"/>
+                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000" Tag="{Binding [Select], Source={x:Static local:Lang.s_Instance}}"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>

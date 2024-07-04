@@ -30,15 +30,21 @@ namespace WH.Controls
         {
             InitializeComponent();
 
-            this.CmbColor.ItemsSource = BrushPro.instance.KnownColors;
+            this.CmbColor.ItemsSource = BrushPro.s_Instance.KnownColors;
         }
 
+        /// <summary>
+        /// 选中颜色
+        /// </summary>
         public KnownColor SelectColor
         {
             get { return (KnownColor)GetValue(SelectBrushProperty); }
             set { SetValue(SelectBrushProperty, value); }
         }
 
+        /// <summary>
+        /// 选中颜色属性
+        /// </summary>
         // Using a DependencyProperty as the backing store for SelectColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectBrushProperty =
             DependencyProperty.Register("SelectColor", typeof(KnownColor), typeof(ColorComboBox), new PropertyMetadata(default(KnownColor), (d, e) =>
@@ -50,6 +56,11 @@ namespace WH.Controls
                 }
             }));
 
+        /// <summary>
+        /// 选中改变事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CmbColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)

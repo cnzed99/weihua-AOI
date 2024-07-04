@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GroupName" xml:space="preserve">
+  <data name="分组名" xml:space="preserve">
     <value>GroupName</value>
   </data>
   <data name="PCParam" xml:space="preserve">
@@ -132,49 +132,49 @@
   <data name="Judge" xml:space="preserve">
     <value>Judge</value>
   </data>
-  <data name="AdaptiveSize" xml:space="preserve">
+  <data name="自适应阈值邻域大小" xml:space="preserve">
     <value>AdaptiveSize</value>
   </data>
-  <data name="AdaptiveAddGray" xml:space="preserve">
+  <data name="自适应阈值增加值" xml:space="preserve">
     <value>AdaptiveAddGray</value>
   </data>
-  <data name="NeighbSize" xml:space="preserve">
+  <data name="过滤矩阵邻域大小" xml:space="preserve">
     <value>NeighbSize</value>
   </data>
-  <data name="NeighbLightPoint" xml:space="preserve">
+  <data name="过滤矩阵邻域点数量限制" xml:space="preserve">
     <value>NeighbLightPoint</value>
   </data>
-  <data name="DarkThresh" xml:space="preserve">
+  <data name="料区阈值" xml:space="preserve">
     <value>DarkThresh</value>
   </data>
-  <data name="LightThresh" xml:space="preserve">
+  <data name="铝层阈值" xml:space="preserve">
     <value>LightThresh</value>
   </data>
-  <data name="LightThick" xml:space="preserve">
+  <data name="铝层厚度" xml:space="preserve">
     <value>LightThick</value>
   </data>
-  <data name="DarkThickLimit" xml:space="preserve">
+  <data name="料区厚度限制" xml:space="preserve">
     <value>DarkThickLimit</value>
   </data>
-  <data name="DarkThickContinueLen" xml:space="preserve">
+  <data name="料区厚度NG连续长度限制" xml:space="preserve">
     <value>DarkThickContinueLen</value>
   </data>
-  <data name="DarkThick" xml:space="preserve">
+  <data name="料区厚度" xml:space="preserve">
     <value>DarkThick</value>
   </data>
-  <data name="LightThickLimit" xml:space="preserve">
+  <data name="铝层厚度限制" xml:space="preserve">
     <value>LightThickLimit</value>
   </data>
-  <data name="LightThickContinueLen" xml:space="preserve">
+  <data name="铝层厚度NG连续长度限制" xml:space="preserve">
     <value>LightThickContinueLen</value>
   </data>
-  <data name="PosLimitT" xml:space="preserve">
+  <data name="铝层在料区中心位置限制上" xml:space="preserve">
     <value>PosLimitT</value>
   </data>
-  <data name="PosLimitB" xml:space="preserve">
+  <data name="铝层在料区中心位置限制下" xml:space="preserve">
     <value>PosLimitB</value>
   </data>
-  <data name="LightPosOffest" xml:space="preserve">
+  <data name="铝层位置偏移值" xml:space="preserve">
     <value>LightPosOffest</value>
   </data>
   <data name="1.GroupName" xml:space="preserve">

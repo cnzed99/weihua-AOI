@@ -27,19 +27,36 @@ namespace QualityGrade
             WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>>(this);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 回复消息，过滤分选设置用
+        /// </summary>
+        /// <param name="message">质量列表</param>
         public void Receive(RequestMessage<ObservableCollection<Quality>> message)
         {
             message.Reply(QualityConfig.Qualities);
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 质量等级配置
+        /// </summary>
         [ObservableProperty]
         private QualityConfig qualityConfig = new QualityConfig();
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 当前设置质量
+        /// </summary>
         [ObservableProperty]
         private Quality qualitySet = new Quality("G1");
 
         private Quality qualitySelect;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 被选中质量
+        /// </summary>
         public Quality QualitySelect
         {
             get { return qualitySelect; }
@@ -54,8 +71,17 @@ namespace QualityGrade
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除、编辑判断
+        /// </summary>
+        /// <returns></returns>
         private bool CanRemoveAndEdit() => QualitySelect != null;
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 增加质量等级
+        /// </summary>
         [RelayCommand]
         public void Add()
         {
@@ -75,6 +101,10 @@ namespace QualityGrade
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 删除质量等级
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanRemoveAndEdit))]
         public void Remove()
         {
@@ -85,6 +115,10 @@ namespace QualityGrade
             }
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 编辑质量等级
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanRemoveAndEdit))]
         public void Edit()
         {
