@@ -165,7 +165,7 @@ namespace SDFilter
             {
                 return;
             }
-            var AlgorithmOut = cell.AlgorithmOut.AlgorithmOut;
+            var AlgorithmOut = cell.MaociTestOut.AlgorithmOut;
 
             foreach (var sp in AlgorithmOut.Specises)
             {

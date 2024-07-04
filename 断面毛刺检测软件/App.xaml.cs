@@ -125,7 +125,7 @@ namespace 断面毛刺检测软件
         {
             ConfigureServices();
             var mainWindow = Container.Resolve<MainWindow>();
-            mainWindow.DataContext = Container.Resolve<MainVM>();
+            mainWindow.DataContext = Container.Resolve<CMainVM>();
             mainWindow?.Show();
             
         }
@@ -133,7 +133,8 @@ namespace 断面毛刺检测软件
         public static IContainer Container { get; set; }
         private static void ConfigureServices()
         {
-            var builder = PublicServices.ConfigureServices();
+            var builder = CPublicServices.ConfigureServices();
+            builder.RegisterType<CMainVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
 
             builder.Register(c=>SingleInstance.Create<Lazy<SystemSettingWindow>,SystemSettingWindow>()).InstancePerDependency();
@@ -146,7 +147,7 @@ namespace 断面毛刺检测软件
             builder.Register(c => SingleInstance.Create<Lazy<OffLineTestWindow>, OffLineTestWindow>()).InstancePerDependency();
 
             Container = builder.Build();
-            PublicServices.Container = Container;
+            CPublicServices.Container = Container;
         }
     }
     internal class GlobalData

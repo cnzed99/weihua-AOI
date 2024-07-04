@@ -11,34 +11,34 @@ using System.Windows;
 
 namespace WH.Controls
 {
-    public partial class SettingViewModel : ObservableObject
+    public partial class CSettingViewModel : ObservableObject
     {
         #region 修改
         /// <summary>
         /// 选择的用户
         /// </summary>
-        public LoginPerson _loginPerson { get; set; } = new LoginPerson();
+        public CLoginPerson LoginPerson { get; set; } = new CLoginPerson();
 
-        private string _selectItem = "";
+        private string selectItem = "";
         /// <summary>
         /// 选择的项
         /// </summary>
         public string SelectItem
         {
-            get { return _selectItem; }
+            get { return selectItem; }
             set
             {
                 if (value!=null)
                 {
                     if (LoginLoad.useNamesDictionary.Keys.Contains(value))
                     {
-                        SetProperty(ref _selectItem, value);
-                        LoginPerson PDic = LoginLoad.useNamesDictionary[_selectItem] as LoginPerson;
+                        SetProperty(ref selectItem, value);
+                        CLoginPerson PDic = LoginLoad.useNamesDictionary[selectItem] as CLoginPerson;
                         if (PDic != null)
                         {
-                            _loginPerson.UserName = PDic.UserName;
-                            _loginPerson.PassWord=PDic.PassWord;
-                            _loginPerson.PrivileageLevel = PDic.PrivileageLevel;
+                            LoginPerson.UserName = PDic.UserName;
+                            LoginPerson.PassWord=PDic.PassWord;
+                            LoginPerson.PrivileageLevel = PDic.PrivileageLevel;
                         }
                        
                     }
@@ -47,7 +47,7 @@ namespace WH.Controls
             }
         }
 
-        private List<string> _itemList = new List<string>();
+        private List<string> itemList = new List<string>();
         /// <summary>
         /// 用户名列表
         /// </summary>
@@ -55,20 +55,20 @@ namespace WH.Controls
         {
             get
             {
-                _itemList.Clear();
+                itemList.Clear();
                 foreach (string key in LoginLoad.useNamesDictionary.Keys)
                 {
                     if (!string.IsNullOrEmpty(key) && key != "管理员")
                     {
-                        _itemList.Add(key);
+                        itemList.Add(key);
                     }
                 }                
-                return _itemList;
+                return itemList;
             }
             set
             {
                
-               SetProperty(ref _itemList, value);
+               SetProperty(ref itemList, value);
             }
         }
 
@@ -92,10 +92,7 @@ namespace WH.Controls
 
         #region 注册
 
-
-       
-
-        private List<PRIVILEGE> _privileageList = new List<PRIVILEGE>();
+        private List<PRIVILEGE> privileageList = new List<PRIVILEGE>();
         /// <summary>
         /// 用户名列表
         /// </summary>
@@ -103,17 +100,17 @@ namespace WH.Controls
         {
             get
             {
-                _privileageList.Clear();
+                privileageList.Clear();
                 Array eumnValue = Enum.GetValues(typeof(PRIVILEGE));
                 foreach (PRIVILEGE val in eumnValue)
                 {
                     if (val.ToString()!="管理员")
                     {
-                        _privileageList.Add(val);
+                        privileageList.Add(val);
                     }
                     
                 }
-                return _privileageList;
+                return privileageList;
 
             }
         }
@@ -157,13 +154,13 @@ namespace WH.Controls
                     ErrorMsg = Properties.Resources.PleaseSelectRights;
                     return;
                 }
-                LoginPerson p = new LoginPerson();
+                CLoginPerson p = new CLoginPerson();
                 p.UserName = AddUserName;
                 p.PassWord = AddPassword;
                 p.PrivileageLevel = AddPrivlege;
 
                 LoginLoad.useNamesDictionary.Add(p.UserName, p);
-                _itemList.Clear();
+                itemList.Clear();
                 List<string> tempList = new List<string>();
                 foreach (string key in LoginLoad.useNamesDictionary.Keys)
                 {
@@ -186,33 +183,33 @@ namespace WH.Controls
         {
             try
             {
-                if (string.IsNullOrEmpty(_loginPerson.UserName))
+                if (string.IsNullOrEmpty(LoginPerson.UserName))
                 {
                     ErrorMsg = Properties.Resources.PleaseSelectUser;
                     return;
                 }
-                if (!LoginLoad.useNamesDictionary.Keys.Contains(_loginPerson.UserName))
+                if (!LoginLoad.useNamesDictionary.Keys.Contains(LoginPerson.UserName))
                 {
                     ErrorMsg = Properties.Resources.UserNotExist;
                     return;
                 }
-                if (_loginPerson.UserName == "管理员")
+                if (LoginPerson.UserName == "管理员")
                 {
                     ErrorMsg = Properties.Resources.ManagerCanNotbeRemoved;
                     return;
                 }
-                LoginLoad.useNamesDictionary.Remove(_loginPerson.UserName);
-                _itemList.Clear();
+                LoginLoad.useNamesDictionary.Remove(LoginPerson.UserName);
+                itemList.Clear();
                 List<string> tempList = new List<string>();
                 foreach (string key in LoginLoad.useNamesDictionary.Keys)
                 {
                     tempList.Add(key);
                 }
                 ItemList = tempList;
-                ErrorMsg = Properties.Resources.Delete + _loginPerson.UserName;
-                _loginPerson.UserName = "";
-                _loginPerson.PassWord = "";
-                _loginPerson.PrivileageLevel = PRIVILEGE.无权限;
+                ErrorMsg = Properties.Resources.Delete + LoginPerson.UserName;
+                LoginPerson.UserName = "";
+                LoginPerson.PassWord = "";
+                LoginPerson.PrivileageLevel = PRIVILEGE.NOPERMISSION;
            
                 LoginLoad.SaveUsers();
 
@@ -228,32 +225,32 @@ namespace WH.Controls
         {
             try
             {
-                if (string.IsNullOrEmpty(_loginPerson.UserName))
+                if (string.IsNullOrEmpty(LoginPerson.UserName))
                 {
                     ErrorMsg = Properties.Resources.PleaseSelectUser;
                     return;
                 }
 
-                if (string.IsNullOrEmpty(_loginPerson.PassWord))
+                if (string.IsNullOrEmpty(LoginPerson.PassWord))
                 {
                     ErrorMsg = Properties.Resources.PleaseInputPassword;
                     return;
                 }
 
-                if (!LoginLoad.useNamesDictionary.Keys.Contains(_loginPerson.UserName))
+                if (!LoginLoad.useNamesDictionary.Keys.Contains(LoginPerson.UserName))
                 {
                     ErrorMsg = Properties.Resources.UserNotExist;
                     return;
                 }
-                if (string.IsNullOrEmpty(_loginPerson.PrivileageLevel.ToString()))
+                if (string.IsNullOrEmpty(LoginPerson.PrivileageLevel.ToString()))
                 {
                     ErrorMsg = Properties.Resources.PleaseSelectRights;
                     return;
                 }
 
-                var selectUser = LoginLoad.useNamesDictionary[_loginPerson.UserName];
-                selectUser.PassWord = _loginPerson.PassWord;
-                selectUser.PrivileageLevel = _loginPerson.PrivileageLevel;
+                var selectUser = LoginLoad.useNamesDictionary[LoginPerson.UserName];
+                selectUser.PassWord = LoginPerson.PassWord;
+                selectUser.PrivileageLevel = LoginPerson.PrivileageLevel;
                 ErrorMsg = Properties.Resources.Succeed;
                 LoginLoad.SaveUsers();
             }

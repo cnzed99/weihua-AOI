@@ -28,44 +28,44 @@ namespace 断面毛刺检测软件.Views
     public partial class OffLineTestCtrl : System.Windows.Controls.UserControl,INotifyPropertyChanged
     {
 
-        private MainVM m_mainVM;
-        public MainVM MMainVM
+        private CMainVM mainVM;
+        public CMainVM MMainVM
         {
-            get => m_mainVM;
+            get => mainVM;
             set
             {
-                m_mainVM = value;
+                mainVM = value;
                 OnPropertyChanged();
             }
         }
 
-        CLogRec SysLog;
+        CLogRec sysLog;
         /// <summary>
         /// 取消令牌
         /// </summary>
-        private CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
+        private CancellationTokenSource cancelToken { get; set; } = new CancellationTokenSource();
 
         /// <summary>
         /// 图片文件筛选
         /// </summary>
-        private readonly Regex _imgRegex = new Regex("(.*?)(jpg|png|bmp|tiff|tif)$",RegexOptions.IgnoreCase);
+        private readonly Regex imgRegex = new Regex("(.*?)(jpg|png|bmp|tiff|tif)$",RegexOptions.IgnoreCase);
 
         /// <summary>
         /// 信号锁，调试时使用。
         /// </summary>
-        private AutoResetEvent WaitSignal;
-        OpenFileDialog ImgFileDialog = new OpenFileDialog();
-        OpenFolderDialog ImgFolderDialog = new OpenFolderDialog();
+        private AutoResetEvent waitSignal;
+        OpenFileDialog imgFileDialog = new OpenFileDialog();
+        OpenFolderDialog imgFolderDialog = new OpenFolderDialog();
 
         
         IEnumerator<KnownColor> brushes = new BrushPro().KnownColors.GetEnumerator();
         Random random = new Random(50);
-        public OffLineTestCtrl(MainVM vm)
+        public OffLineTestCtrl(CMainVM vm)
         {
             InitializeComponent();
             MMainVM = vm;
-            SysLog = vm.SysLog;
-            WaitSignal = vm.WaitSignal;
+            sysLog = vm.SysLog;
+            waitSignal = vm.WaitSignal;
             if (MMainVM.TestImgFiles.Count == 0)
             {
                 MMainVM.TestImgFiles = ImgFiles;
@@ -77,14 +77,14 @@ namespace 断面毛刺检测软件.Views
             // 
             // ImgFileDialog
             // 
-            this.ImgFileDialog.Filter = "图像文件|*.*|png|*.png|jpg|*.jpg|bmp|*.bmp|jpeg|*.jpeg|tiff|*.tiff";
-            this.ImgFileDialog.Multiselect = true;
-            this.ImgFileDialog.Title = "选择图像文件";
+            this.imgFileDialog.Filter = "图像文件|*.*|png|*.png|jpg|*.jpg|bmp|*.bmp|jpeg|*.jpeg|tiff|*.tiff";
+            this.imgFileDialog.Multiselect = true;
+            this.imgFileDialog.Title = "选择图像文件";
             // 
             // ImgFolderDialog
             // 
-            this.ImgFolderDialog.Title = "选择图像文件夹";
-            this.ImgFolderDialog.DefaultDirectory = "D:\\";
+            this.imgFolderDialog.Title = "选择图像文件夹";
+            this.imgFolderDialog.DefaultDirectory = "D:\\";
             this.DataContext = this;
             //cbAngle.SelectedIndex = cbAngle.Items.IndexOf(_projConfig.ProcessSet.Angle.ToString());
         }
@@ -92,71 +92,71 @@ namespace 断面毛刺检测软件.Views
         /// <summary>
         /// 当前图像序号
         /// </summary>
-        private int _imgIndex = -110;
+        private int imgIndex = -110;
 
         /// <summary>
         /// 当前图像序号
         /// </summary>
         public int ImgIndex
         {
-            get => _imgIndex;
+            get => imgIndex;
             set
             {
-                if (_imgIndex != -110)
+                if (imgIndex != -110)
                 {
-                    _imgIndex = value;
-                    if (_imgIndex >= _imgFiles.Count)
+                    imgIndex = value;
+                    if (imgIndex >= imgFiles.Count)
                     {
-                        _imgIndex = 0;
+                        imgIndex = 0;
                     }
-                    else if (_imgIndex <= -1)
+                    else if (imgIndex <= -1)
                     {
-                        _imgIndex = _imgFiles.Count - 1;
+                        imgIndex = imgFiles.Count - 1;
                     }
                     OnPropertyChanged();
                 }
             }
         }
 
-        private bool _stop;
+        private bool stop;
 
         /// <summary>
         /// 离线测试 下一张 按钮按下
         /// </summary>
-        private bool _nextPressed = false;
+        private bool nextPressed = false;
 
         /// <summary>
         /// 离线测试 上一张 按钮按下
         /// </summary>
-        private bool _prePressed = false;
+        private bool prePressed = false;
 
         /// <summary>
         /// 图像文件列表
         /// </summary>
-        private List<string> _imgFiles = new List<string>();
+        private List<string> imgFiles = new List<string>();
 
         /// <summary>
         /// 图像文件列表
         /// </summary>
         private List<string> ImgFiles
         {
-            get => _imgFiles;
+            get => imgFiles;
             set
             {
                 if (value.Count > 0)
                 {
-                    _imgFiles = value;
+                    imgFiles = value;
                     MMainVM.TestImgFiles = value;
                     ImgNames.Clear();
-                    string[] fileNames = Array.ConvertAll<string, string>(_imgFiles.ToArray(), System.IO.Path.GetFileNameWithoutExtension);
+                    string[] fileNames = Array.ConvertAll<string, string>(imgFiles.ToArray(), System.IO.Path.GetFileNameWithoutExtension);
                    
-                    _imgIndex = 0;
+                    imgIndex = 0;
                     ImgNames = new List<string>(fileNames);
                     OnPropertyChanged();
                 }
                 else
                 {
-                    _imgIndex = -110;
+                    imgIndex = -110;
                 }
             }
         }
@@ -165,16 +165,16 @@ namespace 断面毛刺检测软件.Views
 
         private void BtnPreImg_Click(object sender, RoutedEventArgs e)
         {
-            _prePressed = true;
-            _nextPressed = false;
+            prePressed = true;
+            nextPressed = false;
             // CancelToken = new CancellationTokenSource();
             ImgIndex--;
         }
 
         private void BtnNextImg_Click(object sender, RoutedEventArgs e)
         {
-            _prePressed = false;
-            _nextPressed = true;
+            prePressed = false;
+            nextPressed = true;
             // CancelToken = new CancellationTokenSource();
             ImgIndex++;
         }
@@ -182,24 +182,24 @@ namespace 断面毛刺检测软件.Views
         private async void BtnStartOnce_Click(object sender, RoutedEventArgs e)
         {
             DisableButtons();
-            _stop = false;
-            WaitSignal.Set();
+            stop = false;
+            waitSignal.Set();
 
-            CancelToken = new CancellationTokenSource();
+            cancelToken = new CancellationTokenSource();
             Task task = Task.Run(() =>
             {
-                _imgIndex = -1;
-                while (!CancelToken.IsCancellationRequested)
+                imgIndex = -1;
+                while (!cancelToken.IsCancellationRequested)
                 {
-                    if (_stop)
+                    if (stop)
                     {
                         break;
                     }
-                    WaitSignal.WaitOne();
-                    _imgIndex++;
-                    if (_imgIndex >= ImgFiles.Count)
+                    waitSignal.WaitOne();
+                    imgIndex++;
+                    if (imgIndex >= ImgFiles.Count)
                     {
-                        _imgIndex = 0;
+                        imgIndex = 0;
                         break;//退出
                     }
                     //this.BeginInvoke(new Action(() =>
@@ -209,7 +209,7 @@ namespace 断面毛刺检测软件.Views
 
                     PreDllExcute();
                 }
-            }, CancelToken.Token);
+            }, cancelToken.Token);
             await task;
             EnableButtons();
             task.Dispose();
@@ -219,46 +219,46 @@ namespace 断面毛刺检测软件.Views
         {
             MMainVM.DeviceSeting = false;
             DisableButtons();
-            _stop = false;
-            WaitSignal.Set();
-            CancelToken = new CancellationTokenSource();
+            stop = false;
+            waitSignal.Set();
+            cancelToken = new CancellationTokenSource();
             await Task.Run(() =>
             {
-                _imgIndex = -1;
+                imgIndex = -1;
                 int numTimes = 0;
-                while (!CancelToken.IsCancellationRequested)
+                while (!cancelToken.IsCancellationRequested)
                 {
-                    if (_stop)
+                    if (stop)
                     {
                         break;
                     }
-                    WaitSignal.WaitOne();
-                    _imgIndex++;
+                    waitSignal.WaitOne();
+                    imgIndex++;
 
-                    if (_imgIndex >= ImgFiles.Count - 1)
+                    if (imgIndex >= ImgFiles.Count - 1)
                     {
-                        if (_imgIndex == ImgFiles.Count)
+                        if (imgIndex == ImgFiles.Count)
                         {
-                            _imgIndex = 0;
+                            imgIndex = 0;
                         }
 
                         numTimes++;
                         var times = numTimes;
                         this.Dispatcher.Invoke(new Action(() =>
                         {
-                            if (_imgIndex > 0)
+                            if (imgIndex > 0)
                             {
-                                SysLog.Info($"循环遍历了{times}次:{ImgIndex + 1}/{ImgFiles.Count}：" +
-                                                               _imgFiles[ImgIndex]);
+                                sysLog.Info($"循环遍历了{times}次:{ImgIndex + 1}/{ImgFiles.Count}：" +
+                                                               imgFiles[ImgIndex]);
                             }
                         }));
                     }
 
                     PreDllExcute();
                 }
-            }, CancelToken.Token).ContinueWith(t =>
+            }, cancelToken.Token).ContinueWith(t =>
             {
-                SysLog.Info(@"循环遍历已取消！");
+                sysLog.Info(@"循环遍历已取消！");
             });
             EnableButtons();
         }
@@ -270,7 +270,7 @@ namespace 断面毛刺检测软件.Views
         private async void PreDllExcute(bool once = false)
         {
             MMainVM.isStart = false;
-            if (_imgFiles.Count > ImgIndex && File.Exists(_imgFiles[ImgIndex]))
+            if (imgFiles.Count > ImgIndex && File.Exists(imgFiles[ImgIndex]))
             {
                 try
                 {
@@ -296,7 +296,7 @@ namespace 断面毛刺检测软件.Views
                         isOnce = once,
                         QualityColor = brushes.Current.brush,
                         ImageFile = ImgFiles[ImgIndex],
-                        CancelSource = this.CancelToken,
+                        CancelSource = this.cancelToken,
                         ProjGuid = "001",
                         CamSerial = "002",
                         ComGuid = "com"
@@ -307,23 +307,23 @@ namespace 断面毛刺检测软件.Views
                     cell.GetImageExcute(!MMainVM.isStart, 0);
 
                     //await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
-                    await MainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                    await CMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
                 }
                 catch (TaskCanceledException ex)
                 {
 
-                    SysLog.Info("任务被取消！" + ex.Message);
+                    sysLog.Info("任务被取消！" + ex.Message);
                 }
                 catch (Exception e)
                 {
-                    SysLog.Error("读取图片发生错误:" + e.Message);
+                    sysLog.Error("读取图片发生错误:" + e.Message);
                 }
             }
         }
 
         private void BtnStopOffLine_Click(object sender, RoutedEventArgs e)
         {
-            _stop = true;
+            stop = true;
             EnableButtons();
             // DetectProgress.Value = 0;
         }
@@ -362,12 +362,12 @@ namespace 断面毛刺检测软件.Views
        
         private void btn_ImgFiles_Click(object sender, RoutedEventArgs e)
         {
-            if (ImgFileDialog.ShowDialog() == true)
+            if (imgFileDialog.ShowDialog() == true)
             {
                 List<string> imgs = new List<string>();
-                foreach (var file in ImgFileDialog.FileNames)
+                foreach (var file in imgFileDialog.FileNames)
                 {
-                    if (_imgRegex.IsMatch(file))
+                    if (imgRegex.IsMatch(file))
                     {
                         imgs.Add(file);
                     }
@@ -387,7 +387,7 @@ namespace 断面毛刺检测软件.Views
                 }
                 else
                 {
-                    SysLog.Info("没有有效图像文件 jpg|png|bmp|tiff|tif");
+                    sysLog.Info("没有有效图像文件 jpg|png|bmp|tiff|tif");
                     
                 }
             }
@@ -397,13 +397,13 @@ namespace 断面毛刺检测软件.Views
 
         private void btn_ImgDir_Click(object sender, RoutedEventArgs e)
         {
-            if (ImgFolderDialog.ShowDialog() is true)
+            if (imgFolderDialog.ShowDialog() is true)
             {
-                string[] Allfiles = Directory.GetFiles(ImgFolderDialog.FolderName);
+                string[] Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
                 List<string> imgs = new List<string>();
                 foreach (var file in Allfiles)
                 {
-                    if (_imgRegex.IsMatch(file))
+                    if (imgRegex.IsMatch(file))
                     {
                         imgs.Add(file);
                     }
@@ -422,7 +422,7 @@ namespace 断面毛刺检测软件.Views
                 }
                 else
                 {
-                    SysLog.Info("没有有效图像文件 " + _imgRegex.ToString());
+                    sysLog.Info("没有有效图像文件 " + imgRegex.ToString());
                     
                 }
             }
@@ -431,16 +431,16 @@ namespace 断面毛刺检测软件.Views
         private void cb_CurImgFile_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
             DisableButtons();
-            CancelToken = new CancellationTokenSource();
+            cancelToken = new CancellationTokenSource();
            
-            if (File.Exists(_imgFiles[ImgIndex]))
+            if (File.Exists(imgFiles[ImgIndex]))
             {
-               SysLog.Info("正在预处理：" + _imgFiles[ImgIndex]);
+               sysLog.Info("正在预处理：" + imgFiles[ImgIndex]);
                 PreDllExcute(true);
             }
             else
             {
-                SysLog.Info("图像不存在！");
+                sysLog.Info("图像不存在！");
             }
             EnableButtons();
         }

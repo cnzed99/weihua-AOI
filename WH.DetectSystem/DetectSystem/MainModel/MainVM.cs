@@ -34,32 +34,33 @@ using WH.DetectSystem.DetectSystem.SystemSet;
 namespace WH.DetectSystem.ViewModels
 {
     /// <summary>
+    /// 20240704 TCG
     /// 主界面视图模型
     /// </summary>
-    public partial class MainVM : MainModel
+    public partial class CMainVM : CMainModel
     {
         [ObservableProperty]
-        LoginViewModel loginViewModel = new LoginViewModel();
+        CLoginViewModel loginViewModel = new CLoginViewModel();
         [ObservableProperty]
-        SystemSettingsVM systemSettings = new SystemSettingsVM();
+        CSystemSettingsVM systemSettings = new CSystemSettingsVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
-        public CLogRec SysLog { get;} = PublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
+        public CLogRec SysLog { get;} = CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
         /// <summary>
         /// 操作日志
         /// </summary>
-        public CLogRec OperateLog { get;} = PublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+        public CLogRec OperateLog { get;} = CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
         /// <summary>
         /// 当前工程
         /// </summary>
-        private MainModel _model;
+        private CMainModel model;
         /// <summary>
         /// 当前工程 禁止直接修改其属性
         /// </summary>
-        public MainModel Model { get => _model; set{
-                SetProperty(ref _model, value);
-                _model.Adapt(this);
+        public CMainModel Model { get => model; set{
+                SetProperty(ref model, value);
+                model.Adapt(this);
                 this.SDFilterCtrlVM.FilterConfig = MaociFilter;
                 this.QualityCtrlVM.QualityConfig = MaociQuality;
                 this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
@@ -78,7 +79,7 @@ namespace WH.DetectSystem.ViewModels
 
         [ObservableProperty]
         Brush lastBrush = Brushes.White;
-        public MainVM()
+        public CMainVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -90,6 +91,7 @@ namespace WH.DetectSystem.ViewModels
                 OperateLog.UserName = user.UserName;
             };
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
+           
         }
         #region 时间相关
         [ObservableProperty]
@@ -138,11 +140,11 @@ namespace WH.DetectSystem.ViewModels
         /// <summary>
         /// 保存当前工程的修改
         /// </summary>
-        public void ApplyChanges()=>this.Adapt(this._model);
+        public void ApplyChanges()=>this.Adapt(this.model);
         /// <summary>
         /// 丢弃当前工程的修改
         /// </summary>
-        public void DiscardChanges()=>_model.Adapt(this);
+        public void DiscardChanges()=>model.Adapt(this);
         #endregion
 
         #region 软件加载
@@ -159,7 +161,7 @@ namespace WH.DetectSystem.ViewModels
                 #region 读取主配置文件
                 try
                 {
-                    SystemSettings = SysSet.LoadParameter();
+                    SystemSettings = CSysSet.LoadParameter();
                     if (SystemSettings != null)
                     {
                         SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
@@ -201,7 +203,7 @@ namespace WH.DetectSystem.ViewModels
             try
             {
                 ProjPath = header;
-                Model = ConfigAPI.Load<MainModel>(header);
+                Model = ConfigAPI.Load<CMainModel>(header);
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);

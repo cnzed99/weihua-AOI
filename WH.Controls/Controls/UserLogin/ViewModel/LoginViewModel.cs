@@ -14,13 +14,13 @@ using WH.Entity.Messages;
 
 namespace WH.Controls
 {
-    public partial class LoginViewModel : ObservableObject
+    public partial class CLoginViewModel : ObservableObject
     {
       
         /// <summary>
         /// 选择用户改变时传出委托
         /// </summary>
-        public Action<LoginPerson,bool> UserChangeAction { get; set; }
+        public Action<CLoginPerson,bool> UserChangeAction { get; set; }
         /// <summary>
         /// 剩余登录时间传出委托
         /// </summary>
@@ -31,7 +31,7 @@ namespace WH.Controls
        
 
 
-        private List<string> _itemList = new List<string>();
+        private List<string> itemList = new List<string>();
         /// <summary>
         /// 用户名列表
         /// </summary>
@@ -39,17 +39,17 @@ namespace WH.Controls
         {
             get
             {
-                _itemList.Clear();
+                itemList.Clear();
                 foreach (string key in LoginLoad.useNamesDictionary.Keys)
                 {
-                    _itemList.Add(key);
+                    itemList.Add(key);
                 }
-                return _itemList;
+                return itemList;
             }
             set
             {
                
-                SetProperty(ref _itemList, value);
+                SetProperty(ref itemList, value);
             }
         }
 
@@ -100,14 +100,14 @@ namespace WH.Controls
         /// <summary>
         /// 选择的用户
         /// </summary>
-        public LoginPerson LoginPerson { get; set; } = new LoginPerson();
-        public LoginViewModel()
+        public CLoginPerson LoginPerson { get; set; } = new CLoginPerson();
+        public CLoginViewModel()
         {
             bool ret = LoginLoad.LoadUsers();
             if (ret)
             {
 
-                LoginPerson = new LoginPerson();
+                LoginPerson = new CLoginPerson();
 
                 tmrCheckAuthorizationLeftTime.Tick += TmrCheckAuthorizationLeftTime_Tick;
                 tmrCheckAuthorizationLeftTime.Interval = TimeSpan.FromSeconds(1);
@@ -182,7 +182,7 @@ namespace WH.Controls
                     return;
                 }
 
-                LoginPerson person = LoginLoad.useNamesDictionary[LoginPerson.UserName];
+                CLoginPerson person = LoginLoad.useNamesDictionary[LoginPerson.UserName];
                 if (person.PassWord != LoginPerson.PassWord)
                 {
                     ErrorMsg = Properties.Resources.PasswordError;
@@ -236,7 +236,7 @@ namespace WH.Controls
         {
             //LoginPerson P = new LoginPerson();
             LoginPerson.UserName = Properties.Resources.Logout;
-            LoginPerson.PrivileageLevel = PRIVILEGE.无权限;
+            LoginPerson.PrivileageLevel = PRIVILEGE.NOPERMISSION;
             LoggedSuccess = false;
             UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
             ILoginLeftTimeMinute = 0;

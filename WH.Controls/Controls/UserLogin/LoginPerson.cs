@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using WH.Entity.Attribute;
 
 namespace WH.Controls
 {
-    public partial class LoginPerson : ObservableObject
+    public partial class CLoginPerson : ObservableObject
     {
         [ObservableProperty]
         private string userName = string.Empty;
@@ -33,40 +35,40 @@ namespace WH.Controls
         /// 权限等级
         /// </summary>
        
-        private PRIVILEGE _privileageLevel;
+        private PRIVILEGE privileageLevel;
         
         public PRIVILEGE PrivileageLevel
         {
-            get { return _privileageLevel; }
+            get { return privileageLevel; }
             set
             {
 
                
                 switch (value)
                 {
-                    case PRIVILEGE.售后:
+                    case PRIVILEGE.AFTER_SALE:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/售后.png"));
                         break;
-                    case PRIVILEGE.无权限:
+                    case PRIVILEGE.NOPERMISSION:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
                         break;
-                    case PRIVILEGE.工程师:
+                    case PRIVILEGE.ENGINEER:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/工程师.png"));
                         break;
-                    case PRIVILEGE.工艺员:
+                    case PRIVILEGE.TECHNOLOGIST:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/工艺.png"));
                         break;
-                    case PRIVILEGE.操作员:
+                    case PRIVILEGE.OPERATOR:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/操作员.png"));
                         break;
-                    case PRIVILEGE.管理员:
+                    case PRIVILEGE.ADMINISTRATOR:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/管理员.png"));
                         break;
                     default:
                         LogoImage = new BitmapImage(new Uri("pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"));
                         break;
                 }
-                SetProperty(ref _privileageLevel, value);
+                SetProperty(ref privileageLevel, value);
                 OnPropertyChanged(nameof(LogoImage));
             }
         }
@@ -81,26 +83,33 @@ namespace WH.Controls
         /// <summary>
         /// 无权限
         /// </summary>
-        无权限,
+        [EnumString("无权限", "NO PERMISSION")]
+        NOPERMISSION,
         /// <summary>
         /// 普通操作员
         /// </summary>
-        操作员,
+        [EnumString("操作员", "OPERATOR")]
+        OPERATOR,
         /// <summary>
         /// 技术员
         /// </summary>
-        工艺员,
+        [EnumString("技术员", "TECHNOLOGIST")]
+        TECHNOLOGIST,
         /// <summary>
         /// 工程师
         /// </summary>
-        工程师,
+        [EnumString("工程师", "ENGINEER")]
+        ENGINEER,
         /// <summary>
         /// 售后
         /// </summary>
-        售后,
+        [EnumString("售后", "AFTER_SALE")]
+        AFTER_SALE,
         /// <summary>
         /// 管理员
         /// </summary>
-        管理员
+        [EnumString("管理员", "ADMINISTRATOR")]
+        ADMINISTRATOR
     }
+   
 }

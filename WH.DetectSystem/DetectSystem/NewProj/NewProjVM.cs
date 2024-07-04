@@ -14,7 +14,11 @@ using WH.Entity.Messages;
 
 namespace WH.DetectSystem.ViewModels
 {
-    public partial class NewProjVM:ObservableValidator
+    /// <summary>
+    /// 20240704 TCG
+    /// 新建工程 视图模型
+    /// </summary>
+    public partial class CNewProjVM:ObservableValidator
     {
         #region 需要配置的属性 必需项
         string name;
@@ -33,11 +37,11 @@ namespace WH.DetectSystem.ViewModels
             set => SetProperty(ref projPath, value,true);
         }
         #endregion
-        MainModel mainModel = new MainModel();
-        MainVM mainvm;
-        public NewProjVM(MainVM mainVM)
+        CMainModel mainModel = new CMainModel();
+        CMainVM mainVM;
+        public CNewProjVM(CMainVM mainVM)
         {
-            mainvm = mainVM;
+            this.mainVM = mainVM;
             mainVM.Adapt(mainModel);
             mainVM.Adapt(this);
         }
@@ -48,14 +52,14 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void ApplyChanges()
         {
-            mainvm.ProjPath = this.ProjPath;
+            mainVM.ProjPath = this.ProjPath;
             this.Adapt(mainModel);
-            this.mainvm.Model = mainModel;
+            this.mainVM.Model = mainModel;
         }
         /// <summary>
         /// 丢弃当前工程的修改
         /// </summary>
-        public void DiscardChanges() => mainvm.Adapt(this);
+        public void DiscardChanges() => mainVM.Adapt(this);
         #endregion
 
         [RelayCommand]

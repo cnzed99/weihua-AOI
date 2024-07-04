@@ -12,37 +12,37 @@ namespace WH.Entity.Progress
     /// <typeparam name="T"></typeparam>
     public class CProgress<T> : Progress<T> where T : notnull
     {
-        private readonly Action _complete;
-        private readonly T _maximum;
-        private bool _isCompleted;
+        private readonly Action complete;
+        private readonly T maximum;
+        private bool isCompleted;
 
         public CProgress(Action<T> handler, Action complete, T maximum)
             : base(handler)
         {
-            _complete = complete;
-            _maximum = maximum;
+            this.complete = complete;
+            this.maximum = maximum;
 
             ProgressChanged += CheckCompletion;
         }
 
         protected override void OnReport(T value)
         {
-            if (_isCompleted)
+            if (isCompleted)
                 return;
             base.OnReport(value);
         }
 
         private void CheckCompletion(object sender, T e)
         {
-            if (e.Equals(_maximum) && !_isCompleted)
+            if (e.Equals(maximum) && !isCompleted)
             {
-                _isCompleted = true;
-                _complete?.Invoke();
+                isCompleted = true;
+                complete?.Invoke();
             }
         }
         public void Reset()
         {
-            _isCompleted = false;
+            isCompleted = false;
         }
         public void Report(T value)
         {

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace 断面毛刺检测软件
 {
-    public class Lang
+    public class CLang
     {
-        public static LanguageManager.LanguageManager instance = new LanguageManager.LanguageManager("断面毛刺检测软件.Properties.Resources", typeof(Lang).Assembly);
+        public static LanguageManager.LanguageManager Instance = new LanguageManager.LanguageManager("断面毛刺检测软件.Properties.Resources", typeof(CLang).Assembly);
     }
 }

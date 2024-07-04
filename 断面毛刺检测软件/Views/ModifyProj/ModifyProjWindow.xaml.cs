@@ -29,14 +29,14 @@ namespace 断面毛刺检测软件.Views
         public ModifyProjWindow()
         {
             InitializeComponent();
-            this.DataContext = new ModifyProjVM( App.Container.Resolve<MainVM>());
+            this.DataContext = new CModifyProjVM( App.Container.Resolve<CMainVM>());
             WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
         }
 
         private void SelectPath_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = MainVM.projFilter;
+            saveFileDialog.Filter = CMainVM.projFilter;
             saveFileDialog.Title = ModifyProjResources.Title;
             if (saveFileDialog.ShowDialog() is true)
             {

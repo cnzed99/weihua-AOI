@@ -71,7 +71,7 @@
                                     <TextBlock
                                         Margin="5,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding [RunOnce], Source={x:Static local:Lang.offLineTest}}" />
+                                        Text="{Binding [RunOnce], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
 
                             </Button.Content>
@@ -80,7 +80,7 @@
                     </hc:ButtonGroup>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Width="350" Header="{Binding [Images], Source={x:Static local:Lang.offLineTest}}">
+            <GroupBox Width="350" Header="{Binding [Images], Source={x:Static local:CLang.OffLineTest}}">
                 <StackPanel Orientation="Vertical">
                     <hc:ButtonGroup Margin="0,2">
                         <Button x:Name="btn_ImgFiles" Click="btn_ImgFiles_Click">
@@ -90,7 +90,7 @@
                                     <TextBlock
                                         Margin="5,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding [Images], Source={x:Static local:Lang.offLineTest}}" />
+                                        Text="{Binding [Images], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
 
                             </Button.Content>
@@ -102,7 +102,7 @@
                                     <TextBlock
                                         Margin="5,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding [ImageDir], Source={x:Static local:Lang.offLineTest}}" />
+                                        Text="{Binding [ImageDir], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
 
                             </Button.Content>
@@ -114,7 +114,7 @@
                                     <TextBlock
                                         Margin="5,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding [CamImage], Source={x:Static local:Lang.offLineTest}}" />
+                                        Text="{Binding [CamImage], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
 
                             </Button.Content>
@@ -125,7 +125,7 @@
                         <ComboBox
                             Name="cb_RoAngle"
                             Width="100"
-                            hc:TitleElement.Title="{Binding [Rotate], Source={x:Static local:Lang.offLineTest}}"
+                            hc:TitleElement.Title="{Binding [Rotate], Source={x:Static local:CLang.OffLineTest}}"
                             hc:TitleElement.TitlePlacement="Left"
                             DockPanel.Dock="Right"
                             Visibility="Collapsed"
@@ -135,7 +135,7 @@
 
                         <ComboBox
                             Name="cb_CurImgFile"
-                            hc:TitleElement.Title="{Binding [Current], Source={x:Static local:Lang.offLineTest}}"
+                            hc:TitleElement.Title="{Binding [Current], Source={x:Static local:CLang.OffLineTest}}"
                             hc:TitleElement.TitlePlacement="Left"
                             DockPanel.Dock="Left"
                             ItemsSource="{Binding ImgNames}"

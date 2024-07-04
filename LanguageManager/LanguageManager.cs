@@ -43,6 +43,7 @@ namespace LanguageManager
         {
             CultureInfo.CurrentCulture = cultureInfo;
             CultureInfo.CurrentUICulture = cultureInfo;
+            
             foreach (var item in LanguageManagers)
             {
                 item.PropertyChanged?.Invoke(item, new PropertyChangedEventArgs(""));

@@ -10,15 +10,15 @@ using WH.RunCell;
 
 namespace 断面毛刺检测软件.Views
 {
-    public static class OfflineTestExtend
+    public static class COfflineTestExtend
     {
        
-        private static readonly object _lockobj = new object();
+        private static readonly object lockobj = new object();
         public static void GetImageExcute(this Cell cell, bool fromFile = false, int angle = 0)
         {
             try
             {
-                lock (_lockobj)
+                lock (lockobj)
                 {
                     if (fromFile)//非运行模式，调试模式
                     {

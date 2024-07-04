@@ -15,7 +15,11 @@ using WH.Entity.Messages;
 
 namespace WH.DetectSystem.ViewModels
 {
-    public partial class ModifyProjVM : ObservableValidator
+    /// <summary>
+    /// 20240704 TCG
+    /// 工程修改 视图模型
+    /// </summary>
+    public partial class CModifyProjVM : ObservableValidator
     {
         #region 需要配置的属性 必需项
         string name;
@@ -34,9 +38,9 @@ namespace WH.DetectSystem.ViewModels
             set => SetProperty(ref projPath, value,true);
         }
         #endregion
-        MainModel mainModel = new MainModel();
-        MainVM mainvm;
-        public ModifyProjVM(MainVM mainVM)
+        CMainModel mainModel = new CMainModel();
+        CMainVM mainvm;
+        public CModifyProjVM(CMainVM mainVM)
         {
             mainvm = mainVM;
             mainVM.Adapt(mainModel);

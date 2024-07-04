@@ -13,11 +13,12 @@ using System.Threading.Tasks;
 namespace WH.DetectSystem.Models
 {
     /// <summary>
-    /// 工程配置文件
+    /// 20240704 TCG
+    /// 单个工程配置文件
     /// </summary>
-    public partial class MainModel:ObservableObject
+    public partial class CMainModel:ObservableObject
     {
-       
+        
         [ObservableProperty]
         string name  = "毛刺检测";
         [ObservableProperty]

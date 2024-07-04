@@ -9,10 +9,16 @@ using WH.Entity.Attribute;
 
 namespace WH.DetectSystem.Models
 {
-    public partial class SystemSettingsModel:ObservableValidator
+    /// <summary>
+    /// 20240704 TCG
+    /// 系统设置 模型
+    /// </summary>
+    public partial class CSystemSettingsModel:ObservableValidator
     {
         
-        
+        /// <summary>
+        /// 醉经打开的工程
+        /// </summary>
         public ObservableCollection<string> RecentProjs { get; set; } = new ObservableCollection<string>() { "C:\\Users\\Mainvm.Json", "C:\\Users\\Mainvm233.Json" };
 
         [ObservableProperty]

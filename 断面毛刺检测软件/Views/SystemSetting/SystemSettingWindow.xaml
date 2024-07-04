@@ -9,10 +9,10 @@
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
-    Title="{Binding [SystemSettings], Source={x:Static local:Lang.systemSettings}}"
+    Title="{Binding [SystemSettings], Source={x:Static local:CLang.SystemSettings}}"
     Width="650"
     Height="330"
-    d:DataContext="{d:DesignInstance Type=vm:SystemSettingsVM}"
+    d:DataContext="{d:DesignInstance Type=vm:CSystemSettingsVM}"
     Background="{DynamicResource RegionBrush}"
     Icon="/Resources/图片/系统设置/系统设置.png"
     ResizeMode="NoResize"
@@ -52,43 +52,43 @@
         <GroupBox
             Width="250"
             DockPanel.Dock="Left"
-            Header="{Binding [CommonSettings], Source={x:Static local:Lang.systemSettings}}">
+            Header="{Binding [CommonSettings], Source={x:Static local:CLang.SystemSettings}}">
             <StackPanel>
 
-                <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding OfflineSave}" />
-                <ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding IsToMysql}" />
+                <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding OfflineSave}" />
+                <ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />
 
 
             </StackPanel>
 
         </GroupBox>
-        <GroupBox Header="{Binding [DataClearSet], Source={x:Static local:Lang.systemSettings}}">
+        <GroupBox Header="{Binding [DataClearSet], Source={x:Static local:CLang.SystemSettings}}">
             <StackPanel>
                 <hc:ElementGroup>
-                    <CheckBox Content="{Binding [AutoClear], Source={x:Static local:Lang.systemSettings}}" IsChecked="{Binding AutoClearEnable}" />
+                    <CheckBox Content="{Binding [AutoClear], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding AutoClearEnable}" />
                     <TextBlock d:Text="2024年3月27日 白班" Text="{Binding NowShift}" />
                 </hc:ElementGroup>
                 <DockPanel>
                     <hc:TimePicker
                         Name="ucdpe_DayShift"
-                        hc:TitleElement.Title="{Binding [Day], Source={x:Static local:Lang.systemSettings}}"
+                        hc:TitleElement.Title="{Binding [Day], Source={x:Static local:CLang.SystemSettings}}"
                         DockPanel.Dock="Left"
                         SelectedTime="{Binding DayShift}"
                         TimeFormat="HH:mm" />
                     <hc:ElementGroup>
                         <RadioButton
                             x:Name="ucrb_EveryShift"
-                            Content="{Binding [Shift], Source={x:Static local:Lang.systemSettings}}"
+                            Content="{Binding [Shift], Source={x:Static local:CLang.SystemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=1}" />
                         <RadioButton
                             x:Name="ucrb_EveryDay"
-                            Content="{Binding [EachDay], Source={x:Static local:Lang.systemSettings}}"
+                            Content="{Binding [EachDay], Source={x:Static local:CLang.SystemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=2}" />
                         <RadioButton
                             x:Name="ucrb_EveryWeeks"
-                            Content="{Binding [EachWeek], Source={x:Static local:Lang.systemSettings}}"
+                            Content="{Binding [EachWeek], Source={x:Static local:CLang.SystemSettings}}"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding ClearEveryDay, Converter={StaticResource checkconverter}, ConverterParameter=3}" />
                     </hc:ElementGroup>
@@ -96,11 +96,11 @@
                 <DockPanel>
                     <hc:TimePicker
                         Name="ucdpe_NightShift"
-                        hc:TitleElement.Title="{Binding [Night], Source={x:Static local:Lang.systemSettings}}"
+                        hc:TitleElement.Title="{Binding [Night], Source={x:Static local:CLang.SystemSettings}}"
                         SelectedTime="{Binding NightShift}"
                         TimeFormat="HH:mm" />
                     <TextBox
-                        hc:TitleElement.Title="{Binding [NextClearTime], Source={x:Static local:Lang.systemSettings}}"
+                        hc:TitleElement.Title="{Binding [NextClearTime], Source={x:Static local:CLang.SystemSettings}}"
                         hc:TitleElement.TitlePlacement="Left"
                         IsReadOnly="True"
                         Style="{StaticResource TextBoxExtend}"

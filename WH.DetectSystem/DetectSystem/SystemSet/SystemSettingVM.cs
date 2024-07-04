@@ -11,7 +11,11 @@ using WH.DetectSystem.Models;
 
 namespace WH.DetectSystem.ViewModels
 {
-    public partial class SystemSettingsVM:SystemSettingsModel
+    /// <summary>
+    /// 20240704 TCG
+    /// 系统设置 视图模型 继承自系统设置模型
+    /// </summary>
+    public partial class CSystemSettingsVM:CSystemSettingsModel
     {
 
         [RelayCommand]
@@ -24,8 +28,11 @@ namespace WH.DetectSystem.ViewModels
             }
         }
     }
-
-    public static class SysSet
+    /// <summary>
+    /// 20240704 TCG
+    /// 系统设置静态路径，提供保存扩展方法和读取方法
+    /// </summary>
+    public static class CSysSet
     {
         /// <summary>
         /// 系统参数保存的路径
@@ -33,7 +40,7 @@ namespace WH.DetectSystem.ViewModels
         public static string ParameterPath = "..\\SystemConfig\\SystemSetting.Json";
         #region 保存参数
 
-        public static void SaveParameter(this SystemSettingsModel settingsModel)
+        public static void SaveParameter(this CSystemSettingsModel settingsModel)
         {
             try
             {
@@ -47,28 +54,28 @@ namespace WH.DetectSystem.ViewModels
 
         #region 读取参数
 
-        public static SystemSettingsVM LoadParameter()
+        public static CSystemSettingsVM LoadParameter()
         {
-            SystemSettingsVM settingsModel = new SystemSettingsVM();
+            CSystemSettingsVM settingsModel = new CSystemSettingsVM();
             try
             {
                 
                 if (File.Exists(ParameterPath))
                 {
-                    settingsModel = ConfigAPI.Load<SystemSettingsVM>(ParameterPath);
+                    settingsModel = ConfigAPI.Load<CSystemSettingsVM>(ParameterPath);
                     if (settingsModel == null)
                     {
-                        settingsModel = new SystemSettingsVM();
+                        settingsModel = new CSystemSettingsVM();
                     }
                 }
                 else
                 {
-                    settingsModel = new SystemSettingsVM();
+                    settingsModel = new CSystemSettingsVM();
                 }
             }
             catch (Exception)
             {
-                settingsModel = new SystemSettingsVM();
+                settingsModel = new CSystemSettingsVM();
             }
             return settingsModel;
         }

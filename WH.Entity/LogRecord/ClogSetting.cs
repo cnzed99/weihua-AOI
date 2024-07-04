@@ -19,8 +19,8 @@ namespace WH.Entity.LogRecord;
 
 public class ClogSetting
 {
-    private const int SIZE_CONTENT = 10485760;
-    private const int COUNT_BACK = 20;
+    private const int c_SIZE_CONTENT = 10485760;
+    private const int c_COUNT_BACK = 20;
 
     public string Name { get; set; }
 
@@ -53,18 +53,18 @@ public class ClogSetting
 
 public static class ClogHepler
 {
-    private static ConcurrentDictionary<Guid, ClogHepler.PairLogItem> _logPairDictionary;
+    private static ConcurrentDictionary<Guid, ClogHepler.PairLogItem> logPairDictionary;
 
     static ClogHepler()
     {
         BasicConfigurator.Configure();
-        ClogHepler._logPairDictionary = new ConcurrentDictionary<Guid, ClogHepler.PairLogItem>();
+        ClogHepler.logPairDictionary = new ConcurrentDictionary<Guid, ClogHepler.PairLogItem>();
     }
     /// <summary>
     /// 创建或获取LOG记录实例
     /// </summary>
-    /// <param name="logSetting"></param>
-    /// <returns></returns>
+    /// <param name="logSetting">配置文件</param>
+    /// <returns>返回ILog</returns>
     public static ILog Create(this ClogSetting logSetting)
     {
 
@@ -107,7 +107,7 @@ public static class ClogHepler
     // <summary>
     /// 删除过期日志
     /// </summary>
-    /// <param name="logpath"></param>
+    /// <param name="logSetting"></param>
     public static void DeleteLog(this ClogSetting logSetting)
     {
 
@@ -131,7 +131,7 @@ public static class ClogHepler
     public static Guid BeginInfo(this ILog logger, string message, bool isSpanWithMillisecond = true, bool isDelayWrite = false)
     {
         Guid key = Guid.NewGuid();
-        ClogHepler._logPairDictionary.TryAdd(key, new ClogHepler.PairLogItem(message, isDelayWrite, isSpanWithMillisecond));
+        ClogHepler.logPairDictionary.TryAdd(key, new ClogHepler.PairLogItem(message, isDelayWrite, isSpanWithMillisecond));
         if (!isDelayWrite)
             logger.Info((object)(message + "开始"));
         return key;
@@ -144,11 +144,11 @@ public static class ClogHepler
     /// <param name="isSucceed">true:添加到info，false:添加到error</param>
     public static void EndInfo(this ILog logger, Guid guidKey, bool isSucceed)
     {
-        if (!ClogHepler._logPairDictionary.ContainsKey(guidKey))
+        if (!ClogHepler.logPairDictionary.ContainsKey(guidKey))
             return;
-        double timeSpan = ClogHepler._logPairDictionary[guidKey].TimeSpan;
+        double timeSpan = ClogHepler.logPairDictionary[guidKey].TimeSpan;
         ClogHepler.PairLogItem pairLogItem;
-        ClogHepler._logPairDictionary.TryRemove(guidKey, out pairLogItem);
+        ClogHepler.logPairDictionary.TryRemove(guidKey, out pairLogItem);
         string message;
         if (pairLogItem.IsDelayWrite)
             message = string.Format("{0}结束（Result:{1})，耗时 {2}{3}（开始时间：{4:yyyy-MM-dd HH:mm:ss.fff}）", (object)pairLogItem.Content, (object)isSucceed, (object)timeSpan, pairLogItem.IsSanWithMillisecond ? (object)"ms" : (object)"s", (object)pairLogItem.Start);
@@ -167,11 +167,11 @@ public static class ClogHepler
     /// <param name="addMessage">附加信息</param>
     public static void EndInfo(this ILog logger, Guid guidKey, string addMessage)
     {
-        if (!ClogHepler._logPairDictionary.ContainsKey(guidKey))
+        if (!ClogHepler.logPairDictionary.ContainsKey(guidKey))
             return;
-        double timeSpan = ClogHepler._logPairDictionary[guidKey].TimeSpan;
+        double timeSpan = ClogHepler.logPairDictionary[guidKey].TimeSpan;
         ClogHepler.PairLogItem pairLogItem;
-        ClogHepler._logPairDictionary.TryRemove(guidKey, out pairLogItem);
+        ClogHepler.logPairDictionary.TryRemove(guidKey, out pairLogItem);
         string message;
         if (pairLogItem.IsDelayWrite)
             message = string.Format("{0}结束（{1})，耗时 {2}{3}（开始时间：{4:yyyy-MM-dd HH:mm:ss.fff}）", (object)pairLogItem.Content, (object)addMessage, (object)timeSpan, pairLogItem.IsSanWithMillisecond ? (object)"ms" : (object)"s", (object)pairLogItem.Start);

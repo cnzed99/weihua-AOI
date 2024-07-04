@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="2、过滤筛选\新文件夹\**" />
+    <EmbeddedResource Remove="2、过滤筛选\新文件夹\**" />
+    <None Remove="2、过滤筛选\新文件夹\**" />
+    <Page Remove="2、过滤筛选\新文件夹\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />

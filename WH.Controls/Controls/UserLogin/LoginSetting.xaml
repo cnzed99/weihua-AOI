@@ -6,6 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
     xmlns:prop="clr-namespace:WH.Controls.Properties"
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
     Name="window"
@@ -30,6 +31,8 @@
             </ResourceDictionary.MergedDictionaries>
             <Style BasedOn="{StaticResource lbText}" TargetType="TextBlock" />
             <Style BasedOn="{StaticResource PageButton}" TargetType="Button" />
+            <entity:EnumStringConverter x:Key="EnumStringConverter"/>
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -135,7 +138,7 @@
                 
                 IsSafeEnabled="False"
                 ShowEyeButton="True"
-                UnsafePassword="{Binding _loginPerson.PassWord}" />
+                UnsafePassword="{Binding LoginPerson.PassWord}" />
 
             <ComboBox
                 Grid.Row="0"
@@ -146,8 +149,8 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 FontSize="14"
-                ItemsSource="{Binding PrivileageList}"
-                SelectedItem="{Binding _loginPerson.PrivileageLevel}"
+                ItemsSource="{Binding PrivileageList,Converter={StaticResource EnumStringConverter}}"
+                SelectedItem="{Binding LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}"
                 Style="{StaticResource comboxStyle}" />
             <Button
                 Name="btn_ChangeButton"
@@ -232,8 +235,8 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 FontSize="14"
-                ItemsSource="{Binding PrivileageList}"
-                SelectedItem="{Binding AddPrivlege}"
+                ItemsSource="{Binding PrivileageList,Converter={StaticResource EnumStringConverter}}"
+                SelectedItem="{Binding AddPrivlege,Converter={StaticResource StringAttrEnumConverter}}"
                 Style="{StaticResource comboxStyle}" />
             <TextBlock
                 Grid.Row="1"

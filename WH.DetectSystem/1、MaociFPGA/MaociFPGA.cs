@@ -8,12 +8,28 @@ using WH.RunCell;
 
 namespace WH.DetectSystem
 {
-    public static class MaociStage
+    /// <summary>
+    /// 20240704 TCG
+    /// PC算法阶段 算法执行控制
+    /// </summary>
+    public static class CMaociStage
     {
+        /// <summary>
+        /// 20240704 TCG
+        /// 毛刺FPGA算法执行，FPGA参数扩展方法
+        /// </summary>
+        /// <param name="paramFpga">FPGA参数</param>
+        /// <param name="cell">检测对象</param>
         public static void MaociFPGAExcute(this MaociAlgorParamFpga paramFpga, Cell cell)
         {
             //处理结果放到cell中
         }
+        /// <summary>
+        /// 20240704 TCG
+        /// 毛刺PC算法执行，毛刺检测算法扩展方法
+        /// </summary>
+        /// <param name="paramMaoci">毛刺算法参数</param>
+        /// <param name="cell">检测对象</param>
         public static void MaociExcute(this MaociAlgorParam paramMaoci, Cell cell)
         {
             //处理结果放到cell中

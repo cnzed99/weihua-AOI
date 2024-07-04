@@ -7,10 +7,10 @@
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
-    Title="{Binding [Title], Source={x:Static local:Lang.newProj}}"
+    Title="{Binding [Title], Source={x:Static local:CLang.NewProj}}"
     Width="450"
     Height="330"
-    d:DataContext="{d:DesignInstance vm:NewProjVM}"
+    d:DataContext="{d:DesignInstance vm:CNewProjVM}"
     Background="{DynamicResource RegionBrush}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -28,11 +28,11 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10">
-            <TextBox hc:TitleElement.Title="{Binding [Name], Source={x:Static local:Lang.newProj}}" Text="{Binding Name}" />
+            <TextBox hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.NewProj}}" Text="{Binding Name}" />
             <TextBox
                 x:Name="tb_path"
-                hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:Lang.newProj}}"
-                hc:TitleElement.Title="{Binding [Path], Source={x:Static local:Lang.newProj}}"
+                hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:CLang.NewProj}}"
+                hc:TitleElement.Title="{Binding [Path], Source={x:Static local:CLang.NewProj}}"
                 IsReadOnly="True"
                 PreviewMouseDoubleClick="SelectPath_DoubleClick"
                 Text="{Binding ProjPath}" />
@@ -42,12 +42,12 @@
             <Button
                 Width="100"
                 Command="{Binding SureCommand}"
-                Content="{Binding [Sure], Source={x:Static local:Lang.newProj}}"
+                Content="{Binding [Sure], Source={x:Static local:CLang.NewProj}}"
                 Style="{StaticResource ButtonPrimary}" />
             <Button
                 Width="100"
                 Command="{Binding CancelCommand}"
-                Content="{Binding [Cancel], Source={x:Static local:Lang.newProj}}"
+                Content="{Binding [Cancel], Source={x:Static local:CLang.NewProj}}"
                 Style="{StaticResource ButtonDanger}" />
         </hc:ElementGroup>
     </Grid>

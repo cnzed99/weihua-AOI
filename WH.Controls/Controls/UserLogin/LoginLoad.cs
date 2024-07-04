@@ -20,7 +20,7 @@ namespace WH.Controls
         /// <summary>
         /// 用户名 密码 字典
         /// </summary>
-        public static Dictionary<string, LoginPerson> useNamesDictionary = new Dictionary<string, LoginPerson>();
+        public static Dictionary<string, CLoginPerson> useNamesDictionary = new Dictionary<string, CLoginPerson>();
 
 
         public static bool LoadUsers()
@@ -40,7 +40,7 @@ namespace WH.Controls
                 {
                     try
                     {
-                        useNamesDictionary = CEncryption.Load<Dictionary<string, LoginPerson>>(savePath);
+                        useNamesDictionary = CEncryption.Load<Dictionary<string, CLoginPerson>>(savePath);
                         if (useNamesDictionary == null)
                         {
                             GetNewUsers();
@@ -80,26 +80,26 @@ namespace WH.Controls
         private static void GetNewUsers()
         {
 
-            LoginPerson P1 = new LoginPerson();
-            LoginPerson P2 = new LoginPerson();
-            LoginPerson P3 = new LoginPerson();
-            LoginPerson P4 = new LoginPerson();
+            CLoginPerson P1 = new CLoginPerson();
+            CLoginPerson P2 = new CLoginPerson();
+            CLoginPerson P3 = new CLoginPerson();
+            CLoginPerson P4 = new CLoginPerson();
 
             P1.UserName = Properties.Resources.Operator;
             P1.PassWord = "1";
-            P1.PrivileageLevel = PRIVILEGE.操作员;
+            P1.PrivileageLevel = PRIVILEGE.OPERATOR;
 
             P2.UserName = Properties.Resources.Craftman;
             P2.PassWord = "123";
-            P2.PrivileageLevel = PRIVILEGE.工艺员;
+            P2.PrivileageLevel = PRIVILEGE.TECHNOLOGIST;
 
             P3.UserName = Properties.Resources.Engineer;
             P3.PassWord = "vision";
-            P3.PrivileageLevel = PRIVILEGE.工程师;
+            P3.PrivileageLevel = PRIVILEGE.ENGINEER;
 
             P4.UserName = Properties.Resources.Administrator;
             P4.PassWord = "WH-VISION";
-            P4.PrivileageLevel = PRIVILEGE.管理员;
+            P4.PrivileageLevel = PRIVILEGE.ADMINISTRATOR;
 
             useNamesDictionary.Add(P1.UserName, P1);
             useNamesDictionary.Add(P2.UserName, P2);

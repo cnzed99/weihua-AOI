@@ -19,10 +19,10 @@ namespace WH.Controls
     /// </summary>
     public partial class LoginSetting : Window
     {
-        SettingViewModel viewModel;
+        CSettingViewModel viewModel;
         public LoginSetting()
         {
-            viewModel = new SettingViewModel();
+            viewModel = new CSettingViewModel();
             InitializeComponent();
             this.DataContext = viewModel;
         }

@@ -26,10 +26,10 @@ namespace WH.Controls
     /// </summary>
     public partial class LoginPage : Window
     {
-       public LoginViewModel viewModel { get; set; }
+       public CLoginViewModel viewModel { get; set; }
 
 
-        public LoginPage(LoginViewModel vm)
+        public LoginPage(CLoginViewModel vm)
         {
             InitializeComponent();
             

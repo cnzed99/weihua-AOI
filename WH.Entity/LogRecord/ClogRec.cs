@@ -16,12 +16,12 @@ namespace WH.Entity.LogRecord
 {
     public enum LOG
     {
-        LOG_INFO,
-        LOG_WARN,
-        LOG_ERROR,
-        LOG_OK,
-        LOG_NG,
-        LOG_TIP
+        LOG_INFO = 1,
+        LOG_WARN = 2,
+        LOG_ERROR = 4,
+        LOG_OK = 8,
+        LOG_NG = 16,
+        LOG_TIP = 32
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ namespace WH.Entity.LogRecord
     /// </summary>
     public partial class CLogRec:ObservableObject
     {
-        static Hashtable s_logList = new Hashtable();
+        static Hashtable logList = new Hashtable();
         public string UserName { get; set; }
         SlogMessage infoMessage;
         public SlogMessage InfoMessage
@@ -62,8 +62,8 @@ namespace WH.Entity.LogRecord
             }
         }
 
-        private  log4net.ILog _InfoLog ;
-        private  log4net.ILog _ErrorLog ;
+        private  log4net.ILog infoLog ;
+        private  log4net.ILog errorLog ;
         /// <summary>
         /// 未指定errorLog时，共用同一个日志文件,指定后会将错误信息写入单独文件
         /// </summary>
@@ -73,17 +73,17 @@ namespace WH.Entity.LogRecord
         private CLogRec(string logName,string pathDir,string errorLog = null)
         {
 
-            _InfoLog = new ClogSetting(logName,logName) { RootDir = pathDir }.Create();
-            if (string.IsNullOrEmpty(errorLog)) _ErrorLog = _InfoLog;
-            else _ErrorLog = new ClogSetting(errorLog, errorLog) { RootDir = pathDir }.Create();
+            infoLog = new ClogSetting(logName,logName) { RootDir = pathDir }.Create();
+            if (string.IsNullOrEmpty(errorLog)) this.errorLog = infoLog;
+            else this.errorLog = new ClogSetting(errorLog, errorLog) { RootDir = pathDir }.Create();
         }
         public static CLogRec Create(string logName, string pathDir, string errorLog = null)
         {
-            if(s_logList.ContainsKey(logName)) return (CLogRec)s_logList[logName];
+            if(logList.ContainsKey(logName)) return (CLogRec)logList[logName];
             else
             {
                 var log = new CLogRec(logName,pathDir,errorLog);
-                s_logList.Add(logName,log);
+                logList.Add(logName,log);
                 return log;
             }
         }
@@ -107,7 +107,7 @@ namespace WH.Entity.LogRecord
             sb.Append(":");
             sb.Append(message);
             string msg = sb.ToString();
-            _InfoLog.Info(msg);
+            infoLog.Info(msg);
             UpdateMessage(msg, LOG.LOG_INFO);
         }
         public  void Warn(string message)
@@ -116,7 +116,7 @@ namespace WH.Entity.LogRecord
             sb.Append(":");
             sb.Append(message);
             string msg = sb.ToString();
-            _InfoLog.Info(msg);
+            infoLog.Info(msg);
             UpdateMessage(msg,LOG.LOG_WARN);
         }
         public  void Error(string message)
@@ -126,7 +126,7 @@ namespace WH.Entity.LogRecord
             sb.Append(message);
             string msg = sb.ToString();
            
-            _ErrorLog.Error(msg);
+            errorLog.Error(msg);
             UpdateMessage(msg, LOG.LOG_ERROR);
         }
 
@@ -136,7 +136,7 @@ namespace WH.Entity.LogRecord
             sb.Append(":");
             sb.Append(message);
             string msg = sb.ToString();
-            _InfoLog.Info(msg);
+            infoLog.Info(msg);
             UpdateMessage(msg, LOG.LOG_OK);
         }
         public void NG(string message)
@@ -145,7 +145,7 @@ namespace WH.Entity.LogRecord
             sb.Append(":");
             sb.Append(message);
             string msg = sb.ToString();
-            _InfoLog.Info(msg);
+            infoLog.Info(msg);
             UpdateMessage(msg, LOG.LOG_NG);
         }
         public void Tip(string message)
@@ -154,7 +154,7 @@ namespace WH.Entity.LogRecord
             sb.Append(":");
             sb.Append(message);
             string msg = sb.ToString();
-            _InfoLog.Info(msg);
+            infoLog.Info(msg);
             UpdateMessage(msg, LOG.LOG_TIP);
         }
 

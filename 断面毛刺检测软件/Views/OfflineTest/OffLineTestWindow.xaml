@@ -6,7 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding [Title], Source={x:Static local:Lang.offLineTest}}"
+    Title="{Binding [Title], Source={x:Static local:CLang.OffLineTest}}"
     d:Height="450"
     d:Width="800"
     Background="{DynamicResource RegionBrush}"

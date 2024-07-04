@@ -10,7 +10,10 @@ using WH.Entity.LogRecord;
 
 namespace WH.DetectSystem
 {
-    public class PublicServices
+    /// <summary>
+    /// IOC容器 管理各种实例 类型
+    /// </summary>
+    public class CPublicServices
     {
         public static IContainer Container { get; set; }
         public static ContainerBuilder ConfigureServices()
@@ -18,13 +21,16 @@ namespace WH.DetectSystem
             var builder = new ContainerBuilder();
             builder.RegisterInstance(CLogRec.Create("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
             builder.RegisterInstance(CLogRec.Create("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance();
-            builder.RegisterType<MainVM>().SingleInstance();
+            
             return builder;
         }
     }
+    /// <summary>
+    /// 日志类型，目前两类 系统日志和操作日志
+    /// </summary>
     public enum LOGTYPE
     {
-        LOGTYPE_SYS,
-        LOGTYPE_OPERATE
+        LOGTYPE_SYS = 1,
+        LOGTYPE_OPERATE = 2
     }
 }
