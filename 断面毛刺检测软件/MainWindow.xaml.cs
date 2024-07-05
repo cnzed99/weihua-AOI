@@ -33,6 +33,7 @@ using System.Threading.Channels;
 using WH.Entity.CommonLib;
 using WH.DetectSystem.ViewModels;
 using WH.DetectSystem;
+using ProjProduceData;
 
 namespace 断面毛刺检测软件
 {
@@ -83,7 +84,7 @@ namespace 断面毛刺检测软件
                         else OperateLog.Info(Properties.Resources.Stop);
                     }
                     );
-                WeakReferenceMessenger.Default.Register<MemoryStream>(this, (_, imgStream) =>
+                WeakReferenceMessenger.Default.Register<MemoryStream,string>(this,"getImage", (_, imgStream) =>
                 {
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -95,6 +96,14 @@ namespace 断面毛刺检测软件
                         bitmap.EndInit();
                         mainVM.ModelImage = bitmap;
                     }));
+                });
+                WeakReferenceMessenger.Default.Register<Cell,string>(this, "showTask",(obj, cell) =>
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        mainVM.DefectsDataVM.DefectsProduce.CellResultExcute(cell);
+                    }));
+                    
                 });
                 this.IsEnabled = false;
                 

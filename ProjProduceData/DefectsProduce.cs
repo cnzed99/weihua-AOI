@@ -96,14 +96,15 @@ namespace ProjProduceData
             {
                 defect.PercentofAll = defect.Number / Total;
             }
-            List<DefectNumber> defectNumbers = DefectNumbersList.ToList();
-            defectNumbers.Sort((a, b) => (int)(-a.Number + b.Number));
-            for (int i = 0; i < defectNumbers.Count; i++)
-            {
-                var dex = DefectNumbersList.IndexOf(defectNumbers[i]);
-                if (dex == i) continue;
-                DefectNumbersList.Move(dex, i);
-            }
+            //排序
+            //List<DefectNumber> defectNumbers = DefectNumbersList.ToList();
+            //defectNumbers.Sort((a, b) => (int)(-a.Number + b.Number));
+            //for (int i = 0; i < defectNumbers.Count; i++)
+            //{
+            //    var dex = DefectNumbersList.IndexOf(defectNumbers[i]);
+            //    if (dex == i) continue;
+            //    DefectNumbersList.Move(dex, i);
+            //}
             
         }
 

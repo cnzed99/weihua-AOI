@@ -43,7 +43,7 @@ namespace 断面毛刺检测软件.Views
         /// <summary>
         /// 取消令牌
         /// </summary>
-        private CancellationTokenSource cancelToken { get; set; } = new CancellationTokenSource();
+        public CancellationTokenSource CancelToken { get; set; } = new CancellationTokenSource();
 
         /// <summary>
         /// 图片文件筛选
@@ -118,7 +118,7 @@ namespace 断面毛刺检测软件.Views
             }
         }
 
-        private bool stop;
+        public bool Stop;
 
         /// <summary>
         /// 离线测试 下一张 按钮按下
@@ -182,16 +182,16 @@ namespace 断面毛刺检测软件.Views
         private async void BtnStartOnce_Click(object sender, RoutedEventArgs e)
         {
             DisableButtons();
-            stop = false;
+            Stop = false;
             waitSignal.Set();
 
-            cancelToken = new CancellationTokenSource();
+            CancelToken = new CancellationTokenSource();
             Task task = Task.Run(() =>
             {
                 imgIndex = -1;
-                while (!cancelToken.IsCancellationRequested)
+                while (!CancelToken.IsCancellationRequested)
                 {
-                    if (stop)
+                    if (Stop)
                     {
                         break;
                     }
@@ -209,26 +209,26 @@ namespace 断面毛刺检测软件.Views
 
                     PreDllExcute();
                 }
-            }, cancelToken.Token);
+            }, CancelToken.Token);
             await task;
             EnableButtons();
             task.Dispose();
         }
-
+        
         private async void BtnStartCircle_Click(object sender, RoutedEventArgs e)
         {
             MMainVM.DeviceSeting = false;
             DisableButtons();
-            stop = false;
+            Stop = false;
             waitSignal.Set();
-            cancelToken = new CancellationTokenSource();
+            CancelToken = new CancellationTokenSource();
             await Task.Run(() =>
             {
                 imgIndex = -1;
                 int numTimes = 0;
-                while (!cancelToken.IsCancellationRequested)
+                while (!CancelToken.IsCancellationRequested)
                 {
-                    if (stop)
+                    if (Stop)
                     {
                         break;
                     }
@@ -256,7 +256,7 @@ namespace 断面毛刺检测软件.Views
 
                     PreDllExcute();
                 }
-            }, cancelToken.Token).ContinueWith(t =>
+            }, CancelToken.Token).ContinueWith(t =>
             {
                 sysLog.Info(@"循环遍历已取消！");
             });
@@ -296,7 +296,7 @@ namespace 断面毛刺检测软件.Views
                         isOnce = once,
                         QualityColor = brushes.Current.Brush,
                         ImageFile = ImgFiles[ImgIndex],
-                        CancelSource = this.cancelToken,
+                        CancelSource = this.CancelToken,
                         ProjGuid = "001",
                         CamSerial = "002",
                         ComGuid = "com"
@@ -323,7 +323,7 @@ namespace 断面毛刺检测软件.Views
 
         private void BtnStopOffLine_Click(object sender, RoutedEventArgs e)
         {
-            stop = true;
+            Stop = true;
             EnableButtons();
             // DetectProgress.Value = 0;
         }
@@ -431,7 +431,7 @@ namespace 断面毛刺检测软件.Views
         private void cb_CurImgFile_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
         {
             DisableButtons();
-            cancelToken = new CancellationTokenSource();
+            CancelToken = new CancellationTokenSource();
            
             if (File.Exists(imgFiles[ImgIndex]))
             {

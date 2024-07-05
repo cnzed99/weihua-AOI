@@ -488,7 +488,7 @@ namespace WH.DetectSystem.ViewModels
                 {
 
                     Cell cell = await m_WaitImgChannel.Reader.ReadAsync();
-                    WeakReferenceMessenger.Default.Send<MemoryStream>(cell.Image);
+                    WeakReferenceMessenger.Default.Send(cell.Image,"getImage");
                    
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
                     //await Task.Delay(50);
@@ -688,7 +688,12 @@ namespace WH.DetectSystem.ViewModels
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
                         }
-                        DefectsDataVM.DefectsProduce.CellResultExcute(cell);
+                        cell.Detection = new CellDetection()
+                        {
+                            Name = "掉料0"
+                        };
+                        WeakReferenceMessenger.Default.Send(cell, "showTask");
+                        
                         //if (!cell.IsOK) //如果质量OK 颜色不OK 
                         //{
                         //    showcolor = cell.q.ShowColor;
