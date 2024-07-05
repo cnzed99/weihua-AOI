@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using QualityGrade;
+using SDFilter;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,14 +24,14 @@ namespace ProjProduceData
         /// 缺陷统计
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<DefectNumber> defectNumbersList = new ObservableCollection<DefectNumber>();
+        private ObservableCollection<DefectFilter> defectNumbersList = new();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 质量统计
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<QualityNumber> qualityNumbersList = new ObservableCollection<QualityNumber>();
+        private ObservableCollection<Quality> qualityNumbersList = new();
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -59,16 +60,16 @@ namespace ProjProduceData
         /// </summary>
         /// <param name="name">缺陷名</param>
         /// <returns>对应缺陷</returns>
-        public DefectNumber this[string name]
+        public DefectFilter this[string name]
         {
             get
             {
-                if (!DefectNumbersList.ToList().Exists(o => o.Name == name))
-                {
-                    DefectNumber defect = new DefectNumber(name);
-                    DefectNumbersList.Add(defect);
-                    return defect;
-                }
+                //if (!DefectNumbersList.ToList().Exists(o => o.Name == name))
+                //{
+                //    DefectNumber defect = new DefectNumber(name);
+                //    DefectNumbersList.Add(defect);
+                //    return defect;
+                //}
 
                 return DefectNumbersList.FirstOrDefault(o => o.Name == name);
             }
@@ -86,18 +87,23 @@ namespace ProjProduceData
             if (cell.Detection != null)
             {
                 Ng += 1;
-                var currentDefect = this[cell.Detection.Name];
-                currentDefect.Number += 1;
+                //var currentDefect = this[cell.Detection.Name];
+                //currentDefect.Number += 1;
+                cell.Detection.DefectFilter.Number += 1;
                 foreach (var defect in DefectNumbersList)
                 {
                     defect.Percent = defect.Number / Ng;
                 }
+                cell.Detection.DefectFilter.QualityLevel.Number += 1;
+
             }
             foreach (var defect in DefectNumbersList)
             {
                 defect.PercentofAll = defect.Number / Total;
             }
-            QualityNumbersList.FirstOrDefault(o=>o.Name == cell.Quality.Name).Number += 1;
+
+            //QualityNumbersList.FirstOrDefault(o=>o.Name == cell.Quality.Name).Number += 1;//检索过多 界面卡顿
+
             //排序
             //List<DefectNumber> defectNumbers = DefectNumbersList.ToList();
             //defectNumbers.Sort((a, b) => (int)(-a.Number + b.Number));

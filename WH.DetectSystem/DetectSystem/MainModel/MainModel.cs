@@ -46,7 +46,7 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 缺陷数据
         /// </summary>
-        [JsonProperty(Order = 4)]
+        [JsonIgnore]
         public DefectsProduce DefectsProduce { get; set; } = new DefectsProduce();
     }
 }

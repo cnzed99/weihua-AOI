@@ -103,7 +103,7 @@ namespace 断面毛刺检测软件
                 {
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        mainVM.DefectsDataVM.DefectsProduce.CellResultExcute(cell);
+                        //mainVM.DefectsDataVM.DefectsProduce.CellResultExcute(cell);
                     }));
                     
                 });

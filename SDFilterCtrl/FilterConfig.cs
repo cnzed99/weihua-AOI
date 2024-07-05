@@ -199,7 +199,8 @@ namespace SDFilter
                         detection.Type = sp.Name;
                         detection.RecipeDefectName = rp.Name;
                         detection.Priority = de.Priority;
-                        detection.Quality = de.QualityLevel;
+                        detection.Quality = de.QualityLevel;//质量等级
+                        detection.DefectFilter = de;//缺陷过滤器
                         detection.ShowColor = de.ShowColor;
                         if (cell.CancelSource.IsCancellationRequested) return;//任务取消时退出
                         foreach (var filter in de.FilterList)//过滤分选器
@@ -539,7 +540,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 结果列表
         /// </summary>
-        [JsonIgnore]
+        [property: JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<FilterResult> resultList = new ObservableCollection<FilterResult>() { };
 
@@ -551,7 +552,29 @@ namespace SDFilter
         {
             return Name;
         }
-        
+        /// <summary>
+        /// 20240705 TCG
+        /// 当前缺陷 产出
+        /// </summary>
+        [property: JsonIgnore]
+        [ObservableProperty]
+        private int number;
+
+        /// <summary>
+        /// 20240705 TCG
+        /// 占所有缺陷比
+        /// </summary>
+        [property: JsonIgnore]
+        [ObservableProperty]
+        private double percent;
+
+        /// <summary>
+        /// 20240705 TCG
+        /// 占所有检测数比
+        /// </summary>
+        [property: JsonIgnore]
+        [ObservableProperty]
+        private double percentofAll;
     }
     /// <summary>
     /// 2024.6.23 李焕彬

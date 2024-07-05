@@ -505,7 +505,9 @@ namespace WH.DetectSystem.ViewModels
 
                 await foreach(Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
-                    WeakReferenceMessenger.Default.Send(cell.Image,"getImage");
+                    MemoryStream memoryStream = new MemoryStream();
+                    cell.Image.WriteTo(memoryStream);
+                    WeakReferenceMessenger.Default.Send(memoryStream, "getImage");
                    
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
                     //await Task.Delay(50);
@@ -707,10 +709,13 @@ namespace WH.DetectSystem.ViewModels
                         }
                         cell.Detection = new CellDetection()
                         {
-                            Name = "掉料0"
+                            Name = "掉料0",
+                            DefectFilter = MaociFilter.SpeciesFilters[0].RecipeDefects[0].DefectFilters[0],
+                            
                         };
+                        DefectsProduce.AddDefectProduce(cell);
                         WeakReferenceMessenger.Default.Send(cell, "showTask");
-                        
+                        Console.WriteLine(DateTime.Now.Millisecond);
                         //if (!cell.IsOK) //如果质量OK 颜色不OK 
                         //{
                         //    showcolor = cell.q.ShowColor;
@@ -958,7 +963,7 @@ namespace WH.DetectSystem.ViewModels
                     }
                     finally
                     {
-
+                        cell.Dispose();
                         WaitSignal.Set();
                     }
                 }

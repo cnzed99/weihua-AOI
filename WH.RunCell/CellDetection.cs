@@ -51,7 +51,7 @@ namespace WH.RunCell
         /// 质量等级
         /// </summary>
         public dynamic Quality { get; set; }
-
+        public dynamic DefectFilter { get; set; }
         public override void Dispose()
         {
             base.Dispose();

@@ -85,28 +85,29 @@ namespace ProjProduceData
         /// <param name="filter">检测设置配置</param>
         public void Receive(FilterConfig filter)
         {
-            List<string> strings = new List<string>();
+            //List<string> strings = new List<string>();
             foreach (var sp in filter.SpeciesFilters)
             {
                 foreach (var rp in sp.RecipeDefects)
                 {
                     foreach (var de in rp.DefectFilters)
                     {
-                        if (DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == de.Name) == null)
-                        {
-                            DefectsProduce.DefectNumbersList.Add(new(de.Name));
-                        }
-                        strings.Add(de.Name);
+                        //if (DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == de.Name) == null)
+                        //{
+                        //    DefectsProduce.DefectNumbersList.Add(new(de.Name));
+                        //}
+                        //strings.Add(de.Name);
+                        DefectsProduce.DefectNumbersList.Add(de);
                     }
                 }
             }
-            for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
-            {
-                if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
-                {
-                    DefectsProduce.DefectNumbersList.RemoveAt(i);
-                }
-            }
+            //for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
+            //{
+            //    if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
+            //    {
+            //        DefectsProduce.DefectNumbersList.RemoveAt(i);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -119,19 +120,20 @@ namespace ProjProduceData
             List<string> strings = new List<string>();
             foreach (var qua in message.Qualities)
             {
-                if (DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == qua.Name) == null)
-                {
-                    DefectsProduce.QualityNumbersList.Add(new QualityNumber(qua));
-                }
-                strings.Add(qua.Name);
+                //if (DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == qua.Name) == null)
+                //{
+                //    DefectsProduce.QualityNumbersList.Add(new QualityNumber(qua));
+                //}
+                //strings.Add(qua.Name);
+                DefectsProduce.QualityNumbersList.Add(qua);
             }
-            for (int i = DefectsProduce.QualityNumbersList.Count - 1; i >= 0; i--)
-            {
-                if (!strings.Contains(DefectsProduce.QualityNumbersList[i].Name))
-                {
-                    DefectsProduce.QualityNumbersList.RemoveAt(i);
-                }
-            }
+            //for (int i = DefectsProduce.QualityNumbersList.Count - 1; i >= 0; i--)
+            //{
+            //    if (!strings.Contains(DefectsProduce.QualityNumbersList[i].Name))
+            //    {
+            //        DefectsProduce.QualityNumbersList.RemoveAt(i);
+            //    }
+            //}
         }
     }
 }

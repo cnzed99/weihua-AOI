@@ -292,11 +292,11 @@ namespace WH.RunCell
             }
             this.Stopwatch.Stop();
 
-            if (DownImage.CanFreeze)
+            if (DownImage != null && DownImage.CanFreeze)
             {
                 DownImage.Freeze();
             }
-            if (true)
+            if (SmallImage != null && SmallImage.CanFreeze)
             {
                 SmallImage.Freeze();
             }

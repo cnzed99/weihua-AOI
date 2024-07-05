@@ -143,6 +143,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     //CMainVMs.Add(new CMainVM() { Model = item });
                     CMainVMs[0].Model = item;
+
                 }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);

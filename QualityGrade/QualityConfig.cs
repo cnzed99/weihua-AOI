@@ -119,6 +119,12 @@ namespace QualityGrade
             quality.Signal = this.Signal;
             return quality;
         }
+        /// <summary>
+        /// 当前质量等级 产出
+        /// </summary>
+        [property: JsonIgnore]
+        [ObservableProperty]
+        private int number;
 
         public override string ToString()
         {
