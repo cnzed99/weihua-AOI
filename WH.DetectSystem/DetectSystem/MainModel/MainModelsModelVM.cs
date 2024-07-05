@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 using WH.Controls;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
 using WH.Entity;
@@ -17,7 +18,7 @@ using WH.Entity.LogRecord;
 
 namespace WH.DetectSystem.ViewModels
 {
-    public partial class CMainListVM: ObservableObject
+    public partial class CMainModelsModelVM: ObservableObject
     {
         [ObservableProperty]
         CLoginViewModel loginViewModel = new CLoginViewModel();
@@ -37,21 +38,14 @@ namespace WH.DetectSystem.ViewModels
 
         [ObservableProperty]
         bool isLoading = false;
+
+        [ObservableProperty]
+        CMainModelsModel cMainMModel = new CMainModelsModel();
         
-        ObservableCollection<CMainModel> cMainModels = new ObservableCollection<CMainModel>();
-        public ObservableCollection<CMainModel> CMainModels
-        {
-            get => cMainModels;
-            set
-            {
-                SetProperty(ref cMainModels, value);
-                CMainVMs[0].Model = value[0];//单制程
-            }
-        }
         [ObservableProperty]
         ObservableCollection<CMainVM> cMainVMs = new ObservableCollection<CMainVM>();
 
-        public CMainListVM()
+        public CMainModelsModelVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -63,7 +57,7 @@ namespace WH.DetectSystem.ViewModels
                 OperateLog.UserName = user.UserName;
             };
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
-            cMainVMs.Add(new CMainVM());//单制程
+            
         }
 
         #region 时间相关
@@ -139,7 +133,17 @@ namespace WH.DetectSystem.ViewModels
             try
             {
                 ProjPath = header;
-                CMainModels = ConfigAPI.Load<ObservableCollection<CMainModel>>(header);
+                CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
+                //foreach (var item in CMainVMs)
+                //{
+                //    item.StopTask();
+                //}
+                //CMainVMs.Clear();
+                foreach (var item in CMainMModel.CMainModels)
+                {
+                    //CMainVMs.Add(new CMainVM() { Model = item });
+                    CMainVMs[0].Model = item;
+                }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);
@@ -174,7 +178,7 @@ namespace WH.DetectSystem.ViewModels
                 proj.ApplyChanges();
             }
 
-            ConfigAPI.Save(CMainModels, ProjPath);
+            ConfigAPI.Save(CMainMModel, ProjPath);
         }
         #endregion
     }

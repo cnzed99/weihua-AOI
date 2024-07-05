@@ -39,8 +39,8 @@ namespace WH.DetectSystem.ViewModels
         }
         #endregion
        
-        CMainListVM mainvm;
-        public CModifyProjVM(CMainListVM mainVM)
+        CMainModelsModelVM mainvm;
+        public CModifyProjVM(CMainModelsModelVM mainVM)
         {
             mainvm = mainVM;
             mainVM.Adapt(this);

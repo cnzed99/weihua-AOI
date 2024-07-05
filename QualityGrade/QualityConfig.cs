@@ -12,6 +12,7 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Security.Policy;
 
 namespace QualityGrade
 {
@@ -44,9 +45,9 @@ namespace QualityGrade
             }
             foreach (var qua in Qualities)
             {
-                if (message.obj.GetType() == typeof(Quality))
+                if (message.obj is Quality quality)
                 {
-                    if (qua == message.obj)
+                    if (qua == quality)
                     {
                         OperateLog.Info($"质量等级-{qua.Name}-{message.message}");
                         return;
@@ -175,6 +176,11 @@ namespace QualityGrade
         public bool Equals(Quality other)
         {
             return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            return Priority.GetHashCode();
         }
     }
 }

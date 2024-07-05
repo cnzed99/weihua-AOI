@@ -25,7 +25,7 @@ namespace 断面毛刺检测软件.Views
         public OffLineTestWindow()
         {
             InitializeComponent();
-            this.ContainerPanel.Children.Add(new OffLineTestCtrl(App.Container.Resolve<CMainListVM>().CMainVMs[0]));
+            this.ContainerPanel.Children.Add(new OffLineTestCtrl(App.Container.Resolve<CMainModelsModelVM>().CMainVMs[0]));
             this.Closing += OffLineTestWindow_Closing;
         }
 

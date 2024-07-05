@@ -124,8 +124,12 @@ namespace 断面毛刺检测软件
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             ConfigureServices();
+           
+            var viewModel = Container.Resolve<CMainModelsModelVM>();
+           
+            viewModel.CMainVMs.Add(new CMainVM());
             var mainWindow = Container.Resolve<MainWindow>();
-            mainWindow.DataContext = Container.Resolve<CMainListVM>();
+            mainWindow.DataContext = viewModel;
             mainWindow?.Show();
             
         }
@@ -134,7 +138,7 @@ namespace 断面毛刺检测软件
         private static void ConfigureServices()
         {
             var builder = CPublicServices.ConfigureServices();
-            builder.RegisterType<CMainListVM>().SingleInstance();
+            builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
 
             builder.Register(c=>SingleInstance.Create<Lazy<SystemSettingWindow>,SystemSettingWindow>()).InstancePerDependency();

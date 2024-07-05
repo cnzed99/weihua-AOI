@@ -705,10 +705,10 @@ namespace WH.DetectSystem.ViewModels
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
                         }
-                        //cell.Detection = new CellDetection()
-                        //{
-                        //    Name = "掉料0"
-                        //};
+                        cell.Detection = new CellDetection()
+                        {
+                            Name = "掉料0"
+                        };
                         WeakReferenceMessenger.Default.Send(cell, "showTask");
                         
                         //if (!cell.IsOK) //如果质量OK 颜色不OK 

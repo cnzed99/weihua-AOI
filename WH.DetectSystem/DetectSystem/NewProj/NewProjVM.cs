@@ -38,8 +38,8 @@ namespace WH.DetectSystem.ViewModels
         }
         #endregion
        
-        CMainListVM mainVM;
-        public CNewProjVM(CMainListVM mainVM)
+        CMainModelsModelVM mainVM;
+        public CNewProjVM(CMainModelsModelVM mainVM)
         {
             this.mainVM = mainVM;
           

@@ -43,7 +43,7 @@ namespace 断面毛刺检测软件
     public partial class MainWindow : HandyControl.Controls.Window
     {
         IObservable<Unit> StartStopSource;
-        CMainListVM CMainList;
+        CMainModelsModelVM CMainList;
         CMainVM mainVM;
         CProgress<double> progress;
         CLogRec SysLog;
@@ -52,7 +52,7 @@ namespace 断面毛刺检测软件
         public MainWindow()
         {
             InitializeComponent();
-            CMainList = App.Container.Resolve<CMainListVM>();
+            CMainList = App.Container.Resolve<CMainModelsModelVM>();
             mainVM = CMainList.CMainVMs[0];
             SysLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
             OperateLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
@@ -253,7 +253,7 @@ namespace 断面毛刺检测软件
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = CMainListVM.projFilter;
+                openFileDialog.Filter = CMainModelsModelVM.projFilter;
                 //openFileDialog.DefaultDirectory = "D:/";
                 if (openFileDialog.ShowDialog() is true)
                 {
@@ -289,7 +289,7 @@ namespace 断面毛刺检测软件
             {
                 if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
                 SaveFileDialog savefile = new SaveFileDialog();
-                savefile.Filter = CMainListVM.projFilter;
+                savefile.Filter = CMainModelsModelVM.projFilter;
                 //savefile.DefaultDirectory = "D:/";
                 if (savefile.ShowDialog() is true)
                 {

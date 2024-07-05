@@ -16,7 +16,7 @@
     Title=""
     Width="1400"
     Height="850"
-    d:DataContext="{d:DesignInstance Type=viewmodels:CMainListVM}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:CMainModelsModelVM}"
     Closing="Window_Closing"
     Icon="/Resources/logo1.png"
     Loaded="Window_Loaded"
@@ -224,7 +224,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsProduce}" />
+                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" />
                 </Border>
 
                 <!--  启停按钮  -->
