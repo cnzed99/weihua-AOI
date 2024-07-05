@@ -21,8 +21,7 @@ namespace SDFilter
 {
     /// <summary>
     /// 2024.6.25 李焕彬
-    /// 检测设置控件
-    /// SDFilterCtrl.xaml 的交互逻辑
+    /// 检测设置信息 控件
     /// </summary>
     public partial class SDFilterCtrl : UserControl
     {

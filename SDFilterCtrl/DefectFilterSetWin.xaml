@@ -259,16 +259,16 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Text="{Binding [QualityLevel], Source={x:Static local:Lang.s_Instance}}" />
-            <ComboBox ItemsSource="{Binding Qualities}">
-                <ComboBox.SelectedItem>
+            <ComboBox ItemsSource="{Binding Qualities}" SelectedItem="{Binding DefectFilter.QualityLevel}">
+                <!--<ComboBox.SelectedItem>
                     <MultiBinding>
                         <MultiBinding.Converter>
                             <local:QualitySelectConverter/>
                         </MultiBinding.Converter>
-                        <Binding Path="DefectFilter.QualityLevel"/>
+                        <Binding Path="DefectFilter.Quality"/>
                         <Binding Path="Qualities"/>
                     </MultiBinding>
-                </ComboBox.SelectedItem>
+                </ComboBox.SelectedItem>-->
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}"/>

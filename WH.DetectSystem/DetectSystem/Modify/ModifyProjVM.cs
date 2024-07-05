@@ -38,12 +38,11 @@ namespace WH.DetectSystem.ViewModels
             set => SetProperty(ref projPath, value,true);
         }
         #endregion
-        CMainModel mainModel = new CMainModel();
-        CMainVM mainvm;
-        public CModifyProjVM(CMainVM mainVM)
+       
+        CMainListVM mainvm;
+        public CModifyProjVM(CMainListVM mainVM)
         {
             mainvm = mainVM;
-            mainVM.Adapt(mainModel);
             mainVM.Adapt(this);
         }
 
@@ -54,8 +53,8 @@ namespace WH.DetectSystem.ViewModels
         public void ApplyChanges()
         {
             mainvm.ProjPath = this.ProjPath;
-            this.Adapt(mainModel);
-            this.mainvm.Model = mainModel;
+            this.Adapt(mainvm);
+
         }
         /// <summary>
         /// 丢弃当前工程的修改

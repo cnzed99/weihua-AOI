@@ -24,7 +24,8 @@ namespace QualityGrade
     {
         public QualityCtrlVM() 
         {
-            WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>>(this);
+            //返回请求的质量等级集合
+            WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
         }
 
         /// <summary>
@@ -34,24 +35,25 @@ namespace QualityGrade
         /// <param name="message">质量列表</param>
         public void Receive(RequestMessage<ObservableCollection<Quality>> message)
         {
+            if (message.HasReceivedResponse) return;
             message.Reply(QualityConfig.Qualities);
         }
 
         /// <summary>
-        /// 2024.7.4 李焕彬
+        /// 2024.7.5 TCG
         /// 质量等级配置
         /// </summary>
         [ObservableProperty]
-        private QualityConfig qualityConfig = new QualityConfig();
+        private QualityConfig qualityConfig;//不要在这里赋值
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 当前设置质量
+        /// 2024.7.5 TCG
+        /// 当前设置质量 不要赋值
         /// </summary>
         [ObservableProperty]
-        private Quality qualitySet = new Quality("G1");
+        private Quality qualitySet;//不要在这里赋值
 
-        private Quality qualitySelect;
+        private Quality qualitySelect;//不要在这里赋值
 
         /// <summary>
         /// 2024.7.4 李焕彬

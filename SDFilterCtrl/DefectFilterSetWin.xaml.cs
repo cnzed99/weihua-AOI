@@ -22,7 +22,7 @@ namespace SDFilter
 {
     /// <summary>
     /// 2024.6.25 李焕彬
-    /// DefectFilterSetWin.xaml 的交互逻辑
+    /// 检测设置 弹窗界面
     /// </summary>
     public partial class DefectFilterSetWin : HandyControl.Controls.Window
     {

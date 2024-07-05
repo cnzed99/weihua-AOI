@@ -43,6 +43,7 @@ namespace 断面毛刺检测软件
     public partial class MainWindow : HandyControl.Controls.Window
     {
         IObservable<Unit> StartStopSource;
+        CMainListVM CMainList;
         CMainVM mainVM;
         CProgress<double> progress;
         CLogRec SysLog;
@@ -51,7 +52,8 @@ namespace 断面毛刺检测软件
         public MainWindow()
         {
             InitializeComponent();
-            mainVM = App.Container.Resolve<CMainVM>();
+            CMainList = App.Container.Resolve<CMainListVM>();
+            mainVM = CMainList.CMainVMs[0];
             SysLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
             OperateLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
             SysLog.Info(Properties.Resources.OpenSoftware);
@@ -63,7 +65,7 @@ namespace 断面毛刺检测软件
                 () =>
                 {
                     this.IsEnabled = true;
-                    mainVM.IsLoading = false;
+                    CMainList.IsLoading = false;
                     this.Activate();
                 }, 100);
             try
@@ -107,9 +109,9 @@ namespace 断面毛刺检测软件
                 });
                 this.IsEnabled = false;
                 
-                await mainVM.LoadAsync(progress);
+                await CMainList.LoadAsync(progress);
                
-                if (mainVM.SystemSettings.IsEnglish)
+                if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
 
@@ -118,7 +120,7 @@ namespace 断面毛刺检测软件
                     LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<double>)progress).Report(100);
-                WelComePage welComePage = new WelComePage(mainVM.SystemSettings.RecentProjs.ToList(), "断面毛刺检测软件");
+                WelComePage welComePage = new WelComePage(CMainList.SystemSettings.RecentProjs.ToList(), "断面毛刺检测软件");
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();
             }
@@ -161,7 +163,7 @@ namespace 断面毛刺检测软件
         #region 用户登录
         private void btn_UserLogin_Click(object sender, RoutedEventArgs e)
         {
-            LoginPage UserInfoFrm = new LoginPage(mainVM.LoginViewModel);
+            LoginPage UserInfoFrm = new LoginPage(CMainList.LoginViewModel);
             UserInfoFrm.ShowDialog();
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
             
@@ -209,10 +211,10 @@ namespace 断面毛刺检测软件
                 }
                 else if (result == MessageBoxResult.Yes)
                 {
-                    mainVM.SaveCurrentProj();
+                    CMainList.SaveCurrentProj();
                    
                 }
-                mainVM.SystemSettings.SaveParameter();
+                CMainList.SystemSettings.SaveParameter();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
@@ -251,7 +253,7 @@ namespace 断面毛刺检测软件
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = CMainVM.projFilter;
+                openFileDialog.Filter = CMainListVM.projFilter;
                 //openFileDialog.DefaultDirectory = "D:/";
                 if (openFileDialog.ShowDialog() is true)
                 {
@@ -285,15 +287,15 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
+                if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
                 SaveFileDialog savefile = new SaveFileDialog();
-                savefile.Filter = CMainVM.projFilter;
+                savefile.Filter = CMainListVM.projFilter;
                 //savefile.DefaultDirectory = "D:/";
                 if (savefile.ShowDialog() is true)
                 {
-                    mainVM.ProjPath = savefile.FileName;
+                    CMainList.ProjPath = savefile.FileName;
                     SaveProj();
-                    await OpenProjAsync(mainVM.ProjPath);
+                    await OpenProjAsync(CMainList.ProjPath);
 
                 }
             }
@@ -312,7 +314,7 @@ namespace 断面毛刺检测软件
         #region 修改工程
         private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
+            if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
             ModifyProjWindow modifyProj = App.Container.Resolve<Lazy<ModifyProjWindow>>().Value;
             OperateLog.Info(Properties.Resources.ModifyProj);
             modifyProj.ShowDialog();
@@ -326,14 +328,14 @@ namespace 断面毛刺检测软件
             {
                 try
                 {
-                    if (!string.IsNullOrEmpty(mainVM.ProjPath))
+                    if (!string.IsNullOrEmpty(CMainList.ProjPath))
                     {
                         var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
                         if (result == MessageBoxResult.Yes)
                         {
-                            mainVM.SaveCurrentProj();
-                            OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                            CMainList.SaveCurrentProj();
+                            OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
+                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
                         }
                     }
                     await OpenProjAsync(header);
@@ -360,8 +362,8 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
                 progress.Reset();
                 progress.Report(0);
-                await mainVM.OpenProj(progress, header);
-                Growl.Success(Properties.Resources.OpenProj + "\r\n" + mainVM.ProjPath);
+                await CMainList.OpenProj(progress, header);
+                Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
             catch (Exception exception)
@@ -374,10 +376,10 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                if (string.IsNullOrEmpty(mainVM.ProjPath)) return;
-                mainVM.SaveCurrentProj();
-                Growl.Success(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
-                OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + mainVM.ProjPath);
+                if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
+                CMainList.SaveCurrentProj();
+                Growl.Success(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
+                OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
             }
             catch (Exception exception)
             {
@@ -445,7 +447,7 @@ namespace 断面毛刺检测软件
         private void SystemSetting_Click(object sender, RoutedEventArgs e)
         {
             SystemSettingWindow SysSetWindow = App.Container.Resolve<Lazy< SystemSettingWindow>>().Value;
-            SysSetWindow.DataContext = mainVM.SystemSettings;
+            SysSetWindow.DataContext = CMainList.SystemSettings;
             SysSetWindow.Show();
             SysSetWindow.Activate();
             OperateLog.Info(Properties.Resources.SystemSettings);

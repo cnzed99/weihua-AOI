@@ -32,8 +32,8 @@ namespace SDFilter
             RecipeDefects = speciesFilter.RecipeDefects.ToList();
             DefectName = defectFilter.Name;
             recipeDefect = RecipeDefects.Find(o => o.DefectFilters.Contains(defectFilter));
-
-            var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>());
+            //向质量等级请求数据
+            var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>(), "GetQuality");
             Qualities = res.Response;
         }
 

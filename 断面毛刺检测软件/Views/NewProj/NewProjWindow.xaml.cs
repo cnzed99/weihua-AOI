@@ -29,7 +29,7 @@ namespace 断面毛刺检测软件.Views
         public NewProjWindow()
         {
             InitializeComponent();
-            this.DataContext = new CNewProjVM(App.Container.Resolve<CMainVM>());
+            this.DataContext = new CNewProjVM(App.Container.Resolve<CMainListVM>());
             WeakReferenceMessenger.Default.Register<CloseWindowMessage>(this, (_, m) => { if (m.Sender?.Target == this.DataContext) Close(); });
             
         }
@@ -37,7 +37,7 @@ namespace 断面毛刺检测软件.Views
         private void SelectPath_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = CMainVM.projFilter;
+            saveFileDialog.Filter = CMainListVM.projFilter;
             saveFileDialog.Title = NewProjResources.Title;
             if (saveFileDialog.ShowDialog() is true)
             {

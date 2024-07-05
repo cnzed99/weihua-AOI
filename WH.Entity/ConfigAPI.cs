@@ -53,8 +53,8 @@ namespace WH.Entity
                         {
                             ObjectCreationHandling = ObjectCreationHandling.Replace,
                         };
-                        T config = new T();
-                        JsonConvert.PopulateObject(bt64,config, serializerSettings);
+                        //T config = new T();
+                        T config = JsonConvert.DeserializeObject<T>(bt64, serializerSettings);
                         return config;
                     }
                     catch (Exception)

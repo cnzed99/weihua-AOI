@@ -14,7 +14,7 @@ namespace AlgorithmDll
     /// 2024.7.4 李焕彬
     /// 算法参数配置管理类
     /// </summary>
-    public partial class MaociAlgorParamConfig : ObservableLog, IRecipient<OperateMessage>
+    public partial class MaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -111,7 +111,7 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// PC算法参数
     /// </summary>
-    public partial class MaociAlgorParam : ObservableLog
+    public partial class MaociAlgorParam : ConfigModifyObservableBase
     {
         public MaociAlgorParam()
         {
@@ -215,7 +215,7 @@ namespace AlgorithmDll
     /// <summary>
     /// FPGA算法参数
     /// </summary>
-    public partial class MaociAlgorParamFpga : ObservableLog
+    public partial class MaociAlgorParamFpga : ConfigModifyObservableBase
     {
         public MaociAlgorParamFpga()
         {

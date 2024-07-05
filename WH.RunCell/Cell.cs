@@ -227,7 +227,7 @@ namespace WH.RunCell
         /// <summary>
         /// 缺陷等级颜色
         /// </summary>
-        public Brush QualityColor { get; set; } = Brushes.White;
+        //public Brush QualityColor { get; set; } = Brushes.White;
 
         /// <summary>
         /// 缺陷等级颜色名称
@@ -238,21 +238,24 @@ namespace WH.RunCell
 
         public List<string> DetectedDef { get; set; }
 
-        /// <summary>
-        /// 缺陷等级 越低质量越高
-        /// </summary>
-        public int QualityLevel { get; set; } = 0;
+        ///// <summary>
+        ///// 缺陷等级 越低质量越高
+        ///// </summary>
+        //public int QualityLevel { get; set; } = 0;
 
-        /// <summary>
-        /// 质量信号
-        /// </summary>
-        public int QualitySignal { get; set; }
+        ///// <summary>
+        ///// 质量信号
+        ///// </summary>
+        //public int QualitySignal { get; set; }
 
+        ///// <summary>
+        ///// 质量等级名称G1 G2
+        ///// </summary>
+        //public string QualityName { get; set; } = "G1";
         /// <summary>
-        /// 质量等级名称G1 G2
+        /// 质量等级
         /// </summary>
-        public string QualityName { get; set; } = "G1";
-
+        public dynamic Quality { get; set; }
         /// <summary>
         /// 计时
         /// </summary>
@@ -312,9 +315,9 @@ namespace WH.RunCell
             cell.DownImage = this.DownImage?.Clone();
             // cell.QualityColorStr = this.QualityColorStr;
             cell.SmallImage = this.SmallImage?.Clone();
-            cell.QualityLevel = this.QualityLevel;
-            cell.QualityName = this.QualityName;
-            cell.QualitySignal = this.QualitySignal;
+            cell.Quality = this.Quality;
+            //cell.QualityName = this.QualityName;
+            //cell.QualitySignal = this.QualitySignal;
             //cell.QualityColor = this.QualityColor;
             //cell.ColorSignel = this.ColorSignel;
             //cell.ColorGrade = this.ColorGrade?.Clone();

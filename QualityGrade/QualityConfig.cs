@@ -19,34 +19,22 @@ namespace QualityGrade
     /// 2024.6.28 李焕彬
     /// 质量等级配置类
     /// </summary>
-    public partial class QualityConfig : ObservableLog, IRecipient<OperateMessage>
+    public partial class QualityConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 操作日志
-        /// </summary>
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         public QualityConfig()
         {
             Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
+            //参数修改
             WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
+           
         }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 等级列表
-        /// </summary>
         [property: DisplayName("等级列表")]
         [ObservableProperty]
         private ObservableCollection<Quality> qualities;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 操作日志消息处理
-        /// </summary>
-        /// <param name="message">操作消息</param>
+       
         public void Receive(OperateMessage message)
         {
             if (message.obj.GetType() == typeof(QualityConfig))
@@ -67,13 +55,14 @@ namespace QualityGrade
                 }
             }
         }
+        
     }
     /// <summary>
     /// 2024.6.26 李焕彬
     /// 质量
     /// </summary>
     [DisplayName("等级")]
-    public partial class Quality : ObservableLog
+    public partial class Quality : ConfigModifyObservableBase,IEquatable<Quality>
     {
         public Quality()
         {
@@ -84,7 +73,6 @@ namespace QualityGrade
             this.Name = name;
             ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
         }
-
         /// <summary>
         /// 等级名 A\B\C\D
         /// </summary>
@@ -120,11 +108,6 @@ namespace QualityGrade
         [property: DisplayName("信号")]
         private int signal = 0;
 
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 复制
-        /// </summary>
-        /// <returns>质量</returns>
         public Quality Clone()
         {
             var quality = new Quality(this.Name);
@@ -136,13 +119,62 @@ namespace QualityGrade
             return quality;
         }
 
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Name;
+        }
+        /// <summary>
+        /// 20240705 TCG
+        /// 增加比较运算符 比较优先级大小
+        /// </summary>
+        /// <param name="obj1"></param>
+        /// <param name="obj2"></param>
+        /// <returns></returns>
+        public static bool operator >(Quality obj1, Quality obj2)
+        {
+            if(obj1 is null || obj2 is null) return false;
+            return obj1?.Priority > obj2?.Priority;
+        }
+        /// <summary>
+        /// 20240705 TCG
+        /// 增加比较运算符 比较优先级大小
+        /// </summary>
+        public static bool operator <(Quality obj1, Quality obj2)
+        {
+            if(obj1 is null || obj2 is null) return false;
+            return obj1?.Priority < obj2?.Priority;
+        }
+        /// <summary>
+        /// 20240705 TCG
+        /// 增加比较运算符 比较优先级大小
+        /// </summary>
+        public static bool operator ==(Quality obj1, Quality obj2)
+        {
+            if (obj1 is null && obj2 is null) return true;
+            return obj1?.Priority == obj2?.Priority;
+        }
+        /// <summary>
+        /// 20240705 TCG
+        /// 增加比较运算符 比较优先级大小
+        /// </summary>
+        public static bool operator !=(Quality obj1, Quality obj2)
+        {
+            if(obj1 == obj2) return false;
+            return obj1?.Priority != obj2?.Priority;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Quality quality)
+            {
+                return this == quality;
+            }
+            return false;
+        }
+
+        public bool Equals(Quality other)
+        {
+            return this == other;
         }
     }
 }

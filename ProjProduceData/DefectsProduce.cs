@@ -37,14 +37,14 @@ namespace ProjProduceData
         /// 缺陷总数
         /// </summary>
         [ObservableProperty]
-        private int ng = 0;
+        private double ng = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 产品总数
         /// </summary>
         [ObservableProperty]
-        private int total = 0;
+        private double total = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -77,6 +77,7 @@ namespace ProjProduceData
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 缺陷统计函数
+        /// 2024.7.5 TCG 增加质量统计逻辑
         /// </summary>
         /// <param name="cell">要统计的cell</param>
         public void AddDefectProduce(Cell cell)
@@ -96,6 +97,7 @@ namespace ProjProduceData
             {
                 defect.PercentofAll = defect.Number / Total;
             }
+            QualityNumbersList.FirstOrDefault(o=>o.Name == cell.Quality.Name).Number += 1;
             //排序
             //List<DefectNumber> defectNumbers = DefectNumbersList.ToList();
             //defectNumbers.Sort((a, b) => (int)(-a.Number + b.Number));

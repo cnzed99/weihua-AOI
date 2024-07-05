@@ -25,7 +25,7 @@ namespace SDFilter
     /// 2024.6.27 李焕彬
     /// 缺陷筛选管理类
     /// </summary>
-    public partial class FilterConfig : ObservableLog, IRecipient<OperateMessage>
+    public partial class FilterConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.2 李焕彬
@@ -199,7 +199,7 @@ namespace SDFilter
                         detection.Type = sp.Name;
                         detection.RecipeDefectName = rp.Name;
                         detection.Priority = de.Priority;
-                        detection.QualityLevel = de.QualityLevel;
+                        detection.Quality = de.QualityLevel;
                         detection.ShowColor = de.ShowColor;
                         if (cell.CancelSource.IsCancellationRequested) return;//任务取消时退出
                         foreach (var filter in de.FilterList)//过滤分选器
@@ -327,23 +327,23 @@ namespace SDFilter
                         }
                         if (!detection.Result)
                         {
-                            var qualityLevel = detection.QualityLevel;
+                            var qualityLevel = detection.Quality;
                             if (cell.Detection == null)
                             {
                                 cell.Detection = detection;
-                                cell.QualityLevel = detection.QualityLevel;
+                                cell.Quality = detection.Quality;
                             }
                             else
                             {
-                                if (cell.QualityLevel < detection.QualityLevel)//质量等级 还需判断优先级
+                                if (cell.Quality < detection.Quality)//质量等级 还需判断优先级
                                 {
                                     cell.Detection = detection;
-                                    cell.QualityLevel = detection.QualityLevel;
+                                    cell.Quality = detection.Quality;
                                 }
-                                else if (cell.QualityLevel == detection.QualityLevel && cell.Detection?.Priority < detection.Priority)//质量等级相等时 判断优先级
+                                else if (cell.Quality == detection.Quality && cell.Detection?.Priority < detection.Priority)//质量等级相等时 判断优先级
                                 {
                                     cell.Detection = detection;
-                                    cell.QualityLevel = detection.QualityLevel;
+                                    cell.Quality = detection.Quality;
                                 }
                             }
                         }
@@ -358,7 +358,7 @@ namespace SDFilter
     /// 2024.6.27 李焕彬
     /// 检测类
     /// </summary>
-    public partial class SpeciesFilter : ObservableLog
+    public partial class SpeciesFilter : ConfigModifyObservableBase
     {
         public SpeciesFilter()
         {
@@ -422,7 +422,7 @@ namespace SDFilter
     /// 2024.6.28 李焕彬
     /// 算法缺陷
     /// </summary>
-    public partial class RecipeDefect : ObservableLog
+    public partial class RecipeDefect : ConfigModifyObservableBase
     {
         public RecipeDefect()
         {
@@ -479,7 +479,7 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 自定义缺陷
     /// </summary>
-    public partial class DefectFilter : ObservableLog
+    public partial class DefectFilter : ConfigModifyObservableBase
     {
         public DefectFilter()
         {
@@ -525,7 +525,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("质量等级")]
         [ObservableProperty]
-        private int qualityLevel = 0;
+        private Quality qualityLevel;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -551,13 +551,13 @@ namespace SDFilter
         {
             return Name;
         }
-
+        
     }
     /// <summary>
     /// 2024.6.23 李焕彬
     /// 过滤、分选参数集
     /// </summary>
-    public partial class FilterAndSelect : ObservableLog
+    public partial class FilterAndSelect : ConfigModifyObservableBase
     {
         public FilterAndSelect()
         {
@@ -611,7 +611,7 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 选择参数集
     /// </summary>
-    public partial class SelectConfig : ObservableLog
+    public partial class SelectConfig : ConfigModifyObservableBase
     {
         public SelectConfig()
         {
@@ -640,7 +640,7 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 选择参数
     /// </summary>
-    public partial class OneSelectParams : ObservableLog
+    public partial class OneSelectParams : ConfigModifyObservableBase
     {
         /// <summary>
         /// 2024.7.4 李焕彬

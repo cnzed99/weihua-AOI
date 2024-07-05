@@ -39,10 +39,10 @@ namespace WH.DetectSystem.ViewModels
     /// </summary>
     public partial class CMainVM : CMainModel
     {
-        [ObservableProperty]
-        CLoginViewModel loginViewModel = new CLoginViewModel();
-        [ObservableProperty]
-        CSystemSettingsVM systemSettings = new CSystemSettingsVM();
+        //[ObservableProperty]
+        //CLoginViewModel loginViewModel = new CLoginViewModel();
+        //[ObservableProperty]
+        //CSystemSettingsVM systemSettings = new CSystemSettingsVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
@@ -58,17 +58,20 @@ namespace WH.DetectSystem.ViewModels
         /// <summary>
         /// 当前工程 禁止直接修改其属性
         /// </summary>
+        
         public CMainModel Model { get => model; set{
                 SetProperty(ref model, value);
                 model.Adapt(this);
+                InitNewModel();
                 this.SDFilterCtrlVM.FilterConfig = MaociFilter;
                 this.QualityCtrlVM.QualityConfig = MaociQuality;
                 this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
                 this.DefectsDataVM.SetDefectsProduce(DefectsProduce, MaociFilter, MaociQuality);
+
             } }
-        [ObservableProperty]
-        string projPath ;
-        public static string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
+        //[ObservableProperty]
+        //string projPath ;
+        //public static string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
 
         [ObservableProperty]
         BitmapImage modelImage = new BitmapImage(new Uri("D://铝极.png"));
@@ -81,33 +84,50 @@ namespace WH.DetectSystem.ViewModels
         Brush lastBrush = Brushes.White;
         public CMainVM()
         {
-            DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-            timer.Start();
-            LoginViewModel.UserChangeAction += (user, success) =>
-            {
-                SysLog.UserName = user.UserName;
-                OperateLog.UserName = user.UserName;
-            };
-            TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
-           
+            //DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
+            //timer.Interval = TimeSpan.FromSeconds(1);
+            //timer.Tick += Timer_Tick;
+            //timer.Start();
+            //LoginViewModel.UserChangeAction += (user, success) =>
+            //{
+            //    SysLog.UserName = user.UserName;
+            //    OperateLog.UserName = user.UserName;
+            //};
+            //TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
+            InitTask();
         }
-        #region 时间相关
-        [ObservableProperty]
-        static string systemTime;
 
-        static DateTime StartTime = DateTime.Now;
-        [ObservableProperty]
-        static string runingTime = DateTime.Now.ToString("T");
-
-        private void Timer_Tick(object sender, EventArgs e)
+        public void InitNewModel()
         {
-            SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
-            var runTimeSpan = DateTime.Now - StartTime;
-            RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
-           
+            foreach (var spFilter in MaociFilter.SpeciesFilters)
+            {
+                foreach (var reFilger in spFilter.RecipeDefects)
+                {
+                    foreach (var deFilter in reFilger.DefectFilters)
+                    {
+                        var findquality = MaociQuality.Qualities.FirstOrDefault(o => o.Priority == deFilter.QualityLevel.Priority);
+                        deFilter.QualityLevel = null;
+                        deFilter.QualityLevel = findquality;
+                    }
+                }
+            }
         }
+
+        #region 时间相关
+        //[ObservableProperty]
+        //static string systemTime;
+
+        //static DateTime StartTime = DateTime.Now;
+        //[ObservableProperty]
+        //static string runingTime = DateTime.Now.ToString("T");
+
+        //private void Timer_Tick(object sender, EventArgs e)
+        //{
+        //    SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
+        //    var runTimeSpan = DateTime.Now - StartTime;
+        //    RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
+           
+        //}
 
         [ObservableProperty]
         double algorithmTime = 0;
@@ -126,8 +146,7 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         bool startStop = false;
 
-        [ObservableProperty]
-        bool isLoading = false;
+       
 
         [ObservableProperty]
         bool deviceSeting = false;
@@ -148,95 +167,95 @@ namespace WH.DetectSystem.ViewModels
         #endregion
 
         #region 软件加载
-        /// <summary>
-        /// 软件加载
-        /// </summary>
-        /// <param name="progress"></param>
-        /// <returns></returns>
-        public async Task LoadAsync(IProgress<double> progress)
-        {
-            IsLoading = true;
-            await Task.Run(async () => 
-            {
-                #region 读取主配置文件
-                try
-                {
-                    SystemSettings = CSysSet.LoadParameter();
-                    if (SystemSettings != null)
-                    {
-                        SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
+        ///// <summary>
+        ///// 软件加载
+        ///// </summary>
+        ///// <param name="progress"></param>
+        ///// <returns></returns>
+        //public async Task LoadAsync(IProgress<double> progress)
+        //{
+        //    IsLoading = true;
+        //    await Task.Run(async () => 
+        //    {
+        //        #region 读取主配置文件
+        //        try
+        //        {
+        //            SystemSettings = CSysSet.LoadParameter();
+        //            if (SystemSettings != null)
+        //            {
+        //                SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
                         
-                        //CLoading.DispText("读取系统配置成功...", 10);
-                    }
-                    else
-                    {
-                        SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
-                        //CLoading.DispText("读取系统配置失败...", 10);
-                    }
-                    progress.Report(10);
+        //                //CLoading.DispText("读取系统配置成功...", 10);
+        //            }
+        //            else
+        //            {
+        //                SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
+        //                //CLoading.DispText("读取系统配置失败...", 10);
+        //            }
+        //            progress.Report(10);
                     
-                    await longtimefunc(progress);
-                }
-                catch (Exception)
-                {
+        //            await longtimefunc(progress);
+        //        }
+        //        catch (Exception)
+        //        {
 
-                }
-                #endregion
-                InitTask();
-            });
+        //        }
+        //        #endregion
+        //        InitTask();
+        //    });
             
             
-        }
+        //}
 
         #endregion
 
         #region 打开工程文件
-        /// <summary>
-        /// 软件加载
-        /// </summary>
-        /// <param name="progress"></param>
-        /// <returns></returns>
-        public async Task OpenProj(IProgress<double> progress,string header)
-        {
-            IsLoading = true;
-            #region 打开工程
-            try
-            {
-                ProjPath = header;
-                Model = ConfigAPI.Load<CMainModel>(header);
-                SystemSettings.RecentProjs.Remove(header);
-                SystemSettings.RecentProjs.Insert(0, header);
-                progress.Report(50);
-                while(SystemSettings.RecentProjs.Count>10)
-                {
-                    SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
-                }
-                await longtimefunc(progress);
-            }
-            catch (Exception)
-            {
+        ///// <summary>
+        ///// 软件加载
+        ///// </summary>
+        ///// <param name="progress"></param>
+        ///// <returns></returns>
+        //public async Task OpenProj(IProgress<double> progress,string header)
+        //{
+        //    IsLoading = true;
+        //    #region 打开工程
+        //    try
+        //    {
+        //        ProjPath = header;
+        //        Model = ConfigAPI.Load<CMainModel>(header);
+        //        SystemSettings.RecentProjs.Remove(header);
+        //        SystemSettings.RecentProjs.Insert(0, header);
+        //        progress.Report(50);
+        //        while(SystemSettings.RecentProjs.Count>10)
+        //        {
+        //            SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
+        //        }
+        //        await longtimefunc(progress);
+        //    }
+        //    catch (Exception)
+        //    {
 
-            }
-            #endregion
-        }
-        async Task longtimefunc(IProgress<double> progress)
-        {
-            for (int i = 0; i <= 100; i++)
-            {
-                await Task.Delay(10);
-                progress.Report(i);
-            }
-        }
+        //    }
+        //    #endregion
+        //}
+        //async Task longtimefunc(IProgress<double> progress)
+        //{
+        //    for (int i = 0; i <= 100; i++)
+        //    {
+        //        await Task.Delay(10);
+        //        progress.Report(i);
+        //    }
+        //}
         #endregion
 
         #region 保存当前工程
-        public void SaveCurrentProj()
-        {
-            if (string.IsNullOrEmpty(ProjPath)) return;
-            ApplyChanges();
+        //public void SaveCurrentProj()
+        //{
+        //    if (string.IsNullOrEmpty(ProjPath)) return;
+        //    ApplyChanges();
            
-            ConfigAPI.Save(Model, ProjPath);
-        }
+        //    ConfigAPI.Save(Model, ProjPath);
+        //}
         #endregion
 
         /// <summary>
@@ -367,7 +386,7 @@ namespace WH.DetectSystem.ViewModels
                         ProjGuid = "001",
                         ComGuid = "001",
                         CamSerial = "whcam001",
-                        QualityColor = brushes.Current.Brush
+                        Quality = MaociQuality.Qualities[0]
                     };
                     if (random.Next(10) > 5) cell.IsOK = true;
                     StringBuilder strbuilder = new StringBuilder("[");
@@ -484,10 +503,8 @@ namespace WH.DetectSystem.ViewModels
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-                while (true)
+                await foreach(Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
-
-                    Cell cell = await m_WaitImgChannel.Reader.ReadAsync();
                     WeakReferenceMessenger.Default.Send(cell.Image,"getImage");
                    
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
@@ -535,11 +552,11 @@ namespace WH.DetectSystem.ViewModels
             Task waitRecipeTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                while (true)
+                await foreach (Cell cell in m_AlgorithmChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        Cell cell = await m_AlgorithmChannel.Reader.ReadAsync();
+                        
                         StringBuilder strbuilder = new StringBuilder("[");
 
                         //strbuilder.Append("算法");
@@ -592,11 +609,11 @@ namespace WH.DetectSystem.ViewModels
             Task waitFilterTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                while (true)
+                await foreach (Cell cell in m_FilterChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        Cell cell = await m_FilterChannel.Reader.ReadAsync();
+                       
                         StringBuilder strbuilder = new StringBuilder("[");
 
                         //strbuilder.Append("筛选");
@@ -672,26 +689,26 @@ namespace WH.DetectSystem.ViewModels
                 object objAlarmLock = new object();//报警监控用
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-                while (true)
+                await foreach (Cell cell in m_ShowImageChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        Cell cell = await m_ShowImageChannel.Reader.ReadAsync();
+                       
                         //showText.Clear();//list只保存一张图片的文本提示
                         //HImage dumpimage = HWin_DispProduct.hWindow.DumpWindowImage();
                         //HOperatorSet.ZoomImageSize(dumpimage, out HObject img, 64, 64, "constant");
                         //Bitmap bmp = WHImageConvert.HImage2Bitmap(img);
-                        Brush showcolor = cell.QualityColor;
-                        ModelBrush = showcolor;
+                        //Brush showcolor = cell.Quality.ShowColor;
+                        ModelBrush = cell.Quality.ShowColor.Brush;
                         if (cell.IsOK)
                         {
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
                         }
-                        cell.Detection = new CellDetection()
-                        {
-                            Name = "掉料0"
-                        };
+                        //cell.Detection = new CellDetection()
+                        //{
+                        //    Name = "掉料0"
+                        //};
                         WeakReferenceMessenger.Default.Send(cell, "showTask");
                         
                         //if (!cell.IsOK) //如果质量OK 颜色不OK 
@@ -951,11 +968,11 @@ namespace WH.DetectSystem.ViewModels
             Task waitSaveImgTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                while (true)
+                await foreach (Cell cell in m_SaveImageChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        Cell cell = await m_SaveImageChannel.Reader.ReadAsync();
+                        
                         //// int queCount = _waitSaveImageQueue.Count;
                         //_SaveImageParam.SaveFullImage(cell, lb_ProjName.Text, "", _projConfig.ProcessSet.ShowAllDefects, _projConfig.ProcessSet.Angle);
 
@@ -970,7 +987,15 @@ namespace WH.DetectSystem.ViewModels
             });
             #endregion
         }
-
+        public void StopTask()
+        {
+            m_InfoChannel.Writer.Complete();
+            m_AlgorithmChannel.Writer.Complete();
+            m_FilterChannel.Writer.Complete();
+            m_ShowImageChannel.Writer.Complete();
+            m_CropImageChannel.Writer.Complete();
+            m_SaveImageChannel.Writer.Complete();
+        }
         /// <summary>
         /// 获取图像成功 显示至窗口
         /// </summary>

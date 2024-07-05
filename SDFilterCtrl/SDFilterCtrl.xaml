@@ -176,7 +176,7 @@
                                                                 <TextBlock.Text>
                                                                     <MultiBinding StringFormat="{}{0}:{1}">
                                                                         <Binding Source="{x:Static local:Lang.s_Instance}" Path="[QualityLevel]"/>
-                                                                        <Binding Path="QualityLevel"/>
+                                                                        <Binding Path="QualityLevel.Name" NotifyOnSourceUpdated="True"/>
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
                                                             </TextBlock>

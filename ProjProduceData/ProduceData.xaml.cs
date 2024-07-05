@@ -46,21 +46,23 @@ namespace ProjProduceData
         /// <returns>显示</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(values[0] is int && values[1] is int)) return Binding.DoNothing;
-            if ((int)values[0] == 0) return 0;
+            if (!(values[0] is double && values[1] is double)) return Binding.DoNothing;
+            double total = (double)values[0];
+            double ng = (double)values[1];
+            if (total == 0) return 0;
 
             string para = (string)parameter;
             if (para == "OK")
             {
-                return (int)values[0] - (int)values[1];
+                return total - ng;
             }
-            else if (para == "Ok%")
+            else if (para == "OK%")
             {
-                return ((int)values[0]-(int)values[1]) / (int)values[0];
+                return (total - ng) / total;
             }
-            else if (para == "Ng%")
+            else if (para == "NG%")
             {
-                return (int)values[1] / (int)values[0];
+                return ng / total;
             }
 
             return Binding.DoNothing;

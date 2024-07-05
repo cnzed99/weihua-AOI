@@ -6,26 +6,47 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:ProjProduceData"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="100"
+    d:DesignWidth="400"
     mc:Ignorable="d">
     <d:UserControl.DataContext>
         <local:DefectsDataVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
-        <ResourceDictionary/>
+        <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
+            <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            <Setter Property="Margin" Value="3,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style
+            x:Key="tblock"
+            BasedOn="{StaticResource TextBlockDefaultBold}"
+            TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.4*" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
-        <UniformGrid DataContext="{Binding DefectsProduce}" Rows="2">
-            <TextBlock Style="{StaticResource TextBlockDefault}" Text="All" />
-            <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Total}" />
-            <TextBlock Style="{StaticResource TextBlockDefault}" Text="OK" />
-            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
-                <TextBlock.Text>
+        <UniformGrid
+            Columns="3"
+            DataContext="{Binding DefectsProduce}"
+            Rows="2">
+            <TextBox
+                Width="100"
+                hc:TitleElement.Title="All"
+                Text="{Binding Total}" />
+            <TextBox Width="100" hc:TitleElement.Title="OK">
+                <TextBox.Text>
                     <MultiBinding ConverterParameter="OK" StringFormat="{}{0}">
                         <MultiBinding.Converter>
                             <local:MultiCalcConverter />
@@ -33,27 +54,27 @@
                         <Binding Path="Total" />
                         <Binding Path="Ng" />
                     </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
-            <TextBlock Style="{StaticResource TextBlockDefault}" Text="NG" />
-            <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Ng}" />
-            <TextBlock />
-            <TextBlock />
-            <TextBlock Style="{StaticResource TextBlockDefault}" Text="OK%" />
-            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
-                <TextBlock.Text>
+                </TextBox.Text>
+            </TextBox>
+            <TextBox
+                Width="100"
+                hc:TitleElement.Title="NG"
+                Text="{Binding Ng}" />
+            <hc:SimplePanel />
+            <TextBox Width="100" hc:TitleElement.Title="OK">
+                <TextBox.Text>
                     <MultiBinding ConverterParameter="OK%" StringFormat="{}{0:P2}">
                         <MultiBinding.Converter>
                             <local:MultiCalcConverter />
                         </MultiBinding.Converter>
-                        <Binding Path="Total" />
-                        <Binding Path="Ng" />
+                        <Binding NotifyOnSourceUpdated="False" Path="Total" />
+                        <Binding NotifyOnSourceUpdated="True" Path="Ng" />
                     </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
-            <TextBlock Style="{StaticResource TextBlockDefault}" Text="NG%" />
-            <TextBlock Style="{StaticResource TextBlockDefaultBold}">
-                <TextBlock.Text>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBox Width="100" hc:TitleElement.Title="NG">
+                <TextBox.Text>
                     <MultiBinding ConverterParameter="NG%" StringFormat="{}{0:P2}">
                         <MultiBinding.Converter>
                             <local:MultiCalcConverter />
@@ -61,24 +82,32 @@
                         <Binding Path="Total" />
                         <Binding Path="Ng" />
                     </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+                </TextBox.Text>
+            </TextBox>
         </UniformGrid>
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding DefectsProduce.QualityNumbersList}">
+        <hc:Divider
+            Grid.Column="1"
+            LineStroke="DarkCyan"
+            LineStrokeThickness="1"
+            Orientation="Vertical" />
+        <ItemsControl Grid.Column="2" ItemsSource="{Binding DefectsProduce.QualityNumbersList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="3" />
+                    <UniformGrid Rows="3" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <UniformGrid Rows="1">
+                    <StackPanel Orientation="Horizontal">
                         <TextBlock
                             Foreground="{Binding ShowColor.Brush}"
-                            Style="{StaticResource TextBlockDefault}"
+                            Style="{StaticResource tblock}"
                             Text="{Binding Name}" />
-                        <TextBlock Style="{StaticResource TextBlockDefaultBold}" Text="{Binding Number}" />
-                    </UniformGrid>
+                        <TextBlock
+                            Width="100"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding Number}" />
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

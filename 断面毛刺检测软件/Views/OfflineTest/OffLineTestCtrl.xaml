@@ -130,7 +130,7 @@
                             DockPanel.Dock="Right"
                             Visibility="Collapsed"
                             ItemsSource="{StaticResource RotateAngle}"
-                            SelectedItem="{Binding _projConfig.ProcessSet.Angle}"
+                            
                             Style="{StaticResource ComboBoxExtend}" />
 
                         <ComboBox

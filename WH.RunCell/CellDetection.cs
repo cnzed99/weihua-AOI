@@ -47,9 +47,10 @@ namespace WH.RunCell
         /// </summary>
         public int Priority { get; set; } = 0;
         /// <summary>
+        /// 20240705 TCG
         /// 质量等级
         /// </summary>
-        public int QualityLevel { get; set; } = 0;
+        public dynamic Quality { get; set; }
 
         public override void Dispose()
         {
@@ -70,7 +71,7 @@ namespace WH.RunCell
                 detection.ShowColor = this.ShowColor;
             }
             detection.Priority = this.Priority;
-            detection.QualityLevel = this.QualityLevel;
+            detection.Quality = this.Quality;
             return detection;
         }
     }
