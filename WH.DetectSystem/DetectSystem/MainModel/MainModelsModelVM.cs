@@ -14,6 +14,7 @@ using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
 using WH.Entity;
+using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 
 namespace WH.DetectSystem.ViewModels
@@ -57,7 +58,7 @@ namespace WH.DetectSystem.ViewModels
                 OperateLog.UserName = user.UserName;
             };
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
-            
+            TypeAdapterConfig<Token, Token>.NewConfig().MapWith(des => des);
         }
 
         #region 时间相关

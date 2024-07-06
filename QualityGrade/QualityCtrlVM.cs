@@ -98,7 +98,7 @@ namespace QualityGrade
                     var qua = QualitySet.Clone();
                     if (QualityConfig.Qualities.Count > 0) qua.Priority = QualityConfig.Qualities[QualityConfig.Qualities.Count - 1].Priority + 1;
                     QualityConfig.Qualities.Add(qua);
-                    WeakReferenceMessenger.Default.Send<QualityConfig>(QualityConfig);
+                    //WeakReferenceMessenger.Default.Send<QualityConfig>(QualityConfig);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace QualityGrade
                     QualitySelect.Signal = QualitySet.Signal;
                     QualitySelect.Description = QualitySet.Description;
 
-                    WeakReferenceMessenger.Default.Send<PropertyChangedMessage<Quality>>(new PropertyChangedMessage<Quality>(this, null, oldValue, QualitySelect));
+                    //WeakReferenceMessenger.Default.Send<PropertyChangedMessage<Quality>>(new PropertyChangedMessage<Quality>(this, null, oldValue, QualitySelect));
                 }
             }
         }

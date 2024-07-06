@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using WH.Entity.CommonLib;
 
 namespace WH.DetectSystem.Models
 {
@@ -22,7 +23,12 @@ namespace WH.DetectSystem.Models
     /// </summary>
     public partial class CMainModel:ObservableObject
     {
-        
+        /// <summary>
+        /// 20240706 TCG
+        /// 制程GUID
+        /// </summary>
+        public string GUID {  get; set; }
+
         [ObservableProperty]
         string name  = "毛刺检测";
         [ObservableProperty]
@@ -48,5 +54,23 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [JsonProperty(Order = 4)]
         public DefectsProduce DefectsProduce { get; set; } = new DefectsProduce();
+
+        Token token;
+        public CMainModel()
+        {
+            GUID = Guid.NewGuid().ToString();
+        
+        }
+        public void UpdateToken()
+        {
+            MaociAlgorParamConfig.token.ProGuid = GUID;
+            MaociQuality.token.ProGuid = GUID;
+            MaociFilter.token.ProGuid = GUID;
+
+            ConfigModifyObservableBase.UpdateToken(MaociAlgorParamConfig,MaociAlgorParamConfig.token);
+            ConfigModifyObservableBase.UpdateToken(MaociQuality, MaociQuality.token);
+            ConfigModifyObservableBase.UpdateToken(MaociFilter, MaociFilter.token);
+           
+        }
     }
 }

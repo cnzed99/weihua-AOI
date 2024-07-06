@@ -43,7 +43,7 @@ namespace WH.DetectSystem.ViewModels
         {
             mainModelVM = mainVM;
             this.mainVM = mainVM.CMainVMs[0];
-
+            this.mainVM.GUID = Guid.NewGuid().ToString();//GUID
             this.mainVM.Adapt(this);
             this.ProjPath = mainModelVM.ProjPath;
         }

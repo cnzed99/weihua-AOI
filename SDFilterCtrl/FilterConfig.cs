@@ -36,6 +36,7 @@ namespace SDFilter
 
         public FilterConfig()
         {
+            this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
             foreach (var specie in AlgorithmOut.s_Instance.Specises)
             {
@@ -48,7 +49,7 @@ namespace SDFilter
             }
             SpeciesFilters = SpFilters;
            
-            WeakReferenceMessenger.Default.Register<OperateMessage, string>(this, this.GetType().Namespace);
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>
@@ -366,6 +367,7 @@ namespace SDFilter
     {
         public SpeciesFilter()
         {
+            this.token = new Token("", this.GetType().Namespace);
             RecipeDefects = new ObservableCollection<RecipeDefect>();
         }
         public SpeciesFilter(string name) :this()
@@ -430,6 +432,7 @@ namespace SDFilter
     {
         public RecipeDefect()
         {
+            this.token = new Token("", this.GetType().Namespace);
             DefectFilters = new ObservableCollection<DefectFilter>();
         }
         public RecipeDefect(string name):this()
@@ -487,15 +490,17 @@ namespace SDFilter
     {
         public DefectFilter()
         {
+            this.token = new Token("", this.GetType().Namespace);
+            foreach (EMFILTER item in Enum.GetValues(typeof(EMFILTER)))
+            {
+                ResultList.Add(new FilterResult(item));
+            }
             FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
         }
         public DefectFilter(string name):this()
         {
             this.Name = name;
-            foreach (EMFILTER item in Enum.GetValues(typeof(EMFILTER)))
-            {
-                ResultList.Add(new FilterResult(item));
-            }
+           
             ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
         }
 
@@ -544,7 +549,6 @@ namespace SDFilter
         /// 结果列表
         /// </summary>
         [property: IgnoreModifyLog]
-        [property: JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<FilterResult> resultList = new ObservableCollection<FilterResult>() { };
 
@@ -588,6 +592,7 @@ namespace SDFilter
     {
         public FilterAndSelect()
         {
+            this.token = new Token("", this.GetType().Namespace);
             Filter = new ObservableCollection<SelectConfig>() { new SelectConfig() };
             SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig() };
         }
@@ -642,6 +647,7 @@ namespace SDFilter
     {
         public SelectConfig()
         {
+            this.token = new Token("", this.GetType().Namespace);
             SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams() };
            
         }

@@ -168,6 +168,7 @@ namespace ProjProduceData
             {
                 qua.Number = 0;
             }
+            OK = 0;
             Ng = 0;
             Total = 0;
         }

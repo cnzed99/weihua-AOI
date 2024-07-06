@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -24,6 +26,11 @@ namespace WH.Entity.CommonLib
     /// </summary>
     public abstract class ConfigModifyObservableBase : ObservableObject
     {
+        /// <summary>
+        /// 20240706 TCG
+        /// 参数修改消息通道
+        /// </summary>
+        public Token token;
         /// <summary>
         /// 2024.7.2 李焕彬
         /// 属性旧值
@@ -56,7 +63,7 @@ namespace WH.Entity.CommonLib
             sb.Append("=>");
             sb.Append(newValue.ToString());
             
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), this.GetType().Namespace);
+            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         /// <summary>
@@ -92,7 +99,69 @@ namespace WH.Entity.CommonLib
                 sb.Append(e.OldItems[0].ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), this.GetType().Namespace);
+            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+        }
+        public static void UpdateToken(object instance,Token token)
+        {
+            if(instance is ConfigModifyObservableBase config)
+            {
+                config.token = token;
+                var properties = instance.GetType().GetRuntimeFields();
+                foreach (var property in properties)
+                {
+                    
+                    var value = property.GetValue(instance);
+                    if (value is null) continue;
+
+                    UpdateToken(value, token);
+                }
+            }
+            if (instance.GetType().IsGenericType
+                    && instance.GetType().GetGenericTypeDefinition() == typeof(ObservableCollection<>)
+                    )
+            {
+                Type genericType = instance.GetType().GetGenericArguments()[0];
+                PropertyInfo itemsProperty = instance.GetType().GetRuntimeProperties().ToList()[1];
+
+                if (itemsProperty != null)
+                {
+                    IEnumerable items = itemsProperty.GetValue(instance) as IEnumerable;
+                    if (items != null)
+                    {
+                        foreach (object item in items)
+                        {
+                            UpdateToken(item, token);
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+
+    /// <summary>
+    /// 20240706 TCG
+    /// 消息通道类型
+    /// </summary>
+    public class Token:IEquatable<Token>
+    {
+        public string ProGuid { get; set; }
+
+        public string SubChannel {  get; set; }
+        public Token(string projGuid,string subChannel) 
+        {
+            this.ProGuid = projGuid;
+            this.SubChannel = subChannel;
+        }
+
+        public bool Equals(Token other)
+        {
+            if (ProGuid == other.ProGuid
+            && SubChannel == other.SubChannel)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

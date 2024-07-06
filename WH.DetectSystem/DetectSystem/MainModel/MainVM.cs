@@ -112,6 +112,7 @@ namespace WH.DetectSystem.ViewModels
                     }
                 }
             }
+            this.Model.UpdateToken();
         }
 
         #region 时间相关
