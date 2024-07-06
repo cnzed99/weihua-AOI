@@ -38,12 +38,14 @@ namespace WH.DetectSystem.ViewModels
             set => SetProperty(ref projPath, value,true);
         }
         #endregion
-       
-        CMainModelsModelVM mainvm;
+        CMainModelsModelVM mainModelVM;
+        CMainVM mainVM;
         public CModifyProjVM(CMainModelsModelVM mainVM)
         {
-            mainvm = mainVM;
-            mainVM.Adapt(this);
+            mainModelVM = mainVM;
+            this.mainVM = mainVM.CMainVMs[0];
+            this.mainVM.Adapt(this);
+            this.ProjPath = mainModelVM.ProjPath;
         }
 
         #region 应用或丢弃当前工程变更
@@ -52,14 +54,14 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void ApplyChanges()
         {
-            mainvm.ProjPath = this.ProjPath;
-            this.Adapt(mainvm);
+            mainModelVM.ProjPath = this.ProjPath;
+            this.Adapt(mainVM);
 
         }
         /// <summary>
         /// 丢弃当前工程的修改
         /// </summary>
-        public void DiscardChanges() => mainvm.Adapt(this);
+        public void DiscardChanges() => mainVM.Adapt(this);
         #endregion
 
         [RelayCommand]

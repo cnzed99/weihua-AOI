@@ -707,12 +707,12 @@ namespace WH.DetectSystem.ViewModels
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
                         }
-                        cell.Detection = new CellDetection()
-                        {
-                            Name = "掉料0",
-                            DefectFilter = MaociFilter.SpeciesFilters[0].RecipeDefects[0].DefectFilters[0],
+                        //cell.Detection = new CellDetection()
+                        //{
+                        //    Name = "掉料0",
+                        //    DefectFilter = MaociFilter.SpeciesFilters[0].RecipeDefects[0].DefectFilters[0],
                             
-                        };
+                        //};
                         DefectsProduce.AddDefectProduce(cell);
                         WeakReferenceMessenger.Default.Send(cell, "showTask");
                         Console.WriteLine(DateTime.Now.Millisecond);

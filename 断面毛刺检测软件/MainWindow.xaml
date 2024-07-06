@@ -126,7 +126,7 @@
                             <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [DataClear], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem Width="100" Header="{Binding [DataClear], Source={x:Static local:CLang.Instance}}" Click="DataClear_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/数据统计/数据清空.svg" />
                         </MenuItem.Icon>
@@ -213,7 +213,7 @@
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />

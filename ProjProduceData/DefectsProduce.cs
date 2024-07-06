@@ -33,7 +33,7 @@ namespace ProjProduceData
         /// 2024.7.4 李焕彬
         /// 质量统计
         /// </summary>
-        [property:JsonIgnore]
+        [property: JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<Quality> qualityNumbersList = new();
 
@@ -49,15 +49,42 @@ namespace ProjProduceData
         /// 产品总数
         /// </summary>
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(OKPercent))]
+        [NotifyPropertyChangedFor(nameof(NGPercent))]
         private double total = 0;
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 缺陷总数/产品总数
+        /// 20240706 TCG
+        /// 良率 只读属性binding 需写上Mode = OneWay
+        /// </summary>
+        [JsonIgnore]
+        public double OKPercent
+        {
+            get
+            {
+                if (Total <= 0) return 0;
+                return OK / Total;
+            }
+        }
+        /// <summary>
+        /// 20240706 TCG
+        /// 不良率 只读属性binding 需写上Mode = OneWay
+        /// </summary>
+        [JsonIgnore]
+        public double NGPercent
+        {
+            get
+            {
+                if (Total <= 0) return 0;
+                return Ng / Total;
+            }
+        }
+        /// <summary>
+        /// 20200706 TCG
+        /// 利用属性通知，只通知一次，多绑定会通知多次
         /// </summary>
         [ObservableProperty]
-        private double percent;
-
+        public double oK;
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 索引器
@@ -82,12 +109,12 @@ namespace ProjProduceData
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 缺陷统计函数
-        /// 2024.7.5 TCG 增加质量统计逻辑
+        /// 2024.7.5 TCG 增加质量统计逻辑 先加NG 再加Total，只让Total通知一次
         /// </summary>
         /// <param name="cell">要统计的cell</param>
         public void AddDefectProduce(Cell cell)
         {
-            Total += 1;
+            
             if (cell.Detection != null)
             {
                 Ng += 1;
@@ -98,9 +125,13 @@ namespace ProjProduceData
                 {
                     defect.Percent = defect.Number / Ng;
                 }
-                cell.Detection.DefectFilter.QualityLevel.Number += 1;
-
             }
+            else
+            {
+                OK += 1;
+            }
+            cell.Quality.Number += 1;
+            Total += 1;
             foreach (var defect in DefectNumbersList)
             {
                 defect.PercentofAll = defect.Number / Total;
@@ -137,10 +168,8 @@ namespace ProjProduceData
             {
                 qua.Number = 0;
             }
-
-            Total = 0;
             Ng = 0;
-            Percent = 0;
+            Total = 0;
         }
     }
 

@@ -22,6 +22,7 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="IsReadOnly" Value="True" />
         </Style>
         <Style
             x:Key="tblock"
@@ -38,52 +39,19 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
         <UniformGrid
-            Columns="3"
+            Margin="10,0"
+            Columns="2"
             DataContext="{Binding DefectsProduce}"
             Rows="2">
-            <TextBox
-                Width="100"
-                hc:TitleElement.Title="All"
-                Text="{Binding Total}" />
-            <TextBox Width="100" hc:TitleElement.Title="OK">
-                <TextBox.Text>
-                    <MultiBinding ConverterParameter="OK" StringFormat="{}{0}">
-                        <MultiBinding.Converter>
-                            <local:MultiCalcConverter />
-                        </MultiBinding.Converter>
-                        <Binding Path="Total" />
-                        <Binding Path="Ng" />
-                    </MultiBinding>
-                </TextBox.Text>
-            </TextBox>
+            <TextBox hc:TitleElement.Title="All" Text="{Binding Total}"/>
+            <TextBox hc:TitleElement.Title="OK" Text="{Binding OK}" />
+            <TextBox hc:TitleElement.Title="YR" Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
+            <TextBox hc:TitleElement.Title="NG" Text="{Binding Ng}" />
+            <!--<hc:SimplePanel />
             <TextBox
                 Width="100"
                 hc:TitleElement.Title="NG"
-                Text="{Binding Ng}" />
-            <hc:SimplePanel />
-            <TextBox Width="100" hc:TitleElement.Title="OK">
-                <TextBox.Text>
-                    <MultiBinding ConverterParameter="OK%" StringFormat="{}{0:P2}">
-                        <MultiBinding.Converter>
-                            <local:MultiCalcConverter />
-                        </MultiBinding.Converter>
-                        <Binding NotifyOnSourceUpdated="False" Path="Total" />
-                        <Binding NotifyOnSourceUpdated="True" Path="Ng" />
-                    </MultiBinding>
-                </TextBox.Text>
-            </TextBox>
-
-            <TextBox Width="100" hc:TitleElement.Title="NG">
-                <TextBox.Text>
-                    <MultiBinding ConverterParameter="NG%" StringFormat="{}{0:P2}">
-                        <MultiBinding.Converter>
-                            <local:MultiCalcConverter />
-                        </MultiBinding.Converter>
-                        <Binding Path="Total" />
-                        <Binding Path="Ng" />
-                    </MultiBinding>
-                </TextBox.Text>
-            </TextBox>
+                Text="{Binding NGPercent, Mode=OneWay, StringFormat=P2}" />-->
         </UniformGrid>
         <hc:Divider
             Grid.Column="1"
@@ -98,16 +66,14 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <DockPanel>
                         <TextBlock
+                            DockPanel.Dock="Left"
                             Foreground="{Binding ShowColor.Brush}"
                             Style="{StaticResource tblock}"
                             Text="{Binding Name}" />
-                        <TextBlock
-                            Width="100"
-                            Style="{StaticResource tblock}"
-                            Text="{Binding Number}" />
-                    </StackPanel>
+                        <TextBlock Style="{StaticResource tblock}" Text="{Binding Number}" Margin="10,0"/>
+                    </DockPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

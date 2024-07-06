@@ -273,8 +273,6 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-
-
         #region 保存
         private void SaveCurrentProj_Click(object sender, RoutedEventArgs e)
         {
@@ -468,6 +466,17 @@ namespace 断面毛刺检测软件
             offLine.Show();
             offLine.Activate();
             OperateLog.Info(Properties.Resources.Offline);
+        }
+        #endregion
+
+
+        #region 数据清空
+        private void DataClear_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in CMainList.CMainVMs)
+            {
+                item.DefectsProduce.Clear();
+            }
         }
         #endregion
     }

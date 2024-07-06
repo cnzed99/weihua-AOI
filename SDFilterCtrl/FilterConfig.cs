@@ -187,21 +187,23 @@ namespace SDFilter
                 return;
             }
             var AlgorithmOut = cell.MaociTestOut.AlgorithmOut;
-
+            //int deIndex = 0;
             foreach (var sp in AlgorithmOut.Specises)
             {
                 foreach (var rp in sp.Recipes)
                 {
                     foreach (var de in this[sp.Name][rp.Name].DefectFilters)//缺陷
                     {
+                        //deIndex++;
                         CellDetection detection = new CellDetection();
-                        detection.Name = de.Name;
+                        //detection.Name = de.Name;
                         detection.Type = sp.Name;
                         detection.RecipeDefectName = rp.Name;
-                        detection.Priority = de.Priority;
-                        detection.Quality = de.QualityLevel;//质量等级
+                        //detection.Priority = de.Priority;
+                        //detection.Quality = de.QualityLevel;//质量等级
                         detection.DefectFilter = de;//缺陷过滤器
-                        detection.ShowColor = de.ShowColor;
+                        //detection.Index = deIndex;
+                        //detection.ShowColor = de.ShowColor;
                         if (cell.CancelSource.IsCancellationRequested) return;//任务取消时退出
                         foreach (var filter in de.FilterList)//过滤分选器
                         {
@@ -251,7 +253,7 @@ namespace SDFilter
                                 if (!bResult)
                                 {
                                     detection.regionOut = selRegion;
-                                    detection.DetectLog.AppendLine(detection.Name);
+                                    detection.DetectLog.AppendLine(detection.DefectFilter.Name);
                                     detection.DetectLog.AppendLine($"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}");
                                     detection.Result = false;
                                     break;//有一个分选不合格就跳出，不执行剩下的分选（||）
@@ -326,26 +328,27 @@ namespace SDFilter
                                 de.ResultList.RemoveAt(i);
                             }
                         }
-                        if (!detection.Result)
+                        if (!detection.Result)//NG
                         {
-                            var qualityLevel = detection.Quality;
+                            var qualityLevel = detection.DefectFilter.QualityLevel;
                             if (cell.Detection == null)
                             {
                                 cell.Detection = detection;
-                                cell.Quality = detection.Quality;
+                                cell.Quality = detection.DefectFilter.Quality;
                             }
                             else
                             {
-                                if (cell.Quality < detection.Quality)//质量等级 还需判断优先级
+                                if (cell.Detection.DefectFilter.QualityLevel < qualityLevel)//质量等级 还需判断优先级
                                 {
                                     cell.Detection = detection;
-                                    cell.Quality = detection.Quality;
+                                    cell.Quality = detection.DefectFilter.Quality;
                                 }
-                                else if (cell.Quality == detection.Quality && cell.Detection?.Priority < detection.Priority)//质量等级相等时 判断优先级
+                                else if (cell.Detection.DefectFilter.QualityLevel == qualityLevel && cell.Detection?.DefectFilter.Priority < detection.DefectFilter.Priority)//质量等级相等时 判断优先级
                                 {
                                     cell.Detection = detection;
-                                    cell.Quality = detection.Quality;
+                                    cell.Quality = detection.DefectFilter.Quality;
                                 }
+                               
                             }
                         }
                         cell.Detections.Add(detection);

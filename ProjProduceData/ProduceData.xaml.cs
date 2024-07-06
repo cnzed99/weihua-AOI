@@ -47,6 +47,10 @@ namespace ProjProduceData
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(values[0] is double && values[1] is double)) return Binding.DoNothing;
+            if(values[0] is DependencyPropertyChangedEventArgs args)
+            {
+                //if (args.NewValue.Equals(DependencyProperty.UnsetValue)) return Binding.DoNothing;
+            }
             double total = (double)values[0];
             double ng = (double)values[1];
             if (total == 0) return 0;
