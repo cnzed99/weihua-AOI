@@ -13,6 +13,7 @@ using WH.Entity.LogRecord;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Security.Policy;
+using WH.Entity.Attribute;
 
 namespace QualityGrade
 {
@@ -22,6 +23,7 @@ namespace QualityGrade
     /// </summary>
     public partial class QualityConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
+        [IgnoreModifyLog]
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
@@ -122,7 +124,7 @@ namespace QualityGrade
         /// <summary>
         /// 当前质量等级 产出
         /// </summary>
-        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
         [ObservableProperty]
         private int number;
 

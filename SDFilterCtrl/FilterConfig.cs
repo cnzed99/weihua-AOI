@@ -540,6 +540,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 结果列表
         /// </summary>
+        [property: IgnoreModifyLog]
         [property: JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<FilterResult> resultList = new ObservableCollection<FilterResult>() { };
@@ -556,7 +557,7 @@ namespace SDFilter
         /// 20240705 TCG
         /// 当前缺陷 产出
         /// </summary>
-        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
         [ObservableProperty]
         private int number;
 
@@ -564,7 +565,7 @@ namespace SDFilter
         /// 20240705 TCG
         /// 占所有缺陷比
         /// </summary>
-        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
         [ObservableProperty]
         private double percent;
 
@@ -572,7 +573,7 @@ namespace SDFilter
         /// 20240705 TCG
         /// 占所有检测数比
         /// </summary>
-        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
         [ObservableProperty]
         private double percentofAll;
     }

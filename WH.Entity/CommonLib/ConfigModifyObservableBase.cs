@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text;
+using WH.Entity.Attribute;
 
 namespace WH.Entity.CommonLib
 {
@@ -38,7 +39,7 @@ namespace WH.Entity.CommonLib
         {
             base.OnPropertyChanged(e);
             var newValue = this.GetType().GetProperty(e.PropertyName).GetValue(this);
-            var ignore = (JsonIgnoreAttribute)this.GetType().GetProperty(e.PropertyName).GetCustomAttribute(typeof(JsonIgnoreAttribute));
+            var ignore = (IgnoreModifyLogAttribute)this.GetType().GetProperty(e.PropertyName).GetCustomAttribute(typeof(IgnoreModifyLogAttribute));
             if (ignore is not null) return;
             ///要加特特性，不准跳过
             var attr = (DisplayNameAttribute)this.GetType().GetProperty(e.PropertyName).GetCustomAttribute(typeof(DisplayNameAttribute));
