@@ -26,15 +26,15 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">类别</param>
-        public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter) 
+        public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig) 
         {
             this.DefectFilter = defectFilter;
             RecipeDefects = speciesFilter.RecipeDefects.ToList();
             DefectName = defectFilter.Name;
             recipeDefect = RecipeDefects.Find(o => o.DefectFilters.Contains(defectFilter));
             //向质量等级请求数据
-            var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>(), "GetQuality");
-            Qualities = res.Response;
+            //var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>(), "GetQuality");
+            Qualities = qualityConfig.Qualities;
         }
 
         /// <summary>

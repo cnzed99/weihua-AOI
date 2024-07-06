@@ -64,6 +64,7 @@ namespace WH.DetectSystem.ViewModels
                 model.Adapt(this);
                 InitNewModel();
                 this.SDFilterCtrlVM.FilterConfig = MaociFilter;
+                this.SDFilterCtrlVM.QualityConfig = MaociQuality;
                 this.QualityCtrlVM.QualityConfig = MaociQuality;
                 this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
                 this.DefectsDataVM.SetDefectsProduce(DefectsProduce, MaociFilter, MaociQuality);

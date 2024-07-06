@@ -20,12 +20,12 @@ namespace QualityGrade
     /// 2024.6.26 李焕彬
     /// 质量等级控件VM
     /// </summary>
-    public partial class QualityCtrlVM :ObservableObject, IRecipient<RequestMessage<ObservableCollection<Quality>>>
+    public partial class QualityCtrlVM :ObservableObject
     {
         public QualityCtrlVM() 
         {
             //返回请求的质量等级集合
-            WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
+            //WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
         }
 
         /// <summary>
@@ -33,11 +33,11 @@ namespace QualityGrade
         /// 回复消息，过滤分选设置用
         /// </summary>
         /// <param name="message">质量列表</param>
-        public void Receive(RequestMessage<ObservableCollection<Quality>> message)
-        {
-            if (message.HasReceivedResponse) return;
-            message.Reply(QualityConfig.Qualities);
-        }
+        //public void Receive(RequestMessage<ObservableCollection<Quality>> message)
+        //{
+        //    if (message.HasReceivedResponse) return;
+        //    message.Reply(QualityConfig.Qualities);
+        //}
 
         /// <summary>
         /// 2024.7.5 TCG

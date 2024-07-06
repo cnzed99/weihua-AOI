@@ -32,10 +32,10 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">所属类别</param>
-        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter)
+        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig)
         {
             InitializeComponent();
-            VM = new(defectFilter, speciesFilter);
+            VM = new(defectFilter, speciesFilter, qualityConfig);
             this.DataContext = VM;
         }
 

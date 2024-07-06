@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using QualityGrade;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,7 +25,7 @@ namespace SDFilter
         /// </summary>
         [ObservableProperty]
         private FilterConfig filterConfig;
-
+        public QualityConfig QualityConfig;
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 增加过滤器
@@ -80,7 +81,7 @@ namespace SDFilter
             {
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 SpeciesFilter speciesFilter = (SpeciesFilter)objArr[1];
-                DefectFilterSetWin defectFilterSetWin = new DefectFilterSetWin(defectFilter, speciesFilter);
+                DefectFilterSetWin defectFilterSetWin = new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig);
                 defectFilterSetWin.ShowDialog();
             }
         }

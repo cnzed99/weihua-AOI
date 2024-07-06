@@ -17,15 +17,14 @@ namespace ProjProduceData
     /// 2024.7.4 李焕彬
     /// 产量统计、缺陷统计控件ViewModel
     /// </summary>
-    public partial class DefectsDataVM : ObservableObject,IRecipient<PropertyChangedMessage<string>>, IRecipient<PropertyChangedMessage<Quality>>,
-        IRecipient<FilterConfig>, IRecipient<QualityConfig>
+    public partial class DefectsDataVM : ObservableObject
     {
         public DefectsDataVM() 
         {
-            WeakReferenceMessenger.Default.Register<PropertyChangedMessage<string>, string>(this, "DefectName");
-            WeakReferenceMessenger.Default.Register<PropertyChangedMessage<Quality>>(this);
-            WeakReferenceMessenger.Default.Register<FilterConfig>(this);
-            WeakReferenceMessenger.Default.Register<QualityConfig>(this);
+            //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<string>, string>(this, "DefectName");
+            //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<Quality>>(this);
+            //WeakReferenceMessenger.Default.Register<FilterConfig>(this);
+            //WeakReferenceMessenger.Default.Register<QualityConfig>(this);
         }
 
         /// <summary>
@@ -49,34 +48,34 @@ namespace ProjProduceData
         [ObservableProperty]
         private DefectsProduce defectsProduce;
 
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 缺陷名字修改消息处理
-        /// </summary>
-        /// <param name="message">缺陷名字修改消息</param>
-        public void Receive(PropertyChangedMessage<string> message)
-        {
-            var de = DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
-            if (de != null)
-            {
-                de.Name = message.NewValue;
-            }
-        }
+        ///// <summary>
+        ///// 2024.7.4 李焕彬
+        ///// 缺陷名字修改消息处理
+        ///// </summary>
+        ///// <param name="message">缺陷名字修改消息</param>
+        //public void Receive(PropertyChangedMessage<string> message)
+        //{
+        //    var de = DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
+        //    if (de != null)
+        //    {
+        //        de.Name = message.NewValue;
+        //    }
+        //}
 
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级修改消息处理
-        /// </summary>
-        /// <param name="message">质量等级修改消息</param>
-        public void Receive(PropertyChangedMessage<Quality> message)
-        {
-            var qua = DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
-            if (qua != null)
-            {
-                qua.Name = message.NewValue.Name;
-                qua.ShowColor = message.NewValue.ShowColor;
-            }
-        }
+        ///// <summary>
+        ///// 2024.7.4 李焕彬
+        ///// 质量等级修改消息处理
+        ///// </summary>
+        ///// <param name="message">质量等级修改消息</param>
+        //public void Receive(PropertyChangedMessage<Quality> message)
+        //{
+        //    var qua = DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
+        //    if (qua != null)
+        //    {
+        //        qua.Name = message.NewValue.Name;
+        //        qua.ShowColor = message.NewValue.ShowColor;
+        //    }
+        //}
 
         /// <summary>
         /// 2024.7.4 李焕彬

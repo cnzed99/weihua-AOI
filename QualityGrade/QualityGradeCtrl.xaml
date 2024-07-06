@@ -107,7 +107,7 @@
             SelectionMode="Single">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
@@ -123,10 +123,10 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="Background" Value="#FF0078D7" />
+                                        <Setter Property="Background" Value="{DynamicResource ThirdlyRegionBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Panel.Background" Value="#FF0078D7" />
+                                        <Setter Property="Panel.Background" Value="{DynamicResource ThirdlyRegionBrush}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -159,10 +159,16 @@
                         Width="80"
                         DisplayMemberBinding="{Binding Signal}"
                         Header="{Binding [QualitySignal], Source={x:Static local:Lang.s_Instance}}" />
-                    <GridViewColumn
-                        Width="200"
-                        DisplayMemberBinding="{Binding Description}"
-                        Header="{Binding [Description], Source={x:Static local:Lang.s_Instance}}" />
+                    <GridViewColumn Width="150" Header="{Binding [Description], Source={x:Static local:Lang.s_Instance}}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding Description}"
+                                    TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
