@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using QualityGrade;
 using SDFilter;
 using System;
@@ -16,6 +17,7 @@ namespace ProjProduceData
     /// <summary>
     /// 2024.7.3 李焕彬
     /// 缺陷统计数据
+    /// 20240706 TCG 启用保存，除了NG TOTAL PERCENT 质量等级和缺陷统计不保存，在反序列化时从DefectFilter/Quality中获取引用
     /// </summary>
     public partial class DefectsProduce : ObservableObject
     {
@@ -23,6 +25,7 @@ namespace ProjProduceData
         /// 2024.7.4 李焕彬
         /// 缺陷统计
         /// </summary>
+        [property: JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<DefectFilter> defectNumbersList = new();
 
@@ -30,6 +33,7 @@ namespace ProjProduceData
         /// 2024.7.4 李焕彬
         /// 质量统计
         /// </summary>
+        [property:JsonIgnore]
         [ObservableProperty]
         private ObservableCollection<Quality> qualityNumbersList = new();
 
@@ -143,6 +147,7 @@ namespace ProjProduceData
     /// <summary>
     /// 2024.7.4 李焕彬
     /// 缺陷数据
+    /// 20240706 TCG 弃用，改用DefectFilter 统计
     /// </summary>
     public partial class DefectNumber : ObservableObject
     {
@@ -187,6 +192,7 @@ namespace ProjProduceData
 
     /// <summary>
     /// 2024.7.4 李焕彬
+    /// 20240706 TCG 弃用，Quality 统计
     /// 质量数据
     /// </summary>
     public partial class QualityNumber : ObservableObject

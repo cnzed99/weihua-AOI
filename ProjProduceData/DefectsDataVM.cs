@@ -86,6 +86,7 @@ namespace ProjProduceData
         public void Receive(FilterConfig filter)
         {
             //List<string> strings = new List<string>();
+            //DefectsProduce.DefectNumbersList.Clear();
             foreach (var sp in filter.SpeciesFilters)
             {
                 foreach (var rp in sp.RecipeDefects)
@@ -117,7 +118,8 @@ namespace ProjProduceData
         /// <param name="message">质量等级配置</param>
         public void Receive(QualityConfig message)
         {
-            List<string> strings = new List<string>();
+            //List<string> strings = new List<string>();
+            //DefectsProduce.QualityNumbersList.Clear();
             foreach (var qua in message.Qualities)
             {
                 //if (DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == qua.Name) == null)
