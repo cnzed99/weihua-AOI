@@ -66,6 +66,7 @@ namespace WH.DetectSystem.Models
             MaociAlgorParamConfig.token.ProGuid = GUID;
             MaociQuality.token.ProGuid = GUID;
             MaociFilter.token.ProGuid = GUID;
+            
             ConfigModifyObservableBase.UpdateToken(MaociFilter, MaociFilter.token);
             ConfigModifyObservableBase.UpdateToken(MaociAlgorParamConfig,MaociAlgorParamConfig.token);
             ConfigModifyObservableBase.UpdateToken(MaociQuality, MaociQuality.token);

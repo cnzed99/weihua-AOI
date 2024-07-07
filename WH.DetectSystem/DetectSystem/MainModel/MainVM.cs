@@ -104,6 +104,7 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void InitNewModel()
         {
+            this.UpdateToken();//先更新token 再同步引用
             foreach (var spFilter in MaociFilter.SpeciesFilters)
             {
                 foreach (var reFilger in spFilter.RecipeDefects)
@@ -125,7 +126,7 @@ namespace WH.DetectSystem.ViewModels
                     }
                 }
             }
-            this.UpdateToken();
+            
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociFilter,MaociFilter.token);
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociQuality,MaociQuality.token);
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociAlgorParamConfig, MaociAlgorParamConfig.token);
