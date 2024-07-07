@@ -55,6 +55,7 @@ namespace WH.DetectSystem.ViewModels
         public void ApplyChanges()
         {
             mainModelVM.ProjPath = this.ProjPath;
+            if (mainVM.Model is null) mainVM.Model = new CMainModel();
             this.Adapt(mainVM);
             
         }

@@ -32,7 +32,7 @@ namespace QualityGrade
             this.token = new Token("", this.GetType().Namespace);
             Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
             //参数修改
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
            
         }
         [property: DisplayName("等级列表")]
@@ -72,7 +72,7 @@ namespace QualityGrade
         {
             this.token = new Token("",this.GetType().Namespace);
         }
-        public Quality(string name)
+        public Quality(string name):this()
         {
             this.Name = name;
             ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
@@ -115,7 +115,7 @@ namespace QualityGrade
         public Quality Clone()
         {
             var quality = new Quality(this.Name);
-            quality.token = this.token;
+            //quality.token = this.token;
             quality.Name = this.Name;
             quality.ShowColor = this.ShowColor;
             quality.Description = this.Description;

@@ -30,6 +30,7 @@ using WH.Entity;
 using ProjProduceData;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.DetectSystem.SystemSet;
+using Newtonsoft.Json.Linq;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -97,7 +98,10 @@ namespace WH.DetectSystem.ViewModels
             //TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
             InitTask();
         }
-
+        /// <summary>
+        /// 20240707 TCG
+        /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息
+        /// </summary>
         public void InitNewModel()
         {
             foreach (var spFilter in MaociFilter.SpeciesFilters)
@@ -106,13 +110,26 @@ namespace WH.DetectSystem.ViewModels
                 {
                     foreach (var deFilter in reFilger.DefectFilters)
                     {
-                        var findquality = MaociQuality.Qualities.FirstOrDefault(o => o.Priority == deFilter.QualityLevel.Priority);
-                        deFilter.QualityLevel = null;
-                        deFilter.QualityLevel = findquality;
+                        //新建配方 质量等级没有赋值时赋值最差
+                        if (deFilter.QualityLevel is null)
+                        {
+                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
+                        }
+                        else
+                        {
+                            var findquality = MaociQuality.Qualities.FirstOrDefault(o => o.Priority == deFilter.QualityLevel.Priority);
+                            deFilter.QualityLevel = null;
+                            deFilter.QualityLevel = findquality;
+                        }
+                        
                     }
                 }
             }
-            this.Model.UpdateToken();
+            this.UpdateToken();
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociFilter,MaociFilter.token);
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociQuality,MaociQuality.token);
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(MaociAlgorParamConfig, MaociAlgorParamConfig.token);
+            QualityCtrlVM.QualitySelect = null;
         }
 
         #region 时间相关

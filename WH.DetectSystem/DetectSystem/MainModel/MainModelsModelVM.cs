@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -179,7 +180,8 @@ namespace WH.DetectSystem.ViewModels
             {
                 proj.ApplyChanges();
             }
-
+            SystemSettings.RecentProjs.Remove(ProjPath);
+            SystemSettings.RecentProjs.Insert(0, ProjPath);
             ConfigAPI.Save(CMainMModel, ProjPath);
         }
         #endregion

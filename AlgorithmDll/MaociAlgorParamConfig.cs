@@ -28,7 +28,7 @@ namespace AlgorithmDll
             this.token = new Token("",this.GetType().Namespace);
             PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
             FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName) };
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>

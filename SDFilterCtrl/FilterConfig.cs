@@ -49,7 +49,7 @@ namespace SDFilter
             }
             SpeciesFilters = SpFilters;
            
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>
@@ -675,6 +675,10 @@ namespace SDFilter
     /// </summary>
     public partial class OneSelectParams : ConfigModifyObservableBase
     {
+        public OneSelectParams()
+        {
+            this.token = new Token("", this.GetType().Namespace);
+        }
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 特征
