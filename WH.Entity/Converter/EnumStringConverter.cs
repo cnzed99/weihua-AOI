@@ -11,6 +11,10 @@ using WH.Entity.Attribute;
 
 namespace WH.Entity.Converter
 {
+    /// <summary>
+    /// 20240708 TCG
+    /// 将枚举集合转换为中英文特性字符 枚举需添加特性EnumStringAttribute(zh,en)
+    /// </summary>
     public class EnumStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -49,6 +53,9 @@ namespace WH.Entity.Converter
             throw new NotImplementedException();
         }
     }
+    /// <summary>
+    /// 添加了特性EnumStringAttribute(zh,en)的中英文字符与枚举值相互转换
+    /// </summary>
     public class StringAttrEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

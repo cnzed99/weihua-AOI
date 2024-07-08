@@ -11,6 +11,10 @@ using System.Reflection;
 
 namespace WH.Entity.Attribute
 {
+    /// <summary>
+    /// 20240708 TCG
+    /// 给枚举添加中英文特性
+    /// </summary>
     public class EnumStringAttribute : System.Attribute
     {
         public string ZhName;

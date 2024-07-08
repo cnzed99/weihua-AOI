@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace WH.Entity.Attribute
 {
+    /// <summary>
+    /// 20240708 TCG
+    /// 与另一属性比较大小，需大于
+    /// 特性无法阻止参数的修改，仅起到提示作用
+    /// </summary>
     public sealed class GreaterThanAttribute : ValidationAttribute
     {
         public GreaterThanAttribute(string propertyName)
@@ -31,6 +36,11 @@ namespace WH.Entity.Attribute
             return new("The current value is smaller than the other one");
         }
     }
+    /// <summary>
+    /// 20240708 TCG
+    /// 与另一属性比较大小，需小于
+    /// 特性无法阻止参数的修改，仅起到提示作用
+    /// </summary>
     public sealed class LessThanAttribute : ValidationAttribute
     {
         public LessThanAttribute(string propertyName)
