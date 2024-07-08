@@ -130,7 +130,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="DotNetProjects.SVGImage" />
     <PackageReference Include="HandyControl" />
