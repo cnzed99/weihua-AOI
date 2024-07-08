@@ -75,7 +75,7 @@
                                                                 <TextBlock Grid.Column="0" Text="{Binding Name}" />
                                                                 <TextBlock
                                                                     Grid.Column="2"
-                                                                    Text="{Binding ResultList[0].Value}"
+                                                                    Text="{Binding ResultList[0].Value, StringFormat={}{0:F2}}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="3"
@@ -83,7 +83,7 @@
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="4"
-                                                                    Text="{Binding ResultList[1].Value}"
+                                                                    Text="{Binding ResultList[1].Value, StringFormat={}{0:F2}}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="5"
@@ -109,28 +109,27 @@
                                                                                 <ColumnDefinition Width="2*" />
                                                                                 <ColumnDefinition Width="1*" />
                                                                             </Grid.ColumnDefinitions>
-                                                                            <Label
+                                                                            <TextBlock
                                                                                 Grid.Column="0"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
-                                                                            <Label
+                                                                                Foreground="White"
+                                                                                Text="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
+                                                                            <TextBlock
                                                                                 Grid.Column="1"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Value}"
+                                                                                Text="{Binding Value, StringFormat={}{0:F2}}"
                                                                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=Foreground}" />
-                                                                            <Label
+                                                                            <TextBlock
                                                                                 Grid.Column="2"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
+                                                                                Foreground="White"
+                                                                                Text="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
                                                                         </Grid>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>

@@ -22,7 +22,7 @@ namespace WH.DetectSystem
         /// <param name="cell">检测对象</param>
         public static void FilterExute(this FilterConfig filter,Cell cell)
         {
-            
+            filter.Excute(cell);
         }
     }
 }

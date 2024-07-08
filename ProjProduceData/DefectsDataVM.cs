@@ -38,7 +38,26 @@ namespace ProjProduceData
         {
             this.DefectsProduce = defectsProduce;
             Receive(filterConfig);
-            Receive(qualityConfig);
+            filterConfig.SpeciesFilters.CollectionChanged += (s, e) =>
+            {
+                Receive(filterConfig);
+            };
+            foreach (var sp in filterConfig.SpeciesFilters)
+            {
+                sp.RecipeDefects.CollectionChanged += (s, e) =>
+                {
+                    Receive(filterConfig);
+                };
+                foreach (var rd in sp.RecipeDefects)
+                {
+                    rd.DefectFilters.CollectionChanged += (s, e) =>
+                    {
+                        Receive(filterConfig);
+                    };
+                }
+            }
+
+            this.DefectsProduce.QualityNumbersList = qualityConfig.Qualities;
         }
 
         /// <summary>
@@ -84,57 +103,28 @@ namespace ProjProduceData
         /// <param name="filter">检测设置配置</param>
         public void Receive(FilterConfig filter)
         {
-            //List<string> strings = new List<string>();
-            //DefectsProduce.DefectNumbersList.Clear();
+            List<string> strings = new List<string>();
             foreach (var sp in filter.SpeciesFilters)
             {
                 foreach (var rp in sp.RecipeDefects)
                 {
                     foreach (var de in rp.DefectFilters)
                     {
-                        //if (DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == de.Name) == null)
-                        //{
-                        //    DefectsProduce.DefectNumbersList.Add(new(de.Name));
-                        //}
-                        //strings.Add(de.Name);
-                        DefectsProduce.DefectNumbersList.Add(de);
+                        if (!DefectsProduce.DefectNumbersList.Contains(de))
+                        {
+                            DefectsProduce.DefectNumbersList.Add(de);
+                        }
+                        strings.Add(de.Name);
                     }
                 }
             }
-            //for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
-            //{
-            //    if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
-            //    {
-            //        DefectsProduce.DefectNumbersList.RemoveAt(i);
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级配置修改消息处理
-        /// </summary>
-        /// <param name="message">质量等级配置</param>
-        public void Receive(QualityConfig message)
-        {
-            //List<string> strings = new List<string>();
-            //DefectsProduce.QualityNumbersList.Clear();
-            foreach (var qua in message.Qualities)
+            for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
             {
-                //if (DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == qua.Name) == null)
-                //{
-                //    DefectsProduce.QualityNumbersList.Add(new QualityNumber(qua));
-                //}
-                //strings.Add(qua.Name);
-                DefectsProduce.QualityNumbersList.Add(qua);
+                if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
+                {
+                    DefectsProduce.DefectNumbersList.RemoveAt(i);
+                }
             }
-            //for (int i = DefectsProduce.QualityNumbersList.Count - 1; i >= 0; i--)
-            //{
-            //    if (!strings.Contains(DefectsProduce.QualityNumbersList[i].Name))
-            //    {
-            //        DefectsProduce.QualityNumbersList.RemoveAt(i);
-            //    }
-            //}
         }
     }
 }

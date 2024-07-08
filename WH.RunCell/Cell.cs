@@ -42,7 +42,7 @@ namespace WH.RunCell
         /// 2024.7.2 李焕彬
         /// 算法输出管理，含输出区域
         /// </summary>
-        public MaociTest MaociTestOut { get; set; }
+        public MaociTest MaociTestOut { get; set; } = new MaociTest();
 
         /// <summary>
         /// 是否是OK产品

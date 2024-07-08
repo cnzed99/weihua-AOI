@@ -76,6 +76,7 @@ namespace WH.Entity.Attribute
         }
 
         /// <summary>
+        /// 2024.7.4 李焕彬
         /// 获取枚举特性名对应枚举值
         /// </summary>
         /// <param name="value">枚举特性名</param>

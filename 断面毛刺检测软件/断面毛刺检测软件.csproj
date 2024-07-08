@@ -11,15 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
     <Compile Remove="CameraModule\**" />
     <Compile Remove="ImageWinCtrl\**" />
     <Compile Remove="Tools\**" />
+    <EmbeddedResource Remove="bin\**" />
     <EmbeddedResource Remove="CameraModule\**" />
     <EmbeddedResource Remove="ImageWinCtrl\**" />
     <EmbeddedResource Remove="Tools\**" />
+    <None Remove="bin\**" />
     <None Remove="CameraModule\**" />
     <None Remove="ImageWinCtrl\**" />
     <None Remove="Tools\**" />
+    <Page Remove="bin\**" />
     <Page Remove="CameraModule\**" />
     <Page Remove="ImageWinCtrl\**" />
     <Page Remove="Tools\**" />

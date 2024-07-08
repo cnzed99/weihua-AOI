@@ -395,7 +395,6 @@ namespace WH.DetectSystem.ViewModels
                     }
                     MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(imgitor.Current));
 
-
                     Cell cell = new Cell()
                     {
                         Image = memoryStream,
@@ -586,7 +585,7 @@ namespace WH.DetectSystem.ViewModels
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   开始执行配方");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        MaociAlgorParamConfig.PcParams[0].MaociExcute(cell);
+                        MaociAlgorParamConfig.MaociExcute(cell);
                         //SystemStatic.RecipeList[cell.ProjGuid].RecipeExcute(cell);
 
                         //if (cell._skipthis)
@@ -674,7 +673,7 @@ namespace WH.DetectSystem.ViewModels
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   检测结束,耗时:");
                         strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
-                        FilterTime = cell.ProcessTime.TotalMilliseconds;
+                        FilterTime = cell.FilterTime.TotalMilliseconds;
                         await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         //cell.Stopwatch.Stop();
                         //if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning)//如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
@@ -1108,7 +1107,6 @@ namespace WH.DetectSystem.ViewModels
 
         }
         #endregion
-
     }
 
 }

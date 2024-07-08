@@ -69,23 +69,23 @@ namespace SDFilter
                 switch (feature)
                 {
                     case EMFILTER.EMFILTER_AREA:
-                        return "mm²";
+                        return "um²";
                     case EMFILTER.EMFILTER_NUM:
                         return "PCS";
                     case EMFILTER.EMFILTER_LONGLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_SHORTLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_PHI:
-                        return "rad";
+                        return "°";
                     case EMFILTER.EMFILTER_CONTLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_WIDTH:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_HEIGHT:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_PEAKHEI:
-                        return "mm";
+                        return "um";
                     default:
                         return "";
                 }

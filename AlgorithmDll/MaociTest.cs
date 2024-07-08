@@ -38,37 +38,47 @@ namespace AlgorithmDll
     {
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 矩形X
+        /// 像素矩形X
         /// </summary>
         public int X = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 矩形Y
+        /// 像素矩形Y
         /// </summary>
         public int Y = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 矩形宽
+        /// 像素矩形宽
         /// </summary>
         public int Width = 100;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 矩形高
+        /// 像素矩形高
         /// </summary>
         public int Height = 100;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 直角高度
+        /// um垂直宽度
+        /// </summary>
+        public double WidthBound = 0;
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直高度
+        /// </summary>
+        public double HeightBound = 0;
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um直角高度
         /// </summary>
         public double PeakHeight = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 长边长度
+        /// um长边长度
         /// </summary>
         public double LongLen = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 短边长度
+        /// um短边长度
         /// </summary>
         public double ShorLen = 0;
         /// <summary>
@@ -78,14 +88,14 @@ namespace AlgorithmDll
         public double Phi = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 周长
+        /// um周长
         /// </summary>
         public double ContLen = 0;
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 面积
+        /// um面积
         /// </summary>
-        public int Area = 0;
+        public double Area = 0;
         public SRegionInfo()
         {
 
@@ -98,8 +108,12 @@ namespace AlgorithmDll
         /// <param name="regionInfo">复制源</param>
         public void Copy(SRegionInfo regionInfo)
         {
+            X = regionInfo.X;
+            Y = regionInfo.Y;
             Width = regionInfo.Width;
             Height = regionInfo.Height;
+            WidthBound = regionInfo.WidthBound;
+            HeightBound = regionInfo.HeightBound;
             PeakHeight = regionInfo.PeakHeight;
             LongLen = regionInfo.LongLen;
             ShorLen = regionInfo.ShorLen;
@@ -424,10 +438,18 @@ namespace AlgorithmDll
         {
             List<SRegion> regions = new List<SRegion>();
             int regionCount = MaociTest.GetRegionCount(type);
+            double dMmPerPixel = 2.25d;
             for (int k = 0; k < regionCount; k++)
             {
                 SRegion sRegion = new SRegion();
                 int size = MaociTest.GetRegionInfo(type, k, ref sRegion.RegionInfo);
+                sRegion.RegionInfo.WidthBound *= dMmPerPixel;
+                sRegion.RegionInfo.HeightBound *= dMmPerPixel;
+                sRegion.RegionInfo.PeakHeight *= dMmPerPixel;
+                sRegion.RegionInfo.LongLen *= dMmPerPixel;
+                sRegion.RegionInfo.ShorLen *= dMmPerPixel;
+                sRegion.RegionInfo.ContLen *= dMmPerPixel;
+                sRegion.RegionInfo.Area *= dMmPerPixel;
                 IntPtr ptrX = Marshal.AllocHGlobal(size * sizeof(int));
                 IntPtr ptrY = Marshal.AllocHGlobal(size * sizeof(int));
                 MaociTest.GetRegionPoints(type, k, ptrX, ptrY);
