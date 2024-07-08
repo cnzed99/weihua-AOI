@@ -41,7 +41,7 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">类别</param>
-        public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig) 
+        public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig) :this()
         {
             this.DefectFilter = defectFilter;
             RecipeDefects = speciesFilter.RecipeDefects.ToList();

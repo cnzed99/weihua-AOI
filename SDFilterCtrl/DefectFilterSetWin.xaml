@@ -30,7 +30,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+            <entityproxy:BindingProxy x:Key="scroll" Data="{Binding ElementName=scroll,Path=DataContext.FilterCharacters}"/>
             <conv:BoolToBrushConverter
                 x:Key="BoolToBrushConverterEx"
                 FalseValue="Red"
@@ -39,6 +39,7 @@
                 x:Key="BoolToStringConverter"
                 FalseValue="+"
                 TrueValue="-" />
+            <entity:CommMultiParamConverter x:Key="CommMultiParamConverter"/>
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
             <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
@@ -108,7 +109,7 @@
                                 Foreground="White">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}{1}">
-                                        <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                        <Binding Path="Tag[0]" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                         <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource TemplatedParent}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
@@ -195,14 +196,14 @@
                                             </Grid.ColumnDefinitions>
                                             <Grid.Resources>
                                                 <local:ValidationParams x:Key="BindingProxy" Data="{Binding}" />
-                                                <entityproxy:BindingProxy x:Key="Scroll" Data="{Binding ElementName = scroll}"/>
                                             </Grid.Resources>
                                             <ComboBox
                                                 Name="CmbCharacter"
                                                 Grid.Column="1"
                                                 Margin="10,3,10,3"
                                                 SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}"
-                                                ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=hc:Window},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">
+                                                ItemsSource="{Binding Tag[1],RelativeSource={RelativeSource AncestorType=ItemsControl,AncestorLevel=2}}">
+                                                <!--ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:DefectFilterSetWin},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">-->
                                                 <!--<ComboBox.ItemsSource>
                                                     <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
                                                         <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" />
@@ -389,7 +390,14 @@
                                             AlternationCount="10000"
                                             ItemTemplate="{StaticResource Filter}"
                                             ItemsSource="{Binding Filter}"
-                                            Tag="{Binding [Filter], Source={x:Static local:Lang.s_Instance}}" />
+                                            >
+                                            <ItemsControl.Tag>
+                                                <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                    <Binding Path="[Filter]" Source="{x:Static local:Lang.s_Instance}"/>
+                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" Path="DataContext.FilterCharacters" Converter="{StaticResource Enums2StringsConverter}"/>
+                                                </MultiBinding>
+                                            </ItemsControl.Tag>
+                                        </ItemsControl>
                                     </Grid>
                                 </Border>
                                 <Border
@@ -420,7 +428,14 @@
                                             AlternationCount="10000"
                                             ItemTemplate="{StaticResource Filter}"
                                             ItemsSource="{Binding SelectList}"
-                                            Tag="{Binding [Select], Source={x:Static local:Lang.s_Instance}}" />
+                                            >
+                                            <ItemsControl.Tag>
+                                                <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                    <Binding Path="[Select]" Source="{x:Static local:Lang.s_Instance}"/>
+                                                    <Binding Path="Filter[0].SelectParams[0].Character" Converter="{StaticResource EnumProviderConverter}"/>
+                                                </MultiBinding>
+                                            </ItemsControl.Tag>
+                                        </ItemsControl>
                                     </Grid>
                                 </Border>
                             </StackPanel>
