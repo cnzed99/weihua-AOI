@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WH.Entity;
 using WH.Entity.Attribute;
 
 namespace SDFilter
@@ -165,66 +166,66 @@ namespace SDFilter
         /// <returns></returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            BindingProxy bindingProxy = ValidationParams.Data as BindingProxy;
-            OneSelectParams viewModel = bindingProxy.Data as OneSelectParams;
+            //BindingProxy bindingProxy = ValidationParams.Data as BindingProxy;
+            OneSelectParams viewModel = ValidationParams.Data as OneSelectParams;
             if (double.TryParse(value.ToString(), out double result)/* && int.TryParse(textbox.Text, out int result2)*/)
             {
                 if (IsGreater)
                 {
-                    if (bindingProxy.IsMinError)
+                    if (ValidationParams.IsMinError)
                     {
-                        if (result < bindingProxy.Min)
+                        if (result < ValidationParams.Min)
                         {
-                            bindingProxy.Max = result;
-                            bindingProxy.IsMaxError = true;
+                            ValidationParams.Max = result;
+                            ValidationParams.IsMaxError = true;
                             return new ValidationResult(false, "不能小于最小值！");
                         }
                         else
                         {
-                            bindingProxy.IsMinError = false;
-                            bindingProxy.IsMaxError = false;
+                            ValidationParams.IsMinError = false;
+                            ValidationParams.IsMaxError = false;
                             viewModel.Max = result;
-                            viewModel.Min = bindingProxy.Min;
+                            viewModel.Min = ValidationParams.Min;
                         }
                     }
                     else
                     {
                         if (result < viewModel.Min)
                         {
-                            bindingProxy.Max = result;
-                            bindingProxy.IsMaxError = true;
+                            ValidationParams.Max = result;
+                            ValidationParams.IsMaxError = true;
                             return new ValidationResult(false, "不能小于最小值！");
                         }
-                        bindingProxy.IsMaxError = false;
+                        ValidationParams.IsMaxError = false;
                     }
                 }
                 else
                 {
-                    if (bindingProxy.IsMaxError)
+                    if (ValidationParams.IsMaxError)
                     {
-                        if (result > bindingProxy.Max)
+                        if (result > ValidationParams.Max)
                         {
-                            bindingProxy.Min = result;
-                            bindingProxy.IsMinError = true;
+                            ValidationParams.Min = result;
+                            ValidationParams.IsMinError = true;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
                         else
                         {
-                            bindingProxy.IsMinError = false;
-                            bindingProxy.IsMaxError = false;
+                            ValidationParams.IsMinError = false;
+                            ValidationParams.IsMaxError = false;
                             viewModel.Min = result;
-                            viewModel.Max = bindingProxy.Max;
+                            viewModel.Max = ValidationParams.Max;
                         }
                     }
                     else
                     {
                         if (result > viewModel.Max)
                         {
-                            bindingProxy.Min = result;
-                            bindingProxy.IsMinError = true;
+                            ValidationParams.Min = result;
+                            ValidationParams.IsMinError = true;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
-                        bindingProxy.IsMinError = false;
+                        ValidationParams.IsMinError = false;
                     }
                 }
             }
@@ -238,55 +239,8 @@ namespace SDFilter
     /// 2024.7.4 李焕彬
     /// 验证参数
     /// </summary>
-    public class ValidationParams : DependencyObject
+    public class ValidationParams : BindingProxy
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 验证参数
-        /// </summary>
-        public object Data
-        {
-            get { return (object)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 验证参数依赖属性
-        /// </summary>
-        public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object), typeof(ValidationParams), new PropertyMetadata(null));
-    }
-
-    /// <summary>
-    /// 2024.7.4 李焕彬
-    /// BindingProxy
-    /// </summary>
-    public class BindingProxy : Freezable
-    {
-        protected override Freezable CreateInstanceCore()
-        {
-            return new BindingProxy();
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 存储数据
-        /// </summary>
-        public object Data
-        {
-            get { return (object)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 存储数据依赖属性
-        /// </summary>
-        // Using a DependencyProperty as the backing store for Data.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new PropertyMetadata(null));
-
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 最小值错误
@@ -310,5 +264,10 @@ namespace SDFilter
         /// 最大值
         /// </summary>
         public double Max = 0;
+
+        protected override Freezable CreateInstanceCore()
+        {
+            return new ValidationParams();
+        }
     }
 }
