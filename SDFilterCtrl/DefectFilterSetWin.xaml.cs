@@ -167,7 +167,7 @@ namespace SDFilter
         {
             BindingProxy bindingProxy = ValidationParams.Data as BindingProxy;
             OneSelectParams viewModel = bindingProxy.Data as OneSelectParams;
-            if (int.TryParse(value.ToString(), out int result)/* && int.TryParse(textbox.Text, out int result2)*/)
+            if (double.TryParse(value.ToString(), out double result)/* && int.TryParse(textbox.Text, out int result2)*/)
             {
                 if (IsGreater)
                 {
@@ -297,7 +297,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 最小值
         /// </summary>
-        public int Min = 0;
+        public double Min = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -309,58 +309,6 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 最大值
         /// </summary>
-        public int Max = 0;
-    }
-
-    /// <summary>
-    ///  2024.7.4 李焕彬
-    /// 质量等级转换器
-    /// </summary>
-    public class QualitySelectConverter : IMultiValueConverter
-    {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级转换器
-        /// </summary>
-        /// <param name="values">质量等级值、质量集</param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>质量</returns>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values[0] != null && values[1] != null)
-            {
-                int Level = (int)values[0];
-                ObservableCollection<Quality> qualities = values[1] as ObservableCollection<Quality>;
-                return qualities.FirstOrDefault(o => o.Priority == Level);
-            }
-            return Binding.DoNothing;
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级转换器
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetTypes"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>质量等级值</returns>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            List<object> list = new List<object>();
-            if (value != null)
-            {
-                Quality quality = value as Quality;
-                list.Add(quality.Priority);
-            }
-            else
-            {
-                list.Add(Binding.DoNothing);
-            }
-            list.Add(Binding.DoNothing);
-            return list.ToArray();
-        }
+        public double Max = 0;
     }
 }

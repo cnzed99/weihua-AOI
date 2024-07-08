@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+ï»¿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -6,20 +6,20 @@ using System.Windows;
 namespace AlgorithmDll
 {
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// ¼ì²â½á¹û
+    /// 2024.6.25 æç„•å½¬
+    /// æ£€æµ‹ç»“æœ
     /// </summary>
     public enum EMDETECTRESULT
     {
-        EMDR_OK = 0,//¼ì²âOK
-        EMDR_NG_LIGHTEDGE = 1,//Ã«´ÌNG
-        EMDR_NG_DARKEDGE = 2,//ÁÏÇøNG
-        EMDR_NG_EMPTY = 3,//¿Õ°×NG
+        EMDR_OK = 0,//æ£€æµ‹OK
+        EMDR_NG_LIGHTEDGE = 1,//æ¯›åˆºNG
+        EMDR_NG_DARKEDGE = 2,//æ–™åŒºNG
+        EMDR_NG_EMPTY = 3,//ç©ºç™½NG
     };
 
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// ÇøÓòÀàĞÍ
+    /// 2024.6.25 æç„•å½¬
+    /// åŒºåŸŸç±»å‹
     /// </summary>
     public enum EMREGIONTYPE
     {
@@ -31,69 +31,69 @@ namespace AlgorithmDll
         EMRT_THICKREGION = 5,
     };
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// ÇøÓòĞÅÏ¢
+    /// 2024.6.25 æç„•å½¬
+    /// åŒºåŸŸä¿¡æ¯
     /// </summary>
     public struct SRegionInfo
     {
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÏñËØ¾ØĞÎX
+        /// 2024.7.4 æç„•å½¬
+        /// åƒç´ çŸ©å½¢X
         /// </summary>
         public int X = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÏñËØ¾ØĞÎY
+        /// 2024.7.4 æç„•å½¬
+        /// åƒç´ çŸ©å½¢Y
         /// </summary>
         public int Y = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÏñËØ¾ØĞÎ¿í
+        /// 2024.7.4 æç„•å½¬
+        /// åƒç´ çŸ©å½¢å®½
         /// </summary>
         public int Width = 100;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÏñËØ¾ØĞÎ¸ß
+        /// 2024.7.4 æç„•å½¬
+        /// åƒç´ çŸ©å½¢é«˜
         /// </summary>
         public int Height = 100;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// um´¹Ö±¿í¶È
+        /// 2024.7.4 æç„•å½¬
+        /// umå‚ç›´å®½åº¦
         /// </summary>
         public double WidthBound = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// um´¹Ö±¸ß¶È
+        /// 2024.7.4 æç„•å½¬
+        /// umå‚ç›´é«˜åº¦
         /// </summary>
         public double HeightBound = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// umÖ±½Ç¸ß¶È
+        /// 2024.7.4 æç„•å½¬
+        /// umç›´è§’é«˜åº¦
         /// </summary>
         public double PeakHeight = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// um³¤±ß³¤¶È
+        /// 2024.7.4 æç„•å½¬
+        /// umé•¿è¾¹é•¿åº¦
         /// </summary>
         public double LongLen = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// um¶Ì±ß³¤¶È
+        /// 2024.7.4 æç„•å½¬
+        /// umçŸ­è¾¹é•¿åº¦
         /// </summary>
         public double ShorLen = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ½Ç¶È
+        /// 2024.7.4 æç„•å½¬
+        /// è§’åº¦
         /// </summary>
         public double Phi = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// umÖÜ³¤
+        /// 2024.7.4 æç„•å½¬
+        /// umå‘¨é•¿
         /// </summary>
         public double ContLen = 0;
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// umÃæ»ı
+        /// 2024.7.4 æç„•å½¬
+        /// umÂ²é¢ç§¯
         /// </summary>
         public double Area = 0;
         public SRegionInfo()
@@ -102,10 +102,10 @@ namespace AlgorithmDll
         }
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ¸´ÖÆ
+        /// 2024.7.4 æç„•å½¬
+        /// å¤åˆ¶
         /// </summary>
-        /// <param name="regionInfo">¸´ÖÆÔ´</param>
+        /// <param name="regionInfo">å¤åˆ¶æº</param>
         public void Copy(SRegionInfo regionInfo)
         {
             X = regionInfo.X;
@@ -124,20 +124,20 @@ namespace AlgorithmDll
     };
 
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// ÇøÓò
+    /// 2024.6.25 æç„•å½¬
+    /// åŒºåŸŸ
     /// </summary>
     public struct SRegion
     {
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÇøÓòĞÅÏ¢
+        /// 2024.7.4 æç„•å½¬
+        /// åŒºåŸŸä¿¡æ¯
         /// </summary>
         public SRegionInfo RegionInfo;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÇøÓòµã¼¯
+        /// 2024.7.4 æç„•å½¬
+        /// åŒºåŸŸç‚¹é›†
         /// </summary>
         public List<Point> points1;
 
@@ -148,8 +148,8 @@ namespace AlgorithmDll
         }
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡¾ØĞÎ
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–çŸ©å½¢
         /// </summary>
         /// <returns></returns>
         public Rect GetRect()
@@ -158,58 +158,58 @@ namespace AlgorithmDll
         }
     }
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// PCËã·¨²ÎÊı
+    /// 2024.6.25 æç„•å½¬
+    /// PCç®—æ³•å‚æ•°
     /// </summary>
     public struct SMaociAlgorParam
     {
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ×ÔÊÊÓ¦ãĞÖµÁÚÓò´óĞ¡
+        /// 2024.7.4 æç„•å½¬
+        /// è‡ªé€‚åº”é˜ˆå€¼é‚»åŸŸå¤§å°
         /// </summary>
         public uint AdaptiveSize = 14;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ×ÔÊÊÓ¦ãĞÖµÔö¼ÓÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// è‡ªé€‚åº”é˜ˆå€¼å¢åŠ å€¼
         /// </summary>
         public int AdaptiveAddGray = 20;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ¹ıÂË¾ØÕóÁÚÓò´óĞ¡
+        /// 2024.7.4 æç„•å½¬
+        /// è¿‡æ»¤çŸ©é˜µé‚»åŸŸå¤§å°
         /// </summary>
         public uint NeighbSize = 5;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ¹ıÂË¾ØÕóÁÚÓòµãÊıÁ¿ÏŞÖÆ
+        /// 2024.7.4 æç„•å½¬
+        /// è¿‡æ»¤çŸ©é˜µé‚»åŸŸç‚¹æ•°é‡é™åˆ¶
         /// </summary>
         public uint NeighbLightPoint = 30;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÁÏÇøãĞÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// æ–™åŒºé˜ˆå€¼
         /// </summary>
         public uint DarkThresh = 30;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÂÁ²ããĞÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// é“å±‚é˜ˆå€¼
         /// </summary>
         public uint LightThresh = 80;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÂÁ²ãºñ¶È
+        /// 2024.7.4 æç„•å½¬
+        /// é“å±‚åšåº¦
         /// </summary>
         public uint LightThick = 6;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ¹¹Ôì
+        /// 2024.7.4 æç„•å½¬
+        /// æ„é€ 
         /// </summary>
-        /// <param name="param">Ëã·¨²ÎÊıÀà</param>
+        /// <param name="param">ç®—æ³•å‚æ•°ç±»</param>
         public SMaociAlgorParam(MaociAlgorParam param)
         {
             this.AdaptiveSize = param.AdaptiveSize;
@@ -223,106 +223,106 @@ namespace AlgorithmDll
     };
 
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// FpgaËã·¨²ÎÊı
+    /// 2024.6.25 æç„•å½¬
+    /// Fpgaç®—æ³•å‚æ•°
     /// </summary>
     public struct SMaociAlgorParamFpga
     {
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //×ÔÊÊÓ¦ãĞÖµÁÚÓò´óĞ¡
+        /// 2024.7.4 æç„•å½¬
+        /// //è‡ªé€‚åº”é˜ˆå€¼é‚»åŸŸå¤§å°
         /// </summary>
         public uint AdaptiveSize = 14;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //×ÔÊÊÓ¦ãĞÖµÔö¼ÓÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// //è‡ªé€‚åº”é˜ˆå€¼å¢åŠ å€¼
         /// </summary>
         public int AdaptiveAddGray = 20;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //¹ıÂË¾ØÕóÁÚÓò´óĞ¡
+        /// 2024.7.4 æç„•å½¬
+        /// //è¿‡æ»¤çŸ©é˜µé‚»åŸŸå¤§å°
         /// </summary>
         public uint NeighbSize = 5;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //¹ıÂË¾ØÕóÁÚÓòµãÊıÁ¿ÏŞÖÆ
+        /// 2024.7.4 æç„•å½¬
+        /// //è¿‡æ»¤çŸ©é˜µé‚»åŸŸç‚¹æ•°é‡é™åˆ¶
         /// </summary>
         public uint NeighbLightPoint = 30;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÁÏÇøãĞÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// //æ–™åŒºé˜ˆå€¼
         /// </summary>
         public uint DarkThresh = 30;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ããĞÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚é˜ˆå€¼
         /// </summary>
         public uint LightThresh = 80;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÁÏÇøºñ¶ÈÏŞÖÆ£¬µôÁÏ¼ì²â
+        /// 2024.7.4 æç„•å½¬
+        /// //æ–™åŒºåšåº¦é™åˆ¶ï¼Œæ‰æ–™æ£€æµ‹
         /// </summary>
         public uint DarkThickLimit = 30;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÁÏÇøºñ¶ÈNGÁ¬Ğø³¤¶ÈÏŞÖÆ
+        /// 2024.7.4 æç„•å½¬
+        /// //æ–™åŒºåšåº¦NGè¿ç»­é•¿åº¦é™åˆ¶
         /// </summary>
         public uint DarkThickContinueLen = 5;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÁÏÇøºñ¶È
+        /// 2024.7.4 æç„•å½¬
+        /// //æ–™åŒºåšåº¦
         /// </summary>
         public uint DarkThick = 84;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãºñ¶ÈÏŞÖÆ£¬Ã«´Ì¼ì²â
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚åšåº¦é™åˆ¶ï¼Œæ¯›åˆºæ£€æµ‹
         /// </summary>
         public uint LightThickLimit = 7;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãºñ¶ÈNGÁ¬Ğø³¤¶ÈÏŞÖÆ
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚åšåº¦NGè¿ç»­é•¿åº¦é™åˆ¶
         /// </summary>
         public uint LightThickContinueLen = 0;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãºñ¶È
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚åšåº¦
         /// </summary>
         public uint LightThick = 6;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãÔÚÁÏÇøÖĞĞÄÎ»ÖÃÏŞÖÆÉÏ
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚åœ¨æ–™åŒºä¸­å¿ƒä½ç½®é™åˆ¶ä¸Š
         /// </summary>
         public uint PosLimitT = 20;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãÔÚÁÏÇøÖĞĞÄÎ»ÖÃÏŞÖÆÏÂ
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚åœ¨æ–™åŒºä¸­å¿ƒä½ç½®é™åˆ¶ä¸‹
         /// </summary>
         public uint PosLimitB = 20;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// //ÂÁ²ãÎ»ÖÃÆ«ÒÆÖµ
+        /// 2024.7.4 æç„•å½¬
+        /// //é“å±‚ä½ç½®åç§»å€¼
         /// </summary>
         public int LightPosOffest = 0;
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ¹¹Ôì
+        /// 2024.7.4 æç„•å½¬
+        /// æ„é€ 
         /// </summary>
-        /// <param name="param">FPGAËã·¨²ÎÊıÀà</param>
+        /// <param name="param">FPGAç®—æ³•å‚æ•°ç±»</param>
         public SMaociAlgorParamFpga(MaociAlgorParamFpga param)
         {
             this.AdaptiveSize = param.AdaptiveSize;
@@ -344,67 +344,67 @@ namespace AlgorithmDll
     };
 
     /// <summary>
-    /// 2024.6.25 Àî»À±ò
-    /// Ã«´Ì¼ì²âËã·¨½Ó¿Ú
+    /// 2024.6.25 æç„•å½¬
+    /// æ¯›åˆºæ£€æµ‹ç®—æ³•æ¥å£
     /// </summary>
     public class MaociTest
     {
-        #region »ñÈ¡ÇøÓò±ßÔµµã¼¯ºÏ
+        #region è·å–åŒºåŸŸè¾¹ç¼˜ç‚¹é›†åˆ
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓòµã
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸç‚¹
         /// </summary>
-        /// <param name="type">ÇøÓòÀàĞÍ</param>
+        /// <param name="type">åŒºåŸŸç±»å‹</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
         private extern static int GetEdgeCount(EMREGIONTYPE type);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓò
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸ
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
-        /// <param name="ptrX">Êä³öÖ¸ÕëX</param>
-        /// <param name="ptrY">Êä³öÖ¸ÕëY</param>
+        /// <param name="type">ç±»å‹</param>
+        /// <param name="ptrX">è¾“å‡ºæŒ‡é’ˆX</param>
+        /// <param name="ptrY">è¾“å‡ºæŒ‡é’ˆY</param>
         [DllImport("MaociAlg.dll")]
         private extern static void GetEdge(EMREGIONTYPE type, IntPtr ptrX, IntPtr ptrY);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓòµãÊı
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸç‚¹æ•°
         /// </summary>
-        /// <param name="type">ÇøÓòÀàĞÍ</param>
+        /// <param name="type">åŒºåŸŸç±»å‹</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
         private extern static int GetRegionCount(EMREGIONTYPE type);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓòĞÅÏ¢
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸä¿¡æ¯
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
-        /// <param name="nIndex">Ë÷Òı</param>
-        /// <param name="sRegionInfo">Êä³öÇøÓòĞÅÏ¢</param>
+        /// <param name="type">ç±»å‹</param>
+        /// <param name="nIndex">ç´¢å¼•</param>
+        /// <param name="sRegionInfo">è¾“å‡ºåŒºåŸŸä¿¡æ¯</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
         private extern static int GetRegionInfo(EMREGIONTYPE type, int nIndex, ref SRegionInfo sRegionInfo);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓòµã¼¯
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸç‚¹é›†
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
-        /// <param name="nIndex">Ë÷Òı</param>
-        /// <param name="pX">Êä³öÖ¸ÕëX</param>
-        /// <param name="pY">Êä³öÖ¸ÕëY</param>
+        /// <param name="type">ç±»å‹</param>
+        /// <param name="nIndex">ç´¢å¼•</param>
+        /// <param name="pX">è¾“å‡ºæŒ‡é’ˆX</param>
+        /// <param name="pY">è¾“å‡ºæŒ‡é’ˆY</param>
         [DllImport("MaociAlg.dll")]
         private extern static void GetRegionPoints(EMREGIONTYPE type, int nIndex, IntPtr pX, IntPtr pY);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓò
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸ
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
+        /// <param name="type">ç±»å‹</param>
         /// <returns></returns>
         public static List<Point> GetRegion(EMREGIONTYPE type)
         {
@@ -429,10 +429,10 @@ namespace AlgorithmDll
         }
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// »ñÈ¡ÇøÓò¼¯
+        /// 2024.7.4 æç„•å½¬
+        /// è·å–åŒºåŸŸé›†
         /// </summary>
-        /// <param name="type">ÀàĞÍ</param>
+        /// <param name="type">ç±»å‹</param>
         /// <returns></returns>
         public static List<SRegion> GetRegions(EMREGIONTYPE type)
         {
@@ -472,76 +472,76 @@ namespace AlgorithmDll
         #endregion
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// PCËã·¨²âÊÔ
+        /// 2024.7.4 æç„•å½¬
+        /// PCç®—æ³•æµ‹è¯•
         /// </summary>
-        /// <param name="width">¿í¶È</param>
-        /// <param name="height">¸ß¶È</param>
-        /// <param name="nLine">ĞĞ¿í</param>
-        /// <param name="data">Í¼ÏñÊı¾İ</param>
-        /// <param name="detectParam">PCËã·¨</param>
-        /// <returns>¼ì²â½á¹û</returns>
-        #region Ã«´ÌËã·¨
+        /// <param name="width">å®½åº¦</param>
+        /// <param name="height">é«˜åº¦</param>
+        /// <param name="nLine">è¡Œå®½</param>
+        /// <param name="data">å›¾åƒæ•°æ®</param>
+        /// <param name="detectParam">PCç®—æ³•</param>
+        /// <returns>æ£€æµ‹ç»“æœ</returns>
+        #region æ¯›åˆºç®—æ³•
         [DllImport("MaociAlg.dll")]
         public extern static EMDETECTRESULT Test(int width, int height, int nLine, IntPtr data, SMaociAlgorParam detectParam);
 
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// FPGAËã·¨²âÊÔ
+        /// 2024.7.4 æç„•å½¬
+        /// FPGAç®—æ³•æµ‹è¯•
         /// </summary>
-        /// <param name="width">¿í¶È</param>
-        /// <param name="height">¸ß¶È</param>
-        /// <param name="nLine">ĞĞ¿í</param>
-        /// <param name="data">Í¼ÏñÊı¾İ</param>
-        /// <param name="sDetectParamFpga">FPGAËã·¨</param>
-        /// <returns>¼ì²â½á¹û</returns>
+        /// <param name="width">å®½åº¦</param>
+        /// <param name="height">é«˜åº¦</param>
+        /// <param name="nLine">è¡Œå®½</param>
+        /// <param name="data">å›¾åƒæ•°æ®</param>
+        /// <param name="sDetectParamFpga">FPGAç®—æ³•</param>
+        /// <returns>æ£€æµ‹ç»“æœ</returns>
         [DllImport("MaociAlg.dll")]
         public extern static EMDETECTRESULT TestFpga(int width, int height, int nLine, IntPtr data, SMaociAlgorParamFpga sDetectParamFpga);
 
         #endregion
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÁÏÇøÉÏ±ßÔµÂÖÀª
+        /// 2024.7.4 æç„•å½¬
+        /// æ–™åŒºä¸Šè¾¹ç¼˜è½®å»“
         /// </summary>
         public List<Point> DarkTopRegion { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÁÏÇøÏÂ±ßÔµÂÖÀª
+        /// 2024.7.4 æç„•å½¬
+        /// æ–™åŒºä¸‹è¾¹ç¼˜è½®å»“
         /// </summary>
         public List<Point> DarkBotRegion { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÂÁ²ãÉÏ±ßÔµÂÖÀª
+        /// 2024.7.4 æç„•å½¬
+        /// é“å±‚ä¸Šè¾¹ç¼˜è½®å»“
         /// </summary>
         public List<Point> LightTopRegion { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ÂÁ²ãÏÂ±ßÔµÂÖÀª
+        /// 2024.7.4 æç„•å½¬
+        /// é“å±‚ä¸‹è¾¹ç¼˜è½®å»“
         /// </summary>
         public List<Point> LightBotRegion { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// Ã«´ÌÇøÓò¼¯
+        /// 2024.7.4 æç„•å½¬
+        /// æ¯›åˆºåŒºåŸŸé›†
         /// </summary>
         public List<SRegion> MaociRegions { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// ºñ¶ÈNgÇøÓò¼¯
+        /// 2024.7.4 æç„•å½¬
+        /// åšåº¦NgåŒºåŸŸé›†
         /// </summary>
         public List<SRegion> ThickRegions { get; set; } = new();
         /// <summary>
-        /// 2024.7.4 Àî»À±ò
-        /// Ëã·¨Êä³ö
+        /// 2024.7.4 æç„•å½¬
+        /// ç®—æ³•è¾“å‡º
         /// </summary>
         public AlgorithmOut AlgorithmOut { get; set; } = new();
         /// <summary>
-        /// 2024.6.20 Àî»À±ò
-        /// ¼ì²âÍ¼Ïñ
+        /// 2024.6.20 æç„•å½¬
+        /// æ£€æµ‹å›¾åƒ
         /// </summary>
-        /// <param name="width">Í¼Ïñ¿í¶È</param>
-        /// <param name="height">Í¼Ïñ¸ß¶È</param>
-        /// <param name="stride">Ò»ĞĞ¿í¶È</param>
-        /// <param name="data">Í¼ÏñÖ¸Õë</param>
+        /// <param name="width">å›¾åƒå®½åº¦</param>
+        /// <param name="height">å›¾åƒé«˜åº¦</param>
+        /// <param name="stride">ä¸€è¡Œå®½åº¦</param>
+        /// <param name="data">å›¾åƒæŒ‡é’ˆ</param>
         public EMDETECTRESULT DetectImage(int width, int height, int stride, IntPtr data, SMaociAlgorParam detectParam)
         {
             EMDETECTRESULT result = MaociTest.Test(width, height, stride, data, detectParam);
@@ -559,13 +559,13 @@ namespace AlgorithmDll
         }
 
         /// <summary>
-        /// 2024.6.20 Àî»À±ò
-        /// ¼ì²âFpga
+        /// 2024.6.20 æç„•å½¬
+        /// æ£€æµ‹Fpga
         /// </summary>
-        /// <param name="width">Í¼Ïñ¿í¶È</param>
-        /// <param name="height">Í¼Ïñ¸ß¶È</param>
-        /// <param name="stride">Ò»ĞĞ¿í¶È</param>
-        /// <param name="data">Í¼ÏñÖ¸Õë</param>
+        /// <param name="width">å›¾åƒå®½åº¦</param>
+        /// <param name="height">å›¾åƒé«˜åº¦</param>
+        /// <param name="stride">ä¸€è¡Œå®½åº¦</param>
+        /// <param name="data">å›¾åƒæŒ‡é’ˆ</param>
         public EMDETECTRESULT DetectFpga(int width, int height, int stride, IntPtr data, SMaociAlgorParamFpga detectParamFpga)
         {
             EMDETECTRESULT result = MaociTest.TestFpga(width, height, stride, data, detectParamFpga);
