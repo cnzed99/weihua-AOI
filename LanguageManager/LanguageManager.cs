@@ -9,7 +9,7 @@ namespace LanguageManager
 {
     public class LanguageManager : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private ResourceManager resourceManager;
 

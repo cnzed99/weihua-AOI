@@ -19,7 +19,22 @@ namespace SDFilter
     /// </summary>
     public partial class DefectFilterSetVM : ObservableValidator
     {
-        public DefectFilterSetVM() { }
+        public List<EMFILTER> FilterCharacters { get; set; } 
+        
+        public DefectFilterSetVM() 
+        {
+            FilterCharacters = new List<EMFILTER>()
+            {
+                EMFILTER.EMFILTER_PEAKHEI,
+                EMFILTER.EMFILTER_AREA,
+                EMFILTER.EMFILTER_LONGLEN,
+                EMFILTER.EMFILTER_SHORTLEN,
+                EMFILTER.EMFILTER_PHI,
+                EMFILTER.EMFILTER_CONTLEN,
+                EMFILTER.EMFILTER_WIDTH,
+                EMFILTER.EMFILTER_HEIGHT
+            };
+        }
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 构造

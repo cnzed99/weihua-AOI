@@ -5,6 +5,7 @@
     xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:entityproxy="clr-namespace:WH.Entity;assembly=WH.Entity"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:SDFilter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -29,6 +30,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
             <conv:BoolToBrushConverter
                 x:Key="BoolToBrushConverterEx"
                 FalseValue="Red"
@@ -39,7 +41,8 @@
                 TrueValue="-" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
-            <local:ItemSourceCharacterConverter x:Key="ItemSourceCharacterConverter" />
+            <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
+            <entity:Enums2StringsConverter x:Key="Enums2StringsConverter"/>
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
@@ -192,17 +195,19 @@
                                             </Grid.ColumnDefinitions>
                                             <Grid.Resources>
                                                 <local:ValidationParams x:Key="BindingProxy" Data="{Binding}" />
+                                                <entityproxy:BindingProxy x:Key="Scroll" Data="{Binding ElementName = scroll}"/>
                                             </Grid.Resources>
                                             <ComboBox
                                                 Name="CmbCharacter"
                                                 Grid.Column="1"
                                                 Margin="10,3,10,3"
-                                                SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}">
-                                                <ComboBox.ItemsSource>
+                                                SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}"
+                                                ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=hc:Window},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">
+                                                <!--<ComboBox.ItemsSource>
                                                     <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
                                                         <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" />
                                                     </MultiBinding>
-                                                </ComboBox.ItemsSource>
+                                                </ComboBox.ItemsSource>-->
                                             </ComboBox>
                                             <TextBox
                                                 Grid.Column="2"
@@ -305,7 +310,7 @@
                 Content="{Binding [AddSelect], Source={x:Static local:Lang.s_Instance}}"
                 Style="{DynamicResource AddNewButton}" />
         </Border>
-        <ScrollViewer Grid.Row="2">
+        <ScrollViewer Grid.Row="2" x:Name="scroll">
             <ItemsControl AlternationCount="10000" ItemsSource="{Binding DefectFilter.FilterList}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

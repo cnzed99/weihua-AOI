@@ -23,10 +23,40 @@ namespace WH.Entity.Attribute
         {
             ZhName = zh; EnName = en;
         }
-
+        /// <summary>
+        /// 20240708 TCG
+        /// 将枚举集合转换为对应的中英文特性值集合
+        /// </summary>
+        /// <param name="enums"></param>
+        /// <returns></returns>
+        public static List<string> Enums2Strings(IList enums)
+        {
+            List<string> names = new List<string>();
+            foreach (var item in enums)
+            {
+                var attr = (EnumStringAttribute)item.GetType().GetField(item.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
+                if (attr != null)
+                {
+                    switch (CultureInfo.CurrentCulture.Name)
+                    {
+                        case "zh-CN":
+                            names.Add(attr.ZhName);
+                            break;
+                        default:
+                            names.Add(attr.EnName);
+                            break;
+                    }
+                }
+                else
+                {
+                    names.Add(item.ToString());
+                }
+            }
+            return names;
+        }
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 获取输入枚举类型对应特性名集合
+        /// 获取输入枚举类型对应的中英文特性值集合
         /// </summary>
         /// <param name="value">输入枚举类型</param>
         /// <returns>枚举特性名集合</returns>
@@ -58,7 +88,7 @@ namespace WH.Entity.Attribute
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 获取枚举值对应枚举特性名
+        /// 获取枚举值对应的中英文枚举特性值
         /// </summary>
         /// <param name="value">输入枚举值</param>
         /// <returns>枚举名</returns>
