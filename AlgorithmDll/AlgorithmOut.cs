@@ -12,13 +12,13 @@ namespace AlgorithmDll
     /// 2024.7.4 李焕彬
     /// 算法输出管理类
     /// </summary>
-    public partial class AlgorithmOut : ObservableObject
+    public partial class CAlgorithmOut : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 静态实例
         /// </summary>
-        public static AlgorithmOut s_Instance = new AlgorithmOut();
+        public static CAlgorithmOut s_Instance = new CAlgorithmOut();
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -44,7 +44,7 @@ namespace AlgorithmDll
         /// </summary>
         public const string c_DeThick = "掉料";
 
-        public AlgorithmOut()
+        public CAlgorithmOut()
         {
             SpeciesOut species1 = new SpeciesOut(c_SpMaoci);
             species1.Recipes.Add(new RecipeOut(c_DeMaoci));

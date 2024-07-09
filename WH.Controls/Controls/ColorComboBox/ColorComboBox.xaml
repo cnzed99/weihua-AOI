@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<hc:ComboBox
     x:Class="WH.Controls.ColorComboBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,21 +6,21 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-    <ComboBox Name="CmbColor" SelectionChanged="CmbColor_SelectionChanged">
-        <ComboBox.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle
-                        Width="20"
-                        Fill="{Binding Brush}"
-                        Stroke="Black" />
-                    <TextBlock
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Left"
-                        Text="{Binding Name}" />
-                </StackPanel>
-            </DataTemplate>
-        </ComboBox.ItemTemplate>
-    </ComboBox>
-</UserControl>
+    mc:Ignorable="d"
+    SelectionChanged="CmbColor_SelectionChanged"
+    Name="CmbColor">
+    <ComboBox.ItemTemplate>
+        <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+                <Rectangle
+                Width="20"
+                Fill="{Binding Brush}"
+                Stroke="Black" />
+                <TextBlock
+                Margin="5,0,0,0"
+                HorizontalAlignment="Left"
+                Text="{Binding Name}" />
+            </StackPanel>
+        </DataTemplate>
+    </ComboBox.ItemTemplate>
+</hc:ComboBox>

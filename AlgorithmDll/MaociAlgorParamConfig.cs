@@ -1,5 +1,4 @@
-﻿using AlgorithmDll.Properties;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using WH.Entity.CommonLib;
 using Newtonsoft.Json;
 using WH.Entity.LogRecord;
+using WH.Entity.Attribute;
 
 namespace AlgorithmDll
 {
@@ -14,20 +14,22 @@ namespace AlgorithmDll
     /// 2024.7.4 李焕彬
     /// 算法参数配置管理类
     /// </summary>
-    public partial class MaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CMaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 操作日志
         /// </summary>
-        [JsonIgnore]
+        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
-        public MaociAlgorParamConfig() 
+        public CMaociAlgorParamConfig() 
         {
             this.token = new Token("",this.GetType().Namespace);
             PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
             FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName) };
+            UpdataMaociAlgorParamUse();
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
@@ -38,9 +40,10 @@ namespace AlgorithmDll
         /// <param name="message">消息</param>
         public void Receive(OperateMessage message)
         {
-            if (message.obj.GetType() == typeof(MaociAlgorParamConfig))
+            if (message.obj.GetType() == typeof(CMaociAlgorParamConfig))
             {
                 OperateLog.Info($"算法参数-{message.message}");
+                UpdataMaociAlgorParamUse();
                 return;
             }
             foreach (var qua in PcParams)
@@ -50,6 +53,7 @@ namespace AlgorithmDll
                     if (qua == message.obj)
                     {
                         OperateLog.Info($"PC参数-{qua.Name}-{message.message}");
+                        UpdataMaociAlgorParamUse();
                         return;
                     }
                     continue;
@@ -62,6 +66,7 @@ namespace AlgorithmDll
                     if (qua == message.obj)
                     {
                         OperateLog.Info($"FPGA参数-{qua.Name}-{message.message}");
+                        UpdataMaociAlgorParamUse();
                         return;
                     }
                     continue;
@@ -106,6 +111,24 @@ namespace AlgorithmDll
         [property: DisplayName("当前预处理参数组")]
         [ObservableProperty]
         private string fpgaSelect = c_ParamName;
+
+        /// <summary>
+        /// 2024.7.5 李焕彬
+        /// 正在使用的PC参数结构体
+        /// </summary>
+        public SMaociAlgorParam MaociAlgorParamUse { get; set; }
+
+        /// <summary>
+        /// 2024.7.5 李焕彬
+        /// 正在使用的FPGA参数结构体
+        /// </summary>
+        public SMaociAlgorParamFpga MaociAlgorParamFpgaUse { get; set; }
+
+        private void UpdataMaociAlgorParamUse()
+        {
+            MaociAlgorParamUse = new(PcParams.FirstOrDefault(o => o.Name == PcSelect));
+            MaociAlgorParamFpgaUse = new(FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect));
+        }
     }
 
     /// <summary>

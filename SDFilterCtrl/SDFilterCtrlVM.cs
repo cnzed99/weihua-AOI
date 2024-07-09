@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WH.Entity.CommonLib;
+using WH.Controls.SingleInstance;
 
 namespace SDFilter
 {
@@ -17,15 +17,15 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 检测设置窗口VM
     /// </summary>
-    public partial class SDFilterCtrlVM : ObservableObject
+    public partial class CSDFilterCtrlVM : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 过滤分选配置
         /// </summary>
         [ObservableProperty]
-        private FilterConfig filterConfig;
-        public QualityConfig QualityConfig;
+        private CFilterConfig filterConfig;
+        public CQualityConfig QualityConfig;
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 增加过滤器
@@ -47,7 +47,7 @@ namespace SDFilter
                 }
             }
             recipeDefect.DefectFilters.Add(new DefectFilter(recipeDefect.Name + index));
-            WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
+            WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
                 recipeDefect.DefectFilters.Remove(defectFilter);
-                WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
+                WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
             }
         }
 
@@ -81,8 +81,51 @@ namespace SDFilter
             {
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 SpeciesFilter speciesFilter = (SpeciesFilter)objArr[1];
-                DefectFilterSetWin defectFilterSetWin = new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig);
-                defectFilterSetWin.ShowDialog();
+                DefectFilterSetWin defectFilterSetWin = 
+                    SingleInstance.Add(new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig), defectFilter.Name);
+                defectFilterSetWin.Title = defectFilter.Name;
+                defectFilterSetWin.Show();
+                defectFilterSetWin.Activate();
+               
+                //每次关闭打开刷新ResultList
+                List<EMFILTER> lsParam = new List<EMFILTER>();
+                foreach (var filter in defectFilter.FilterList)
+                {
+                    foreach (var select in filter.Filter)
+                    {
+                        foreach (var selParam in select.SelectParams)
+                        {
+                            if (!lsParam.Contains(selParam.Character))
+                            {
+                                lsParam.Add(selParam.Character);
+                            }
+                        }
+                    }
+                    foreach (var select in filter.SelectList)
+                    {
+                        foreach (var selParam in select.SelectParams)
+                        {
+                            if (!lsParam.Contains(selParam.Character))
+                            {
+                                lsParam.Add(selParam.Character);
+                            }
+                        }
+                    }
+                }
+                foreach (var pa in lsParam)
+                {
+                    if (defectFilter.ResultList.FirstOrDefault(o => o.Feature == pa) == null)
+                    {
+                        defectFilter.ResultList.Add(new FilterResult(pa));
+                    }
+                }
+                for (int i = defectFilter.ResultList.Count - 1; i >= 0; i--)
+                {
+                    if (!lsParam.Contains(defectFilter.ResultList[i].Feature))
+                    {
+                        defectFilter.ResultList.RemoveAt(i);
+                    }
+                }
             }
         }
     }

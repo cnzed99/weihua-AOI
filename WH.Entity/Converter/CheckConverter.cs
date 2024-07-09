@@ -9,6 +9,7 @@ using System.Windows.Data;
 namespace WH.Entity.Converter
 {
     /// <summary>
+    /// 20240708 TCG
     /// radiobutton 转换器，check为true时，返回Parameter
     /// </summary>
     public class CheckConverter : IValueConverter

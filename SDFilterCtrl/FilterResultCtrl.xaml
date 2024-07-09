@@ -2,17 +2,17 @@
     x:Class="SDFilter.FilterResultCtrl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:SDFilter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
     d:DesignHeight="450"
     d:DesignWidth="550"
     mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <local:SDFilterCtrlVM />
+        <local:CSDFilterCtrlVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,8 +23,14 @@
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
-            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ThirdlyRegionBrush}" FalseValue="Red"/>
-            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterText" TrueValue="{DynamicResource InfoBrush}" FalseValue="Red"/>
+            <conv:BoolToBrushConverter
+                x:Key="BoolToBrushConverterEx"
+                FalseValue="Red"
+                TrueValue="{DynamicResource ThirdlyRegionBrush}" />
+            <conv:BoolToBrushConverter
+                x:Key="BoolToBrushConverterText"
+                FalseValue="Red"
+                TrueValue="{DynamicResource InfoBrush}" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -75,7 +81,7 @@
                                                                 <TextBlock Grid.Column="0" Text="{Binding Name}" />
                                                                 <TextBlock
                                                                     Grid.Column="2"
-                                                                    Text="{Binding ResultList[0].Value}"
+                                                                    Text="{Binding ResultList[0].Value, StringFormat={}{0:F2}}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="3"
@@ -83,7 +89,7 @@
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="4"
-                                                                    Text="{Binding ResultList[1].Value}"
+                                                                    Text="{Binding ResultList[1].Value, StringFormat={}{0:F2}}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="5"
@@ -109,28 +115,27 @@
                                                                                 <ColumnDefinition Width="2*" />
                                                                                 <ColumnDefinition Width="1*" />
                                                                             </Grid.ColumnDefinitions>
-                                                                            <Label
+                                                                            <TextBlock
                                                                                 Grid.Column="0"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
-                                                                            <Label
+                                                                                Foreground="White"
+                                                                                Text="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
+                                                                            <TextBlock
                                                                                 Grid.Column="1"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Value}"
-                                                                                Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=Foreground}" />
-                                                                            <Label
+                                                                                Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=Foreground}"
+                                                                                Text="{Binding Value, StringFormat={}{0:F2}}" />
+                                                                            <TextBlock
                                                                                 Grid.Column="2"
-                                                                                Margin="0,0"
-                                                                                HorizontalContentAlignment="Center"
+                                                                                Margin="0,3"
+                                                                                HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                BorderThickness="0"
-                                                                                Content="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
+                                                                                Foreground="White"
+                                                                                Text="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
                                                                         </Grid>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>

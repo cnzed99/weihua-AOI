@@ -19,7 +19,7 @@ namespace ProjProduceData
     /// 缺陷统计数据
     /// 20240706 TCG 启用保存，除了NG TOTAL PERCENT 质量等级和缺陷统计不保存，在反序列化时从DefectFilter/Quality中获取引用
     /// </summary>
-    public partial class DefectsProduce : ObservableObject
+    public partial class CDefectsProduce : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -123,7 +123,7 @@ namespace ProjProduceData
                 cell.Detection.DefectFilter.Number += 1;
                 foreach (var defect in DefectNumbersList)
                 {
-                    defect.Percent = defect.Number / Ng;
+                    defect.Percent = (double)defect.Number / Ng;
                 }
             }
             else
@@ -134,7 +134,7 @@ namespace ProjProduceData
             Total += 1;
             foreach (var defect in DefectNumbersList)
             {
-                defect.PercentofAll = defect.Number / Total;
+                defect.PercentofAll = (double)defect.Number / Total;
             }
 
             //QualityNumbersList.FirstOrDefault(o=>o.Name == cell.Quality.Name).Number += 1;//检索过多 界面卡顿
@@ -232,6 +232,7 @@ namespace ProjProduceData
         {
             this.Name = qua.Name;
             this.ShowColor = qua.ShowColor;
+            this.QualityLevel = qua.Priority;
         }
 
         /// <summary>
@@ -240,6 +241,13 @@ namespace ProjProduceData
         /// </summary>
         [ObservableProperty]
         private int number;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 数值
+        /// </summary>
+        [ObservableProperty]
+        private int qualityLevel;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -253,6 +261,6 @@ namespace ProjProduceData
         /// 显示颜色
         /// </summary>
         [ObservableProperty]
-        private KnownColor showColor;
+        private CKnownColor showColor;
     }
 }

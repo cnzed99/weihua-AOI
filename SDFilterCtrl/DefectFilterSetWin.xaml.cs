@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WH.Entity;
 using WH.Entity.Attribute;
 
 namespace SDFilter
@@ -32,7 +33,7 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">所属类别</param>
-        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig)
+        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,CQualityConfig qualityConfig)
         {
             InitializeComponent();
             VM = new(defectFilter, speciesFilter, qualityConfig);
@@ -43,7 +44,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// VM
         /// </summary>
-        public DefectFilterSetVM VM { get; set; }
+        public CDefectFilterSetVM VM { get; set; }
     }
 
     /// <summary>
@@ -69,23 +70,23 @@ namespace SDFilter
                 switch (feature)
                 {
                     case EMFILTER.EMFILTER_AREA:
-                        return "mm²";
+                        return "um²";
                     case EMFILTER.EMFILTER_NUM:
                         return "PCS";
                     case EMFILTER.EMFILTER_LONGLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_SHORTLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_PHI:
-                        return "rad";
+                        return "°";
                     case EMFILTER.EMFILTER_CONTLEN:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_WIDTH:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_HEIGHT:
-                        return "mm";
+                        return "um";
                     case EMFILTER.EMFILTER_PEAKHEI:
-                        return "mm";
+                        return "um";
                     default:
                         return "";
                 }
@@ -165,66 +166,66 @@ namespace SDFilter
         /// <returns></returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            BindingProxy bindingProxy = ValidationParams.Data as BindingProxy;
-            OneSelectParams viewModel = bindingProxy.Data as OneSelectParams;
-            if (int.TryParse(value.ToString(), out int result)/* && int.TryParse(textbox.Text, out int result2)*/)
+            //CBindingProxy bindingProxy = ValidationParams.Data as CBindingProxy;
+            OneSelectParams viewModel = ValidationParams.Data as OneSelectParams;
+            if (double.TryParse(value.ToString(), out double result)/* && int.TryParse(textbox.Text, out int result2)*/)
             {
                 if (IsGreater)
                 {
-                    if (bindingProxy.IsMinError)
+                    if (ValidationParams.IsMinError)
                     {
-                        if (result < bindingProxy.Min)
+                        if (result < ValidationParams.Min)
                         {
-                            bindingProxy.Max = result;
-                            bindingProxy.IsMaxError = true;
+                            ValidationParams.Max = result;
+                            ValidationParams.IsMaxError = true;
                             return new ValidationResult(false, "不能小于最小值！");
                         }
                         else
                         {
-                            bindingProxy.IsMinError = false;
-                            bindingProxy.IsMaxError = false;
+                            ValidationParams.IsMinError = false;
+                            ValidationParams.IsMaxError = false;
                             viewModel.Max = result;
-                            viewModel.Min = bindingProxy.Min;
+                            viewModel.Min = ValidationParams.Min;
                         }
                     }
                     else
                     {
                         if (result < viewModel.Min)
                         {
-                            bindingProxy.Max = result;
-                            bindingProxy.IsMaxError = true;
+                            ValidationParams.Max = result;
+                            ValidationParams.IsMaxError = true;
                             return new ValidationResult(false, "不能小于最小值！");
                         }
-                        bindingProxy.IsMaxError = false;
+                        ValidationParams.IsMaxError = false;
                     }
                 }
                 else
                 {
-                    if (bindingProxy.IsMaxError)
+                    if (ValidationParams.IsMaxError)
                     {
-                        if (result > bindingProxy.Max)
+                        if (result > ValidationParams.Max)
                         {
-                            bindingProxy.Min = result;
-                            bindingProxy.IsMinError = true;
+                            ValidationParams.Min = result;
+                            ValidationParams.IsMinError = true;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
                         else
                         {
-                            bindingProxy.IsMinError = false;
-                            bindingProxy.IsMaxError = false;
+                            ValidationParams.IsMinError = false;
+                            ValidationParams.IsMaxError = false;
                             viewModel.Min = result;
-                            viewModel.Max = bindingProxy.Max;
+                            viewModel.Max = ValidationParams.Max;
                         }
                     }
                     else
                     {
                         if (result > viewModel.Max)
                         {
-                            bindingProxy.Min = result;
-                            bindingProxy.IsMinError = true;
+                            ValidationParams.Min = result;
+                            ValidationParams.IsMinError = true;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
-                        bindingProxy.IsMinError = false;
+                        ValidationParams.IsMinError = false;
                     }
                 }
             }
@@ -238,55 +239,8 @@ namespace SDFilter
     /// 2024.7.4 李焕彬
     /// 验证参数
     /// </summary>
-    public class ValidationParams : DependencyObject
+    public class ValidationParams : CBindingProxy
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 验证参数
-        /// </summary>
-        public object Data
-        {
-            get { return (object)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 验证参数依赖属性
-        /// </summary>
-        public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object), typeof(ValidationParams), new PropertyMetadata(null));
-    }
-
-    /// <summary>
-    /// 2024.7.4 李焕彬
-    /// BindingProxy
-    /// </summary>
-    public class BindingProxy : Freezable
-    {
-        protected override Freezable CreateInstanceCore()
-        {
-            return new BindingProxy();
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 存储数据
-        /// </summary>
-        public object Data
-        {
-            get { return (object)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 存储数据依赖属性
-        /// </summary>
-        // Using a DependencyProperty as the backing store for Data.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new PropertyMetadata(null));
-
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 最小值错误
@@ -297,7 +251,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 最小值
         /// </summary>
-        public int Min = 0;
+        public double Min = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -309,58 +263,11 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 最大值
         /// </summary>
-        public int Max = 0;
-    }
+        public double Max = 0;
 
-    /// <summary>
-    ///  2024.7.4 李焕彬
-    /// 质量等级转换器
-    /// </summary>
-    public class QualitySelectConverter : IMultiValueConverter
-    {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级转换器
-        /// </summary>
-        /// <param name="values">质量等级值、质量集</param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>质量</returns>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        protected override Freezable CreateInstanceCore()
         {
-            if (values[0] != null && values[1] != null)
-            {
-                int Level = (int)values[0];
-                ObservableCollection<Quality> qualities = values[1] as ObservableCollection<Quality>;
-                return qualities.FirstOrDefault(o => o.Priority == Level);
-            }
-            return Binding.DoNothing;
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级转换器
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetTypes"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>质量等级值</returns>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            List<object> list = new List<object>();
-            if (value != null)
-            {
-                Quality quality = value as Quality;
-                list.Add(quality.Priority);
-            }
-            else
-            {
-                list.Add(Binding.DoNothing);
-            }
-            list.Add(Binding.DoNothing);
-            return list.ToArray();
+            return new ValidationParams();
         }
     }
 }

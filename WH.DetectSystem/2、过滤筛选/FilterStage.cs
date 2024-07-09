@@ -20,9 +20,9 @@ namespace WH.DetectSystem
         /// </summary>
         /// <param name="filter">过滤参数</param>
         /// <param name="cell">检测对象</param>
-        public static void FilterExute(this FilterConfig filter,Cell cell)
+        public static void FilterExute(this CFilterConfig filter,Cell cell)
         {
-            
+            filter.Excute(cell);
         }
     }
 }

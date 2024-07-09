@@ -103,7 +103,7 @@ namespace 断面毛刺检测软件
                 {
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        //mainVM.DefectsDataVM.DefectsProduce.CellResultExcute(cell);
+                        //mainVM.CDefectsDataVM.CDefectsProduce.CellResultExcute(cell);
                     }));
                     
                 });
@@ -117,7 +117,7 @@ namespace 断面毛刺检测软件
 
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
                     Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
-                    LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+                    LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<double>)progress).Report(100);
                 WelComePage welComePage = new WelComePage(CMainList.SystemSettings.RecentProjs.ToList(), "断面毛刺检测软件");
@@ -126,7 +126,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
                 //throw;
             }
             finally
@@ -400,7 +400,7 @@ namespace 断面毛刺检测软件
             OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
-            LanguageManager.LanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+            LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
 
         #endregion

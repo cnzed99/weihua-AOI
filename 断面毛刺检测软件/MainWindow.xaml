@@ -213,7 +213,7 @@
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -224,7 +224,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" />
+                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15"/>
                 </Border>
 
                 <!--  启停按钮  -->
@@ -289,7 +289,7 @@
                         <Button.ToolTip>
                             <StackPanel>
                                 <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}" />
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}" />
+                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}" />
                             </StackPanel>
                         </Button.ToolTip>
                     </Button>
@@ -445,7 +445,7 @@
                     x:Name="lb_UserName"
                     DockPanel.Dock="Right"
                     Foreground="{StaticResource InfoBrush}"
-                    Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel}" />
+                    Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}" />
                 <hc:Divider Width="5" DockPanel.Dock="Right" />
                 <TextBlock
                     x:Name="lb_UserPrivalige"

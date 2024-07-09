@@ -10,7 +10,7 @@ namespace WH.Entity.Converter
 {
     /// <summary>
     /// 2024.7.2 李焕彬
-    /// Command多参数时转换器
+    /// Command Multibinding多参数时转换器 将参数集合传递出去
     /// </summary>
     public class CommMultiParamConverter : IMultiValueConverter
     {

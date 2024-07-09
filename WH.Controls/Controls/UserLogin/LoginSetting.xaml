@@ -31,8 +31,9 @@
             </ResourceDictionary.MergedDictionaries>
             <Style BasedOn="{StaticResource lbText}" TargetType="TextBlock" />
             <Style BasedOn="{StaticResource PageButton}" TargetType="Button" />
-            <entity:EnumStringConverter x:Key="EnumStringConverter"/>
+            <entity:Enums2StringsConverter x:Key="Enums2StringsConverter"/>
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter"/>
+            <entity:EnumProviderConverter x:Key="EnumProviderConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -149,7 +150,7 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 FontSize="14"
-                ItemsSource="{Binding PrivileageList,Converter={StaticResource EnumStringConverter}}"
+                ItemsSource="{Binding LoginPerson.PrivileageLevel,Converter={StaticResource EnumProviderConverter}}"
                 SelectedItem="{Binding LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}"
                 Style="{StaticResource comboxStyle}" />
             <Button
@@ -235,7 +236,7 @@
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 FontSize="14"
-                ItemsSource="{Binding PrivileageList,Converter={StaticResource EnumStringConverter}}"
+                ItemsSource="{Binding PrivileageList,Converter={StaticResource Enums2StringsConverter}}"
                 SelectedItem="{Binding AddPrivlege,Converter={StaticResource StringAttrEnumConverter}}"
                 Style="{StaticResource comboxStyle}" />
             <TextBlock

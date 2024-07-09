@@ -283,28 +283,28 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private MaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new MaociAlgorParamCtrlVm();
+        private CMaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new CMaociAlgorParamCtrlVm();
 
         /// <summary>
         /// 检测设置控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private SDFilterCtrlVM sDFilterCtrlVM = new SDFilterCtrlVM();
+        private CSDFilterCtrlVM sDFilterCtrlVM = new CSDFilterCtrlVM();
 
         /// <summary>
         /// 质量等级控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private QualityCtrlVM qualityCtrlVM = new QualityCtrlVM();
+        private CQualityCtrlVM qualityCtrlVM = new CQualityCtrlVM();
 
         /// <summary>
         /// 缺陷数据VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private DefectsDataVM defectsDataVM = new DefectsDataVM();
+        private CDefectsDataVM defectsDataVM = new CDefectsDataVM();
 
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
@@ -374,8 +374,8 @@ namespace WH.DetectSystem.ViewModels
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 DateTime triggerStartData = DateTime.Now;
                 IEnumerator<string> imgitor = new List<string>() { "D://铝极.png", "D://原图-1.bmp", "D://原图-2.bmp", "D://原图-3.bmp", "D://设备-1.PNG", "D://设备-2.PNG", "D://设备-3.PNG" }.GetEnumerator();
-                BrushPro color = new BrushPro();
-                IEnumerator<KnownColor> brushes = color.KnownColors.GetEnumerator();
+                CBrushPro color = new CBrushPro();
+                IEnumerator<CKnownColor> brushes = color.KnownColors.GetEnumerator();
                 Random random = new Random(50);
                 while (true)
                 {
@@ -394,7 +394,6 @@ namespace WH.DetectSystem.ViewModels
                         brushes.MoveNext();
                     }
                     MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(imgitor.Current));
-
 
                     Cell cell = new Cell()
                     {
@@ -586,7 +585,7 @@ namespace WH.DetectSystem.ViewModels
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   开始执行配方");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        MaociAlgorParamConfig.PcParams[0].MaociExcute(cell);
+                        MaociAlgorParamConfig.MaociExcute(cell);
                         //SystemStatic.RecipeList[cell.ProjGuid].RecipeExcute(cell);
 
                         //if (cell._skipthis)
@@ -645,7 +644,7 @@ namespace WH.DetectSystem.ViewModels
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         //await Task.Delay(30);
                         MaociFilter.FilterExute(cell);
-                        //SystemStatic.SysConfigList[cell.ProjGuid].Config.FilterConfig.FilterExcute(cell);
+                        //SystemStatic.SysConfigList[cell.ProjGuid].Config.CFilterConfig.FilterExcute(cell);
                         //ColorGradeGroupConfig colorConfig = null;
                         //if (SystemStatic.SysConfigList[cell.ProjGuid].Config.ColorConfig.SelectedParam != null)
                         //{
@@ -674,7 +673,7 @@ namespace WH.DetectSystem.ViewModels
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   检测结束,耗时:");
                         strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
-                        FilterTime = cell.ProcessTime.TotalMilliseconds;
+                        FilterTime = cell.FilterTime.TotalMilliseconds;
                         await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         //cell.Stopwatch.Stop();
                         //if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning)//如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
@@ -1108,7 +1107,6 @@ namespace WH.DetectSystem.ViewModels
 
         }
         #endregion
-
     }
 
 }

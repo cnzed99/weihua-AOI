@@ -11,7 +11,7 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// 算法参数VM
     /// </summary>
-    public partial class MaociAlgorParamCtrlVm : ObservableObject
+    public partial class CMaociAlgorParamCtrlVm : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -31,7 +31,7 @@ namespace AlgorithmDll
         /// 算法参数配置
         /// </summary>
         [ObservableProperty]
-        private MaociAlgorParamConfig config = new MaociAlgorParamConfig();
+        private CMaociAlgorParamConfig config = new CMaociAlgorParamConfig();
 
         /// <summary>
         /// 2024.7.4 李焕彬

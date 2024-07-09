@@ -1,6 +1,11 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	<LangVersion>10</LangVersion>
+	<TargetFramework>net8.0-windows</TargetFramework>
+	<Nullable>disable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac" Version="7.1.0" />

@@ -21,13 +21,13 @@ namespace QualityGrade
     /// 2024.6.28 李焕彬
     /// 质量等级配置类
     /// </summary>
-    public partial class QualityConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CQualityConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         [IgnoreModifyLog]
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
-        public QualityConfig()
+        public CQualityConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
             Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
@@ -41,7 +41,7 @@ namespace QualityGrade
        
         public void Receive(OperateMessage message)
         {
-            if (message.obj.GetType() == typeof(QualityConfig))
+            if (message.obj.GetType() == typeof(CQualityConfig))
             {
                 OperateLog.Info($"质量等级-{message.message}");
                 return;
@@ -75,7 +75,7 @@ namespace QualityGrade
         public Quality(string name):this()
         {
             this.Name = name;
-            ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
+            ShowColor = CBrushPro.s_Instance.KnownColors[new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)];
         }
         /// <summary>
         /// 等级名 A\B\C\D
@@ -89,7 +89,7 @@ namespace QualityGrade
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("颜色")]
-        private KnownColor showColor = null;
+        private CKnownColor showColor = null;
         
         /// <summary>
         /// 说明

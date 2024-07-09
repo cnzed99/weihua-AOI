@@ -17,14 +17,14 @@ namespace ProjProduceData
     /// 2024.7.4 李焕彬
     /// 产量统计、缺陷统计控件ViewModel
     /// </summary>
-    public partial class DefectsDataVM : ObservableObject
+    public partial class CDefectsDataVM : ObservableObject
     {
-        public DefectsDataVM() 
+        public CDefectsDataVM() 
         {
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<string>, string>(this, "DefectName");
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<Quality>>(this);
-            //WeakReferenceMessenger.Default.Register<FilterConfig>(this);
-            //WeakReferenceMessenger.Default.Register<QualityConfig>(this);
+            //WeakReferenceMessenger.Default.Register<CFilterConfig>(this);
+            //WeakReferenceMessenger.Default.Register<CQualityConfig>(this);
         }
 
         /// <summary>
@@ -34,11 +34,30 @@ namespace ProjProduceData
         /// <param name="defectsProduce"></param>
         /// <param name="filterConfig"></param>
         /// <param name="qualityConfig"></param>
-        public void SetDefectsProduce(DefectsProduce defectsProduce, FilterConfig filterConfig, QualityConfig qualityConfig) 
+        public void SetDefectsProduce(CDefectsProduce defectsProduce, CFilterConfig filterConfig, CQualityConfig qualityConfig) 
         {
             this.DefectsProduce = defectsProduce;
             Receive(filterConfig);
-            Receive(qualityConfig);
+            filterConfig.SpeciesFilters.CollectionChanged += (s, e) =>
+            {
+                Receive(filterConfig);
+            };
+            foreach (var sp in filterConfig.SpeciesFilters)
+            {
+                sp.RecipeDefects.CollectionChanged += (s, e) =>
+                {
+                    Receive(filterConfig);
+                };
+                foreach (var rd in sp.RecipeDefects)
+                {
+                    rd.DefectFilters.CollectionChanged += (s, e) =>
+                    {
+                        Receive(filterConfig);
+                    };
+                }
+            }
+
+            this.DefectsProduce.QualityNumbersList = qualityConfig.Qualities;
         }
 
         /// <summary>
@@ -46,7 +65,7 @@ namespace ProjProduceData
         /// 缺陷统计配置
         /// </summary>
         [ObservableProperty]
-        private DefectsProduce defectsProduce;
+        private CDefectsProduce defectsProduce;
 
         ///// <summary>
         ///// 2024.7.4 李焕彬
@@ -55,7 +74,7 @@ namespace ProjProduceData
         ///// <param name="message">缺陷名字修改消息</param>
         //public void Receive(PropertyChangedMessage<string> message)
         //{
-        //    var de = DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
+        //    var de = CDefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
         //    if (de != null)
         //    {
         //        de.Name = message.NewValue;
@@ -69,7 +88,7 @@ namespace ProjProduceData
         ///// <param name="message">质量等级修改消息</param>
         //public void Receive(PropertyChangedMessage<Quality> message)
         //{
-        //    var qua = DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
+        //    var qua = CDefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
         //    if (qua != null)
         //    {
         //        qua.Name = message.NewValue.Name;
@@ -82,59 +101,30 @@ namespace ProjProduceData
         /// 检测设置配置修改消息处理
         /// </summary>
         /// <param name="filter">检测设置配置</param>
-        public void Receive(FilterConfig filter)
+        public void Receive(CFilterConfig filter)
         {
-            //List<string> strings = new List<string>();
-            //DefectsProduce.DefectNumbersList.Clear();
+            List<string> strings = new List<string>();
             foreach (var sp in filter.SpeciesFilters)
             {
                 foreach (var rp in sp.RecipeDefects)
                 {
                     foreach (var de in rp.DefectFilters)
                     {
-                        //if (DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == de.Name) == null)
-                        //{
-                        //    DefectsProduce.DefectNumbersList.Add(new(de.Name));
-                        //}
-                        //strings.Add(de.Name);
-                        DefectsProduce.DefectNumbersList.Add(de);
+                        if (!DefectsProduce.DefectNumbersList.Contains(de))
+                        {
+                            DefectsProduce.DefectNumbersList.Add(de);
+                        }
+                        strings.Add(de.Name);
                     }
                 }
             }
-            //for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
-            //{
-            //    if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
-            //    {
-            //        DefectsProduce.DefectNumbersList.RemoveAt(i);
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 质量等级配置修改消息处理
-        /// </summary>
-        /// <param name="message">质量等级配置</param>
-        public void Receive(QualityConfig message)
-        {
-            //List<string> strings = new List<string>();
-            //DefectsProduce.QualityNumbersList.Clear();
-            foreach (var qua in message.Qualities)
+            for (int i = DefectsProduce.DefectNumbersList.Count - 1; i >= 0; i--)
             {
-                //if (DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == qua.Name) == null)
-                //{
-                //    DefectsProduce.QualityNumbersList.Add(new QualityNumber(qua));
-                //}
-                //strings.Add(qua.Name);
-                DefectsProduce.QualityNumbersList.Add(qua);
+                if (!strings.Contains(DefectsProduce.DefectNumbersList[i].Name))
+                {
+                    DefectsProduce.DefectNumbersList.RemoveAt(i);
+                }
             }
-            //for (int i = DefectsProduce.QualityNumbersList.Count - 1; i >= 0; i--)
-            //{
-            //    if (!strings.Contains(DefectsProduce.QualityNumbersList[i].Name))
-            //    {
-            //        DefectsProduce.QualityNumbersList.RemoveAt(i);
-            //    }
-            //}
         }
     }
 }

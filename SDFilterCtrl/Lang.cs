@@ -10,8 +10,8 @@ namespace SDFilter
     /// 2024.7.4 李焕彬
     /// 语言
     /// </summary>
-    public class Lang
+    public class CLang
     {
-        public static LanguageManager.LanguageManager s_Instance = new LanguageManager.LanguageManager("SDFilter.Properties.Resource1", typeof(Lang).Assembly);
+        public static LanguageManager.CLanguageManager s_Instance = new LanguageManager.CLanguageManager("SDFilter.Properties.Resource1", typeof(CLang).Assembly);
     }
 }

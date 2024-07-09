@@ -1,110 +1,118 @@
-﻿<hc:Window x:Class="SDFilter.DefectFilterSetWin"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SDFilter"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
-        xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
-        xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
-        mc:Ignorable="d"
-        Title="参数设置"
-        Width="810"
-        Height="610"
-        WindowStartupLocation="CenterScreen"
-        Background="#FF1C1C26"
-        ResizeMode="NoResize"
-        Foreground="White"
-        FontSize="12"
-        FontFamily="宋体">
-    <d:Window.DataContext>
-        <local:DefectFilterSetVM/>
-    </d:Window.DataContext>
+﻿<hc:Window
+    x:Class="SDFilter.DefectFilterSetWin"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:entityproxy="clr-namespace:WH.Entity;assembly=WH.Entity"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:SDFilter"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    Title=""
+    Width="810"
+    Height="610"
+    d:DataContext="{d:DesignInstance local:CDefectFilterSetVM}"
+    Background="{StaticResource SecondaryRegionBrush}"
+    Icon="/SDFilter;component/Resources/检测设置.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="#FF324B64" FalseValue="Red"/>
-            <conv:BoolToStringConverter x:Key="BoolToStringConverter" TrueValue="-" FalseValue="+"/>
+            <entityproxy:CBindingProxy x:Key="scroll" Data="{Binding ElementName=scroll, Path=DataContext.FilterCharacters}" />
+            <conv:BoolToBrushConverter
+                x:Key="BoolToBrushConverterEx"
+                FalseValue="Red"
+                TrueValue="#FF324B64" />
+            <conv:BoolToStringConverter
+                x:Key="BoolToStringConverter"
+                FalseValue="+"
+                TrueValue="-" />
+            <entity:CommMultiParamConverter x:Key="CommMultiParamConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
-            <local:ItemSourceCharacterConverter x:Key="ItemSourceCharacterConverter" />
-            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter"/>
+            <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
+            <entity:Enums2StringsConverter x:Key="Enums2StringsConverter" />
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style TargetType="TextBox" BasedOn="{StaticResource TextBox.Small}">
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Margin" Value="5" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="20" />
-                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            <Style BasedOn="{StaticResource TextBoxExtend.Small}" TargetType="TextBox">
+                <Setter Property="Margin" Value="6,0" />
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
                 <Setter Property="Padding" Value="3" />
             </Style>
-            <Style TargetType="ComboBox">
-                <Setter Property="Margin" Value="5" />
+            <Style BasedOn="{StaticResource ComboBoxExtend.Small}" TargetType="ComboBox">
+                <Setter Property="Margin" Value="6,0" />
                 <Setter Property="IsEditable" Value="False" />
-                <Setter Property="Padding" Value="3" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="20" />
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
+
             </Style>
-            <Style x:Key="Button" TargetType="Button" BasedOn="{StaticResource ButtonDanger}">
-                <Setter Property="Foreground" Value="White" />
+            <Style
+                x:Key="Button"
+                BasedOn="{StaticResource ButtonDanger}"
+                TargetType="Button">
+
                 <Setter Property="Padding" Value="8,5,8,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
                 <Setter Property="Height" Value="25" />
             </Style>
-            <Style x:Key="AddNewButton" TargetType="Button" BasedOn="{StaticResource ButtonPrimary}">
-                <Setter Property="Foreground" Value="White" />
+            <Style
+                x:Key="AddNewButton"
+                BasedOn="{StaticResource ButtonPrimary}"
+                TargetType="Button">
+
                 <Setter Property="Padding" Value="8,5,8,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
                 <Setter Property="Height" Value="25" />
             </Style>
             <DataTemplate x:Key="Filter">
-                <Expander hc:BorderElement.CornerRadius="0"
-                          IsExpanded="True"
-                          Background="#FF324B64"
-                          Foreground="White">
-                    <Expander.Header>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition Width="650" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0}{1}">
-                                        <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="Tag" />
-                                        <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="(ItemsControl.AlternationIndex)" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                            <Button Grid.Column="2"
+                <Border
+                    Margin="0,2"
+                    BorderBrush="{StaticResource ThirdlyRegionBrush}"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                    <Expander Background="{StaticResource ThirdlyRegionBrush}" IsExpanded="True">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="650" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} : {1}">
+                                            <Binding Path="Tag[0]" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                            <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button
+                                    Grid.Column="2"
                                     VerticalAlignment="Center"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType=local:DefectFilterSetWin}, Path=DataContext.DeleteSelectConfigCommand}"
                                     Content="×"
-                                    Style="{DynamicResource Button}"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteSelectConfigCommand}"
-                                    >
-                                <Button.CommandParameter>
-                                    <MultiBinding Converter="{StaticResource MultiBindingConverter}">
-                                        <Binding />
-                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}" Path="ItemsSource" />
-                                    </MultiBinding>
-                                </Button.CommandParameter>
-                            </Button>
-                        </Grid>
-                    </Expander.Header>
-                    <Border BorderBrush="#FF3F3F45" BorderThickness="1">
+                                    Style="{DynamicResource Button}">
+                                    <Button.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource MultiBindingConverter}">
+                                            <Binding />
+                                            <Binding Path="ItemsSource" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}" />
+                                        </MultiBinding>
+                                    </Button.CommandParameter>
+                                </Button>
+                            </Grid>
+                        </Expander.Header>
                         <StackPanel Margin="12,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -116,40 +124,47 @@
                                     <ColumnDefinition Width="140" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Button Margin="12,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        Content="{Binding [Add], Source={x:Static local:Lang.s_Instance}}"
-                                        Style="{DynamicResource AddNewButton}"
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddOneSelectParamCommand}"
-                                        CommandParameter="{Binding}" />
-                                <TextBlock Grid.Column="0"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [Type], Source={x:Static local:Lang.s_Instance}}" />
-                                <TextBlock Grid.Column="1"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [Unit], Source={x:Static local:Lang.s_Instance}}" />
-                                <TextBlock Grid.Column="2"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [UseLow], Source={x:Static local:Lang.s_Instance}}" />
-                                <TextBlock Grid.Column="3"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [LowLimit], Source={x:Static local:Lang.s_Instance}}" />
-                                <TextBlock Grid.Column="4"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [UseUp], Source={x:Static local:Lang.s_Instance}}" />
-                                <TextBlock Grid.Column="5"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding [UpLimit], Source={x:Static local:Lang.s_Instance}}" />
+                                <Button
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddOneSelectParamCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource AddNewButton}" />
+                                <TextBlock
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [Type], Source={x:Static local:CLang.s_Instance}}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [Unit], Source={x:Static local:CLang.s_Instance}}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [UseLow], Source={x:Static local:CLang.s_Instance}}" />
+                                <TextBlock
+                                    Grid.Column="3"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [LowLimit], Source={x:Static local:CLang.s_Instance}}" />
+                                <TextBlock
+                                    Grid.Column="4"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [UseUp], Source={x:Static local:CLang.s_Instance}}" />
+                                <TextBlock
+                                    Grid.Column="5"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [UpLimit], Source={x:Static local:CLang.s_Instance}}" />
                             </Grid>
                             <ItemsControl Grid.Row="1" ItemsSource="{Binding SelectParams}">
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate DataType="local:OneSelectParams">
                                         <Grid Height="28">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="10" />
@@ -163,67 +178,65 @@
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
                                             <Grid.Resources>
-                                                <local:BindingProxy x:Key="BindingProxy" Data="{Binding}"/>
+                                                <local:ValidationParams x:Key="BindingProxy" Data="{Binding}" />
                                             </Grid.Resources>
-                                            <ComboBox Name="CmbCharacter"
-                                                      Grid.Column="1"
-                                                      Margin="10,3,10,3"
-                                                      SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}">
-                                                <ComboBox.ItemsSource>
-                                                    <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
-                                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" Path="Tag" />
-                                                    </MultiBinding>
-                                                </ComboBox.ItemsSource>
+                                            <ComboBox
+                                                Name="CmbCharacter"
+                                                Grid.Column="1"
+                                                Margin="10,3,10,3"
+                                                ItemsSource="{Binding Tag[1], RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}"
+                                                SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}">
+                                                <!--  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:DefectFilterSetWin},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">  -->
+                                                <!--<ComboBox.ItemsSource>
+                            <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
+                                <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" />
+                            </MultiBinding>
+                        </ComboBox.ItemsSource>-->
                                             </ComboBox>
-                                            <TextBox Grid.Column="2"
-                                                     Margin="10,0,10,0"
-                                                     Text="{Binding Character, Mode=OneWay, Converter={StaticResource TextUnitsConverter}}"
-                                                     IsReadOnly="True" />
-                                            <CheckBox Grid.Column="3"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      IsChecked="{Binding MinLimit}" />
+                                            <TextBox
+                                                Grid.Column="2"
+                                                Margin="10,0,10,0"
+                                                IsReadOnly="True"
+                                                Text="{Binding Character, Mode=OneWay, Converter={StaticResource TextUnitsConverter}}" />
+                                            <CheckBox
+                                                Grid.Column="3"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                IsChecked="{Binding MinLimit}" />
                                             <TextBox Grid.Column="4" Margin="10,0,10,0">
                                                 <TextBox.Text>
                                                     <Binding Path="Min" UpdateSourceTrigger="PropertyChanged">
                                                         <Binding.ValidationRules>
-                                                            <local:MinMaxValidation IsGreater="False">
-                                                                <local:MinMaxValidation.ValidationParams>
-                                                                    <local:ValidationParams Data="{StaticResource BindingProxy}"/>
-                                                                </local:MinMaxValidation.ValidationParams>
-                                                            </local:MinMaxValidation>
+                                                            <local:MinMaxValidation IsGreater="False" ValidationParams="{StaticResource BindingProxy}" />
                                                         </Binding.ValidationRules>
                                                     </Binding>
                                                 </TextBox.Text>
                                             </TextBox>
-                                            <CheckBox Grid.Column="5"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      IsChecked="{Binding MaxLimit}" />
-                                            <TextBox Grid.Column="6" Margin="10,0,10,0" >
+                                            <CheckBox
+                                                Grid.Column="5"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                IsChecked="{Binding MaxLimit}" />
+                                            <TextBox Grid.Column="6" Margin="10,0,10,0">
                                                 <TextBox.Text>
                                                     <Binding Path="Max" UpdateSourceTrigger="PropertyChanged">
                                                         <Binding.ValidationRules>
-                                                            <local:MinMaxValidation IsGreater="True">
-                                                                <local:MinMaxValidation.ValidationParams>
-                                                                    <local:ValidationParams Data="{StaticResource BindingProxy}"/>
-                                                                </local:MinMaxValidation.ValidationParams>
-                                                            </local:MinMaxValidation>
+                                                            <local:MinMaxValidation IsGreater="True" ValidationParams="{StaticResource BindingProxy}" />
                                                         </Binding.ValidationRules>
                                                     </Binding>
                                                 </TextBox.Text>
                                             </TextBox>
-                                            <Button Grid.Column="7"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Content="×"
-                                                    Style="{DynamicResource Button}"
-                                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteOneSelectParamCommand}"
-                                                    >
+                                            <Button
+                                                Grid.Column="7"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteOneSelectParamCommand}"
+                                                Content="×"
+                                                Style="{DynamicResource Button}">
                                                 <Button.CommandParameter>
                                                     <MultiBinding Converter="{StaticResource MultiBindingConverter}">
                                                         <Binding />
-                                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}" Path="ItemsSource" />
+                                                        <Binding Path="ItemsSource" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}" />
                                                     </MultiBinding>
                                                 </Button.CommandParameter>
                                             </Button>
@@ -232,8 +245,9 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </StackPanel>
-                    </Border>
-                </Expander>
+
+                    </Expander>
+                </Border>
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
@@ -243,135 +257,190 @@
             <RowDefinition Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <UniformGrid Rows="2" Margin="0,0,30,0">
-            <TextBlock Text="{Binding [DefectName], Source={x:Static local:Lang.s_Instance}}"/>
-            <TextBox Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding [Priority], Source={x:Static local:Lang.s_Instance}}"/>
-            <TextBox Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock/>
-            <TextBlock/>
-            <TextBlock Text="{Binding [Algorithm], Source={x:Static local:Lang.s_Instance}}"/>
-            <ComboBox ItemsSource="{Binding RecipeDefects}" SelectedItem="{Binding RecipeDefect}">
+        <UniformGrid
+            Margin="30,0,30,0"
+            Columns="3"
+            Rows="2">
+
+            <TextBox hc:TitleElement.Title="{Binding [DefectName], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox hc:TitleElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
+
+            <ComboBox
+                hc:TitleElement.Title="{Binding [Algorithm], Source={x:Static local:CLang.s_Instance}}"
+                ItemsSource="{Binding RecipeDefects}"
+                SelectedItem="{Binding RecipeDefect}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [QualityLevel], Source={x:Static local:Lang.s_Instance}}" />
-            <ComboBox ItemsSource="{Binding Qualities}" SelectedItem="{Binding DefectFilter.QualityLevel}">
-                <!--<ComboBox.SelectedItem>
-                    <MultiBinding>
-                        <MultiBinding.Converter>
-                            <local:QualitySelectConverter/>
-                        </MultiBinding.Converter>
-                        <Binding Path="DefectFilter.Quality"/>
-                        <Binding Path="Qualities"/>
-                    </MultiBinding>
-                </ComboBox.SelectedItem>-->
+            <ComboBox
+                hc:TitleElement.Title="{Binding [QualityLevel], Source={x:Static local:CLang.s_Instance}}"
+                ItemsSource="{Binding Qualities}"
+                SelectedItem="{Binding DefectFilter.QualityLevel}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [ShowColor], Source={x:Static local:Lang.s_Instance}}" />
-            <wh:ColorComboBox SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}"/>
+
+            <wh:ColorComboBox
+                Margin="6,0"
+                hc:TitleElement.Title="{Binding [ShowColor], Source={x:Static local:CLang.s_Instance}}"
+                hc:TitleElement.TitlePlacement="Left"
+                SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}"
+                Style="{StaticResource ComboBoxExtend.Small}" />
         </UniformGrid>
-        <Border Grid.Row="1"
-                Margin="1,5,1,5"
-                BorderBrush="#FF58585A"
-                BorderThickness="1">
-            <Button Margin="5,0,0,0"
-                    HorizontalAlignment="Left"
-                    Content="{Binding [AddSelect],Source={x:Static local:Lang.s_Instance}}"
-                    Style="{DynamicResource AddNewButton}"
-                    Command="{Binding AddFilterConfigCommand}" />
-        </Border>
-        <ScrollViewer Grid.Row="2">
-            <ItemsControl ItemsSource="{Binding DefectFilter.FilterList}" AlternationCount="10000">
+        <StackPanel Grid.Row="1">
+            <Button
+                Margin="5,0,0,5"
+                HorizontalAlignment="Left"
+                Command="{Binding AddFilterConfigCommand}"
+                Content="{Binding [AddSelect], Source={x:Static local:CLang.s_Instance}}"
+                Style="{DynamicResource AddNewButton}" />
+            <hc:Divider
+                Margin="1"
+                LineStroke="{StaticResource SecondaryBorderBrush}"
+                LineStrokeThickness="1"
+                Orientation="Horizontal" />
+        </StackPanel>
+
+        <ScrollViewer x:Name="scroll" Grid.Row="2">
+            <ItemsControl AlternationCount="10000" ItemsSource="{Binding DefectFilter.FilterList}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Expander hc:BorderElement.CornerRadius="0" IsExpanded="True" Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}">
-                            <Expander.Header>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="550" />
-                                        <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="77" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Foreground="White" VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}"/>
-                                    <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White">
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0}{1}">
-                                                <Binding Source="{x:Static local:Lang.s_Instance}" Path="[DefectFilter]" />
-                                                <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="(ItemsControl.AlternationIndex)" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                    <ComboBox Grid.Column="2" Margin="2" SelectedItem="{Binding UnionOrConnect}">
-                                        <ComboBox.Items>
-                                            <sys:String>区域打散</sys:String>
-                                            <sys:String>区域合并</sys:String>
-                                            <sys:String>不打散不合并</sys:String>
-                                        </ComboBox.Items>
-                                    </ComboBox>
-                                    <Button Name="btn_DeleteFilter"
+                        <Border
+                            BorderBrush="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <Expander Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}" IsExpanded="True">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="450" />
+                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="77" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Foreground="White"
+                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Foreground="White">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} : {1}">
+                                                    <Binding Path="[DefectFilter]" Source="{x:Static local:CLang.s_Instance}" />
+                                                    <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource TemplatedParent}" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <ComboBox
+                                            Grid.Column="2"
+                                            Width="180"
+                                            Margin="2"
+                                            ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}"
+                                            SelectedItem="{Binding UnionMethod, Converter={StaticResource StringAttrEnumConverter}}"
+                                            Style="{StaticResource ComboBoxExtend}" />
+                                        <Button
+                                            Name="btn_DeleteFilter"
                                             Grid.Column="3"
                                             Margin="5,0,5,0"
                                             HorizontalAlignment="Right"
-                                            Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"
-                                            Style="{DynamicResource Button}"
                                             Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteFilterConfigCommand}"
-                                            CommandParameter="{Binding}" />
-                                </Grid>
-                            </Expander.Header>
-                            <StackPanel Margin="20,1,30,1">
-                                <Border BorderBrush="#FF3F3F45" BorderThickness="1">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition Height="15" />
-                                        </Grid.RowDefinitions>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Filter], Source={x:Static local:Lang.s_Instance}}" Foreground="Cyan" />
-                                            <Button Padding="8,2,8,2"
-                                                    Content="+"
-                                                    Style="{DynamicResource AddNewButton}"
+                                            CommandParameter="{Binding}"
+                                            Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
+                                            Style="{DynamicResource Button}" />
+                                    </Grid>
+                                </Expander.Header>
+                                <StackPanel Margin="1">
+                                    <Border
+                                        BorderBrush="{StaticResource SecondaryBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition Height="15" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    Margin="5,5,15,5"
+                                                    Foreground="{StaticResource DarkInfoBrush}"
+                                                    Text="{Binding [Filter], Source={x:Static local:CLang.s_Instance}}" />
+                                                <Button
+                                                    Padding="8,2,8,2"
                                                     Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddSelectConfigCommand}"
-                                                    CommandParameter="{Binding}" />
-                                        </StackPanel>
-                                        <ItemsControl Grid.Row="1"
-                                                      Margin="15,0,0,0"
-                                                      ItemsSource="{Binding Filter}"
-                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000"  Tag="{Binding [Filter], Source={x:Static local:Lang.s_Instance}}"/>
-                                    </Grid>
-                                </Border>
-                                <Border Margin="0,10,0,0" BorderBrush="#FF3F3F45" BorderThickness="1">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                            <RowDefinition Height="15" />
-                                        </Grid.RowDefinitions>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="5,5,15,5" Text="{Binding [Select], Source={x:Static local:Lang.s_Instance}}" Foreground="Cyan" />
-                                            <Button Padding="8,2,8,2"
+                                                    CommandParameter="{Binding}"
                                                     Content="+"
-                                                    Style="{DynamicResource AddNewButton}"
+                                                    Style="{DynamicResource AddNewButton}" />
+                                            </StackPanel>
+                                            <ItemsControl
+                                                Grid.Row="1"
+                                                Margin="15,0,0,0"
+                                                AlternationCount="10000"
+                                                ItemTemplate="{StaticResource Filter}"
+                                                ItemsSource="{Binding Filter}">
+                                                <ItemsControl.Tag>
+                                                    <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                        <Binding Path="[Filter]" Source="{x:Static local:CLang.s_Instance}" />
+                                                        <Binding
+                                                            Converter="{StaticResource Enums2StringsConverter}"
+                                                            Path="DataContext.FilterCharacters"
+                                                            RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
+                                                    </MultiBinding>
+                                                </ItemsControl.Tag>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+                                    <Border
+                                        Margin="1"
+                                        BorderBrush="{StaticResource SecondaryBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition Height="15" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    Margin="5,5,15,5"
+                                                    Foreground="{StaticResource DarkInfoBrush}"
+                                                    Text="{Binding [Select], Source={x:Static local:CLang.s_Instance}}" />
+                                                <Button
+                                                    Padding="8,2,8,2"
                                                     Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.AddSelectConfig2Command}"
-                                                    CommandParameter="{Binding}" />
-                                        </StackPanel>
-                                        <ItemsControl Grid.Row="1"
-                                                      Margin="15,0,0,0"
-                                                      ItemsSource="{Binding SelectList}"
-                                                      ItemTemplate="{StaticResource Filter}" AlternationCount="10000" Tag="{Binding [Select], Source={x:Static local:Lang.s_Instance}}"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                        </Expander>
+                                                    CommandParameter="{Binding}"
+                                                    Content="+"
+                                                    Style="{DynamicResource AddNewButton}" />
+                                            </StackPanel>
+                                            <ItemsControl
+                                                Grid.Row="1"
+                                                Margin="15,0,0,0"
+                                                AlternationCount="10000"
+                                                ItemTemplate="{StaticResource Filter}"
+                                                ItemsSource="{Binding SelectList}">
+                                                <ItemsControl.Tag>
+                                                    <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
+                                                        <Binding Path="[Select]" Source="{x:Static local:CLang.s_Instance}" />
+                                                        <Binding Converter="{StaticResource EnumProviderConverter}" Path="Filter[0].SelectParams[0].Character" />
+                                                    </MultiBinding>
+                                                </ItemsControl.Tag>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

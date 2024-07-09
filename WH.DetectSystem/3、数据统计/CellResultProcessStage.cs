@@ -14,7 +14,7 @@ namespace WH.DetectSystem
     /// </summary>
     public static class CellResultProcessStage
     {
-        public static void CellResultExcute(this DefectsProduce produce, Cell cell)
+        public static void CellResultExcute(this CDefectsProduce produce, Cell cell)
         {
             produce.AddDefectProduce(cell);
         }

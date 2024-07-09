@@ -11,35 +11,38 @@ using WH.Entity.Attribute;
 
 namespace WH.Entity.Converter
 {
-    public class EnumStringConverter : IValueConverter
+    /// <summary>
+    /// 20240708 TCG
+    /// 将枚举集合转换为中英文特性字符 枚举需添加特性EnumStringAttribute(zh,en)
+    /// </summary>
+    public class Enums2StringsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is IList enums)
             {
-                List<string> names = new List<string>();
-                foreach (var item in enums)
-                {
-                    var attr = (EnumStringAttribute)item.GetType().GetField(item.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
-                    if (attr != null)
-                    {
-                        switch (CultureInfo.CurrentCulture.Name)
-                        {
-                            case "zh-CN":
-                                names.Add( attr.ZhName);
-                                break;
-                            default:
-                                names.Add(attr.EnName);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        names.Add(item.ToString());
-                    }
-                }
-                return names;
-               
+                return EnumStringAttribute.Enums2Strings(enums);
+            }
+            return value?.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    /// <summary>
+    /// 20240708 TCG
+    /// 根据传入的SelectedItem 得到所有枚举值的中英文特性参数给到ComboBox
+    /// </summary>
+    public class EnumProviderConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Enum)
+            {
+                return EnumStringAttribute.GetEnumNames(value.GetType());
+
             }
             return value.ToString();
         }
@@ -49,6 +52,10 @@ namespace WH.Entity.Converter
             throw new NotImplementedException();
         }
     }
+    /// <summary>
+    /// 20240708 TCG
+    /// 添加了特性EnumStringAttribute(zh,en)的中英文字符与枚举值相互转换
+    /// </summary>
     public class StringAttrEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
