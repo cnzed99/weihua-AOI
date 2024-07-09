@@ -37,10 +37,9 @@ namespace 断面毛刺检测软件.Views
 
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                
-                throw e;
+                throw;
             }
 
             //Task.Delay(200);

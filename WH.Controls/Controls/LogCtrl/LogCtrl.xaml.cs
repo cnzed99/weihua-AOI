@@ -119,7 +119,7 @@ namespace WH.Controls
                 //TargetListBox.Focus();
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
               
                 return false;

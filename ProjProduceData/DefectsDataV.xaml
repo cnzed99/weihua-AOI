@@ -55,22 +55,22 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <DataGrid
-    AlternationCount="2"
-    AutoGenerateColumns="False"
-    Background="{DynamicResource RegionBrush}"
-    IsReadOnly="True"
-    ItemsSource="{Binding DefectsProduce.DefectNumbersList}"
-    RowHeaderWidth="0"
-    Style="{x:Null}">
+        AlternationCount="2"
+        AutoGenerateColumns="False"
+        Background="{DynamicResource RegionBrush}"
+        IsReadOnly="True"
+        ItemsSource="{Binding DefectsProduce.DefectNumbersList}"
+        RowHeaderWidth="0"
+        Style="{x:Null}">
         <DataGrid.Columns>
             <DataGridTextColumn
-            Width="80"
-            Binding="{Binding Name}"
-            Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                Width="80"
+                Binding="{Binding Name}"
+                Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
             <DataGridTextColumn
-            Width="50"
-            Binding="{Binding Number}"
-            Header="{Binding [Num], Source={x:Static local:CLang.s_Instance}}" />
+                Width="50"
+                Binding="{Binding Number}"
+                Header="{Binding [Num], Source={x:Static local:CLang.s_Instance}}" />
             <DataGridTextColumn Binding="{Binding Percent, StringFormat={}{0:P2}}" Header="{Binding [Percent], Source={x:Static local:CLang.s_Instance}}" />
             <DataGridTextColumn Binding="{Binding PercentofAll, StringFormat={}{0:P2}}" Header="{Binding [PercentOfAll], Source={x:Static local:CLang.s_Instance}}" />
         </DataGrid.Columns>

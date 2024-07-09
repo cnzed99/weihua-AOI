@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WH.Entity.CommonLib;
+using WH.Controls.SingleInstance;
 
 namespace SDFilter
 {
@@ -81,9 +81,12 @@ namespace SDFilter
             {
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 SpeciesFilter speciesFilter = (SpeciesFilter)objArr[1];
-                DefectFilterSetWin defectFilterSetWin = new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig);
-                defectFilterSetWin.ShowDialog();
-
+                DefectFilterSetWin defectFilterSetWin = 
+                    SingleInstance.Add(new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig), defectFilter.Name);
+                defectFilterSetWin.Title = defectFilter.Name;
+                defectFilterSetWin.Show();
+                defectFilterSetWin.Activate();
+               
                 //每次关闭打开刷新ResultList
                 List<EMFILTER> lsParam = new List<EMFILTER>();
                 foreach (var filter in defectFilter.FilterList)

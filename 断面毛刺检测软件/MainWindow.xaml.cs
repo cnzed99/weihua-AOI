@@ -126,7 +126,7 @@ namespace 断面毛刺检测软件
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
                 //throw;
             }
             finally

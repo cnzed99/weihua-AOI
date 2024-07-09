@@ -59,7 +59,7 @@ namespace WH.DetectSystem.Models
         public CMainModel()
         {
             GUID = Guid.NewGuid().ToString();
-        
+            this.token = new Token(GUID,String.Empty);
         }
         public void UpdateToken()
         {

@@ -41,8 +41,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="150"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Button
@@ -79,14 +79,13 @@
             IsReadOnly="True"
             Style="{StaticResource Textbox1}"
             Text="{Binding QualitySet.Priority}" />
-        <Grid Grid.Column="2" Margin="5,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Text="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}" />
-            <wh:ColorComboBox Grid.Column="1" SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}" />
-        </Grid>
+        <wh:ColorComboBox
+            Grid.Column="2"
+            Margin="5,0"
+            hc:TitleElement.Title="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+            hc:TitleElement.TitlePlacement="Left"
+            SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}"
+            Style="{StaticResource ComboBoxExtend.Small}" />
         <TextBox
             Grid.Row="1"
             hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
@@ -107,7 +106,7 @@
             SelectionMode="Single">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
@@ -122,7 +121,6 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Foreground" Value="White" />
                                         <Setter Property="Background" Value="{DynamicResource ThirdlyRegionBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">

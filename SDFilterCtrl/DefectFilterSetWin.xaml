@@ -11,22 +11,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
-    Title="{Binding [Title], Source={x:Static local:CLang.s_Instance}}"
+    Title=""
     Width="810"
     Height="610"
+    d:DataContext="{d:DesignInstance local:CDefectFilterSetVM}"
     Background="{StaticResource SecondaryRegionBrush}"
+    Icon="/SDFilter;component/Resources/检测设置.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Icon="/SDFilter;component/Resources/检测设置.png">
-    <d:Window.DataContext>
-        <local:DefectFilterSetVM />
-    </d:Window.DataContext>
+    mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
-            <!--<ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>-->
             <entityproxy:CBindingProxy x:Key="scroll" Data="{Binding ElementName=scroll, Path=DataContext.FilterCharacters}" />
             <conv:BoolToBrushConverter
                 x:Key="BoolToBrushConverterEx"
@@ -46,21 +41,16 @@
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style BasedOn="{StaticResource TextBox.Small}" TargetType="TextBox">
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Margin" Value="5" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="20" />
-                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            <Style BasedOn="{StaticResource TextBoxExtend.Small}" TargetType="TextBox">
+                <Setter Property="Margin" Value="6,0" />
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
                 <Setter Property="Padding" Value="3" />
             </Style>
-            <Style TargetType="ComboBox">
-                <Setter Property="Margin" Value="5" />
+            <Style BasedOn="{StaticResource ComboBoxExtend.Small}" TargetType="ComboBox">
+                <Setter Property="Margin" Value="6,0" />
                 <Setter Property="IsEditable" Value="False" />
-                <Setter Property="Padding" Value="3" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="20" />
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
+
             </Style>
             <Style
                 x:Key="Button"
@@ -84,14 +74,11 @@
             </Style>
             <DataTemplate x:Key="Filter">
                 <Border
+                    Margin="0,2"
                     BorderBrush="{StaticResource ThirdlyRegionBrush}"
                     BorderThickness="1"
-                    Margin="0,2"
                     CornerRadius="5">
-                    <Expander
-                       
-                        Background="{StaticResource ThirdlyRegionBrush}"
-                        IsExpanded="True">
+                    <Expander Background="{StaticResource ThirdlyRegionBrush}" IsExpanded="True">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -105,7 +92,7 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center">
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0}{1}">
+                                        <MultiBinding StringFormat="{}{0} : {1}">
                                             <Binding Path="Tag[0]" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                             <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource TemplatedParent}" />
                                         </MultiBinding>
@@ -270,31 +257,41 @@
             <RowDefinition Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <UniformGrid Margin="0,0,30,0" Rows="2">
-            <TextBlock Text="{Binding [DefectName], Source={x:Static local:CLang.s_Instance}}" />
-            <TextBox Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding [Priority], Source={x:Static local:CLang.s_Instance}}" />
-            <TextBox Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock />
-            <TextBlock />
-            <TextBlock Text="{Binding [Algorithm], Source={x:Static local:CLang.s_Instance}}" />
-            <ComboBox ItemsSource="{Binding RecipeDefects}" SelectedItem="{Binding RecipeDefect}">
+        <UniformGrid
+            Margin="30,0,30,0"
+            Columns="3"
+            Rows="2">
+
+            <TextBox hc:TitleElement.Title="{Binding [DefectName], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox hc:TitleElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
+
+            <ComboBox
+                hc:TitleElement.Title="{Binding [Algorithm], Source={x:Static local:CLang.s_Instance}}"
+                ItemsSource="{Binding RecipeDefects}"
+                SelectedItem="{Binding RecipeDefect}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [QualityLevel], Source={x:Static local:CLang.s_Instance}}" />
-            <ComboBox ItemsSource="{Binding Qualities}" SelectedItem="{Binding DefectFilter.QualityLevel}">
+            <ComboBox
+                hc:TitleElement.Title="{Binding [QualityLevel], Source={x:Static local:CLang.s_Instance}}"
+                ItemsSource="{Binding Qualities}"
+                SelectedItem="{Binding DefectFilter.QualityLevel}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBlock Text="{Binding [ShowColor], Source={x:Static local:CLang.s_Instance}}" />
-            <wh:ColorComboBox SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}" />
+
+            <wh:ColorComboBox
+                Margin="6,0"
+                hc:TitleElement.Title="{Binding [ShowColor], Source={x:Static local:CLang.s_Instance}}"
+                hc:TitleElement.TitlePlacement="Left"
+                SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}"
+                Style="{StaticResource ComboBoxExtend.Small}" />
         </UniformGrid>
         <StackPanel Grid.Row="1">
             <Button
@@ -323,8 +320,8 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="10" />
-                                            <ColumnDefinition Width="550" />
-                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="450" />
+                                            <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="77" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock
@@ -337,7 +334,7 @@
                                             VerticalAlignment="Center"
                                             Foreground="White">
                                             <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                <MultiBinding StringFormat="{}{0} : {1}">
                                                     <Binding Path="[DefectFilter]" Source="{x:Static local:CLang.s_Instance}" />
                                                     <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource TemplatedParent}" />
                                                 </MultiBinding>
@@ -345,9 +342,11 @@
                                         </TextBlock>
                                         <ComboBox
                                             Grid.Column="2"
+                                            Width="180"
                                             Margin="2"
-                                            SelectedItem="{Binding UnionMethod, Converter={StaticResource StringAttrEnumConverter}}" ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}">
-                                        </ComboBox>
+                                            ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}"
+                                            SelectedItem="{Binding UnionMethod, Converter={StaticResource StringAttrEnumConverter}}"
+                                            Style="{StaticResource ComboBoxExtend}" />
                                         <Button
                                             Name="btn_DeleteFilter"
                                             Grid.Column="3"

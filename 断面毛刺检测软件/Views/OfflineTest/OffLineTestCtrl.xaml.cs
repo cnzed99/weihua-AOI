@@ -121,16 +121,6 @@ namespace 断面毛刺检测软件.Views
         public bool Stop;
 
         /// <summary>
-        /// 离线测试 下一张 按钮按下
-        /// </summary>
-        private bool nextPressed = false;
-
-        /// <summary>
-        /// 离线测试 上一张 按钮按下
-        /// </summary>
-        private bool prePressed = false;
-
-        /// <summary>
         /// 图像文件列表
         /// </summary>
         private List<string> imgFiles = new List<string>();
@@ -165,16 +155,14 @@ namespace 断面毛刺检测软件.Views
 
         private void BtnPreImg_Click(object sender, RoutedEventArgs e)
         {
-            prePressed = true;
-            nextPressed = false;
+          
             // CancelToken = new CancellationTokenSource();
             ImgIndex--;
         }
 
         private void BtnNextImg_Click(object sender, RoutedEventArgs e)
         {
-            prePressed = false;
-            nextPressed = true;
+           
             // CancelToken = new CancellationTokenSource();
             ImgIndex++;
         }
@@ -446,7 +434,7 @@ namespace 断面毛刺检测软件.Views
         }
 
         
-        private async void btn_FromCam_Click(object sender, RoutedEventArgs e)  
+        private void btn_FromCam_Click(object sender, RoutedEventArgs e)  
         {
             try
             {
@@ -461,7 +449,7 @@ namespace 断面毛刺检测软件.Views
             catch (Exception ex)
             {
                 //SystemStatic._isRuning = false;
-                //CLogRec.Error($"发生错误:{ex.Message}");
+                sysLog.Error($"发生错误:{ex.Message}");
             }
 
         }

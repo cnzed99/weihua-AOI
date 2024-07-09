@@ -43,7 +43,7 @@
             Columns="2"
             DataContext="{Binding DefectsProduce}"
             Rows="2">
-            <TextBox hc:TitleElement.Title="All" Text="{Binding Total}"/>
+            <TextBox hc:TitleElement.Title="All" Text="{Binding Total}" />
             <TextBox hc:TitleElement.Title="OK" Text="{Binding OK}" />
             <TextBox hc:TitleElement.Title="YR" Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
             <TextBox hc:TitleElement.Title="NG" Text="{Binding Ng}" />
@@ -72,7 +72,10 @@
                             Foreground="{Binding ShowColor.Brush}"
                             Style="{StaticResource tblock}"
                             Text="{Binding Name}" />
-                        <TextBlock Style="{StaticResource tblock}" Text="{Binding Number}" Margin="10,0"/>
+                        <TextBlock
+                            Margin="10,0"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding Number}" />
                     </DockPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

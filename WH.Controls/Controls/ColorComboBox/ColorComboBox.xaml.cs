@@ -24,7 +24,7 @@ namespace WH.Controls
     /// 颜色ComBox控件 颜色值绑定SelectColor
     /// ColorComboBox.xaml 的交互逻辑
     /// </summary>
-    public partial class ColorComboBox : UserControl
+    public partial class ColorComboBox : HandyControl.Controls.ComboBox
     {
         public ColorComboBox()
         {
