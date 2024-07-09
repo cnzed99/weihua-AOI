@@ -14,7 +14,7 @@ namespace AlgorithmDll
     /// 2024.7.4 李焕彬
     /// 算法参数配置管理类
     /// </summary>
-    public partial class MaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CMaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -24,7 +24,7 @@ namespace AlgorithmDll
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
-        public MaociAlgorParamConfig() 
+        public CMaociAlgorParamConfig() 
         {
             this.token = new Token("",this.GetType().Namespace);
             PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
@@ -40,7 +40,7 @@ namespace AlgorithmDll
         /// <param name="message">消息</param>
         public void Receive(OperateMessage message)
         {
-            if (message.obj.GetType() == typeof(MaociAlgorParamConfig))
+            if (message.obj.GetType() == typeof(CMaociAlgorParamConfig))
             {
                 OperateLog.Info($"算法参数-{message.message}");
                 UpdataMaociAlgorParamUse();

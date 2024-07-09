@@ -59,9 +59,9 @@ namespace WH.Controls
     /// 2024.7.4 李焕彬
     /// 图像坐标绘图
     /// </summary>
-    public class ImagePro : Image
+    public class CImagePro : Image
     {
-        public ImagePro() : base()
+        public CImagePro() : base()
         {
             Stretch = Stretch.Uniform;
 
@@ -189,7 +189,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for FillEdge.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FillEdgeProperty =
-            DependencyProperty.Register("FillEdge", typeof(bool), typeof(ImagePro), new PropertyMetadata(false));
+            DependencyProperty.Register("FillEdge", typeof(bool), typeof(CImagePro), new PropertyMetadata(false));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -203,7 +203,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for MinScale.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MinScaleProperty =
-            DependencyProperty.Register("MinScale", typeof(double), typeof(ImagePro), new PropertyMetadata(0.5d));
+            DependencyProperty.Register("MinScale", typeof(double), typeof(CImagePro), new PropertyMetadata(0.5d));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -217,7 +217,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for MaxScale.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MaxScaleProperty =
-            DependencyProperty.Register("MaxScale", typeof(double), typeof(ImagePro), new PropertyMetadata(100.0d));
+            DependencyProperty.Register("MaxScale", typeof(double), typeof(CImagePro), new PropertyMetadata(100.0d));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -231,7 +231,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for G.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RProperty =
-            DependencyProperty.Register("R", typeof(string), typeof(ImagePro));
+            DependencyProperty.Register("R", typeof(string), typeof(CImagePro));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -245,7 +245,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for G.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty GProperty =
-            DependencyProperty.Register("G", typeof(string), typeof(ImagePro));
+            DependencyProperty.Register("G", typeof(string), typeof(CImagePro));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -259,7 +259,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for B.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty BProperty =
-            DependencyProperty.Register("B", typeof(string), typeof(ImagePro));
+            DependencyProperty.Register("B", typeof(string), typeof(CImagePro));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -273,7 +273,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for X.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty XProperty =
-            DependencyProperty.Register("X", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
+            DependencyProperty.Register("X", typeof(int), typeof(CImagePro), new PropertyMetadata(0));
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -287,7 +287,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for Y.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty YProperty =
-            DependencyProperty.Register("Y", typeof(int), typeof(ImagePro), new PropertyMetadata(0));
+            DependencyProperty.Register("Y", typeof(int), typeof(CImagePro), new PropertyMetadata(0));
 
         /// <summary>
         /// 2024.7.8 李焕彬

@@ -33,7 +33,7 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">所属类别</param>
-        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig)
+        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,CQualityConfig qualityConfig)
         {
             InitializeComponent();
             VM = new(defectFilter, speciesFilter, qualityConfig);
@@ -44,7 +44,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// VM
         /// </summary>
-        public DefectFilterSetVM VM { get; set; }
+        public CDefectFilterSetVM VM { get; set; }
     }
 
     /// <summary>
@@ -166,7 +166,7 @@ namespace SDFilter
         /// <returns></returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            //BindingProxy bindingProxy = ValidationParams.Data as BindingProxy;
+            //CBindingProxy bindingProxy = ValidationParams.Data as CBindingProxy;
             OneSelectParams viewModel = ValidationParams.Data as OneSelectParams;
             if (double.TryParse(value.ToString(), out double result)/* && int.TryParse(textbox.Text, out int result2)*/)
             {
@@ -239,7 +239,7 @@ namespace SDFilter
     /// 2024.7.4 李焕彬
     /// 验证参数
     /// </summary>
-    public class ValidationParams : BindingProxy
+    public class ValidationParams : CBindingProxy
     {
         /// <summary>
         /// 2024.7.4 李焕彬

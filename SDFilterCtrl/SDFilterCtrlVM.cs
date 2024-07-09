@@ -17,15 +17,15 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 检测设置窗口VM
     /// </summary>
-    public partial class SDFilterCtrlVM : ObservableObject
+    public partial class CSDFilterCtrlVM : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 过滤分选配置
         /// </summary>
         [ObservableProperty]
-        private FilterConfig filterConfig;
-        public QualityConfig QualityConfig;
+        private CFilterConfig filterConfig;
+        public CQualityConfig QualityConfig;
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 增加过滤器
@@ -47,7 +47,7 @@ namespace SDFilter
                 }
             }
             recipeDefect.DefectFilters.Add(new DefectFilter(recipeDefect.Name + index));
-            WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
+            WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
                 recipeDefect.DefectFilters.Remove(defectFilter);
-                WeakReferenceMessenger.Default.Send<FilterConfig>(FilterConfig);
+                WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
             }
         }
 

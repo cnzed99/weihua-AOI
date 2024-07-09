@@ -41,7 +41,7 @@ namespace WH.RunCell
         ///// <summary>
         ///// 缺陷颜色 DefectFilter里有
         ///// </summary>
-        //public KnownColor ShowColor { get; set; }
+        //public CKnownColor ShowColor { get; set; }
         ///// <summary>
         ///// 优先级 DefectFilter里有
         ///// </summary>

@@ -147,6 +147,12 @@ namespace AlgorithmDll
             points1 = new List<Point>();
         }
 
+        public SRegion(SRegionInfo regionInfo, List<Point> points)
+        {
+            RegionInfo = regionInfo;
+            points1 = points;
+        }
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 获取矩形
@@ -347,7 +353,7 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// 毛刺检测算法接口
     /// </summary>
-    public class MaociTest
+    public class CMaociTest
     {
         #region 获取区域边缘点集合
         /// <summary>
@@ -408,10 +414,10 @@ namespace AlgorithmDll
         /// <returns></returns>
         public static List<Point> GetRegion(EMREGIONTYPE type)
         {
-            int size = MaociTest.GetEdgeCount(type);
+            int size = CMaociTest.GetEdgeCount(type);
             IntPtr ptrX = Marshal.AllocHGlobal(size * sizeof(int));
             IntPtr ptrY = Marshal.AllocHGlobal(size * sizeof(int));
-            MaociTest.GetEdge(type, ptrX, ptrY);
+            CMaociTest.GetEdge(type, ptrX, ptrY);
             int[] Xs = new int[size];
             int[] Ys = new int[size];
             Marshal.Copy(ptrX, Xs, 0, size);
@@ -437,12 +443,12 @@ namespace AlgorithmDll
         public static List<SRegion> GetRegions(EMREGIONTYPE type)
         {
             List<SRegion> regions = new List<SRegion>();
-            int regionCount = MaociTest.GetRegionCount(type);
+            int regionCount = CMaociTest.GetRegionCount(type);
             double dMmPerPixel = 2.25d;
             for (int k = 0; k < regionCount; k++)
             {
                 SRegion sRegion = new SRegion();
-                int size = MaociTest.GetRegionInfo(type, k, ref sRegion.RegionInfo);
+                int size = CMaociTest.GetRegionInfo(type, k, ref sRegion.RegionInfo);
                 sRegion.RegionInfo.WidthBound *= dMmPerPixel;
                 sRegion.RegionInfo.HeightBound *= dMmPerPixel;
                 sRegion.RegionInfo.PeakHeight *= dMmPerPixel;
@@ -452,7 +458,7 @@ namespace AlgorithmDll
                 sRegion.RegionInfo.Area *= dMmPerPixel;
                 IntPtr ptrX = Marshal.AllocHGlobal(size * sizeof(int));
                 IntPtr ptrY = Marshal.AllocHGlobal(size * sizeof(int));
-                MaociTest.GetRegionPoints(type, k, ptrX, ptrY);
+                CMaociTest.GetRegionPoints(type, k, ptrX, ptrY);
                 int[] Xs = new int[size];
                 int[] Ys = new int[size];
                 Marshal.Copy(ptrX, Xs, 0, size);
@@ -533,7 +539,7 @@ namespace AlgorithmDll
         /// 2024.7.4 李焕彬
         /// 算法输出
         /// </summary>
-        public AlgorithmOut AlgorithmOut { get; set; } = new();
+        public CAlgorithmOut AlgorithmOut { get; set; } = new();
         /// <summary>
         /// 2024.6.20 李焕彬
         /// 检测图像
@@ -544,16 +550,16 @@ namespace AlgorithmDll
         /// <param name="data">图像指针</param>
         public EMDETECTRESULT DetectImage(int width, int height, int stride, IntPtr data, SMaociAlgorParam detectParam)
         {
-            EMDETECTRESULT result = MaociTest.Test(width, height, stride, data, detectParam);
-            DarkTopRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
-            DarkBotRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKBOT);
-            LightTopRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTTOP);
-            LightBotRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTBOT);
-            MaociRegions = MaociTest.GetRegions(EMREGIONTYPE.EMRT_MAOCIREGION);
-            ThickRegions = MaociTest.GetRegions(EMREGIONTYPE.EMRT_THICKREGION);
+            EMDETECTRESULT result = CMaociTest.Test(width, height, stride, data, detectParam);
+            DarkTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
+            DarkBotRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKBOT);
+            LightTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTTOP);
+            LightBotRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTBOT);
+            MaociRegions = CMaociTest.GetRegions(EMREGIONTYPE.EMRT_MAOCIREGION);
+            ThickRegions = CMaociTest.GetRegions(EMREGIONTYPE.EMRT_THICKREGION);
 
-            AlgorithmOut[AlgorithmOut.c_SpMaoci][AlgorithmOut.c_DeMaoci].Region = MaociRegions;
-            AlgorithmOut[AlgorithmOut.c_SpThick][AlgorithmOut.c_DeThick].Region = ThickRegions;
+            AlgorithmOut[CAlgorithmOut.c_SpMaoci][CAlgorithmOut.c_DeMaoci].Region = MaociRegions;
+            AlgorithmOut[CAlgorithmOut.c_SpThick][CAlgorithmOut.c_DeThick].Region = ThickRegions;
 
             return result;
         }
@@ -568,16 +574,16 @@ namespace AlgorithmDll
         /// <param name="data">图像指针</param>
         public EMDETECTRESULT DetectFpga(int width, int height, int stride, IntPtr data, SMaociAlgorParamFpga detectParamFpga)
         {
-            EMDETECTRESULT result = MaociTest.TestFpga(width, height, stride, data, detectParamFpga);
-            DarkTopRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
-            DarkBotRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKBOT);
-            LightTopRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTTOP);
-            LightBotRegion = MaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTBOT);
-            MaociRegions = MaociTest.GetRegions(EMREGIONTYPE.EMRT_MAOCIREGION);
-            ThickRegions = MaociTest.GetRegions(EMREGIONTYPE.EMRT_THICKREGION);
+            EMDETECTRESULT result = CMaociTest.TestFpga(width, height, stride, data, detectParamFpga);
+            DarkTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
+            DarkBotRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKBOT);
+            LightTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTTOP);
+            LightBotRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTBOT);
+            MaociRegions = CMaociTest.GetRegions(EMREGIONTYPE.EMRT_MAOCIREGION);
+            ThickRegions = CMaociTest.GetRegions(EMREGIONTYPE.EMRT_THICKREGION);
 
-            AlgorithmOut[AlgorithmOut.c_SpMaoci][AlgorithmOut.c_DeMaoci].Region = MaociRegions;
-            AlgorithmOut[AlgorithmOut.c_SpThick][AlgorithmOut.c_DeThick].Region = ThickRegions;
+            AlgorithmOut[CAlgorithmOut.c_SpMaoci][CAlgorithmOut.c_DeMaoci].Region = MaociRegions;
+            AlgorithmOut[CAlgorithmOut.c_SpThick][CAlgorithmOut.c_DeThick].Region = ThickRegions;
 
             return result;
         }

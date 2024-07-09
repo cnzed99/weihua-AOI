@@ -19,7 +19,7 @@ namespace ProjProduceData
     /// 缺陷统计数据
     /// 20240706 TCG 启用保存，除了NG TOTAL PERCENT 质量等级和缺陷统计不保存，在反序列化时从DefectFilter/Quality中获取引用
     /// </summary>
-    public partial class DefectsProduce : ObservableObject
+    public partial class CDefectsProduce : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -261,6 +261,6 @@ namespace ProjProduceData
         /// 显示颜色
         /// </summary>
         [ObservableProperty]
-        private KnownColor showColor;
+        private CKnownColor showColor;
     }
 }

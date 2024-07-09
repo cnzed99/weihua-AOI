@@ -10,7 +10,7 @@ namespace WH.Controls
     /// 2024.7.4 李焕彬
     /// 窗口坐标绘图
     /// </summary>
-    public class CanvasPro : Canvas
+    public class CCanvasPro : Canvas
     {
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -93,7 +93,7 @@ namespace WH.Controls
             }
         }
 
-        public CanvasPro()
+        public CCanvasPro()
         {
             this.Background = Brushes.Transparent;
             this.IsHitTestVisible = false;
@@ -110,7 +110,7 @@ namespace WH.Controls
 
         // Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(CanvasPro), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(CCanvasPro), new PropertyMetadata(null));
 
         /// <summary>
         /// 2024.7.8 李焕彬

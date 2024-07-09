@@ -17,11 +17,11 @@ namespace SDFilter
     /// 2024.6.23 李焕彬
     /// 过滤分选设置窗口VM
     /// </summary>
-    public partial class DefectFilterSetVM : ObservableValidator
+    public partial class CDefectFilterSetVM : ObservableValidator
     {
         public List<EMFILTER> FilterCharacters { get; set; } 
         
-        public DefectFilterSetVM() 
+        public CDefectFilterSetVM() 
         {
             FilterCharacters = new List<EMFILTER>()
             {
@@ -41,7 +41,7 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">类别</param>
-        public DefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,QualityConfig qualityConfig) :this()
+        public CDefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,CQualityConfig qualityConfig) :this()
         {
             this.DefectFilter = defectFilter;
             RecipeDefects = speciesFilter.RecipeDefects.ToList();
@@ -77,7 +77,7 @@ namespace SDFilter
         /// 缺陷名
         /// </summary>
         [Required]
-        [CustomValidation(typeof(DefectFilterSetVM), nameof(ValidateDefectName))]
+        [CustomValidation(typeof(CDefectFilterSetVM), nameof(ValidateDefectName))]
         public string DefectName
         {
             get => defectName;
@@ -116,7 +116,7 @@ namespace SDFilter
         /// <returns></returns>
         public static ValidationResult ValidateDefectName(string name, ValidationContext context)
         {
-            DefectFilterSetVM s_Instance = (DefectFilterSetVM)context.ObjectInstance;
+            CDefectFilterSetVM s_Instance = (CDefectFilterSetVM)context.ObjectInstance;
             if (name == string.Empty)
                 return new ValidationResult(Properties.Resource1.NameNotNull);
             if (!s_Instance.IsValidString(name))

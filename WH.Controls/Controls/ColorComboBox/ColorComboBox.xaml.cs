@@ -30,15 +30,15 @@ namespace WH.Controls
         {
             InitializeComponent();
 
-            this.CmbColor.ItemsSource = BrushPro.s_Instance.KnownColors;
+            this.CmbColor.ItemsSource = CBrushPro.s_Instance.KnownColors;
         }
 
         /// <summary>
         /// 选中颜色
         /// </summary>
-        public KnownColor SelectColor
+        public CKnownColor SelectColor
         {
-            get { return (KnownColor)GetValue(SelectBrushProperty); }
+            get { return (CKnownColor)GetValue(SelectBrushProperty); }
             set { SetValue(SelectBrushProperty, value); }
         }
 
@@ -47,7 +47,7 @@ namespace WH.Controls
         /// </summary>
         // Using a DependencyProperty as the backing store for SelectColor.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectBrushProperty =
-            DependencyProperty.Register("SelectColor", typeof(KnownColor), typeof(ColorComboBox), new PropertyMetadata(default(KnownColor), (d, e) =>
+            DependencyProperty.Register("SelectColor", typeof(CKnownColor), typeof(ColorComboBox), new PropertyMetadata(default(CKnownColor), (d, e) =>
             {
                 if (e.NewValue != null)
                 {
@@ -65,7 +65,7 @@ namespace WH.Controls
         {
             if (e.AddedItems.Count > 0)
             {
-                KnownColor knownColor = e.AddedItems[0] as KnownColor;
+                CKnownColor knownColor = e.AddedItems[0] as CKnownColor;
                 if (knownColor != null)
                 {
                     SelectColor = knownColor;

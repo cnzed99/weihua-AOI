@@ -7,15 +7,15 @@ using System.Resources;
 
 namespace LanguageManager
 {
-    public class LanguageManager : INotifyPropertyChanged
+    public class CLanguageManager : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ResourceManager resourceManager;
 
-        private static List<LanguageManager> s_LanguageManagers = new List<LanguageManager>();
+        private static List<CLanguageManager> s_LanguageManagers = new List<CLanguageManager>();
 
-        public LanguageManager(string resourcePath, Assembly assembly)
+        public CLanguageManager(string resourcePath, Assembly assembly)
         {
             resourceManager = new ResourceManager(resourcePath, assembly);
             s_LanguageManagers.Add(this);

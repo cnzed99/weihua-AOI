@@ -12,13 +12,13 @@ namespace WH.Entity.CommonLib
     /// 2024.7.1 李焕彬
     /// Known颜色类，含颜色和颜色名
     /// </summary>
-    public class KnownColor:IEquatable<KnownColor>
+    public class CKnownColor:IEquatable<CKnownColor>
     {
-        public KnownColor()
+        public CKnownColor()
         {
             
         }
-        public KnownColor(string name, Brush brush)
+        public CKnownColor(string name, Brush brush)
         {
             this.Name = name;
             this.Brush = brush;
@@ -43,10 +43,10 @@ namespace WH.Entity.CommonLib
         /// <param name="other"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public bool Equals(KnownColor other)
+        public bool Equals(CKnownColor other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
-            var kcolor = (KnownColor)other;
+            var kcolor = (CKnownColor)other;
             if (kcolor.Name == Name) return true;
             else return false;
         }
@@ -65,32 +65,32 @@ namespace WH.Entity.CommonLib
     /// 2024.6.26 李焕彬
     /// Known颜色集，含静态对象
     /// </summary>
-    public class BrushPro
+    public class CBrushPro
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// Known颜色实例
         /// </summary>
-        public static BrushPro s_Instance = new BrushPro();
+        public static CBrushPro s_Instance = new CBrushPro();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// Known颜色集
         /// </summary>
-        public List<KnownColor> KnownColors { get; set; } = new List<KnownColor>();
+        public List<CKnownColor> KnownColors { get; set; } = new List<CKnownColor>();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 初始化Known颜色集
         /// </summary>
-        public BrushPro()
+        public CBrushPro()
         {
             PropertyInfo[] properties = typeof(Brushes).GetProperties();
             foreach (var property in properties)
             {
                 if (typeof(Brush).IsAssignableFrom(property.PropertyType))
                 {
-                    KnownColors.Add(new KnownColor(property.Name, (Brush)property.GetValue(null)));
+                    KnownColors.Add(new CKnownColor(property.Name, (Brush)property.GetValue(null)));
                 }
             }
         }

@@ -58,9 +58,9 @@
         </DockPanel>
         <Grid Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Disabled">
-                <local:ImagePro x:Name="Image" />
+                <local:CImagePro x:Name="Image" />
             </ScrollViewer>
-            <local:CanvasPro x:Name="Canvas" />
+            <local:CCanvasPro x:Name="Canvas" />
         </Grid>
     </Grid>
 </UserControl>

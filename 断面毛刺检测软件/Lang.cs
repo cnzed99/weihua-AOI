@@ -8,6 +8,6 @@ namespace 断面毛刺检测软件
 {
     public class CLang
     {
-        public static LanguageManager.LanguageManager Instance = new LanguageManager.LanguageManager("断面毛刺检测软件.Properties.Resources", typeof(CLang).Assembly);
+        public static LanguageManager.CLanguageManager Instance = new LanguageManager.CLanguageManager("断面毛刺检测软件.Properties.Resources", typeof(CLang).Assembly);
     }
 }

@@ -283,28 +283,28 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private MaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new MaociAlgorParamCtrlVm();
+        private CMaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new CMaociAlgorParamCtrlVm();
 
         /// <summary>
         /// 检测设置控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private SDFilterCtrlVM sDFilterCtrlVM = new SDFilterCtrlVM();
+        private CSDFilterCtrlVM sDFilterCtrlVM = new CSDFilterCtrlVM();
 
         /// <summary>
         /// 质量等级控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private QualityCtrlVM qualityCtrlVM = new QualityCtrlVM();
+        private CQualityCtrlVM qualityCtrlVM = new CQualityCtrlVM();
 
         /// <summary>
         /// 缺陷数据VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private DefectsDataVM defectsDataVM = new DefectsDataVM();
+        private CDefectsDataVM defectsDataVM = new CDefectsDataVM();
 
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
@@ -374,8 +374,8 @@ namespace WH.DetectSystem.ViewModels
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 DateTime triggerStartData = DateTime.Now;
                 IEnumerator<string> imgitor = new List<string>() { "D://铝极.png", "D://原图-1.bmp", "D://原图-2.bmp", "D://原图-3.bmp", "D://设备-1.PNG", "D://设备-2.PNG", "D://设备-3.PNG" }.GetEnumerator();
-                BrushPro color = new BrushPro();
-                IEnumerator<KnownColor> brushes = color.KnownColors.GetEnumerator();
+                CBrushPro color = new CBrushPro();
+                IEnumerator<CKnownColor> brushes = color.KnownColors.GetEnumerator();
                 Random random = new Random(50);
                 while (true)
                 {
@@ -644,7 +644,7 @@ namespace WH.DetectSystem.ViewModels
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         //await Task.Delay(30);
                         MaociFilter.FilterExute(cell);
-                        //SystemStatic.SysConfigList[cell.ProjGuid].Config.FilterConfig.FilterExcute(cell);
+                        //SystemStatic.SysConfigList[cell.ProjGuid].Config.CFilterConfig.FilterExcute(cell);
                         //ColorGradeGroupConfig colorConfig = null;
                         //if (SystemStatic.SysConfigList[cell.ProjGuid].Config.ColorConfig.SelectedParam != null)
                         //{

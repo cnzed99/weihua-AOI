@@ -24,7 +24,7 @@ namespace WH.DetectSystem
         /// </summary>
         /// <param name="paramFpga">FPGA参数</param>
         /// <param name="cell">检测对象</param>
-        public static void MaociFPGAExcute(this MaociAlgorParamConfig paramMaoci, Cell cell)
+        public static void MaociFPGAExcute(this CMaociAlgorParamConfig paramMaoci, Cell cell)
         {
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -45,7 +45,7 @@ namespace WH.DetectSystem
         /// </summary>
         /// <param name="paramMaoci">毛刺算法参数</param>
         /// <param name="cell">检测对象</param>
-        public static void MaociExcute(this MaociAlgorParamConfig paramMaoci, Cell cell)
+        public static void MaociExcute(this CMaociAlgorParamConfig paramMaoci, Cell cell)
         {
             //处理结果放到cell中
             BitmapImage bitmapImage = new BitmapImage();

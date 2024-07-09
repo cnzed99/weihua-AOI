@@ -6,5 +6,5 @@
         <ResourceDictionary Source="pack://application:,,,/WH.Controls;component/ControlDictionary.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:PropertyGridLang}" />
+    <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:CPropertyGridLang}" />
 </ResourceDictionary>

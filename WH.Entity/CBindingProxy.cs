@@ -12,11 +12,11 @@ namespace WH.Entity
     /// 用于不在可视化树中的对象的绑定 
     /// 不在可视化树上的对象，无法继承和直接绑定到DataContext
     /// </summary>
-    public class BindingProxy : Freezable
+    public class CBindingProxy : Freezable
     {
         protected override Freezable CreateInstanceCore()
         {
-            return new BindingProxy();
+            return new CBindingProxy();
         }
         /// <summary>
         /// 20240708 TCG
@@ -33,6 +33,6 @@ namespace WH.Entity
         /// 注入依赖属性
         /// </summary>
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new PropertyMetadata(null));
+            DependencyProperty.Register("Data", typeof(object), typeof(CBindingProxy), new PropertyMetadata(null));
     }
 }

@@ -38,22 +38,22 @@ namespace WH.DetectSystem.Models
         /// 算法参数
         /// </summary>
         [JsonProperty(Order = 1)]
-        public MaociAlgorParamConfig MaociAlgorParamConfig { get; set; } = new MaociAlgorParamConfig();
+        public CMaociAlgorParamConfig MaociAlgorParamConfig { get; set; } = new CMaociAlgorParamConfig();
         /// <summary>
         /// 质量等级
         /// </summary>
         [JsonProperty(Order = 2)]
-        public QualityConfig MaociQuality { get; set; } = new QualityConfig();
+        public CQualityConfig MaociQuality { get; set; } = new CQualityConfig();
         /// <summary>
         /// 检测设置
         /// </summary>
         [JsonProperty(Order = 3)]
-        public FilterConfig MaociFilter { get; set; } = new FilterConfig();
+        public CFilterConfig MaociFilter { get; set; } = new CFilterConfig();
         /// <summary>
         /// 缺陷数据
         /// </summary>
         [JsonProperty(Order = 4)]
-        public DefectsProduce DefectsProduce { get; set; } = new DefectsProduce();
+        public CDefectsProduce DefectsProduce { get; set; } = new CDefectsProduce();
 
         Token token;
         public CMainModel()

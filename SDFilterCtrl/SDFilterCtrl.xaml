@@ -10,7 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="550">
     <d:UserControl.DataContext>
-        <local:SDFilterCtrlVM/>
+        <local:CSDFilterCtrlVM/>
     </d:UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -132,7 +132,7 @@
                                 <TextBlock Grid.Column="1" Style="{StaticResource TextBlock1}" Text="{Binding Name}"/>
                                 <Button Grid.Column="2"
                                         Margin="2"
-                                        Content="{Binding [AddDefect], Source={x:Static local:Lang.s_Instance}}"
+                                        Content="{Binding [AddDefect], Source={x:Static local:CLang.s_Instance}}"
                                         Style="{DynamicResource Button}"
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AddFilterCommand}"
                                         CommandParameter="{Binding}" />
@@ -165,7 +165,7 @@
                                                                        Foreground="Gray" >      
                                                                 <TextBlock.Text>
                                                                     <MultiBinding StringFormat="{}{0}:{1}">
-                                                                        <Binding Source="{x:Static local:Lang.s_Instance}" Path="[Algorithm]"/>
+                                                                        <Binding Source="{x:Static local:CLang.s_Instance}" Path="[Algorithm]"/>
                                                                         <Binding Path="DataContext.Name" RelativeSource="{RelativeSource AncestorType=ItemsControl}"/>
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
@@ -175,7 +175,7 @@
                                                                        Foreground="Gray" >
                                                                 <TextBlock.Text>
                                                                     <MultiBinding StringFormat="{}{0}:{1}">
-                                                                        <Binding Source="{x:Static local:Lang.s_Instance}" Path="[QualityLevel]"/>
+                                                                        <Binding Source="{x:Static local:CLang.s_Instance}" Path="[QualityLevel]"/>
                                                                         <Binding Path="QualityLevel.Name"/>
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
@@ -185,7 +185,7 @@
                                                                        Foreground="Gray" >
                                                                 <TextBlock.Text>
                                                                     <MultiBinding StringFormat="{}{0}:{1}">
-                                                                        <Binding Source="{x:Static local:Lang.s_Instance}" Path="[Priority]"/>
+                                                                        <Binding Source="{x:Static local:CLang.s_Instance}" Path="[Priority]"/>
                                                                         <Binding Path="Priority"/>
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
@@ -194,7 +194,7 @@
                                                         <Button Grid.Column="3"
                                                                 Width="55"
                                                                 Margin="5,2,0,0"
-                                                                Content="{Binding [Edit], Source={x:Static local:Lang.s_Instance}}"
+                                                                Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
                                                                 Style="{DynamicResource Button}"
                                                                 Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.EditFilterCommand}">
                                                             <Button.CommandParameter>
@@ -207,7 +207,7 @@
                                                         <Button Grid.Column="4"
                                                                 Width="55"
                                                                 Margin="5,2,5,0"
-                                                                Content="{Binding [Delete], Source={x:Static local:Lang.s_Instance}}"
+                                                                Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                                                                 Style="{DynamicResource DelButton}"
                                                                 Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl},  Path=DataContext.RemoveFilterCommand}">
                                                             <Button.CommandParameter>
@@ -235,7 +235,7 @@
                                                                             <TextBlock Style="{DynamicResource TextBlock2}" FontSize="12">
                                                                                 <TextBlock.Text>
                                                                                     <MultiBinding StringFormat="{}{0}{1}">
-                                                                                        <Binding Path="[DefectFilter]" Source="{x:Static local:Lang.s_Instance}"/>
+                                                                                        <Binding Path="[DefectFilter]" Source="{x:Static local:CLang.s_Instance}"/>
                                                                                         <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
                                                                                     </MultiBinding>
                                                                                 </TextBlock.Text>

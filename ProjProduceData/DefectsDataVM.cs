@@ -17,14 +17,14 @@ namespace ProjProduceData
     /// 2024.7.4 李焕彬
     /// 产量统计、缺陷统计控件ViewModel
     /// </summary>
-    public partial class DefectsDataVM : ObservableObject
+    public partial class CDefectsDataVM : ObservableObject
     {
-        public DefectsDataVM() 
+        public CDefectsDataVM() 
         {
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<string>, string>(this, "DefectName");
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<Quality>>(this);
-            //WeakReferenceMessenger.Default.Register<FilterConfig>(this);
-            //WeakReferenceMessenger.Default.Register<QualityConfig>(this);
+            //WeakReferenceMessenger.Default.Register<CFilterConfig>(this);
+            //WeakReferenceMessenger.Default.Register<CQualityConfig>(this);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ProjProduceData
         /// <param name="defectsProduce"></param>
         /// <param name="filterConfig"></param>
         /// <param name="qualityConfig"></param>
-        public void SetDefectsProduce(DefectsProduce defectsProduce, FilterConfig filterConfig, QualityConfig qualityConfig) 
+        public void SetDefectsProduce(CDefectsProduce defectsProduce, CFilterConfig filterConfig, CQualityConfig qualityConfig) 
         {
             this.DefectsProduce = defectsProduce;
             Receive(filterConfig);
@@ -65,7 +65,7 @@ namespace ProjProduceData
         /// 缺陷统计配置
         /// </summary>
         [ObservableProperty]
-        private DefectsProduce defectsProduce;
+        private CDefectsProduce defectsProduce;
 
         ///// <summary>
         ///// 2024.7.4 李焕彬
@@ -74,7 +74,7 @@ namespace ProjProduceData
         ///// <param name="message">缺陷名字修改消息</param>
         //public void Receive(PropertyChangedMessage<string> message)
         //{
-        //    var de = DefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
+        //    var de = CDefectsProduce.DefectNumbersList.FirstOrDefault(o => o.Name == message.OldValue);
         //    if (de != null)
         //    {
         //        de.Name = message.NewValue;
@@ -88,7 +88,7 @@ namespace ProjProduceData
         ///// <param name="message">质量等级修改消息</param>
         //public void Receive(PropertyChangedMessage<Quality> message)
         //{
-        //    var qua = DefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
+        //    var qua = CDefectsProduce.QualityNumbersList.FirstOrDefault(o => o.Name == message.OldValue.Name);
         //    if (qua != null)
         //    {
         //        qua.Name = message.NewValue.Name;
@@ -101,7 +101,7 @@ namespace ProjProduceData
         /// 检测设置配置修改消息处理
         /// </summary>
         /// <param name="filter">检测设置配置</param>
-        public void Receive(FilterConfig filter)
+        public void Receive(CFilterConfig filter)
         {
             List<string> strings = new List<string>();
             foreach (var sp in filter.SpeciesFilters)

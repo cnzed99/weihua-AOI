@@ -23,20 +23,20 @@ namespace WH.Controls
     /// 属性编辑器扩展，可适应中英文，绑定lang属性
     /// 属性特性用Resource键值
     /// </summary>
-    public class PropertyGridLang : PropertyGrid
+    public class CPropertyGridLang : PropertyGrid
     {
-        static PropertyGridLang()
+        static CPropertyGridLang()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(PropertyGridLang), new FrameworkPropertyMetadata(typeof(PropertyGridLang)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(CPropertyGridLang), new FrameworkPropertyMetadata(typeof(CPropertyGridLang)));
         }
 
         /// <summary>
         /// 2024.7.2 李焕彬
         /// 语言
         /// </summary>
-        public LanguageManager.LanguageManager lang
+        public LanguageManager.CLanguageManager lang
         {
-            get { return (LanguageManager.LanguageManager)GetValue(langProperty); }
+            get { return (LanguageManager.CLanguageManager)GetValue(langProperty); }
             set { SetValue(langProperty, value); }
         }
 
@@ -46,9 +46,9 @@ namespace WH.Controls
         /// </summary>
         // Using a DependencyProperty as the backing store for lang.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty langProperty =
-            DependencyProperty.Register("lang", typeof(LanguageManager.LanguageManager), typeof(PropertyGridLang), new PropertyMetadata(default(LanguageManager.LanguageManager), (d,e) =>
+            DependencyProperty.Register("lang", typeof(LanguageManager.CLanguageManager), typeof(CPropertyGridLang), new PropertyMetadata(default(LanguageManager.CLanguageManager), (d,e) =>
             {
-                PropertyGridLang PropertyGridLang = (PropertyGridLang)d;
+                CPropertyGridLang PropertyGridLang = (CPropertyGridLang)d;
                 if (PropertyGridLang.lang != null)
                 {
                     PropertyGridLang.lang.PropertyChanged += (o, k) =>

@@ -58,7 +58,7 @@ namespace 断面毛刺检测软件.Views
         OpenFolderDialog imgFolderDialog = new OpenFolderDialog();
 
         
-        IEnumerator<KnownColor> brushes = new BrushPro().KnownColors.GetEnumerator();
+        IEnumerator<CKnownColor> brushes = new CBrushPro().KnownColors.GetEnumerator();
         Random random = new Random(50);
         public OffLineTestCtrl(CMainVM vm)
         {

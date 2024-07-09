@@ -12,7 +12,7 @@
     d:DesignWidth="550"
     mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <local:SDFilterCtrlVM />
+        <local:CSDFilterCtrlVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>

@@ -20,9 +20,9 @@ namespace QualityGrade
     /// 2024.6.26 李焕彬
     /// 质量等级控件VM
     /// </summary>
-    public partial class QualityCtrlVM :ObservableObject
+    public partial class CQualityCtrlVM :ObservableObject
     {
-        public QualityCtrlVM() 
+        public CQualityCtrlVM() 
         {
             //返回请求的质量等级集合
             //WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
@@ -36,7 +36,7 @@ namespace QualityGrade
         //public void Receive(RequestMessage<ObservableCollection<Quality>> message)
         //{
         //    if (message.HasReceivedResponse) return;
-        //    message.Reply(QualityConfig.Qualities);
+        //    message.Reply(CQualityConfig.Qualities);
         //}
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace QualityGrade
         /// 质量等级配置
         /// </summary>
         [ObservableProperty]
-        private QualityConfig qualityConfig;//不要在这里赋值
+        private CQualityConfig qualityConfig;//不要在这里赋值
 
         /// <summary>
         /// 2024.7.5 TCG
@@ -98,7 +98,7 @@ namespace QualityGrade
                     var qua = QualitySet.Clone();
                     if (QualityConfig.Qualities.Count > 0) qua.Priority = QualityConfig.Qualities[QualityConfig.Qualities.Count - 1].Priority + 1;
                     QualityConfig.Qualities.Add(qua);
-                    //WeakReferenceMessenger.Default.Send<QualityConfig>(QualityConfig);
+                    //WeakReferenceMessenger.Default.Send<CQualityConfig>(CQualityConfig);
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace QualityGrade
             if (QualitySelect != null)
             {
                 QualityConfig.Qualities.Remove(QualitySelect);
-                WeakReferenceMessenger.Default.Send<QualityConfig>(QualityConfig);
+                WeakReferenceMessenger.Default.Send<CQualityConfig>(QualityConfig);
             }
         }
 

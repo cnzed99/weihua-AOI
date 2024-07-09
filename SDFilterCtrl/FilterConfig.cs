@@ -25,7 +25,7 @@ namespace SDFilter
     /// 2024.6.27 李焕彬
     /// 缺陷筛选管理类
     /// </summary>
-    public partial class FilterConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CFilterConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.2 李焕彬
@@ -35,11 +35,11 @@ namespace SDFilter
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
-        public FilterConfig()
+        public CFilterConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
-            foreach (var specie in AlgorithmOut.s_Instance.Specises)
+            foreach (var specie in CAlgorithmOut.s_Instance.Specises)
             {
                 SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
                 foreach (var recipe in specie.Recipes)
@@ -82,7 +82,7 @@ namespace SDFilter
         /// <param name="message">消息</param>
         public void Receive(OperateMessage message)
         {
-            if (message.obj.GetType() == typeof(FilterConfig))
+            if (message.obj.GetType() == typeof(CFilterConfig))
             {
                 OperateLog.Info($"检测设置：{message.message}");
                 return;
@@ -213,9 +213,9 @@ namespace SDFilter
                         {
                             filter.Result = true;
                             List<SRegion> detectRegion = AlgorithmOut[sp.Name][rp.Name].Region;
-                            switch (filter.UnionOrConnect)
+                            switch (filter.UnionMethod)
                             {
-                                case "区域合并":
+                                case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
                                     SRegionInfo regionInfo = new SRegionInfo();
                                     regionInfo.WidthBound = detectRegion.Select(o => o.RegionInfo.WidthBound).Sum();
                                     regionInfo.HeightBound = detectRegion.Select(o => o.RegionInfo.HeightBound).Sum();
@@ -225,9 +225,9 @@ namespace SDFilter
                                     regionInfo.Phi = detectRegion.Select(o => o.RegionInfo.Phi).Max();
                                     regionInfo.ContLen = detectRegion.Select(o => o.RegionInfo.ContLen).Sum();
                                     regionInfo.Area = detectRegion.Select(o => o.RegionInfo.Area).Sum();
-                                    foreach (SRegion region in detectRegion)
+                                    for (int i = 0; i < detectRegion.Count; i++)
                                     {
-                                        region.RegionInfo.Copy(regionInfo);
+                                        detectRegion[i] = new SRegion(regionInfo, detectRegion[i].points1);
                                     }
                                     break;
                             }
@@ -481,7 +481,7 @@ namespace SDFilter
         {
             this.Name = name;
            
-            ShowColor = BrushPro.s_Instance.KnownColors[new Random().Next(BrushPro.s_Instance.KnownColors.Count - 1)];
+            ShowColor = CBrushPro.s_Instance.KnownColors[new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)];
         }
 
         /// <summary>
@@ -506,7 +506,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("颜色")]
         [ObservableProperty]
-        private KnownColor showColor = null;
+        private CKnownColor showColor = null;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -592,7 +592,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("输入操作")]
         [ObservableProperty]
-        private string unionOrConnect = "不打散不合并";
+        private EMUNIONMETHOD unionMethod = EMUNIONMETHOD.EMUNIONMETHOD_NONE;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -895,5 +895,31 @@ namespace SDFilter
         /// </summary>
         [EnumString("数量", "Num")]
         EMFILTER_NUM
+    }
+
+    /// <summary>
+    /// 2024.7.9 李焕彬
+    /// 合并方法
+    /// </summary>
+    public enum EMUNIONMETHOD
+    {
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 不打散不合并
+        /// </summary>
+        [EnumString("不打散不合并", "Not Break And Union")]
+        EMUNIONMETHOD_NONE,
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 打散
+        /// </summary>
+        [EnumString("打散", "Break")]
+        EMUNIONMETHOD_BREAK,
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 合并
+        /// </summary>
+        [EnumString("合并", "Union")]
+        EMUNIONMETHOD_UNION,
     }
 }
