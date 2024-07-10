@@ -16,6 +16,7 @@ namespace WH.Controls.SingleInstance
     public class SingleInstance
     {
         static Hashtable s_typeList = new Hashtable();
+
         /// <summary>
         /// 20240701 TCG
         /// 系统配置等窗口 全局唯一窗口单例，要求无参构造
@@ -24,16 +25,18 @@ namespace WH.Controls.SingleInstance
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="W"></typeparam>
         /// <returns></returns>
-        public static T Create<T,W>() where T : Lazy<W>,new() where W : Window,new()
+        public static T Create<T, W>()
+            where T : Lazy<W>, new()
+            where W : Window, new()
         {
             if (s_typeList.ContainsKey(typeof(T)))
             {
-                if(s_typeList[typeof(T)] is not null)
+                if (s_typeList[typeof(T)] is not null)
                     return (T)s_typeList[typeof(T)];
                 else
                 {
                     T t = new T();
-                    
+
                     s_typeList[typeof(T)] = t;
                     t.Value.Closed += (s, e) => s_typeList[typeof(T)] = null;
                     return t;
@@ -42,18 +45,20 @@ namespace WH.Controls.SingleInstance
             else
             {
                 T t = new T();
-               
+
                 s_typeList.Add(typeof(T), t);
                 t.Value.Closed += (s, e) => s_typeList[typeof(T)] = null;
                 return t;
             }
         }
+
         /// <summary>
         /// 20240709 TCG
         /// 单例窗体容器 不要求无参构造
         /// 存在且不为空则返回现有实例，否则添加到容器并返回当前实例
         /// </summary>
-        public static T Add<T>(T window, string key) where T : Window
+        public static T Add<T>(T window, string key)
+            where T : Window
         {
             if (s_typeList.ContainsKey(key))
             {
@@ -61,7 +66,6 @@ namespace WH.Controls.SingleInstance
                     return (T)s_typeList[key];
                 else
                 {
-                   
                     s_typeList[key] = window;
                     window.Closed += (s, e) => s_typeList[key] = null;
                     return window;
@@ -69,13 +73,10 @@ namespace WH.Controls.SingleInstance
             }
             else
             {
-                
                 s_typeList.Add(key, window);
                 window.Closed += (s, e) => s_typeList[key] = null;
                 return window;
             }
         }
     }
-    
-   
 }
