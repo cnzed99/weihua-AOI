@@ -7,4 +7,5 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:CPropertyGridLang}" />
+
 </ResourceDictionary>

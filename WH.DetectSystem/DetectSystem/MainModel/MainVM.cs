@@ -31,6 +31,7 @@ using ProjProduceData;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.DetectSystem.SystemSet;
 using Newtonsoft.Json.Linq;
+using MotionControl;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -69,7 +70,6 @@ namespace WH.DetectSystem.ViewModels
                 this.QualityCtrlVM.QualityConfig = MaociQuality;
                 this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
                 this.DefectsDataVM.SetDefectsProduce(DefectsProduce, MaociFilter, MaociQuality);
-
             } }
         //[ObservableProperty]
         //string projPath ;

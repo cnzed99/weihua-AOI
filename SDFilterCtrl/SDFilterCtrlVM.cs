@@ -46,7 +46,7 @@ namespace SDFilter
                     break;
                 }
             }
-            recipeDefect.DefectFilters.Add(new DefectFilter(recipeDefect.Name + index));
+            recipeDefect.DefectFilters.Add(new DefectFilter(recipeDefect.Name + index, FilterConfig.token));
             WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
         }
 

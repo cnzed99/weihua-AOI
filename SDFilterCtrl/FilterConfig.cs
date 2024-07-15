@@ -44,7 +44,7 @@ namespace SDFilter
                 SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
                 foreach (var recipe in specie.Recipes)
                 {
-                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name));
+                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name,token));
                 }
                 SpFilters.Add(speciesFilter);
             }
@@ -355,7 +355,6 @@ namespace SDFilter
         public SpeciesFilter(string name) :this()
         {
             this.Name = name;
-           
         }
 
         /// <summary>
@@ -418,11 +417,11 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
             DefectFilters = new ObservableCollection<DefectFilter>();
         }
-        public RecipeDefect(string name):this()
+        public RecipeDefect(string name, Token token)
         {
+            this.token = token;
             this.Name = name;
-            DefectFilters.Add(new DefectFilter(Name + "0"));
-          
+            DefectFilters = new ObservableCollection<DefectFilter>() { new DefectFilter(Name + "0", token) };
         }
 
         /// <summary>
@@ -477,10 +476,12 @@ namespace SDFilter
             FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
             ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
         }
-        public DefectFilter(string name):this()
+        public DefectFilter(string name, Token token)
         {
+            this.token = token;
             this.Name = name;
-           
+            FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect(token) };
+            ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
             ShowColor = CBrushPro.s_Instance.KnownColors[new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)];
         }
 
@@ -577,6 +578,13 @@ namespace SDFilter
             SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig() };
         }
 
+        public FilterAndSelect(Token token)
+        {
+            this.token = token;
+            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
+            SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
+        }
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 检测结果
@@ -630,7 +638,12 @@ namespace SDFilter
         {
             this.token = new Token("", this.GetType().Namespace);
             SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams() };
-           
+        }
+
+        public SelectConfig(Token token)
+        {
+            this.token = token;
+            SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams(token) };
         }
 
         /// <summary>
@@ -659,6 +672,11 @@ namespace SDFilter
         public OneSelectParams()
         {
             this.token = new Token("", this.GetType().Namespace);
+        }
+
+        public OneSelectParams(Token token)
+        {
+            this.token = token;
         }
         /// <summary>
         /// 2024.7.4 李焕彬

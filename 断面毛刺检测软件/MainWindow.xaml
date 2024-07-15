@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
+    xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
@@ -360,7 +361,9 @@
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}"/>
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}" />

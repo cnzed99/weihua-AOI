@@ -155,6 +155,7 @@ namespace WH.Entity.CommonLib
     /// <summary>
     /// 20240706 TCG
     /// 消息通道类型
+    /// 
     /// </summary>
     public class Token : IEquatable<Token>
     {

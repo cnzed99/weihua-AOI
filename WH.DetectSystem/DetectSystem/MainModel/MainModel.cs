@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using WH.Entity.CommonLib;
+using MotionControl;
 
 namespace WH.DetectSystem.Models
 {
@@ -70,8 +71,7 @@ namespace WH.DetectSystem.Models
             ConfigModifyObservableBase.UpdateToken(MaociFilter, MaociFilter.token);
             ConfigModifyObservableBase.UpdateToken(MaociAlgorParamConfig,MaociAlgorParamConfig.token);
             ConfigModifyObservableBase.UpdateToken(MaociQuality, MaociQuality.token);
-            
-           
+
         }
     }
 }

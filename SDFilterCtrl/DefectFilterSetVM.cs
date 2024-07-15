@@ -160,7 +160,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddFilterConfig()
         {
-            DefectFilter?.FilterList.Add(new FilterAndSelect());
+            DefectFilter?.FilterList.Add(new FilterAndSelect(DefectFilter.token));
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddSelectConfig(FilterAndSelect filterConfig)
         {
-            filterConfig.Filter.Add(new SelectConfig());
+            filterConfig.Filter.Add(new SelectConfig(filterConfig.token));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddSelectConfig2(FilterAndSelect filterConfig)
         {
-            filterConfig.SelectList.Add(new SelectConfig());
+            filterConfig.SelectList.Add(new SelectConfig(filterConfig.token));
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddOneSelectParam(SelectConfig selectConfig)
         {
-            selectConfig.SelectParams.Add(new OneSelectParams());
+            selectConfig.SelectParams.Add(new OneSelectParams(selectConfig.token));
         }
 
         /// <summary>

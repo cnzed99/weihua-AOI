@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mapster;
+using MotionControl;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,12 @@ namespace WH.DetectSystem.ViewModels
         CLoginViewModel loginViewModel = new CLoginViewModel();
         [ObservableProperty]
         CSystemSettingsVM systemSettings = new CSystemSettingsVM();
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 运动控制VM
+        /// </summary>
+        [ObservableProperty]
+        CMotionCtrlVM motionCtrlVM = new CMotionCtrlVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
