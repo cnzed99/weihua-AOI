@@ -163,7 +163,7 @@
     <value>Data Statistics</value>
   </data>
   <data name="Statistics" xml:space="preserve">
-    <value>Statistics</value>
+    <value>SqlSet</value>
   </data>
   <data name="DataClear" xml:space="preserve">
     <value>Clear</value>

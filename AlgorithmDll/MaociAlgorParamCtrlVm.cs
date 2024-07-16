@@ -50,7 +50,7 @@ namespace AlgorithmDll
                     break;
                 }
             }
-            Config.PcParams.Add(new MaociAlgorParam(c_ParamName + index));
+            Config.PcParams.Add(new MaociAlgorParam(c_ParamName + index, Config.token));
             Config.PcSelect = c_ParamName + index;
         }
 
@@ -84,7 +84,7 @@ namespace AlgorithmDll
                     break;
                 }
             }
-            Config.FpgaParams.Add(new MaociAlgorParamFpga(c_ParamName + index));
+            Config.FpgaParams.Add(new MaociAlgorParamFpga(c_ParamName + index, Config.token));
             Config.FpgaSelect = c_ParamName + index;
         }
 

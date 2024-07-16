@@ -26,11 +26,17 @@ namespace WH.Entity.Converter
             return value?.ToString();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
     }
+
     /// <summary>
     /// 20240708 TCG
     /// 根据传入的SelectedItem 得到所有枚举值的中英文特性参数给到ComboBox
@@ -42,16 +48,21 @@ namespace WH.Entity.Converter
             if (value is Enum)
             {
                 return EnumStringAttribute.GetEnumNames(value.GetType());
-
             }
             return value.ToString();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
     }
+
     /// <summary>
     /// 20240708 TCG
     /// 添加了特性EnumStringAttribute(zh,en)的中英文字符与枚举值相互转换
@@ -60,16 +71,23 @@ namespace WH.Entity.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is Enum item)
+            if (value is Enum item)
             {
                 return EnumStringAttribute.GetEnumName((Enum)value) ?? value.ToString();
             }
             return value.ToString();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
-            return EnumStringAttribute.GetEnumValue((string)value, targetType) ?? value.ToString();
+            if (value is null)
+                return Binding.DoNothing;
+            return EnumStringAttribute.GetEnumValue((string)value, targetType) ?? value?.ToString();
         }
     }
 }

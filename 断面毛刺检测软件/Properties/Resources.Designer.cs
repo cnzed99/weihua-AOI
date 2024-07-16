@@ -494,7 +494,7 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
-        ///   查找类似 数据统计 的本地化字符串。
+        ///   查找类似 数据库设置 的本地化字符串。
         /// </summary>
         public static string Statistics {
             get {

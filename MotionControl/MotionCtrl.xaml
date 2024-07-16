@@ -1,0 +1,520 @@
+﻿<UserControl
+    x:Class="MotionControl.MotionCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:MotionControl"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    d:DesignHeight="450"
+    d:DesignWidth="550"
+    mc:Ignorable="d">
+    <d:UserControl.DataContext>
+        <local:CMotionCtrlVM />
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+            <Style BasedOn="{StaticResource LabelDefault}" TargetType="Label">
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="Margin" Value="5" />
+            </Style>
+            <cov:BoolToBrushConverter
+                x:Key="SuccessToBrushConverter"
+                FalseValue="{x:Null}"
+                TrueValue="{DynamicResource SuccessBrush}" />
+            <cov:BoolToBrushConverter
+                x:Key="AlarmToBrushConverter"
+                FalseValue="{x:Null}"
+                TrueValue="{DynamicResource DangerBrush}" />
+            <cov:BoolToStringConverter
+                x:Key="BoolToStringConverter"
+                FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [Connected], Source={x:Static local:CLang.s_Instance}}" />
+            <Style
+                x:Key="DataGrid1"
+                BasedOn="{StaticResource DataGrid.Small}"
+                TargetType="DataGrid">
+                <Setter Property="AutoGenerateColumns" Value="False" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <TabControl Style="{StaticResource TabControlInLine}">
+        <TabItem Header="{Binding [AxisControl], Source={x:Static local:CLang.s_Instance}}">
+            <ScrollViewer>
+                <StackPanel>
+                    <UniformGrid Margin="5" Columns="3">
+                        <Button
+                            Width="100"
+                            Background="{Binding Connected, Converter={StaticResource SuccessToBrushConverter}}"
+                            Command="{Binding ConnectCommand}"
+                            Content="{Binding Connected, Converter={StaticResource BoolToStringConverter}}" />
+                        <Button
+                            Width="100"
+                            Content="{Binding [ClearAlarm], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonWarning}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrReset}" />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseUp">
+                                    <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrReset}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Button>
+                        <Button
+                            Width="100"
+                            Content="{Binding [AutoFocus], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                    </UniformGrid>
+                    <GroupBox
+                        Margin="5"
+                        Header="{Binding [OperateAxis], Source={x:Static local:CLang.s_Instance}}"
+                        Style="{StaticResource GroupBoxTab}">
+                        <GroupBox.Resources>
+                            <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </GroupBox.Resources>
+                        <StackPanel>
+                            <UniformGrid Columns="5">
+                                <Button
+                                    Width="80"
+                                    Command="{Binding EnableCommand}"
+                                    Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonPrimary}" />
+                                <Button
+                                    Width="80"
+                                    Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonWarning}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button
+                                    Width="80"
+                                    Background="{DynamicResource SuccessBrush}"
+                                    Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonSuccess}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button
+                                    Width="80"
+                                    Background="{DynamicResource SuccessBrush}"
+                                    Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonSuccess}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button
+                                    Width="80"
+                                    Background="{DynamicResource DangerBrush}"
+                                    Content="{Binding [Stop], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDanger}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Label
+                                    Width="80"
+                                    Background="{Binding IsEnable, Converter={StaticResource SuccessToBrushConverter}}"
+                                    Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}" />
+                                <Label Width="80" Content="{Binding [Home], Source={x:Static local:CLang.s_Instance}}" />
+                                <Label Width="80" Content="{Binding [PosLimitP], Source={x:Static local:CLang.s_Instance}}" />
+                                <Label Width="80" Content="{Binding [PosLimitN], Source={x:Static local:CLang.s_Instance}}" />
+                                <Label
+                                    Width="80"
+                                    Background="{Binding IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
+                                    Content="{Binding [Alarm], Source={x:Static local:CLang.s_Instance}}" />
+                                <Label
+                                    Width="80"
+                                    Background="{Binding IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
+                                    Content="{Binding [DriveAlarm], Source={x:Static local:CLang.s_Instance}}" />
+                            </UniformGrid>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="70" />
+                                </Grid.ColumnDefinitions>
+                                <GroupBox
+                                    Grid.Column="0"
+                                    Margin="3"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    Style="{StaticResource GroupBoxOriginal}">
+                                    <GroupBox.Header>
+                                        <TextBlock Text="{Binding [AbsPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}" />
+                                    </GroupBox.Header>
+                                    <hc:NumericUpDown
+                                        Name="num_abs"
+                                        Maximum="{Binding MotionConfig.SoftLimitP}"
+                                        Minimum="{Binding MotionConfig.SoftLimitN}" />
+                                </GroupBox>
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="2,0"
+                                    Text="mm" />
+                                <Button
+                                    Grid.Column="2"
+                                    Command="{Binding AbsMoveCommand}"
+                                    CommandParameter="{Binding ElementName=num_abs, Path=Value}"
+                                    Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                                <GroupBox
+                                    Grid.Column="3"
+                                    Margin="3"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    Style="{StaticResource GroupBoxOriginal}">
+                                    <GroupBox.Header>
+                                        <TextBlock Text="{Binding [RelaPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}" />
+                                    </GroupBox.Header>
+                                    <hc:NumericUpDown Name="num_rela" Minimum="0" />
+                                </GroupBox>
+                                <TextBlock
+                                    Grid.Column="4"
+                                    Margin="2,0"
+                                    Text="mm" />
+                                <Button
+                                    Grid.Column="5"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding RelaMovePCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="+"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                                <Button
+                                    Grid.Column="5"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding RelaMoveNCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="-"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox
+                        Margin="5"
+                        Header="{Binding [ObserveAxis], Source={x:Static local:CLang.s_Instance}}"
+                        Style="{StaticResource GroupBoxTab}">
+                        <GroupBox.Resources>
+                            <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </GroupBox.Resources>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBox
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [CurPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding CurPos, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="mm" />
+                            <TextBox
+                                Grid.Row="1"
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [CurSpeed], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding CurSpeed, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="mm/s" />
+                            <TextBox
+                                Grid.Row="2"
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [CurTorque], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding CurTarque, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="%" />
+                            <TextBox
+                                Grid.Row="3"
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [FocusPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding FocusPos, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="mm" />
+                            <TextBox
+                                Grid.Row="4"
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [FocusDst], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding FocusPosDst, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="mm" />
+                            <TextBox
+                                Grid.Row="5"
+                                Margin="3"
+                                hc:TitleElement.Title="{Binding [SensorPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                hc:TitleElement.TitlePlacement="Left"
+                                hc:TitleElement.TitleWidth="100"
+                                IsEnabled="False"
+                                Text="{Binding SensorPos, StringFormat={}{0:F3}}" />
+                            <TextBlock
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Left"
+                                Text="mm" />
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="{Binding [IO], Source={x:Static local:CLang.s_Instance}}">
+            <UniformGrid Columns="1">
+                <GroupBox Style="{StaticResource GroupBoxTab}">
+                    <GroupBox.Header>
+                        <DockPanel>
+                            <TextBlock Text="{Binding [InputIO], Source={x:Static local:CLang.s_Instance}}" />
+                            <Button
+                                Width="80"
+                                Margin="10,2"
+                                Command="{Binding AddInputCommand}"
+                                Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource ButtonPrimary}" />
+                            <Button
+                                Width="80"
+                                Margin="10,2"
+                                Command="{Binding DelInputCommand}"
+                                CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItems}"
+                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource ButtonDanger}" />
+                        </DockPanel>
+                    </GroupBox.Header>
+                    <DataGrid
+                        x:Name="dataGrid1"
+                        hc:DataGridAttach.ShowRowNumber="True"
+                        AutoGenerateColumns="False"
+                        HeadersVisibility="All"
+                        ItemsSource="{Binding MotionConfig.SignalIns}"
+                        RowHeaderWidth="30"
+                        Style="{StaticResource DataGrid1}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridCheckBoxColumn
+                                Binding="{Binding HasSignal}"
+                                Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn
+                                Width="300"
+                                Binding="{Binding Description}"
+                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+                <GroupBox Style="{StaticResource GroupBoxTab}">
+                    <GroupBox.Header>
+                        <DockPanel>
+                            <TextBlock Text="{Binding [OutputIO], Source={x:Static local:CLang.s_Instance}}" />
+                            <Button
+                                Width="80"
+                                Margin="10,2"
+                                Command="{Binding AddOutputCommand}"
+                                Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource ButtonPrimary}" />
+                            <Button
+                                Width="80"
+                                Margin="10,2"
+                                Command="{Binding DelOutputCommand}"
+                                CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"
+                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource ButtonDanger}" />
+                        </DockPanel>
+                    </GroupBox.Header>
+                    <DataGrid
+                        x:Name="dataGrid2"
+                        hc:DataGridAttach.ShowRowNumber="True"
+                        HeadersVisibility="All"
+                        ItemsSource="{Binding MotionConfig.SignalOuts}"
+                        RowHeaderWidth="30"
+                        Style="{StaticResource DataGrid1}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridCheckBoxColumn
+                                Binding="{Binding HasSignal}"
+                                Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTemplateColumn Header="{Binding [OpenOrClose], Source={x:Static local:CLang.s_Instance}}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox
+                                            Command="{Binding ElementName=dataGrid2, Path=DataContext.SetOutputCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsChecked="{Binding Set, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn
+                                Width="300"
+                                Binding="{Binding Description}"
+                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+            </UniformGrid>
+        </TabItem>
+        <TabItem Header="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}">
+            <TabItem.Resources>
+                <!--<Style TargetType="DataGrid" BasedOn="{StaticResource DataGrid.Small}">
+                    <Setter Property="AutoGenerateColumns" Value="False"/>
+                    <Setter Property="ColumnHeaderStyle">
+                        <Setter.Value>
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="CellStyle">
+                        <Setter.Value>
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle.Small}">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </Style>-->
+            </TabItem.Resources>
+            <GroupBox Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel>
+                        <Button
+                            Width="80"
+                            Margin="10,2"
+                            Command="{Binding WriteRegisterCommand}"
+                            Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                        <TextBlock Text="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}" />
+                        <Button
+                            Width="80"
+                            Margin="10,2"
+                            Command="{Binding AddRegisterCommand}"
+                            Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                        <Button
+                            Width="80"
+                            Margin="10,2"
+                            Command="{Binding DelRegisterCommand}"
+                            CommandParameter="{Binding ElementName=dataGrid3, Path=SelectedItems}"
+                            Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonDanger}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <DataGrid
+                    Name="dataGrid3"
+                    hc:DataGridAttach.ShowRowNumber="True"
+                    HeadersVisibility="All"
+                    ItemsSource="{Binding MotionConfig.RegisterSets}"
+                    RowHeaderWidth="30"
+                    Style="{StaticResource DataGrid1}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                        <DataGridTextColumn
+                            Binding="{Binding ValueRead}"
+                            Header="{Binding [Read], Source={x:Static local:CLang.s_Instance}}"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding ValueWrite}" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                        <DataGridTextColumn
+                            Width="300"
+                            Binding="{Binding Description}"
+                            Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </TabItem>
+        <TabItem Header="{Binding [AxisConfig], Source={x:Static local:CLang.s_Instance}}">
+            <GroupBox Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel>
+                        <Button
+                            Width="80"
+                            Margin="10,2"
+                            Command="{Binding WriteRegisterFixCommand}"
+                            Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                        <TextBlock Text="{Binding [AxisConfig], Source={x:Static local:CLang.s_Instance}}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <wh:CPropertyGridLang SelectedObject="{Binding MotionConfig}" lang="{x:Static local:CLang.s_Instance}" />
+            </GroupBox>
+        </TabItem>
+    </TabControl>
+</UserControl>

@@ -27,10 +27,9 @@ namespace AlgorithmDll
         public CMaociAlgorParamConfig() 
         {
             this.token = new Token("",this.GetType().Namespace);
-            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
-            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName) };
+            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName, token) };
+            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName, token) };
             UpdataMaociAlgorParamUse();
-            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>
@@ -141,8 +140,9 @@ namespace AlgorithmDll
         {
             this.token = new Token("", this.GetType().Namespace);
         }
-        public MaociAlgorParam(string name):this()
+        public MaociAlgorParam(string name, Token token)
         {
+            this.token = token;
             Name = name;
         }
 
@@ -245,8 +245,9 @@ namespace AlgorithmDll
         {
             this.token = new Token("", this.GetType().Namespace);
         }
-        public MaociAlgorParamFpga(string name):this()
+        public MaociAlgorParamFpga(string name, Token token)
         {
+            this.token = token;
             Name = name;
         }
 

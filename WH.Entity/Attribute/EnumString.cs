@@ -1,13 +1,13 @@
-﻿using Mapster.Utils;
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Reflection;
+using Mapster.Utils;
 
 namespace WH.Entity.Attribute
 {
@@ -19,10 +19,13 @@ namespace WH.Entity.Attribute
     {
         public string ZhName;
         public string EnName;
+
         public EnumStringAttribute(string zh, string en)
         {
-            ZhName = zh; EnName = en;
+            ZhName = zh;
+            EnName = en;
         }
+
         /// <summary>
         /// 20240708 TCG
         /// 将枚举集合转换为对应的中英文特性值集合
@@ -34,7 +37,10 @@ namespace WH.Entity.Attribute
             List<string> names = new List<string>();
             foreach (var item in enums)
             {
-                var attr = (EnumStringAttribute)item.GetType().GetField(item.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
+                var attr = (EnumStringAttribute)
+                    item.GetType()
+                        .GetField(item.ToString())
+                        .GetCustomAttribute(typeof(EnumStringAttribute));
                 if (attr != null)
                 {
                     switch (CultureInfo.CurrentCulture.Name)
@@ -54,6 +60,7 @@ namespace WH.Entity.Attribute
             }
             return names;
         }
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 获取输入枚举类型对应的中英文特性值集合
@@ -65,7 +72,10 @@ namespace WH.Entity.Attribute
             List<string> names = new List<string>();
             foreach (var item in Enum.GetValues(type))
             {
-                var attr = (EnumStringAttribute)item.GetType().GetField(item.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
+                var attr = (EnumStringAttribute)
+                    item.GetType()
+                        .GetField(item.ToString())
+                        .GetCustomAttribute(typeof(EnumStringAttribute));
                 if (attr != null)
                 {
                     switch (CultureInfo.CurrentCulture.Name)
@@ -94,7 +104,11 @@ namespace WH.Entity.Attribute
         /// <returns>枚举名</returns>
         public static string GetEnumName(Enum value)
         {
-            var attr = (EnumStringAttribute)value.GetType().GetField(value.ToString()).GetCustomAttribute(typeof(EnumStringAttribute));
+            var attr = (EnumStringAttribute)
+                value
+                    .GetType()
+                    .GetField(value.ToString())
+                    .GetCustomAttribute(typeof(EnumStringAttribute));
             if (attr != null)
             {
                 switch (CultureInfo.CurrentCulture.Name)
@@ -118,33 +132,38 @@ namespace WH.Entity.Attribute
         /// <returns>枚举值</returns>
         public static object GetEnumValue(string value, Type targetType)
         {
-            var fieldInfo = targetType.GetFields().FirstOrDefault(finfo =>
-            {
-                var atr = ((EnumStringAttribute)finfo.GetCustomAttribute(typeof(EnumStringAttribute)));
-                if (atr is null) return false;
-                switch (CultureInfo.CurrentCulture.Name)
+            var fieldInfo = targetType
+                .GetFields()
+                .FirstOrDefault(finfo =>
                 {
-                    case "zh-CN":
-                        if (atr.ZhName == value.ToString())
-                        {
-                            return true;
-                        }  
-                        else
-                        {
-                            return false;
-                        }
-                    default:
-                        if (atr.EnName == value.ToString())
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                }
-            });
-            return fieldInfo.GetValue(null);
+                    var atr = (
+                        (EnumStringAttribute)finfo.GetCustomAttribute(typeof(EnumStringAttribute))
+                    );
+                    if (atr is null)
+                        return false;
+                    switch (CultureInfo.CurrentCulture.Name)
+                    {
+                        case "zh-CN":
+                            if (atr.ZhName == value?.ToString())
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        default:
+                            if (atr.EnName == value?.ToString())
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                    }
+                });
+            return fieldInfo?.GetValue(null);
         }
     }
 }

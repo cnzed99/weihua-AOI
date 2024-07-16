@@ -1,0 +1,181 @@
+﻿<UserControl
+    x:Class="HistoryPlayback.HistoryCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:HistoryPlayback"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    d:DataContext="{d:DesignInstance Type=local:CHistoryVM}"
+    d:DesignHeight="800"
+    d:DesignWidth="600"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource GroupBoxTab}" TargetType="GroupBox" />
+            <local:FileNameConverter x:Key="FileNameConverter" />
+            <entity:CheckConverter x:Key="CheckConverter" />
+            <Style BasedOn="{StaticResource TextBoxExtend.Small}" TargetType="TextBox">
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Top" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="2,0" />
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition />
+            <RowDefinition Height="9*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ListBox
+                Foreground="White"
+                ItemsSource="{Binding FileNames}"
+                SelectedIndex="{Binding FileIndex}"
+                SelectedItem="{Binding SelectedItem}"
+                SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="5" Text="{Binding Converter={StaticResource FileNameConverter}}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ItemSelectedCommand}" CommandParameter="{Binding SelectedItem}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </ListBox>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+
+                </Grid.RowDefinitions>
+                <DockPanel>
+                    <RadioButton
+                        Grid.Column="0"
+                        d:IsChecked="True"
+                        Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
+                        GroupName="Options"
+                        IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=0}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Checked">
+                                <i:InvokeCommandAction Command="{Binding RbCheckCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </RadioButton>
+                    <RadioButton
+                        Margin="2"
+                        Content="{Binding [byDefect], Source={x:Static local:CLang.instance}}"
+                        GroupName="Options"
+                        IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=1}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Checked">
+                                <i:InvokeCommandAction Command="{Binding RbCheckCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </RadioButton>
+                    <ComboBox
+                        Height="20"
+                        Margin="2"
+                        ItemsSource="{Binding Filters}"
+                        SelectedItem="{Binding SelectedDefectName}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding RbCheckCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        Width="100"
+                        Height="40"
+                        Command="{Binding FrontImageCommand}">
+                        <Button.Content>
+                            <Image Source="/HistoryPlayback;component/Resources/上一张.png" />
+                        </Button.Content>
+                    </Button>
+
+                    <Button
+                        Grid.Column="1"
+                        Width="100"
+                        Height="40"
+                        Command="{Binding NextImageCommand}">
+                        <Button.Content>
+                            <Image Source="/HistoryPlayback;component/Resources/下一张.png" />
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal" />
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="2.5*" />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                Grid.Column="0"
+                hc:InfoElement.Title="{Binding [ID], Source={x:Static local:CLang.instance}}"
+                Text="{Binding ImageInfo.ID, Mode=OneWay}" />
+            <TextBox
+                Grid.Column="1"
+                hc:InfoElement.Title="{Binding [Time], Source={x:Static local:CLang.instance}}"
+              
+                Text="{Binding ImageInfo.CreateTime, Mode=OneWay}" />
+            <TextBox
+                Grid.Column="2"
+                hc:InfoElement.Title="{Binding [TakeTime], Source={x:Static local:CLang.instance}}"
+                Text="{Binding ImageInfo.TakeTime, Mode=OneWay}" />
+            <TextBox
+                Grid.Column="3"
+                hc:InfoElement.Title="{Binding [QualityLev], Source={x:Static local:CLang.instance}}"
+                Text="{Binding ImageInfo.Level, Mode=OneWay}" />
+            <TextBox
+                Grid.Column="4"
+                hc:InfoElement.Title="{Binding [DefectName], Source={x:Static local:CLang.instance}}"
+                Text="{Binding ImageInfo.DefectName, Mode=OneWay}" />
+
+        </Grid>
+
+        <Border
+            Grid.Row="2"
+            BorderBrush="White"
+            BorderThickness="3">
+            <!--<wh:ImageView d:Source="D:\\铝极1.bmp" Source="{Binding ReadImage}" />-->
+            <Image Source="{Binding ReadImage}" />
+        </Border>
+
+    </Grid>
+</UserControl>

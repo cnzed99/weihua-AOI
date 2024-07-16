@@ -311,10 +311,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrlWPF.csproj" />
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+    <ProjectReference Include="..\DataQuery\DataQuery.csproj" />
+    <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
+    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
+    <ProjectReference Include="..\SaveImageManageWPF\SaveImageManage.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
     <ProjectReference Include="..\WH.DetectSystem\WH.DetectSystem.csproj" />

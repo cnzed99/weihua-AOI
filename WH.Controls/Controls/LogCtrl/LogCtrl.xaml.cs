@@ -1,5 +1,4 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using log4net;
 using WH.Entity.LogRecord;
 
 namespace WH.Controls
@@ -22,19 +22,24 @@ namespace WH.Controls
     /// </summary>
     public partial class LogCtrl : UserControl
     {
-
-
         public SlogMessage LogMessage
         {
             get { return (SlogMessage)GetValue(LogMessageProperty); }
-            set { SetValue(LogMessageProperty, value);  }
+            set { SetValue(LogMessageProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for LogStr.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LogMessageProperty =
-            DependencyProperty.Register("LogMessage", typeof(SlogMessage), typeof(LogCtrl),new PropertyMetadata(LogMessageChanged));
+        public static readonly DependencyProperty LogMessageProperty = DependencyProperty.Register(
+            "LogMessage",
+            typeof(SlogMessage),
+            typeof(LogCtrl),
+            new PropertyMetadata(LogMessageChanged)
+        );
 
-        private static void LogMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void LogMessageChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e
+        )
         {
             LogCtrl ctrl = (LogCtrl)d;
             SlogMessage logMessage = (SlogMessage)e.NewValue;
@@ -44,7 +49,6 @@ namespace WH.Controls
         public LogCtrl()
         {
             InitializeComponent();
-            
         }
 
         /// <summary>
@@ -55,8 +59,6 @@ namespace WH.Controls
         /// <returns>执行结果</returns>
         public bool AddLogToListBox(string targetText, LOG logType = LOG.LOG_INFO)
         {
-
-
             if (string.IsNullOrEmpty(targetText))
             {
                 return false;
@@ -98,35 +100,33 @@ namespace WH.Controls
                         textColor = Brushes.DarkGray;
                         break;
                 }
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    int count = LogBox.Document.Blocks.Count;
-                    if (count > 150)
+                this.Dispatcher.Invoke(
+                    new Action(() =>
                     {
-                        LogBox.Document.Blocks.Clear();
-                    }
+                        int count = LogBox.Document.Blocks.Count;
+                        if (count > 150)
+                        {
+                            LogBox.Document.Blocks.Clear();
+                        }
 
-
-                    Run item = new Run(DateTime.Now.ToString("yyyy/M/d HH:mm:ss:fff") + " " + targetText + "\n");
-                    Paragraph paragraph = new Paragraph();
-                    paragraph.Inlines.Add(item);
-                    paragraph.Margin = new Thickness(0, 0, 0, 0);
-                    paragraph.LineHeight = 0.1;
-                    paragraph.Foreground = textColor;
-                    LogBox.Document.Blocks.Add(paragraph);
-                    LogBox.ScrollToEnd();
-                }));
+                        Run item = new Run(targetText);
+                        Paragraph paragraph = new Paragraph();
+                        paragraph.Inlines.Add(item);
+                        paragraph.Margin = new Thickness(0, 5, 0, 0);
+                        paragraph.LineHeight = 1;
+                        paragraph.Foreground = textColor;
+                        LogBox.Document.Blocks.Add(paragraph);
+                        LogBox.ScrollToEnd();
+                    })
+                );
                 //TargetListBox.Focus();
-
             }
             catch (Exception)
             {
-              
                 return false;
             }
             return true;
             //}
-
         }
     }
 }

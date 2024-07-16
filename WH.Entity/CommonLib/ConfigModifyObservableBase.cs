@@ -24,8 +24,17 @@ namespace WH.Entity.CommonLib
     /// 2024.7.2 李焕彬
     /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
-    public abstract class ConfigModifyObservableBase : ObservableObject
+    public abstract partial class ConfigModifyObservableBase : ObservableRecipient
     {
+        public ConfigModifyObservableBase() { }
+
+        /// <summary>
+        /// 20240712 TCG
+        /// 名称
+        /// </summary>
+        [ObservableProperty]
+        string name;
+
         /// <summary>
         /// 20240706 TCG
         /// 参数修改消息通道
@@ -63,19 +72,35 @@ namespace WH.Entity.CommonLib
             {
                 collect.CollectionChanged += (s, ee) =>
                 {
-                    CollectionChanged(ee, attr.DisplayName);
+                    CollectionChanged(ee, attr?.DisplayName);
                 };
             }
             if (oldValue == null || newValue == null || oldValue.ToString() == newValue.ToString())
                 return;
 
-            sb.Append(attr.DisplayName);
+            sb.Append(attr?.DisplayName);
             sb.Append(":");
-            sb.Append(oldValue?.ToString());
-            sb.Append("=>");
-            sb.Append(newValue.ToString());
+            //枚举类型均需加上特性 EnumString
+            if (oldValue is Enum oldEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(oldEnum));
+            }
+            else
+            {
+                sb.Append(oldValue?.ToString());
+            }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            sb.Append("=>");
+            if (newValue is Enum newEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(newEnum));
+            }
+            else
+            {
+                sb.Append(newValue.ToString());
+            }
+
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         /// <summary>
@@ -111,7 +136,7 @@ namespace WH.Entity.CommonLib
                 sb.Append(e.OldItems[0].ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         public static void UpdateToken(object instance, Token token)
@@ -155,6 +180,7 @@ namespace WH.Entity.CommonLib
     /// <summary>
     /// 20240706 TCG
     /// 消息通道类型
+    ///
     /// </summary>
     public class Token : IEquatable<Token>
     {
