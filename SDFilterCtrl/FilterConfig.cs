@@ -457,7 +457,6 @@ namespace SDFilter
         public RecipeDefect()
         {
             this.token = new Token("", this.GetType().Namespace);
-            DefectFilters = new ObservableCollection<DefectFilter>();
         }
 
         public RecipeDefect(string name, Token token)
@@ -516,8 +515,6 @@ namespace SDFilter
         public DefectFilter()
         {
             this.token = new Token("", this.GetType().Namespace);
-            FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
-            ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
         }
 
         public DefectFilter(string name, Token token)
@@ -623,8 +620,6 @@ namespace SDFilter
         public FilterAndSelect()
         {
             this.token = new Token("", this.GetType().Namespace);
-            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig() };
-            SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig() };
         }
 
         public FilterAndSelect(Token token)
@@ -686,7 +681,6 @@ namespace SDFilter
         public SelectConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
-            SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams() };
         }
 
         public SelectConfig(Token token)

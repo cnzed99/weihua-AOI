@@ -441,10 +441,10 @@ namespace AlarmSetCtrlWPF
                 switch (Type)
                 {
                     case ALARMTYPE.ALARMTYPE_GRADE:
-                        alarmcell.Item2 = cell.Quality == Source;
+                        alarmcell.Item2 = cell.Quality == (Quality)Source;
                         break;
                     case ALARMTYPE.ALARMTYPE_DEFECT:
-                        alarmcell.Item2 = cell.Detection.DefectFilter == Source;
+                        alarmcell.Item2 = cell.Detection.DefectFilter == (DefectFilter)Source;
                         break;
                 }
 

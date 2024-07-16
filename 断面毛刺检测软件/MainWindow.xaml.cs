@@ -567,7 +567,8 @@ namespace 断面毛刺检测软件
             this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    Growl.Error(message.alarm.RegularShow);
+                    if (message.alarm.IsPopWin)
+                        Growl.Error(message.alarm.RegularShow);
                 })
             );
         }

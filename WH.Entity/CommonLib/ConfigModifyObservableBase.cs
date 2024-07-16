@@ -24,7 +24,7 @@ namespace WH.Entity.CommonLib
     /// 2024.7.2 李焕彬
     /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
-    public partial class ConfigModifyObservableBase : ObservableRecipient
+    public abstract partial class ConfigModifyObservableBase : ObservableRecipient
     {
         public ConfigModifyObservableBase() { }
 
