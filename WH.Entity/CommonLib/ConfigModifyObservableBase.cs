@@ -24,8 +24,17 @@ namespace WH.Entity.CommonLib
     /// 2024.7.2 李焕彬
     /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
-    public abstract class ConfigModifyObservableBase : ObservableObject
+    public partial class ConfigModifyObservableBase : ObservableObject
     {
+        public ConfigModifyObservableBase() { }
+
+        /// <summary>
+        /// 20240712 TCG
+        /// 名称
+        /// </summary>
+        [ObservableProperty]
+        string name;
+
         /// <summary>
         /// 20240706 TCG
         /// 参数修改消息通道
@@ -63,17 +72,33 @@ namespace WH.Entity.CommonLib
             {
                 collect.CollectionChanged += (s, ee) =>
                 {
-                    CollectionChanged(ee, attr.DisplayName);
+                    CollectionChanged(ee, attr?.DisplayName);
                 };
             }
             if (oldValue == null || newValue == null || oldValue.ToString() == newValue.ToString())
                 return;
 
-            sb.Append(attr.DisplayName);
+            sb.Append(attr?.DisplayName);
             sb.Append(":");
-            sb.Append(oldValue?.ToString());
+            //枚举类型均需加上特性 EnumString
+            if (oldValue is Enum oldEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(oldEnum));
+            }
+            else
+            {
+                sb.Append(oldValue?.ToString());
+            }
+
             sb.Append("=>");
-            sb.Append(newValue.ToString());
+            if (newValue is Enum newEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(newEnum));
+            }
+            else
+            {
+                sb.Append(newValue.ToString());
+            }
 
             WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
         }

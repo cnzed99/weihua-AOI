@@ -3,14 +3,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:al="clr-namespace:AlgorithmDll;assembly=AlgorithmDll"
+    xmlns:alarm="clr-namespace:AlarmSetCtrlWPF;assembly=AlarmSetCtrlWPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:history="clr-namespace:HistoryPlayback;assembly=HistoryPlayback"
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
-    xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
@@ -83,7 +85,10 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/图片设置/图片设置.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [ImageSave], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="SaveImageSetting_Click"
+                        Header="{Binding [ImageSave], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/图片设置/图片.svg" />
                         </MenuItem.Icon>
@@ -122,12 +127,26 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/数据统计/数据统计.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="DataQuery_Click"
+                        Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [DataClear], Source={x:Static local:CLang.Instance}}" Click="DataClear_Click">
+                    <MenuItem
+                        Width="100"
+                        Click="Mysql_Click"
+                        Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="DataClear_Click"
+                        Header="{Binding [DataClear], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/数据统计/数据清空.svg" />
                         </MenuItem.Icon>
@@ -225,7 +244,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15"/>
+                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
 
                 <!--  启停按钮  -->
@@ -290,7 +309,7 @@
                         <Button.ToolTip>
                             <StackPanel>
                                 <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}" />
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}" />
+                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}" />
                             </StackPanel>
                         </Button.ToolTip>
                     </Button>
@@ -355,18 +374,22 @@
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <alarm:AlarmSetCtrl DataContext="{Binding CMainVMs[0].AlarmSetConfigVM}" />
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}"/>
+                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <history:HistoryCtrl x:Name="histable" DataContext="{Binding CMainVMs[0].HistoryVM}" />
+                    </hc:SimplePanel>
                 </hc:TabItem>
             </hc:TabControl>
             <!--  右侧统计栏 消息栏 离线  -->
@@ -448,7 +471,7 @@
                     x:Name="lb_UserName"
                     DockPanel.Dock="Right"
                     Foreground="{StaticResource InfoBrush}"
-                    Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel,Converter={StaticResource StringAttrEnumConverter}}" />
+                    Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}" />
                 <hc:Divider Width="5" DockPanel.Dock="Right" />
                 <TextBlock
                     x:Name="lb_UserPrivalige"

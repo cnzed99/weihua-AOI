@@ -434,6 +434,21 @@ namespace WH.Controls
 
                 dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
             }
+            foreach (var region in Regions)
+            {
+                List<Point> tmp = new List<Point>();
+                foreach (var item in region.points)
+                {
+                    tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                }
+                PathGeometry geometry = new PathGeometry();
+                PolyLineSegment polyLineSegment = new PolyLineSegment();
+                polyLineSegment.Points = new PointCollection(tmp);
+                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
+                geometry.Figures.Add(figure);
+
+                dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
+            }
             foreach (var text in Texts)
             {
                 text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);

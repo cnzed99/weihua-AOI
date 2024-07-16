@@ -1,8 +1,7 @@
-
-using AlgorithmDll;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AlgorithmDll;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell
@@ -20,12 +19,13 @@ namespace WH.RunCell
         /// <summary>
         /// 图像文件
         /// </summary>
-        public string ImageFile;
+        public string ImageFile = string.Empty;
 
         /// <summary>
         /// 缺陷位置图像
         /// </summary>
         public BitmapSource DefectPartImg { get; set; }
+
         /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
         /// </summary>
@@ -52,16 +52,18 @@ namespace WH.RunCell
         /// <summary>
         /// 用来存储是质量OK还是颜色OK [0]=质量 [1]=颜色;
         /// </summary>
-       // public bool[] DetectionOrColorOK { get; set; } = new bool[2];
+        // public bool[] DetectionOrColorOK { get; set; } = new bool[2];
 
         /// <summary>
         /// 流水号
         /// </summary>
-        public string ID { get; set; }
+        public string ID { get; set; } = string.Empty;
+
         /// <summary>
-        /// 产品ID 
+        /// 产品ID
         /// </summary>
-        public string WaferID { get; set; }
+        public string WaferID { get; set; } = string.Empty;
+
         /// <summary>
         /// 当前班次的产品序号
         /// </summary>
@@ -75,7 +77,8 @@ namespace WH.RunCell
         /// <summary>
         /// 发送信息字典
         /// </summary>
-        public Dictionary<string, string> OtherInfoSend { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> OtherInfoSend { get; set; } =
+            new Dictionary<string, string>();
 
         ///// <summary>
         ///// 原图像== Image
@@ -207,55 +210,15 @@ namespace WH.RunCell
             }
         }
 
-        /// <summary>
-        /// 颜色等级
-        /// </summary>
-        // public ColorGradeParamConfig ColorGrade { get; set; }
-
-        /// <summary>
-        /// 颜色等级信号
-        /// </summary>
-        //  public int ColorSignel { get; set; }
-
-        /// <summary>
-        /// 颜色值
-        /// </summary>
-        // public double ColorValue { get; set; }
-
-        //  public int QualitySignal { get; set; }
-
-        /// <summary>
-        /// 缺陷等级颜色
-        /// </summary>
-        //public Brush QualityColor { get; set; } = Brushes.White;
-
-        /// <summary>
-        /// 缺陷等级颜色名称
-        /// </summary>
-        //  public string QualityColorStr { get; set; } = "White";
-
-        public string DefectType { get; set; }
+        public string DefectType { get; set; } = string.Empty;
 
         public List<string> DetectedDef { get; set; }
 
-        ///// <summary>
-        ///// 缺陷等级 越低质量越高
-        ///// </summary>
-        //public int QualityLevel { get; set; } = 0;
-
-        ///// <summary>
-        ///// 质量信号
-        ///// </summary>
-        //public int QualitySignal { get; set; }
-
-        ///// <summary>
-        ///// 质量等级名称G1 G2
-        ///// </summary>
-        //public string QualityName { get; set; } = "G1";
         /// <summary>
         /// 质量等级
         /// </summary>
         public dynamic Quality { get; set; }
+
         /// <summary>
         /// 计时
         /// </summary>
@@ -300,9 +263,7 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
-
         }
-
 
         public override Cell Clone()
         {
@@ -338,7 +299,7 @@ namespace WH.RunCell
             cell.IsMix = this.IsMix;
             cell.ImageFile = this.ImageFile;
             cell.LineName = this.LineName;
-            cell.ProjectName = this.ProjectName;
+            cell.ProjName = this.ProjName;
             cell.CamSerial = this.CamSerial;
             cell.ProjGuid = this.ProjGuid;
             cell.ComGuid = this.ComGuid;
@@ -416,31 +377,29 @@ namespace WH.RunCell
         /// <summary>
         /// 制程绑定的相机序列号
         /// </summary>
-        public string CamSerial { get; set; }
+        public string CamSerial { get; set; } = string.Empty;
+        public string CamName { get; set; } = string.Empty;
 
         /// <summary>
         /// 制程绑定的通讯
         /// </summary>
-        public string ComGuid { get; set; }
+        public string ComGuid { get; set; } = string.Empty;
 
         /// <summary>
         /// 制程绑定的唯一ID
         /// </summary>
-        public string ProjGuid { get; set; }
+        public string ProjGuid { get; set; } = string.Empty;
+
+        public string ProjName { get; set; } = string.Empty;
+
         /// <summary>
         /// 线名称（属于哪条产线）
         /// </summary>
-        public string LineName { get; set; }
+        public string LineName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// 制程名
-        /// </summary>
-        public string ProjectName { get; set; }
         /// <summary>
         /// 接收到的信号数据
         /// </summary>
         public byte[] DataBytes { get; set; }
-
     }
-
 }

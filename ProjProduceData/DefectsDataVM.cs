@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using QualityGrade;
-using SDFilter;
-using SVGImage.SVG.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using QualityGrade;
+using SDFilter;
+using SVGImage.SVG.Filters;
 
 namespace ProjProduceData
 {
@@ -19,7 +19,7 @@ namespace ProjProduceData
     /// </summary>
     public partial class CDefectsDataVM : ObservableObject
     {
-        public CDefectsDataVM() 
+        public CDefectsDataVM()
         {
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<string>, string>(this, "DefectName");
             //WeakReferenceMessenger.Default.Register<PropertyChangedMessage<Quality>>(this);
@@ -34,7 +34,11 @@ namespace ProjProduceData
         /// <param name="defectsProduce"></param>
         /// <param name="filterConfig"></param>
         /// <param name="qualityConfig"></param>
-        public void SetDefectsProduce(CDefectsProduce defectsProduce, CFilterConfig filterConfig, CQualityConfig qualityConfig) 
+        public void SetDefectsProduce(
+            CDefectsProduce defectsProduce,
+            CFilterConfig filterConfig,
+            CQualityConfig qualityConfig
+        )
         {
             this.DefectsProduce = defectsProduce;
             Receive(filterConfig);

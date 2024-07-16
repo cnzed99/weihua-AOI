@@ -1,12 +1,4 @@
-﻿using AlgorithmDll;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using Mapster;
-using Newtonsoft.Json;
-using QualityGrade;
-using SVGImage.SVG.Filters;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -14,6 +6,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
+using AlgorithmDll;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using Mapster;
+using Newtonsoft.Json;
+using QualityGrade;
+using SVGImage.SVG.Filters;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -49,8 +49,41 @@ namespace SDFilter
                 SpFilters.Add(speciesFilter);
             }
             SpeciesFilters = SpFilters;
-           
+
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+        }
+
+        /// <summary>
+        /// 20240715 TCG
+        /// 同步毛刺等级实例
+        /// </summary>
+        /// <param name="MaociQuality"></param>
+        public void Synchronization(CQualityConfig MaociQuality)
+        {
+            #region 同步毛刺过滤配置
+            foreach (var spFilter in SpeciesFilters)
+            {
+                foreach (var reFilger in spFilter.RecipeDefects)
+                {
+                    foreach (var deFilter in reFilger.DefectFilters)
+                    {
+                        //新建配方 质量等级没有赋值时赋值最差
+                        if (deFilter.QualityLevel is null)
+                        {
+                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
+                        }
+                        else
+                        {
+                            var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
+                                o.Priority == deFilter.QualityLevel.Priority
+                            );
+                            deFilter.QualityLevel = null;
+                            deFilter.QualityLevel = findquality;
+                        }
+                    }
+                }
+            }
+            #endregion
         }
 
         /// <summary>
@@ -69,10 +102,7 @@ namespace SDFilter
         /// <returns></returns>
         public SpeciesFilter this[string name]
         {
-            get
-            {
-                return SpeciesFilters.FirstOrDefault(s => s.Name == name);
-            }
+            get { return SpeciesFilters.FirstOrDefault(s => s.Name == name); }
         }
 
         /// <summary>
@@ -89,7 +119,7 @@ namespace SDFilter
             }
             foreach (var sp in SpeciesFilters)
             {
-                if(message.obj.GetType() == typeof(SpeciesFilter))
+                if (message.obj.GetType() == typeof(SpeciesFilter))
                 {
                     if (sp == message.obj)
                     {
@@ -102,7 +132,7 @@ namespace SDFilter
                 {
                     if (message.obj.GetType() == typeof(RecipeDefect))
                     {
-                        if(re == message.obj)
+                        if (re == message.obj)
                         {
                             OperateLog.Info($"类别：{sp.Name}-{re.Name}-{message.message}");
                             return;
@@ -115,7 +145,9 @@ namespace SDFilter
                         {
                             if (de == message.obj)
                             {
-                                OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-{message.message}");
+                                OperateLog.Info(
+                                    $"类别：{sp.Name}-{re.Name}-{de.Name}-{message.message}"
+                                );
                                 return;
                             }
                             continue;
@@ -126,7 +158,9 @@ namespace SDFilter
                             {
                                 if (fis == message.obj)
                                 {
-                                    OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}");
+                                    OperateLog.Info(
+                                        $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}"
+                                    );
                                     return;
                                 }
                                 continue;
@@ -137,7 +171,9 @@ namespace SDFilter
                                 {
                                     if (se == message.obj)
                                     {
-                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}");
+                                        OperateLog.Info(
+                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}"
+                                        );
                                         return;
                                     }
                                     continue;
@@ -146,7 +182,9 @@ namespace SDFilter
                                 {
                                     if (pa == message.obj)
                                     {
-                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}");
+                                        OperateLog.Info(
+                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}"
+                                        );
                                         return;
                                     }
                                 }
@@ -157,7 +195,9 @@ namespace SDFilter
                                 {
                                     if (fi == message.obj)
                                     {
-                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}");
+                                        OperateLog.Info(
+                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}"
+                                        );
                                         return;
                                     }
                                     continue;
@@ -166,7 +206,9 @@ namespace SDFilter
                                 {
                                     if (pa == message.obj)
                                     {
-                                        OperateLog.Info($"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}");
+                                        OperateLog.Info(
+                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}"
+                                        );
                                         return;
                                     }
                                 }
@@ -195,7 +237,7 @@ namespace SDFilter
                 this[sp.Name].Result = true;
                 foreach (var rp in sp.Recipes)
                 {
-                    foreach (var de in this[sp.Name][rp.Name].DefectFilters)//缺陷
+                    foreach (var de in this[sp.Name][rp.Name].DefectFilters) //缺陷
                     {
                         //deIndex++;
                         CellDetection detection = new CellDetection();
@@ -204,12 +246,13 @@ namespace SDFilter
                         detection.RecipeDefectName = rp.Name;
                         //detection.Priority = de.Priority;
                         //detection.Quality = de.QualityLevel;//质量等级
-                        detection.DefectFilter = de;//缺陷过滤器
+                        detection.DefectFilter = de; //缺陷过滤器
                         //detection.Index = deIndex;
                         //detection.ShowColor = de.ShowColor;
                         detection.regionOut = AlgorithmOut[sp.Name][rp.Name].Region;
-                        if (cell.CancelSource.IsCancellationRequested) return;//任务取消时退出
-                        foreach (var filter in de.FilterList)//过滤分选器
+                        if (cell.CancelSource.IsCancellationRequested)
+                            return; //任务取消时退出
+                        foreach (var filter in de.FilterList) //过滤分选器
                         {
                             filter.Result = true;
                             List<SRegion> detectRegion = AlgorithmOut[sp.Name][rp.Name].Region;
@@ -217,52 +260,75 @@ namespace SDFilter
                             {
                                 case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
                                     SRegionInfo regionInfo = new SRegionInfo();
-                                    regionInfo.WidthBound = detectRegion.Select(o => o.RegionInfo.WidthBound).Sum();
-                                    regionInfo.HeightBound = detectRegion.Select(o => o.RegionInfo.HeightBound).Sum();
-                                    regionInfo.PeakHeight = detectRegion.Select(o => o.RegionInfo.PeakHeight).Sum();
-                                    regionInfo.LongLen = detectRegion.Select(o => o.RegionInfo.LongLen).Sum();
-                                    regionInfo.ShorLen = detectRegion.Select(o => o.RegionInfo.ShorLen).Sum();
-                                    regionInfo.Phi = detectRegion.Select(o => o.RegionInfo.Phi).Max();
-                                    regionInfo.ContLen = detectRegion.Select(o => o.RegionInfo.ContLen).Sum();
-                                    regionInfo.Area = detectRegion.Select(o => o.RegionInfo.Area).Sum();
+                                    regionInfo.WidthBound = detectRegion
+                                        .Select(o => o.RegionInfo.WidthBound)
+                                        .Sum();
+                                    regionInfo.HeightBound = detectRegion
+                                        .Select(o => o.RegionInfo.HeightBound)
+                                        .Sum();
+                                    regionInfo.PeakHeight = detectRegion
+                                        .Select(o => o.RegionInfo.PeakHeight)
+                                        .Sum();
+                                    regionInfo.LongLen = detectRegion
+                                        .Select(o => o.RegionInfo.LongLen)
+                                        .Sum();
+                                    regionInfo.ShorLen = detectRegion
+                                        .Select(o => o.RegionInfo.ShorLen)
+                                        .Sum();
+                                    regionInfo.Phi = detectRegion
+                                        .Select(o => o.RegionInfo.Phi)
+                                        .Max();
+                                    regionInfo.ContLen = detectRegion
+                                        .Select(o => o.RegionInfo.ContLen)
+                                        .Sum();
+                                    regionInfo.Area = detectRegion
+                                        .Select(o => o.RegionInfo.Area)
+                                        .Sum();
                                     for (int i = 0; i < detectRegion.Count; i++)
                                     {
-                                        detectRegion[i] = new SRegion(regionInfo, detectRegion[i].points1);
+                                        detectRegion[i] = new SRegion(
+                                            regionInfo,
+                                            detectRegion[i].points1
+                                        );
                                     }
                                     break;
                             }
 
-                            List<SRegion> filterOuts = new List<SRegion>();//过滤后的区域
-                            foreach (var select in filter.Filter)//过滤
+                            List<SRegion> filterOuts = new List<SRegion>(); //过滤后的区域
+                            foreach (var select in filter.Filter) //过滤
                             {
                                 List<SRegion> selRegion = detectRegion;
                                 foreach (var selParam in select.SelectParams)
                                 {
-                                    selParam.Excute(selRegion, out selRegion);//&&
+                                    selParam.Excute(selRegion, out selRegion); //&&
                                 }
-                                filterOuts.AddRange(selRegion);//||
+                                filterOuts.AddRange(selRegion); //||
                             }
-                            foreach (var select in filter.SelectList)//分选
+                            foreach (var select in filter.SelectList) //分选
                             {
                                 List<SRegion> selRegion = filterOuts;
                                 bool bResult = true;
-                                OneSelectParams oneSelectParams = null;//若有数量判断，则留到分选完后
+                                OneSelectParams oneSelectParams = null; //若有数量判断，则留到分选完后
                                 foreach (var selParam in select.SelectParams)
                                 {
                                     if (selParam.Character == EMFILTER.EMFILTER_NUM)
                                         oneSelectParams = selParam;
                                     else
-                                        bResult = selParam.Excute(selRegion, out selRegion);//&&
+                                        bResult = selParam.Excute(selRegion, out selRegion); //&&
                                 }
-                                if(!bResult) detection.regionOut = selRegion;
-                                if (oneSelectParams != null) bResult = oneSelectParams.Excute(selRegion, out selRegion);//数量判断
+                                if (!bResult)
+                                    detection.regionOut = selRegion;
+                                if (oneSelectParams != null)
+                                    bResult = oneSelectParams.Excute(selRegion, out selRegion); //数量判断
                                 if (!bResult)
                                 {
                                     detection.regionOut = selRegion;
                                     detection.DetectLog.AppendLine(detection.DefectFilter.Name);
-                                    detection.DetectLog.AppendLine($"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}");
+                                    detection.DetectLog.AppendLine(
+                                        $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                    );
                                     detection.Result = false;
-                                    break;//有一个分选不合格就跳出，不执行剩下的分选（||）
+                                    break; //有一个分选不合格就跳出，不执行剩下的分选（||）
                                 }
                             }
                             //有一个过滤分选器不合格就跳出，不执行剩下的过滤分选器（||）
@@ -274,7 +340,12 @@ namespace SDFilter
                             }
                         }
                         //检测区显示
-                        SRegion maxRegion = detection.regionOut.Count > 0 ? detection.regionOut.MaxBy<SRegion, double>(o => o.RegionInfo.PeakHeight) : new SRegion();
+                        SRegion maxRegion =
+                            detection.regionOut.Count > 0
+                                ? detection.regionOut.MaxBy<SRegion, double>(o =>
+                                    o.RegionInfo.PeakHeight
+                                )
+                                : new SRegion();
                         foreach (var item in de.ResultList)
                         {
                             switch (item.Feature)
@@ -309,9 +380,11 @@ namespace SDFilter
                                 default:
                                     break;
                             }
-                            detection.DetectLog.AppendLine($"{EnumStringAttribute.GetEnumName(item.Feature)}:");
+                            detection.DetectLog.AppendLine(
+                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:"
+                            );
                         }
-                        if (!detection.Result)//NG
+                        if (!detection.Result) //NG
                         {
                             var qualityLevel = detection.DefectFilter.QualityLevel;
                             if (cell.Detection == null)
@@ -321,17 +394,20 @@ namespace SDFilter
                             }
                             else
                             {
-                                if (cell.Detection.DefectFilter.QualityLevel < qualityLevel)//质量等级 还需判断优先级
+                                if (cell.Detection.DefectFilter.QualityLevel < qualityLevel) //质量等级 还需判断优先级
                                 {
                                     cell.Detection = detection;
                                     cell.Quality = detection.DefectFilter.QualityLevel;
                                 }
-                                else if (cell.Detection.DefectFilter.QualityLevel == qualityLevel && cell.Detection?.DefectFilter.Priority < detection.DefectFilter.Priority)//质量等级相等时 判断优先级
+                                else if (
+                                    cell.Detection.DefectFilter.QualityLevel == qualityLevel
+                                    && cell.Detection?.DefectFilter.Priority
+                                        < detection.DefectFilter.Priority
+                                ) //质量等级相等时 判断优先级
                                 {
                                     cell.Detection = detection;
                                     cell.Quality = detection.DefectFilter.QualityLevel;
                                 }
-                               
                             }
                         }
                         cell.Detections.Add(detection);
@@ -352,18 +428,20 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
             RecipeDefects = new ObservableCollection<RecipeDefect>();
         }
-        public SpeciesFilter(string name) :this()
+
+        public SpeciesFilter(string name)
+            : this()
         {
             this.Name = name;
         }
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 名称
+        /// 名称 放置基类中
         /// </summary>
-        [property: DisplayName("名称")]
-        [ObservableProperty]
-        private string name;
+        //[property: DisplayName("名称")]
+        //[ObservableProperty]
+        //private string name;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -390,10 +468,7 @@ namespace SDFilter
         /// <returns></returns>
         public RecipeDefect this[string name]
         {
-            get
-            {
-                return RecipeDefects.FirstOrDefault(x => x.Name == name);
-            }
+            get { return RecipeDefects.FirstOrDefault(x => x.Name == name); }
         }
 
         /// <summary>
@@ -426,11 +501,11 @@ namespace SDFilter
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 名称
+        /// 名称 放置基类中
         /// </summary>
-        [property: DisplayName("名称")]
-        [ObservableProperty]
-        private string name;
+        //[property: DisplayName("名称")]
+        //[ObservableProperty]
+        //private string name;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -448,10 +523,7 @@ namespace SDFilter
         /// <returns></returns>
         public DefectFilter this[string name]
         {
-            get
-            {
-                return DefectFilters.FirstOrDefault(x => x.Name == name);
-            }
+            get { return DefectFilters.FirstOrDefault(x => x.Name == name); }
         }
 
         /// <summary>
@@ -531,7 +603,8 @@ namespace SDFilter
         /// </summary>
         [property: IgnoreModifyLog]
         [ObservableProperty]
-        private ObservableCollection<FilterResult> resultList = new ObservableCollection<FilterResult>() { };
+        private ObservableCollection<FilterResult> resultList =
+            new ObservableCollection<FilterResult>() { };
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -541,6 +614,7 @@ namespace SDFilter
         {
             return Name;
         }
+
         /// <summary>
         /// 20240705 TCG
         /// 当前缺陷 产出
@@ -565,6 +639,7 @@ namespace SDFilter
         [ObservableProperty]
         private double percentofAll;
     }
+
     /// <summary>
     /// 2024.6.23 李焕彬
     /// 过滤、分选参数集
@@ -624,10 +699,10 @@ namespace SDFilter
         /// <returns></returns>
         public override string ToString()
         {
-            return $"过滤分选器->过滤：{string.Join("||",Filter)}，分选：{string.Join("||", SelectList)}";
+            return $"过滤分选器->过滤：{string.Join("||", Filter)}，分选：{string.Join("||", SelectList)}";
         }
-
     }
+
     /// <summary>
     /// 2024.6.23 李焕彬
     /// 选择参数集
@@ -663,6 +738,7 @@ namespace SDFilter
             return "条件集->" + string.Join("&&", SelectParams);
         }
     }
+
     /// <summary>
     /// 2024.6.23 李焕彬
     /// 选择参数
@@ -714,7 +790,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 下限
         /// </summary>
-        [property:DisplayName("下限")]
+        [property: DisplayName("下限")]
         [ObservableProperty]
         private bool minLimit = true;
 
@@ -730,15 +806,15 @@ namespace SDFilter
             {
                 return $"{Min}≤{characterName}≤{Max}";
             }
-            else if (MinLimit)//限制最小
+            else if (MinLimit) //限制最小
             {
                 return $"{Min}≤{characterName}≤{double.PositiveInfinity}";
             }
-            else if (MaxLimit)//限制最大
+            else if (MaxLimit) //限制最大
             {
                 return $"{double.NegativeInfinity}≤{characterName}≤{Max}";
             }
-            else//都不限制
+            else //都不限制
             {
                 return $"{double.NegativeInfinity}≤{characterName}≤{double.PositiveInfinity}";
             }
@@ -758,16 +834,15 @@ namespace SDFilter
                 {
                     return true;
                 }
-
             }
-            else if (MinLimit)//限制最小
+            else if (MinLimit) //限制最小
             {
                 if (value >= Min)
                 {
                     return true;
                 }
             }
-            else if (MaxLimit)//限制最大
+            else if (MaxLimit) //限制最大
             {
                 if (value <= Max)
                 {
@@ -814,12 +889,12 @@ namespace SDFilter
                     sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.HeightBound));
                     break;
                 case EMFILTER.EMFILTER_NUM:
-                    if (Excute(sRegionIn.Count)) sRegionOut = sRegionIn;
+                    if (Excute(sRegionIn.Count))
+                        sRegionOut = sRegionIn;
                     break;
             }
             return sRegionOut.Count == 0;
         }
-
     }
 
     /// <summary>
@@ -828,11 +903,9 @@ namespace SDFilter
     /// </summary>
     public partial class FilterResult : ObservableObject
     {
-        public FilterResult()
-        {
-            
-        }
-        public FilterResult(EMFILTER detectFeature) 
+        public FilterResult() { }
+
+        public FilterResult(EMFILTER detectFeature)
         {
             feature = detectFeature;
         }
@@ -848,7 +921,7 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 检测结果值
         /// </summary>
-        [property:JsonIgnore]
+        [property: JsonIgnore]
         [ObservableProperty]
         private double value;
     }
@@ -863,50 +936,58 @@ namespace SDFilter
         /// 2024.7.4 李焕彬
         /// 顶点高度
         /// </summary>
-        [EnumString("顶点高度","PeakHeight")]
+        [EnumString("顶点高度", "PeakHeight")]
         EMFILTER_PEAKHEI,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 面积
         /// </summary>
         [EnumString("面积", "Area")]
         EMFILTER_AREA,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 长边
         /// </summary>
         [EnumString("长边", "LongLength")]
         EMFILTER_LONGLEN,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 短边
         /// </summary>
         [EnumString("短边", "ShortLength")]
         EMFILTER_SHORTLEN,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 角度
         /// </summary>
         [EnumString("角度", "Angle")]
         EMFILTER_PHI,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 周长
         /// </summary>
         [EnumString("周长", "ContLength")]
         EMFILTER_CONTLEN,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 宽度
         /// </summary>
         [EnumString("宽度", "Width")]
         EMFILTER_WIDTH,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 高度
         /// </summary>
         [EnumString("高度", "Height")]
         EMFILTER_HEIGHT,
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 数量
@@ -927,12 +1008,14 @@ namespace SDFilter
         /// </summary>
         [EnumString("不打散不合并", "Not Break And Union")]
         EMUNIONMETHOD_NONE,
+
         /// <summary>
         /// 2024.7.9 李焕彬
         /// 打散
         /// </summary>
         [EnumString("打散", "Break")]
         EMUNIONMETHOD_BREAK,
+
         /// <summary>
         /// 2024.7.9 李焕彬
         /// 合并

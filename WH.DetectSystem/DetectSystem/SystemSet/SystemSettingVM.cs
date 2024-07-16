@@ -23,7 +23,6 @@ namespace WH.DetectSystem.ViewModels
         {
             if (HasErrors)
             {
-
                 e.Cancel = true;
             }
         }

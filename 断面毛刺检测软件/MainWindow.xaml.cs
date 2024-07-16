@@ -1,13 +1,15 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using HandyControl.Controls;
-using HandyControl.Data;
-using Newtonsoft.Json;
-using System.Reactive;
+﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Threading.Channels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -15,25 +17,27 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MessageBox = HandyControl.Controls.MessageBox;
-using System.Reactive.Linq;
-using System.Windows.Controls.Primitives;
-using System.Globalization;
-using WH.Controls;
-using Microsoft.Win32;
-using 断面毛刺检测软件.Views;
-using WH.Entity.Progress;
-using System;
-using System.Reflection.PortableExecutable;
+using AlarmSetCtrlWPF;
 using Autofac;
-using WH.Entity.LogRecord;
+using CommunityToolkit.Mvvm.Messaging;
+using DataQuery;
+using HandyControl.Controls;
+using HandyControl.Data;
 using Mapster;
-using WH.RunCell;
-using System.Threading.Channels;
-using WH.Entity.CommonLib;
-using WH.DetectSystem.ViewModels;
-using WH.DetectSystem;
+using Microsoft.Win32;
+using MySqlOperatesApiWPF;
+using Newtonsoft.Json;
 using ProjProduceData;
+using SaveImageManage;
+using WH.Controls;
+using WH.DetectSystem;
+using WH.DetectSystem.ViewModels;
+using WH.Entity.CommonLib;
+using WH.Entity.LogRecord;
+using WH.Entity.Progress;
+using WH.RunCell;
+using 断面毛刺检测软件.Views;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 断面毛刺检测软件
 {
@@ -48,6 +52,7 @@ namespace 断面毛刺检测软件
         CProgress<double> progress;
         CLogRec SysLog;
         CLogRec OperateLog;
+
         #region 初始化 加载
         public MainWindow()
         {
@@ -61,18 +66,24 @@ namespace 断面毛刺检测软件
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            progress = new CProgress<double>(value => LoadProgressBar.Value = value,
+            progress = new CProgress<double>(
+                value => LoadProgressBar.Value = value,
                 () =>
                 {
                     this.IsEnabled = true;
                     CMainList.IsLoading = false;
                     this.Activate();
-                }, 100);
+                },
+                100
+            );
             try
             {
                 //半秒之内防止多次点击
                 StartStopSource = Observable
-                    .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(h => Btn_StartStop.Click += h, h => Btn_StartStop.Click -= h)
+                    .FromEventPattern<RoutedEventHandler, RoutedEventArgs>(
+                        h => Btn_StartStop.Click += h,
+                        h => Btn_StartStop.Click -= h
+                    )
                     .Select(x => Unit.Default)
                     .StartWith(Unit.Default);
 
@@ -80,47 +91,77 @@ namespace 断面毛刺检测软件
                     .Throttle(TimeSpan.FromMilliseconds(500))
                     .Subscribe(_ =>
                     {
-                        if (mainVM.isStart == mainVM.StartStop) return;
+                        if (mainVM.isStart == mainVM.StartStop)
+                            return;
                         mainVM.isStart = mainVM.StartStop;
-                        if(mainVM.isStart) OperateLog.Info(Properties.Resources.Start);
-                        else OperateLog.Info(Properties.Resources.Stop);
+                        if (mainVM.isStart)
+                            OperateLog.Info(Properties.Resources.Start);
+                        else
+                            OperateLog.Info(Properties.Resources.Stop);
+                    });
+                WeakReferenceMessenger.Default.Register<MemoryStream, string>(
+                    this,
+                    "getImage",
+                    (_, imgStream) =>
+                    {
+                        this.Dispatcher.BeginInvoke(
+                            new Action(() =>
+                            {
+                                var bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = new MemoryStream();
+                                imgStream.WriteTo(bitmap.StreamSource);
+                                bitmap.EndInit();
+                                mainVM.ModelImage = bitmap;
+                            })
+                        );
                     }
-                    );
-                WeakReferenceMessenger.Default.Register<MemoryStream,string>(this,"getImage", (_, imgStream) =>
-                {
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                );
+                WeakReferenceMessenger.Default.Register<Cell, string>(
+                    this,
+                    "showTask",
+                    (obj, cell) =>
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = new MemoryStream();
-                        imgStream.WriteTo(bitmap.StreamSource);
-                        bitmap.EndInit();
-                        mainVM.ModelImage = bitmap;
-                    }));
-                });
-                WeakReferenceMessenger.Default.Register<Cell,string>(this, "showTask",(obj, cell) =>
-                {
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                        this.Dispatcher.BeginInvoke(
+                            new Action(() => {
+                                //mainVM.CDefectsDataVM.CDefectsProduce.CellResultExcute(cell);
+                            })
+                        );
+                    }
+                );
+                WeakReferenceMessenger.Default.Register<AlarmPopMessage, Token>(
+                    this,
+                    mainVM.MaociAlarmSetConfig.token,
+                    (obj, msg) =>
                     {
-                        //mainVM.CDefectsDataVM.CDefectsProduce.CellResultExcute(cell);
-                    }));
-                    
-                });
+                        this.Dispatcher.BeginInvoke(
+                            new Action(() =>
+                            {
+                                Growl.Error(msg.alarm.RegularShow);
+                            })
+                        );
+                    }
+                );
                 this.IsEnabled = false;
-                
+
                 await CMainList.LoadAsync(progress);
-               
+
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
 
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
-                    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+                    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(
+                        languageCode
+                    );
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<double>)progress).Report(100);
-                WelComePage welComePage = new WelComePage(CMainList.SystemSettings.RecentProjs.ToList(), "断面毛刺检测软件");
+                WelComePage welComePage = new WelComePage(
+                    CMainList.SystemSettings.RecentProjs.ToList(),
+                    "断面毛刺检测软件"
+                );
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();
             }
@@ -134,6 +175,7 @@ namespace 断面毛刺检测软件
                 ((IProgress<double>)progress).Report(100);
             }
         }
+
         /// <summary>
         /// 欢迎页事件处理
         /// </summary>
@@ -142,17 +184,17 @@ namespace 断面毛刺检测软件
         {
             switch (act)
             {
-                case "mainform"://打开主界面
+                case "mainform": //打开主界面
                     ((IProgress<double>)progress).Report(100);
                     //this.Visible = true;
                     //新建项目ToolStripMenuItem_Click(null, null);
                     break;
-                case "openfile"://打开项目
+                case "openfile": //打开项目
                     //this.Visible = true;
                     OpenProj_Click(null, null);
                     break;
-                default://默认 打开最近项目
-                    
+                default: //默认 打开最近项目
+
                     await OpenProjAsync(act);
                     break;
             }
@@ -166,7 +208,6 @@ namespace 断面毛刺检测软件
             LoginPage UserInfoFrm = new LoginPage(CMainList.LoginViewModel);
             UserInfoFrm.ShowDialog();
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
-            
         }
 
         #endregion
@@ -177,13 +218,11 @@ namespace 断面毛刺检测软件
         {
             if (e.OriginalSource is ToggleButton toggle)
             {
-
                 if (toggle.IsChecked ?? true)
                 {
                     GlobalData.Config.Skin = SkinType.Dark;
 
                     ((App)Application.Current).UpdateSkin(SkinType.Dark);
-
                 }
                 else
                 {
@@ -202,17 +241,22 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                var result = MessageBox.Show("是否需要保存项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.OK);
+                var result = MessageBox.Show(
+                    "是否需要保存项目？\r\n Do you want to save it ?",
+                    "提示|Tips",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK
+                );
                 if (result == MessageBoxResult.Cancel)
                 {
                     e.Cancel = true;
-                   
+
                     return;
                 }
                 else if (result == MessageBoxResult.Yes)
                 {
                     CMainList.SaveCurrentProj();
-                   
                 }
                 CMainList.SystemSettings.SaveParameter();
                 CMainList.MotionCtrlVM.SaveParameter();
@@ -228,7 +272,6 @@ namespace 断面毛刺检测软件
             {
                 //CLoading.Close();
             }
-            
         }
 
         #endregion
@@ -240,17 +283,15 @@ namespace 断面毛刺检测软件
         private void NewProj_Click(object sender, RoutedEventArgs e)
         {
             NewProjWindow newProj = App.Container.Resolve<Lazy<NewProjWindow>>().Value;
-           
+
             OperateLog.Info(Properties.Resources.NewProj);
             newProj.ShowDialog();
-            
         }
         #endregion
 
         #region 打开
         private async void OpenProj_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -259,7 +300,6 @@ namespace 断面毛刺检测软件
                 if (openFileDialog.ShowDialog() is true)
                 {
                     await OpenProjAsync(openFileDialog.FileName);
-
                 }
             }
             catch (Exception exception)
@@ -286,7 +326,8 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
+                if (string.IsNullOrEmpty(CMainList.ProjPath))
+                    return;
                 SaveFileDialog savefile = new SaveFileDialog();
                 savefile.Filter = CMainModelsModelVM.projFilter;
                 //savefile.DefaultDirectory = "D:/";
@@ -295,7 +336,6 @@ namespace 断面毛刺检测软件
                     CMainList.ProjPath = savefile.FileName;
                     SaveProj();
                     await OpenProjAsync(CMainList.ProjPath);
-
                 }
             }
             catch (Exception exception)
@@ -313,7 +353,8 @@ namespace 断面毛刺检测软件
         #region 修改工程
         private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
+            if (string.IsNullOrEmpty(CMainList.ProjPath))
+                return;
             ModifyProjWindow modifyProj = App.Container.Resolve<Lazy<ModifyProjWindow>>().Value;
             OperateLog.Info(Properties.Resources.ModifyProj);
             modifyProj.ShowDialog();
@@ -329,16 +370,25 @@ namespace 断面毛刺检测软件
                 {
                     if (!string.IsNullOrEmpty(CMainList.ProjPath))
                     {
-                        var result = MessageBox.Show("是否需要保存当前项目？\r\n Do you want to save it ?", "提示|Tips", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+                        var result = MessageBox.Show(
+                            "是否需要保存当前项目？\r\n Do you want to save it ?",
+                            "提示|Tips",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question,
+                            MessageBoxResult.Yes
+                        );
                         if (result == MessageBoxResult.Yes)
                         {
                             CMainList.SaveCurrentProj();
-                            OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
-                            Growl.Success(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
+                            OperateLog.Info(
+                                Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath
+                            );
+                            Growl.Success(
+                                Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath
+                            );
                         }
                     }
                     await OpenProjAsync(header);
-
                 }
                 catch (Exception exception)
                 {
@@ -349,7 +399,6 @@ namespace 断面毛刺检测软件
                 {
                     progress.Report(100);
                 }
-
             }
         }
         #endregion
@@ -371,11 +420,13 @@ namespace 断面毛刺检测软件
                 Growl.Warning(Properties.Resources.OpenFailed + "\r\n" + exception.Message);
             }
         }
+
         private void SaveProj()
         {
             try
             {
-                if (string.IsNullOrEmpty(CMainList.ProjPath)) return;
+                if (string.IsNullOrEmpty(CMainList.ProjPath))
+                    return;
                 CMainList.SaveCurrentProj();
                 Growl.Success(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.SaveProj + "\r\n" + CMainList.ProjPath);
@@ -385,7 +436,6 @@ namespace 断面毛刺检测软件
                 OperateLog.Error(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
                 Growl.Warning(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
             }
-           
         }
         #endregion
 
@@ -393,10 +443,9 @@ namespace 断面毛刺检测软件
         private void Lang_Checked(object sender, RoutedEventArgs e)
         {
             var languageCode = "zh-CN";
-            if (cbLang.IsChecked??true)
+            if (cbLang.IsChecked ?? true)
             {
                 languageCode = "en-US";
-               
             }
             OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
@@ -412,32 +461,44 @@ namespace 断面毛刺检测软件
         {
             TakeScreenshotButton_Click(sender, e);
         }
-       
+
         private void TakeScreenshotButton_Click(object sender, RoutedEventArgs e)
         {
             // 获取屏幕图像
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight, 96, 96, PixelFormats.Pbgra32);
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                (int)SystemParameters.PrimaryScreenWidth,
+                (int)SystemParameters.PrimaryScreenHeight,
+                96,
+                96,
+                PixelFormats.Pbgra32
+            );
             renderTargetBitmap.Render(this);
 
             // 处理截图
-            CroppedBitmap croppedBitmap = new CroppedBitmap(renderTargetBitmap, new Int32Rect(0, 0, (int)this.Width, (int)this.Height));
+            CroppedBitmap croppedBitmap = new CroppedBitmap(
+                renderTargetBitmap,
+                new Int32Rect(0, 0, (int)this.Width, (int)this.Height)
+            );
 
             // 保存截图
             BitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(croppedBitmap));
             SaveFileDialog savefile = new SaveFileDialog();
             savefile.Filter = ".bmp|*.bmp";
-            if(savefile.ShowDialog() is true)
+            if (savefile.ShowDialog() is true)
             {
                 using (FileStream stream = new FileStream(savefile.FileName, FileMode.Create))
                 {
                     encoder.Save(stream);
                 }
-                OperateLog.Info(Properties.Resources.ScreenShot+savefile.FileName);
-                MessageBox.Show(Properties.Resources.ScreenShot+$":{savefile.FileName}","提示|Tips：",MessageBoxButton.OK,MessageBoxImage.Information);
-
+                OperateLog.Info(Properties.Resources.ScreenShot + savefile.FileName);
+                MessageBox.Show(
+                    Properties.Resources.ScreenShot + $":{savefile.FileName}",
+                    "提示|Tips：",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
             }
-            
         }
         #endregion
 
@@ -445,38 +506,57 @@ namespace 断面毛刺检测软件
 
         private void SystemSetting_Click(object sender, RoutedEventArgs e)
         {
-            SystemSettingWindow SysSetWindow = App.Container.Resolve<Lazy< SystemSettingWindow>>().Value;
+            SystemSettingWindow SysSetWindow = App
+                .Container.Resolve<Lazy<SystemSettingWindow>>()
+                .Value;
             SysSetWindow.DataContext = CMainList.SystemSettings;
             SysSetWindow.Show();
             SysSetWindow.Activate();
             OperateLog.Info(Properties.Resources.SystemSettings);
         }
+        #endregion
 
-
-
-
-
-
+        #region 存图设置
+        private void SaveImageSetting_Click(object sender, RoutedEventArgs e)
+        {
+            CSaveImageSetFrm saveImageWindow = App
+                .Container.Resolve<Lazy<CSaveImageSetFrm>>()
+                .Value;
+            saveImageWindow.DataContext = CMainList.CMainVMs[0].SaveImageVM;
+            saveImageWindow.Show();
+        }
         #endregion
 
         #region 离线测试
         private void OffLineTest_Click(object sender, RoutedEventArgs e)
         {
             OffLineTestWindow offLine = App.Container.Resolve<Lazy<OffLineTestWindow>>().Value;
-
-            offLine.Show();
-            offLine.Activate();
-            OperateLog.Info(Properties.Resources.Offline);
         }
         #endregion
 
+        #region 数据库设置
+        private void Mysql_Click(object sender, RoutedEventArgs e)
+        {
+            SQLSetWindow sqlSetwindow = App.Container.Resolve<Lazy<SQLSetWindow>>().Value;
+            sqlSetwindow.DataContext = CMainList.CMainVMs[0].MySqlVM;
+            sqlSetwindow.Show();
+        }
+        #endregion
+
+        #region 数据查看
+        private void DataQuery_Click(object sender, RoutedEventArgs e)
+        {
+            DataQueryWindow sqlSetwindow = App.Container.Resolve<Lazy<DataQueryWindow>>().Value;
+            sqlSetwindow.Show();
+        }
+        #endregion
 
         #region 数据清空
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in CMainList.CMainVMs)
             {
-                item.DefectsProduce.Clear();
+                item.MaociDefectsProduce.Clear();
             }
         }
         #endregion

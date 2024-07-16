@@ -1,8 +1,4 @@
-﻿using Autofac;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Mapster;
-using MotionControl;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
+using AlarmSetCtrlWPF;
+using AlgorithmDll;
+using Autofac;
+using Autofac;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using HistoryPlayback;
+using Mapster;
+using Mapster;
+using MotionControl;
+using MySqlOperatesApiWPF;
+using QualityGrade;
+using SaveImageManage;
+using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.DetectSystem.SystemSet;
@@ -21,26 +32,33 @@ using WH.Entity.LogRecord;
 
 namespace WH.DetectSystem.ViewModels
 {
-    public partial class CMainModelsModelVM: ObservableObject
+    public partial class CMainModelsModelVM : ObservableObject
     {
         [ObservableProperty]
         CLoginViewModel loginViewModel = new CLoginViewModel();
+
         [ObservableProperty]
         CSystemSettingsVM systemSettings = new CSystemSettingsVM();
+
         /// <summary>
         /// 2024.7.12 李焕彬
         /// 运动控制VM
         /// </summary>
         [ObservableProperty]
         CMotionCtrlVM motionCtrlVM = new CMotionCtrlVM();
+
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
-        public CLogRec SysLog { get; } = CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
+        public CLogRec SysLog { get; } =
+            CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
+
         /// <summary>
         /// 操作日志
         /// </summary>
-        public CLogRec OperateLog { get; } = CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+        public CLogRec OperateLog { get; } =
+            CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
+
         [ObservableProperty]
         string projPath;
         public static string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
@@ -50,7 +68,7 @@ namespace WH.DetectSystem.ViewModels
 
         [ObservableProperty]
         CMainModelsModel cMainMModel = new CMainModelsModel();
-        
+
         [ObservableProperty]
         ObservableCollection<CMainVM> cMainVMs = new ObservableCollection<CMainVM>();
 
@@ -67,6 +85,7 @@ namespace WH.DetectSystem.ViewModels
             };
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
             TypeAdapterConfig<Token, Token>.NewConfig().MapWith(des => des);
+            TypeAdapterConfig<dynamic, dynamic>.NewConfig().MapWith(des => des);
         }
 
         #region 时间相关
@@ -74,6 +93,7 @@ namespace WH.DetectSystem.ViewModels
         static string systemTime;
 
         static DateTime StartTime = DateTime.Now;
+
         [ObservableProperty]
         static string runingTime = DateTime.Now.ToString("T");
 
@@ -82,7 +102,6 @@ namespace WH.DetectSystem.ViewModels
             SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
             var runTimeSpan = DateTime.Now - StartTime;
             RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
-
         }
         #endregion
 
@@ -116,15 +135,9 @@ namespace WH.DetectSystem.ViewModels
 
                     await longtimefunc(progress);
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) { }
                 #endregion
-                
             });
-
-
         }
 
         #endregion
@@ -138,6 +151,7 @@ namespace WH.DetectSystem.ViewModels
         public async Task OpenProj(IProgress<double> progress, string header)
         {
             IsLoading = true;
+            WeakReferenceMessenger.Default.Reset();
             #region 打开工程
             try
             {
@@ -152,7 +166,6 @@ namespace WH.DetectSystem.ViewModels
                 {
                     //CMainVMs.Add(new CMainVM() { Model = item });
                     CMainVMs[0].Model = item;
-
                 }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
@@ -163,12 +176,13 @@ namespace WH.DetectSystem.ViewModels
                 }
                 await longtimefunc(progress);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                SysLog.Error(ex.Message);
             }
             #endregion
         }
+
         async Task longtimefunc(IProgress<double> progress)
         {
             for (int i = 0; i <= 100; i++)
@@ -182,8 +196,9 @@ namespace WH.DetectSystem.ViewModels
         #region 保存当前工程
         public void SaveCurrentProj()
         {
-            if (string.IsNullOrEmpty(ProjPath)) return;
-            foreach (var proj in CMainVMs) 
+            if (string.IsNullOrEmpty(ProjPath))
+                return;
+            foreach (var proj in CMainVMs)
             {
                 proj.ApplyChanges();
             }

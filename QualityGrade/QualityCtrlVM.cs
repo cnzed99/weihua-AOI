@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -22,29 +23,24 @@ namespace QualityGrade
     /// </summary>
     public partial class CQualityCtrlVM : ObservableObject
     {
-        public CQualityCtrlVM()
-        {
-            //返回请求的质量等级集合
-            //WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
-        }
+        public CQualityCtrlVM() { }
+
+        private CQualityConfig qualityConfig; //不要在这里赋值
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 回复消息，过滤分选设置用
-        /// </summary>
-        /// <param name="message">质量列表</param>
-        //public void Receive(RequestMessage<ObservableCollection<Quality>> message)
-        //{
-        //    if (message.HasReceivedResponse) return;
-        //    message.Reply(CQualityConfig.Qualities);
-        //}
-
-        /// <summary>
-        /// 2024.7.5 TCG
+        /// 20240716 TCG
         /// 质量等级配置
         /// </summary>
-        [ObservableProperty]
-        private CQualityConfig qualityConfig; //不要在这里赋值
+        public CQualityConfig QualityConfig
+        {
+            get => qualityConfig;
+            set
+            {
+                SetProperty(ref qualityConfig, value);
+                QualitySelect = null;
+                QualitySet = new Quality();
+            }
+        }
 
         /// <summary>
         /// 2024.7.5 TCG
