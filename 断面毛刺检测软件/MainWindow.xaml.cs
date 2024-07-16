@@ -568,9 +568,25 @@ namespace 断面毛刺检测软件
                 new Action(() =>
                 {
                     if (message.alarm.IsPopWin)
-                        Growl.Error(message.alarm.RegularShow);
+                    {
+                        //Growl.Warning(message.alarm.RegularShow);
+                        Growl.Warning(
+                            new GrowlInfo()
+                            {
+                                Message = message.alarm.RegularShow,
+                                StaysOpen = false,
+                                WaitTime = 3,
+                            }
+                        );
+                        SysLog.Error(message.alarm.RegularShow);
+                    }
                 })
             );
+        }
+
+        private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
+        {
+            Growl.Clear();
         }
     }
 }

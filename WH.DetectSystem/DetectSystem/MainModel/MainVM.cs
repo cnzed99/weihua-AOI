@@ -78,9 +78,9 @@ namespace WH.DetectSystem.ViewModels
                 SetProperty(ref model, value);
                 model.Adapt(this);
                 InitNewModel();
-                this.SDFilterCtrlVM.SetSDFilterVM(MaociFilterConfig, MaociQualityConfig);
-                this.QualityCtrlVM.QualityConfig = MaociQualityConfig;
-                this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
+                this.SDFilterVM.SetSDFilterVM(MaociFilterConfig, MaociQualityConfig);
+                this.QualityVM.QualityConfig = MaociQualityConfig;
+                this.MaociAlgorVM.Config = MaociAlgorParamConfig;
                 this.SaveImageVM.Param = MaociSaveImageConfig;
 
                 this.DefectsDataVM.SetDefectsProduce(
@@ -88,7 +88,7 @@ namespace WH.DetectSystem.ViewModels
                     MaociFilterConfig,
                     MaociQualityConfig
                 );
-                this.AlarmSetConfigVM.SetCAlarm(
+                this.AlarmSetVM.SetCAlarm(
                     MaociAlarmSetConfig,
                     MaociFilterConfig,
                     MaociQualityConfig
@@ -200,6 +200,10 @@ namespace WH.DetectSystem.ViewModels
         public void DiscardChanges() => model.Adapt(this);
         #endregion
 
+        /// <summary>
+        /// 20240716 TCG
+        /// 当前制程的token，用于向窗口传递界面更新数据，窗口需实现IRecipient<T> 借口
+        /// </summary>
         public Token TokeVM { get; set; }
 
         /// <summary>
@@ -207,21 +211,21 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private CMaociAlgorParamCtrlVm maociAlgorParamCtrlVm = new CMaociAlgorParamCtrlVm();
+        private CMaociAlgorParamCtrlVm maociAlgorVM = new CMaociAlgorParamCtrlVm();
 
         /// <summary>
         /// 检测设置控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private CSDFilterCtrlVM sDFilterCtrlVM = new CSDFilterCtrlVM();
+        private CSDFilterCtrlVM sDFilterVM = new CSDFilterCtrlVM();
 
         /// <summary>
         /// 质量等级控件VM
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private CQualityCtrlVM qualityCtrlVM = new CQualityCtrlVM();
+        private CQualityCtrlVM qualityVM = new CQualityCtrlVM();
 
         /// <summary>
         /// 缺陷数据VM
@@ -235,7 +239,7 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        private CAlarmSetConfigVM alarmSetConfigVM = new CAlarmSetConfigVM(); //报警
+        private CAlarmSetConfigVM alarmSetVM = new CAlarmSetConfigVM(); //报警
 
         /// <summary>
         /// 历史图回看

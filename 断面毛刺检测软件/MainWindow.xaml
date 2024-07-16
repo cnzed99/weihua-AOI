@@ -236,8 +236,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+
                 </Grid.ColumnDefinitions>
                 <Border
                     Grid.Column="0"
@@ -246,81 +245,87 @@
                     CornerRadius="10">
                     <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
-
-                <!--  启停按钮  -->
-                <ToggleButton
-                    x:Name="Btn_StartStop"
-                    Grid.Column="2"
-                    Width="70"
-                    Height="70"
-                    Margin="10,0"
-                    IsChecked="{Binding CMainVMs[0].StartStop, Mode=OneWayToSource}"
-                    Style="{DynamicResource ToggleButtonFlip}">
-                    <hc:StatusSwitchElement.CheckedElement>
-                        <Border Margin="-2" Background="{DynamicResource DangerBrush}">
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Click="ClearGrowlMessage_Click" Content="清空报警" Style="{StaticResource ButtonDashedInfo}" Height="70"/>
+                    <!--  启停按钮  -->
+                    <ToggleButton
+                        x:Name="Btn_StartStop"
+                        Grid.Column="2"
+                        Width="70"
+                        Height="70"
+                        Margin="10,0"
+                        IsChecked="{Binding CMainVMs[0].StartStop, Mode=OneWayToSource}"
+                        Style="{DynamicResource ToggleButtonFlip}">
+                        <hc:StatusSwitchElement.CheckedElement>
+                            <Border Margin="-2" Background="{DynamicResource DangerBrush}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [Stop], Source={x:Static local:CLang.Instance}}" />
+                            </Border>
+                        </hc:StatusSwitchElement.CheckedElement>
+                        <Border Margin="-2" Background="{DynamicResource SuccessBrush}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Text="{Binding [Stop], Source={x:Static local:CLang.Instance}}" />
+                                Text="{Binding [Start], Source={x:Static local:CLang.Instance}}" />
                         </Border>
-                    </hc:StatusSwitchElement.CheckedElement>
-                    <Border Margin="-2" Background="{DynamicResource SuccessBrush}">
+                    </ToggleButton>
+                    <!--  系统时间  -->
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                        <TextBlock
+                            Margin="5,5,5,0"
+                            HorizontalAlignment="Center"
+                            Text="{Binding [SystemTime], Source={x:Static local:CLang.Instance}}" />
                         <TextBlock
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Text="{Binding [Start], Source={x:Static local:CLang.Instance}}" />
-                    </Border>
-                </ToggleButton>
-                <StackPanel Grid.Column="3" VerticalAlignment="Center">
-                    <TextBlock
-                        Margin="5,5,5,0"
-                        HorizontalAlignment="Center"
-                        Text="{Binding [SystemTime], Source={x:Static local:CLang.Instance}}" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        d:Text="2024-04-02"
-                        Text="{Binding SystemTime}"
-                        TextAlignment="Center" />
-                    <TextBlock
-                        Margin="5,0"
-                        Text="{Binding [RunTime], Source={x:Static local:CLang.Instance}}"
-                        TextAlignment="Center" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        d:Text="02:22:22"
-                        Text="{Binding RuningTime}" />
-                </StackPanel>
-                <StackPanel Grid.Column="4" Width="80">
-                    <Button
-                        x:Name="btn_UserLogin"
-                        Width="50"
-                        Height="50"
-                        Margin="5"
-                        Padding="0"
-                        BorderBrush="#FFC6C6C6"
-                        Click="btn_UserLogin_Click">
-                        <Button.Background>
-                            <ImageBrush
-                                x:Name="btn_UserLoginImg"
-                                d:ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"
-                                ImageSource="{Binding LoginViewModel.LoginPerson.LogoImage}"
-                                Stretch="Uniform" />
-                        </Button.Background>
-                        <Button.ToolTip>
-                            <StackPanel>
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}" />
-                                <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}" />
-                            </StackPanel>
-                        </Button.ToolTip>
-                    </Button>
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            d:Text="2024-04-02"
+                            Text="{Binding SystemTime}"
+                            TextAlignment="Center" />
+                        <TextBlock
+                            Margin="5,0"
+                            Text="{Binding [RunTime], Source={x:Static local:CLang.Instance}}"
+                            TextAlignment="Center" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            d:Text="02:22:22"
+                            Text="{Binding RuningTime}" />
+                    </StackPanel>
+                    <!--  用户登录  -->
+                    <StackPanel Grid.Column="4" Width="80">
+                        <Button
+                            x:Name="btn_UserLogin"
+                            Width="50"
+                            Height="50"
+                            Margin="5"
+                            Padding="0"
+                            BorderBrush="#FFC6C6C6"
+                            Click="btn_UserLogin_Click">
+                            <Button.Background>
+                                <ImageBrush
+                                    x:Name="btn_UserLoginImg"
+                                    d:ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/未登录.png"
+                                    ImageSource="{Binding LoginViewModel.LoginPerson.LogoImage}"
+                                    Stretch="Uniform" />
+                            </Button.Background>
+                            <Button.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding LoginViewModel.LoginPerson.UserName}" />
+                                    <TextBlock Text="{Binding LoginViewModel.LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}" />
+                                </StackPanel>
+                            </Button.ToolTip>
+                        </Button>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                        <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeMinute}" />
-                        <TextBlock Text="{Binding [Minute], Source={x:Static local:CLang.Instance}}" />
-                        <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeSecond}" />
-                        <TextBlock Text="{Binding [Second], Source={x:Static local:CLang.Instance}}" />
+                            <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeMinute}" />
+                            <TextBlock Text="{Binding [Minute], Source={x:Static local:CLang.Instance}}" />
+                            <TextBlock d:Text="00" Text="{Binding LoginViewModel.ILoginLeftTimeSecond}" />
+                            <TextBlock Text="{Binding [Second], Source={x:Static local:CLang.Instance}}" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
+                
+
             </Grid>
 
         </DockPanel>
@@ -355,27 +360,27 @@
                 Style="{DynamicResource TabControlInLine}">
                 <hc:TabItem Header="{Binding [DetectArea], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <filter:FilterResultCtrl DataContext="{Binding CMainVMs[0].SDFilterCtrlVM}" />
+                        <filter:FilterResultCtrl DataContext="{Binding CMainVMs[0].SDFilterVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [Quality], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <qua:QualityGradeCtrl DataContext="{Binding CMainVMs[0].QualityCtrlVM}" />
+                        <qua:QualityGradeCtrl DataContext="{Binding CMainVMs[0].QualityVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [AlgorParam], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <al:MaociAlgorParamCtrl DataContext="{Binding CMainVMs[0].MaociAlgorParamCtrlVm}" />
+                        <al:MaociAlgorParamCtrl DataContext="{Binding CMainVMs[0].MaociAlgorVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [DetectConfig], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <filter:SDFilterCtrl DataContext="{Binding CMainVMs[0].SDFilterCtrlVM}" />
+                        <filter:SDFilterCtrl DataContext="{Binding CMainVMs[0].SDFilterVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <alarm:AlarmSetCtrl DataContext="{Binding CMainVMs[0].AlarmSetConfigVM}" />
+                        <alarm:AlarmSetCtrl DataContext="{Binding CMainVMs[0].AlarmSetVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
