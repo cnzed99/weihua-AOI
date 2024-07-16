@@ -78,8 +78,7 @@ namespace WH.DetectSystem.ViewModels
                 SetProperty(ref model, value);
                 model.Adapt(this);
                 InitNewModel();
-                this.SDFilterCtrlVM.FilterConfig = MaociFilterConfig;
-                this.SDFilterCtrlVM.QualityConfig = MaociQualityConfig;
+                this.SDFilterCtrlVM.SetSDFilterVM(MaociFilterConfig, MaociQualityConfig);
                 this.QualityCtrlVM.QualityConfig = MaociQualityConfig;
                 this.MaociAlgorParamCtrlVm.Config = MaociAlgorParamConfig;
                 this.SaveImageVM.Param = MaociSaveImageConfig;
@@ -94,6 +93,7 @@ namespace WH.DetectSystem.ViewModels
                     MaociFilterConfig,
                     MaociQualityConfig
                 );
+                TokeVM.ProGuid = value.GUID;
             }
         }
 
@@ -116,6 +116,7 @@ namespace WH.DetectSystem.ViewModels
         public CMainVM()
         {
             InitTask();
+            TokeVM = new Token("", this.GetType().Namespace);
         }
 
         /// <summary>
@@ -124,7 +125,6 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void InitNewModel()
         {
-            MaociFilterConfig.Synchronization(MaociQualityConfig);
             InitSubProj();
             this.UpdateToken(); //先更新token 再同步引用
             #region 注册参数修改通道令牌 并清除当前选择的质量等级
@@ -148,6 +148,7 @@ namespace WH.DetectSystem.ViewModels
                 MaociSaveImageConfig,
                 MaociSaveImageConfig.token
             );
+
             #endregion
         }
 
@@ -198,6 +199,8 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void DiscardChanges() => model.Adapt(this);
         #endregion
+
+        public Token TokeVM { get; set; }
 
         /// <summary>
         /// 算法参数控件VM
@@ -508,7 +511,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     MemoryStream memoryStream = new MemoryStream();
                     cell.Image.WriteTo(memoryStream);
-                    WeakReferenceMessenger.Default.Send(memoryStream, "getImage");
+                    WeakReferenceMessenger.Default.Send(memoryStream, TokeVM);
 
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
                     //await Task.Delay(50);
@@ -711,7 +714,7 @@ namespace WH.DetectSystem.ViewModels
 
                         //};
                         MaociDefectsProduce.AddDefectProduce(cell);
-                        WeakReferenceMessenger.Default.Send(cell, "showTask");
+                        WeakReferenceMessenger.Default.Send(cell, TokeVM);
                         Console.WriteLine(DateTime.Now.Millisecond);
                         //if (!cell.IsOK) //如果质量OK 颜色不OK
                         //{
@@ -775,32 +778,7 @@ namespace WH.DetectSystem.ViewModels
                             {
                                 lock (objAlarmLock)
                                 {
-                                    foreach (var alarm in MaociAlarmSetConfig.AlarmList)
-                                    {
-                                        if (alarm.AddCellAndJudge(cell))
-                                        {
-                                            switch (alarm.Mode)
-                                            {
-                                                case AlarmMode.报警信号:
-                                                    {
-                                                        //todo 调用接口
-                                                    }
-                                                    break;
-                                                case AlarmMode.停机信号:
-                                                    {
-                                                        //todo 调用接口
-                                                    }
-                                                    break;
-                                                case AlarmMode.同时发送:
-                                                    {
-                                                        //todo 调用接口
-                                                    }
-                                                    break;
-                                            }
-
-                                            SysLog.Warn(alarm.Name + "监控报警！" + alarm.RegularShow);
-                                        }
-                                    }
+                                    MaociAlarmSetConfig.Excute(cell);
                                 }
                             }
                             catch (Exception ex)

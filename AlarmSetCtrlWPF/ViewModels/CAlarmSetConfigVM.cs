@@ -69,6 +69,7 @@ namespace AlarmSetCtrlWPF
                     };
                 }
             }
+            MAlarm = null;
             MAlarm = new Alarm();
             SourceAlarm = null;
         }

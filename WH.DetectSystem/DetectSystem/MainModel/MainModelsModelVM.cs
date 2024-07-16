@@ -10,12 +10,9 @@ using System.Windows.Threading;
 using AlarmSetCtrlWPF;
 using AlgorithmDll;
 using Autofac;
-using Autofac;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using HistoryPlayback;
-using Mapster;
 using Mapster;
 using MotionControl;
 using MySqlOperatesApiWPF;
@@ -66,9 +63,15 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         bool isLoading = false;
 
+        /// <summary>
+        /// 多制程本地持久化配置
+        /// </summary>
         [ObservableProperty]
         CMainModelsModel cMainMModel = new CMainModelsModel();
 
+        /// <summary>
+        /// 多制程视图模型
+        /// </summary>
         [ObservableProperty]
         ObservableCollection<CMainVM> cMainVMs = new ObservableCollection<CMainVM>();
 
@@ -151,11 +154,17 @@ namespace WH.DetectSystem.ViewModels
         public async Task OpenProj(IProgress<double> progress, string header)
         {
             IsLoading = true;
-            WeakReferenceMessenger.Default.Reset();
+            //WeakReferenceMessenger.Default.Reset();
             #region 打开工程
             try
             {
                 ProjPath = header;
+                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlgorParamConfig);
+                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociQualityConfig);
+                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociFilterConfig);
+                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlarmSetConfig);
+                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociSaveImageConfig);
+
                 CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
                 //foreach (var item in CMainVMs)
                 //{

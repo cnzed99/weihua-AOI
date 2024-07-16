@@ -26,7 +26,6 @@ using 断面毛刺检测软件.Views;
 using System.Runtime;
 #endif
 
-
 namespace 断面毛刺检测软件
 {
     /// <summary>
@@ -159,14 +158,13 @@ namespace 断面毛刺检测软件
             var builder = CPublicServices.ConfigureServices();
             builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
-
+            //系统设置
             builder
                 .Register(c =>
                     SingleInstance.Create<Lazy<SystemSettingWindow>, SystemSettingWindow>()
                 )
                 .InstancePerDependency();
             //新建
-
             builder
                 .Register(c => SingleInstance.Create<Lazy<NewProjWindow>, NewProjWindow>())
                 .InstancePerDependency();
@@ -178,24 +176,21 @@ namespace 断面毛刺检测软件
             builder
                 .Register(c => SingleInstance.Create<Lazy<OffLineTestWindow>, OffLineTestWindow>())
                 .InstancePerDependency();
+            //修改工程
             builder
                 .Register(c => SingleInstance.Create<Lazy<ModifyProjWindow>, ModifyProjWindow>())
-                .SingleInstance()
                 .InstancePerDependency();
             //存图设置
             builder
                 .Register(c => SingleInstance.Create<Lazy<CSaveImageSetFrm>, CSaveImageSetFrm>())
-                .SingleInstance()
                 .InstancePerDependency();
             //数据库设置
             builder
                 .Register(c => SingleInstance.Create<Lazy<SQLSetWindow>, SQLSetWindow>())
-                .SingleInstance()
                 .InstancePerDependency();
             //数据查看
             builder
                 .Register(c => SingleInstance.Create<Lazy<DataQueryWindow>, DataQueryWindow>())
-                .SingleInstance()
                 .InstancePerDependency();
 
             Container = builder.Build();

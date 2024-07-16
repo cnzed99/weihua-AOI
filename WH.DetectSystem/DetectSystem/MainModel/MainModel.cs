@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HistoryPlayback;
+using MotionControl;
 using MySqlOperatesApiWPF;
 using Newtonsoft.Json;
 using ProjProduceData;
@@ -18,7 +19,6 @@ using QualityGrade;
 using SaveImageManage;
 using SDFilter;
 using WH.Entity.CommonLib;
-using MotionControl;
 
 namespace WH.DetectSystem.Models
 {
@@ -106,7 +106,7 @@ namespace WH.DetectSystem.Models
         public CMainModel()
         {
             GUID = Guid.NewGuid().ToString();
-            this.token = new Token(GUID, String.Empty);
+            this.token = new Token(GUID, this.GetType().Namespace);
         }
 
         public void UpdateToken()

@@ -24,7 +24,7 @@ namespace WH.Entity.CommonLib
     /// 2024.7.2 李焕彬
     /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
-    public partial class ConfigModifyObservableBase : ObservableObject
+    public partial class ConfigModifyObservableBase : ObservableRecipient
     {
         public ConfigModifyObservableBase() { }
 
@@ -100,7 +100,7 @@ namespace WH.Entity.CommonLib
                 sb.Append(newValue.ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace WH.Entity.CommonLib
                 sb.Append(e.OldItems[0].ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         public static void UpdateToken(object instance, Token token)
@@ -180,7 +180,7 @@ namespace WH.Entity.CommonLib
     /// <summary>
     /// 20240706 TCG
     /// 消息通道类型
-    /// 
+    ///
     /// </summary>
     public class Token : IEquatable<Token>
     {

@@ -13,6 +13,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -44,7 +45,10 @@ namespace 断面毛刺检测软件
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : HandyControl.Controls.Window
+    public partial class MainWindow
+        : HandyControl.Controls.Window,
+            IRecipient<MemoryStream>,
+            IRecipient<AlarmPopMessage>
     {
         IObservable<Unit> StartStopSource;
         CMainModelsModelVM CMainList;
@@ -99,50 +103,7 @@ namespace 断面毛刺检测软件
                         else
                             OperateLog.Info(Properties.Resources.Stop);
                     });
-                WeakReferenceMessenger.Default.Register<MemoryStream, string>(
-                    this,
-                    "getImage",
-                    (_, imgStream) =>
-                    {
-                        this.Dispatcher.BeginInvoke(
-                            new Action(() =>
-                            {
-                                var bitmap = new BitmapImage();
-                                bitmap.BeginInit();
-                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                bitmap.StreamSource = new MemoryStream();
-                                imgStream.WriteTo(bitmap.StreamSource);
-                                bitmap.EndInit();
-                                mainVM.ModelImage = bitmap;
-                            })
-                        );
-                    }
-                );
-                WeakReferenceMessenger.Default.Register<Cell, string>(
-                    this,
-                    "showTask",
-                    (obj, cell) =>
-                    {
-                        this.Dispatcher.BeginInvoke(
-                            new Action(() => {
-                                //mainVM.CDefectsDataVM.CDefectsProduce.CellResultExcute(cell);
-                            })
-                        );
-                    }
-                );
-                WeakReferenceMessenger.Default.Register<AlarmPopMessage, Token>(
-                    this,
-                    mainVM.MaociAlarmSetConfig.token,
-                    (obj, msg) =>
-                    {
-                        this.Dispatcher.BeginInvoke(
-                            new Action(() =>
-                            {
-                                Growl.Error(msg.alarm.RegularShow);
-                            })
-                        );
-                    }
-                );
+
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
@@ -312,6 +273,7 @@ namespace 断面毛刺检测软件
                 progress.Report(100);
             }
         }
+
         #endregion
 
         #region 保存
@@ -410,7 +372,19 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
                 progress.Reset();
                 progress.Report(0);
+                WeakReferenceMessenger.Default.UnregisterAll(this);
                 await CMainList.OpenProj(progress, header);
+
+                WeakReferenceMessenger.Default.Register<MemoryStream, Token>(
+                    this,
+                    CMainList.CMainVMs[0].TokeVM
+                );
+
+                WeakReferenceMessenger.Default.Register<AlarmPopMessage, Token>(
+                    this,
+                    CMainList.CMainVMs[0].MaociAlarmSetConfig.token
+                );
+
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
@@ -524,6 +498,8 @@ namespace 断面毛刺检测软件
                 .Value;
             saveImageWindow.DataContext = CMainList.CMainVMs[0].SaveImageVM;
             saveImageWindow.Show();
+            saveImageWindow.Activate();
+            OperateLog.Info(Properties.Resources.ImageSave);
         }
         #endregion
 
@@ -531,6 +507,9 @@ namespace 断面毛刺检测软件
         private void OffLineTest_Click(object sender, RoutedEventArgs e)
         {
             OffLineTestWindow offLine = App.Container.Resolve<Lazy<OffLineTestWindow>>().Value;
+            offLine.Show();
+            offLine.Activate();
+            OperateLog.Info(Properties.Resources.Offline);
         }
         #endregion
 
@@ -540,6 +519,8 @@ namespace 断面毛刺检测软件
             SQLSetWindow sqlSetwindow = App.Container.Resolve<Lazy<SQLSetWindow>>().Value;
             sqlSetwindow.DataContext = CMainList.CMainVMs[0].MySqlVM;
             sqlSetwindow.Show();
+            sqlSetwindow.Activate();
+            OperateLog.Info(Properties.Resources.DataStatistics);
         }
         #endregion
 
@@ -548,6 +529,8 @@ namespace 断面毛刺检测软件
         {
             DataQueryWindow sqlSetwindow = App.Container.Resolve<Lazy<DataQueryWindow>>().Value;
             sqlSetwindow.Show();
+            sqlSetwindow.Activate();
+            OperateLog.Info(Properties.Resources.DataStatistics);
         }
         #endregion
 
@@ -558,7 +541,35 @@ namespace 断面毛刺检测软件
             {
                 item.MaociDefectsProduce.Clear();
             }
+            OperateLog.Info(Properties.Resources.DataClear);
         }
+
         #endregion
+
+        public void Receive(MemoryStream imgStream)
+        {
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.StreamSource = new MemoryStream();
+                    imgStream.WriteTo(bitmap.StreamSource);
+                    bitmap.EndInit();
+                    mainVM.ModelImage = bitmap;
+                })
+            );
+        }
+
+        public void Receive(AlarmPopMessage message)
+        {
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    Growl.Error(message.alarm.RegularShow);
+                })
+            );
+        }
     }
 }

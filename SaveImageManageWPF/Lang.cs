@@ -10,7 +10,7 @@ namespace SaveImageManage
     {
         public static LanguageManager.CLanguageManager s_SaveImageLang =
             new LanguageManager.CLanguageManager(
-                "SaveImageManageWPF.Properties.SaveimageResources",
+                "SaveImageManage.View.SaveimageResources",
                 typeof(CLang).Assembly
             );
     }

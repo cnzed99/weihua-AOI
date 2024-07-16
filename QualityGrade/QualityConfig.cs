@@ -115,7 +115,7 @@ namespace QualityGrade
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("信号")]
-        private int signal = -1;
+        private int signal = 0;
 
         public Quality Clone()
         {

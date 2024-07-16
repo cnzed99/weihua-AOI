@@ -44,46 +44,13 @@ namespace SDFilter
                 SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
                 foreach (var recipe in specie.Recipes)
                 {
-                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name,token));
+                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name, token));
                 }
                 SpFilters.Add(speciesFilter);
             }
             SpeciesFilters = SpFilters;
 
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
-        }
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 同步毛刺等级实例
-        /// </summary>
-        /// <param name="MaociQuality"></param>
-        public void Synchronization(CQualityConfig MaociQuality)
-        {
-            #region 同步毛刺过滤配置
-            foreach (var spFilter in SpeciesFilters)
-            {
-                foreach (var reFilger in spFilter.RecipeDefects)
-                {
-                    foreach (var deFilter in reFilger.DefectFilters)
-                    {
-                        //新建配方 质量等级没有赋值时赋值最差
-                        if (deFilter.QualityLevel is null)
-                        {
-                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
-                        }
-                        else
-                        {
-                            var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
-                                o.Priority == deFilter.QualityLevel.Priority
-                            );
-                            deFilter.QualityLevel = null;
-                            deFilter.QualityLevel = findquality;
-                        }
-                    }
-                }
-            }
-            #endregion
         }
 
         /// <summary>
@@ -492,11 +459,15 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
             DefectFilters = new ObservableCollection<DefectFilter>();
         }
+
         public RecipeDefect(string name, Token token)
         {
             this.token = token;
             this.Name = name;
-            DefectFilters = new ObservableCollection<DefectFilter>() { new DefectFilter(Name + "0", token) };
+            DefectFilters = new ObservableCollection<DefectFilter>()
+            {
+                new DefectFilter(Name + "0", token)
+            };
         }
 
         /// <summary>
@@ -548,13 +519,16 @@ namespace SDFilter
             FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect() };
             ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
         }
+
         public DefectFilter(string name, Token token)
         {
             this.token = token;
             this.Name = name;
             FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect(token) };
             ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
-            ShowColor = CBrushPro.s_Instance.KnownColors[new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)];
+            ShowColor = CBrushPro.s_Instance.KnownColors[
+                new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)
+            ];
         }
 
         /// <summary>
@@ -718,7 +692,10 @@ namespace SDFilter
         public SelectConfig(Token token)
         {
             this.token = token;
-            SelectParams = new ObservableCollection<OneSelectParams>() { new OneSelectParams(token) };
+            SelectParams = new ObservableCollection<OneSelectParams>()
+            {
+                new OneSelectParams(token)
+            };
         }
 
         /// <summary>
@@ -754,6 +731,7 @@ namespace SDFilter
         {
             this.token = token;
         }
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 特征

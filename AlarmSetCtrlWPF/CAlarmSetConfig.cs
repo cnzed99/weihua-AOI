@@ -223,6 +223,12 @@ namespace AlarmSetCtrlWPF
         [NotifyPropertyChangedFor(nameof(isIndependent))]
         private bool isTimeLimit = true;
 
+        partial void OnIsTimeLimitChanged(bool value)
+        {
+            TimeCellList.Clear();
+            totalNG = 0;
+        }
+
         /// <summary>
         ///  2024.6.25 鲍赞宝
         /// 规则时间间隔
@@ -272,6 +278,12 @@ namespace AlarmSetCtrlWPF
         [NotifyPropertyChangedFor(nameof(RegularShow))]
         [NotifyPropertyChangedFor(nameof(isIndependent))]
         private bool isTotalLimit = true;
+
+        partial void OnIsTotalLimitChanged(bool value)
+        {
+            TotalCellList.Clear();
+            totalNG = 0;
+        }
 
         private int total = 500;
 
@@ -336,9 +348,8 @@ namespace AlarmSetCtrlWPF
                 if (IsTimeLimit)
                     sb.Append($"在最近{Time}{EnumStringAttribute.GetEnumName(TimeUnit)}内");
                 if (IsTotalLimit)
-                    sb.Append($"连续{Total}片中");
+                    sb.Append($"/连续{Total}片中");
                 sb.Append($"出现{NgCount}片{Source}");
-                totalNG = 0;
                 return sb.ToString();
             }
         }
@@ -423,6 +434,7 @@ namespace AlarmSetCtrlWPF
         /// <returns>规则NG数量满足为true,否则为false</returns>
         public bool AddCellAndJudge(Cell cell)
         {
+            bool ret = false;
             if (IsTimeLimit || IsTotalLimit)
             {
                 var alarmcell = (cell.CreateTime, true);
@@ -435,10 +447,12 @@ namespace AlarmSetCtrlWPF
                         alarmcell.Item2 = cell.Detection.DefectFilter == Source;
                         break;
                 }
-                var firstNg = TimeCellList[0];
+
                 //在规定时间内出现指定数量NG
                 if (IsTimeLimit)
                 {
+                    TimeCellList.Add(alarmcell);
+                    var firstNg = TimeCellList[0];
                     //超时限 删除
                     while (cell.CreateTime - TimeCellList[0].createTime > TimeSpan)
                     {
@@ -449,15 +463,12 @@ namespace AlarmSetCtrlWPF
                     if (ngNumber >= NgCount) //达到报警标准
                     {
                         WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        return true;
-                    }
-                    else //未达到报警标准
-                    {
-                        return false;
+                        ret = true;
                     }
                 }
                 if (IsTotalLimit)
                 {
+                    TotalCellList.Add(alarmcell);
                     //保持最近限定数量内
                     while (TotalCellList.Count > Total)
                     {
@@ -467,19 +478,14 @@ namespace AlarmSetCtrlWPF
                     if (ngNumber >= NgCount) //达到报警标准
                     {
                         WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        return true;
-                    }
-                    else //未达到报警标准
-                    {
-                        return false;
+                        ret = true;
                     }
                 }
-                TotalCellList.Clear();
-                TimeCellList.Clear();
-                return true;
+                return ret;
             }
             else //NG数量达标即报警
             {
+                TimeCellList.Clear();
                 switch (Type)
                 {
                     case ALARMTYPE.ALARMTYPE_GRADE:
