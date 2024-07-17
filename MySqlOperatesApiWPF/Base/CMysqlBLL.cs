@@ -110,8 +110,8 @@ namespace MySqlOperatesApiWPF
                     cell.FilterTime.TotalMilliseconds.ToString("F1"),
                     cell.ShowTime.TotalMilliseconds.ToString("F1"),
                     cell.ProcessTime.TotalMilliseconds.ToString("F1"),
-                    cell.Quality.QualityName,
-                    cell.Quality.QualitySignal,
+                    cell.Quality.Name,
+                    cell.Quality.Signal,
                     cell.IsOK ? "OK" : "NG",
                     cell.Detection?.Type,
                     cell.Detection?.DefectFilter?.Name
@@ -209,35 +209,84 @@ namespace MySqlOperatesApiWPF
 
         /// <summary>
         /// 2024.7.7 鲍赞宝
-        /// 查询数据
+        /// 查询数据 tableList入参为空时查询可能包含该时间段内数据的表 返回查询到的表名
         /// </summary>
         /// <param name="dateNow">待查询表名称数组</param>
         /// <returns></returns>
-        public override DataSet QueryData(List<string> dateNow, string start, string end)
+        public override DataSet QueryData(List<string> tableList, string start, string end)
         {
             string sqlconn = string.Empty;
             string strconn = "";
 
-            start = $"'{start}'";
-            end = $"'{end}'";
-            if (dateNow.Count > 0)
+            var startStr = $"'{start}'";
+            var endStr = $"'{end}'";
+            if (tableList.Count == 0)
             {
-                if (dateNow.Count == 1)
+                string closestTable = "";
+                string searchClosestTable = string.Format(
+                    @"SELECT TABLE_NAME, CREATE_TIME
+                    FROM information_schema.tables
+                    WHERE TABLE_SCHEMA = '{0}'
+                    AND CREATE_TIME <= '{1}'
+                    ORDER BY ABS(TIMESTAMPDIFF(SECOND, CREATE_TIME, '{1}')) ASC
+                    LIMIT 1",
+                    DataBaseName,
+                    start
+                );
+                string searchTables = string.Format(
+                    @"SELECT TABLE_NAME, CREATE_TIME 
+                    FROM information_schema.tables 
+                    WHERE TABLE_SCHEMA = '{0}' 
+                    AND CREATE_TIME BETWEEN {1} AND {2}",
+                    DataBaseName,
+                    startStr,
+                    endStr
+                );
+                _mySqlHelper.ExecuteReader(
+                    searchClosestTable,
+                    new Action<MySql.Data.MySqlClient.MySqlDataReader>(reader =>
+                    {
+                        while (reader.Read())
+                        {
+                            closestTable = reader["TABLE_NAME"].ToString();
+                        }
+                    })
+                );
+                tableList = new List<string>();
+                if (!string.IsNullOrEmpty(closestTable))
                 {
-                    sqlconn = dateNow[0];
+                    tableList.Add(closestTable);
+                }
+                _mySqlHelper.ExecuteReader(
+                    searchTables,
+                    new Action<MySql.Data.MySqlClient.MySqlDataReader>(reader =>
+                    {
+                        while (reader.Read())
+                        {
+                            tableList.Add(reader["TABLE_NAME"].ToString());
+                        }
+                    })
+                );
+            }
+
+            if (tableList.Count > 0)
+            {
+                if (tableList.Count == 1)
+                {
+                    sqlconn = tableList[0];
                 }
                 else
                 {
                     strconn = "AS combined_tables";
-                    for (int i = 0; i < dateNow.Count; i++)
+                    for (int i = 0; i < tableList.Count; i++)
                     {
-                        if (i == (dateNow.Count - 1))
+                        if (i == (tableList.Count - 1))
                         {
-                            sqlconn += $" SELECT * FROM {dateNow[i]}";
+                            sqlconn += $" SELECT * FROM {tableList[i]}";
                         }
                         else
                         {
-                            sqlconn += $" SELECT * FROM {dateNow[i]} UNION ALL ";
+                            sqlconn += $" SELECT * FROM {tableList[i]} UNION ALL ";
                         }
                     }
                 }
@@ -254,8 +303,8 @@ namespace MySqlOperatesApiWPF
                         + "FROM ({0}){1} WHERE 创建时间 >= {2} AND 创建时间 <= {3} GROUP BY DATE_FORMAT(创建时间, '%Y-%m-%d %H:00')",
                     sqlconn,
                     strconn,
-                    start,
-                    end
+                    startStr,
+                    endStr
                 );
 
                 datatable = _mySqlHelper.GetDataSet(querySql);
@@ -263,7 +312,7 @@ namespace MySqlOperatesApiWPF
             }
             else
             {
-                return null;
+                return new DataSet();
             }
         }
     }
