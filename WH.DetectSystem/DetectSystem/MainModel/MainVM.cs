@@ -260,12 +260,9 @@ namespace WH.DetectSystem.ViewModels
         MySqlViewModel mySqlVM = new MySqlViewModel(); //数据库
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
-        private static readonly BoundedChannelOptions s_channelOptions = new BoundedChannelOptions(
-            1000
-        )
-        {
-            FullMode = BoundedChannelFullMode.DropWrite
-        };
+
+        private static readonly BoundedChannelOptions s_NormalChannelOptions =
+            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
         private static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
 
@@ -273,7 +270,7 @@ namespace WH.DetectSystem.ViewModels
         /// 消息队列
         /// </summary>
         private readonly Channel<string> m_InfoChannel = Channel.CreateBounded<string>(
-            s_channelOptions
+            s_NormalChannelOptions
         );
 
         /// <summary>
@@ -287,28 +284,35 @@ namespace WH.DetectSystem.ViewModels
         /// 算法 图像队列
         /// </summary>
         private readonly Channel<Cell> m_AlgorithmChannel = Channel.CreateBounded<Cell>(
-            s_channelOptions
+            s_NormalChannelOptions
         );
 
         /// <summary>
         /// 过滤 图像队列
         /// </summary>
         private readonly Channel<Cell> m_FilterChannel = Channel.CreateBounded<Cell>(
-            s_channelOptions
+            s_NormalChannelOptions
         );
 
         /// <summary>
         /// 显示 图像队列
         /// </summary>
         private readonly Channel<Cell> m_ShowImageChannel = Channel.CreateBounded<Cell>(
-            s_channelOptions
+            s_NormalChannelOptions
         );
 
         /// <summary>
-        /// 缺陷放大图像队列
+        /// 报警队列
         /// </summary>
-        private readonly Channel<Cell> m_CropImageChannel = Channel.CreateBounded<Cell>(
-            s_channelOptions
+        private readonly Channel<Cell> m_AlarmChannel = Channel.CreateBounded<Cell>(
+            s_NormalChannelOptions
+        );
+
+        /// <summary>
+        /// 数据库队列
+        /// </summary>
+        private readonly Channel<Cell> m_dataBaseChannel = Channel.CreateBounded<Cell>(
+            s_NormalChannelOptions
         );
 
         /// <summary>
@@ -503,6 +507,7 @@ namespace WH.DetectSystem.ViewModels
                 }
             });
             #endregion
+
             #region 取图线程
             Task waitGetImageTask = Task.Run(async () =>
             {
@@ -680,7 +685,6 @@ namespace WH.DetectSystem.ViewModels
             #region 显示线程
             Task waitShowTask = Task.Run(async () =>
             {
-                object objAlarmLock = new object(); //报警监控用
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 await foreach (Cell cell in m_ShowImageChannel.Reader.ReadAllAsync())
@@ -693,7 +697,7 @@ namespace WH.DetectSystem.ViewModels
                         //Bitmap bmp = WHImageConvert.HImage2Bitmap(img);
                         //Brush showcolor = cell.Quality.ShowColor;
                         ModelBrush = cell.Quality.ShowColor.Brush;
-                        if (cell.IsOK)
+                        if (!cell.IsOK)
                         {
                             LastBrush = ModelBrush;
                             LastImage = ModelImage;
@@ -728,76 +732,8 @@ namespace WH.DetectSystem.ViewModels
                         //    //textBuilder.Append(cell.QualityName);
 
                         //}));
-                        _ = Task.Run(() =>
-                        {
-                            #region 写入Access数据库
-                            //try
-                            //{
-                            //    var space = DiskSpace.GetHardDiskFreeSpace("D");
-                            //    if (space > 1)
-                            //    {
-                            //        if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning) //如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
-                            //        {
-                            //            SQLClientAccess.AddData(cell, CSystemParamJson.SystemSetParam.NowShift);//数据库写入
-                            //        }
-
-                            //    }//空间不足1GB不存
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
-                            //}
-                            #endregion
-                            #region 写入Mysql
-                            if (SystemSettings.IsToMysql)
-                            {
-                                try
-                                {
-                                    if (SystemSettings.OfflineSave || isStart)
-                                        MySqlVM.mysqlExecute.AddData(cell, SystemSettings.NowShift);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SysLog.Error("Mysql数据库写入出错:" + ex.Message);
-                                    Growl.Warning(
-                                        new GrowlInfo()
-                                        {
-                                            Message = "Mysql数据库写入出错:",
-                                            StaysOpen = false,
-                                            WaitTime = 2,
-                                        }
-                                    );
-                                }
-                            }
-
-                            //if (CSystemParamJson.SystemSetParam.IsToMysql) //如果配置了写mysql
-                            //{
-                            //    try
-                            //    {
-                            //        if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning)//如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
-                            //        {
-                            //            // SQLClientMySql.AddData(cell, "");
-                            //        }
-                            //    }
-                            //    catch (Exception ex)
-                            //    {
-                            //        SysLog.Error("Mysql数据库写入出错:" + ex.Message + ex.StackTrace);
-                            //    }
-                            //}
-                            #endregion
-                            #region 报警监控
-                            try
-                            {
-                                lock (objAlarmLock)
-                                {
-                                    MaociAlarmSetConfig.Excute(cell);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                SysLog.Error("监控报警出错:" + ex.Message + ex.StackTrace);
-                            }
-                            #endregion
+                        await m_AlarmChannel.Writer.WriteAsync(cell);
+                        _ = Task.Run(() => {
                             #region 窗口显示
                             //this.Invoke(new Action(() =>
                             //{
@@ -942,9 +878,85 @@ namespace WH.DetectSystem.ViewModels
                     }
                     finally
                     {
-                        cell.Dispose();
                         WaitSignal.Set();
                     }
+                }
+            });
+            #endregion
+
+            #region 报警线程
+            Task alarmTask = Task.Run(async () =>
+            {
+                object objAlarmLock = new object(); //报警监控用
+                Thread.CurrentThread.Priority = ThreadPriority.Normal;
+                await foreach (Cell cell in m_AlarmChannel.Reader.ReadAllAsync())
+                {
+                    try
+                    {
+                        lock (objAlarmLock)
+                        {
+                            MaociAlarmSetConfig.Excute(cell);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SysLog.Error("监控报警出错:" + ex.Message + ex.StackTrace);
+                    }
+                    finally
+                    {
+                        await m_dataBaseChannel.Writer.WriteAsync(cell);
+                    }
+                }
+            });
+            #endregion
+
+            #region 数据库线程
+            //数据库写入容易出错，卡顿时间较长，容量最大10个
+            Task dataBaseTask = Task.Run(async () =>
+            {
+                Thread.CurrentThread.Priority = ThreadPriority.Normal;
+                await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
+                {
+                    #region 写入Access数据库
+                    //try
+                    //{
+                    //    var space = DiskSpace.GetHardDiskFreeSpace("D");
+                    //    if (space > 1)
+                    //    {
+                    //        if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning) //如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
+                    //        {
+                    //            SQLClientAccess.AddData(cell, CSystemParamJson.SystemSetParam.NowShift);//数据库写入
+                    //        }
+
+                    //    }//空间不足1GB不存
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
+                    //}
+                    #endregion
+
+                    if (SystemSettings.IsToMysql)
+                    {
+                        try
+                        {
+                            if (SystemSettings.OfflineSave || isStart)
+                                MySqlVM.mysqlExecute.AddData(cell, SystemSettings.NowShift);
+                        }
+                        catch (Exception ex)
+                        {
+                            SysLog.Error("Mysql数据库写入出错:" + ex.Message);
+                            Growl.Warning(
+                                new GrowlInfo()
+                                {
+                                    Message = "Mysql数据库写入出错:",
+                                    StaysOpen = false,
+                                    WaitTime = 2,
+                                }
+                            );
+                        }
+                    }
+                    cell.Dispose();
                 }
             });
             #endregion
@@ -980,7 +992,8 @@ namespace WH.DetectSystem.ViewModels
             m_AlgorithmChannel.Writer.Complete();
             m_FilterChannel.Writer.Complete();
             m_ShowImageChannel.Writer.Complete();
-            m_CropImageChannel.Writer.Complete();
+            m_AlarmChannel.Writer.Complete();
+            m_dataBaseChannel.Writer.Complete();
             m_SaveImageChannel.Writer.Complete();
         }
 
