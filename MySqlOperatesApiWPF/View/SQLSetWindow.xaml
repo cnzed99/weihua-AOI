@@ -14,7 +14,7 @@
     ResizeMode="NoResize"
     SizeToContent="Height"
     d:DataContext="{d:DesignInstance Type=local:SQLBase}"
-    Icon="/MySqlOperatesApiWPF;component/Resources/数据库.png"
+    Icon="/MySqlOperatesApiWPF;component/Resources/数据库设置.png"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>

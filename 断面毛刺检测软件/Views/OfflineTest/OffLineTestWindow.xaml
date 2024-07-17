@@ -12,8 +12,10 @@
     Background="{DynamicResource RegionBrush}"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
-    WindowStyle="SingleBorderWindow"
+    Topmost="True"
+    Icon="/Resources/图片/工具/离线检测.png"
     WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow"
     mc:Ignorable="d">
     <StackPanel Name="ContainerPanel" />
 </hc:Window>

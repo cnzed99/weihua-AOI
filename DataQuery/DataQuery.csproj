@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\数据库设置.png" />
+    <None Remove="Resources\数据查询.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="HandyControl" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
@@ -17,6 +22,11 @@
   <ItemGroup>
     <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\数据库设置.png" />
+    <Resource Include="Resources\数据查询.png" />
   </ItemGroup>
 
   <ItemGroup>

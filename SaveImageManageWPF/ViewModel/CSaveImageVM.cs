@@ -75,11 +75,12 @@ namespace SaveImageManage
         int imageCount = -1;
 
         /// <summary>
-        /// 保存原图和截图
+        /// 保存原图和截图 并返回截图路径
         /// </summary>
         /// <param name="cell">cell</param>
-        public void SaveFullImage(Cell cell)
+        public string SaveFullImage(Cell cell)
         {
+            string savePath = string.Empty;
             try
             {
                 string classPath;
@@ -118,7 +119,7 @@ namespace SaveImageManage
                             string filecropName = dirPath + cropName + detection.DefectFilter.Name;
                         }
 
-                        SaveDumpImage(cell, classPath); //存窗口截图
+                        savePath = SaveDumpImage(cell, classPath); //存窗口截图 李工还未做
                     }
                 }
 
@@ -164,6 +165,7 @@ namespace SaveImageManage
                             break;
                     }
                 }
+                return savePath;
             }
             catch (Exception)
             {
@@ -172,27 +174,20 @@ namespace SaveImageManage
         }
 
         /// <summary>
-        ///
+        ///20240717 TCG
+        ///保存截图并返回其路径
         /// </summary>
-        /// <param name="cell">cell</param>
-        /// <param name="dumpImagePath">NG截图路径</param>
-        /// <param name="showAllDefects">是否显示所有缺陷</param>
-        private void SaveDumpImage(Cell cell, string dumpImagePath)
+        /// <param name="cell"></param>
+        /// <param name="dumpImagePath"></param>
+        /// <returns>保存路径</returns>
+        private string SaveDumpImage(Cell cell, string dumpImagePath)
         {
             string directory = Path.GetDirectoryName(dumpImagePath);
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(dumpImagePath);
             string Dirpath = $"{directory}{"\\Jpg\\"}";
             string path = $"{Dirpath}{fileNameWithoutExtension}{".jpg"}";
-
-            if (Param.NgImagePaths != null)
-            {
-                Param.NgImagePaths.Insert(0, path);
-                if (Param.NgImagePaths.Count >= 1000)
-                {
-                    Param.NgImagePaths.RemoveAt(Param.NgImagePaths.Count - 1);
-                }
-                TransferPathDelegate?.Invoke(Param.NgImagePaths);
-            }
+            //保存截图。。。
+            return path;
         }
 
         /// <summary>
@@ -229,10 +224,10 @@ namespace SaveImageManage
 
                     cropName = nameBuilder.ToString();
 
-                    nameBuilder.Append(cell.Quality?.QualitySignal); //质量信号值
+                    nameBuilder.Append(cell.Quality?.Signal); //质量信号值
                     nameBuilder.Append("-");
 
-                    nameBuilder.Append(cell.Quality?.QualityName); //质量等级名称
+                    nameBuilder.Append(cell.Quality?.Name); //质量等级名称
                     nameBuilder.Append("-");
 
                     nameBuilder.Append(cell.Detection?.DefectFilter?.Name); //缺陷名称

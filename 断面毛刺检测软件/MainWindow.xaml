@@ -132,7 +132,7 @@
                         Click="DataQuery_Click"
                         Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据查询.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
@@ -140,7 +140,7 @@
                         Click="Mysql_Click"
                         Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据监控.svg" />
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据库设置.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
@@ -246,7 +246,11 @@
                     <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Click="ClearGrowlMessage_Click" Content="清空报警" Style="{StaticResource ButtonDashedInfo}" Height="70"/>
+                    <Button
+                        Height="70"
+                        Click="ClearGrowlMessage_Click"
+                        Content="清空报警"
+                        Style="{StaticResource ButtonDashedInfo}" />
                     <!--  启停按钮  -->
                     <ToggleButton
                         x:Name="Btn_StartStop"
@@ -324,7 +328,7 @@
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
-                
+
 
             </Grid>
 

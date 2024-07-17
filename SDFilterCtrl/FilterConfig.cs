@@ -376,6 +376,7 @@ namespace SDFilter
                                     cell.Quality = detection.DefectFilter.QualityLevel;
                                 }
                             }
+                            cell.IsOK = false;
                         }
                         cell.Detections.Add(detection);
                     }

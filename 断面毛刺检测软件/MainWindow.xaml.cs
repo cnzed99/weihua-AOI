@@ -3,32 +3,20 @@ using System.Globalization;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Text.Json.Nodes;
-using System.Threading.Channels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using AlarmSetCtrlWPF;
 using Autofac;
 using CommunityToolkit.Mvvm.Messaging;
 using DataQuery;
 using HandyControl.Controls;
 using HandyControl.Data;
-using Mapster;
+using HistoryPlayback.Model;
 using Microsoft.Win32;
 using MySqlOperatesApiWPF;
-using Newtonsoft.Json;
-using ProjProduceData;
 using SaveImageManage;
 using WH.Controls;
 using WH.DetectSystem;
@@ -36,7 +24,6 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
-using WH.RunCell;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -48,7 +35,8 @@ namespace 断面毛刺检测软件
     public partial class MainWindow
         : HandyControl.Controls.Window,
             IRecipient<MemoryStream>,
-            IRecipient<AlarmPopMessage>
+            IRecipient<AlarmPopMessage>,
+            IRecipient<AddOneNgImagePathMessage>
     {
         IObservable<Unit> StartStopSource;
         CMainModelsModelVM CMainList;
@@ -369,6 +357,8 @@ namespace 断面毛刺检测软件
         {
             try
             {
+                if (!File.Exists(header))
+                    return;
                 this.IsEnabled = false;
                 progress.Reset();
                 progress.Report(0);
@@ -384,7 +374,10 @@ namespace 断面毛刺检测软件
                     this,
                     CMainList.CMainVMs[0].MaociAlarmSetConfig.token
                 );
-
+                WeakReferenceMessenger.Default.Register<AddOneNgImagePathMessage, Token>(
+                    this,
+                    CMainList.CMainVMs[0].TokeVM
+                );
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
@@ -543,7 +536,13 @@ namespace 断面毛刺检测软件
             }
             OperateLog.Info(Properties.Resources.DataClear);
         }
+        #endregion
 
+        #region 清空Growl消息
+        private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
+        {
+            Growl.Clear();
+        }
         #endregion
 
         public void Receive(MemoryStream imgStream)
@@ -584,9 +583,19 @@ namespace 断面毛刺检测软件
             );
         }
 
-        private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
+        public void Receive(AddOneNgImagePathMessage message)
         {
-            Growl.Clear();
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    if (!string.IsNullOrEmpty(message.Path))
+                    {
+                        if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count >= 1000)
+                            mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(0);
+                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Add(message.Path);
+                    }
+                })
+            );
         }
     }
 }

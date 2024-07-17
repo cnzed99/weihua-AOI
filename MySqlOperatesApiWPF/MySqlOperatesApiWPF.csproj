@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\数据库.png" />
+    <None Remove="Resources\数据库设置.png" />
+    <None Remove="Resources\数据查询.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\数据库.png" />
+    <Resource Include="Resources\数据库设置.png" />
+    <Resource Include="Resources\数据查询.png" />
   </ItemGroup>
 
   <ItemGroup>

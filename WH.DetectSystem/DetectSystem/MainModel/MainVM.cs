@@ -17,7 +17,10 @@ using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
+using HandyControl.Data;
 using HistoryPlayback;
+using HistoryPlayback.Model;
 using Mapster;
 using MapsterMapper;
 using MySqlOperatesApiWPF;
@@ -61,6 +64,9 @@ namespace WH.DetectSystem.ViewModels
         public CLogRec OperateLog { get; } =
             CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
 
+        private CSystemSettingsVM SystemSettings =
+            CPublicServices.Container.Resolve<CSystemSettingsVM>();
+
         /// <summary>
         /// 当前工程
         /// </summary>
@@ -93,6 +99,7 @@ namespace WH.DetectSystem.ViewModels
                     MaociFilterConfig,
                     MaociQualityConfig
                 );
+                HistoryVM.SetHistory(MaociHistoryModel, MaociFilterConfig);
                 TokeVM.ProGuid = value.GUID;
             }
         }
@@ -125,7 +132,6 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void InitNewModel()
         {
-            InitSubProj();
             this.UpdateToken(); //先更新token 再同步引用
             #region 注册参数修改通道令牌 并清除当前选择的质量等级
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
@@ -150,15 +156,6 @@ namespace WH.DetectSystem.ViewModels
             );
 
             #endregion
-        }
-
-        public void InitSubProj()
-        {
-            //历史回看绑定
-            SaveImageVM.TransferPathDelegate = (pathList) =>
-            {
-                HistoryVM.ImagePaths = pathList;
-            };
         }
 
         #region 时间相关
@@ -642,16 +639,7 @@ namespace WH.DetectSystem.ViewModels
                         cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Stop();
                         //CCommunicationManagement.SendDetectionFinishSignal(cell.CamSerial, cell.ID, cell.QualitySignal, cell.ColorSignel, cell.OtherInfoSend);
-                        //strbuilder.Clear();
-                        //strbuilder.Append("[");
-                        //strbuilder.Append("筛选");
-                        //strbuilder.Append("]     ");
-                        //strbuilder.Append(cell.ID);
-                        //strbuilder.Append("   筛选执行完成,耗时:");
-                        //strbuilder.Append(cell.FilterTime.TotalMilliseconds.ToString("F2"));
-                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        // _infoLog.Enqueue($"{$"[{_waitFilterImageQueue.Name}]",-10}{cell.ID,-8}{"筛选执行完成",-20}耗时 {cell.FilterTime.TotalMilliseconds:0.00}");
-                        //cell.Stopwatch.Restart();
+
                         cell.ProcessTime = DateTime.Now - cell.CreateTime;
 
                         strbuilder.Clear();
@@ -671,11 +659,10 @@ namespace WH.DetectSystem.ViewModels
                         //        dataGridView1.Invalidate(dataGridView1.DisplayRectangle);
                         //    }));
 
-                        //    if (_SaveImageParam.SaveImageEnable || !cell.IsOK) //Clone 比较耗时 只有在开启存图 或NG时才复制Cell
-                        //    {
-                        //        await SaveImageChannel.Writer.WriteAsync(cell.Clone());
-                        //    }
-                        //}
+                        if (MaociSaveImageConfig.SaveImageEnable || !cell.IsOK) //Clone 比较耗时 只有在开启存图 或NG时才复制Cell
+                        {
+                            await m_SaveImageChannel.Writer.WriteAsync(cell.Clone());
+                        }
 
                         await m_ShowImageChannel.Writer.WriteAsync(cell);
                         //_waitShowImageQueue.Enqueue(cell); //先加入存图 再加入显示  因为先显示可能会先把cell dispose掉,Clone时会报错
@@ -762,6 +749,27 @@ namespace WH.DetectSystem.ViewModels
                             //}
                             #endregion
                             #region 写入Mysql
+                            if (SystemSettings.IsToMysql)
+                            {
+                                try
+                                {
+                                    if (SystemSettings.OfflineSave || isStart)
+                                        MySqlVM.mysqlExecute.AddData(cell, SystemSettings.NowShift);
+                                }
+                                catch (Exception ex)
+                                {
+                                    SysLog.Error("Mysql数据库写入出错:" + ex.Message);
+                                    Growl.Warning(
+                                        new GrowlInfo()
+                                        {
+                                            Message = "Mysql数据库写入出错:",
+                                            StaysOpen = false,
+                                            WaitTime = 2,
+                                        }
+                                    );
+                                }
+                            }
+
                             //if (CSystemParamJson.SystemSetParam.IsToMysql) //如果配置了写mysql
                             //{
                             //    try
@@ -950,8 +958,11 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         //// int queCount = _waitSaveImageQueue.Count;
-                        SaveImageVM.SaveFullImage(cell);
-
+                        string savePath = SaveImageVM.SaveFullImage(cell);
+                        WeakReferenceMessenger.Default.Send(
+                            new AddOneNgImagePathMessage() { Path = savePath },
+                            TokeVM
+                        );
                         cell.Dispose(); //这个cell是复制的clone 存图后清理
                     }
                     catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -34,8 +35,8 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         CLoginViewModel loginViewModel = new CLoginViewModel();
 
-        [ObservableProperty]
-        CSystemSettingsVM systemSettings = new CSystemSettingsVM();
+        public CSystemSettingsVM SystemSettings { get; set; } =
+            CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -120,25 +121,26 @@ namespace WH.DetectSystem.ViewModels
             await Task.Run(async () =>
             {
                 #region 读取主配置文件
-                try
-                {
-                    SystemSettings = CSysSet.LoadParameter();
-                    if (SystemSettings != null)
-                    {
-                        SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
+                //在app.xaml.cs中读取
+                //try
+                //{
+                //    SystemSettings = CSysSet.LoadParameter();
+                //    if (SystemSettings != null)
+                //    {
+                //        SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
 
-                        //CLoading.DispText("读取系统配置成功...", 10);
-                    }
-                    else
-                    {
-                        SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
-                        //CLoading.DispText("读取系统配置失败...", 10);
-                    }
-                    progress.Report(10);
+                //        //CLoading.DispText("读取系统配置成功...", 10);
+                //    }
+                //    else
+                //    {
+                //        SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
+                //        //CLoading.DispText("读取系统配置失败...", 10);
+                //    }
+                //    progress.Report(10);
 
-                    await longtimefunc(progress);
-                }
-                catch (Exception) { }
+                await longtimefunc(progress);
+                //}
+                //catch (Exception) { }
                 #endregion
             });
         }
@@ -179,10 +181,16 @@ namespace WH.DetectSystem.ViewModels
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);
+                foreach (var proj in SystemSettings.RecentProjs)
+                {
+                    if (!File.Exists(proj))
+                        SystemSettings.RecentProjs.Remove(proj);
+                }
                 while (SystemSettings.RecentProjs.Count > 10)
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
+
                 await longtimefunc(progress);
             }
             catch (Exception ex)

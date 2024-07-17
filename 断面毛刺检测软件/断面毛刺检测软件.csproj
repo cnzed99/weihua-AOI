@@ -81,6 +81,8 @@
     <None Remove="Resources\图标\数据监控.svg" />
     <None Remove="Resources\图标\数据监控.svg.ldenc" />
     <None Remove="Resources\图标\数据统计.svg" />
+    <None Remove="Resources\图标\数据统计\数据库设置.svg" />
+    <None Remove="Resources\图标\数据统计\数据查询.svg" />
     <None Remove="Resources\图标\新建工程.svg" />
     <None Remove="Resources\图标\最近打开.svg" />
     <None Remove="Resources\图标\相机.svg" />
@@ -116,6 +118,8 @@
     <None Remove="Resources\图片\帮助\关于.png" />
     <None Remove="Resources\图片\帮助\帮助.png" />
     <None Remove="Resources\图片\帮助\帮助文档.png" />
+    <None Remove="Resources\图片\数据统计\数据库设置.png" />
+    <None Remove="Resources\图片\数据统计\数据查询.png" />
     <None Remove="Resources\图片\数据统计\数据清空.png" />
     <None Remove="Resources\图片\数据统计\数据监控.png" />
     <None Remove="Resources\图片\数据统计\数据统计.png" />
@@ -145,6 +149,8 @@
     <Resource Include="Resources\logo1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\图标\数据统计\数据库设置.svg" />
+    <Resource Include="Resources\图标\数据统计\数据查询.svg" />
     <Resource Include="Resources\图标\文件\主页.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -242,6 +248,8 @@
     <Resource Include="Resources\图片\帮助\关于.png" />
     <Resource Include="Resources\图片\帮助\帮助.png" />
     <Resource Include="Resources\图片\帮助\帮助文档.png" />
+    <Resource Include="Resources\图片\数据统计\数据库设置.png" />
+    <Resource Include="Resources\图片\数据统计\数据查询.png" />
     <Resource Include="Resources\图片\数据统计\数据清空.png" />
     <Resource Include="Resources\图片\数据统计\数据监控.png" />
     <Resource Include="Resources\图片\数据统计\数据统计.png" />

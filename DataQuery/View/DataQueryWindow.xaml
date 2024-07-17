@@ -13,6 +13,7 @@
     Title="数据查询"
     Width="700"
     Height="700"
+    Icon="/DataQuery;component/Resources/数据查询.png"
     d:DataContext="{d:DesignInstance Type=local:CDataQueryVM}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

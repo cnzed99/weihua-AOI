@@ -1,4 +1,3 @@
-
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
@@ -6,30 +5,27 @@ using System.Windows.Media.Imaging;
 
 namespace WH.RecipeCellRootBase
 {
-    public class CellRootBase<C, T> where T : CellDetectionBase<T>, IwhClone<T>, new() where C : CellRootBase<C, T>, new()
+    public class CellRootBase<C, T>
+        where T : CellDetectionBase<T>, IwhClone<T>, new()
+        where C : CellRootBase<C, T>, new()
     {
-       // public PreVariable PreVal { get; set; } = new PreVariable();
+        // public PreVariable PreVal { get; set; } = new PreVariable();
         private MemoryStream _image;
         public MemoryStream Image
         {
             get => _image;
-            set
-            {
-                _image = value;
-            }
+            set { _image = value; }
         }
 
         private T _detection;
+
         /// <summary>
         /// 定级缺陷
         /// </summary>
         public T Detection
         {
             get => _detection;
-            set
-            {
-                _detection = value;
-            }
+            set { _detection = value; }
         }
         public ConcurrentBag<T> Detections { get; set; } = new ConcurrentBag<T>();
 
@@ -50,13 +46,14 @@ namespace WH.RecipeCellRootBase
             foreach (T detection in this.Detections)
                 detection.Dispose();
             this.Detections = new ConcurrentBag<T>();
-
         }
+
         public virtual C Clone()
         {
             C Cell = new C();
             if (this.Image != null)
             {
+                Cell.Image = new MemoryStream();
                 this.Image.WriteTo(Cell.Image);
             }
             Cell.Detection = this.Detection?.Clone();
@@ -66,27 +63,29 @@ namespace WH.RecipeCellRootBase
         }
     }
 
-    public class CellDetectionBase<T> : IwhClone<T> where T : IwhClone<T>, new()
+    public class CellDetectionBase<T> : IwhClone<T>
+        where T : IwhClone<T>, new()
     {
         public CellDetectionBase()
         {
-
             //HOperatorSet.GenEmptyObj(out HObject _region);
             //Region = _region;
             //HOperatorSet.GenEmptyObj(out HObject _unionedRegion);
             //UnionedRegion = _unionedRegion;
         }
+
         public bool Result { get; set; } = true;
 
-       // public HObject Region { get; set; } = new HObject();
+        // public HObject Region { get; set; } = new HObject();
 
         public float[] Value { get; set; }
+
         /// <summary>
         /// 检测日志
         /// </summary>
         public StringBuilder DetectLog { get; set; } = new StringBuilder();
 
-      //  public HObject UnionedRegion { get; set; } = new HObject();
+        //  public HObject UnionedRegion { get; set; } = new HObject();
 
 
 
@@ -95,8 +94,8 @@ namespace WH.RecipeCellRootBase
             //((IDisposable)this.Region).Dispose();
 
             //UnionedRegion.Dispose();
-
         }
+
         public virtual T Clone()
         {
             T detection = new T();
@@ -118,19 +117,21 @@ namespace WH.RecipeCellRootBase
             return detection;
         }
     }
+
     public interface IwhClone<T>
     {
         bool Result { get; set; }
 
-       // HObject Region { get; set; }
+        // HObject Region { get; set; }
 
         float[] Value { get; set; }
+
         /// <summary>
         /// 检测日志
         /// </summary>
         StringBuilder DetectLog { get; set; }
 
-      //  HObject UnionedRegion { get; set; }
+        //  HObject UnionedRegion { get; set; }
         T Clone();
     }
 
@@ -140,6 +141,7 @@ namespace WH.RecipeCellRootBase
         正面AOI,
         反面AOI,
     }
+
     /// <summary>
     /// 缺陷项范畴
     /// </summary>
@@ -148,8 +150,8 @@ namespace WH.RecipeCellRootBase
     {
         区域,
         值
-
     }
+
     /// <summary>
     /// 检测类型
     /// </summary>
@@ -159,6 +161,4 @@ namespace WH.RecipeCellRootBase
         面积,
         数值
     }
-
-
 }

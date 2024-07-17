@@ -13,10 +13,6 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-            </ResourceDictionary.MergedDictionaries>
             <Style BasedOn="{StaticResource GroupBoxTab}" TargetType="GroupBox" />
             <x:Array x:Key="RotateAngle" Type="sys:Int32">
                 <sys:Int32>0</sys:Int32>
@@ -128,10 +124,9 @@
                             hc:TitleElement.Title="{Binding [Rotate], Source={x:Static local:CLang.OffLineTest}}"
                             hc:TitleElement.TitlePlacement="Left"
                             DockPanel.Dock="Right"
-                            Visibility="Collapsed"
                             ItemsSource="{StaticResource RotateAngle}"
-                            
-                            Style="{StaticResource ComboBoxExtend}" />
+                            Style="{StaticResource ComboBoxExtend}"
+                            Visibility="Collapsed" />
 
                         <ComboBox
                             Name="cb_CurImgFile"

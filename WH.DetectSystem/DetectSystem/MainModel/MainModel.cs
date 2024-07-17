@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HistoryPlayback;
+using HistoryPlayback.Model;
 using MotionControl;
 using MySqlOperatesApiWPF;
 using Newtonsoft.Json;
@@ -95,7 +96,7 @@ namespace WH.DetectSystem.Models
         /// 历史图查看
         /// </summary>
         [JsonProperty(Order = 7)]
-        public CHistoryVM MaociHistoryVM { get; set; } = new CHistoryVM(); //历史回看
+        public CHistoryModel MaociHistoryModel { get; set; } = new CHistoryModel(); //历史回看
 
         /// <summary>
         /// 20240706 TCG

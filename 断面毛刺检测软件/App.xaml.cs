@@ -156,8 +156,10 @@ namespace 断面毛刺检测软件
         private static void ConfigureServices()
         {
             var builder = CPublicServices.ConfigureServices();
+            builder.Register(c => CSysSet.LoadParameter()).SingleInstance();
             builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
+
             //系统设置
             builder
                 .Register(c =>

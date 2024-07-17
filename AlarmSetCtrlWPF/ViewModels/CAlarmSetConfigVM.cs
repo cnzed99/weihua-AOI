@@ -36,7 +36,7 @@ namespace AlarmSetCtrlWPF
 
         /// <summary>
         /// 20240711 TCG
-        /// 构造
+        /// 初始化报警
         /// </summary>
         /// <param name="cAlarmSet"></param>
         /// <param name="filterConfig"></param>

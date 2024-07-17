@@ -47,7 +47,7 @@ namespace WH.RunCell
         /// <summary>
         /// 是否是OK产品
         /// </summary>
-        public bool IsOK { get; set; } = false;
+        public bool IsOK { get; set; } = true;
 
         /// <summary>
         /// 用来存储是质量OK还是颜色OK [0]=质量 [1]=颜色;
@@ -272,7 +272,7 @@ namespace WH.RunCell
             cell.ID = this.ID;
             cell.IsOK = this.IsOK;
             cell.IsEmpty = this.IsEmpty;
-            this.Image.WriteTo(cell.Image);
+            //this.Image.WriteTo(cell.Image);
             cell.DownImage = this.DownImage?.Clone();
             // cell.QualityColorStr = this.QualityColorStr;
             cell.SmallImage = this.SmallImage?.Clone();
