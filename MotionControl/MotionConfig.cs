@@ -50,7 +50,6 @@ namespace MotionControl
                 new(this.token, "速度", "D100"),
                 new(this.token, "加速度", "D116")
             };
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>

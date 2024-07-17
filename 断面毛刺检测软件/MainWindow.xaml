@@ -13,6 +13,7 @@
     xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
+    xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
@@ -388,11 +389,13 @@
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}" />
+                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                        <mark:MarkCtrl DataContext="{Binding MarkCtrlVM}"/>
+                    </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}" />
+                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}"/>
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">

@@ -15,6 +15,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using HistoryPlayback;
 using Mapster;
+using MarkControl;
 using MotionControl;
 using MySqlOperatesApiWPF;
 using QualityGrade;
@@ -37,6 +38,13 @@ namespace WH.DetectSystem.ViewModels
 
         public CSystemSettingsVM SystemSettings { get; set; } =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 打标控制VM,初始化需要放在运动控制前面
+        /// </summary>
+        [ObservableProperty]
+        CMarkCtrlVM markCtrlVM = new CMarkCtrlVM();
 
         /// <summary>
         /// 2024.7.12 李焕彬

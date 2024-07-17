@@ -1,0 +1,409 @@
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Timers;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
+using WH.Entity;
+using WH.Entity.CommonLib;
+using Timer = System.Timers.Timer;
+
+namespace MarkControl
+{
+    /// <summary>
+    /// 2024.7.15 李焕彬
+    /// 打标控制VM
+    /// </summary>
+    public partial class CMarkCtrlVM : ObservableObject
+    {
+        public CMarkCtrlVM()
+        {
+            MarkConfig = LoadParameter();
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                MarkConfig,
+                MarkConfig.token
+            );
+            Connect();
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 定时获取打标模块信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (Connected)
+            {
+                int triggerCnt = 0;
+                CMiniEcatLib.Mb_E4O4TrigOut_GetCounter(
+                    MarkConfig.SlaveId,
+                    MarkConfig.TriggerId,
+                    ref triggerCnt
+                );
+                TrigCount = triggerCnt;
+                int encoderCnt = 0;
+                CMiniEcatLib.Mb_E4O4Encoder_GetEncoderData(
+                    MarkConfig.SlaveId,
+                    MarkConfig.EncoderId,
+                    ref encoderCnt
+                );
+                EncoderCount = encoderCnt;
+                int waitTriggerCnt = 0;
+                CMiniEcatLib.Mb_E4O4DynamicCmp_GetFifoCnt(
+                    MarkConfig.SlaveId,
+                    MarkConfig.CmpNO,
+                    ref waitTriggerCnt
+                );
+                WaitTrigCount = waitTriggerCnt;
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 运动控制配置
+        /// </summary>
+        [ObservableProperty]
+        private CMarkConfig markConfig;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 连接信号
+        /// </summary>
+        [ObservableProperty]
+        private bool connected = false;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 编码器数
+        /// </summary>
+        [ObservableProperty]
+        private double encoderCount = 0;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 已触发计数
+        /// </summary>
+        [ObservableProperty]
+        private double trigCount = 0;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 未触发计数
+        /// </summary>
+        [ObservableProperty]
+        private double waitTrigCount = 0;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 触发点集合
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<CTrigPos> trigPoses = new ObservableCollection<CTrigPos>();
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 测试触发点集合
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<CTrigPos> testPoses = new ObservableCollection<CTrigPos>();
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 设置编码器数值
+        /// </summary>
+        [ObservableProperty]
+        private int encoderSetValue = 0;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 初始化控制，包含连接、写入初始参数
+        /// </summary>
+        [RelayCommand]
+        public void InitControl()
+        {
+            //初始化编码器，使能
+            CMiniEcatLib.Mb_E4O4Encoder_Initial(
+                MarkConfig.SlaveId,
+                MarkConfig.EncoderId,
+                MarkConfig.EncoderMode,
+                MarkConfig.EncoderDir,
+                1
+            );
+            //编码器数值清零,打开软件时跟相机同步清零
+            CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(MarkConfig.SlaveId, MarkConfig.EncoderId, 0);
+            //设置触发输出模式
+            CMiniEcatLib.Mb_E4O4TrigOut_SetOutMode(MarkConfig.SlaveId, MarkConfig.OutMode);
+            //设置触发模式
+            CMiniEcatLib.Mb_E4O4TrigOut_SetTrigMode(
+                MarkConfig.SlaveId,
+                MarkConfig.TriggerId,
+                MarkConfig.TrigMode
+            );
+            //设置脉宽
+            CMiniEcatLib.Mb_E4O4TrigOut_SetPulseWidth(
+                MarkConfig.SlaveId,
+                MarkConfig.TriggerId,
+                MarkConfig.PulseWidth
+            );
+            //触发计数值清零
+            CMiniEcatLib.Mb_E4O4TrigOut_ResetCounter(MarkConfig.SlaveId, MarkConfig.TriggerId);
+            //从站号、动态比较器号(0-3)、编码器号(0-3)，绑定动态比较器0和编码器0
+            CMiniEcatLib.Mb_E4O4DynamicCmp_BindingEncoder(
+                MarkConfig.SlaveId,
+                MarkConfig.CmpNO,
+                MarkConfig.EncoderId
+            );
+            //触发通道绑定动态触发表(0001-比较器0，0010-比较器1，0100-比较器2，1000-比较器3)，第二参数是通道号
+            CMiniEcatLib.Mb_E4O4TrigOut_BandingDynamic(
+                MarkConfig.SlaveId,
+                MarkConfig.TriggerId,
+                (uint)(1 << MarkConfig.CmpNO)
+            );
+            //清空动态比较器点表
+            CMiniEcatLib.Mb_E4O4DynamicCmp_ClrFifoData(MarkConfig.SlaveId, MarkConfig.CmpNO);
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 连接打标模块
+        /// </summary>
+        [RelayCommand]
+        public void Connect()
+        {
+            try
+            {
+                int slaveNum = 0;
+                //不开启别名
+                CMiniEcatLib.Mb_InitEcat(ref slaveNum, 0);
+                if (slaveNum > 0)
+                {
+                    Connected = true;
+                    InitControl();
+                    Timer timer = new Timer(TimeSpan.FromMilliseconds(300));
+                    timer.Elapsed += Timer_Elapsed;
+                    timer.Enabled = true;
+                }
+                else
+                {
+                    Connected = false;
+                    Growl.Error(Properties.Resources.ConnectError);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 打标测试
+        /// </summary>
+        [RelayCommand]
+        public void MarkTest()
+        {
+            CMiniEcatLib.Mb_E4O4TrigOut_SetManualPulseOutput(
+                MarkConfig.SlaveId,
+                MarkConfig.TriggerId
+            );
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 编码器清零
+        /// </summary>
+        [RelayCommand]
+        public void SetZeroEncoder()
+        {
+            CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(MarkConfig.SlaveId, MarkConfig.EncoderId, 0);
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 触发计数清零
+        /// </summary>
+        [RelayCommand]
+        public void SetZeroTrigs()
+        {
+            CMiniEcatLib.Mb_E4O4TrigOut_ResetCounter(MarkConfig.SlaveId, MarkConfig.TriggerId);
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 清空待触发点表
+        /// </summary>
+        [RelayCommand]
+        public void ClearTrigs()
+        {
+            CMiniEcatLib.Mb_E4O4DynamicCmp_ClrFifoData(MarkConfig.SlaveId, MarkConfig.CmpNO);
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 批量点测试
+        /// </summary>
+        [RelayCommand]
+        public void MarksTest(string needAdd)
+        {
+            if (TestPoses.Count > 0)
+            {
+                List<int> posList = TestPoses.Select(o => o.Pos).ToList();
+                posList.Sort();
+                foreach (var item in posList)
+                {
+                    AddMark(item, bool.Parse(needAdd));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 增加打标位置
+        /// </summary>
+        /// <param name="pos">打标位置</param>
+        /// <param name="needAddoffest">true需要加补偿值，false不需要</param>
+        public void AddMark(int pos, bool needAddoffest = true)
+        {
+            int encoderCnt = 0;
+            CMiniEcatLib.Mb_E4O4Encoder_GetEncoderData(
+                MarkConfig.SlaveId,
+                MarkConfig.EncoderId,
+                ref encoderCnt
+            );
+            if (needAddoffest)
+            {
+                pos += (int)MarkConfig.GetPulseOffest();
+            }
+
+            int[] posArray = new int[] { (int)pos };
+            CMiniEcatLib.Mb_E4O4DynamicCmp_SetFifoData(
+                MarkConfig.SlaveId,
+                MarkConfig.CmpNO,
+                posArray.Length,
+                ref posArray[0]
+            );
+            System.Windows.Application.Current.Dispatcher.Invoke(
+                new Action(() =>
+                {
+                    if (TrigPoses.Count > 50)
+                    {
+                        TrigPoses.RemoveAt(0);
+                    }
+                    TrigPoses.Add(new CTrigPos(pos));
+                })
+            );
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 清空
+        /// </summary>
+        [RelayCommand]
+        public void Clear()
+        {
+            TrigPoses.Clear();
+        }
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 设置编码器数值
+        /// </summary>
+        [RelayCommand]
+        public void SetEncoderValue()
+        {
+            CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(
+                MarkConfig.SlaveId,
+                MarkConfig.EncoderId,
+                EncoderSetValue
+            );
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 配置保存路径
+        /// </summary>
+        private const string c_ParameterPath = "..\\SystemConfig\\MarkConfig.Json";
+
+        #region 保存参数
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 控制配置保存方法
+        /// </summary>
+        public void SaveParameter()
+        {
+            try
+            {
+                ConfigAPI.Save(MarkConfig, c_ParameterPath);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region 读取参数
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 控制配置加载方法
+        /// </summary>
+        /// <returns></returns>
+        public CMarkConfig LoadParameter()
+        {
+            CMarkConfig config = new CMarkConfig();
+            try
+            {
+                if (File.Exists(c_ParameterPath))
+                {
+                    config = ConfigAPI.Load<CMarkConfig>(c_ParameterPath);
+                    if (config == null)
+                    {
+                        config = new CMarkConfig();
+                    }
+                }
+                else
+                {
+                    config = new CMarkConfig();
+                }
+            }
+            catch (Exception)
+            {
+                config = new CMarkConfig();
+            }
+            return config;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// 2024.7.15 李焕彬
+    /// 触发位置
+    /// </summary>
+    public partial class CTrigPos : ObservableObject
+    {
+        public CTrigPos() { }
+
+        public CTrigPos(int pos)
+        {
+            this.Pos = pos;
+            this.DateTime = DateTime.Now;
+        }
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 添加时间
+        /// </summary>
+        [ObservableProperty]
+        private DateTime dateTime;
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 编码器值
+        /// </summary>
+        [ObservableProperty]
+        private int pos;
+    }
+}

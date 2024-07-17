@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AlgorithmDll
 {
@@ -11,10 +11,10 @@ namespace AlgorithmDll
     /// </summary>
     public enum EMDETECTRESULT
     {
-        EMDR_OK = 0,//检测OK
-        EMDR_NG_LIGHTEDGE = 1,//毛刺NG
-        EMDR_NG_DARKEDGE = 2,//料区NG
-        EMDR_NG_EMPTY = 3,//空白NG
+        EMDR_OK = 0, //检测OK
+        EMDR_NG_LIGHTEDGE = 1, //毛刺NG
+        EMDR_NG_DARKEDGE = 2, //料区NG
+        EMDR_NG_EMPTY = 3, //空白NG
     };
 
     /// <summary>
@@ -30,6 +30,7 @@ namespace AlgorithmDll
         EMRT_MAOCIREGION = 4,
         EMRT_THICKREGION = 5,
     };
+
     /// <summary>
     /// 2024.6.25 李焕彬
     /// 区域信息
@@ -41,65 +42,74 @@ namespace AlgorithmDll
         /// 像素矩形X
         /// </summary>
         public int X = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 像素矩形Y
         /// </summary>
         public int Y = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 像素矩形宽
         /// </summary>
         public int Width = 100;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 像素矩形高
         /// </summary>
         public int Height = 100;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um垂直宽度
         /// </summary>
         public double WidthBound = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um垂直高度
         /// </summary>
         public double HeightBound = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um直角高度
         /// </summary>
         public double PeakHeight = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um长边长度
         /// </summary>
         public double LongLen = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um短边长度
         /// </summary>
         public double ShorLen = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 角度
         /// </summary>
         public double Phi = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um周长
         /// </summary>
         public double ContLen = 0;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// um²面积
         /// </summary>
         public double Area = 0;
-        public SRegionInfo()
-        {
 
-        }
+        public SRegionInfo() { }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -163,6 +173,7 @@ namespace AlgorithmDll
             return new Rect(RegionInfo.X, RegionInfo.Y, RegionInfo.Width, RegionInfo.Height);
         }
     }
+
     /// <summary>
     /// 2024.6.25 李焕彬
     /// PC算法参数
@@ -216,7 +227,7 @@ namespace AlgorithmDll
         /// 构造
         /// </summary>
         /// <param name="param">算法参数类</param>
-        public SMaociAlgorParam(MaociAlgorParam param)
+        public SMaociAlgorParam(CMaociAlgorParam param)
         {
             this.AdaptiveSize = param.AdaptiveSize;
             this.AdaptiveAddGray = param.AdaptiveAddGray;
@@ -329,7 +340,7 @@ namespace AlgorithmDll
         /// 构造
         /// </summary>
         /// <param name="param">FPGA算法参数类</param>
-        public SMaociAlgorParamFpga(MaociAlgorParamFpga param)
+        public SMaociAlgorParamFpga(CMaociAlgorParamFpga param)
         {
             this.AdaptiveSize = param.AdaptiveSize;
             this.AdaptiveAddGray = param.AdaptiveAddGray;
@@ -363,7 +374,7 @@ namespace AlgorithmDll
         /// <param name="type">区域类型</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
-        private extern static int GetEdgeCount(EMREGIONTYPE type);
+        private static extern int GetEdgeCount(EMREGIONTYPE type);
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -373,7 +384,7 @@ namespace AlgorithmDll
         /// <param name="ptrX">输出指针X</param>
         /// <param name="ptrY">输出指针Y</param>
         [DllImport("MaociAlg.dll")]
-        private extern static void GetEdge(EMREGIONTYPE type, IntPtr ptrX, IntPtr ptrY);
+        private static extern void GetEdge(EMREGIONTYPE type, IntPtr ptrX, IntPtr ptrY);
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -382,7 +393,7 @@ namespace AlgorithmDll
         /// <param name="type">区域类型</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
-        private extern static int GetRegionCount(EMREGIONTYPE type);
+        private static extern int GetRegionCount(EMREGIONTYPE type);
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -393,7 +404,11 @@ namespace AlgorithmDll
         /// <param name="sRegionInfo">输出区域信息</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
-        private extern static int GetRegionInfo(EMREGIONTYPE type, int nIndex, ref SRegionInfo sRegionInfo);
+        private static extern int GetRegionInfo(
+            EMREGIONTYPE type,
+            int nIndex,
+            ref SRegionInfo sRegionInfo
+        );
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -404,7 +419,12 @@ namespace AlgorithmDll
         /// <param name="pX">输出指针X</param>
         /// <param name="pY">输出指针Y</param>
         [DllImport("MaociAlg.dll")]
-        private extern static void GetRegionPoints(EMREGIONTYPE type, int nIndex, IntPtr pX, IntPtr pY);
+        private static extern void GetRegionPoints(
+            EMREGIONTYPE type,
+            int nIndex,
+            IntPtr pX,
+            IntPtr pY
+        );
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -489,7 +509,13 @@ namespace AlgorithmDll
         /// <returns>检测结果</returns>
         #region 毛刺算法
         [DllImport("MaociAlg.dll")]
-        public extern static EMDETECTRESULT Test(int width, int height, int nLine, IntPtr data, SMaociAlgorParam detectParam);
+        public static extern EMDETECTRESULT Test(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            SMaociAlgorParam detectParam
+        );
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -502,7 +528,13 @@ namespace AlgorithmDll
         /// <param name="sDetectParamFpga">FPGA算法</param>
         /// <returns>检测结果</returns>
         [DllImport("MaociAlg.dll")]
-        public extern static EMDETECTRESULT TestFpga(int width, int height, int nLine, IntPtr data, SMaociAlgorParamFpga sDetectParamFpga);
+        public static extern EMDETECTRESULT TestFpga(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            SMaociAlgorParamFpga sDetectParamFpga
+        );
 
         #endregion
         /// <summary>
@@ -510,36 +542,43 @@ namespace AlgorithmDll
         /// 料区上边缘轮廓
         /// </summary>
         public List<Point> DarkTopRegion { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 料区下边缘轮廓
         /// </summary>
         public List<Point> DarkBotRegion { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 铝层上边缘轮廓
         /// </summary>
         public List<Point> LightTopRegion { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 铝层下边缘轮廓
         /// </summary>
         public List<Point> LightBotRegion { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 毛刺区域集
         /// </summary>
         public List<SRegion> MaociRegions { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 厚度Ng区域集
         /// </summary>
         public List<SRegion> ThickRegions { get; set; } = new();
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 算法输出
         /// </summary>
         public CAlgorithmOut AlgorithmOut { get; set; } = new();
+
         /// <summary>
         /// 2024.6.20 李焕彬
         /// 检测图像
@@ -548,7 +587,13 @@ namespace AlgorithmDll
         /// <param name="height">图像高度</param>
         /// <param name="stride">一行宽度</param>
         /// <param name="data">图像指针</param>
-        public EMDETECTRESULT DetectImage(int width, int height, int stride, IntPtr data, SMaociAlgorParam detectParam)
+        public EMDETECTRESULT DetectImage(
+            int width,
+            int height,
+            int stride,
+            IntPtr data,
+            SMaociAlgorParam detectParam
+        )
         {
             EMDETECTRESULT result = CMaociTest.Test(width, height, stride, data, detectParam);
             DarkTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
@@ -572,9 +617,21 @@ namespace AlgorithmDll
         /// <param name="height">图像高度</param>
         /// <param name="stride">一行宽度</param>
         /// <param name="data">图像指针</param>
-        public EMDETECTRESULT DetectFpga(int width, int height, int stride, IntPtr data, SMaociAlgorParamFpga detectParamFpga)
+        public EMDETECTRESULT DetectFpga(
+            int width,
+            int height,
+            int stride,
+            IntPtr data,
+            SMaociAlgorParamFpga detectParamFpga
+        )
         {
-            EMDETECTRESULT result = CMaociTest.TestFpga(width, height, stride, data, detectParamFpga);
+            EMDETECTRESULT result = CMaociTest.TestFpga(
+                width,
+                height,
+                stride,
+                data,
+                detectParamFpga
+            );
             DarkTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKTOP);
             DarkBotRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_DARKBOT);
             LightTopRegion = CMaociTest.GetRegion(EMREGIONTYPE.EMRT_LIGHTTOP);
