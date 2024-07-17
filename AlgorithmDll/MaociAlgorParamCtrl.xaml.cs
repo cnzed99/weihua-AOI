@@ -24,7 +24,12 @@ namespace AlgorithmDll
             return (double)value / 2;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -32,24 +37,36 @@ namespace AlgorithmDll
 
     public class string2ComboxSelectItemPc : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             if (values.Length == 2)
             {
                 string name = values[0] as string;
-                ObservableCollection<MaociAlgorParam> maociAlgorParams = values[1] as ObservableCollection<MaociAlgorParam>;
-                if (name!=null && maociAlgorParams!=null)
+                ObservableCollection<CMaociAlgorParam> maociAlgorParams =
+                    values[1] as ObservableCollection<CMaociAlgorParam>;
+                if (name != null && maociAlgorParams != null)
                 {
-                    return maociAlgorParams.FirstOrDefault(o => o.Name == name) ?? Binding.DoNothing;
+                    return maociAlgorParams.FirstOrDefault(o => o.Name == name)
+                        ?? Binding.DoNothing;
                 }
             }
             return Binding.DoNothing;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             List<object> list = new List<object>();
-            MaociAlgorParam maociAlgorParam = value as MaociAlgorParam;
+            CMaociAlgorParam maociAlgorParam = value as CMaociAlgorParam;
             if (maociAlgorParam != null)
             {
                 list.Add(maociAlgorParam.Name);
@@ -66,24 +83,36 @@ namespace AlgorithmDll
 
     public class string2ComboxSelectItemFpga : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             if (values.Length == 2)
             {
                 string name = values[0] as string;
-                ObservableCollection<MaociAlgorParamFpga> maociAlgorParams = values[1] as ObservableCollection<MaociAlgorParamFpga>;
+                ObservableCollection<CMaociAlgorParamFpga> maociAlgorParams =
+                    values[1] as ObservableCollection<CMaociAlgorParamFpga>;
                 if (name != null && maociAlgorParams != null)
                 {
-                    return maociAlgorParams.FirstOrDefault(o => o.Name == name) ?? Binding.DoNothing;
+                    return maociAlgorParams.FirstOrDefault(o => o.Name == name)
+                        ?? Binding.DoNothing;
                 }
             }
             return Binding.DoNothing;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             List<object> list = new List<object>();
-            MaociAlgorParamFpga maociAlgorParam = value as MaociAlgorParamFpga;
+            CMaociAlgorParamFpga maociAlgorParam = value as CMaociAlgorParamFpga;
             if (maociAlgorParam != null)
             {
                 list.Add(maociAlgorParam.Name);

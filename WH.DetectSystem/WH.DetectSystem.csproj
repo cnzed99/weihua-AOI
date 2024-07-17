@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrlWPF.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
+    <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
     <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
     <ProjectReference Include="..\MotionControl\MotionControl.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />

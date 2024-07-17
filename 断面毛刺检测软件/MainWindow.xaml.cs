@@ -209,6 +209,7 @@ namespace 断面毛刺检测软件
                 }
                 CMainList.SystemSettings.SaveParameter();
                 CMainList.MotionCtrlVM.SaveParameter();
+                CMainList.MarkCtrlVM.SaveParameter();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }

@@ -9,9 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using Newtonsoft.Json.Linq;
 using WH.Entity;
+using WH.Entity.CommonLib;
 
 namespace MotionControl
 {
@@ -24,6 +26,10 @@ namespace MotionControl
         public CMotionCtrlVM()
         {
             MotionConfig = LoadParameter();
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                MotionConfig,
+                MotionConfig.token
+            );
             InitControl();
         }
 
