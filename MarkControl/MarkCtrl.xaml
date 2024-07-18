@@ -206,17 +206,21 @@
             </Grid>
         </TabItem>
         <TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.s_Instance}}">
-            <GroupBox>
+            <GroupBox Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource TextBlockDefault}" Text="{Binding [MarkConfig], Source={x:Static local:CLang.s_Instance}}" />
+                    <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type GroupBox}}}">
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource TextBlockSubTitleBold}"
+                            Text="{Binding [MarkConfig], Source={x:Static local:CLang.s_Instance}}" />
                         <Button
                             Width="80"
-                            Margin="10,2"
+                            Margin="20,2"
+                            HorizontalAlignment="Right"
                             Command="{Binding InitControlCommand}"
                             Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                             Style="{DynamicResource ButtonPrimary}" />
-                    </StackPanel>
+                    </Grid>
                 </GroupBox.Header>
                 <wh:CPropertyGridLang SelectedObject="{Binding MarkConfig}" lang="{x:Static local:CLang.s_Instance}" />
             </GroupBox>
