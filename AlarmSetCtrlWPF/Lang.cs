@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlarmSetCtrlWPF
+namespace AlarmSetCtrl
 {
     public class CLang
     {
         public static LanguageManager.CLanguageManager s_AlarmSetCtrlLang =
             new LanguageManager.CLanguageManager(
-                "AlarmSetCtrlWPF.Properties.Resources",
+                "AlarmSetCtrl.Properties.Resources",
                 typeof(CLang).Assembly
             );
     }

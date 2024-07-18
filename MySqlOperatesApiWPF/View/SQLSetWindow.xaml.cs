@@ -10,15 +10,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WH.RunCell;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
-
     public partial class SQLSetWindow : HandyControl.Controls.Window
     {
         /// <summary>
         /// Mysql数据库
         /// </summary>
-      //  public MySqlViewModel MySqlVM { get; set; }
+        //  public MySqlViewModel MySqlVM { get; set; }
         public SQLSetWindow()
         {
             InitializeComponent();
@@ -77,7 +76,5 @@ namespace MySqlOperatesApiWPF
         //    DateTime time = DateTime.Now.AddDays(2);
         //    MySqlVM.mysqlExecute.AddData(cell, time.ToString("D"));
         //}
-
-
     }
 }

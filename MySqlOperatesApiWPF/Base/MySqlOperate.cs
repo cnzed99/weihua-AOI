@@ -1,23 +1,22 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using MySql.Data.MySqlClient;
 using WH.RunCell;
 
-
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public class MySqlOperate : SQLBase
     {
-
         /// <summary>
         /// 连接数据库字符串
         /// </summary>
         public string connectStringCreateDB;
+
         /// <summary>
         /// 连接表字符串
         /// </summary>
@@ -26,8 +25,7 @@ namespace MySqlOperatesApiWPF
         /// <summary>
         /// 数据库执行对象
         /// </summary>
-        public MySqlHelper _mySqlHelper=new MySqlHelper();
-
+        public MySqlHelper _mySqlHelper = new MySqlHelper();
 
         public override void AddData(Cell cell, string date)
         {
@@ -45,15 +43,14 @@ namespace MySqlOperatesApiWPF
             bool result = false;
             try
             {
-
                 _mySqlHelper.connString = connectStringCreateDB;
 
-                string sql = @"CREATE DATABASE  IF NOT EXISTS {0} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
+                string sql =
+                    @"CREATE DATABASE  IF NOT EXISTS {0} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
                 sql = string.Format(sql, DBName);
                 int linecount = _mySqlHelper.ExecuteNonQuery(sql);
                 result = linecount > 0 ? true : false;
                 return result;
-
             }
             catch (Exception)
             {
@@ -69,7 +66,11 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public override void CreateTable(string sql, string tablename)
         {
-            string createTableQuery = string.Format(@"CREATE TABLE IF NOT EXISTS {0} ({1}) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 ;", tablename, sql);
+            string createTableQuery = string.Format(
+                @"CREATE TABLE IF NOT EXISTS {0} ({1}) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 ;",
+                tablename,
+                sql
+            );
             _mySqlHelper.connString = connectStringCreateTable;
 
             int linecount = _mySqlHelper.ExecuteNonQuery(createTableQuery);
@@ -80,8 +81,6 @@ namespace MySqlOperatesApiWPF
             //在子类中实现查询数据
             return null;
         }
-
-
 
         /// <summary>
         /// 2024.6.23 鲍赞宝
@@ -109,11 +108,9 @@ namespace MySqlOperatesApiWPF
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-
 
         // private static object _lockDatabase = new object();
         /// <summary>
@@ -123,7 +120,6 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public bool IsDatabaseExists(string dbName)
         {
-            
             string sqlIsExists = "SELECT DATABASE() = '{0}';";
             sqlIsExists = string.Format(sqlIsExists, dbName);
             bool Exists = false;
@@ -135,7 +131,6 @@ namespace MySqlOperatesApiWPF
                 {
                     Exists = true;
                 }
-
             }
             catch (Exception)
             {
@@ -143,10 +138,7 @@ namespace MySqlOperatesApiWPF
             }
 
             return Exists;
-
         }
-
-
 
         /// <summary>
         /// 2024.6.23 鲍赞宝
@@ -155,7 +147,8 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public bool IsTableExists(string tablename)
         {
-            string sqlIsExists = "SELECT COUNT(*)  FROM information_schema.TABLES WHERE table_schema='{0}' AND table_name='{1}';";
+            string sqlIsExists =
+                "SELECT COUNT(*)  FROM information_schema.TABLES WHERE table_schema='{0}' AND table_name='{1}';";
             sqlIsExists = string.Format(sqlIsExists, this.DataBaseName, tablename);
 
             //string connectionString = string.Format("Database={0};Data Source={1};Port=3306;User Id={2};PassWord={3};Charset=utf8;" +
@@ -177,10 +170,7 @@ namespace MySqlOperatesApiWPF
             }
 
             return Exists;
-
         }
-
-
 
         /// <summary>
         /// 更新数据
@@ -204,7 +194,6 @@ namespace MySqlOperatesApiWPF
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -222,7 +211,6 @@ namespace MySqlOperatesApiWPF
             List<string> ColumnsDatasList = new List<string>();
             if (cell.OtherInfoRecv != null)
             {
-
                 foreach (var item in cell.OtherInfoRecv.Keys)
                 {
                     columNameList.Add(item);
@@ -234,9 +222,6 @@ namespace MySqlOperatesApiWPF
             }
             columName = columNameList.ToArray();
             ColumnsDatas = ColumnsDatasList.ToArray();
-
         }
-
-
     }
 }

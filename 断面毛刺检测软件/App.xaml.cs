@@ -14,7 +14,7 @@ using DataQuery;
 using HandyControl.Data;
 using HandyControl.Properties.Langs;
 using HandyControl.Tools;
-using MySqlOperatesApiWPF;
+using MySqlOperatesApi;
 using Newtonsoft.Json;
 using SaveImageManage;
 using WH.Controls.SingleInstance;

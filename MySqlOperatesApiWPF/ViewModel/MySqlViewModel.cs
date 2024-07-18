@@ -11,7 +11,7 @@ using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public partial class MySqlViewModel : ObservableObject
     {

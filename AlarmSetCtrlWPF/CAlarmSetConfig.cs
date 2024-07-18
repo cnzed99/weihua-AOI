@@ -15,7 +15,7 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RunCell;
 
-namespace AlarmSetCtrlWPF
+namespace AlarmSetCtrl
 {
     /// <summary>
     /// 20240715 TCG

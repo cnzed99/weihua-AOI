@@ -327,7 +327,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrlWPF.csproj" />
+    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrl.csproj" />
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
     <ProjectReference Include="..\DataQuery\DataQuery.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
@@ -335,7 +335,7 @@
     <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
     <ProjectReference Include="..\MotionControl\MotionControl.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
-    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
+    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApi.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SaveImageManageWPF\SaveImageManage.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />

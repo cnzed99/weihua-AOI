@@ -11,10 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrlWPF.csproj" />
+    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrl.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
     <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
-    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
+    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApi.csproj" />
     <ProjectReference Include="..\MotionControl\MotionControl.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />

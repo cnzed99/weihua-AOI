@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using SDFilter;
 using WH.RunCell;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public class CMysqlBLL : MySqlOperate
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WH.Entity;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public static class SQLManagement
     {

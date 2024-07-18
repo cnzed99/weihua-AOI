@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MySqlOperatesApiWPF;
+using MySqlOperatesApi;
 using SDFilter;
 using WH.DetectSystem;
 using WH.DetectSystem.ViewModels;

@@ -22,7 +22,7 @@ using WH.Entity.CommonLib;
 using WH.RunCell;
 using MessageBox = HandyControl.Controls.MessageBox;
 
-namespace AlarmSetCtrlWPF
+namespace AlarmSetCtrl
 {
     /// <summary>
     /// 报警设置ViewModel

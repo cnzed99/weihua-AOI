@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:al="clr-namespace:AlgorithmDll;assembly=AlgorithmDll"
-    xmlns:alarm="clr-namespace:AlarmSetCtrlWPF;assembly=AlarmSetCtrlWPF"
+    xmlns:alarm="clr-namespace:AlarmSetCtrl;assembly=AlarmSetCtrlWPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
     xmlns:hc="https://handyorg.github.io/handycontrol"

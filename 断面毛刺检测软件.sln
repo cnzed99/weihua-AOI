@@ -48,11 +48,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaveImageManage", "SaveImag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "数据库", "数据库", "{7E6F2B0E-7108-4EEB-A238-AAF53359DD5C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySqlOperatesApiWPF", "MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj", "{883056C7-7847-48FB-B18A-D89B4D717E80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySqlOperatesApi", "MySqlOperatesApiWPF\MySqlOperatesApi.csproj", "{883056C7-7847-48FB-B18A-D89B4D717E80}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "报警参数", "报警参数", "{DB54D003-7AB5-4DC9-AA8F-4E6BD5B1EA1D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlarmSetCtrlWPF", "AlarmSetCtrlWPF\AlarmSetCtrlWPF.csproj", "{1B959A27-C46E-49B6-AFE9-17935B4C9215}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlarmSetCtrl", "AlarmSetCtrlWPF\AlarmSetCtrl.csproj", "{1B959A27-C46E-49B6-AFE9-17935B4C9215}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "历史回看", "历史回看", "{C225B0DB-8283-4927-BAC2-D3C14585587A}"
 EndProject
@@ -341,7 +341,7 @@ Global
 		{B5C39D38-C91F-4B3B-BCEC-FF9FFDCA7FE7} = {E33ABC3A-FBAD-41CC-9BC0-EAD30233767B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
 		RESX_NeutralResourcesLanguage = zh-CN
+		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
 	EndGlobalSection
 EndGlobal
