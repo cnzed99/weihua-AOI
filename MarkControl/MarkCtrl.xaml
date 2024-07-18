@@ -206,7 +206,11 @@
             </Grid>
         </TabItem>
         <TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.s_Instance}}">
-            <GroupBox Style="{StaticResource GroupBoxTab}">
+            <GroupBox
+                hc:BorderElement.CornerRadius="0"
+                Background="Transparent"
+                BorderThickness="0"
+                Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
                     <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type GroupBox}}}">
                         <TextBlock
@@ -222,7 +226,10 @@
                             Style="{DynamicResource ButtonPrimary}" />
                     </Grid>
                 </GroupBox.Header>
-                <wh:CPropertyGridLang SelectedObject="{Binding MarkConfig}" lang="{x:Static local:CLang.s_Instance}" />
+                <wh:CPropertyGridLang
+                    Background="Transparent"
+                    SelectedObject="{Binding MarkConfig}"
+                    lang="{x:Static local:CLang.s_Instance}" />
             </GroupBox>
 
         </TabItem>
