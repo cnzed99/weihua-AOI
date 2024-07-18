@@ -9,11 +9,11 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:history="clr-namespace:HistoryPlayback;assembly=HistoryPlayback"
     xmlns:local="clr-namespace:断面毛刺检测软件"
+    xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
-    xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
@@ -249,6 +249,7 @@
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button
                         Height="70"
+                        Margin="10,0"
                         Click="ClearGrowlMessage_Click"
                         Content="清空报警"
                         Style="{StaticResource ButtonDashedInfo}" />
@@ -277,24 +278,22 @@
                         </Border>
                     </ToggleButton>
                     <!--  系统时间  -->
-                    <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                    <StackPanel
+                        Grid.Column="3"
+                        Margin="10,0"
+                        VerticalAlignment="Center">
                         <TextBlock
-                            Margin="5,5,5,0"
+                            Margin="0,3"
                             HorizontalAlignment="Center"
+                            DockPanel.Dock="Right"
                             Text="{Binding [SystemTime], Source={x:Static local:CLang.Instance}}" />
                         <TextBlock
-                            HorizontalAlignment="Center"
+                           
+                            TextAlignment="Center"
                             d:Text="2024-04-02"
-                            Text="{Binding SystemTime}"
-                            TextAlignment="Center" />
-                        <TextBlock
-                            Margin="5,0"
-                            Text="{Binding [RunTime], Source={x:Static local:CLang.Instance}}"
-                            TextAlignment="Center" />
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            d:Text="02:22:22"
-                            Text="{Binding RuningTime}" />
+                            DockPanel.Dock="Right"
+                            Text="{Binding SystemTime}" />
+
                     </StackPanel>
                     <!--  用户登录  -->
                     <StackPanel Grid.Column="4" Width="80">
@@ -339,7 +338,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="320" />
             </Grid.ColumnDefinitions>
             <UniformGrid Grid.Column="0" Rows="2">
                 <Border
@@ -390,12 +389,12 @@
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <mark:MarkCtrl DataContext="{Binding MarkCtrlVM}"/>
+                        <mark:MarkCtrl DataContext="{Binding MarkCtrlVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}"/>
+                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
@@ -469,6 +468,16 @@
 
             </StackPanel>
             <DockPanel LastChildFill="True">
+                <TextBlock
+                    d:Text="02:22:22"
+                    DockPanel.Dock="Right"
+                    Text="{Binding RuningTime}" />
+                <TextBlock
+                    Margin="5,0"
+                    DockPanel.Dock="Right"
+                    Text="{Binding [RunTime], Source={x:Static local:CLang.Instance}}" />
+
+
 
                 <TextBlock
                     Margin="5,0"
