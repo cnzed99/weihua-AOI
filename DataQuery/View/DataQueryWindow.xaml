@@ -108,8 +108,8 @@
 
         <TextBlock Grid.Row="1" Text="{Binding MessageText}" TextWrapping="Wrap"/>
 
-        <ListView Grid.Row="2" ItemsSource="{Binding DataViews}">
-            <ListView.View>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DataViews}">
+            <!--<ListView.View>
                 <GridView>
                     <GridViewColumn
                         Width="150"
@@ -136,8 +136,8 @@
                         DisplayMemberBinding="{Binding Path=划伤数量}"
                         Header="划伤数量" />
                 </GridView>
-            </ListView.View>
-        </ListView>
+            </ListView.View>-->
+        </DataGrid>
 
 
     </Grid>

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SDFilter;
 using WH.RunCell;
 
 namespace MySqlOperatesApiWPF
@@ -14,6 +16,8 @@ namespace MySqlOperatesApiWPF
     {
         bool DBExists = false;
         bool totalExists = false; //避免重复读取表是否存在
+        public ObservableCollection<DefectFilter> Filters { get; set; } = new();
+
         #region 表头名
 
         string tableName_total = "TotalRecord";
@@ -50,11 +54,12 @@ namespace MySqlOperatesApiWPF
                     string titalname = GetTableNameStr(cell, out _); //表抬头
 
                     bool tableExists = IsTableExists(date);
-                    tableName_total = date;
+
                     if (!tableExists)
                     {
                         CreateTable(ComTableString(titalname), date); //创建toatlrecord表
                     }
+                    tableName_total = date;
                 }
                 //if (!pereExists)
                 //{
@@ -293,14 +298,29 @@ namespace MySqlOperatesApiWPF
 
                 _mySqlHelper.connString = connectStringCreateTable;
                 DataSet datatable;
-                string querySql = string.Format(
+                StringBuilder queryStr = new StringBuilder(
                     "SELECT DATE_FORMAT(创建时间, '%Y-%m-%d %H:00') AS 时段,"
-                        + "COUNT(*) AS 生产数,"
-                        + "SUM(CASE WHEN 结果 = 'OK' THEN 1 ELSE 0 END) AS OK数量,"
-                        + "SUM(CASE WHEN 结果 = 'NG' THEN 1 ELSE 0 END) AS NG数量,"
-                        + "CONCAT(FORMAT(IFNULL((SUM(CASE WHEN 结果 = 'NG' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0), 2), '%') AS 总缺陷占比,"
-                        + "SUM(CASE WHEN 定级缺陷 = '划伤' THEN 1 ELSE 0 END) AS 划伤数量 "
-                        + "FROM ({0}){1} WHERE 创建时间 >= {2} AND 创建时间 <= {3} GROUP BY DATE_FORMAT(创建时间, '%Y-%m-%d %H:00')",
+                );
+                queryStr.Append("COUNT(*) AS 生产数,");
+                queryStr.Append("SUM(CASE WHEN 结果 = 'OK' THEN 1 ELSE 0 END) AS OK数量,");
+                queryStr.Append("SUM(CASE WHEN 结果 = 'NG' THEN 1 ELSE 0 END) AS NG数量,");
+                queryStr.Append(
+                    "CONCAT(FORMAT(IFNULL((SUM(CASE WHEN 结果 = 'NG' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0), 2), '%') AS 总缺陷占比"
+                );
+                foreach (var de in Filters)
+                {
+                    queryStr.Append(
+                        string.Format(
+                            ",SUM(CASE WHEN 定级缺陷 = '{0}' THEN 1 ELSE 0 END) AS {0}数量 ",
+                            de.Name
+                        )
+                    );
+                }
+                queryStr.Append(
+                    " FROM ({0}){1} WHERE 创建时间 >= {2} AND 创建时间 <= {3} GROUP BY DATE_FORMAT(创建时间, '%Y-%m-%d %H:00')"
+                );
+                string querySql = string.Format(
+                    queryStr.ToString(),
                     sqlconn,
                     strconn,
                     startStr,

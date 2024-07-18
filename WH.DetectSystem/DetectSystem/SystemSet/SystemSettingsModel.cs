@@ -128,7 +128,7 @@ namespace WH.DetectSystem.Models
                         if (nowSecond >= dayshiftSecond && nowSecond < nightshiftSecond) //白班晚班数据放在同一天的数据库表
                         {
                             // nowShift = now.ToLongDateString() + " 白班+晚班";
-                            nowShift = string.Format("{0}_白班+晚班", now.ToLongDateString());
+                            nowShift = string.Format("{0}_白班_晚班", now.ToLongDateString());
                         }
                         else //晚班
                         {
@@ -137,14 +137,14 @@ namespace WH.DetectSystem.Models
                                 // nowShift = now.AddDays(-1).ToLongDateString() + " 白班+晚班";
 
                                 nowShift = string.Format(
-                                    "{0}_白班+晚班",
+                                    "{0}_白班_晚班",
                                     now.AddDays(-1).ToLongDateString()
                                 );
                             }
                             else //否则是当天的晚班
                             {
                                 //nowShift = now.ToLongDateString() + " 白班+晚班";
-                                nowShift = string.Format("{0}_白班+晚班", now.ToLongDateString());
+                                nowShift = string.Format("{0}_白班_晚班", now.ToLongDateString());
                             }
                         }
                         break;

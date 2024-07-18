@@ -21,7 +21,7 @@ namespace MySqlOperatesApiWPF
         /// 远程数据库IP
         /// </summary>
         [ObservableProperty]
-        private string remoteIP = "127.0.0.1";
+        private string remoteIP = "192.168.2.51";
 
         /// <summary>
         /// 2024.6.23 鲍赞宝
@@ -35,7 +35,7 @@ namespace MySqlOperatesApiWPF
         /// 用户名
         /// </summary>
         [ObservableProperty]
-        private string userID = "root";
+        private string userID = "admin";
 
         /// <summary>
         /// 2024.6.23 鲍赞宝

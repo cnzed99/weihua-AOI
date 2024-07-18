@@ -8,6 +8,7 @@ using Autofac;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MySqlOperatesApiWPF;
+using SDFilter;
 using WH.DetectSystem;
 using WH.DetectSystem.ViewModels;
 
@@ -15,12 +16,12 @@ namespace DataQuery
 {
     public partial class CDataQueryVM : ObservableObject
     {
-        MySqlViewModel cMysqlBLL;
+        public MySqlViewModel cMysqlBLL;
         CSystemSettingsVM SystemSettings = CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
-        public CDataQueryVM()
+        public CDataQueryVM(MySqlViewModel sqlViewModel)
         {
-            cMysqlBLL = new MySqlViewModel();
+            cMysqlBLL = sqlViewModel;
         }
 
         /// <summary>

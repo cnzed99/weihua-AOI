@@ -100,6 +100,7 @@ namespace WH.DetectSystem.ViewModels
                     MaociQualityConfig
                 );
                 HistoryVM.SetHistory(MaociHistoryModel, MaociFilterConfig);
+                MySqlVM.mysqlExecute.Filters = MaociHistoryModel.DefectList;
                 TokeVM.ProGuid = value.GUID;
             }
         }

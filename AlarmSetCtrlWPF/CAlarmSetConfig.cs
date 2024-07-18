@@ -304,6 +304,9 @@ namespace AlarmSetCtrlWPF
                         NgCount = value;
                     }
                 }
+                totalNG = 0;
+                TotalCellList.Clear();
+                TimeCellList.Clear();
                 SetProperty(ref total, value);
                 OnPropertyChanged(nameof(RegularShow));
             }
@@ -329,6 +332,9 @@ namespace AlarmSetCtrlWPF
                         value = total;
                     }
                 }
+                TotalCellList.Clear();
+                TimeCellList.Clear();
+                totalNG = 0;
                 SetProperty(ref ngCount, value);
                 OnPropertyChanged(nameof(RegularShow));
             }

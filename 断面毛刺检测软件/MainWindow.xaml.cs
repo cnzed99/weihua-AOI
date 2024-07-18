@@ -522,6 +522,7 @@ namespace 断面毛刺检测软件
         private void DataQuery_Click(object sender, RoutedEventArgs e)
         {
             DataQueryWindow sqlSetwindow = App.Container.Resolve<Lazy<DataQueryWindow>>().Value;
+            sqlSetwindow.DataContext = new CDataQueryVM(CMainList.CMainVMs[0].MySqlVM);
             sqlSetwindow.Show();
             sqlSetwindow.Activate();
             OperateLog.Info(Properties.Resources.DataStatistics);

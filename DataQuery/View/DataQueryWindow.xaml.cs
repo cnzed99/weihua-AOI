@@ -18,15 +18,14 @@ namespace DataQuery
     /// </summary>
     public partial class DataQueryWindow : HandyControl.Controls.Window
     {
-        public CDataQueryVM dataVM { get; set; }
+        //public CDataQueryVM dataVM { get; set; }
 
         public DataQueryWindow()
         {
             InitializeComponent();
-            dataVM = new CDataQueryVM();
-           // myListView.ItemsSource = dataVM.DataTable;
-            this.DataContext = dataVM;
-           
+            // dataVM = new CDataQueryVM();
+            //// myListView.ItemsSource = dataVM.DataTable;
+            // this.DataContext = dataVM;
         }
 
         //private void BTN_CLICK(object sender, RoutedEventArgs e)
