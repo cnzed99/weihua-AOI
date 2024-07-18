@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApiWPF.csproj" />
+    <ProjectReference Include="..\WH.DetectSystem\WH.DetectSystem.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
   </ItemGroup>
 
