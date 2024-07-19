@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SDFilter;
 using WH.RunCell;
 
 namespace MySqlOperatesApi
@@ -11,6 +13,7 @@ namespace MySqlOperatesApi
     public abstract class SQLBase : SQLParamBase
     {
         public static object LockObj = new object();
+        public ObservableCollection<DefectFilter> defectList { get; set; } = new();
 
         /// <summary>
         /// 创建数据库
@@ -57,5 +60,10 @@ namespace MySqlOperatesApi
         /// <param name="sql">sql语句</param>
         /// <returns></returns>
         public abstract bool UpDate(string sql);
+
+        public virtual void SetSQL(CFilterConfig filterConfig)
+        {
+            defectList = filterConfig.DefectList;
+        }
     }
 }

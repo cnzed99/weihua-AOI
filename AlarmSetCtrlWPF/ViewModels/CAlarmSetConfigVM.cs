@@ -27,7 +27,7 @@ namespace AlarmSetCtrl
     /// <summary>
     /// 报警设置ViewModel
     /// </summary>
-    public partial class CAlarmSetConfigVM : ObservableObject, IRecipient<AlarmPopMessage>
+    public partial class CAlarmSetConfigVM : ObservableObject
     {
         public CAlarmSetConfigVM() { }
 
@@ -35,112 +35,14 @@ namespace AlarmSetCtrl
         public CAlarmSetConfig cAlarmSet = new CAlarmSetConfig();
 
         /// <summary>
-        /// 20240711 TCG
-        /// 初始化报警
+        /// 20270719 TCG
+        /// 在打开项目时 重置选中项
         /// </summary>
-        /// <param name="cAlarmSet"></param>
-        /// <param name="filterConfig"></param>
-        /// <param name="qualityConfig"></param>
-        public void SetCAlarm(
-            CAlarmSetConfig cAlarmSet,
-            CFilterConfig filterConfig,
-            CQualityConfig qualityConfig
-        )
+        public void Reset()
         {
-            CAlarmSet = cAlarmSet;
-            Receive(filterConfig);
-            this.CAlarmSet.Qualities = qualityConfig.Qualities;
-            Synchronization();
-            filterConfig.SpeciesFilters.CollectionChanged += (s, e) =>
-            {
-                Receive(filterConfig);
-            };
-            foreach (var sp in filterConfig.SpeciesFilters)
-            {
-                sp.RecipeDefects.CollectionChanged += (s, e) =>
-                {
-                    Receive(filterConfig);
-                };
-                foreach (var rd in sp.RecipeDefects)
-                {
-                    rd.DefectFilters.CollectionChanged += (s, e) =>
-                    {
-                        Receive(filterConfig);
-                    };
-                }
-            }
             MAlarm = null;
             MAlarm = new Alarm();
             SourceAlarm = null;
-        }
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 同步缺陷和质量等级实例，同时移除不适用的报警源 报警配置
-        /// </summary>
-        void Synchronization()
-        {
-            var DeList = CAlarmSet.DefectList.ToList();
-            var QaList = CAlarmSet.Qualities.ToList();
-            var alarmNeedRemove = new List<Alarm>();
-            foreach (var alarm in CAlarmSet.AlarmList)
-            {
-                if (alarm.Source is DefectFilter de)
-                {
-                    var index = DeList.FindIndex(d => d.Name == de.Name);
-                    if (index >= 0)
-                    {
-                        alarm.Source = DeList[index];
-                    }
-                    else
-                    {
-                        alarmNeedRemove.Add(alarm);
-                    }
-                }
-                else if (alarm.Source is Quality qa)
-                {
-                    var index = QaList.FindIndex(d => d.Name == qa.Name);
-                    if (index >= 0)
-                    {
-                        alarm.Source = QaList[index];
-                    }
-                    else
-                    {
-                        alarmNeedRemove.Add(alarm);
-                    }
-                }
-            }
-            //移除不适用的报警设置
-            foreach (var alarm in alarmNeedRemove)
-            {
-                CAlarmSet.AlarmList.Remove(alarm);
-            }
-        }
-
-        private void Receive(CFilterConfig filter)
-        {
-            List<string> strings = new List<string>();
-            foreach (var sp in filter.SpeciesFilters)
-            {
-                foreach (var rp in sp.RecipeDefects)
-                {
-                    foreach (var de in rp.DefectFilters)
-                    {
-                        if (!CAlarmSet.DefectList.Contains(de))
-                        {
-                            CAlarmSet.DefectList.Add(de);
-                        }
-                        strings.Add(de.Name);
-                    }
-                }
-            }
-            for (int i = CAlarmSet.DefectList.Count - 1; i >= 0; i--)
-            {
-                if (!strings.Contains(CAlarmSet.DefectList[i].Name))
-                {
-                    CAlarmSet.DefectList.RemoveAt(i);
-                }
-            }
         }
 
         /// <summary>
@@ -231,22 +133,6 @@ namespace AlarmSetCtrl
                     MAlarm.TempSignal = MAlarm.MarkSignal;
                     break;
             }
-        }
-
-        /// <summary>
-        /// 接收到报警信号
-        /// </summary>
-        /// <param name="message"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        public void Receive(AlarmPopMessage message)
-        {
-            if (message.alarm.IsPopWin)
-                MessageBox.Show(
-                    message.alarm.RegularShow,
-                    "警告",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
         }
 
         /// <summary>

@@ -26,6 +26,19 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         bool isEnglish = false;
 
+        partial void OnIsEnglishChanged(bool value)
+        {
+            var languageCode = "zh-CN";
+            if (value)
+            {
+                languageCode = "en-US";
+            }
+            //OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+            LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+        }
+
         [ObservableProperty]
         bool offlineSave = false;
 

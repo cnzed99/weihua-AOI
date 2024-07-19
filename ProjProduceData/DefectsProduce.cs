@@ -1,14 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-using QualityGrade;
-using SDFilter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using QualityGrade;
+using SDFilter;
 using WH.Entity.CommonLib;
 using WH.RunCell;
 
@@ -62,10 +62,12 @@ namespace ProjProduceData
         {
             get
             {
-                if (Total <= 0) return 0;
+                if (Total <= 0)
+                    return 0;
                 return OK / Total;
             }
         }
+
         /// <summary>
         /// 20240706 TCG
         /// 不良率 只读属性binding 需写上Mode = OneWay
@@ -75,16 +77,19 @@ namespace ProjProduceData
         {
             get
             {
-                if (Total <= 0) return 0;
+                if (Total <= 0)
+                    return 0;
                 return Ng / Total;
             }
         }
+
         /// <summary>
         /// 20200706 TCG
         /// 利用属性通知，只通知一次，多绑定会通知多次
         /// </summary>
         [ObservableProperty]
         public double oK;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 索引器
@@ -93,62 +98,20 @@ namespace ProjProduceData
         /// <returns>对应缺陷</returns>
         public DefectFilter this[string name]
         {
-            get
-            {
-                //if (!DefectNumbersList.ToList().Exists(o => o.Name == name))
-                //{
-                //    DefectNumber defect = new DefectNumber(name);
-                //    DefectNumbersList.Add(defect);
-                //    return defect;
-                //}
-
-                return DefectNumbersList.FirstOrDefault(o => o.Name == name);
-            }
+            get { return DefectNumbersList.FirstOrDefault(o => o.Name == name); }
         }
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 缺陷统计函数
-        /// 2024.7.5 TCG 增加质量统计逻辑 先加NG 再加Total，只让Total通知一次
+        /// 初始化缺陷统计VM
         /// </summary>
-        /// <param name="cell">要统计的cell</param>
-        public void AddDefectProduce(Cell cell)
+        /// <param name="defectsProduce"></param>
+        /// <param name="filterConfig"></param>
+        /// <param name="qualityConfig"></param>
+        public void SetDefectsProduce(CFilterConfig filterConfig, CQualityConfig qualityConfig)
         {
-            
-            if (cell.Detection != null)
-            {
-                Ng += 1;
-                //var currentDefect = this[cell.Detection.Name];
-                //currentDefect.Number += 1;
-                cell.Detection.DefectFilter.Number += 1;
-                foreach (var defect in DefectNumbersList)
-                {
-                    defect.Percent = (double)defect.Number / Ng;
-                }
-            }
-            else
-            {
-                OK += 1;
-            }
-            cell.Quality.Number += 1;
-            Total += 1;
-            foreach (var defect in DefectNumbersList)
-            {
-                defect.PercentofAll = (double)defect.Number / Total;
-            }
-
-            //QualityNumbersList.FirstOrDefault(o=>o.Name == cell.Quality.Name).Number += 1;//检索过多 界面卡顿
-
-            //排序
-            //List<DefectNumber> defectNumbers = DefectNumbersList.ToList();
-            //defectNumbers.Sort((a, b) => (int)(-a.Number + b.Number));
-            //for (int i = 0; i < defectNumbers.Count; i++)
-            //{
-            //    var dex = DefectNumbersList.IndexOf(defectNumbers[i]);
-            //    if (dex == i) continue;
-            //    DefectNumbersList.Move(dex, i);
-            //}
-            
+            DefectNumbersList = filterConfig.DefectList;
+            this.QualityNumbersList = qualityConfig.Qualities;
         }
 
         /// <summary>
@@ -164,7 +127,7 @@ namespace ProjProduceData
                 defect.PercentofAll = 0;
             }
 
-            foreach(var qua in QualityNumbersList)
+            foreach (var qua in QualityNumbersList)
             {
                 qua.Number = 0;
             }
@@ -181,10 +144,7 @@ namespace ProjProduceData
     /// </summary>
     public partial class DefectNumber : ObservableObject
     {
-        public DefectNumber() 
-        {
-
-        }
+        public DefectNumber() { }
 
         public DefectNumber(string name)
         {
@@ -228,6 +188,7 @@ namespace ProjProduceData
     public partial class QualityNumber : ObservableObject
     {
         public QualityNumber() { }
+
         public QualityNumber(Quality qua)
         {
             this.Name = qua.Name;

@@ -82,27 +82,12 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [ImageManagement], Source={x:Static local:CLang.Instance}}">
+                <!--<MenuItem Header="{Binding [ImageManagement], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/图片设置/图片设置.svg" />
                     </MenuItem.Icon>
-                    <MenuItem
-                        Width="100"
-                        Click="SaveImageSetting_Click"
-                        Header="{Binding [ImageSave], Source={x:Static local:CLang.Instance}}">
-                        <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/图片设置/图片.svg" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem
-                        Width="100"
-                        Click="Screenshot_Click"
-                        Header="{Binding [ScreenShot], Source={x:Static local:CLang.Instance}}">
-                        <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/图片设置/截屏保存.svg" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+
+                </MenuItem>-->
 
                 <MenuItem Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
@@ -119,10 +104,34 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Click="SystemSetting_Click" Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
+                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
+                    <MenuItem
+                        Width="100"
+                        Click="SystemSetting_Click"
+                        Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="Mysql_Click"
+                        Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据库设置.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="SaveImageSetting_Click"
+                        Header="{Binding [ImageSave], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/图片设置/图片.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
@@ -136,14 +145,7 @@
                             <svg1:SVGImage Source="/Resources/图标/数据统计/数据查询.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem
-                        Width="100"
-                        Click="Mysql_Click"
-                        Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
-                        <MenuItem.Icon>
-                            <svg1:SVGImage Source="/Resources/图标/数据统计/数据库设置.svg" />
-                        </MenuItem.Icon>
-                    </MenuItem>
+
                     <MenuItem
                         Width="100"
                         Click="DataClear_Click"
@@ -170,6 +172,14 @@
                             <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="Screenshot_Click"
+                        Header="{Binding [ScreenShot], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/图片设置/截屏保存.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding [Help], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
@@ -180,23 +190,33 @@
                             <svg1:SVGImage Source="/Resources/图标/帮助/帮助文档.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Header="{Binding [Lang], Source={x:Static local:CLang.Instance}}"
+                        IsCheckable="True"
+                        IsChecked="{Binding SystemSettings.IsEnglish}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/语言/语言.svg" />
+                        </MenuItem.Icon>
+                        <!--<MenuItem.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MenuItemBaseStyle}" TargetType="MenuItem">
+                                <Setter Property="Width" Value="100" />
+                            </Style>
+                        </MenuItem.ItemContainerStyle>-->
+                        <!--<CheckBox
+                            Name="cbLang"
+                            Checked="Lang_Checked"
+                            Content="en_US"
+                            IsChecked="{Binding SystemSettings.IsEnglish}"
+                            Unchecked="Lang_Checked" />-->
+                    </MenuItem>
                     <MenuItem Width="100" Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/帮助/关于.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [Lang], Source={x:Static local:CLang.Instance}}">
-                    <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/语言/语言.svg" />
-                    </MenuItem.Icon>
-                    <CheckBox
-                        Name="cbLang"
-                        Checked="Lang_Checked"
-                        Content="en_US"
-                        IsChecked="{Binding SystemSettings.IsEnglish}"
-                        Unchecked="Lang_Checked" />
-                </MenuItem>
+
             </Menu>
             <TextBlock
                 Grid.Column="1"
@@ -288,11 +308,10 @@
                             DockPanel.Dock="Right"
                             Text="{Binding [SystemTime], Source={x:Static local:CLang.Instance}}" />
                         <TextBlock
-                           
-                            TextAlignment="Center"
                             d:Text="2024-04-02"
                             DockPanel.Dock="Right"
-                            Text="{Binding SystemTime}" />
+                            Text="{Binding SystemTime}"
+                            TextAlignment="Center" />
 
                     </StackPanel>
                     <!--  用户登录  -->

@@ -14,7 +14,7 @@
     ResizeMode="NoResize"
     SizeToContent="Height"
     d:DataContext="{d:DesignInstance Type=local:SQLBase}"
-    Icon="/MySqlOperatesApiWPF;component/Resources/数据库设置.png"
+    Icon="/MySqlOperatesApi;component/Resources/数据库设置.png"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
@@ -40,7 +40,7 @@
                             hc:ToggleButtonAttach.ShowLabel="True"
                             Background="Gray"
                             Content="{x:Static prop:Resources.Enable}"
-                            IsChecked="{Binding mysqlExecute.SqlEnable}" />
+                            IsChecked="{Binding MysqlExecute.SqlEnable}" />
                         <ComboBox
                             x:Name="cb_mysql"
                             Width="160"
@@ -49,7 +49,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.UserSelect}"
                             hc:InfoElement.TitlePlacement="Left"
                             ItemsSource="{StaticResource UserStr}"
-                            SelectedItem="{Binding mysqlExecute.UseSelect}"
+                            SelectedItem="{Binding MysqlExecute.UseSelect}"
                             Style="{StaticResource ComboBoxExtend}" />
                         <TextBox
                             Width="160"
@@ -58,7 +58,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.UserName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.UserID}" />
+                            Text="{Binding MysqlExecute.UserID}" />
 
                         <hc:PasswordBox
                             Width="160"
@@ -71,7 +71,7 @@
                             IsSafeEnabled="false"
                             PasswordChar="*"
                             ShowEyeButton="True"
-                            UnsafePassword="{Binding mysqlExecute.Password, Mode=TwoWay}" />
+                            UnsafePassword="{Binding MysqlExecute.Password, Mode=TwoWay}" />
 
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -82,7 +82,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.ServerName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.DataBaseName}" />
+                            Text="{Binding MysqlExecute.DataBaseName}" />
 
                         <TextBox
                             Width="160"
@@ -91,7 +91,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.RemoteIP}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.RemoteIP}" />
+                            Text="{Binding MysqlExecute.RemoteIP}" />
 
                         <TextBox
                             Width="160"
@@ -100,7 +100,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.RemoteProt}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.RemotePort}" />
+                            Text="{Binding MysqlExecute.RemotePort}" />
 
 
                         <TextBox
@@ -110,7 +110,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.LineName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.LineName}" />
+                            Text="{Binding MysqlExecute.LineName}" />
 
                         <TextBox
                             Width="160"
@@ -119,7 +119,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.DBDeviceName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.DBDeviceName}" />
+                            Text="{Binding MysqlExecute.DBDeviceName}" />
                     </StackPanel>
 
                 </StackPanel>

@@ -13,11 +13,9 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using Mapster;
 using Newtonsoft.Json;
 using QualityGrade;
-using SVGImage.SVG.Filters;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
-using WH.RunCell;
 
 namespace SDFilter
 {
@@ -35,6 +33,15 @@ namespace SDFilter
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
+        /// <summary>
+        /// 20240719 TCG
+        /// 缺陷列表，外部引用较多
+        /// </summary>
+        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
+        public ObservableCollection<DefectFilter> DefectList { get; set; } =
+            new ObservableCollection<DefectFilter>();
+
         public CFilterConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
@@ -49,8 +56,90 @@ namespace SDFilter
                 SpFilters.Add(speciesFilter);
             }
             SpeciesFilters = SpFilters;
+        }
 
-            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+        public void SetSDFilterVM(CQualityConfig qualityConfig)
+        {
+            Synchronization(qualityConfig);
+            UpdateDefectList();
+
+            SpeciesFilters.CollectionChanged += (s, e) =>
+            {
+                UpdateDefectList();
+            };
+            foreach (var sp in SpeciesFilters)
+            {
+                sp.RecipeDefects.CollectionChanged += (s, e) =>
+                {
+                    UpdateDefectList();
+                };
+                foreach (var rd in sp.RecipeDefects)
+                {
+                    rd.DefectFilters.CollectionChanged += (s, e) =>
+                    {
+                        UpdateDefectList();
+                    };
+                }
+            }
+        }
+
+        /// <summary>
+        /// 20240715 TCG
+        /// 同步毛刺等级实例
+        /// </summary>
+        /// <param name="MaociQuality"></param>
+        protected void Synchronization(CQualityConfig MaociQuality)
+        {
+            #region 同步毛刺过滤配置
+            foreach (var spFilter in SpeciesFilters)
+            {
+                foreach (var reFilger in spFilter.RecipeDefects)
+                {
+                    foreach (var deFilter in reFilger.DefectFilters)
+                    {
+                        //新建配方 质量等级没有赋值时赋值最差
+                        if (deFilter.QualityLevel is null)
+                        {
+                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
+                        }
+                        else
+                        {
+                            var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
+                                o.Priority == deFilter.QualityLevel.Priority
+                            );
+                            deFilter.QualityLevel = null;
+                            deFilter.QualityLevel = findquality;
+                        }
+                    }
+                }
+            }
+            #endregion
+        }
+
+        protected void UpdateDefectList()
+        {
+            List<string> strings = new List<string>();
+            foreach (var sp in SpeciesFilters)
+            {
+                foreach (var rp in sp.RecipeDefects)
+                {
+                    foreach (var de in rp.DefectFilters)
+                    {
+                        if (!DefectList.Contains(de))
+                        {
+                            DefectList.Add(de);
+                        }
+                        strings.Add(de.Name);
+                    }
+                }
+            }
+            for (int i = DefectList.Count - 1; i >= 0; i--)
+            {
+                if (!strings.Contains(DefectList[i].Name))
+                {
+                    DefectList.RemoveAt(i);
+                }
+            }
         }
 
         /// <summary>
@@ -181,204 +270,6 @@ namespace SDFilter
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.2 李焕彬
-        /// 过滤分选，结果输出在cell里面
-        ///</summary>
-        /// <param name="cell"></param>
-        public void Excute(Cell cell)
-        {
-            if (cell._skipthis)
-            {
-                return;
-            }
-            var AlgorithmOut = cell.MaociTestOut.AlgorithmOut;
-            //int deIndex = 0;
-            foreach (var sp in AlgorithmOut.Specises)
-            {
-                this[sp.Name].Result = true;
-                foreach (var rp in sp.Recipes)
-                {
-                    foreach (var de in this[sp.Name][rp.Name].DefectFilters) //缺陷
-                    {
-                        //deIndex++;
-                        CellDetection detection = new CellDetection();
-                        //detection.Name = de.Name;
-                        detection.Type = sp.Name;
-                        detection.RecipeDefectName = rp.Name;
-                        //detection.Priority = de.Priority;
-                        //detection.Quality = de.QualityLevel;//质量等级
-                        detection.DefectFilter = de; //缺陷过滤器
-                        //detection.Index = deIndex;
-                        //detection.ShowColor = de.ShowColor;
-                        detection.regionOut = AlgorithmOut[sp.Name][rp.Name].Region;
-                        if (cell.CancelSource.IsCancellationRequested)
-                            return; //任务取消时退出
-                        foreach (var filter in de.FilterList) //过滤分选器
-                        {
-                            filter.Result = true;
-                            List<SRegion> detectRegion = AlgorithmOut[sp.Name][rp.Name].Region;
-                            switch (filter.UnionMethod)
-                            {
-                                case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
-                                    SRegionInfo regionInfo = new SRegionInfo();
-                                    regionInfo.WidthBound = detectRegion
-                                        .Select(o => o.RegionInfo.WidthBound)
-                                        .Sum();
-                                    regionInfo.HeightBound = detectRegion
-                                        .Select(o => o.RegionInfo.HeightBound)
-                                        .Sum();
-                                    regionInfo.PeakHeight = detectRegion
-                                        .Select(o => o.RegionInfo.PeakHeight)
-                                        .Sum();
-                                    regionInfo.LongLen = detectRegion
-                                        .Select(o => o.RegionInfo.LongLen)
-                                        .Sum();
-                                    regionInfo.ShorLen = detectRegion
-                                        .Select(o => o.RegionInfo.ShorLen)
-                                        .Sum();
-                                    regionInfo.Phi = detectRegion
-                                        .Select(o => o.RegionInfo.Phi)
-                                        .Max();
-                                    regionInfo.ContLen = detectRegion
-                                        .Select(o => o.RegionInfo.ContLen)
-                                        .Sum();
-                                    regionInfo.Area = detectRegion
-                                        .Select(o => o.RegionInfo.Area)
-                                        .Sum();
-                                    for (int i = 0; i < detectRegion.Count; i++)
-                                    {
-                                        detectRegion[i] = new SRegion(
-                                            regionInfo,
-                                            detectRegion[i].points1
-                                        );
-                                    }
-                                    break;
-                            }
-
-                            List<SRegion> filterOuts = new List<SRegion>(); //过滤后的区域
-                            foreach (var select in filter.Filter) //过滤
-                            {
-                                List<SRegion> selRegion = detectRegion;
-                                foreach (var selParam in select.SelectParams)
-                                {
-                                    selParam.Excute(selRegion, out selRegion); //&&
-                                }
-                                filterOuts.AddRange(selRegion); //||
-                            }
-                            foreach (var select in filter.SelectList) //分选
-                            {
-                                List<SRegion> selRegion = filterOuts;
-                                bool bResult = true;
-                                OneSelectParams oneSelectParams = null; //若有数量判断，则留到分选完后
-                                foreach (var selParam in select.SelectParams)
-                                {
-                                    if (selParam.Character == EMFILTER.EMFILTER_NUM)
-                                        oneSelectParams = selParam;
-                                    else
-                                        bResult = selParam.Excute(selRegion, out selRegion); //&&
-                                }
-                                if (!bResult)
-                                    detection.regionOut = selRegion;
-                                if (oneSelectParams != null)
-                                    bResult = oneSelectParams.Excute(selRegion, out selRegion); //数量判断
-                                if (!bResult)
-                                {
-                                    detection.regionOut = selRegion;
-                                    detection.DetectLog.AppendLine(detection.DefectFilter.Name);
-                                    detection.DetectLog.AppendLine(
-                                        $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
-                                    );
-                                    detection.Result = false;
-                                    break; //有一个分选不合格就跳出，不执行剩下的分选（||）
-                                }
-                            }
-                            //有一个过滤分选器不合格就跳出，不执行剩下的过滤分选器（||）
-                            if (!detection.Result)
-                            {
-                                filter.Result = false;
-                                this[sp.Name].Result = false;
-                                break;
-                            }
-                        }
-                        //检测区显示
-                        SRegion maxRegion =
-                            detection.regionOut.Count > 0
-                                ? detection.regionOut.MaxBy<SRegion, double>(o =>
-                                    o.RegionInfo.PeakHeight
-                                )
-                                : new SRegion();
-                        foreach (var item in de.ResultList)
-                        {
-                            switch (item.Feature)
-                            {
-                                case EMFILTER.EMFILTER_PEAKHEI:
-                                    item.Value = maxRegion.RegionInfo.PeakHeight;
-                                    break;
-                                case EMFILTER.EMFILTER_AREA:
-                                    item.Value = maxRegion.RegionInfo.Area;
-                                    break;
-                                case EMFILTER.EMFILTER_LONGLEN:
-                                    item.Value = maxRegion.RegionInfo.LongLen;
-                                    break;
-                                case EMFILTER.EMFILTER_SHORTLEN:
-                                    item.Value = maxRegion.RegionInfo.ShorLen;
-                                    break;
-                                case EMFILTER.EMFILTER_PHI:
-                                    item.Value = maxRegion.RegionInfo.Phi;
-                                    break;
-                                case EMFILTER.EMFILTER_CONTLEN:
-                                    item.Value = maxRegion.RegionInfo.ContLen;
-                                    break;
-                                case EMFILTER.EMFILTER_WIDTH:
-                                    item.Value = maxRegion.RegionInfo.WidthBound;
-                                    break;
-                                case EMFILTER.EMFILTER_HEIGHT:
-                                    item.Value = maxRegion.RegionInfo.HeightBound;
-                                    break;
-                                case EMFILTER.EMFILTER_NUM:
-                                    item.Value = detection.regionOut.Count;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            detection.DetectLog.AppendLine(
-                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:"
-                            );
-                        }
-                        if (!detection.Result) //NG
-                        {
-                            var qualityLevel = detection.DefectFilter.QualityLevel;
-                            if (cell.Detection == null)
-                            {
-                                cell.Detection = detection;
-                                cell.Quality = detection.DefectFilter.QualityLevel;
-                            }
-                            else
-                            {
-                                if (cell.Detection.DefectFilter.QualityLevel < qualityLevel) //质量等级 还需判断优先级
-                                {
-                                    cell.Detection = detection;
-                                    cell.Quality = detection.DefectFilter.QualityLevel;
-                                }
-                                else if (
-                                    cell.Detection.DefectFilter.QualityLevel == qualityLevel
-                                    && cell.Detection?.DefectFilter.Priority
-                                        < detection.DefectFilter.Priority
-                                ) //质量等级相等时 判断优先级
-                                {
-                                    cell.Detection = detection;
-                                    cell.Quality = detection.DefectFilter.QualityLevel;
-                                }
-                            }
-                            cell.IsOK = false;
-                        }
-                        cell.Detections.Add(detection);
                     }
                 }
             }

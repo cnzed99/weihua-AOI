@@ -45,6 +45,63 @@ namespace AlarmSetCtrl
         }
 
         /// <summary>
+        /// 20240711 TCG
+        /// 初始化报警
+        /// </summary>
+        /// <param name="cAlarmSet"></param>
+        /// <param name="filterConfig"></param>
+        /// <param name="qualityConfig"></param>
+        public void SetCAlarm(CFilterConfig filterConfig, CQualityConfig qualityConfig)
+        {
+            DefectList = filterConfig.DefectList;
+            this.Qualities = qualityConfig.Qualities;
+            Synchronization();
+        }
+
+        /// <summary>
+        /// 20240715 TCG
+        /// 同步缺陷和质量等级实例，同时移除不适用的报警源 报警配置
+        /// </summary>
+        protected void Synchronization()
+        {
+            var DeList = DefectList.ToList();
+            var QaList = Qualities.ToList();
+            var alarmNeedRemove = new List<Alarm>();
+            foreach (var alarm in AlarmList)
+            {
+                if (alarm.Source is DefectFilter de)
+                {
+                    var index = DeList.FindIndex(d => d.Name == de.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = DeList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+                else if (alarm.Source is Quality qa)
+                {
+                    var index = QaList.FindIndex(d => d.Name == qa.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = QaList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+            }
+            //移除不适用的报警设置
+            foreach (var alarm in alarmNeedRemove)
+            {
+                AlarmList.Remove(alarm);
+            }
+        }
+
+        /// <summary>
         /// 2024.6.25 鲍赞宝
         /// 报警规则集合
         /// </summary>
@@ -145,14 +202,6 @@ namespace AlarmSetCtrl
                 }
             }
         }
-
-        public void Excute(Cell cell)
-        {
-            foreach (Alarm alarm in AlarmList)
-            {
-                if (alarm.AddCellAndJudge(cell)) { }
-            }
-        }
     }
 
     /// <summary>
@@ -225,8 +274,8 @@ namespace AlarmSetCtrl
 
         partial void OnIsTimeLimitChanged(bool value)
         {
-            TimeCellList.Clear();
-            totalNG = 0;
+            TotalCellList.Clear();
+            TotalNG = 0;
         }
 
         /// <summary>
@@ -282,7 +331,7 @@ namespace AlarmSetCtrl
         partial void OnIsTotalLimitChanged(bool value)
         {
             TotalCellList.Clear();
-            totalNG = 0;
+            TotalNG = 0;
         }
 
         private int total = 500;
@@ -304,9 +353,8 @@ namespace AlarmSetCtrl
                         NgCount = value;
                     }
                 }
-                totalNG = 0;
+                TotalNG = 0;
                 TotalCellList.Clear();
-                TimeCellList.Clear();
                 SetProperty(ref total, value);
                 OnPropertyChanged(nameof(RegularShow));
             }
@@ -333,8 +381,7 @@ namespace AlarmSetCtrl
                     }
                 }
                 TotalCellList.Clear();
-                TimeCellList.Clear();
-                totalNG = 0;
+                TotalNG = 0;
                 SetProperty(ref ngCount, value);
                 OnPropertyChanged(nameof(RegularShow));
             }
@@ -354,7 +401,7 @@ namespace AlarmSetCtrl
                 if (IsTimeLimit)
                     sb.Append($"在最近{Time}{EnumStringAttribute.GetEnumName(TimeUnit)}内");
                 if (IsTotalLimit)
-                    sb.Append($"/连续{Total}片中");
+                    sb.Append($"连续{Total}片中");
                 sb.Append($"出现{NgCount}片{Source}");
                 return sb.ToString();
             }
@@ -414,104 +461,16 @@ namespace AlarmSetCtrl
 
         /// <summary>
         /// 20240715 TCG
-        /// 时间规则列表
-        /// </summary>
-        [JsonIgnore]
-        private List<(DateTime createTime, bool isCellNg)> TimeCellList = new();
-
-        /// <summary>
-        /// 20240715 TCG
         /// 总数规则列表
         /// </summary>
         [JsonIgnore]
-        private List<(DateTime createTime, bool isCellNg)> TotalCellList = new();
+        public List<(DateTime createTime, bool isCellNg)> TotalCellList = new();
 
         /// <summary>
         /// 20240712 TCG
         /// 独立控制的 总NG数量
         /// </summary>
-        int totalNG;
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 增加Cell并判断规则
-        /// </summary>
-        /// <param name="cell"></param>
-        /// <returns>规则NG数量满足为true,否则为false</returns>
-        public bool AddCellAndJudge(Cell cell)
-        {
-            bool ret = false;
-            if (IsTimeLimit || IsTotalLimit)
-            {
-                var alarmcell = (cell.CreateTime, true);
-                switch (Type)
-                {
-                    case ALARMTYPE.ALARMTYPE_GRADE:
-                        alarmcell.Item2 = cell.Quality == (Quality)Source;
-                        break;
-                    case ALARMTYPE.ALARMTYPE_DEFECT:
-                        alarmcell.Item2 = cell.Detection.DefectFilter == (DefectFilter)Source;
-                        break;
-                }
-
-                //在规定时间内出现指定数量NG
-                if (IsTimeLimit)
-                {
-                    TimeCellList.Add(alarmcell);
-                    var firstNg = TimeCellList[0];
-                    //超时限 删除
-                    while (cell.CreateTime - TimeCellList[0].createTime > TimeSpan)
-                    {
-                        TimeCellList.RemoveAt(0);
-                    }
-                    //规定时限内NG数量
-                    int ngNumber = TimeCellList.FindAll(a => a.isCellNg).Count();
-                    if (ngNumber >= NgCount) //达到报警标准
-                    {
-                        WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        ret = true;
-                    }
-                }
-                if (IsTotalLimit)
-                {
-                    TotalCellList.Add(alarmcell);
-                    //保持最近限定数量内
-                    while (TotalCellList.Count > Total)
-                    {
-                        TotalCellList.RemoveAt(0);
-                    }
-                    int ngNumber = TotalCellList.FindAll(a => a.isCellNg).Count();
-                    if (ngNumber >= NgCount) //达到报警标准
-                    {
-                        WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        ret = true;
-                    }
-                }
-                return ret;
-            }
-            else //NG数量达标即报警
-            {
-                TimeCellList.Clear();
-                switch (Type)
-                {
-                    case ALARMTYPE.ALARMTYPE_GRADE:
-                        if (cell.Quality == Source)
-                            totalNG++;
-                        break;
-                    case ALARMTYPE.ALARMTYPE_DEFECT:
-                        if (cell.Quality == cell.Detection.DefectFilter)
-                            totalNG++;
-                        break;
-                }
-                if (totalNG >= NgCount)
-                {
-                    totalNG = 0;
-                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                    return true;
-                }
-                return false;
-            }
-        }
+        public int TotalNG;
 
         /// <summary>
         /// 20240715 鲍赞宝

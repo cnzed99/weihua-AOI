@@ -31,5 +31,10 @@ namespace HistoryPlayback.Model
         [ObservableProperty]
         [property: IgnoreModifyLog]
         private ObservableCollection<DefectFilter> defectList = new();
+
+        public void SetHistory(CFilterConfig filterConfig)
+        {
+            DefectList = filterConfig.DefectList;
+        }
     }
 }

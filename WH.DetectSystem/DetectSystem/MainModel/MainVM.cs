@@ -33,6 +33,8 @@ using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
+using WH.DetectSystem._4_报警处理;
+using WH.DetectSystem._5_存图操作;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -48,10 +50,6 @@ namespace WH.DetectSystem.ViewModels
     /// </summary>
     public partial class CMainVM : CMainModel
     {
-        //[ObservableProperty]
-        //CLoginViewModel loginViewModel = new CLoginViewModel();
-        //[ObservableProperty]
-        //CSystemSettingsVM systemSettings = new CSystemSettingsVM();
         /// <summary>
         /// 运行日志和报警日志
         /// </summary>
@@ -84,47 +82,9 @@ namespace WH.DetectSystem.ViewModels
                 SetProperty(ref model, value);
                 model.Adapt(this);
                 InitNewModel();
-                this.SDFilterVM.SetSDFilterVM(MaociFilterConfig, MaociQualityConfig);
-                this.QualityVM.QualityConfig = MaociQualityConfig;
-                this.MaociAlgorVM.Config = MaociAlgorParamConfig;
-                this.SaveImageVM.Param = MaociSaveImageConfig;
 
-                this.DefectsDataVM.SetDefectsProduce(
-                    MaociDefectsProduce,
-                    MaociFilterConfig,
-                    MaociQualityConfig
-                );
-                this.AlarmSetVM.SetCAlarm(
-                    MaociAlarmSetConfig,
-                    MaociFilterConfig,
-                    MaociQualityConfig
-                );
-                HistoryVM.SetHistory(MaociHistoryModel, MaociFilterConfig);
-                MySqlVM.mysqlExecute.Filters = MaociHistoryModel.DefectList;
                 TokeVM.ProGuid = value.GUID;
             }
-        }
-
-        //[ObservableProperty]
-        //string projPath ;
-        //public static string projFilter = "工程文件|*.burrproj|工程文件|*.Json";
-
-        [ObservableProperty]
-        BitmapImage modelImage = new BitmapImage(new Uri("D://铝极.png"));
-
-        [ObservableProperty]
-        Brush modelBrush = Brushes.White;
-
-        [ObservableProperty]
-        BitmapImage lastImage = new BitmapImage(new Uri("D://铝极.png"));
-
-        [ObservableProperty]
-        Brush lastBrush = Brushes.White;
-
-        public CMainVM()
-        {
-            InitTask();
-            TokeVM = new Token("", this.GetType().Namespace);
         }
 
         /// <summary>
@@ -134,7 +94,22 @@ namespace WH.DetectSystem.ViewModels
         public void InitNewModel()
         {
             this.UpdateToken(); //先更新token 再同步引用
-            #region 注册参数修改通道令牌 并清除当前选择的质量等级
+            MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
+            MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+            MaociDefectsProduce.SetDefectsProduce(MaociFilterConfig, MaociQualityConfig);
+            MaociHistoryModel.SetHistory(MaociFilterConfig);
+
+            MaociMysqlConfig.SetSQL(MaociFilterConfig);
+
+            AlarmSetVM.Reset();
+            HistoryVM.Reset();
+            QualityVM.Reset();
+            #region 注册参数修改通道令牌
+            WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
+            WeakReferenceMessenger.Default.UnregisterAll(MaociQualityConfig);
+            WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
+            WeakReferenceMessenger.Default.UnregisterAll(MaociAlarmSetConfig);
+            WeakReferenceMessenger.Default.UnregisterAll(MaociSaveImageConfig);
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociFilterConfig,
                 MaociFilterConfig.token
@@ -157,6 +132,38 @@ namespace WH.DetectSystem.ViewModels
             );
 
             #endregion
+        }
+
+        [ObservableProperty]
+        BitmapImage modelImage = new BitmapImage(new Uri("D://铝极.png"));
+
+        [ObservableProperty]
+        Brush modelBrush = Brushes.White;
+
+        [ObservableProperty]
+        BitmapImage lastImage = new BitmapImage(new Uri("D://铝极.png"));
+
+        [ObservableProperty]
+        Brush lastBrush = Brushes.White;
+
+        public CMainVM()
+        {
+            this.SDFilterVM.FilterConfig = MaociFilterConfig;
+            this.SDFilterVM.QualityConfig = MaociQualityConfig;
+
+            this.QualityVM.QualityConfig = MaociQualityConfig;
+            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
+            this.SaveImageVM.Param = MaociSaveImageConfig;
+
+            this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
+            this.AlarmSetVM.CAlarmSet = MaociAlarmSetConfig;
+
+            this.HistoryVM.HistoryModel = MaociHistoryModel;
+            var cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
+            MaociMysqlConfig = cMysql;
+            this.MySqlVM.MysqlExecute = cMysql;
+            InitTask();
+            TokeVM = new Token("", this.GetType().Namespace);
         }
 
         #region 时间相关
@@ -258,7 +265,7 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         [AdaptIgnore]
         [ObservableProperty]
-        MySqlViewModel mySqlVM = new MySqlViewModel(); //数据库
+        CMySqlVM mySqlVM = new CMySqlVM(); //数据库
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
 
@@ -709,7 +716,7 @@ namespace WH.DetectSystem.ViewModels
                         //    DefectFilter = MaociFilter.SpeciesFilters[0].RecipeDefects[0].DefectFilters[0],
 
                         //};
-                        MaociDefectsProduce.AddDefectProduce(cell);
+                        MaociDefectsProduce.Excute(cell);
                         WeakReferenceMessenger.Default.Send(cell, TokeVM);
                         Console.WriteLine(DateTime.Now.Millisecond);
                         //if (!cell.IsOK) //如果质量OK 颜色不OK
@@ -942,7 +949,7 @@ namespace WH.DetectSystem.ViewModels
                         try
                         {
                             if (SystemSettings.OfflineSave || isStart)
-                                MySqlVM.mysqlExecute.AddData(cell, SystemSettings.NowShift);
+                                MySqlVM.MysqlExecute.AddData(cell, SystemSettings.NowShift);
                         }
                         catch (Exception ex)
                         {
@@ -971,7 +978,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         //// int queCount = _waitSaveImageQueue.Count;
-                        string savePath = SaveImageVM.SaveFullImage(cell);
+                        string savePath = MaociSaveImageConfig.Excute(cell);
                         WeakReferenceMessenger.Default.Send(
                             new AddOneNgImagePathMessage() { Path = savePath },
                             TokeVM

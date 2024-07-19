@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HistoryPlayback;
 using HistoryPlayback.Model;
+using Mapster;
 using MotionControl;
 using MySqlOperatesApi;
 using Newtonsoft.Json;
@@ -81,8 +82,9 @@ namespace WH.DetectSystem.Models
         /// 20240706 TCG
         /// 数据库
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public MySqlViewModel MySqlVM { get; set; } = new MySqlViewModel(); //数据库
+        [JsonIgnore]
+        [AdaptIgnore]
+        public SQLBase MaociMysqlConfig { get; set; } //数据库
 
         /// <summary>
         /// 20240706 TCG

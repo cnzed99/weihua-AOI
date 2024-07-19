@@ -34,12 +34,13 @@ namespace QualityGrade
         public CQualityConfig QualityConfig
         {
             get => qualityConfig;
-            set
-            {
-                SetProperty(ref qualityConfig, value);
-                QualitySelect = null;
-                QualitySet = new Quality();
-            }
+            set { SetProperty(ref qualityConfig, value); }
+        }
+
+        public void Reset()
+        {
+            QualitySelect = null;
+            QualitySet = new Quality();
         }
 
         /// <summary>

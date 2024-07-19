@@ -410,15 +410,15 @@ namespace 断面毛刺检测软件
         #region 语言切换
         private void Lang_Checked(object sender, RoutedEventArgs e)
         {
-            var languageCode = "zh-CN";
-            if (cbLang.IsChecked ?? true)
-            {
-                languageCode = "en-US";
-            }
-            OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
-            LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+            //var languageCode = "zh-CN";
+            //if (cbLang.IsChecked ?? true)
+            //{
+            //    languageCode = "en-US";
+            //}
+            //OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+            //LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
 
         #endregion

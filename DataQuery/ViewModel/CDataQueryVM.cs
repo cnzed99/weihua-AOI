@@ -16,10 +16,10 @@ namespace DataQuery
 {
     public partial class CDataQueryVM : ObservableObject
     {
-        public MySqlViewModel cMysqlBLL;
+        public CMySqlVM cMysqlBLL;
         CSystemSettingsVM SystemSettings = CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
-        public CDataQueryVM(MySqlViewModel sqlViewModel)
+        public CDataQueryVM(CMySqlVM sqlViewModel)
         {
             cMysqlBLL = sqlViewModel;
         }
@@ -77,46 +77,48 @@ namespace DataQuery
         /// 查询
         /// </summary>
         [RelayCommand]
-        void Search()
+        async Task SearchAsync()
         {
             try
             {
-                List<string> dates = new List<string>();
-
-                DateTime newStarTime = StartDate.Date + StartTime.TimeOfDay;
-                DateTime endStarTime = EndDate.Date + EndTime.TimeOfDay;
-                string strStartTime = newStarTime.ToString("yyyy-MM-dd HH:mm:ss");
-                string strEndTime = endStarTime.ToString("yyyy-MM-dd HH:mm:ss");
-                switch (SelectQueryMode)
+                string SearchStatus = await Task.Run(() =>
                 {
-                    case 0:
-                        dates.Add(SystemSettings.NowShift);
-                        break;
-                    case 1:
-                        break;
-                    default:
-                        dates.Add(SystemSettings.NowShift);
-                        break;
-                }
-
-                //dates.Add("2024年6月26日");
-                //dates.Add("2024年6月27日");
-                //dates.Add("2024年6月29日");
-                //string[]  = new string[] { "2024年6月26日", "2024年6月27日", "2024年6月29日" };
-                var dataTableCollection = cMysqlBLL.mysqlExecute.QueryData(
-                    dates,
-                    strStartTime,
-                    strEndTime
-                );
-                if (dataTableCollection.Tables.Count > 0)
-                {
-                    DataViews = dataTableCollection.Tables[0].DefaultView;
-                    MessageText = "查询成功";
-                }
-                else
-                {
-                    MessageText = "查询成功,该段时间没有生产。";
-                }
+                    List<string> dates = new List<string>();
+                    DateTime newStarTime = StartDate.Date + StartTime.TimeOfDay;
+                    DateTime endStarTime = EndDate.Date + EndTime.TimeOfDay;
+                    string strStartTime = newStarTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    string strEndTime = endStarTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    switch (SelectQueryMode)
+                    {
+                        case 0:
+                            dates.Add(SystemSettings.NowShift);
+                            break;
+                        case 1:
+                            break;
+                        default:
+                            dates.Add(SystemSettings.NowShift);
+                            break;
+                    }
+                    //dates.Add("2024年6月26日");
+                    //dates.Add("2024年6月27日");
+                    //dates.Add("2024年6月29日");
+                    //string[]  = new string[] { "2024年6月26日", "2024年6月27日", "2024年6月29日" };
+                    var dataTableCollection = cMysqlBLL.MysqlExecute.QueryData(
+                        dates,
+                        strStartTime,
+                        strEndTime
+                    );
+                    if (dataTableCollection.Tables.Count > 0)
+                    {
+                        DataViews = dataTableCollection.Tables[0].DefaultView;
+                        MessageText = "查询成功";
+                    }
+                    else
+                    {
+                        MessageText = "查询成功,该段时间没有生产。";
+                    }
+                    return "";
+                });
             }
             catch (Exception ex)
             {

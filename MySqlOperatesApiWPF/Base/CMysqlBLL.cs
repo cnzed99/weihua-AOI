@@ -16,8 +16,6 @@ namespace MySqlOperatesApi
     {
         bool DBExists = false;
         bool totalExists = false; //避免重复读取表是否存在
-        public ObservableCollection<DefectFilter> Filters { get; set; } = new();
-
         #region 表头名
 
         string tableName_total = "TotalRecord";
@@ -307,7 +305,7 @@ namespace MySqlOperatesApi
                 queryStr.Append(
                     "CONCAT(FORMAT(IFNULL((SUM(CASE WHEN 结果 = 'NG' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0), 2), '%') AS 总缺陷占比"
                 );
-                foreach (var de in Filters)
+                foreach (var de in defectList)
                 {
                     queryStr.Append(
                         string.Format(

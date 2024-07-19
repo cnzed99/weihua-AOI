@@ -30,37 +30,13 @@ namespace HistoryPlayback
 
         /// <summary>
         /// 20240711 TCG
-        /// 初始化报警
+        /// 重置报警选项
         /// </summary>
-        /// <param name="cAlarmSet"></param>
-        /// <param name="filterConfig"></param>
-        /// <param name="qualityConfig"></param>
-        public void SetHistory(CHistoryModel historyModel, CFilterConfig filterConfig)
+        public void Reset()
         {
-            HistoryModel = historyModel;
-            Receive(filterConfig);
-            filterConfig.SpeciesFilters.CollectionChanged += (s, e) =>
-            {
-                Receive(filterConfig);
-            };
-            foreach (var sp in filterConfig.SpeciesFilters)
-            {
-                sp.RecipeDefects.CollectionChanged += (s, e) =>
-                {
-                    Receive(filterConfig);
-                };
-                foreach (var rd in sp.RecipeDefects)
-                {
-                    rd.DefectFilters.CollectionChanged += (s, e) =>
-                    {
-                        Receive(filterConfig);
-                    };
-                }
-            }
-
             SelectedCellInfo = new CellInfo();
             SelectClassify = 0;
-            SelectedDefect = historyModel.DefectList[0];
+            OnPropertyChanged(nameof(FileNames));
         }
 
         /// <summary>
