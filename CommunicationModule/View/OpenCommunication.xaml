@@ -1,0 +1,140 @@
+﻿<hc:Window
+    x:Class="CommunicationModule.OpenCommunication"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:CommunicationModule"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    Title="{Binding [CommSet], Source={x:Static local:CLang.s_Instance}}"
+    Width="1000"
+    Height="650"
+    Background="{DynamicResource SecondaryRegionBrush}"
+    Icon="/CommunicationModule;component/Resources/外接通讯数据.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <d:Window.DataContext>
+        <local:COpenCommunicationVM />
+    </d:Window.DataContext>
+    <hc:Window.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <cov:BoolToBrushConverter
+                x:Key="SuccessToBrushConverter"
+                FalseValue="{x:Null}"
+                TrueValue="{DynamicResource SuccessBrush}" />
+            <cov:BoolToBrushConverter
+                x:Key="SuccessToBrushConverter2"
+                FalseValue="{DynamicResource DangerBrush}"
+                TrueValue="{x:Null}" />
+            <cov:BoolToStringConverter
+                x:Key="ConnectToStringConverter"
+                FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [Connected], Source={x:Static local:CLang.s_Instance}}" />
+        </ResourceDictionary>
+    </hc:Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="0.8*" />
+        </Grid.ColumnDefinitions>
+        <UniformGrid Columns="2">
+            <Button
+                Width="200"
+                Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter}}"
+                Command="{Binding ConnectCommand}"
+                Content="{Binding Com.IsConnected, Converter={StaticResource ConnectToStringConverter}}"
+                IsEnabled="{Binding Com.IsConnected, Converter={StaticResource Boolean2BooleanReConverter}}" />
+            <Button
+                Width="200"
+                Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter2}}"
+                Command="{Binding DisconnectCommand}"
+                Content="{Binding [Close], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding Com.IsConnected}" />
+        </UniformGrid>
+
+        <Border
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            Margin="5"
+            BorderThickness="1">
+            <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" />
+        </Border>
+        <GroupBox
+            Grid.Row="3"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="5"
+            Style="{StaticResource GroupBoxTab}">
+            <GroupBox.Header>
+                <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
+                    <TextBlock
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource TextBlockDefault}"
+                        Text="{Binding [AlarmProtocol], Source={x:Static local:CLang.s_Instance}}" />
+                    <Button
+                        Width="60"
+                        Margin="10,3"
+                        Command="{Binding DelAlarmCommand}"
+                        CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
+                        Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonDanger}" />
+                    <Button
+                        Width="60"
+                        Margin="10,3"
+                        Command="{Binding SetAlarmCommand}"
+                        CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
+                        Content="{Binding [Set], Source={x:Static local:CLang.s_Instance}}"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonPrimary}" />
+                    <Button
+                        Width="60"
+                        Margin="10,3"
+                        Command="{Binding AddAlarmCommand}"
+                        Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                        DockPanel.Dock="Right"
+                        Style="{DynamicResource ButtonPrimary}" />
+                </DockPanel>
+            </GroupBox.Header>
+            <DataGrid
+                x:Name="dataGrid1"
+                hc:DataGridAttach.ShowRowNumber="True"
+                AutoGenerateColumns="False"
+                HeadersVisibility="All"
+                ItemsSource="{Binding Setting.AlarmProtocols}"
+                RowHeaderWidth="30"
+                SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="350"
+                        Binding="{Binding Name}"
+                        Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+        <Grid
+            Name="testGrid"
+            Grid.Row="1"
+            Grid.RowSpan="4" />
+    </Grid>
+</hc:Window>

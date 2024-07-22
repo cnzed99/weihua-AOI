@@ -32,8 +32,6 @@ namespace WH.Entity.CommonLib
         /// <summary>
         /// 20240712 TCG
         /// 名称
-        /// 20240716 李焕彬
-        /// 要增加Browsable(false),不然会在属性编辑器显示
         /// </summary>
         [ObservableProperty]
         string name;

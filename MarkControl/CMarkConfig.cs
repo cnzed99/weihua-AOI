@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -79,7 +80,7 @@ namespace MarkControl
         [property: Description("TriggerIdInfo")]
         private int triggerId = 0;
 
-        private int encoderMode = 1;
+        private EMENCODERMODE encoderMode = EMENCODERMODE.EMENCODEMONE;
 
         /// <summary>
         /// 2024.7.15 李焕彬
@@ -88,7 +89,8 @@ namespace MarkControl
         [property: Category("1.卡配置")]
         [property: DisplayName("14.编码器倍频")]
         [property: Description("EncoderModeInfo")]
-        public int EncoderMode
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        public EMENCODERMODE EncoderMode
         {
             get { return encoderMode; }
             set
@@ -106,7 +108,8 @@ namespace MarkControl
         [property: Category("1.卡配置")]
         [property: DisplayName("15.编码器计数方向")]
         [property: Description("EncoderDirInfo")]
-        private int encoderDir = 0;
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        private EMENCODEDIR encoderDir = EMENCODEDIR.EMENCODEDIRFORW;
 
         /// <summary>
         /// 2024.7.15 李焕彬
@@ -117,7 +120,8 @@ namespace MarkControl
         [property: DisplayName("16.触发输出模式")]
         [property: Description("OutModeInfo")]
         [property: ReadOnly(true)]
-        private int outMode = 1;
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        private EMOUTMODE outMode = EMOUTMODE.EMOUTMODEPULSE;
 
         /// <summary>
         /// 2024.7.15 李焕彬
@@ -128,7 +132,8 @@ namespace MarkControl
         [property: DisplayName("17.触发模式")]
         [property: Description("TrigModeInfo")]
         [property: ReadOnly(true)]
-        private int trigMode = 0;
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        private EMTRIGMODE trigMode = EMTRIGMODE.EMTRIGMODEPULSE;
 
         /// <summary>
         /// 2024.7.15 李焕彬
@@ -136,7 +141,7 @@ namespace MarkControl
         /// </summary>
         [ObservableProperty]
         [property: Category("1.卡配置")]
-        [property: DisplayName("18.脉冲宽度")]
+        [property: DisplayName("18.脉冲宽度(10ns)")]
         [property: Description("PulseWidthInfo")]
         private int pulseWidth = 100000;
 
@@ -156,7 +161,7 @@ namespace MarkControl
         /// </summary>
         [ObservableProperty]
         [property: Category("2.打标补偿")]
-        [property: DisplayName("11.打标补偿")]
+        [property: DisplayName("11.打标补偿(mm)")]
         [property: Description("OffestInfo")]
         private double offest = 0;
 
@@ -186,7 +191,7 @@ namespace MarkControl
         /// 滚轮直径
         /// </summary>
         [property: Category("3.编码器信息")]
-        [property: DisplayName("12.滚轮直径")]
+        [property: DisplayName("12.滚轮直径(mm)")]
         [property: Description("DiameterInfo")]
         public double Diameter
         {
@@ -216,7 +221,7 @@ namespace MarkControl
         /// </summary>
         private void UpdateMmPerPulse()
         {
-            MmPerPulse = double.Pi * Diameter / (PulsePerRound * EncoderMode);
+            MmPerPulse = double.Pi * Diameter / ((int)PulsePerRound * (int)EncoderMode);
         }
 
         /// <summary>
@@ -228,5 +233,103 @@ namespace MarkControl
         {
             return Offest / MmPerPulse;
         }
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 编码器倍频
+    /// </summary>
+    public enum EMENCODERMODE
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 1倍频
+        /// </summary>
+        [EnumString("1倍频", "1")]
+        EMENCODEMONE = 1,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 2倍频
+        /// </summary>
+        [EnumString("2倍频", "2")]
+        EMENCODEMTWO = 2,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 4倍频
+        /// </summary>
+        [EnumString("4倍频", "4")]
+        EMENCODEMFOUR = 4,
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 编码器计数方向
+    /// </summary>
+    public enum EMENCODEDIR
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 正向
+        /// </summary>
+        [EnumString("正向", "Forward")]
+        EMENCODEDIRFORW = 0,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 反向
+        /// </summary>
+        [EnumString("反向", "Back")]
+        EMENCODEDIRBACK = 1,
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 触发输出模式
+    /// </summary>
+    public enum EMOUTMODE
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// GPIO
+        /// </summary>
+        [EnumString("GPIO", "GPIO")]
+        EMOUTMODEGPIO = 0,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 脉冲
+        /// </summary>
+        [EnumString("脉冲", "PULSE")]
+        EMOUTMODEPULSE = 1,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// PWM
+        /// </summary>
+        [EnumString("PWM", "PWM")]
+        EMOUTMODEPWM = 2,
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 触发模式
+    /// </summary>
+    public enum EMTRIGMODE
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 脉冲信号
+        /// </summary>
+        [EnumString("脉冲信号", "Pulse")]
+        EMTRIGMODEPULSE = 0,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 电平翻转
+        /// </summary>
+        [EnumString("电平翻转", "Level")]
+        EMTRIGMODELEVEL = 1,
     }
 }

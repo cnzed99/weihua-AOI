@@ -314,7 +314,7 @@ namespace 断面毛刺检测软件.Views
                     };
                     if (random.Next(10) > 5)
                         cell.IsOK = true;
-                    //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
+                    //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
                     // _waitTriggerImageQueue.Enqueue(cell);
                     cell.GetImageExcute(!MMainVM.isStart, 0);
 

@@ -355,4 +355,7 @@
   <data name="20.纠偏感应值" xml:space="preserve">
     <value>20.纠偏感应值</value>
   </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>写入地址M不能为空！</value>
+  </data>
 </root>

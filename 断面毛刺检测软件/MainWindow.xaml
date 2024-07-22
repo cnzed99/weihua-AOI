@@ -98,7 +98,10 @@
                             <svg1:SVGImage Source="/Resources/图标/相机通讯/相机.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [Communication], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="CommSet_Click"
+                        Header="{Binding [Communication], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/相机通讯/通讯.svg" />
                         </MenuItem.Icon>

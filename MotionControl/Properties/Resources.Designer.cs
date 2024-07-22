@@ -799,6 +799,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 写入地址M不能为空！ 的本地化字符串。
+        /// </summary>
+        public static string SetOutputError {
+            get {
+                return ResourceManager.GetString("SetOutputError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 状态 的本地化字符串。
         /// </summary>
         public static string State {

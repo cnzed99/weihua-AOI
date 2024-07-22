@@ -10,10 +10,10 @@
     d:Height="450"
     d:Width="800"
     Background="{DynamicResource RegionBrush}"
+    Icon="/Resources/图片/工具/离线检测.png"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     Topmost="True"
-    Icon="/Resources/图片/工具/离线检测.png"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
     mc:Ignorable="d">

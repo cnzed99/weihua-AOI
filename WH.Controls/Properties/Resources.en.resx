@@ -207,4 +207,16 @@
   <data name="ModifyError" xml:space="preserve">
     <value>Modify Error:</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Collection" xml:space="preserve">
+    <value>(Collection)</value>
+  </data>
+  <data name="CollectionEditor" xml:space="preserve">
+    <value>Collection Editor</value>
+  </data>
 </root>

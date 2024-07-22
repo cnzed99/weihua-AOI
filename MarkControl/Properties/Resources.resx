@@ -198,14 +198,14 @@
   <data name="17.触发模式" xml:space="preserve">
     <value>17.触发模式</value>
   </data>
-  <data name="18.脉冲宽度" xml:space="preserve">
-    <value>18.脉冲宽度</value>
+  <data name="18.脉冲宽度(10ns)" xml:space="preserve">
+    <value>18.脉冲宽度(10ns)</value>
   </data>
   <data name="19.比较器号" xml:space="preserve">
     <value>19.比较器号</value>
   </data>
-  <data name="11.打标补偿" xml:space="preserve">
-    <value>11.打标补偿</value>
+  <data name="11.打标补偿(mm)" xml:space="preserve">
+    <value>11.打标补偿(mm)</value>
   </data>
   <data name="2.打标补偿" xml:space="preserve">
     <value>2.打标补偿</value>
@@ -249,8 +249,8 @@
   <data name="11.一圈脉冲数" xml:space="preserve">
     <value>11.一圈脉冲数</value>
   </data>
-  <data name="12.滚轮直径" xml:space="preserve">
-    <value>12.滚轮直径</value>
+  <data name="12.滚轮直径(mm)" xml:space="preserve">
+    <value>12.滚轮直径(mm)</value>
   </data>
   <data name="13.毫米每脉冲" xml:space="preserve">
     <value>13.毫米每脉冲</value>

@@ -4,8 +4,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\外接通讯数据.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resources\" />
+	  <Resource Include="Resources\外接通讯数据.png" />
 	</ItemGroup>
 
 </Project>

@@ -509,6 +509,11 @@ namespace MotionControl
         [RelayCommand]
         public void SetOutput(CSignalOut signalOut)
         {
+            if (String.IsNullOrEmpty(signalOut.AddrM))
+            {
+                Growl.Error(Properties.Resources.SetOutputError);
+                return;
+            }
             modbusTcp.WriteCoilM(signalOut.AddrM, signalOut.Set);
         }
 

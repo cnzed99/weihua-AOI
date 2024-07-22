@@ -545,7 +545,7 @@ namespace WH.DetectSystem.ViewModels
                     //    strbuilder.Append(cell.GetImageTime.TotalMilliseconds.ToString("F2"));
                     //    _infoLog.Enqueue(strbuilder.ToString());
 
-                    //    // _infoLog.Enqueue($"{$"[{CCameraBase.WaitGetImageQueue.Name}]",-10}{cell.ID,-8}{"图片采集完成",-20}耗时 {cell.GetImageTime.TotalMilliseconds:0.00}");
+                    //    // _infoLog.Enqueue($"{$"[{CCameraBase.WaitGetImageQueue.s_Name}]",-10}{cell.ID,-8}{"图片采集完成",-20}耗时 {cell.GetImageTime.TotalMilliseconds:0.00}");
 
                     //    // this._waitPreImageQueue.Enqueue(cell);
                     //    //显示图片到窗口
@@ -712,7 +712,7 @@ namespace WH.DetectSystem.ViewModels
                         }
                         //cell.Detection = new CellDetection()
                         //{
-                        //    Name = "掉料0",
+                        //    s_Name = "掉料0",
                         //    DefectFilter = MaociFilter.SpeciesFilters[0].RecipeDefects[0].DefectFilters[0],
 
                         //};
@@ -761,7 +761,7 @@ namespace WH.DetectSystem.ViewModels
                             //        {
                             //            HWin_DispProduct.Background = WpfWFTransfer.WFColor2Wpf(cell.QualityColor);
 
-                            //            textBuilder.AppendLine(cell.Detection.Name);
+                            //            textBuilder.AppendLine(cell.Detection.s_Name);
 
                             //            color = cell.QualityColorStr;
                             //            //窗口左上角显示定级缺陷名称，信号值

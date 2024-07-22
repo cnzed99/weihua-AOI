@@ -4,11 +4,11 @@
     <OutputType>WinExe</OutputType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm"  />
-    <PackageReference Include="HandyControl" />
-    <PackageReference Include="System.Threading.Channels" />
-    <PackageReference Include="ValueConverters" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+		<PackageReference Include="ValueConverters" />
+	</ItemGroup>
 
 </Project>

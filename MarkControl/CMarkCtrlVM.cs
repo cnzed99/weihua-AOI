@@ -130,19 +130,19 @@ namespace MarkControl
             CMiniEcatLib.Mb_E4O4Encoder_Initial(
                 MarkConfig.SlaveId,
                 MarkConfig.EncoderId,
-                MarkConfig.EncoderMode,
-                MarkConfig.EncoderDir,
+                (int)MarkConfig.EncoderMode,
+                (int)MarkConfig.EncoderDir,
                 1
             );
             //编码器数值清零,打开软件时跟相机同步清零
             CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(MarkConfig.SlaveId, MarkConfig.EncoderId, 0);
             //设置触发输出模式
-            CMiniEcatLib.Mb_E4O4TrigOut_SetOutMode(MarkConfig.SlaveId, MarkConfig.OutMode);
+            CMiniEcatLib.Mb_E4O4TrigOut_SetOutMode(MarkConfig.SlaveId, (int)MarkConfig.OutMode);
             //设置触发模式
             CMiniEcatLib.Mb_E4O4TrigOut_SetTrigMode(
                 MarkConfig.SlaveId,
                 MarkConfig.TriggerId,
-                MarkConfig.TrigMode
+                (int)MarkConfig.TrigMode
             );
             //设置脉宽
             CMiniEcatLib.Mb_E4O4TrigOut_SetPulseWidth(

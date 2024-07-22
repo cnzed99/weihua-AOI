@@ -340,21 +340,23 @@
             <UniformGrid Columns="1">
                 <GroupBox Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Header>
-                        <DockPanel>
+                        <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
                             <TextBlock Text="{Binding [InputIO], Source={x:Static local:CLang.s_Instance}}" />
+                            <Button
+                                Width="80"
+                                Margin="20,2"
+                                Command="{Binding DelInputCommand}"
+                                CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItems}"
+                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                DockPanel.Dock="Right"
+                                Style="{DynamicResource ButtonDanger}" />
                             <Button
                                 Width="80"
                                 Margin="10,2"
                                 Command="{Binding AddInputCommand}"
                                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                                DockPanel.Dock="Right"
                                 Style="{DynamicResource ButtonPrimary}" />
-                            <Button
-                                Width="80"
-                                Margin="10,2"
-                                Command="{Binding DelInputCommand}"
-                                CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItems}"
-                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonDanger}" />
                         </DockPanel>
                     </GroupBox.Header>
                     <DataGrid
@@ -373,7 +375,7 @@
                                 IsReadOnly="True" />
                             <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                             <DataGridTextColumn
-                                Width="300"
+                                Width="180"
                                 Binding="{Binding Description}"
                                 Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
                         </DataGrid.Columns>
@@ -381,21 +383,23 @@
                 </GroupBox>
                 <GroupBox Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Header>
-                        <DockPanel>
+                        <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
                             <TextBlock Text="{Binding [OutputIO], Source={x:Static local:CLang.s_Instance}}" />
+                            <Button
+                                Width="80"
+                                Margin="20,2"
+                                Command="{Binding DelOutputCommand}"
+                                CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"
+                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                DockPanel.Dock="Right"
+                                Style="{DynamicResource ButtonDanger}" />
                             <Button
                                 Width="80"
                                 Margin="10,2"
                                 Command="{Binding AddOutputCommand}"
                                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                                DockPanel.Dock="Right"
                                 Style="{DynamicResource ButtonPrimary}" />
-                            <Button
-                                Width="80"
-                                Margin="10,2"
-                                Command="{Binding DelOutputCommand}"
-                                CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"
-                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonDanger}" />
                         </DockPanel>
                     </GroupBox.Header>
                     <DataGrid
@@ -424,7 +428,7 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}" />
                             <DataGridTextColumn
-                                Width="300"
+                                Width="180"
                                 Binding="{Binding Description}"
                                 Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
                         </DataGrid.Columns>
@@ -454,27 +458,31 @@
             </TabItem.Resources>
             <GroupBox Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
-                    <DockPanel>
+                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
+                        <TextBlock Text="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}" />
+                        <Button
+                            Width="80"
+                            Margin="20,2"
+                            Command="{Binding DelRegisterCommand}"
+                            CommandParameter="{Binding ElementName=dataGrid3, Path=SelectedItems}"
+                            Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                            DockPanel.Dock="Right"
+                            Style="{DynamicResource ButtonDanger}" />
                         <Button
                             Width="80"
                             Margin="10,2"
                             Command="{Binding WriteRegisterCommand}"
                             Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            DockPanel.Dock="Right"
                             Style="{DynamicResource ButtonPrimary}" />
-                        <TextBlock Text="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}" />
                         <Button
                             Width="80"
                             Margin="10,2"
                             Command="{Binding AddRegisterCommand}"
                             Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                            DockPanel.Dock="Right"
                             Style="{DynamicResource ButtonPrimary}" />
-                        <Button
-                            Width="80"
-                            Margin="10,2"
-                            Command="{Binding DelRegisterCommand}"
-                            CommandParameter="{Binding ElementName=dataGrid3, Path=SelectedItems}"
-                            Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                            Style="{DynamicResource ButtonDanger}" />
+
                     </DockPanel>
                 </GroupBox.Header>
                 <DataGrid
@@ -493,7 +501,7 @@
                         <DataGridTextColumn Binding="{Binding ValueWrite}" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}" />
                         <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                         <DataGridTextColumn
-                            Width="300"
+                            Width="180"
                             Binding="{Binding Description}"
                             Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
                     </DataGrid.Columns>
@@ -503,10 +511,11 @@
         <TabItem Header="{Binding [AxisConfig], Source={x:Static local:CLang.s_Instance}}">
             <GroupBox Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
-                    <DockPanel>
+                    <DockPanel LastChildFill="False" Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}">
                         <Button
+                            DockPanel.Dock="Right"
                             Width="80"
-                            Margin="10,2"
+                            Margin="20,2"
                             Command="{Binding WriteRegisterFixCommand}"
                             Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                             Style="{DynamicResource ButtonPrimary}" />

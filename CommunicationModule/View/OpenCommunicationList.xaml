@@ -1,0 +1,97 @@
+﻿<hc:Window
+    x:Class="CommunicationModule.OpenCommunicationList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:CommunicationModule"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding [CommList], Source={x:Static local:CLang.s_Instance}}"
+    Width="800"
+    Height="300"
+    Background="{DynamicResource SecondaryRegionBrush}"
+    Icon="/CommunicationModule;component/Resources/外接通讯数据.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <d:Window.DataContext>
+        <local:COpenCommunicationListVM />
+    </d:Window.DataContext>
+    <hc:Window.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
+        </ResourceDictionary>
+    </hc:Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <UniformGrid Rows="1">
+            <Button
+                Width="80"
+                Command="{Binding AddCommand}"
+                Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                Style="{DynamicResource ButtonPrimary}" />
+            <Button
+                Width="80"
+                Command="{Binding SetCommand}"
+                CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
+                Content="{Binding [Set], Source={x:Static local:CLang.s_Instance}}"
+                Style="{DynamicResource ButtonPrimary}" />
+            <Button
+                Width="80"
+                Command="{Binding DelCommand}"
+                CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
+                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                Style="{DynamicResource ButtonDanger}" />
+        </UniformGrid>
+        <DataGrid
+            x:Name="dataGrid1"
+            Grid.Row="1"
+            hc:DataGridAttach.ShowRowNumber="True"
+            AutoGenerateColumns="False"
+            HeadersVisibility="All"
+            ItemsSource="{Binding Settings}"
+            RowHeaderWidth="30"
+            SelectionMode="Single">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SetCommand}" CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Binding="{Binding Name}"
+                    Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding CommType}"
+                    Header="{Binding [Type], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding ConnectDevice, Converter={StaticResource StringAttrEnumConverter}}"
+                    Header="{Binding [Machine], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding RemoteIP}"
+                    Header="{Binding [IP], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding Enable}"
+                    Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding Guid}"
+                    Header="GUID"
+                    IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</hc:Window>

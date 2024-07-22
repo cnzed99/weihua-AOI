@@ -61,6 +61,231 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 1.名称 的本地化字符串。
+        /// </summary>
+        public static string _1_名称 {
+            get {
+                return ResourceManager.GetString("1.名称", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.基础设置 的本地化字符串。
+        /// </summary>
+        public static string _1_基础设置 {
+            get {
+                return ResourceManager.GetString("1.基础设置", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.字段类型 的本地化字符串。
+        /// </summary>
+        public static string _1_字段类型 {
+            get {
+                return ResourceManager.GetString("1.字段类型", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.控制相机 的本地化字符串。
+        /// </summary>
+        public static string _1_控制相机 {
+            get {
+                return ResourceManager.GetString("1.控制相机", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.本地IP 的本地化字符串。
+        /// </summary>
+        public static string _1_本地IP {
+            get {
+                return ResourceManager.GetString("1.本地IP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.相机名 的本地化字符串。
+        /// </summary>
+        public static string _1_相机名 {
+            get {
+                return ResourceManager.GetString("1.相机名", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1.连接设备 的本地化字符串。
+        /// </summary>
+        public static string _1_连接设备 {
+            get {
+                return ResourceManager.GetString("1.连接设备", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.字段名 的本地化字符串。
+        /// </summary>
+        public static string _2_字段名 {
+            get {
+                return ResourceManager.GetString("2.字段名", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.本地端口 的本地化字符串。
+        /// </summary>
+        public static string _2_本地端口 {
+            get {
+                return ResourceManager.GetString("2.本地端口", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.目标IP 的本地化字符串。
+        /// </summary>
+        public static string _2_目标IP {
+            get {
+                return ResourceManager.GetString("2.目标IP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.结果分组 的本地化字符串。
+        /// </summary>
+        public static string _2_结果分组 {
+            get {
+                return ResourceManager.GetString("2.结果分组", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 2.通讯类型 的本地化字符串。
+        /// </summary>
+        public static string _2_通讯类型 {
+            get {
+                return ResourceManager.GetString("2.通讯类型", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 3.字段索引 的本地化字符串。
+        /// </summary>
+        public static string _3_字段索引 {
+            get {
+                return ResourceManager.GetString("3.字段索引", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 3.当前版本 的本地化字符串。
+        /// </summary>
+        public static string _3_当前版本 {
+            get {
+                return ResourceManager.GetString("3.当前版本", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 3.目标端口 的本地化字符串。
+        /// </summary>
+        public static string _3_目标端口 {
+            get {
+                return ResourceManager.GetString("3.目标端口", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 3.默认转码类型 的本地化字符串。
+        /// </summary>
+        public static string _3_默认转码类型 {
+            get {
+                return ResourceManager.GetString("3.默认转码类型", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 4.字段值 的本地化字符串。
+        /// </summary>
+        public static string _4_字段值 {
+            get {
+                return ResourceManager.GetString("4.字段值", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 4.是否启用 的本地化字符串。
+        /// </summary>
+        public static string _4_是否启用 {
+            get {
+                return ResourceManager.GetString("4.是否启用", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 4.默认进制转换 的本地化字符串。
+        /// </summary>
+        public static string _4_默认进制转换 {
+            get {
+                return ResourceManager.GetString("4.默认进制转换", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 5.字段长度 的本地化字符串。
+        /// </summary>
+        public static string _5_字段长度 {
+            get {
+                return ResourceManager.GetString("5.字段长度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 5.默认转码类型 的本地化字符串。
+        /// </summary>
+        public static string _5_默认转码类型 {
+            get {
+                return ResourceManager.GetString("5.默认转码类型", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 6.转码类型 的本地化字符串。
+        /// </summary>
+        public static string _6_转码类型 {
+            get {
+                return ResourceManager.GetString("6.转码类型", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 6.默认进制转换 的本地化字符串。
+        /// </summary>
+        public static string _6_默认进制转换 {
+            get {
+                return ResourceManager.GetString("6.默认进制转换", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 7.进制转换 的本地化字符串。
+        /// </summary>
+        public static string _7_进制转换 {
+            get {
+                return ResourceManager.GetString("7.进制转换", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 8.说明 的本地化字符串。
+        /// </summary>
+        public static string _8_说明 {
+            get {
+                return ResourceManager.GetString("8.说明", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 添加 的本地化字符串。
         /// </summary>
         public static string Add {
@@ -79,11 +304,38 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 报警协议 的本地化字符串。
+        /// </summary>
+        public static string AlarmProtocol {
+            get {
+                return ResourceManager.GetString("AlarmProtocol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 断开 的本地化字符串。
         /// </summary>
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击关闭界面 的本地化字符串。
+        /// </summary>
+        public static string CloseInfo {
+            get {
+                return ResourceManager.GetString("CloseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt; 的本地化字符串。
+        /// </summary>
+        public static string CommInfo {
+            get {
+                return ResourceManager.GetString("CommInfo", resourceCulture);
             }
         }
         
@@ -115,6 +367,33 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 已连接 的本地化字符串。
+        /// </summary>
+        public static string Connected {
+            get {
+                return ResourceManager.GetString("Connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;连接远程设备出现异常: 的本地化字符串。
+        /// </summary>
+        public static string ConnectError {
+            get {
+                return ResourceManager.GetString("ConnectError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击连接 的本地化字符串。
+        /// </summary>
+        public static string ConnectInfo {
+            get {
+                return ResourceManager.GetString("ConnectInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 转码后↓字段值 的本地化字符串。
         /// </summary>
         public static string ConvertData {
@@ -129,6 +408,15 @@ namespace CommunicationModule.Properties {
         public static string Del {
             get {
                 return ResourceManager.GetString("Del", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击断开连接: 的本地化字符串。
+        /// </summary>
+        public static string DisConectInfo {
+            get {
+                return ResourceManager.GetString("DisConectInfo", resourceCulture);
             }
         }
         
@@ -169,6 +457,24 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Ping出错, 的本地化字符串。
+        /// </summary>
+        public static string PingError {
+            get {
+                return ResourceManager.GetString("PingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击执行Ping 的本地化字符串。
+        /// </summary>
+        public static string PingInfo {
+            get {
+                return ResourceManager.GetString("PingInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 接收数据 的本地化字符串。
         /// </summary>
         public static string RecvData {
@@ -178,11 +484,56 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 接收信号转换出错: 的本地化字符串。
+        /// </summary>
+        public static string RecvError {
+            get {
+                return ResourceManager.GetString("RecvError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 收到触发信号！ 的本地化字符串。
+        /// </summary>
+        public static string RecvTrigger {
+            get {
+                return ResourceManager.GetString("RecvTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 保存 的本地化字符串。
         /// </summary>
         public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存通讯配置文件出错, 的本地化字符串。
+        /// </summary>
+        public static string SaveError {
+            get {
+                return ResourceManager.GetString("SaveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击保存 的本地化字符串。
+        /// </summary>
+        public static string SaveInfo {
+            get {
+                return ResourceManager.GetString("SaveInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;保存成功 的本地化字符串。
+        /// </summary>
+        public static string SaveSuccesInfo {
+            get {
+                return ResourceManager.GetString("SaveSuccesInfo", resourceCulture);
             }
         }
         
@@ -201,6 +552,24 @@ namespace CommunicationModule.Properties {
         public static string SendData {
             get {
                 return ResourceManager.GetString("SendData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 发送数据出错, 的本地化字符串。
+        /// </summary>
+        public static string SendError {
+            get {
+                return ResourceManager.GetString("SendError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯设置界面=&gt;点击发送: 的本地化字符串。
+        /// </summary>
+        public static string SendInfo {
+            get {
+                return ResourceManager.GetString("SendInfo", resourceCulture);
             }
         }
         
@@ -237,6 +606,69 @@ namespace CommunicationModule.Properties {
         public static string Type {
             get {
                 return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 受控相机 的本地化字符串。
+        /// </summary>
+        public static string 受控相机 {
+            get {
+                return ResourceManager.GetString("受控相机", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 基本参数 的本地化字符串。
+        /// </summary>
+        public static string 基本参数 {
+            get {
+                return ResourceManager.GetString("基本参数", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 应用到 的本地化字符串。
+        /// </summary>
+        public static string 应用到 {
+            get {
+                return ResourceManager.GetString("应用到", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 应用相机 的本地化字符串。
+        /// </summary>
+        public static string 应用相机 {
+            get {
+                return ResourceManager.GetString("应用相机", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择结果分组,同一组的检测结果合并发送 的本地化字符串。
+        /// </summary>
+        public static string 选择结果分组_同一组的检测结果合并发送 {
+            get {
+                return ResourceManager.GetString("选择结果分组,同一组的检测结果合并发送", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯基础信息 的本地化字符串。
+        /// </summary>
+        public static string 通讯基础信息 {
+            get {
+                return ResourceManager.GetString("通讯基础信息", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯基础设置 的本地化字符串。
+        /// </summary>
+        public static string 通讯基础设置 {
+            get {
+                return ResourceManager.GetString("通讯基础设置", resourceCulture);
             }
         }
     }

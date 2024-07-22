@@ -157,4 +157,148 @@
   <data name="CommSet" xml:space="preserve">
     <value>通讯设置</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="CloseInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击关闭界面</value>
+  </data>
+  <data name="SaveInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击保存</value>
+  </data>
+  <data name="SaveSuccesInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;保存成功</value>
+  </data>
+  <data name="SaveError" xml:space="preserve">
+    <value>保存通讯配置文件出错,</value>
+  </data>
+  <data name="ConnectInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击连接</value>
+  </data>
+  <data name="ConnectError" xml:space="preserve">
+    <value>通讯设置界面=&gt;连接远程设备出现异常:</value>
+  </data>
+  <data name="DisConectInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击断开连接:</value>
+  </data>
+  <data name="SendInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击发送:</value>
+  </data>
+  <data name="SendError" xml:space="preserve">
+    <value>发送数据出错,</value>
+  </data>
+  <data name="PingInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击执行Ping</value>
+  </data>
+  <data name="PingError" xml:space="preserve">
+    <value>Ping出错,</value>
+  </data>
+  <data name="RecvTrigger" xml:space="preserve">
+    <value>收到触发信号！</value>
+  </data>
+  <data name="CommInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;</value>
+  </data>
+  <data name="RecvError" xml:space="preserve">
+    <value>接收信号转换出错:</value>
+  </data>
+  <data name="AlarmProtocol" xml:space="preserve">
+    <value>报警协议</value>
+  </data>
+  <data name="通讯基础信息" xml:space="preserve">
+    <value>通讯基础信息</value>
+  </data>
+  <data name="受控相机" xml:space="preserve">
+    <value>受控相机</value>
+  </data>
+  <data name="通讯基础设置" xml:space="preserve">
+    <value>通讯基础设置</value>
+  </data>
+  <data name="1.名称" xml:space="preserve">
+    <value>1.名称</value>
+  </data>
+  <data name="2.通讯类型" xml:space="preserve">
+    <value>2.通讯类型</value>
+  </data>
+  <data name="3.当前版本" xml:space="preserve">
+    <value>3.当前版本</value>
+  </data>
+  <data name="1.连接设备" xml:space="preserve">
+    <value>1.连接设备</value>
+  </data>
+  <data name="2.目标IP" xml:space="preserve">
+    <value>2.目标IP</value>
+  </data>
+  <data name="3.目标端口" xml:space="preserve">
+    <value>3.目标端口</value>
+  </data>
+  <data name="4.是否启用" xml:space="preserve">
+    <value>4.是否启用</value>
+  </data>
+  <data name="5.默认转码类型" xml:space="preserve">
+    <value>5.默认转码类型</value>
+  </data>
+  <data name="6.默认进制转换" xml:space="preserve">
+    <value>6.默认进制转换</value>
+  </data>
+  <data name="1.控制相机" xml:space="preserve">
+    <value>1.控制相机</value>
+  </data>
+  <data name="1.相机名" xml:space="preserve">
+    <value>1.相机名</value>
+  </data>
+  <data name="2.结果分组" xml:space="preserve">
+    <value>2.结果分组</value>
+  </data>
+  <data name="选择结果分组,同一组的检测结果合并发送" xml:space="preserve">
+    <value>选择结果分组,同一组的检测结果合并发送</value>
+  </data>
+  <data name="基本参数" xml:space="preserve">
+    <value>基本参数</value>
+  </data>
+  <data name="1.字段类型" xml:space="preserve">
+    <value>1.字段类型</value>
+  </data>
+  <data name="2.字段名" xml:space="preserve">
+    <value>2.字段名</value>
+  </data>
+  <data name="3.字段索引" xml:space="preserve">
+    <value>3.字段索引</value>
+  </data>
+  <data name="4.字段值" xml:space="preserve">
+    <value>4.字段值</value>
+  </data>
+  <data name="5.字段长度" xml:space="preserve">
+    <value>5.字段长度</value>
+  </data>
+  <data name="6.转码类型" xml:space="preserve">
+    <value>6.转码类型</value>
+  </data>
+  <data name="7.进制转换" xml:space="preserve">
+    <value>7.进制转换</value>
+  </data>
+  <data name="8.说明" xml:space="preserve">
+    <value>8.说明</value>
+  </data>
+  <data name="应用相机" xml:space="preserve">
+    <value>应用相机</value>
+  </data>
+  <data name="应用到" xml:space="preserve">
+    <value>应用到</value>
+  </data>
+  <data name="1.基础设置" xml:space="preserve">
+    <value>1.基础设置</value>
+  </data>
+  <data name="1.本地IP" xml:space="preserve">
+    <value>1.本地IP</value>
+  </data>
+  <data name="2.本地端口" xml:space="preserve">
+    <value>2.本地端口</value>
+  </data>
+  <data name="3.默认转码类型" xml:space="preserve">
+    <value>3.默认转码类型</value>
+  </data>
+  <data name="4.默认进制转换" xml:space="preserve">
+    <value>4.默认进制转换</value>
+  </data>
 </root>

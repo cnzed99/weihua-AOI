@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AlarmSetCtrl;
 using Autofac;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.Messaging;
 using DataQuery;
 using HandyControl.Controls;
@@ -210,6 +211,7 @@ namespace 断面毛刺检测软件
                 CMainList.SystemSettings.SaveParameter();
                 CMainList.MotionCtrlVM.SaveParameter();
                 CMainList.MarkCtrlVM.SaveParameter();
+                CMainList.CommManagement.CloseAllComm();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Environment.Exit(0);
             }
@@ -598,6 +600,12 @@ namespace 断面毛刺检测软件
                     }
                 })
             );
+        }
+
+        private void CommSet_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCommunicationList openCommunicationList = new OpenCommunicationList();
+            openCommunicationList.Show();
         }
     }
 }

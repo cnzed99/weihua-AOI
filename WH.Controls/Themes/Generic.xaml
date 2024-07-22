@@ -7,5 +7,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:CPropertyGridLang}" />
+    <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type local:EnumComboBox}" />
+    <Style BasedOn="{StaticResource ButtonDefault}" TargetType="{x:Type local:CCollectionButton}" />
 
 </ResourceDictionary>

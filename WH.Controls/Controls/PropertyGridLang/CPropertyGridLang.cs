@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -18,6 +19,7 @@ using HandyControl.Controls;
 using HandyControl.Data;
 using HandyControl.Interactivity;
 using HandyControl.Tools.Extension;
+using WH.Entity.Attribute;
 
 namespace WH.Controls
 {
@@ -381,6 +383,10 @@ namespace WH.Controls
             if (types.Contains(propertyDescriptor.PropertyType))
             {
                 propertyItem.Editor = new PlainTextPropertyEditor();
+            }
+            else if (typeof(IList).IsAssignableFrom(propertyDescriptor.PropertyType))
+            {
+                propertyItem.Editor = new CCollectionPropertyEditor();
             }
             else
             {

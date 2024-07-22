@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WH.Entity
 {
@@ -81,6 +82,40 @@ namespace WH.Entity
             else
             {
                 //ZzMessageBox.Show(fileName+"文件不存在！");
+                return default(T);
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.18 李焕彬
+        /// 反序列化加载配方配置文件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName">文件名</param>
+        /// <returns>文件不存在时返回default值</returns>
+        public static T LoadDeserialize<T>(string fileName)
+            where T : new()
+        {
+            if (
+                File.Exists(fileName)
+                || File.Exists(fileName = fileName.Replace(".whrecipe", ".Json"))
+            )
+            {
+                using (StreamReader reader = File.OpenText(fileName))
+                {
+                    string bt64 = reader.ReadToEnd();
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<T>(bt64);
+                    }
+                    catch (Exception)
+                    {
+                        return default(T);
+                    }
+                }
+            }
+            else
+            {
                 return default(T);
             }
         }

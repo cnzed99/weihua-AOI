@@ -177,4 +177,148 @@
   <data name="CommSet" xml:space="preserve">
     <value>CommSet</value>
   </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="CloseInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to close the screen</value>
+  </data>
+  <data name="SaveInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to save</value>
+  </data>
+  <data name="SaveSuccesInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Saved successfully</value>
+  </data>
+  <data name="SaveError" xml:space="preserve">
+    <value>Error saving communication profile,</value>
+  </data>
+  <data name="ConnectInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to connect</value>
+  </data>
+  <data name="ConnectError" xml:space="preserve">
+    <value>Communication settings screen = &gt; abnormal connection to remote device:</value>
+  </data>
+  <data name="DisConectInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to disconnect:</value>
+  </data>
+  <data name="SendInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to send:</value>
+  </data>
+  <data name="SendError" xml:space="preserve">
+    <value>Error sending data,</value>
+  </data>
+  <data name="PingInfo" xml:space="preserve">
+    <value>Communication settings screen = &gt; Click to execute Ping</value>
+  </data>
+  <data name="PingError" xml:space="preserve">
+    <value>Ping error,</value>
+  </data>
+  <data name="RecvTrigger" xml:space="preserve">
+    <value>Trigger signal received!</value>
+  </data>
+  <data name="CommInfo" xml:space="preserve">
+    <value>Communication settings interface = &gt;</value>
+  </data>
+  <data name="RecvError" xml:space="preserve">
+    <value>Error converting received signal:</value>
+  </data>
+  <data name="AlarmProtocol" xml:space="preserve">
+    <value>AlarmProtocol</value>
+  </data>
+  <data name="通讯基础信息" xml:space="preserve">
+    <value>Communication Basics</value>
+  </data>
+  <data name="受控相机" xml:space="preserve">
+    <value>Controlled Camera</value>
+  </data>
+  <data name="通讯基础设置" xml:space="preserve">
+    <value>Communication infrastructure</value>
+  </data>
+  <data name="1.名称" xml:space="preserve">
+    <value>1.Name</value>
+  </data>
+  <data name="2.通讯类型" xml:space="preserve">
+    <value>2. Communication type</value>
+  </data>
+  <data name="3.当前版本" xml:space="preserve">
+    <value>3. Current version</value>
+  </data>
+  <data name="1.连接设备" xml:space="preserve">
+    <value>1. Connect the device</value>
+  </data>
+  <data name="2.目标IP" xml:space="preserve">
+    <value>2. Target IP</value>
+  </data>
+  <data name="3.目标端口" xml:space="preserve">
+    <value>3. Destination port</value>
+  </data>
+  <data name="4.是否启用" xml:space="preserve">
+    <value>4. Enable or not</value>
+  </data>
+  <data name="5.默认转码类型" xml:space="preserve">
+    <value>5. Default transcoding type</value>
+  </data>
+  <data name="6.默认进制转换" xml:space="preserve">
+    <value>6. Default Binary Conversion</value>
+  </data>
+  <data name="1.控制相机" xml:space="preserve">
+    <value>1. Control the camera</value>
+  </data>
+  <data name="1.相机名" xml:space="preserve">
+    <value>1. Camera name</value>
+  </data>
+  <data name="2.结果分组" xml:space="preserve">
+    <value>2. Results grouping</value>
+  </data>
+  <data name="选择结果分组,同一组的检测结果合并发送" xml:space="preserve">
+    <value>Select the result group, and the test results of the same group will be sent together</value>
+  </data>
+  <data name="基本参数" xml:space="preserve">
+    <value>Basic Parameter</value>
+  </data>
+  <data name="1.字段类型" xml:space="preserve">
+    <value>1. Field type</value>
+  </data>
+  <data name="2.字段名" xml:space="preserve">
+    <value>2. Field name</value>
+  </data>
+  <data name="3.字段索引" xml:space="preserve">
+    <value>3. Field index</value>
+  </data>
+  <data name="4.字段值" xml:space="preserve">
+    <value>4. Field Value</value>
+  </data>
+  <data name="5.字段长度" xml:space="preserve">
+    <value>5. Field length</value>
+  </data>
+  <data name="6.转码类型" xml:space="preserve">
+    <value>6. Transcoding type</value>
+  </data>
+  <data name="7.进制转换" xml:space="preserve">
+    <value>7. Binary Conversion</value>
+  </data>
+  <data name="8.说明" xml:space="preserve">
+    <value>8. Instructions</value>
+  </data>
+  <data name="应用相机" xml:space="preserve">
+    <value>Apply camera</value>
+  </data>
+  <data name="应用到" xml:space="preserve">
+    <value>Applies to</value>
+  </data>
+  <data name="1.基础设置" xml:space="preserve">
+    <value>1.Config</value>
+  </data>
+  <data name="1.本地IP" xml:space="preserve">
+    <value>1.Local IP</value>
+  </data>
+  <data name="2.本地端口" xml:space="preserve">
+    <value>2.Local Port</value>
+  </data>
+  <data name="3.默认转码类型" xml:space="preserve">
+    <value>3.Encode Default</value>
+  </data>
+  <data name="4.默认进制转换" xml:space="preserve">
+    <value>4.Convert Default</value>
+  </data>
 </root>

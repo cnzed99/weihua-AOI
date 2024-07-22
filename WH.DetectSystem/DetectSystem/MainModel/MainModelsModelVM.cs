@@ -11,8 +11,10 @@ using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using HistoryPlayback;
 using Mapster;
 using MarkControl;
@@ -84,6 +86,18 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         ObservableCollection<CMainVM> cMainVMs = new ObservableCollection<CMainVM>();
 
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 通讯列表
+        /// </summary>
+        public List<CCommunicationSettingBase> ListCommSetParam { get; set; }
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 通讯管理
+        /// </summary>
+        public CCommunicationManagement CommManagement { get; set; }
+
         public CMainModelsModelVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
@@ -149,6 +163,29 @@ namespace WH.DetectSystem.ViewModels
                 await longtimefunc(progress);
                 //}
                 //catch (Exception) { }
+                #endregion
+
+                #region 读取所有通讯参数文件并连接通讯
+                try
+                {
+                    if (File.Exists(CCommunicationManagement.s_CommPath))
+                    {
+                        ListCommSetParam = ConfigAPI.LoadDeserialize<List<CCommunicationSettingBase>>(CCommunicationManagement.s_CommPath);
+                    }
+                    else
+                    {
+                        ListCommSetParam = new List<CCommunicationSettingBase>();
+                    }
+                    CommManagement = new CCommunicationManagement(ListCommSetParam, CCommunicationManagement.s_CommPath);
+                    if (!CommManagement.OpenAllComm())
+                    {
+                        Growl.Error("连接通讯失败，请检查参数表！");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error("读取通讯参数发生异常,请检查参数表是否损坏:\r\n" + ex.Message);
+                }
                 #endregion
             });
         }

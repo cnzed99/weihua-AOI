@@ -375,4 +375,7 @@
   <data name="20.纠偏感应值" xml:space="preserve">
     <value>20.SensorPos</value>
   </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>Write address M cannot be empty!</value>
+  </data>
 </root>

@@ -88,20 +88,20 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 11.打标补偿 的本地化字符串。
+        ///   查找类似 11.打标补偿(mm) 的本地化字符串。
         /// </summary>
-        public static string _11_打标补偿 {
+        public static string _11_打标补偿_mm_ {
             get {
-                return ResourceManager.GetString("11.打标补偿", resourceCulture);
+                return ResourceManager.GetString("11.打标补偿(mm)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 12.滚轮直径 的本地化字符串。
+        ///   查找类似 12.滚轮直径(mm) 的本地化字符串。
         /// </summary>
-        public static string _12_滚轮直径 {
+        public static string _12_滚轮直径_mm_ {
             get {
-                return ResourceManager.GetString("12.滚轮直径", resourceCulture);
+                return ResourceManager.GetString("12.滚轮直径(mm)", resourceCulture);
             }
         }
         
@@ -169,11 +169,11 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 18.脉冲宽度 的本地化字符串。
+        ///   查找类似 18.脉冲宽度(10ns) 的本地化字符串。
         /// </summary>
-        public static string _18_脉冲宽度 {
+        public static string _18_脉冲宽度_10ns_ {
             get {
-                return ResourceManager.GetString("18.脉冲宽度", resourceCulture);
+                return ResourceManager.GetString("18.脉冲宽度(10ns)", resourceCulture);
             }
         }
         
