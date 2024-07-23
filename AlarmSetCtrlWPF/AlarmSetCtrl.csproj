@@ -10,6 +10,7 @@
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />

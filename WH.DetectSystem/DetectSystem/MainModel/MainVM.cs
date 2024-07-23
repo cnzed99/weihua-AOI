@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;

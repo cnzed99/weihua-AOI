@@ -20,7 +20,7 @@ namespace CommunicationModule
         public CCommunicationSettingBase()
         {
             this.token = new Token("", "CommunicationModule");
-            AlarmProtocols = new ObservableCollection<CAlarmProtocol>();
+            AlarmAgreements = new ObservableCollection<CAlarmAgreement>();
         }
 
         #region 信息
@@ -115,47 +115,11 @@ namespace CommunicationModule
         /// 报警协议
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<CAlarmProtocol> alarmProtocols;
+        private ObservableCollection<CAlarmAgreement> alarmAgreements;
 
         /// <summary>
         /// 2024.7.17 李焕彬
         /// ToString
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    /// <summary>
-    /// 2024.7.19 李焕彬
-    /// 报警协议
-    /// </summary>
-    public partial class CAlarmProtocol : ConfigModifyObservableBase
-    {
-        public CAlarmProtocol()
-        {
-            this.token = new Token("", this.GetType().Namespace);
-        }
-
-        public CAlarmProtocol(string name, IList list)
-        {
-            this.token = new Token("", this.GetType().Namespace);
-            this.Name = name;
-            Protocol = list;
-        }
-
-        /// <summary>
-        /// 2024.7.19 李焕彬
-        /// 协议
-        /// </summary>
-        [ObservableProperty]
-        private IList protocol;
-
-        /// <summary>
-        /// 2024.7.19 李焕彬
-        /// ToString()
         /// </summary>
         /// <returns></returns>
         public override string ToString()

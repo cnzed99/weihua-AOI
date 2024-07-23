@@ -156,12 +156,13 @@ namespace CommunicationModule
         /// </summary>
         /// <param name="cAlarmProtocol">报警协议</param>
         [RelayCommand]
-        public void SetAlarm(CAlarmProtocol cAlarmProtocol)
+        public void SetAlarm(CAlarmAgreement cAlarmProtocol)
         {
             if (cAlarmProtocol != null)
             {
                 CollectionEditor collectionEditor = new CollectionEditor();
                 collectionEditor.Collection = cAlarmProtocol.Protocol;
+                collectionEditor.Title = cAlarmProtocol.Name;
                 collectionEditor.Lang = Com.GetLanguage();
                 collectionEditor.ShowDialog();
             }
@@ -175,16 +176,18 @@ namespace CommunicationModule
         public void AddAlarm()
         {
             int index = 0;
-            for (int i = Setting.AlarmProtocols.Count - 1; i >= 0; i--)
+            for (int i = Setting.AlarmAgreements.Count - 1; i >= 0; i--)
             {
-                var match = Regex.Match(Setting.AlarmProtocols[i].Name, alarmName + "[0-9]+");
+                var match = Regex.Match(Setting.AlarmAgreements[i].Name, alarmName + "[0-9]+");
                 if (match.Success)
                 {
                     index = int.Parse(match.Value.Substring(alarmName.Length)) + 1;
                     break;
                 }
             }
-            Setting.AlarmProtocols.Add(new CAlarmProtocol(alarmName + index, Com.CreateProtocol()));
+            Setting.AlarmAgreements.Add(
+                new CAlarmAgreement(alarmName + index, Com.CreateProtocol(), Setting)
+            );
         }
 
         /// <summary>
@@ -193,11 +196,11 @@ namespace CommunicationModule
         /// </summary>
         /// <param name="cAlarmProtocol">报警协议</param>
         [RelayCommand]
-        public void DelAlarm(CAlarmProtocol cAlarmProtocol)
+        public void DelAlarm(CAlarmAgreement cAlarmProtocol)
         {
             if (cAlarmProtocol != null)
             {
-                Setting.AlarmProtocols.Remove(cAlarmProtocol);
+                Setting.AlarmAgreements.Remove(cAlarmProtocol);
             }
         }
     }

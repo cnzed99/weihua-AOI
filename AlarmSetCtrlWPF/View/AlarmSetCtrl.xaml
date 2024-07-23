@@ -48,66 +48,67 @@
             <hc:SimplePanel>
                 <!--<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:AlarmSetCtrl}}, Path=AlarmSetConfig}">-->
                 <DockPanel>
-                    <UniformGrid
-                        Width="270"
-                        Height="120"
-                        Margin="5"
-                        Rows="3">
-                        <TextBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [AlarmName], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            Text="{Binding MAlarm.Name}" />
-                        <ComboBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [AlarmType], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            ItemsSource="{Binding MAlarm.Type, Converter={StaticResource EnumProviderConverter}}"
-                            SelectedItem="{Binding MAlarm.Type, Converter={StaticResource StringAttrEnumConverter}}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="SelectionChanged">
-                                    <i:InvokeCommandAction Command="{Binding SelectedAlarmTypeChangedCommand}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ComboBox>
-                        <ComboBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [AlarmSource], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            ItemsSource="{Binding SourceList}"
-                            SelectedItem="{Binding MAlarm.Source}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <ComboBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            ItemsSource="{Binding MAlarm.Mode, Converter={StaticResource EnumProviderConverter}}"
-                            SelectedItem="{Binding MAlarm.Mode, Converter={StaticResource StringAttrEnumConverter}}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="SelectionChanged">
-                                    <i:InvokeCommandAction Command="{Binding ModeChangedCommand}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ComboBox>
+                    <StackPanel>
+                        <UniformGrid
+                            Width="270"
+                            Height="80"
+                            Margin="5"
+                            Rows="2">
+                            <TextBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmName], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                Text="{Binding MAlarm.Name}" />
+                            <ComboBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmType], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding MAlarm.Type, Converter={StaticResource EnumProviderConverter}}"
+                                SelectedItem="{Binding MAlarm.Type, Converter={StaticResource StringAttrEnumConverter}}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding SelectedAlarmTypeChangedCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ComboBox>
+                            <ComboBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmSource], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding SourceList}"
+                                SelectedItem="{Binding MAlarm.Source}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <CheckBox
+                                Margin="0,0,5,6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Content="{Binding [Popup], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                IsChecked="{Binding MAlarm.IsPopWin}" />
 
-                        <ComboBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [Authoritylevel], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            ItemsSource="{Binding MAlarm.PermitLevel, Converter={StaticResource EnumProviderConverter}}"
-                            SelectedItem="{Binding MAlarm.PermitLevel, Converter={StaticResource StringAttrEnumConverter}}"
-                            Visibility="Collapsed" />
-                        <TextBox
-                            Margin="0,0,5,0"
-                            hc:TitleElement.Title="{Binding [Signal], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            Text="{Binding MAlarm.TempSignal}" />
-                        <CheckBox
-                            Margin="0,0,5,6"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            Content="{Binding [Popup], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                            IsChecked="{Binding MAlarm.IsPopWin}" />
-                    </UniformGrid>
+
+                        </UniformGrid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox
+                                HorizontalAlignment="Stretch"
+                                hc:TitleElement.Title="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding AlarmAgreements}"
+                                SelectedItem="{Binding MAlarm.AlarmAgreement}" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="0,15,0,0"
+                                Content="Refresh"
+                                Command="{Binding RefreshAlarmAgreementsCommand}"
+                                Style="{StaticResource ButtonPrimary.Small}" />
+                        </Grid>
+
+                    </StackPanel>
+
                     <UniformGrid Rows="3">
                         <DockPanel>
                             <CheckBox
@@ -251,7 +252,7 @@
                         Header="{x:Static prop:Resources.AlarmSource}" />
                     <GridViewColumn
                         Width="70"
-                        DisplayMemberBinding="{Binding Mode}"
+                        DisplayMemberBinding="{Binding AlarmAgreement}"
                         Header="{x:Static prop:Resources.AlarmMode}" />
                     <GridViewColumn
                         Width="70"

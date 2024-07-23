@@ -145,7 +145,6 @@ namespace 断面毛刺检测软件
             CMainVM mainVM = new CMainVM();
             mainVM.Model = cmodel;
             viewModel.CMainVMs.Add(mainVM);
-
             var mainWindow = Container.Resolve<MainWindow>();
             mainWindow.DataContext = viewModel;
             mainWindow?.Show();

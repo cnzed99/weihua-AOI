@@ -40,7 +40,7 @@ namespace Modbus
         public CCommunicationSettingBase Init(string path, int index, out CCommunicationBase com)
         {
             CModbusSetting param = ConfigAPI.LoadDeserialize<List<CModbusSetting>>(path)[index];
-            foreach (var alarm in param.AlarmProtocols)
+            foreach (var alarm in param.AlarmAgreements)
             {
                 ObservableCollection<CElement> elems = new ObservableCollection<CElement>();
                 foreach (var item in alarm.Protocol)

@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Documents;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -69,6 +70,9 @@ namespace AlarmSetCtrl
             }
         }
 
+        [ObservableProperty]
+        ObservableCollection<CAlarmAgreement> alarmAgreements = new();
+
         /// <summary>
         /// 当前报警类型更改时
         /// </summary>
@@ -109,6 +113,7 @@ namespace AlarmSetCtrl
             SourceAlarm = selectedItem as Alarm;
             if (SourceAlarm != null)
             {
+                RefreshAlarmAgreements();
                 var alarm = new Alarm();
                 alarm.Copy(SourceAlarm);
                 MAlarm = alarm;
@@ -116,22 +121,21 @@ namespace AlarmSetCtrl
         }
 
         /// <summary>
-        /// 待定
+        /// 更新报警列表
         /// </summary>
         [RelayCommand]
-        void ModeChanged()
+        void RefreshAlarmAgreements()
         {
-            switch (MAlarm?.Mode)
+            AlarmAgreements.Clear();
+            foreach (var comParams in CCommunicationManagement.CommParamDic.Values)
             {
-                case AlarmMode.报警信号:
-                    MAlarm.TempSignal = MAlarm.AlarmSignal;
-                    break;
-                case AlarmMode.停机信号:
-                    MAlarm.TempSignal = MAlarm.StopSignal;
-                    break;
-                case AlarmMode.打标信号:
-                    MAlarm.TempSignal = MAlarm.MarkSignal;
-                    break;
+                foreach (var AlarmAgree in comParams.AlarmAgreements)
+                {
+                    if (!AlarmAgreements.Contains(AlarmAgree))
+                    {
+                        AlarmAgreements.Add(AlarmAgree);
+                    }
+                }
             }
         }
 

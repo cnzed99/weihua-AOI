@@ -170,13 +170,18 @@ namespace WH.DetectSystem.ViewModels
                 {
                     if (File.Exists(CCommunicationManagement.s_CommPath))
                     {
-                        ListCommSetParam = ConfigAPI.LoadDeserialize<List<CCommunicationSettingBase>>(CCommunicationManagement.s_CommPath);
+                        ListCommSetParam = ConfigAPI.LoadDeserialize<
+                            List<CCommunicationSettingBase>
+                        >(CCommunicationManagement.s_CommPath);
                     }
                     else
                     {
                         ListCommSetParam = new List<CCommunicationSettingBase>();
                     }
-                    CommManagement = new CCommunicationManagement(ListCommSetParam, CCommunicationManagement.s_CommPath);
+                    CommManagement = new CCommunicationManagement(
+                        ListCommSetParam,
+                        CCommunicationManagement.s_CommPath
+                    );
                     if (!CommManagement.OpenAllComm())
                     {
                         Growl.Error("连接通讯失败，请检查参数表！");

@@ -121,7 +121,7 @@
                 hc:DataGridAttach.ShowRowNumber="True"
                 AutoGenerateColumns="False"
                 HeadersVisibility="All"
-                ItemsSource="{Binding Setting.AlarmProtocols}"
+                ItemsSource="{Binding Setting.AlarmAgreements}"
                 RowHeaderWidth="30"
                 SelectionMode="Single">
                 <DataGrid.Columns>

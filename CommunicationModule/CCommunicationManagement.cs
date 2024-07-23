@@ -52,7 +52,7 @@ namespace CommunicationModule
 
         /// <summary>
         /// 2024.7.19 李焕彬
-        /// 通讯参数操作字典
+        /// key:通讯GUID,value:通讯实例 通讯参数操作字典
         /// </summary>
         public static Dictionary<string, CCommunicationSettingBase> CommParamDic =
             new Dictionary<string, CCommunicationSettingBase>();
@@ -132,9 +132,9 @@ namespace CommunicationModule
                     }
                     continue;
                 }
-                foreach (var protocol in com.Value.AlarmProtocols)
+                foreach (var protocol in com.Value.AlarmAgreements)
                 {
-                    if (message.obj.GetType() == typeof(CAlarmProtocol))
+                    if (message.obj.GetType() == typeof(CAlarmAgreement))
                     {
                         if (protocol == message.obj)
                         {
@@ -231,13 +231,11 @@ namespace CommunicationModule
         /// </summary>
         /// <param name="com">通讯名</param>
         /// <param name="alarmName">报警名</param>
-        public static void SendAlarmSignal(string com, string alarmName)
+        public static void SendAlarmSignal(CAlarmAgreement alarm)
         {
-            CAlarmProtocol alarmProtocol = CommParamDic[com]
-                .AlarmProtocols.FirstOrDefault(o => o.Name == alarmName);
-            if (alarmProtocol != null)
+            if (alarm != null)
             {
-                CommDic[com].Send(alarmProtocol.Protocol);
+                CommDic[alarm.GUID].Send(alarm.Protocol);
             }
         }
     }

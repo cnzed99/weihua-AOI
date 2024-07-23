@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlarmSetCtrl;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.Messaging;
 using QualityGrade;
 using SDFilter;
@@ -18,7 +19,11 @@ namespace WH.DetectSystem._4_报警处理
         {
             foreach (Alarm alarm in alarmSetConfig.AlarmList)
             {
-                if (alarm.AddCellAndJudge(cell)) { }
+                if (alarm.AddCellAndJudge(cell))
+                {
+                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(alarm), alarm.token);
+                    CCommunicationManagement.SendAlarmSignal(alarm.AlarmAgreement);
+                }
             }
         }
 
@@ -63,10 +68,7 @@ namespace WH.DetectSystem._4_报警处理
                     int ngNumber = alarm.TotalCellList.FindAll(a => a.isCellNg).Count();
                     if (ngNumber >= alarm.NgCount) //达到报警标准
                     {
-                        WeakReferenceMessenger.Default.Send(
-                            new AlarmPopMessage(alarm),
-                            alarm.token
-                        );
+                        alarm.TotalCellList.Clear();
                         ret = true;
                     }
                 }
@@ -88,7 +90,6 @@ namespace WH.DetectSystem._4_报警处理
                 if (alarm.TotalNG >= alarm.NgCount)
                 {
                     alarm.TotalNG = 0;
-                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(alarm), alarm.token);
                     return true;
                 }
                 return false;

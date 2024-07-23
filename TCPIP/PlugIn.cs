@@ -1,11 +1,11 @@
-﻿using CommunicationModule;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunicationModule;
+using Newtonsoft.Json;
 using WH.Entity;
 
 namespace TCPIP
@@ -25,6 +25,7 @@ namespace TCPIP
             com = Tcp;
             return param;
         }
+
         /// <summary>
         /// 2024.7.21 李焕彬
         /// 根据json路径初始化通讯实例
@@ -35,14 +36,18 @@ namespace TCPIP
         /// <returns>通讯参数对象</returns>
         public CCommunicationSettingBase Init(string path, int index, out CCommunicationBase com)
         {
-            CTcpIpCommunicationSetting param = ConfigAPI.LoadDeserialize<List<CTcpIpCommunicationSetting>>(path)[index];
+            CTcpIpCommunicationSetting param = ConfigAPI.LoadDeserialize<
+                List<CTcpIpCommunicationSetting>
+            >(path)[index];
             CTcpIpCommPart Tcp = new CTcpIpCommPart(param);
-            foreach (var alarm in param.AlarmProtocols)
+            foreach (var alarm in param.AlarmAgreements)
             {
                 ObservableCollection<CDataInfo> elems = new ObservableCollection<CDataInfo>();
                 foreach (var item in alarm.Protocol)
                 {
-                    elems.Add(JsonConvert.DeserializeObject<CDataInfo>(JsonConvert.SerializeObject(item)));
+                    elems.Add(
+                        JsonConvert.DeserializeObject<CDataInfo>(JsonConvert.SerializeObject(item))
+                    );
                 }
                 alarm.Protocol = elems;
             }

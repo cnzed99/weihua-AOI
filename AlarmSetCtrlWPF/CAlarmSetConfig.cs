@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
@@ -53,8 +54,9 @@ namespace AlarmSetCtrl
         /// <param name="qualityConfig"></param>
         public void SetCAlarm(CFilterConfig filterConfig, CQualityConfig qualityConfig)
         {
-            DefectList = filterConfig.DefectList;
+            this.DefectList = filterConfig.DefectList;
             this.Qualities = qualityConfig.Qualities;
+
             Synchronization();
         }
 
@@ -66,6 +68,7 @@ namespace AlarmSetCtrl
         {
             var DeList = DefectList.ToList();
             var QaList = Qualities.ToList();
+
             var alarmNeedRemove = new List<Alarm>();
             foreach (var alarm in AlarmList)
             {
@@ -94,6 +97,30 @@ namespace AlarmSetCtrl
                     }
                 }
             }
+
+            foreach (var alarm in AlarmList)
+            {
+                if (
+                    CCommunicationManagement.CommParamDic.TryGetValue(
+                        alarm.AlarmAgreement?.GUID,
+                        out CCommunicationSettingBase comParams
+                    )
+                )
+                {
+                    var index = comParams
+                        .AlarmAgreements.ToList()
+                        .FindIndex(al => al.ToString() == alarm.AlarmAgreement.ToString());
+                    if (index >= 0)
+                    {
+                        alarm.AlarmAgreement = comParams.AlarmAgreements[index];
+                    }
+                }
+                else
+                {
+                    alarmNeedRemove.Add(alarm);
+                }
+            }
+
             //移除不适用的报警设置
             foreach (var alarm in alarmNeedRemove)
             {
@@ -221,14 +248,6 @@ namespace AlarmSetCtrl
         [ObservableProperty]
         [property: DisplayName("报警名称")]
         private string name = "新规则";
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 报警模式
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("报警模式")]
-        private AlarmMode mode = AlarmMode.报警信号;
 
         /// <summary>
         ///  2024.6.25 鲍赞宝
@@ -408,56 +427,12 @@ namespace AlarmSetCtrl
         }
 
         /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 报警信号
+        /// 20240723 TCG
+        /// 通讯报警协议
         /// </summary>
+        [property: DisplayName("报警协议")]
         [ObservableProperty]
-        [property: DisplayName("报警信号")]
-        private int alarmSignal = 0;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 停机信号
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("停机信号")]
-        private int stopSignal = 0;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 打标信号
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("打标信号")]
-        private int markSignal = 0;
-
-        private int tempSignal = 0;
-
-        /// <summary>
-        /// 2024.6.25 鲍赞宝
-        /// 用于临时显示信号 待定
-        /// </summary>
-        [DisplayName("信号")]
-        public int TempSignal
-        {
-            get { return tempSignal; }
-            set
-            {
-                switch (Mode)
-                {
-                    case AlarmMode.报警信号:
-                        AlarmSignal = value;
-                        break;
-                    case AlarmMode.停机信号:
-                        StopSignal = value;
-                        break;
-                    case AlarmMode.打标信号:
-                        MarkSignal = value;
-                        break;
-                }
-                SetProperty(ref tempSignal, value);
-            }
-        }
+        CAlarmAgreement alarmAgreement = new();
 
         /// <summary>
         /// 20240715 TCG
@@ -480,7 +455,6 @@ namespace AlarmSetCtrl
         public void Copy(Alarm a)
         {
             this.Name = a.Name;
-            this.Mode = a.Mode;
             this.Type = a.Type;
             this.IsPopWin = a.IsPopWin;
             this.Source = a.Source;
@@ -491,35 +465,13 @@ namespace AlarmSetCtrl
             this.TimeUnit = a.TimeUnit;
             this.Total = a.Total;
             this.NgCount = a.NgCount;
-            this.AlarmSignal = a.AlarmSignal;
-            this.StopSignal = a.StopSignal;
-            this.MarkSignal = a.MarkSignal;
-            this.TempSignal = a.TempSignal;
+            this.AlarmAgreement = a.AlarmAgreement;
         }
 
         public override string ToString()
         {
             return RegularShow;
         }
-    }
-
-    /// <summary>
-    /// 20240711 TCG
-    /// 枚举格式 未改 要在通讯配置里添加信号 从列表绑定到这里
-    /// </summary>
-    public enum AlarmMode
-    {
-        [EnumString("报警信号", "AlarmSignal")]
-        报警信号 = 1,
-
-        [EnumString("停机信号", "AlarmSignal")]
-        停机信号 = 2,
-
-        [EnumString("打标信号", "AlarmSignal")]
-        打标信号 = 4,
-
-        [EnumString("同时发送", "AlarmSignal")]
-        同时发送 = 8
     }
 
     /// <summary>
