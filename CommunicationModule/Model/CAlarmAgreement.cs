@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 
 namespace CommunicationModule
@@ -16,7 +17,17 @@ namespace CommunicationModule
     /// </summary>
     public partial class CAlarmAgreement : ConfigModifyObservableBase
     {
+        /// <summary>
+        /// 20240723 TCG
+        /// 所属相机名
+        /// </summary>
+        [IgnoreModifyLog]
         public string ComName { get; set; }
+
+        /// <summary>
+        /// 所属相机的GUID
+        /// </summary>
+        [IgnoreModifyLog]
         public string GUID { get; set; }
 
         public CAlarmAgreement()
