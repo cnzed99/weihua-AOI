@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Channels;
@@ -44,7 +45,7 @@ namespace WH.DetectSystem.ViewModels
 
         public CSystemSettingsVM SystemSettings { get; set; } =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
-
+        public Version version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version;
         /// <summary>
         /// 2024.7.15 李焕彬
         /// 打标控制VM,初始化需要放在运动控制前面

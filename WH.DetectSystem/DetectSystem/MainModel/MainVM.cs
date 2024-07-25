@@ -88,7 +88,7 @@ namespace WH.DetectSystem.ViewModels
                 TokeVM.ProGuid = value.GUID;
             }
         }
-
+       
         /// <summary>
         /// 20240707 TCG
         /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息

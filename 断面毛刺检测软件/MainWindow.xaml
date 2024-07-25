@@ -213,7 +213,7 @@
                             IsChecked="{Binding SystemSettings.IsEnglish}"
                             Unchecked="Lang_Checked" />-->
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem Width="100" Click="About_Click" Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/帮助/关于.svg" />
                         </MenuItem.Icon>
@@ -253,7 +253,7 @@
                     Margin="5"
                     HorizontalAlignment="Left"
                     Source="/Resources/组合-2.png" />
-                <TextBlock HorizontalAlignment="Center" Text="Version:1.0.0.0" />
+                <TextBlock HorizontalAlignment="Center" Text="{Binding version,StringFormat='{}Version:{0}'}" />
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>

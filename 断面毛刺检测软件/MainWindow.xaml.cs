@@ -636,5 +636,11 @@ namespace 断面毛刺检测软件
             cameraSetWindow.Show();
             cameraSetWindow.Activate();
         }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
+        }
     }
 }
