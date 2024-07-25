@@ -374,162 +374,162 @@ namespace WH.DetectSystem.ViewModels
             #endregion
 
             #region 触发相机线程
-            Task TriggerCameraTask = Task.Run(async () =>
-            {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                DateTime triggerStartData = DateTime.Now;
-                IEnumerator<string> imgitor = new List<string>()
-                {
-                    "D://铝极.png",
-                    "D://原图-1.bmp",
-                    "D://原图-2.bmp",
-                    "D://原图-3.bmp",
-                    "D://设备-1.PNG",
-                    "D://设备-2.PNG",
-                    "D://设备-3.PNG"
-                }.GetEnumerator();
-                CBrushPro color = new CBrushPro();
-                IEnumerator<CKnownColor> brushes = color.KnownColors.GetEnumerator();
-                Random random = new Random(50);
-                while (true)
-                {
-                    #region test
+            //Task TriggerCameraTask = Task.Run(async () =>
+            //{
+            //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            //    DateTime triggerStartData = DateTime.Now;
+            //    IEnumerator<string> imgitor = new List<string>()
+            //    {
+            //        "D://铝极.png",
+            //        "D://原图-1.bmp",
+            //        "D://原图-2.bmp",
+            //        "D://原图-3.bmp",
+            //        "D://设备-1.PNG",
+            //        "D://设备-2.PNG",
+            //        "D://设备-3.PNG"
+            //    }.GetEnumerator();
+            //    CBrushPro color = new CBrushPro();
+            //    IEnumerator<CKnownColor> brushes = color.KnownColors.GetEnumerator();
+            //    Random random = new Random(50);
+            //    while (true)
+            //    {
+            //        #region test
 
-                    await Task.Delay(20);
-                    if (!IsStart)
-                        continue;
-                    if (!imgitor.MoveNext())
-                    {
-                        imgitor.Reset();
-                        imgitor.MoveNext();
-                    }
-                    if (!brushes.MoveNext())
-                    {
-                        brushes.Reset();
-                        brushes.MoveNext();
-                    }
+            //        await Task.Delay(20);
+            //        if (!IsStart)
+            //            continue;
+            //        if (!imgitor.MoveNext())
+            //        {
+            //            imgitor.Reset();
+            //            imgitor.MoveNext();
+            //        }
+            //        if (!brushes.MoveNext())
+            //        {
+            //            brushes.Reset();
+            //            brushes.MoveNext();
+            //        }
 
-                    Cell cell = new Cell()
-                    {
-                        Image = new(imgitor.Current),
-                        ID = "00001",
-                        OtherInfoRecv = new Dictionary<string, string>(),
-                        isOnce = false,
-                        CancelSource = this.m_cts,
-                        ProjGuid = GUID,
-                        ComGuid = "001",
-                        CamSerial = CameraSerial,
-                        Quality = MaociQualityConfig.Qualities[0]
-                    };
-                    if (random.Next(10) > 5)
-                        cell.IsOK = true;
-                    StringBuilder strbuilder = new StringBuilder("[");
+            //        Cell cell = new Cell()
+            //        {
+            //            Image = new(imgitor.Current),
+            //            ID = "00001",
+            //            OtherInfoRecv = new Dictionary<string, string>(),
+            //            isOnce = false,
+            //            CancelSource = this.m_cts,
+            //            ProjGuid = GUID,
+            //            ComGuid = "001",
+            //            CamSerial = CameraSerial,
+            //            Quality = MaociQualityConfig.Qualities[0]
+            //        };
+            //        if (random.Next(10) > 5)
+            //            cell.IsOK = true;
+            //        StringBuilder strbuilder = new StringBuilder("[");
 
-                    strbuilder.Append("触发");
-                    strbuilder.Append("]     ");
-                    strbuilder.Append(cell.ID);
-                    strbuilder.Append("   收到触发信号");
+            //        strbuilder.Append("触发");
+            //        strbuilder.Append("]     ");
+            //        strbuilder.Append(cell.ID);
+            //        strbuilder.Append("   收到触发信号");
 
-                    await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                    await m_WaitImgChannel.Writer.WriteAsync(cell);
+            //        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+            //        await m_WaitImgChannel.Writer.WriteAsync(cell);
 
-                    #endregion
+            //        #endregion
 
-                    //((string Cam, string split), string Com, byte[] bytes) Data = await CCommunicationBase.DataChannel.Reader.ReadAsync();
-                    //try
-                    //{
-                    //    if (CCameraManagement.CameraDict.ContainsKey(Data.Item1.Cam) && !CCameraManagement.CameraDict[Data.Item1.Cam].ProjGuid[Data.Item1.split].IsNullOrEmpty()
-                    //    && CCommunicationManagement.CheckTriggerSignal(Data.Com, Data.Item1.Cam, Data.Item1.split, Data.bytes, out string IDstr, out Dictionary<string, string> otherRecvInfo))
-                    //    {
-                    //        if (SystemStatic._isRuning && !CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing && CCameraManagement.CameraDict.ContainsKey(Data.Item1.Cam))
-                    //        {
-                    //            CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing = true;
+            //        //((string Cam, string split), string Com, byte[] bytes) Data = await CCommunicationBase.DataChannel.Reader.ReadAsync();
+            //        //try
+            //        //{
+            //        //    if (CCameraManagement.CameraDict.ContainsKey(Data.Item1.Cam) && !CCameraManagement.CameraDict[Data.Item1.Cam].ProjGuid[Data.Item1.split].IsNullOrEmpty()
+            //        //    && CCommunicationManagement.CheckTriggerSignal(Data.Com, Data.Item1.Cam, Data.Item1.split, Data.bytes, out string IDstr, out Dictionary<string, string> otherRecvInfo))
+            //        //    {
+            //        //        if (SystemStatic._isRuning && !CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing && CCameraManagement.CameraDict.ContainsKey(Data.Item1.Cam))
+            //        //        {
+            //        //            CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing = true;
 
-                    //            Cell cell = new Cell()
-                    //            {
-                    //                //ID = (DetectSysConfig.Config.LevelProduce.TotalNum + 1).ToString(), //这里的总数要改成PLC发上来的
-                    //                ID = IDstr,
-                    //                OtherInfoRecv = otherRecvInfo,
-                    //                isOnce = false,
-                    //                CancelSource = this.CancelToken,
-                    //                ProjGuid = CCameraManagement.CameraDict[Data.Item1.Cam].ProjGuid[Data.Item1.split],
-                    //                ComGuid = Data.Com,
-                    //                CamSerial = Data.Item1.Cam
-                    //            };
-                    //            // 准备 清空
-                    //            CCommunicationManagement.SendReadySignal(Data.Item1.Cam, IDstr, cell.OtherInfoSend);
+            //        //            Cell cell = new Cell()
+            //        //            {
+            //        //                //ID = (DetectSysConfig.Config.LevelProduce.TotalNum + 1).ToString(), //这里的总数要改成PLC发上来的
+            //        //                ID = IDstr,
+            //        //                OtherInfoRecv = otherRecvInfo,
+            //        //                isOnce = false,
+            //        //                CancelSource = this.CancelToken,
+            //        //                ProjGuid = CCameraManagement.CameraDict[Data.Item1.Cam].ProjGuid[Data.Item1.split],
+            //        //                ComGuid = Data.Com,
+            //        //                CamSerial = Data.Item1.Cam
+            //        //            };
+            //        //            // 准备 清空
+            //        //            CCommunicationManagement.SendReadySignal(Data.Item1.Cam, IDstr, cell.OtherInfoSend);
 
-                    //            StringBuilder strbuilder = new StringBuilder("[");
+            //        //            StringBuilder strbuilder = new StringBuilder("[");
 
-                    //            strbuilder.Append("触发");
-                    //            strbuilder.Append("]     ");
-                    //            strbuilder.Append(cell.ID);
-                    //            strbuilder.Append("   收到触发信号");
+            //        //            strbuilder.Append("触发");
+            //        //            strbuilder.Append("]     ");
+            //        //            strbuilder.Append(cell.ID);
+            //        //            strbuilder.Append("   收到触发信号");
 
-                    //            _infoLog.Enqueue(strbuilder.ToString());
+            //        //            _infoLog.Enqueue(strbuilder.ToString());
 
-                    //            TimeSpan triggerSpan = DateTime.Now - triggerStartData;
-                    //            triggerStartData = DateTime.Now;
+            //        //            TimeSpan triggerSpan = DateTime.Now - triggerStartData;
+            //        //            triggerStartData = DateTime.Now;
 
-                    //            this.BeginInvoke(new Action(() =>
-                    //            {
-                    //                if (triggerSpan.TotalMilliseconds > 99999)
-                    //                {
-                    //                    triggerSpan = TimeSpan.FromMilliseconds(99999);
-                    //                }
+            //        //            this.BeginInvoke(new Action(() =>
+            //        //            {
+            //        //                if (triggerSpan.TotalMilliseconds > 99999)
+            //        //                {
+            //        //                    triggerSpan = TimeSpan.FromMilliseconds(99999);
+            //        //                }
 
-                    //                DetectProgress.Value = 0;
-                    //                lb_triggerTime.Text = triggerSpan.TotalMilliseconds.ToString("F");
-                    //            }));
+            //        //                DetectProgress.Value = 0;
+            //        //                lb_triggerTime.Text = triggerSpan.TotalMilliseconds.ToString("F");
+            //        //            }));
 
 
-                    //            if (!CCameraManagement.CameraDict[Data.Item1.Cam].Connected)
-                    //            {
-                    //                this.NotifyError("相机未打开，请检查相机是否连接", 5000);
-                    //                throw new Exception("相机未打开，请检查相机连接");
-                    //            }
-                    //            if (!CCommunicationManagement.CommDic[Data.Com].IsConnected && !_bTestOffLine)
-                    //            {
-                    //                this.NotifyError("通讯未打开，请检查通讯是否连接", 5000);
-                    //                throw new Exception("通讯未打开，请检查通讯是否连接");
-                    //            }
+            //        //            if (!CCameraManagement.CameraDict[Data.Item1.Cam].Connected)
+            //        //            {
+            //        //                this.NotifyError("相机未打开，请检查相机是否连接", 5000);
+            //        //                throw new Exception("相机未打开，请检查相机连接");
+            //        //            }
+            //        //            if (!CCommunicationManagement.CommDic[Data.Com].IsConnected && !_bTestOffLine)
+            //        //            {
+            //        //                this.NotifyError("通讯未打开，请检查通讯是否连接", 5000);
+            //        //                throw new Exception("通讯未打开，请检查通讯是否连接");
+            //        //            }
 
-                    //            cell.Stopwatch.Restart();
-                    //            strbuilder.Clear();
-                    //            strbuilder.Append("[");
-                    //            strbuilder.Append("触发");
-                    //            strbuilder.Append("]     ");
-                    //            strbuilder.Append(cell.ID);
-                    //            strbuilder.Append("   开始触发拍照");
-                    //            _infoLog.Enqueue(strbuilder.ToString());
+            //        //            cell.Stopwatch.Restart();
+            //        //            strbuilder.Clear();
+            //        //            strbuilder.Append("[");
+            //        //            strbuilder.Append("触发");
+            //        //            strbuilder.Append("]     ");
+            //        //            strbuilder.Append(cell.ID);
+            //        //            strbuilder.Append("   开始触发拍照");
+            //        //            _infoLog.Enqueue(strbuilder.ToString());
 
-                    //            cell.BeginVisionTime = DateTime.Now;
-                    //            await CCameraManagement.CameraDict[Data.Item1.Cam]._TriggerImageChannel.Writer.WriteAsync(cell);
-                    //            CCameraManagement.CameraDict[Data.Item1.Cam].TriggerCount++;
-                    //            strbuilder.Clear();
-                    //            strbuilder.Append("收到触发信号:");
-                    //            strbuilder.Append(CCameraManagement.CameraDict[Data.Item1.Cam].TriggerCount);
-                    //            strbuilder.Append("次, 开始触发");
-                    //            CCameraManagement.CamLogger.Info(strbuilder);
-                    //            CCameraManagement.CameraDict[Data.Item1.Cam].ExecuteSoftwareTrigger();
-                    //            // 正在拍照中
-                    //            CCommunicationManagement.SendGrabbingSignal(Data.Item1.Cam, IDstr, cell.OtherInfoSend);
+            //        //            cell.BeginVisionTime = DateTime.Now;
+            //        //            await CCameraManagement.CameraDict[Data.Item1.Cam]._TriggerImageChannel.Writer.WriteAsync(cell);
+            //        //            CCameraManagement.CameraDict[Data.Item1.Cam].TriggerCount++;
+            //        //            strbuilder.Clear();
+            //        //            strbuilder.Append("收到触发信号:");
+            //        //            strbuilder.Append(CCameraManagement.CameraDict[Data.Item1.Cam].TriggerCount);
+            //        //            strbuilder.Append("次, 开始触发");
+            //        //            CCameraManagement.CamLogger.Info(strbuilder);
+            //        //            CCameraManagement.CameraDict[Data.Item1.Cam].ExecuteSoftwareTrigger();
+            //        //            // 正在拍照中
+            //        //            CCommunicationManagement.SendGrabbingSignal(Data.Item1.Cam, IDstr, cell.OtherInfoSend);
 
-                    //        }
+            //        //        }
 
-                    //    }
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing = false;
-                    //    this.Invoke(new Action(() =>
-                    //    {
-                    //        CUpdateRecords.AddLogToListBox("触发相机线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR);
-                    //        this.NotifyWarning("触发相机线程出错:" + ex.Message, 1000);
-                    //    }));
-                    //}
-                }
-            });
+            //        //    }
+            //        //}
+            //        //catch (Exception ex)
+            //        //{
+            //        //    CCameraManagement.CameraDict[Data.Item1.Cam]._isGrabing = false;
+            //        //    this.Invoke(new Action(() =>
+            //        //    {
+            //        //        CUpdateRecords.AddLogToListBox("触发相机线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR);
+            //        //        this.NotifyWarning("触发相机线程出错:" + ex.Message, 1000);
+            //        //    }));
+            //        //}
+            //    }
+            //});
             #endregion
 
             #region 取图线程
