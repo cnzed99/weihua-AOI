@@ -94,9 +94,7 @@ namespace CameraModule
         /// 李焕彬 2024.7.24
         /// 通道数
         /// </summary>
-        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(
-            100
-        )
+        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(10)
         {
             FullMode = BoundedChannelFullMode.DropWrite
         };
@@ -105,15 +103,21 @@ namespace CameraModule
         /// 李焕彬 2024.7.24
         /// 采集 信号
         /// </summary>
-        public Channel<Cell> triggerImageChannel = Channel.CreateBounded<Cell>(channelOptions);
+        //public Channel<Cell> triggerImageChannel = Channel.CreateBounded<Cell>(channelOptions);
 
         /// <summary>
         /// 李焕彬 2024.7.24
         /// 采集 图像队列
         /// </summary>
-        public static Channel<Cell> waitGetImageChannel = Channel.CreateBounded<Cell>(
+        public static Channel<Cell> WaitGetImageChannel = Channel.CreateBounded<Cell>(
             channelOptions
         );
+
+        /// <summary>
+        /// 20240725 TCG
+        /// 当前制程是否启动
+        /// </summary>
+        public bool IsRuning { get; set; } = false;
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -346,7 +350,7 @@ namespace CameraModule
             try
             {
                 //需要增加判断是否是运行模式
-                if (true)
+                if (!IsRuning)
                 {
                     Cell cell = new Cell();
                     cell.ImageCam = outImage;
@@ -358,11 +362,16 @@ namespace CameraModule
                 }
                 else
                 {
-                    Cell cell = await triggerImageChannel.Reader.ReadAsync();
-                    cell.ImageCam = outImage;
-                    cell.FrameLoss = IsLostFrame;
-                    cell.CamSerial = Setting.SerialNumber;
-                    await waitGetImageChannel.Writer.WriteAsync(cell);
+                    //Cell cell = await triggerImageChannel.Reader.ReadAsync();
+                    Cell cell = new Cell()
+                    {
+                        ImageCam = outImage,
+                        FrameLoss = IsLostFrame,
+                        CamSerial = Setting.SerialNumber,
+                        ProjGuid = Setting.ProjGuid
+                    };
+
+                    await WaitGetImageChannel.Writer.WriteAsync(cell);
                     GrabFinishEvent.Invoke(cell);
                     noOver = false;
                     isGrabing = false;

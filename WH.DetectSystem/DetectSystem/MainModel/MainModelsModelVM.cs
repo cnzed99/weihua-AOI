@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -17,6 +18,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using HistoryPlayback;
+using HistoryPlayback.Model;
 using Mapster;
 using MarkControl;
 using MotionControl;
@@ -31,6 +33,7 @@ using WH.DetectSystem.Models;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
+using WH.RunCell;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -125,6 +128,7 @@ namespace WH.DetectSystem.ViewModels
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
             TypeAdapterConfig<Token, Token>.NewConfig().MapWith(des => des);
             TypeAdapterConfig<dynamic, dynamic>.NewConfig().MapWith(des => des);
+            Task.Run(ImageTask);
         }
 
         #region 时间相关
@@ -211,13 +215,18 @@ namespace WH.DetectSystem.ViewModels
                 {
                     if (File.Exists(CCameraManagement.s_CamPath))
                     {
-                        ListCamSetParam = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(CCameraManagement.s_CamPath);
+                        ListCamSetParam = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(
+                            CCameraManagement.s_CamPath
+                        );
                     }
                     else
                     {
                         ListCamSetParam = new List<CCameraParameterBase>();
                     }
-                    CamManagement = new CCameraManagement(ListCamSetParam, CCameraManagement.s_CamPath);
+                    CamManagement = new CCameraManagement(
+                        ListCamSetParam,
+                        CCameraManagement.s_CamPath
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -306,5 +315,26 @@ namespace WH.DetectSystem.ViewModels
             ConfigAPI.Save(CMainMModel, ProjPath);
         }
         #endregion
+
+        private async void ImageTask()
+        {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            await foreach (Cell cell in CCameraBase.WaitGetImageChannel.Reader.ReadAllAsync())
+            {
+                try
+                {
+                    string projGuid = cell.ProjGuid;
+                    int index = CMainVMs.ToList().FindIndex(MainVM => MainVM.GUID == projGuid);
+                    if (index >= 0)
+                    {
+                        CMainVMs[index].m_WaitImgChannel.Writer.TryWrite(cell);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SysLog.Error("取图主线程出错:" + ex.Message);
+                }
+            }
+        }
     }
 }

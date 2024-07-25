@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Autofac;
+using CameraModule;
 using Microsoft.Win32;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -281,12 +282,12 @@ namespace 断面毛刺检测软件.Views
         /// </summary>
         private async void PreDllExcute(bool once = false)
         {
-            MMainVM.isStart = false;
+            MMainVM.IsStart = false;
             if (imgFiles.Count > ImgIndex && File.Exists(imgFiles[ImgIndex]))
             {
                 try
                 {
-                    if (!MMainVM.isStart)
+                    if (!MMainVM.IsStart)
                     {
                         if (!once) //连续离线
                         {
@@ -308,18 +309,18 @@ namespace 断面毛刺检测软件.Views
                         Quality = mainVM.MaociQualityConfig.Qualities[0],
                         ImageFile = ImgFiles[ImgIndex],
                         CancelSource = this.CancelToken,
-                        ProjGuid = "001",
-                        CamSerial = "002",
+                        ProjGuid = MMainVM.GUID,
+                        CamSerial = MMainVM.CameraSerial,
                         ComGuid = "com"
                     };
                     if (random.Next(10) > 5)
                         cell.IsOK = true;
                     //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
                     // _waitTriggerImageQueue.Enqueue(cell);
-                    cell.GetImageExcute(!MMainVM.isStart, 0);
+                    cell.GetImageExcute(!MMainVM.IsStart, 0);
 
                     //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
-                    await CMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                    await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
                 }
                 catch (TaskCanceledException ex)
                 {

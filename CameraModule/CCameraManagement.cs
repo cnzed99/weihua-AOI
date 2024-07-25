@@ -227,5 +227,21 @@ namespace CameraModule
                 }
             }
         }
+
+        public static void StopImaging(string ProjGuid, string CamSerial)
+        {
+            if (!CameraDict.ContainsKey(CamSerial))
+            {
+                CameraDict[CamSerial].IsRuning = false;
+            }
+        }
+
+        public static void StartImaging(string ProjGuid, string CamSerial)
+        {
+            if (!CameraDict.ContainsKey(CamSerial))
+            {
+                CameraDict[CamSerial].IsRuning = true;
+            }
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace WH.DetectSystem.Models
         /// 制程GUID
         /// </summary>
         public string GUID { get; set; }
+        public string CameraSerial { get; set; }
 
         [ObservableProperty]
         string name = "毛刺检测";

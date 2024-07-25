@@ -400,6 +400,11 @@ namespace CameraModule
         }
 
         /// <summary>
+        /// 所属制程
+        /// </summary>
+        public string ProjGuid { get; set; }
+
+        /// <summary>
         /// 2024.7.17 李焕彬
         /// ToString
         /// </summary>

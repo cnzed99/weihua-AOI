@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
+using CameraModule;
 using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -177,10 +178,27 @@ namespace WH.DetectSystem.ViewModels
         #endregion
 
         #region 启停 状态
+        bool isStart = false;
+
         /// <summary>
         /// 是否启动 后台使用此变量判断用户是否启动软件
         /// </summary>
-        public bool isStart = false;
+        public bool IsStart
+        {
+            get => isStart;
+            set
+            {
+                SetProperty(ref isStart, value);
+                if (value)
+                {
+                    CCameraManagement.StartImaging(this.GUID, this.CameraSerial);
+                }
+                else
+                {
+                    CCameraManagement.StopImaging(this.GUID, this.CameraSerial);
+                }
+            }
+        }
 
         /// <summary>
         /// 界面绑定变量，勿用此变量判断用户是否启动软件
@@ -270,9 +288,9 @@ namespace WH.DetectSystem.ViewModels
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
 
-        private static readonly BoundedChannelOptions s_NormalChannelOptions =
+        public static readonly BoundedChannelOptions s_NormalChannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
-        private static readonly BoundedChannelOptions s_SaveImgchannelOptions =
+        public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
 
         /// <summary>
@@ -283,10 +301,10 @@ namespace WH.DetectSystem.ViewModels
         );
 
         /// <summary>
-        /// 取图队列 目前没有相机，先改静态类离线测试用
+        /// 取图队列
         /// </summary>
-        public static Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
-            s_SaveImgchannelOptions
+        public readonly Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
+            CMainVM.s_SaveImgchannelOptions
         );
 
         /// <summary>
@@ -378,7 +396,7 @@ namespace WH.DetectSystem.ViewModels
                     #region test
 
                     await Task.Delay(20);
-                    if (!isStart)
+                    if (!IsStart)
                         continue;
                     if (!imgitor.MoveNext())
                     {
@@ -401,9 +419,9 @@ namespace WH.DetectSystem.ViewModels
                         OtherInfoRecv = new Dictionary<string, string>(),
                         isOnce = false,
                         CancelSource = this.m_cts,
-                        ProjGuid = "001",
+                        ProjGuid = GUID,
                         ComGuid = "001",
-                        CamSerial = "whcam001",
+                        CamSerial = CameraSerial,
                         Quality = MaociQualityConfig.Qualities[0]
                     };
                     if (random.Next(10) > 5)
@@ -416,7 +434,7 @@ namespace WH.DetectSystem.ViewModels
                     strbuilder.Append("   收到触发信号");
 
                     await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                    await m_WaitImgChannel.Writer.WriteAsync(cell);
+                    await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
 
                     #endregion
 
@@ -522,7 +540,7 @@ namespace WH.DetectSystem.ViewModels
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-                await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
+                await foreach (Cell cell in CCameraBase.WaitGetImageChannel.Reader.ReadAllAsync())
                 {
                     MemoryStream memoryStream = new MemoryStream();
                     cell.Image.WriteTo(memoryStream);
@@ -949,7 +967,7 @@ namespace WH.DetectSystem.ViewModels
                     {
                         try
                         {
-                            if (SystemSettings.OfflineSave || isStart)
+                            if (SystemSettings.OfflineSave || IsStart)
                                 MySqlVM.MysqlExecute.AddData(cell, SystemSettings.NowShift);
                         }
                         catch (Exception ex)

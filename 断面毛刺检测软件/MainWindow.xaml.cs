@@ -86,10 +86,10 @@ namespace 断面毛刺检测软件
                     .Throttle(TimeSpan.FromMilliseconds(500))
                     .Subscribe(_ =>
                     {
-                        if (mainVM.isStart == mainVM.StartStop)
+                        if (mainVM.IsStart == mainVM.StartStop)
                             return;
-                        mainVM.isStart = mainVM.StartStop;
-                        if (mainVM.isStart)
+                        mainVM.IsStart = mainVM.StartStop;
+                        if (mainVM.IsStart)
                             OperateLog.Info(Properties.Resources.Start);
                         else
                             OperateLog.Info(Properties.Resources.Stop);
@@ -237,12 +237,15 @@ namespace 断面毛刺检测软件
 
         #region 新建工程
 
-        private void NewProj_Click(object sender, RoutedEventArgs e)
+        private async void NewProj_Click(object sender, RoutedEventArgs e)
         {
             NewProjWindow newProj = App.Container.Resolve<Lazy<NewProjWindow>>().Value;
 
             OperateLog.Info(Properties.Resources.NewProj);
-            newProj.ShowDialog();
+            if (newProj.ShowDialog() is true)
+            {
+                await OpenProjAsync(CMainList.ProjPath);
+            }
         }
         #endregion
 

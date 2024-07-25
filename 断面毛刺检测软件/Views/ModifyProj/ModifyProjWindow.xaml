@@ -2,6 +2,7 @@
     x:Class="断面毛刺检测软件.Views.ModifyProjWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cam="clr-namespace:CameraModule;assembly=CameraModule"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
@@ -29,6 +30,14 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10">
             <TextBox hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.ModifyProj}}" Text="{Binding Name}" />
+            <ComboBox
+                Margin="5"
+                hc:TitleElement.Title="相机："
+                hc:TitleElement.TitlePlacement="Left"
+                
+                ItemsSource="{Binding Keys,Source={x:Static cam:CCameraManagement.CamParamDict}}"
+                SelectedItem="{Binding CameraSerial}"
+                Style="{StaticResource ComboBoxExtend}" />
             <TextBox
                 x:Name="tb_path"
                 hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:CLang.ModifyProj}}"
