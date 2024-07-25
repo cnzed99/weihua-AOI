@@ -370,4 +370,22 @@
   <data name="14.最小清晰度" xml:space="preserve">
     <value>14.最小清晰度</value>
   </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>粗定位数据</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>精定位数据</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>清晰度</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>对焦数据</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>正在对焦</value>
+  </data>
 </root>

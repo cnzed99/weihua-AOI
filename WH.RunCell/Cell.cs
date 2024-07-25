@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AlgorithmDll;
@@ -21,11 +22,6 @@ namespace WH.RunCell
         /// 图像文件
         /// </summary>
         public string ImageFile = string.Empty;
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// </summary>
-        public CImage ImageCam { get; set; }
 
         /// <summary>
         /// 缺陷位置图像
@@ -269,7 +265,6 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
-            ImageCam?.Dispose();
         }
 
         public override Cell Clone()
@@ -408,74 +403,5 @@ namespace WH.RunCell
         /// 接收到的信号数据
         /// </summary>
         public byte[] DataBytes { get; set; }
-    }
-
-    /// <summary>
-    /// 2024.7.23
-    /// 自定义图像类
-    /// </summary>
-    public class CImage : IDisposable
-    {
-        public CImage(int imageWidth, int imageHeight, nint imageData, PixelFormat pixelFormat)
-        {
-            ImageWidth = imageWidth;
-            ImageHeight = imageHeight;
-            ImageData = imageData;
-            PixelFormat = pixelFormat;
-            int bitsPerPixel = pixelFormat == PixelFormats.Gray8 ? 8 : 24;
-            StrideWidth = imageWidth * ((bitsPerPixel + 7) / 8);
-            ImageSize = StrideWidth * ImageHeight;
-        }
-
-        public CImage(int imageWidth, int imageHeight, int strideWidth, nint imageData, PixelFormat pixelFormat)
-        {
-            ImageWidth = imageWidth;
-            ImageHeight = imageHeight;
-            StrideWidth = strideWidth;
-            ImageData = imageData;
-            PixelFormat = pixelFormat;
-            ImageSize = StrideWidth * ImageHeight;
-        }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像宽度
-        /// </summary>
-        public int ImageWidth {  get; set; }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像高度
-        /// </summary>
-        public int ImageHeight { get; set; }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像数据
-        /// </summary>
-        public IntPtr ImageData { get; set; }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像行宽
-        /// </summary>
-        public int StrideWidth {  get; set; }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像类型
-        /// </summary>
-        public PixelFormat PixelFormat { get; set; }
-
-        /// <summary>
-        /// 2024.7.23
-        /// 图像大小
-        /// </summary>
-        public int ImageSize { get; set; }
-
-        public void Dispose()
-        {
-            Marshal.FreeHGlobal(ImageData);
-        }
     }
 }

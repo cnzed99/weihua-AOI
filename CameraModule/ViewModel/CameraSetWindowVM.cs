@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WH.RecipeCellRootBase;
 using WH.RunCell;
 
 namespace CameraModule
@@ -197,24 +198,14 @@ namespace CameraModule
         /// <param name="cell">cell</param>
         public void ShowImage(Cell cell)
         {
-            CImage image = cell.ImageCam;
+            CImage image = cell.Image;
             if (image != null)
             {
                 try
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ImageShow = BitmapSource.Create(
-                            image.ImageWidth,
-                            image.ImageHeight,
-                            96,
-                            96,
-                            image.PixelFormat,
-                            null,
-                            image.ImageData,
-                            image.ImageSize,
-                            image.StrideWidth
-                        );
+                        ImageShow = image.ToBitmapSource();
                     });
                     cellRecv?.Dispose();
                     cellRecv = cell;

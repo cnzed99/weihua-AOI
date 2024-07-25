@@ -137,13 +137,13 @@ namespace WH.DetectSystem.ViewModels
         }
 
         [ObservableProperty]
-        BitmapImage modelImage = new BitmapImage(new Uri("D://铝极.png"));
+        BitmapSource modelImage = new BitmapImage(new Uri("D://铝极.png"));
 
         [ObservableProperty]
         Brush modelBrush = Brushes.White;
 
         [ObservableProperty]
-        BitmapImage lastImage = new BitmapImage(new Uri("D://铝极.png"));
+        BitmapSource lastImage = new BitmapImage(new Uri("D://铝极.png"));
 
         [ObservableProperty]
         Brush lastBrush = Brushes.White;
@@ -408,13 +408,10 @@ namespace WH.DetectSystem.ViewModels
                         brushes.Reset();
                         brushes.MoveNext();
                     }
-                    MemoryStream memoryStream = new MemoryStream(
-                        File.ReadAllBytes(imgitor.Current)
-                    );
 
                     Cell cell = new Cell()
                     {
-                        Image = memoryStream,
+                        Image = new(imgitor.Current),
                         ID = "00001",
                         OtherInfoRecv = new Dictionary<string, string>(),
                         isOnce = false,
@@ -434,7 +431,7 @@ namespace WH.DetectSystem.ViewModels
                     strbuilder.Append("   收到触发信号");
 
                     await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                    await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
+                    await m_WaitImgChannel.Writer.WriteAsync(cell);
 
                     #endregion
 
@@ -540,11 +537,9 @@ namespace WH.DetectSystem.ViewModels
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-                await foreach (Cell cell in CCameraBase.WaitGetImageChannel.Reader.ReadAllAsync())
+                await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
-                    MemoryStream memoryStream = new MemoryStream();
-                    cell.Image.WriteTo(memoryStream);
-                    WeakReferenceMessenger.Default.Send(memoryStream, TokeVM);
+                    WeakReferenceMessenger.Default.Send(cell.Image, TokeVM);
 
                     await m_AlgorithmChannel.Writer.WriteAsync(cell);
                     //await Task.Delay(50);

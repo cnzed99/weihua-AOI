@@ -8,8 +8,8 @@ using System.Threading.Channels;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AlgorithmDll;
 using WH.Entity.LogRecord;
+using WH.RecipeCellRootBase;
 using WH.RunCell;
 
 namespace CameraModule
@@ -114,10 +114,24 @@ namespace CameraModule
         );
 
         /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 对焦采集 图像队列
+        /// </summary>
+        public static Channel<Cell> FocusWaitGetImageChannel = Channel.CreateBounded<Cell>(
+            channelOptions
+        );
+
+        /// <summary>
         /// 20240725 TCG
         /// 当前制程是否启动
         /// </summary>
         public bool IsRuning { get; set; } = false;
+
+        /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 当前制程是否正在对焦
+        /// </summary>
+        public bool IsFocusing { get; set; } = false;
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -350,10 +364,10 @@ namespace CameraModule
             try
             {
                 //需要增加判断是否是运行模式
-                if (!IsRuning)
+                if (!IsRuning && !IsFocusing)
                 {
                     Cell cell = new Cell();
-                    cell.ImageCam = outImage;
+                    cell.Image = outImage;
                     cell.FrameLoss = IsLostFrame;
                     GrabFinishEvent.Invoke(cell);
                     noOver = false;
@@ -365,13 +379,19 @@ namespace CameraModule
                     //Cell cell = await triggerImageChannel.Reader.ReadAsync();
                     Cell cell = new Cell()
                     {
-                        ImageCam = outImage,
+                        Image = outImage,
                         FrameLoss = IsLostFrame,
                         CamSerial = Setting.SerialNumber,
                         ProjGuid = Setting.ProjGuid
                     };
-
-                    await WaitGetImageChannel.Writer.WriteAsync(cell);
+                    if (IsRuning)
+                    {
+                        await WaitGetImageChannel.Writer.WriteAsync(cell);
+                    }
+                    else
+                    {
+                        await FocusWaitGetImageChannel.Writer.WriteAsync(cell);
+                    }
                     GrabFinishEvent.Invoke(cell);
                     noOver = false;
                     isGrabing = false;

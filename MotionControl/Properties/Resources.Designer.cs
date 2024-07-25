@@ -547,6 +547,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 粗定位数据 的本地化字符串。
+        /// </summary>
+        public static string CoarseData {
+            get {
+                return ResourceManager.GetString("CoarseData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 连接 的本地化字符串。
         /// </summary>
         public static string Connect {
@@ -619,6 +628,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 清晰度 的本地化字符串。
+        /// </summary>
+        public static string Distinct {
+            get {
+                return ResourceManager.GetString("Distinct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 驱动报警 的本地化字符串。
         /// </summary>
         public static string DriveAlarm {
@@ -637,11 +655,38 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 精定位数据 的本地化字符串。
+        /// </summary>
+        public static string FineData {
+            get {
+                return ResourceManager.GetString("FineData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦数据 的本地化字符串。
+        /// </summary>
+        public static string FocusData {
+            get {
+                return ResourceManager.GetString("FocusData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 对焦期望位 的本地化字符串。
         /// </summary>
         public static string FocusDst {
             get {
                 return ResourceManager.GetString("FocusDst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在对焦 的本地化字符串。
+        /// </summary>
+        public static string Focusing {
+            get {
+                return ResourceManager.GetString("Focusing", resourceCulture);
             }
         }
         
@@ -759,6 +804,15 @@ namespace MotionControl.Properties {
         public static string OutputIO {
             get {
                 return ResourceManager.GetString("OutputIO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 位置 的本地化字符串。
+        /// </summary>
+        public static string Pos {
+            get {
+                return ResourceManager.GetString("Pos", resourceCulture);
             }
         }
         

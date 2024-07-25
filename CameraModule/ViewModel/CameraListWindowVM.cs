@@ -43,11 +43,11 @@ namespace CameraModule
 
         /// <summary>
         /// 2024.7.22 李焕彬
-        /// OK命令，添加相机
+        /// Close命令，添加相机
         /// </summary>
         /// <param name="cameraListWindow">窗口对象</param>
         [RelayCommand]
-        public void OK(CameraListWindow cameraListWindow)
+        public void Close()
         {
             foreach (var info in CameraInfos)
             {
@@ -99,19 +99,6 @@ namespace CameraModule
                     }
                 }
             }
-
-            cameraListWindow.Close();
-        }
-
-        /// <summary>
-        /// 2024.7.22 李焕彬
-        /// Cancel命令
-        /// </summary>
-        /// <param name="cameraListWindow">窗口对象</param>
-        [RelayCommand]
-        public void Cancel(CameraListWindow cameraListWindow)
-        {
-            cameraListWindow.Close();
         }
 
         /// <summary>

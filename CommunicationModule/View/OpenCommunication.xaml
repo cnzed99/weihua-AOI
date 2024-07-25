@@ -38,6 +38,26 @@
                 x:Key="ConnectToStringConverter"
                 FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
                 TrueValue="{Binding [Connected], Source={x:Static local:CLang.s_Instance}}" />
+            <Style
+                x:Key="Button"
+                BasedOn="{StaticResource ButtonPrimary}"
+                TargetType="Button">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Padding" Value="8,5,8,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            </Style>
+            <Style
+                x:Key="DelButton"
+                BasedOn="{StaticResource ButtonDanger}"
+                TargetType="Button">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Padding" Value="8,5,8,5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+            </Style>
         </ResourceDictionary>
     </hc:Window.Resources>
     <i:Interaction.Triggers>
@@ -85,12 +105,12 @@
                             Style="{StaticResource TextBlockDefault}"
                             Text="{Binding [AlarmProtocol], Source={x:Static local:CLang.s_Instance}}" />
                         <Button
-                            Width="60"
-                            Margin="10,3"
+                            Width="80"
+                            Margin="20,3"
                             Command="{Binding AddAlarmCommand}"
                             Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
-                            Style="{DynamicResource ButtonPrimary}" />
+                            Style="{StaticResource Button}" />
                     </DockPanel>
                 </GroupBox.Header>
                 <Grid>
@@ -140,19 +160,19 @@
                                             <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" />
                                             <TextBox Grid.Column="1" Text="{Binding Name}" />
                                             <Button
-                                                Grid.Column="3"
+                                                Grid.Column="4"
                                                 Width="60"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DelAlarmCommand}"
                                                 CommandParameter="{Binding}"
                                                 Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                                                Style="{DynamicResource ButtonDanger}" />
+                                                Style="{StaticResource ButtonDanger}" />
                                             <Button
-                                                Grid.Column="4"
+                                                Grid.Column="3"
                                                 Width="60"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.SetAlarmCommand}"
                                                 CommandParameter="{Binding}"
                                                 Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
-                                                Style="{DynamicResource ButtonPrimary}" />
+                                                Style="{StaticResource Button}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

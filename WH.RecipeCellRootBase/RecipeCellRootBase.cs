@@ -1,6 +1,9 @@
 using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Media;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace WH.RecipeCellRootBase
@@ -10,8 +13,8 @@ namespace WH.RecipeCellRootBase
         where C : CellRootBase<C, T>, new()
     {
         // public PreVariable PreVal { get; set; } = new PreVariable();
-        private MemoryStream _image;
-        public MemoryStream Image
+        private CImage _image;
+        public CImage Image
         {
             get => _image;
             set { _image = value; }
@@ -51,11 +54,7 @@ namespace WH.RecipeCellRootBase
         public virtual C Clone()
         {
             C Cell = new C();
-            if (this.Image != null)
-            {
-                Cell.Image = new MemoryStream();
-                this.Image.WriteTo(Cell.Image);
-            }
+            Cell.Image = (CImage)this.Image.Clone();
             Cell.Detection = this.Detection?.Clone();
             foreach (T detection in this.Detections)
                 Cell.Detections.Add(detection.Clone());
@@ -160,5 +159,128 @@ namespace WH.RecipeCellRootBase
     {
         面积,
         数值
+    }
+
+    /// <summary>
+    /// 2024.7.23
+    /// 自定义图像类
+    /// </summary>
+    public class CImage : IDisposable, ICloneable
+    {
+        public CImage(BitmapSource bitmap)
+        {
+            ImageWidth = bitmap.PixelWidth;
+            ImageHeight = bitmap.PixelHeight;
+            PixelFormat = bitmap.Format;
+            StrideWidth = ImageWidth * ((PixelFormat.BitsPerPixel + 7) / 8);
+            ImageSize = StrideWidth * ImageHeight;
+            ImageData = Marshal.AllocHGlobal(ImageSize);
+            bitmap.CopyPixels(new Int32Rect(0, 0, ImageWidth, ImageHeight), ImageData, ImageSize, StrideWidth);
+        }
+
+        public CImage(string path) : this(new BitmapImage(new Uri(path)))
+        {
+
+        }
+
+        public CImage(int imageWidth, int imageHeight, nint imageData, PixelFormat pixelFormat)
+        {
+            ImageWidth = imageWidth;
+            ImageHeight = imageHeight;
+            ImageData = imageData;
+            PixelFormat = pixelFormat;
+            int bitsPerPixel = pixelFormat == PixelFormats.Gray8 ? 8 : 24;
+            StrideWidth = imageWidth * ((bitsPerPixel + 7) / 8);
+            ImageSize = StrideWidth * ImageHeight;
+        }
+
+        public CImage(int imageWidth, int imageHeight, int strideWidth, nint imageData, PixelFormat pixelFormat)
+        {
+            ImageWidth = imageWidth;
+            ImageHeight = imageHeight;
+            StrideWidth = strideWidth;
+            ImageData = imageData;
+            PixelFormat = pixelFormat;
+            ImageSize = StrideWidth * ImageHeight;
+        }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 转BitmapSource方法
+        /// </summary>
+        /// <returns>BitmapSource</returns>
+        public BitmapSource ToBitmapSource()
+        {
+            return BitmapSource.Create(
+                            ImageWidth,
+                            ImageHeight,
+                            96,
+                            96,
+                            PixelFormat,
+                            null,
+                            ImageData,
+                            ImageSize,
+                            StrideWidth
+                        );
+        }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像宽度
+        /// </summary>
+        public int ImageWidth { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像高度
+        /// </summary>
+        public int ImageHeight { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像数据
+        /// </summary>
+        public IntPtr ImageData { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像行宽
+        /// </summary>
+        public int StrideWidth { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像类型
+        /// </summary>
+        public PixelFormat PixelFormat { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// 图像大小
+        /// </summary>
+        public int ImageSize { get; set; }
+
+        /// <summary>
+        /// 2024.7.23
+        /// Dispose方法
+        /// </summary>
+        public void Dispose()
+        {
+            Marshal.FreeHGlobal(ImageData);
+        }
+
+        /// <summary>
+        /// 2024.7.23
+        /// Clone方法
+        /// </summary>
+        public object Clone()
+        {
+            IntPtr ptrDst = Marshal.AllocHGlobal(ImageSize);
+            byte[] data = new byte[ImageSize];
+            Marshal.Copy(ImageData, data, 0, ImageSize);
+            Marshal.Copy(data, 0, ptrDst, ImageSize);
+
+            return new CImage(ImageWidth, ImageHeight, StrideWidth, ptrDst, PixelFormat);
+        }
     }
 }

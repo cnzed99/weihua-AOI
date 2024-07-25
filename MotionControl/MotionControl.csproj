@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
 		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />

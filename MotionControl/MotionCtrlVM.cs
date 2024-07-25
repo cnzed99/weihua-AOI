@@ -5,8 +5,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -14,15 +18,35 @@ using HandyControl.Controls;
 using Newtonsoft.Json.Linq;
 using WH.Entity;
 using WH.Entity.CommonLib;
+using WH.RecipeCellRootBase;
+using WH.RunCell;
 
 namespace MotionControl
 {
+    /// <summary>
+    /// 2024.7.9 李焕彬
+    /// 对焦数据
+    /// </summary>
+    public record FocusData(double pos, float data);
+
     /// <summary>
     /// 2024.7.9 李焕彬
     /// 运动控件VM
     /// </summary>
     public partial class CMotionCtrlVM : ObservableObject
     {
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 计算对焦清晰度
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="nLine"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [DllImport("MaociAlg.dll")]
+        public static extern float CalcDistinct(int width, int height, int nLine, IntPtr data);
+
         public CMotionCtrlVM()
         {
             MotionConfig = LoadParameter();
@@ -115,6 +139,33 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         private double sensorPos;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 自动对焦状态
+        /// </summary>
+        [ObservableProperty]
+        private bool isFocusing;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 对焦请求停止
+        /// </summary>
+        private CancellationTokenSource cancellFocus;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 粗对焦数据
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<FocusData> focusDatas;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 精对焦数据
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<FocusData> fineFocusDatas;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -524,9 +575,98 @@ namespace MotionControl
         [RelayCommand]
         public void AutoFocus()
         {
-            //对焦流程
+            if (IsFocusing)
+            {
+                if(HandyControl.Controls.MessageBox.Show("正在对焦中，是否停止对焦？", "Tips", MessageBoxButton.YesNo) == MessageBoxResult.OK)
+                {
+                    IsFocusing = false;
+                    cancellFocus.Cancel();
+                    return;
+                }    
+            }
+            cancellFocus = new CancellationTokenSource();
+            if (CCameraManagement.CameraDict.Count == 0)
+            {
+                Growl.Error("没有相机！");
+                return;
+            }
+            CCameraBase cam = CCameraManagement.CameraDict.First().Value;
+            if (!cam.Connected)
+            {
+                Growl.Error("未打开相机！");
+                return;
+            }
+            if (!Connected)
+            {
+                Growl.Error("运动控制未连接！");
+                return;
+            }
+            if (cam.IsRuning)
+            {
+                Growl.Error("软件需要先暂停！");
+                return;
+            }
+            FocusDatas.Clear();
+            FineFocusDatas.Clear();
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    IsFocusing = true;
+                    cam.IsFocusing = true;
+                    for (float i = MotionConfig.SoftLimitN; i < MotionConfig.SoftLimitP; i += MotionConfig.StepCoarse)
+                    {
+                        AbsMove(i);
+                        while (Math.Abs(i - CurPos) > 0.01)
+                        {
+                            Thread.Sleep(50);
+                            cancellFocus.Token.ThrowIfCancellationRequested();
+                        }
+                        cam.ExecuteSoftwareTrigger();
+                        Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
+                        CImage image = cell.Image;
+                        float distinct = CalcDistinct(cell.Image.ImageWidth, cell.Image.ImageHeight, cell.Image.StrideWidth, cell.Image.ImageData);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            FocusDatas.Add(new(i, distinct));
+                        });
+                    }
+                    float focusPos = FocusDatas.MaxBy(o => o.data).data;
+                    float focusPosN = Math.Max(MotionConfig.SoftLimitN, focusPos - MotionConfig.FineRange / 2);
+                    float focusPosP = Math.Min(MotionConfig.SoftLimitP, focusPos + MotionConfig.FineRange / 2);
+                    for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
+                    {
+                        AbsMove(i);
+                        while (Math.Abs(i - CurPos) > 0.01)
+                        {
+                            Thread.Sleep(50);
+                            cancellFocus.Token.ThrowIfCancellationRequested();
+                        }
+                        cam.ExecuteSoftwareTrigger();
+                        Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
+                        CImage image = cell.Image;
 
-            modbusTcp.WriteRegisterD(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
+                        float distinct = CalcDistinct(image.ImageWidth, image.ImageHeight, image.StrideWidth, image.ImageData);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            FineFocusDatas.Add(new(i, distinct));
+                        });
+                    }
+                    MotionConfig.FocusPos = FineFocusDatas.MaxBy(o => o.data).data;
+                    AbsMove(MotionConfig.FocusPos);
+                    modbusTcp.WriteRegisterD(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
+                    Growl.Success("对焦完成！");
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error("对焦异常！" + ex.Message);
+                }
+                finally
+                {
+                    cam.IsFocusing = false;
+                    IsFocusing = false;
+                }
+            });
         }
 
         /// <summary>

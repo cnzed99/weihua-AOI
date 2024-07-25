@@ -27,6 +27,7 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
+using WH.RecipeCellRootBase;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -37,7 +38,7 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class MainWindow
         : HandyControl.Controls.Window,
-            IRecipient<MemoryStream>,
+            IRecipient<CImage>,
             IRecipient<AlarmPopMessage>,
             IRecipient<AddOneNgImagePathMessage>
     {
@@ -376,11 +377,10 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 await CMainList.OpenProj(progress, header);
 
-                WeakReferenceMessenger.Default.Register<MemoryStream, Token>(
+                WeakReferenceMessenger.Default.Register<CImage, Token>(
                     this,
                     CMainList.CMainVMs[0].TokeVM
                 );
-
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage, Token>(
                     this,
                     CMainList.CMainVMs[0].MaociAlarmSetConfig.token
@@ -557,18 +557,12 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        public void Receive(MemoryStream imgStream)
+        public void Receive(CImage image)
         {
             this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.StreamSource = new MemoryStream();
-                    imgStream.WriteTo(bitmap.StreamSource);
-                    bitmap.EndInit();
-                    mainVM.ModelImage = bitmap;
+                    mainVM.ModelImage = image.ToBitmapSource();
                 })
             );
         }

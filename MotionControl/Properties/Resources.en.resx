@@ -390,4 +390,22 @@
   <data name="14.最小清晰度" xml:space="preserve">
     <value>14.Min Distinct</value>
   </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>Coarse Data</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>Fine Data</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>Pos</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>Distinct</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>Focus Data</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>Focusing</value>
+  </data>
 </root>

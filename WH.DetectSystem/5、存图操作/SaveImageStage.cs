@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using SaveImageManage;
+using WH.RecipeCellRootBase;
 using WH.RunCell;
 
 namespace WH.DetectSystem._5_存图操作
@@ -271,14 +272,14 @@ namespace WH.DetectSystem._5_存图操作
         /// </summary>
         /// <param name="bitImage">图片</param>
         /// <param name="filepath">存图路径</param>
-        private static void WriteImage(MemoryStream msImage, string filepath, string format)
+        private static void WriteImage(CImage image, string filepath, string format)
         {
-            if (msImage != null)
+            if (image != null)
             {
                 using (FileStream stream = new FileStream(filepath, FileMode.Create))
                 {
                     BitmapEncoder encoder = GetEncoder(format);
-                    encoder.Frames.Add(BitmapFrame.Create(msImage));
+                    encoder.Frames.Add(BitmapFrame.Create(image.ToBitmapSource()));
                     encoder.Save(stream);
                 }
             }

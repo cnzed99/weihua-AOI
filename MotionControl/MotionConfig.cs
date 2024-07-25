@@ -390,7 +390,17 @@ namespace MotionControl
         [property: DisplayName("14.最小清晰度")]
         [property: Description("14.最小清晰度")]
         [ObservableProperty]
-        private float minDistinct = 0;
+        private float minDistinct = 10;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 精调范围
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("15.精调范围(mm)")]
+        [property: Description("15.精调范围(mm)")]
+        [ObservableProperty]
+        private float fineRange = 1;
 
         /// <summary>
         /// 2024.7.10 李焕彬

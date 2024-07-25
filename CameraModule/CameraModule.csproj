@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+		<ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
 		<ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
 	</ItemGroup>
 
