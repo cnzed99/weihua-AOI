@@ -170,7 +170,7 @@
                             <svg1:SVGImage Source="/Resources/图标/工具/离线检测.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Width="100" Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem Click="LightControl_Click" Width="100" Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />
                         </MenuItem.Icon>

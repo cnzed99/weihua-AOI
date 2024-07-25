@@ -65,9 +65,9 @@
             FalseValue="{StaticResource BorderBrush}"
             TrueValue="LimeGreen" />
     </hc:Window.Resources>
-   
+
     <DockPanel>
-        <GroupBox Width="auto" Header="基本参数">
+        <GroupBox Width="auto" Header="{Binding [基本参数], Source={x:Static local:CLang.LSWLightLang}}">
             <hc:ScrollViewer IsInertiaEnabled="True">
                 <StackPanel>
                     <UniformGrid Columns="2">
@@ -82,7 +82,7 @@
                                 Width="100"
                                 Margin="10,0"
                                 Command="{Binding OpenCommand}"
-                                Content="打开串口"
+                                Content="{Binding [连接控制器], Source={x:Static local:CLang.LSWLightLang}}"
                                 Style="{StaticResource ButtonPrimary.Small}" />
                         </StackPanel>
 
@@ -90,7 +90,7 @@
                             Width="100"
                             Margin="10,0"
                             Command="{Binding SaveCommand}"
-                            Content="保存配置"
+                            Content="{Binding [保存配置], Source={x:Static local:CLang.LSWLightLang}}"
                             Style="{StaticResource ButtonPrimary.Small}" />
                     </UniformGrid>
 
@@ -100,7 +100,7 @@
                         Width="100"
                         Margin="10"
                         Command="{Binding ReSetCommand}"
-                        Content="恢复出厂"
+                        Content="{Binding [恢复出厂], Source={x:Static local:CLang.LSWLightLang}}"
                         Style="{StaticResource ButtonDanger.Small}" />
                 </StackPanel>
             </hc:ScrollViewer>
@@ -109,9 +109,9 @@
         </GroupBox>
         <StackPanel>
             <hc:ElementGroup Margin="5">
-                <TextBlock HorizontalAlignment="Right" Text="高低电平:" />
-                <RadioButton Content="高电平" IsChecked="{Binding Config.TriggerMode}" />
-                <RadioButton Content="低电平" IsChecked="{Binding Config.TriggerMode, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <TextBlock HorizontalAlignment="Right" Text="{Binding [高低电平], Source={x:Static local:CLang.LSWLightLang}}" />
+                <RadioButton Content="{Binding [高电平], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.TriggerMode}" />
+                <RadioButton Content="{Binding [低电平], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.TriggerMode, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <hc:Interaction.Triggers>
                         <hc:EventTrigger EventName="Checked">
                             <hc:InvokeCommandAction Command="{Binding TriggerModeChangedCommand}" />
@@ -123,9 +123,9 @@
                 </RadioButton>
             </hc:ElementGroup>
             <hc:ElementGroup Margin="5">
-                <TextBlock HorizontalAlignment="Right" Text="触发沿:" />
-                <RadioButton Content="上升沿" IsChecked="{Binding Config.TriggerEdge}" />
-                <RadioButton Content="下降沿" IsChecked="{Binding Config.TriggerEdge, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <TextBlock HorizontalAlignment="Right" Text="{Binding [边沿触发], Source={x:Static local:CLang.LSWLightLang}}" />
+                <RadioButton Content="{Binding [上升沿], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.TriggerEdge}" />
+                <RadioButton Content="{Binding [下降沿], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.TriggerEdge, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <hc:Interaction.Triggers>
                         <hc:EventTrigger EventName="Checked">
                             <hc:InvokeCommandAction Command="{Binding TriggerEdgeChangedCommand}" />
@@ -137,9 +137,9 @@
                 </RadioButton>
             </hc:ElementGroup>
             <hc:ElementGroup Margin="5">
-                <TextBlock HorizontalAlignment="Right" Text="工作模式:" />
-                <RadioButton Content="增亮" IsChecked="{Binding Config.WorkMode}" />
-                <RadioButton Content="调试" IsChecked="{Binding Config.WorkMode, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <TextBlock HorizontalAlignment="Right" Text="{Binding [工作模式], Source={x:Static local:CLang.LSWLightLang}}" />
+                <RadioButton Content="{Binding [增亮], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.WorkMode}" />
+                <RadioButton Content="{Binding [调试], Source={x:Static local:CLang.LSWLightLang}}" IsChecked="{Binding Config.WorkMode, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <hc:Interaction.Triggers>
                         <hc:EventTrigger EventName="Checked">
                             <hc:InvokeCommandAction Command="{Binding WorkModeChangedCommand}" />
@@ -150,7 +150,7 @@
                     </hc:Interaction.Triggers>
                 </RadioButton>
             </hc:ElementGroup>
-            <GroupBox Header="通道亮度">
+            <GroupBox Header="{Binding [通道亮度], Source={x:Static local:CLang.LSWLightLang}}">
                 <ItemsControl ItemsSource="{Binding Config.LightChannelList}" />
             </GroupBox>
         </StackPanel>

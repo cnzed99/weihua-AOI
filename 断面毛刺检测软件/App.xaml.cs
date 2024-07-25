@@ -93,6 +93,8 @@ namespace 断面毛刺检测软件
         {
             base.OnExit(e);
             GlobalData.Save();
+            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            lightProcess?.Kill();
         }
 
         internal void UpdateSkin(SkinType skin)
@@ -193,9 +195,24 @@ namespace 断面毛刺检测软件
             builder
                 .Register(c => SingleInstance.Create<Lazy<DataQueryWindow>, DataQueryWindow>())
                 .InstancePerDependency();
+            //光源控制
+            var lightProcess = Invoke("./WH.LightControl.exe");
+            builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
 
             Container = builder.Build();
             CPublicServices.Container = Container;
+        }
+
+        public static Process Invoke(string file)
+        {
+            if (file != null && File.Exists(file))
+            {
+                Process Opener = new Process();
+                Opener.StartInfo.FileName = file;
+                Opener.StartInfo.UseShellExecute = false;
+                return Opener;
+            }
+            return null;
         }
     }
 

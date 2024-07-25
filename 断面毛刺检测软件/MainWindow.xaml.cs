@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reactive;
@@ -213,7 +214,7 @@ namespace 断面毛刺检测软件
                 CMainList.MarkCtrlVM.SaveParameter();
                 CMainList.CommManagement.CloseAllComm();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
-                Environment.Exit(0);
+                Application.Current.Shutdown();
             }
             catch (Exception exception)
             {
@@ -602,10 +603,27 @@ namespace 断面毛刺检测软件
             );
         }
 
+        /// <summary>
+        /// 通讯设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CommSet_Click(object sender, RoutedEventArgs e)
         {
             OpenCommunicationList openCommunicationList = new OpenCommunicationList();
             openCommunicationList.Show();
+        }
+
+        /// <summary>
+        /// 光源控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LightControl_Click(object sender, RoutedEventArgs e)
+        {
+            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            //lightProcess.Start();
+            lightProcess?.Start();
         }
     }
 }
