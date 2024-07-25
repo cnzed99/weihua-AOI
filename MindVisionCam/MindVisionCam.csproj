@@ -6,6 +6,7 @@
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\net8.0-windows\CamPlug\$(TargetName)\ /d /y" />
 		<Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\net8.0-windows\en\ /d /y" />
+		<Exec Command="xcopy $(OutDir)MVCAMSDK_X64.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\net8.0-windows\CamPlug\$(TargetName)\ /d /y" />
 	</Target>
 
 	<ItemGroup>
@@ -25,6 +26,10 @@
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="bin\Debug\net8.0-windows\MVCAMSDK_X64.dll" />
 	</ItemGroup>
 
 </Project>

@@ -614,8 +614,11 @@ namespace 断面毛刺检测软件
         /// <param name="e"></param>
         private void CommSet_Click(object sender, RoutedEventArgs e)
         {
-            OpenCommunicationList openCommunicationList = new OpenCommunicationList();
+            OpenCommunicationList openCommunicationList = App
+                .Container.Resolve<Lazy<OpenCommunicationList>>()
+                .Value;
             openCommunicationList.Show();
+            openCommunicationList.Activate();
         }
 
         /// <summary>
@@ -628,10 +631,13 @@ namespace 断面毛刺检测软件
             var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
             //lightProcess.Start();
             lightProcess?.Start();
+        }
+
         private void CamSet_Click(object sender, RoutedEventArgs e)
         {
-            CameraSetWindow cameraSetWindow = new CameraSetWindow();
+            CameraSetWindow cameraSetWindow = App.Container.Resolve<Lazy<CameraSetWindow>>().Value;
             cameraSetWindow.Show();
+            cameraSetWindow.Activate();
         }
     }
 }

@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using Autofac;
+using CameraModule;
+using CommunicationModule;
 using DataQuery;
 using HandyControl.Data;
 using HandyControl.Properties.Langs;
@@ -94,7 +96,15 @@ namespace 断面毛刺检测软件
             base.OnExit(e);
             GlobalData.Save();
             var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
-            lightProcess?.Kill();
+            try
+            {
+                if (lightProcess != null && lightProcess.Threads != null)
+                    lightProcess?.Kill();
+            }
+            catch (Exception)
+            {
+                //退出程序
+            }
         }
 
         internal void UpdateSkin(SkinType skin)
@@ -194,6 +204,16 @@ namespace 断面毛刺检测软件
             //数据查看
             builder
                 .Register(c => SingleInstance.Create<Lazy<DataQueryWindow>, DataQueryWindow>())
+                .InstancePerDependency();
+            //通讯配置
+            builder
+                .Register(c =>
+                    SingleInstance.Create<Lazy<OpenCommunicationList>, OpenCommunicationList>()
+                )
+                .InstancePerDependency();
+            //相机配置
+            builder
+                .Register(c => SingleInstance.Create<Lazy<CameraSetWindow>, CameraSetWindow>())
                 .InstancePerDependency();
             //光源控制
             var lightProcess = Invoke("./WH.LightControl.exe");
