@@ -46,95 +46,122 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="0.8*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <UniformGrid Columns="2">
-            <Button
-                Width="200"
-                Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter}}"
-                Command="{Binding ConnectCommand}"
-                Content="{Binding Com.IsConnected, Converter={StaticResource ConnectToStringConverter}}"
-                IsEnabled="{Binding Com.IsConnected, Converter={StaticResource Boolean2BooleanReConverter}}" />
-            <Button
-                Width="200"
-                Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter2}}"
-                Command="{Binding DisconnectCommand}"
-                Content="{Binding [Close], Source={x:Static local:CLang.s_Instance}}"
-                IsEnabled="{Binding Com.IsConnected}" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <UniformGrid Columns="2">
+                <Button
+                    Width="200"
+                    Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter}}"
+                    Command="{Binding ConnectCommand}"
+                    Content="{Binding Com.IsConnected, Converter={StaticResource ConnectToStringConverter}}"
+                    IsEnabled="{Binding Com.IsConnected, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                <Button
+                    Width="200"
+                    Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter2}}"
+                    Command="{Binding DisconnectCommand}"
+                    Content="{Binding [Close], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding Com.IsConnected}" />
+            </UniformGrid>
+            <Border
+                Grid.Row="1"
+                Margin="5"
+                BorderThickness="1">
+                <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" />
+            </Border>
+        </Grid>
+        <UniformGrid Grid.Column="1" Rows="2">
+            <GroupBox Margin="5" Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource TextBlockDefault}"
+                            Text="{Binding [AlarmProtocol], Source={x:Static local:CLang.s_Instance}}" />
+                        <Button
+                            Width="60"
+                            Margin="10,3"
+                            Command="{Binding AddAlarmCommand}"
+                            Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                            DockPanel.Dock="Right"
+                            Style="{DynamicResource ButtonPrimary}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="序号" />
+                        <TextBlock Grid.Column="1" Text="名称" />
+                        <TextBlock Grid.Column="3" Text="编辑" />
+                        <TextBlock Grid.Column="4" Text="删除" />
+                    </Grid>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl AlternationCount="10000" ItemsSource="{Binding Setting.AlarmAgreements}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Margin="0,3"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1">
+                                        <Grid Margin="0,2">
+                                            <Grid.Resources>
+                                                <ResourceDictionary>
+                                                    <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+                                                </ResourceDictionary>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50" />
+                                                <ColumnDefinition Width="140" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" />
+                                            <TextBox Grid.Column="1" Text="{Binding Name}" />
+                                            <Button
+                                                Grid.Column="3"
+                                                Width="60"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DelAlarmCommand}"
+                                                CommandParameter="{Binding}"
+                                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                                Style="{DynamicResource ButtonDanger}" />
+                                            <Button
+                                                Grid.Column="4"
+                                                Width="60"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.SetAlarmCommand}"
+                                                CommandParameter="{Binding}"
+                                                Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
+                                                Style="{DynamicResource ButtonPrimary}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </GroupBox>
+            <Grid Name="testGrid" Margin="5" />
         </UniformGrid>
-
-        <Border
-            Grid.RowSpan="3"
-            Grid.Column="1"
-            Margin="5"
-            BorderThickness="1">
-            <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" />
-        </Border>
-        <GroupBox
-            Grid.Row="3"
-            Grid.RowSpan="2"
-            Grid.Column="1"
-            Margin="5"
-            Style="{StaticResource GroupBoxTab}">
-            <GroupBox.Header>
-                <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
-                    <TextBlock
-                        DockPanel.Dock="Left"
-                        Style="{StaticResource TextBlockDefault}"
-                        Text="{Binding [AlarmProtocol], Source={x:Static local:CLang.s_Instance}}" />
-                    <Button
-                        Width="60"
-                        Margin="10,3"
-                        Command="{Binding DelAlarmCommand}"
-                        CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
-                        Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                        DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonDanger}" />
-                    <Button
-                        Width="60"
-                        Margin="10,3"
-                        Command="{Binding SetAlarmCommand}"
-                        CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
-                        Content="{Binding [Set], Source={x:Static local:CLang.s_Instance}}"
-                        DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" />
-                    <Button
-                        Width="60"
-                        Margin="10,3"
-                        Command="{Binding AddAlarmCommand}"
-                        Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
-                        DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" />
-                </DockPanel>
-            </GroupBox.Header>
-            <DataGrid
-                x:Name="dataGrid1"
-                hc:DataGridAttach.ShowRowNumber="True"
-                AutoGenerateColumns="False"
-                HeadersVisibility="All"
-                ItemsSource="{Binding Setting.AlarmAgreements}"
-                RowHeaderWidth="30"
-                SelectionMode="Single">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="350"
-                        Binding="{Binding Name}"
-                        Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </GroupBox>
-        <Grid
-            Name="testGrid"
-            Grid.Row="1"
-            Grid.RowSpan="4" />
     </Grid>
 </hc:Window>

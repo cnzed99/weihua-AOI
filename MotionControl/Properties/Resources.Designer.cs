@@ -106,6 +106,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 11.最佳对焦位置(mm) 的本地化字符串。
+        /// </summary>
+        public static string _11_最佳对焦位置_mm_ {
+            get {
+                return ResourceManager.GetString("11.最佳对焦位置(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 11.轴名称 的本地化字符串。
         /// </summary>
         public static string _11_轴名称 {
@@ -129,6 +138,15 @@ namespace MotionControl.Properties {
         public static string _12_正限位 {
             get {
                 return ResourceManager.GetString("12.正限位", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 12.粗调步长(mm) 的本地化字符串。
+        /// </summary>
+        public static string _12_粗调步长_mm_ {
+            get {
+                return ResourceManager.GetString("12.粗调步长(mm)", resourceCulture);
             }
         }
         
@@ -160,6 +178,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 13.精调步长(mm) 的本地化字符串。
+        /// </summary>
+        public static string _13_精调步长_mm_ {
+            get {
+                return ResourceManager.GetString("13.精调步长(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 13.负限位 的本地化字符串。
         /// </summary>
         public static string _13_负限位 {
@@ -169,20 +196,20 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 14.对焦基准位 的本地化字符串。
-        /// </summary>
-        public static string _14_对焦基准位 {
-            get {
-                return ResourceManager.GetString("14.对焦基准位", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 14.当前速度 的本地化字符串。
         /// </summary>
         public static string _14_当前速度 {
             get {
                 return ResourceManager.GetString("14.当前速度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 14.最小清晰度 的本地化字符串。
+        /// </summary>
+        public static string _14_最小清晰度 {
+            get {
+                return ResourceManager.GetString("14.最小清晰度", resourceCulture);
             }
         }
         
@@ -408,6 +435,15 @@ namespace MotionControl.Properties {
         public static string _4_软限位使能 {
             get {
                 return ResourceManager.GetString("4.软限位使能", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 5.对焦参数 的本地化字符串。
+        /// </summary>
+        public static string _5_对焦参数 {
+            get {
+                return ResourceManager.GetString("5.对焦参数", resourceCulture);
             }
         }
         

@@ -14,7 +14,21 @@ namespace CommunicationModule
     /// </summary>
     public interface ICommunicate
     {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 创建新通讯
+        /// </summary>
+        /// <param name="com">通讯对象</param>
+        /// <returns>通讯参数</returns>
         CCommunicationSettingBase CreateNewCom(out CCommunicationBase com);
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 初始化通讯
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="index">索引</param>
+        /// <param name="com">通讯对象</param>
+        /// <returns>通讯参数</returns>
         CCommunicationSettingBase Init(string path, int index, out CCommunicationBase com);
 
     }
@@ -25,6 +39,10 @@ namespace CommunicationModule
     /// </summary>
     public class CLoadComPlugs
     {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 加载通讯插件
+        /// </summary>
         public static void LoadCom()
         {
             foreach (var item in Directory.GetDirectories("ComPlug"))
@@ -40,17 +58,6 @@ namespace CommunicationModule
                     }
                 }
             }
-        }
-
-        public static Type LoadType(string asemblyName, string typeName)
-        {
-            if (File.Exists($"ComPlug\\{asemblyName}\\{asemblyName}.dll"))
-            {
-                Assembly ass = Assembly.LoadFrom($"ComPlug\\{asemblyName}\\{asemblyName}.dll");
-                Type type = ass.GetTypes().ToList().Find(c => c.FullName == typeName);
-                return type;
-            }
-            return null;
         }
     }
 }

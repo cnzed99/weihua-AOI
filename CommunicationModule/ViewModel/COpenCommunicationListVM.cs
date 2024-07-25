@@ -55,7 +55,7 @@ namespace CommunicationModule
         void Set(CCommunicationSettingBase settingBase)
         {
             OpenCommunication openCommunication = new OpenCommunication(settingBase);
-            openCommunication.ShowDialog();
+            openCommunication.Show();
         }
 
         /// <summary>

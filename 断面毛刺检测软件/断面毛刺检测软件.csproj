@@ -329,6 +329,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrl.csproj" />
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+    <ProjectReference Include="..\CameraModule\CameraModule.csproj" />
     <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
     <ProjectReference Include="..\DataQuery\DataQuery.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />

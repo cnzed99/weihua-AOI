@@ -93,7 +93,7 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [Camera], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem Width="100" Header="{Binding [Camera], Source={x:Static local:CLang.Instance}}" Click="CamSet_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/相机通讯/相机.svg" />
                         </MenuItem.Icon>

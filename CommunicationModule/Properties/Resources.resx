@@ -301,4 +301,7 @@
   <data name="4.默认进制转换" xml:space="preserve">
     <value>4.默认进制转换</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
 </root>

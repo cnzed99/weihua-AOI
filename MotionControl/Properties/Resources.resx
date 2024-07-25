@@ -346,9 +346,6 @@
   <data name="FocusDst" xml:space="preserve">
     <value>对焦期望位</value>
   </data>
-  <data name="14.对焦基准位" xml:space="preserve">
-    <value>14.对焦基准位</value>
-  </data>
   <data name="SensorPos" xml:space="preserve">
     <value>纠偏感应值</value>
   </data>
@@ -357,5 +354,20 @@
   </data>
   <data name="SetOutputError" xml:space="preserve">
     <value>写入地址M不能为空！</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.对焦参数</value>
+  </data>
+  <data name="11.最佳对焦位置(mm)" xml:space="preserve">
+    <value>11.最佳对焦位置(mm)</value>
+  </data>
+  <data name="12.粗调步长(mm)" xml:space="preserve">
+    <value>12.粗调步长(mm)</value>
+  </data>
+  <data name="13.精调步长(mm)" xml:space="preserve">
+    <value>13.精调步长(mm)</value>
+  </data>
+  <data name="14.最小清晰度" xml:space="preserve">
+    <value>14.最小清晰度</value>
   </data>
 </root>

@@ -153,16 +153,6 @@ namespace MotionControl
         private float softLimitN = -10000;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 对焦基准位
-        /// </summary>
-        [property: Category("2.轴信息")]
-        [property: DisplayName("14.对焦基准位")]
-        [property: Description("14.对焦基准位")]
-        [ObservableProperty]
-        private float focusPos = 0;
-
-        /// <summary>
         /// 2024.7.9 李焕彬
         /// 回原点
         /// </summary>
@@ -361,6 +351,46 @@ namespace MotionControl
         [property: DisplayName("20.纠偏感应值")]
         [property: Description("20.纠偏感应值")]
         private string addrSensorPos = "D126";
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 对焦基准位
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("11.最佳对焦位置(mm)")]
+        [property: Description("11.最佳对焦位置(mm)")]
+        [ObservableProperty]
+        private float focusPos = 0;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 粗调步长
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("12.粗调步长(mm)")]
+        [property: Description("12.粗调步长(mm)")]
+        [ObservableProperty]
+        private float stepCoarse = 0;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 精调步长
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("13.精调步长(mm)")]
+        [property: Description("13.精调步长(mm)")]
+        [ObservableProperty]
+        private float stepFine = 0;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 最小清晰度
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("14.最小清晰度")]
+        [property: Description("14.最小清晰度")]
+        [ObservableProperty]
+        private float minDistinct = 0;
 
         /// <summary>
         /// 2024.7.10 李焕彬

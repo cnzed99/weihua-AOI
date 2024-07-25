@@ -200,7 +200,7 @@ namespace CommunicationModule
         /// 2024.7.19 李焕彬
         /// 关闭所有通讯
         /// </summary>
-        public void CloseAllComm()
+        public static void CloseAllComm()
         {
             if (CommDic.Count > 0)
             {
@@ -222,6 +222,33 @@ namespace CommunicationModule
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 保存所有通讯参数
+        /// </summary>
+        /// <param name="campath"></param>
+        public static void SaveAllComConfig()
+        {
+            try
+            {
+                CCommunicationManagement.ComLogger.Info("保存所有通讯参数！");
+                List<CCommunicationSettingBase> listparam = new List<CCommunicationSettingBase>();
+                Dictionary<string, CCommunicationSettingBase>.ValueCollection Values =
+                    CCommunicationManagement.CommParamDic.Values;
+                foreach (var value in Values)
+                {
+                    listparam.Add(value);
+                }
+
+                ConfigAPI.Save(listparam, s_CommPath);
+                CCommunicationManagement.ComLogger.Info("保存所有通讯参数成功！");
+            }
+            catch (Exception ex)
+            {
+                CCommunicationManagement.ComLogger.Error("相机设置界面=>保存所有通讯参数错误:" + ex.Message);
             }
         }
 

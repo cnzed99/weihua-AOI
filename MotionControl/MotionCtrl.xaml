@@ -184,7 +184,7 @@
                                     <hc:NumericUpDown
                                         Name="num_abs"
                                         Maximum="{Binding MotionConfig.SoftLimitP}"
-                                        Minimum="{Binding MotionConfig.SoftLimitN}" />
+                                        Minimum="{Binding MotionConfig.SoftLimitN}"/>
                                 </GroupBox>
                                 <TextBlock
                                     Grid.Column="1"

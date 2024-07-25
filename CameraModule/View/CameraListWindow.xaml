@@ -1,0 +1,60 @@
+﻿<hc:Window
+    x:Class="CameraModule.CameraListWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:CameraModule"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    Title="{Binding [CameraList], Source={x:Static local:CLang.s_Instance}}"
+    Width="600"
+    Height="300"
+    Icon="/CameraModule;component/Resources/cam.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:CCameraListWindowVM/>
+    </Window.DataContext>
+    <hc:Window.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+        </ResourceDictionary>
+    </hc:Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel LastChildFill="False" MouseMove="DockPanel_MouseMove">
+            <Image  Margin="5,0" >
+                <Image.Source>
+                    <BitmapImage UriSource="/CameraModule;component/Resources/cam.png"  />
+                </Image.Source>
+            </Image>
+            <TextBlock Text="{Binding [CameraList], Source={x:Static local:CLang.s_Instance}}" Style="{StaticResource TextBlockDefault}"/>
+            <Button Content="✖"  DockPanel.Dock="Right" BorderThickness="0" Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=local:CameraListWindow}}"/>
+            <Button Content="✔" DockPanel.Dock="Right" BorderThickness="0" Command="{Binding OKCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=local:CameraListWindow}}"/>
+        </DockPanel>
+        <DataGrid
+            ItemsSource="{Binding CameraInfos}"
+            Grid.Row="1"
+            hc:DataGridAttach.ShowRowNumber="True"
+            AutoGenerateColumns="False"
+            HeadersVisibility="All"
+            RowHeaderWidth="30">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding SerialNumber}" Header="{Binding [Serial], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Vender}" Header="{Binding [Vender], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding CamType}" Header="{Binding [CamType], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding CamIp}" Header="{Binding [CamIp], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
+                <DataGridCheckBoxColumn Binding="{Binding IsUse}" Header="{Binding [IsUse], Source={x:Static local:CLang.s_Instance}}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</hc:Window>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AlarmSetCtrl;
 using Autofac;
+using CameraModule;
 using CommunicationModule;
 using CommunityToolkit.Mvvm.Messaging;
 using DataQuery;
@@ -212,7 +213,10 @@ namespace 断面毛刺检测软件
                 CMainList.SystemSettings.SaveParameter();
                 CMainList.MotionCtrlVM.SaveParameter();
                 CMainList.MarkCtrlVM.SaveParameter();
-                CMainList.CommManagement.CloseAllComm();
+                CCommunicationManagement.SaveAllComConfig();
+                CCameraManagement.SaveAllCamConfig();
+                CCommunicationManagement.CloseAllComm();
+                CCameraManagement.CloseAllCameras();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Application.Current.Shutdown();
             }
@@ -624,6 +628,10 @@ namespace 断面毛刺检测软件
             var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
             //lightProcess.Start();
             lightProcess?.Start();
+        private void CamSet_Click(object sender, RoutedEventArgs e)
+        {
+            CameraSetWindow cameraSetWindow = new CameraSetWindow();
+            cameraSetWindow.Show();
         }
     }
 }

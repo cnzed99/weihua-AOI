@@ -332,72 +332,104 @@ namespace WH.Controls
         /// <returns></returns>
         protected override PropertyItem CreatePropertyItem(PropertyDescriptor propertyDescriptor)
         {
-            PropertyItem propertyItem = new PropertyItem();
-            if (lang != null)
+            try
             {
-                propertyItem.Category = lang[PropertyResolver.ResolveCategory(propertyDescriptor)];
-                if (string.IsNullOrEmpty(propertyItem.Category))
+                PropertyItem propertyItem = new PropertyItem();
+                if (lang != null)
+                {
+                    propertyItem.Category = lang[
+                        PropertyResolver.ResolveCategory(propertyDescriptor)
+                    ];
+                    if (string.IsNullOrEmpty(propertyItem.Category))
+                    {
+                        propertyItem.Category = PropertyResolver.ResolveCategory(
+                            propertyDescriptor
+                        );
+                    }
+                    propertyItem.DisplayName = lang[
+                        PropertyResolver.ResolveDisplayName(propertyDescriptor)
+                    ];
+                    if (string.IsNullOrEmpty(propertyItem.DisplayName))
+                    {
+                        propertyItem.DisplayName = PropertyResolver.ResolveDisplayName(
+                            propertyDescriptor
+                        );
+                    }
+                    propertyItem.Description = lang[
+                        PropertyResolver.ResolveDescription(propertyDescriptor)
+                    ];
+                    if (string.IsNullOrEmpty(propertyItem.Description))
+                    {
+                        propertyItem.Description = PropertyResolver.ResolveDescription(
+                            propertyDescriptor
+                        );
+                    }
+                }
+                else
                 {
                     propertyItem.Category = PropertyResolver.ResolveCategory(propertyDescriptor);
-                }
-                propertyItem.DisplayName = lang[
-                    PropertyResolver.ResolveDisplayName(propertyDescriptor)
-                ];
-                if (string.IsNullOrEmpty(propertyItem.DisplayName))
-                {
                     propertyItem.DisplayName = PropertyResolver.ResolveDisplayName(
                         propertyDescriptor
                     );
-                }
-                propertyItem.Description = lang[
-                    PropertyResolver.ResolveDescription(propertyDescriptor)
-                ];
-                if (string.IsNullOrEmpty(propertyItem.Description))
-                {
                     propertyItem.Description = PropertyResolver.ResolveDescription(
                         propertyDescriptor
                     );
                 }
+                propertyItem.IsReadOnly = PropertyResolver.ResolveIsReadOnly(propertyDescriptor);
+                propertyItem.DefaultValue = PropertyResolver.ResolveDefaultValue(
+                    propertyDescriptor
+                );
+
+                List<Type> types = new List<Type>()
+                {
+                    typeof(sbyte),
+                    typeof(byte),
+                    typeof(short),
+                    typeof(ushort),
+                    typeof(int),
+                    typeof(uint),
+                    typeof(long),
+                    typeof(ulong),
+                    typeof(float),
+                    typeof(double)
+                };
+                bool hasEditor = false;
+                foreach (var item in propertyDescriptor.Attributes)
+                {
+                    if (item is EditorAttribute)
+                    {
+                        hasEditor = true;
+                        break;
+                    }
+                }
+                if (hasEditor)
+                {
+                    propertyItem.Editor = PropertyResolver.ResolveEditor(propertyDescriptor);
+                }
+                else if (types.Contains(propertyDescriptor.PropertyType))
+                {
+                    propertyItem.Editor = new PlainTextPropertyEditor();
+                }
+                else if (typeof(IList).IsAssignableFrom(propertyDescriptor.PropertyType))
+                {
+                    propertyItem.Editor = new CCollectionPropertyEditor();
+                }
+                else
+                {
+                    propertyItem.Editor = PropertyResolver.ResolveEditor(propertyDescriptor);
+                }
+                propertyItem.Value = SelectedObject;
+                propertyItem.PropertyName = propertyDescriptor.Name;
+                propertyItem.PropertyType = propertyDescriptor.PropertyType;
+                propertyItem.PropertyTypeName =
+                    $"{propertyDescriptor.PropertyType.Namespace}.{propertyDescriptor.PropertyType.Name}";
+                return propertyItem;
             }
-            else
+            catch (Exception ex)
             {
-                propertyItem.Category = PropertyResolver.ResolveCategory(propertyDescriptor);
-                propertyItem.DisplayName = PropertyResolver.ResolveDisplayName(propertyDescriptor);
-                propertyItem.Description = PropertyResolver.ResolveDescription(propertyDescriptor);
+                Growl.Error(ex.Message);
+                throw;
             }
-            propertyItem.IsReadOnly = PropertyResolver.ResolveIsReadOnly(propertyDescriptor);
-            propertyItem.DefaultValue = PropertyResolver.ResolveDefaultValue(propertyDescriptor);
-            List<Type> types = new List<Type>()
-            {
-                typeof(sbyte),
-                typeof(byte),
-                typeof(short),
-                typeof(ushort),
-                typeof(int),
-                typeof(uint),
-                typeof(long),
-                typeof(ulong),
-                typeof(float),
-                typeof(double)
-            };
-            if (types.Contains(propertyDescriptor.PropertyType))
-            {
-                propertyItem.Editor = new PlainTextPropertyEditor();
-            }
-            else if (typeof(IList).IsAssignableFrom(propertyDescriptor.PropertyType))
-            {
-                propertyItem.Editor = new CCollectionPropertyEditor();
-            }
-            else
-            {
-                propertyItem.Editor = PropertyResolver.ResolveEditor(propertyDescriptor);
-            }
-            propertyItem.Value = SelectedObject;
-            propertyItem.PropertyName = propertyDescriptor.Name;
-            propertyItem.PropertyType = propertyDescriptor.PropertyType;
-            propertyItem.PropertyTypeName =
-                $"{propertyDescriptor.PropertyType.Namespace}.{propertyDescriptor.PropertyType.Name}";
-            return propertyItem;
         }
     }
 }

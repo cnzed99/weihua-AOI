@@ -366,9 +366,6 @@
   <data name="FocusDst" xml:space="preserve">
     <value>FocusDst</value>
   </data>
-  <data name="14.对焦基准位" xml:space="preserve">
-    <value>14.FocusPos</value>
-  </data>
   <data name="SensorPos" xml:space="preserve">
     <value>SensorPos</value>
   </data>
@@ -377,5 +374,20 @@
   </data>
   <data name="SetOutputError" xml:space="preserve">
     <value>Write address M cannot be empty!</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.Focus Param</value>
+  </data>
+  <data name="11.最佳对焦位置(mm)" xml:space="preserve">
+    <value>11.Best Pos</value>
+  </data>
+  <data name="12.粗调步长(mm)" xml:space="preserve">
+    <value>12.Step Coarse</value>
+  </data>
+  <data name="13.精调步长(mm)" xml:space="preserve">
+    <value>13.Step Fine</value>
+  </data>
+  <data name="14.最小清晰度" xml:space="preserve">
+    <value>14.Min Distinct</value>
   </data>
 </root>

@@ -46,8 +46,7 @@
                     TextWrapping="Wrap" />
                 <Button
                     Grid.Column="1"
-                    Width="100"
-                    Height="40"
+                    Width="80"
                     Command="{Binding SendCommand}"
                     CommandParameter="{Binding ElementName=txt_send, Path=Text}"
                     Content="{Binding [Send], Source={x:Static local:CLang.s_Instance}}"
@@ -55,8 +54,7 @@
                 <Button
                     Grid.Row="1"
                     Grid.Column="2"
-                    Width="100"
-                    Height="40"
+                    Width="80"
                     Command="{Binding PingCommand}"
                     Content="Ping" />
             </Grid>

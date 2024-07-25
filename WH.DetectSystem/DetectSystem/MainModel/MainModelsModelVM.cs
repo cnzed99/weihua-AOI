@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
+using CameraModule;
 using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -97,6 +98,18 @@ namespace WH.DetectSystem.ViewModels
         /// 通讯管理
         /// </summary>
         public CCommunicationManagement CommManagement { get; set; }
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 相机列表
+        /// </summary>
+        public List<CCameraParameterBase> ListCamSetParam { get; set; }
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 相机管理
+        /// </summary>
+        public CCameraManagement CamManagement { get; set; }
 
         public CMainModelsModelVM()
         {
@@ -190,6 +203,25 @@ namespace WH.DetectSystem.ViewModels
                 catch (Exception ex)
                 {
                     Growl.Error("读取通讯参数发生异常,请检查参数表是否损坏:\r\n" + ex.Message);
+                }
+                #endregion
+
+                #region 读取所有相机参数文件并连接相机
+                try
+                {
+                    if (File.Exists(CCameraManagement.s_CamPath))
+                    {
+                        ListCamSetParam = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(CCameraManagement.s_CamPath);
+                    }
+                    else
+                    {
+                        ListCamSetParam = new List<CCameraParameterBase>();
+                    }
+                    CamManagement = new CCameraManagement(ListCamSetParam, CCameraManagement.s_CamPath);
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error("读取相机参数发生异常,请检查参数表是否损坏:\r\n" + ex.Message);
                 }
                 #endregion
             });

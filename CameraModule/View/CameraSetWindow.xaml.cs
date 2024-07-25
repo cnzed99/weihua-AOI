@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 namespace CameraModule
 {
     /// <summary>
+    /// 2024.7.22 李焕彬
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class CameraSetWindow : HandyControl.Controls.Window

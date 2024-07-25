@@ -318,7 +318,7 @@ namespace 断面毛刺检测软件.Views
                     // _waitTriggerImageQueue.Enqueue(cell);
                     cell.GetImageExcute(!MMainVM.isStart, 0);
 
-                    //await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
+                    //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
                     await CMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
                 }
                 catch (TaskCanceledException ex)

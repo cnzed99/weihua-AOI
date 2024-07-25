@@ -79,37 +79,7 @@ namespace CommunicationModule
         [RelayCommand]
         private void Close()
         {
-            Save();
             CCommunicationManagement.ComLogger.Info(Properties.Resources.CloseInfo);
-        }
-
-        /// <summary>
-        /// 2024.7.17 l李焕彬
-        /// 保存通讯
-        /// </summary>
-        [RelayCommand]
-        public void Save()
-        {
-            try
-            {
-                CCommunicationManagement.ComLogger.Info(Properties.Resources.SaveInfo);
-                List<CCommunicationSettingBase> listparam = new List<CCommunicationSettingBase>();
-
-                Dictionary<string, CCommunicationSettingBase>.ValueCollection Values =
-                    CCommunicationManagement.CommParamDic.Values;
-
-                foreach (var value in Values)
-                {
-                    listparam.Add(value);
-                }
-
-                ConfigAPI.Save(listparam, CCommunicationManagement.s_CommPath);
-                CCommunicationManagement.ComLogger.Info(Properties.Resources.SaveSuccesInfo);
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(Properties.Resources.SaveError + ex.Message);
-            }
         }
 
         /// <summary>
