@@ -138,6 +138,7 @@
     <None Include="bin\Debug\net8.0-windows\MaociAlg.dll" />
     <None Include="bin\Debug\net8.0-windows\MiniEcatLib.dll" />
     <None Include="bin\Debug\net8.0-windows\opencv_world490.dll" />
+    <None Include="bin\Debug\net8.0-windows\WH.LightControl.exe" />
   </ItemGroup>
 
   <ItemGroup>
