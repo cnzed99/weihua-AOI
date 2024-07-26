@@ -45,8 +45,8 @@
                 TrueValue="Lime" />
             <cov:BoolToBrushConverter
                 x:Key="StatusReConverter"
-                TrueValue="{StaticResource BorderBrush}"
-                FalseValue="Lime" />
+                FalseValue="Lime"
+                TrueValue="{StaticResource BorderBrush}" />
             <cov:BoolToBrushConverter
                 x:Key="GotMaxDisConverter"
                 FalseValue="Red"
@@ -64,14 +64,14 @@
             <DockPanel>
                 <UniformGrid
                     Margin="5"
-                    Columns="3"
+                    Columns="2"
                     DockPanel.Dock="Top">
                     <Button
                         Width="100"
                         Background="{Binding Connected, Converter={StaticResource SuccessToBrushConverter}}"
                         Command="{Binding ConnectCommand}"
                         Content="{Binding Connected, Converter={StaticResource BoolToStringConverter}}" />
-                    <Button
+                    <!--<Button
                         Width="100"
                         Content="{Binding [ClearAlarm], Source={x:Static local:CLang.s_Instance}}"
                         Style="{DynamicResource ButtonWarning}">
@@ -83,14 +83,15 @@
                                 <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrReset}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Button>
+                    </Button>-->
                     <Button
                         Width="100"
                         Margin="20,0"
                         Command="{Binding AutoFocusCommand}"
                         Content="{Binding IsFocusing, Converter={StaticResource FocusToStringConverter}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" />
+                        
+                        Style="{DynamicResource ButtonDashedPrimary}" />
                 </UniformGrid>
                 <GroupBox
                     Margin="5"
@@ -104,89 +105,69 @@
                     </GroupBox.Resources>
                     <StackPanel>
                         <UniformGrid Columns="5">
-                            <UniformGrid.Resources>
-                                <Style TargetType="wh:StatusLight">
-                                    <Setter Property="Radius" Value="10" />
-                                    <Setter Property="HorizontalAlignment" Value="Left" />
-                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                    <Setter Property="Margin" Value="10,10" />
-                                </Style>
-                            </UniformGrid.Resources>
-                            <hc:SimplePanel>
-                                <Button
-                                    Width="100"
-                                    Command="{Binding EnableCommand}"
-                                    Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
-                                    Style="{DynamicResource ButtonDefault}" />
-                                <wh:StatusLight Fill="{Binding IsEnable, Converter={StaticResource StatusConverter}}" />
-                            </hc:SimplePanel>
-                            <hc:SimplePanel>
 
-                                <Button
-                                    Width="100"
-                                    Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
-                                    Style="{DynamicResource ButtonDefault}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDown">
-                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="PreviewMouseUp">
-                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Button>
-                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusReConverter}}" />
-                            </hc:SimplePanel>
-                            <hc:SimplePanel>
-
-                                <Button
-                                    Width="100"
-                                    Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
-                                    Style="{DynamicResource ButtonDefault}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDown">
-                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="PreviewMouseUp">
-                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Button>
-                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[1].HasSignal, Converter={StaticResource GotMaxDisConverter}}" />
-                            </hc:SimplePanel>
-                            <hc:SimplePanel>
-                                <Button
-                                    Width="100"
-                                    Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
-                                    Style="{DynamicResource ButtonDefault}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDown">
-                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="PreviewMouseUp">
-                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Button>
-                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[0].HasSignal, Converter={StaticResource GotMaxDisConverter}}" />
-                            </hc:SimplePanel>
-                            <hc:SimplePanel>
-
-                                <Button
-                                    Width="100"
-                                    Background="{DynamicResource DangerBrush}"
-                                    Content="{Binding [Stop], Source={x:Static local:CLang.s_Instance}}"
-                                    Style="{DynamicResource ButtonDanger}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="PreviewMouseDown">
-                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
-                                        </i:EventTrigger>
-                                        <i:EventTrigger EventName="PreviewMouseUp">
-                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Button>
-                            </hc:SimplePanel>
+                            <Button
+                                Width="100"
+                                wh:StatusDotElement.DotBrush="{Binding IsEnable, Converter={StaticResource StatusConverter}}"
+                                Command="{Binding EnableCommand}"
+                                Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource StatusDotButton}" />
+                            <Button
+                                Width="100"
+                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusReConverter}}"
+                                Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource StatusDotButton}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDown">
+                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="PreviewMouseUp">
+                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button
+                                Width="100"
+                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[1].HasSignal, Converter={StaticResource GotMaxDisConverter}}"
+                                Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource StatusDotButton}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDown">
+                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="PreviewMouseUp">
+                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button
+                                Width="100"
+                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[0].HasSignal, Converter={StaticResource GotMaxDisConverter}}"
+                                Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource StatusDotButton}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDown">
+                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="PreviewMouseUp">
+                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                            <Button
+                                Width="100"
+                                BorderBrush="{StaticResource DangerBrush}"
+                                Content="{Binding [Stop], Source={x:Static local:CLang.s_Instance}}"
+                                Style="{DynamicResource ButtonDefault}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseDown">
+                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="PreviewMouseUp">
+                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
 
                             <!--<Label
                                 Width="80"
@@ -210,11 +191,12 @@
                                 <Button
                                     Width="100"
                                     Margin="5,0"
+                                    BorderBrush="{StaticResource PrimaryBrush}"
                                     Command="{Binding AbsMoveCommand}"
                                     CommandParameter="{Binding ElementName=num_abs, Path=Value}"
                                     Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
                                     DockPanel.Dock="Right"
-                                    Style="{DynamicResource ButtonPrimary}" />
+                                    Style="{DynamicResource ButtonDefault}" />
                                 <TextBlock
                                     Margin="5,0"
                                     DockPanel.Dock="Right"
@@ -229,24 +211,24 @@
                                     Style="{StaticResource NumericUpDownExtend}" />
                             </DockPanel>
                             <DockPanel Margin="50,5">
-
-
                                 <Button
                                     Width="50"
                                     Margin="5,0"
-                                    Command="{Binding RelaMovePCommand}"
-                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
-                                    Content="{Binding [前进], Source={x:Static local:CLang.s_Instance}}"
-                                    DockPanel.Dock="Right"
-                                    Style="{DynamicResource ButtonSuccess}" />
-                                <Button
-                                    Width="50"
-                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
                                     Command="{Binding RelaMoveNCommand}"
                                     CommandParameter="{Binding ElementName=num_rela, Path=Value}"
                                     Content="{Binding [后退], Source={x:Static local:CLang.s_Instance}}"
                                     DockPanel.Dock="Right"
-                                    Style="{DynamicResource ButtonSuccess}" />
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
+                                    Command="{Binding RelaMovePCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="{Binding [前进], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
                                 <TextBlock
                                     Margin="2,0"
                                     DockPanel.Dock="Right"

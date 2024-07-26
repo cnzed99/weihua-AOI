@@ -102,8 +102,8 @@
                             <Button
                                 Grid.Column="1"
                                 Margin="0,15,0,0"
-                                Content="Refresh"
                                 Command="{Binding RefreshAlarmAgreementsCommand}"
+                                Content="Refresh"
                                 Style="{StaticResource ButtonPrimary.Small}" />
                         </Grid>
 
@@ -200,7 +200,6 @@
             Grid.Row="1"
             AlternationCount="10000"
             Background="{x:Null}"
-            Foreground="Cyan"
             ItemsSource="{Binding CAlarmSet.AlarmList}"
             SelectionMode="Single">
             <ListView.ItemContainerStyle>

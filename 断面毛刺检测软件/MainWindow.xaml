@@ -9,6 +9,7 @@
     xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:history="clr-namespace:HistoryPlayback;assembly=HistoryPlayback"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,7 +17,6 @@
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     Title=""
@@ -31,8 +31,8 @@
     <hc:Window.Resources>
         <cov:BoolToBrushConverter
             x:Key="AlarmToBrushConverter"
-            FalseValue="{x:Null}"
-            TrueValue="{DynamicResource DangerBrush}" />
+            FalseValue="{StaticResource BorderBrush}"
+            TrueValue="Red" />
     </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
@@ -289,20 +289,24 @@
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <UniformGrid Columns="1">
                         <Label
-                            Width="80"
-                            Background="{Binding CMainVMs[0].MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
-                            Content="{Binding [轴报警], Source={x:Static local:CLang.Instance}}" />
+                            Width="100"
+                            wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
+                            wh:StatusDotElement.Radius="10"
+                            Content="{Binding [轴报警], Source={x:Static local:CLang.Instance}}"
+                            Style="{StaticResource StatusDotLabel}" />
                         <Label
-                            Width="80"
-                            Background="{Binding CMainVMs[0].MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
-                            Content="{Binding [驱动器报警], Source={x:Static local:CLang.Instance}}" />
+                            Width="100"
+                            wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
+                            wh:StatusDotElement.Radius="10"
+                            Content="{Binding [驱动器报警], Source={x:Static local:CLang.Instance}}"
+                            Style="{StaticResource StatusDotLabel}" />
                     </UniformGrid>
                     <Button
                         Height="70"
                         Margin="10,0"
                         Click="ClearGrowlMessage_Click"
                         Content="清空报警"
-                        Style="{StaticResource ButtonDashedInfo}" >
+                        Style="{StaticResource ButtonDashedInfo}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
                                 <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseDownCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
