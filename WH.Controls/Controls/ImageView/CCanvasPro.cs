@@ -409,21 +409,5 @@ namespace WH.Controls
             this.InvalidateVisual();
         }
 
-        /// <summary>
-        /// 2024.7.25 李焕彬
-        /// 复制显示
-        /// </summary>
-        public void CopyDraw(CCanvasPro copy)
-        {
-            Lines = copy.Lines;
-            Ellipses = copy.Ellipses;
-            Rectangles = copy.Rectangles;
-            Texts = copy.Texts;
-            TextAlignments = copy.TextAlignments;
-            Regions = copy.Regions;
-            _Pens = copy._Pens;
-
-            this.InvalidateVisual();
-        }
     }
 }

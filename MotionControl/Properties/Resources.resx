@@ -106,11 +106,11 @@
   <data name="4.脉冲毫米比" xml:space="preserve">
     <value>4.脉冲毫米比</value>
   </data>
-  <data name="12.正限位" xml:space="preserve">
-    <value>12.正限位</value>
+  <data name="12.正限位(mm)" xml:space="preserve">
+    <value>12.正限位(mm)</value>
   </data>
-  <data name="13.负限位" xml:space="preserve">
-    <value>13.负限位</value>
+  <data name="13.负限位(mm)" xml:space="preserve">
+    <value>13.负限位(mm)</value>
   </data>
   <data name="4.软限位使能" xml:space="preserve">
     <value>4.软限位使能</value>
@@ -393,5 +393,23 @@
   </data>
   <data name="后退" xml:space="preserve">
     <value>后退</value>
+  </data>
+  <data name="14.运行速度(mm/s)" xml:space="preserve">
+    <value>14.运行速度(mm/s)</value>
+  </data>
+  <data name="15.加速度(mm²/s)" xml:space="preserve">
+    <value>15.加速度(mm²/s)</value>
+  </data>
+  <data name="21.速度" xml:space="preserve">
+    <value>21.速度</value>
+  </data>
+  <data name="22.加速度" xml:space="preserve">
+    <value>22.加速度</value>
+  </data>
+  <data name="16.对焦速度(mm/s)" xml:space="preserve">
+    <value>16.对焦速度(mm/s)</value>
+  </data>
+  <data name="15.精调范围(mm)" xml:space="preserve">
+    <value>15.精调范围(mm)</value>
   </data>
 </root>

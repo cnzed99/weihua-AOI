@@ -376,8 +376,8 @@ namespace MotionControl
         public void WriteRegisterFix()
         {
             modbusTcp.WriteRegisterD(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
-            modbusTcp.WriteRegisterD(MotionConfig.AddrSoftLimitP, MotionConfig.SoftLimitP);
-            modbusTcp.WriteRegisterD(MotionConfig.AddrSoftLimitN, MotionConfig.SoftLimitN);
+            modbusTcp.WriteRegisterD(MotionConfig.AddrAcc, MotionConfig.Acc);
+            modbusTcp.WriteRegisterD(MotionConfig.AddrSpeed, MotionConfig.Speed);
         }
 
         /// <summary>
@@ -618,6 +618,32 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.12 李焕彬
+        /// 设置速度
+        /// </summary>
+        /// <param name="dis">移动速度/param>
+        public void SetSpeed(float speed)
+        {
+            modbusTcp.WriteRegisterD(MotionConfig.AddrSpeed, speed);
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 绝对值移动，等待到位
+        /// </summary>
+        /// <param name="dis">位置</param>
+        public void WaitMoveTo(float pos)
+        {
+            AbsMove(pos);
+            while (Math.Abs(pos - CurPos) > 0.01)
+            {
+                Thread.Sleep(10);
+                cancellFocus.Token.ThrowIfCancellationRequested();
+                AbsMove(pos);
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
         /// 自动对焦
         /// </summary>
         [RelayCommand]
@@ -645,7 +671,7 @@ namespace MotionControl
                 )
                 {
                     IsFocusing = false;
-                    cam.IsSetWindowShowed = false;
+
                     cancellFocus.Cancel();
                     return;
                 }
@@ -670,21 +696,14 @@ namespace MotionControl
                     {
                         try
                         {
-                            cam.IsSetWindowShowed = true;
                             IsFocusing = true;
-                            for (
-                                float i = MotionConfig.SoftLimitN;
-                                i < MotionConfig.SoftLimitP;
-                                i += MotionConfig.StepCoarse
-                            )
+                            SetSpeed(20);
+                            WaitMoveTo(MotionConfig.SoftLimitN);
+                            SetSpeed(MotionConfig.SpeedFocus);
+                            Thread.Sleep(50);
+                            AbsMove(MotionConfig.SoftLimitP);
+                            while (Math.Abs(MotionConfig.SoftLimitP - CurPos) > 0.01)
                             {
-                                AbsMove(i);
-                                while (Math.Abs(i - CurPos) > 0.01)
-                                {
-                                    Thread.Sleep(10);
-                                    cancellFocus.Token.ThrowIfCancellationRequested();
-                                    AbsMove(i);
-                                }
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
                                 CImage image = cell.Image;
@@ -696,9 +715,10 @@ namespace MotionControl
                                 );
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {
-                                    FocusDatas.Add(new(i, distinct));
+                                    FocusDatas.Add(new((float)CurPos, distinct));
                                 });
                             }
+
                             float focusPos = FocusDatas
                                 .MaxBy((Func<FocusData, float>)(o => o.distinct))
                                 .pos;
@@ -710,15 +730,12 @@ namespace MotionControl
                                 MotionConfig.SoftLimitP,
                                 focusPos + MotionConfig.FineRange / 2
                             );
+                            SetSpeed(20);
+                            WaitMoveTo(focusPosN);
+                            SetSpeed(MotionConfig.SpeedFocus);
                             for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
                             {
-                                AbsMove(i);
-                                while (Math.Abs(i - CurPos) > 0.01)
-                                {
-                                    Thread.Sleep(10);
-                                    cancellFocus.Token.ThrowIfCancellationRequested();
-                                    AbsMove(i);
-                                }
+                                WaitMoveTo(i);
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
                                 CImage image = cell.Image;
@@ -737,19 +754,15 @@ namespace MotionControl
                             MotionConfig.FocusPos = FineFocusDatas
                                 .MaxBy((Func<FocusData, float>)(o => o.distinct))
                                 .pos;
-                            AbsMove(MotionConfig.FocusPos);
-                            while (Math.Abs(MotionConfig.FocusPos - CurPos) > 0.01)
-                            {
-                                Thread.Sleep(50);
-                                cancellFocus.Token.ThrowIfCancellationRequested();
-                                AbsMove(MotionConfig.FocusPos);
-                            }
+                            SetSpeed(20);
+                            WaitMoveTo(MotionConfig.FocusPos);
                             cam.ExecuteSoftwareTrigger();
                             await FocusWaitGetImageChannel.Reader.ReadAsync();
                             modbusTcp.WriteRegisterD(
                                 MotionConfig.AddrFocusPos,
                                 MotionConfig.FocusPos
                             );
+                            WriteRegisterFix();
                             Growl.Success("对焦完成！");
                         }
                         catch (Exception ex)
@@ -758,7 +771,6 @@ namespace MotionControl
                         }
                         finally
                         {
-                            cam.IsSetWindowShowed = false;
                             IsFocusing = false;
                         }
                     }

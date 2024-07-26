@@ -133,11 +133,11 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 12.正限位 的本地化字符串。
+        ///   查找类似 12.正限位(mm) 的本地化字符串。
         /// </summary>
-        public static string _12_正限位 {
+        public static string _12_正限位_mm_ {
             get {
-                return ResourceManager.GetString("12.正限位", resourceCulture);
+                return ResourceManager.GetString("12.正限位(mm)", resourceCulture);
             }
         }
         
@@ -187,11 +187,11 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 13.负限位 的本地化字符串。
+        ///   查找类似 13.负限位(mm) 的本地化字符串。
         /// </summary>
-        public static string _13_负限位 {
+        public static string _13_负限位_mm_ {
             get {
-                return ResourceManager.GetString("13.负限位", resourceCulture);
+                return ResourceManager.GetString("13.负限位(mm)", resourceCulture);
             }
         }
         
@@ -223,6 +223,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 14.运行速度(mm/s) 的本地化字符串。
+        /// </summary>
+        public static string _14_运行速度_mm_s_ {
+            get {
+                return ResourceManager.GetString("14.运行速度(mm/s)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 15.当前扭矩 的本地化字符串。
         /// </summary>
         public static string _15_当前扭矩 {
@@ -241,11 +250,29 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 15.精调范围(mm) 的本地化字符串。
+        /// </summary>
+        public static string _15_精调范围_mm_ {
+            get {
+                return ResourceManager.GetString("15.精调范围(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 16.停止运动 的本地化字符串。
         /// </summary>
         public static string _16_停止运动 {
             get {
                 return ResourceManager.GetString("16.停止运动", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 16.对焦速度(mm/s) 的本地化字符串。
+        /// </summary>
+        public static string _16_对焦速度_mm_s_ {
+            get {
+                return ResourceManager.GetString("16.对焦速度(mm/s)", resourceCulture);
             }
         }
         
@@ -372,6 +399,24 @@ namespace MotionControl.Properties {
         public static string _20_驱动报警信号 {
             get {
                 return ResourceManager.GetString("20.驱动报警信号", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 21.速度 的本地化字符串。
+        /// </summary>
+        public static string _21_速度 {
+            get {
+                return ResourceManager.GetString("21.速度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 22.加速度 的本地化字符串。
+        /// </summary>
+        public static string _22_加速度 {
+            get {
+                return ResourceManager.GetString("22.加速度", resourceCulture);
             }
         }
         

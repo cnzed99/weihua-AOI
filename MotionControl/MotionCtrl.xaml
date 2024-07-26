@@ -44,9 +44,13 @@
                 FalseValue="{StaticResource BorderBrush}"
                 TrueValue="Lime" />
             <cov:BoolToBrushConverter
+                x:Key="StatusReConverter"
+                TrueValue="{StaticResource BorderBrush}"
+                FalseValue="Lime" />
+            <cov:BoolToBrushConverter
                 x:Key="GotMaxDisConverter"
-                FalseValue="{StaticResource BorderBrush}"
-                TrueValue="Red" />
+                FalseValue="Red"
+                TrueValue="{StaticResource BorderBrush}" />
             <Style
                 x:Key="DataGrid1"
                 BasedOn="{StaticResource DataGrid.Small}"
@@ -131,7 +135,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Button>
-                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusConverter}}" />
+                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusReConverter}}" />
                             </hc:SimplePanel>
                             <hc:SimplePanel>
 

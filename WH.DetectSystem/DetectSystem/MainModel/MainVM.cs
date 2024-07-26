@@ -802,72 +802,89 @@ namespace WH.DetectSystem.ViewModels
                         #region 窗口显示
                         try
                         {
-                            CurView.Dispatcher.Invoke(() =>
+                            for (int i = 0; i < 2; i++)
                             {
-                                CurView.Clear();
-                                if (!cell.IsOK && cell.Detection != null)
+                                ImageView drawView;
+                                if (i == 0)
                                 {
-                                    DefectFilter dstFilter = cell.Detection.DefectFilter;
-                                    StringBuilder textBuilder = new StringBuilder();
-                                    textBuilder.AppendLine(dstFilter.Name);
-                                    textBuilder.Append("质量:");
-                                    textBuilder.Append(dstFilter.QualityLevel.Name);
-                                    CurView.SetFontBrush(dstFilter.QualityLevel.ShowColor.Brush);
-                                    CurView.WinDrawText(
-                                        textBuilder.ToString(),
-                                        AlignmentX.Right,
-                                        AlignmentY.Top
-                                    );
-                                    //显示所有Region缺陷
-                                    if (SystemSettings.ShowAllDefect)
-                                    {
-                                        foreach (var detection in cell.Detections)
-                                        {
-                                            if (
-                                                detection.Result
-                                                || detection.Category != Category.区域
-                                            )
-                                                continue;
-                                            DefectFilter defectFilter = detection.DefectFilter;
-                                            CurView.SetPen(defectFilter.ShowColor.Brush);
-                                            CurView.SetFontBrush(defectFilter.ShowColor.Brush);
-                                            foreach (var reg in detection.regionOut)
-                                            {
-                                                CurView.ImgDrawPoints(reg.points1);
-                                                CurView.ImgDrawText(
-                                                    detection.DetectLog.ToString(),
-                                                    reg.GetCenter()
-                                                );
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        DefectFilter defectFilter = cell.Detection.DefectFilter;
-                                        if (cell.Detection.Category == Category.区域)
-                                        {
-                                            CurView.SetPen(defectFilter.ShowColor.Brush);
-                                            CurView.SetFontBrush(defectFilter.ShowColor.Brush);
-                                            foreach (var reg in cell.Detection.regionOut)
-                                            {
-                                                CurView.ImgDrawPoints(reg.points1);
-                                                CurView.ImgDrawText(
-                                                    cell.Detection.DetectLog.ToString(),
-                                                    reg.GetCenter()
-                                                );
-                                            }
-                                        }
-                                    }
+                                    drawView = CurView;
                                 }
-                            });
-                            //if (!cell.IsOK)
-                            //{
-                            //    LastView.Dispatcher.Invoke(() =>
-                            //    {
-                            //        LastView.Clear();
-                            //        LastView.CopyDraw(CurView);
-                            //    });
-                            //}
+                                else
+                                {
+                                    if (cell.IsOK) return;
+                                    drawView = LastView;
+                                }
+                                drawView.Dispatcher.Invoke(() =>
+                                {
+                                    drawView.Clear();
+                                    drawView.SetPen(Brushes.Blue);
+                                    drawView.ImgDrawRegion(cell.MaociTestOut.DarkTopRegion, false);
+                                    drawView.ImgDrawRegion(cell.MaociTestOut.DarkBotRegion, false);
+                                    drawView.SetPen(Brushes.Green);
+                                    drawView.ImgDrawRegion(cell.MaociTestOut.LightBotRegion, false);
+                                    drawView.ImgDrawRegion(cell.MaociTestOut.LightTopRegion, false);
+                                    if (!cell.IsOK && cell.Detection != null)
+                                    {
+                                        DefectFilter dstFilter = cell.Detection.DefectFilter;
+                                        StringBuilder textBuilder = new StringBuilder();
+                                        textBuilder.AppendLine(dstFilter.Name);
+                                        textBuilder.Append(dstFilter.QualityLevel.Name);
+                                        drawView.SetFontBrush(dstFilter.QualityLevel.ShowColor.Brush);
+                                        drawView.WinDrawText(
+                                            textBuilder.ToString(),
+                                            AlignmentX.Right,
+                                            AlignmentY.Top, false
+                                        );
+                                        //显示所有Region缺陷
+                                        if (SystemSettings.ShowAllDefect)
+                                        {
+                                            foreach (var detection in cell.Detections)
+                                            {
+                                                if (
+                                                    detection.Result
+                                                    || detection.Category != Category.区域 || detection.regionOut.Count == 0
+                                                )
+                                                    continue;
+                                                DefectFilter defectFilter = detection.DefectFilter;
+                                                drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                drawView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                                for (int i = 0; i < detection.regionOut.Count; i++)
+                                                {
+                                                    drawView.ImgDrawPoints(detection.regionOut[i].points1, false);
+                                                    if (i == detection.regionOut.Count - 1)
+                                                    {
+                                                        drawView.ImgDrawText(
+                                                        detection.DetectLog.ToString(),
+                                                        detection.regionOut[i].GetCenter(), false
+                                                    );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            DefectFilter defectFilter = cell.Detection.DefectFilter;
+                                            if (cell.Detection.Category == Category.区域 || cell.Detection.regionOut.Count == 0)
+                                            {
+                                                drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                drawView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                                for (int i = 0; i < cell.Detection.regionOut.Count; i++)
+                                                {
+                                                    drawView.ImgDrawPoints(cell.Detection.regionOut[i].points1, false);
+                                                    if (i == cell.Detection.regionOut.Count - 1)
+                                                    {
+                                                        drawView.ImgDrawText(
+                                                        cell.Detection.DetectLog.ToString(),
+                                                        cell.Detection.regionOut[i].GetCenter(), false
+                                                    );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    drawView.Invalidate();
+                                });
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -876,8 +893,8 @@ namespace WH.DetectSystem.ViewModels
                         }
                         finally
                         {
-                            cell.Dispose(); //结束 清理
-                            GC.Collect();
+                            //cell.Dispose(); //结束 清理
+                            //GC.Collect();
                         }
 
                         await m_AlarmChannel.Writer.WriteAsync(cell);

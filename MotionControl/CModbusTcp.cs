@@ -137,7 +137,7 @@ namespace MotionControl
                         SendDxData?.Invoke(dValue);
                         //plc连接事件
                         actionConnect.Invoke(true);
-                        Thread.Sleep(500);
+                        Thread.Sleep(10);
                     }
                     else
                     {

@@ -349,16 +349,6 @@ namespace WH.Controls
         }
 
         /// <summary>
-        /// 2024.7.25 李焕彬
-        /// 复制显示
-        /// </summary>
-        public void CopyDraw(ImageView copy)
-        {
-            this.Image.CopyDraw(copy.Image);
-            this.Canvas.CopyDraw(copy.Canvas);
-        }
-
-        /// <summary>
         /// 2024.7.5 李焕彬
         /// 获取窗口截图
         /// </summary>

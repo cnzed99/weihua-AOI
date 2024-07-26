@@ -126,11 +126,11 @@
   <data name="4.脉冲毫米比" xml:space="preserve">
     <value>4.PulsePerUnit</value>
   </data>
-  <data name="12.正限位" xml:space="preserve">
-    <value>12.SoftLimitP</value>
+  <data name="12.正限位(mm)" xml:space="preserve">
+    <value>12.SoftLimitP(mm)</value>
   </data>
-  <data name="13.负限位" xml:space="preserve">
-    <value>13.SoftLimitN</value>
+  <data name="13.负限位(mm)" xml:space="preserve">
+    <value>13.SoftLimitN(mm)</value>
   </data>
   <data name="4.软限位使能" xml:space="preserve">
     <value>4.SoftLimitEnable</value>
@@ -413,5 +413,23 @@
   </data>
   <data name="后退" xml:space="preserve">
     <value>Step-</value>
+  </data>
+  <data name="14.运行速度(mm/s)" xml:space="preserve">
+    <value>14.Speed(mm/s)</value>
+  </data>
+  <data name="15.加速度(mm²/s)" xml:space="preserve">
+    <value>15.Acc(mm²/s)</value>
+  </data>
+  <data name="21.速度" xml:space="preserve">
+    <value>21.Speed</value>
+  </data>
+  <data name="22.加速度" xml:space="preserve">
+    <value>22.Acc</value>
+  </data>
+  <data name="16.对焦速度(mm/s)" xml:space="preserve">
+    <value>16.Speed Focus(mm/s)</value>
+  </data>
+  <data name="15.精调范围(mm)" xml:space="preserve">
+    <value>15.Fine Focus Range(mm)</value>
   </data>
 </root>

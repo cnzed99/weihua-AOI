@@ -289,9 +289,6 @@
   <data name="AlgorParam" xml:space="preserve">
     <value>算法参数</value>
   </data>
-  <data name="ShowAllDefect" xml:space="preserve">
-    <value>显示所有缺陷</value>
-  </data>
   <data name="轴报警" xml:space="preserve">
     <value>轴报警</value>
   </data>

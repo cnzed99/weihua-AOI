@@ -137,13 +137,12 @@ namespace WH.DetectSystem
                                 break;
                             }
                         }
-                        //检测区显示
-                        SRegion maxRegion =
-                            detection.regionOut.Count > 0
-                                ? detection.regionOut.MaxBy<SRegion, double>(o =>
-                                    o.RegionInfo.PeakHeight
-                                )
-                                : new SRegion();
+                        SRegion maxRegion = new SRegion(); ;
+                        if (detection.regionOut.Count > 0)
+                        {
+                            detection.regionOut.Sort(delegate (SRegion l, SRegion r) { return l.RegionInfo.PeakHeight.CompareTo(r.RegionInfo.PeakHeight); });
+                            maxRegion = detection.regionOut.Last();
+                        }
                         foreach (var item in de.ResultList)
                         {
                             switch (item.Feature)

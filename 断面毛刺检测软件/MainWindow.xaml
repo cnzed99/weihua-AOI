@@ -16,6 +16,7 @@
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     Title=""
@@ -301,7 +302,16 @@
                         Margin="10,0"
                         Click="ClearGrowlMessage_Click"
                         Content="清空报警"
-                        Style="{StaticResource ButtonDashedInfo}" />
+                        Style="{StaticResource ButtonDashedInfo}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDown">
+                                <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseDownCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="PreviewMouseUp">
+                                <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseUpCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
                     <!--  启停按钮  -->
                     <ToggleButton
                         x:Name="Btn_StartStop"

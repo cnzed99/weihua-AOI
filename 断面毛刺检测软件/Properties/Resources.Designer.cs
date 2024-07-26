@@ -485,15 +485,6 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
-        ///   查找类似 显示所有缺陷 的本地化字符串。
-        /// </summary>
-        public static string ShowAllDefect {
-            get {
-                return ResourceManager.GetString("ShowAllDefect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 启动 的本地化字符串。
         /// </summary>
         public static string Start {

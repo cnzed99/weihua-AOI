@@ -354,12 +354,12 @@ namespace CameraModule
                     ProjGuid = Setting.ProjGuid
                 };
                 //需要增加判断是否是运行模式
-                if (!IsSetWindowShowed)
+                if (IsSetWindowShowed)
                 {
                     GrabFinishEvent?.Invoke(cell);
                 }
                 //Cell cell = await triggerImageChannel.Reader.ReadAsync();
-                if (OutputImageChannel is not null)
+                else if (OutputImageChannel is not null)
                 {
                     await OutputImageChannel.Writer.WriteAsync(cell);
                 }

@@ -30,6 +30,40 @@ namespace MotionControl
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreModifyLog]
+        string[] XIOName = new string[10]
+        {
+            "负限位",
+            "正限位",
+            "原点",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用"
+        };
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreModifyLog]
+        string[] YIOName = new string[10]
+        {
+            "脉冲",
+            "方向",
+            "使能",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用"
+        };
+
         public CMotionConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
@@ -47,8 +81,6 @@ namespace MotionControl
             this.SignalOuts = signalOut;
             this.RegisterSets = new ObservableCollection<CRegisterSet>()
             {
-                new(this.token, "速度", "D100"),
-                new(this.token, "加速度", "D116")
             };
         }
 
@@ -151,6 +183,26 @@ namespace MotionControl
         [property: DisplayName("13.负限位(mm)")]
         [property: Description("13.负限位(mm)")]
         private float softLimitN = -15f;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 运行（纠偏）速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.轴信息")]
+        [property: DisplayName("14.运行速度(mm/s)")]
+        [property: Description("14.运行速度(mm/s)")]
+        private float speed = 10;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 加速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.轴信息")]
+        [property: DisplayName("15.加速度(mm²/s)")]
+        [property: Description("15.加速度(mm²/s)")]
+        private float acc = 50;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -304,26 +356,6 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.9 李焕彬
-        /// 正限位
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("4.地址信息D")]
-        [property: DisplayName("16.正限位")]
-        [property: Description("16.正限位")]
-        private string addrSoftLimitP = "D122";
-
-        /// <summary>
-        /// 2024.7.9 李焕彬
-        /// 负限位
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("4.地址信息D")]
-        [property: DisplayName("17.负限位")]
-        [property: Description("17.负限位")]
-        private string addrSoftLimitN = "D124";
-
-        /// <summary>
-        /// 2024.7.9 李焕彬
         /// 对焦基准位
         /// </summary>
         [ObservableProperty]
@@ -351,6 +383,26 @@ namespace MotionControl
         [property: DisplayName("20.纠偏感应值")]
         [property: Description("20.纠偏感应值")]
         private string addrSensorPos = "D126";
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 速度地址
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("21.速度")]
+        [property: Description("21.速度")]
+        private string addrSpeed = "D100";
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 加速度地址
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("22.加速度")]
+        [property: Description("22.加速度")]
+        private string addrAcc = "D116";
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -402,6 +454,16 @@ namespace MotionControl
         [property: Description("15.精调范围(mm)")]
         [ObservableProperty]
         private float fineRange = 0.3f;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 对焦速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("16.对焦速度(mm/s)")]
+        [property: Description("16.对焦速度(mm/s)")]
+        private float speedFocus = 5;
 
         /// <summary>
         /// 2024.7.10 李焕彬
