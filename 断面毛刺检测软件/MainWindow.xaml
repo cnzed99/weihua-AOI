@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:al="clr-namespace:AlgorithmDll;assembly=AlgorithmDll"
     xmlns:alarm="clr-namespace:AlarmSetCtrl;assembly=AlarmSetCtrl"
+    xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
     xmlns:hc="https://handyorg.github.io/handycontrol"
@@ -26,6 +27,12 @@
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <hc:Window.Resources>
+        <cov:BoolToBrushConverter
+            x:Key="AlarmToBrushConverter"
+            FalseValue="{x:Null}"
+            TrueValue="{DynamicResource DangerBrush}" />
+    </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
         <Grid>
@@ -93,7 +100,10 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [Camera], Source={x:Static local:CLang.Instance}}" Click="CamSet_Click">
+                    <MenuItem
+                        Width="100"
+                        Click="CamSet_Click"
+                        Header="{Binding [Camera], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/相机通讯/相机.svg" />
                         </MenuItem.Icon>
@@ -170,7 +180,10 @@
                             <svg1:SVGImage Source="/Resources/图标/工具/离线检测.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Click="LightControl_Click" Width="100" Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="LightControl_Click"
+                        Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />
                         </MenuItem.Icon>
@@ -213,7 +226,10 @@
                             IsChecked="{Binding SystemSettings.IsEnglish}"
                             Unchecked="Lang_Checked" />-->
                     </MenuItem>
-                    <MenuItem Width="100" Click="About_Click" Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Click="About_Click"
+                        Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/帮助/关于.svg" />
                         </MenuItem.Icon>
@@ -253,7 +269,7 @@
                     Margin="5"
                     HorizontalAlignment="Left"
                     Source="/Resources/组合-2.png" />
-                <TextBlock HorizontalAlignment="Center" Text="{Binding version,StringFormat='{}Version:{0}'}" />
+                <TextBlock HorizontalAlignment="Center" Text="{Binding version, StringFormat='{}Version:{0}'}" />
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -270,6 +286,16 @@
                     <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <UniformGrid Columns="1">
+                        <Label
+                            Width="80"
+                            Background="{Binding CMainVMs[0].MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
+                            Content="{Binding [轴报警], Source={x:Static local:CLang.Instance}}" />
+                        <Label
+                            Width="80"
+                            Background="{Binding CMainVMs[0].MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
+                            Content="{Binding [驱动器报警], Source={x:Static local:CLang.Instance}}" />
+                    </UniformGrid>
                     <Button
                         Height="70"
                         Margin="10,0"
@@ -367,13 +393,16 @@
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].ModelBrush}"
                     BorderThickness="3">
-                    <wh:ImageView Source="{Binding CMainVMs[0].ModelImage}" Operator="{Binding CMainVMs[0].CurView, Mode=OneWayToSource}"/>
+                    <wh:ImageView Operator="{Binding CMainVMs[0].CurView, Mode=OneWayToSource}" Source="{Binding CMainVMs[0].ModelImage}" />
                 </Border>
                 <Border
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].LastBrush}"
                     BorderThickness="3">
-                    <wh:ImageView d:Source="D://铝极.png" Source="{Binding CMainVMs[0].LastImage}" Operator="{Binding CMainVMs[0].LastView, Mode=OneWayToSource}"/>
+                    <wh:ImageView
+                        d:Source="D://铝极.png"
+                        Operator="{Binding CMainVMs[0].LastView, Mode=OneWayToSource}"
+                        Source="{Binding CMainVMs[0].LastImage}" />
                 </Border>
 
             </UniformGrid>

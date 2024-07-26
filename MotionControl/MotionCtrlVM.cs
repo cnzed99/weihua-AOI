@@ -413,7 +413,7 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error(signal + ":" + ex.Message);
+                    Growl.Warning(signal + ":" + ex.Message);
                 }
             }
 
@@ -428,7 +428,7 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error(signal + ":" + ex.Message);
+                    Growl.Warning(signal + ":" + ex.Message);
                 }
             }
         }
@@ -448,7 +448,7 @@ namespace MotionControl
             }
             catch (Exception err)
             {
-                Growl.Error(err.Message);
+                Growl.Warning(err.Message);
             }
         }
 
@@ -477,7 +477,7 @@ namespace MotionControl
             }
             catch (Exception err)
             {
-                Growl.Error(err.Message);
+                Growl.Warning(err.Message);
             }
         }
 
@@ -498,7 +498,7 @@ namespace MotionControl
             }
             else
             {
-                Growl.Error(Properties.Resources.PosOverLimit);
+                Growl.Warning(Properties.Resources.PosOverLimit);
             }
         }
 
@@ -519,7 +519,7 @@ namespace MotionControl
             }
             else
             {
-                Growl.Error(Properties.Resources.PosOverLimit);
+                Growl.Warning(Properties.Resources.PosOverLimit);
             }
         }
 
@@ -540,7 +540,7 @@ namespace MotionControl
             }
             else
             {
-                Growl.Error(Properties.Resources.PosOverLimit);
+                Growl.Warning(Properties.Resources.PosOverLimit);
             }
         }
 
@@ -560,7 +560,7 @@ namespace MotionControl
                 }
                 catch (Exception err)
                 {
-                    Growl.Error(err.Message);
+                    Growl.Warning(err.Message);
                 }
             }
         }
@@ -581,7 +581,7 @@ namespace MotionControl
                 }
                 catch (Exception err)
                 {
-                    Growl.Error(err.Message);
+                    Growl.Warning(err.Message);
                 }
             }
         }
@@ -610,7 +610,7 @@ namespace MotionControl
         {
             if (String.IsNullOrEmpty(signalOut.AddrM))
             {
-                Growl.Error(Properties.Resources.SetOutputError);
+                Growl.Warning(Properties.Resources.SetOutputError);
                 return;
             }
             modbusTcp.WriteCoilM(signalOut.AddrM, signalOut.Set);
@@ -625,13 +625,13 @@ namespace MotionControl
         {
             if (!CCameraManagement.CameraDict.ContainsKey(CameraSerial))
             {
-                Growl.Error("没有相机！");
+                Growl.Warning("没有相机！");
                 return;
             }
             CCameraBase cam = CCameraManagement.CameraDict[CameraSerial];
             if (!cam.Connected)
             {
-                Growl.Error("未打开相机！");
+                Growl.Warning("未打开相机！");
                 return;
             }
             if (IsFocusing)
@@ -654,12 +654,12 @@ namespace MotionControl
 
             if (!Connected)
             {
-                Growl.Error("运动控制未连接！");
+                Growl.Warning("运动控制未连接！");
                 return;
             }
             if (IsRuning)
             {
-                Growl.Error("软件需要先暂停！");
+                Growl.Warning("软件需要先暂停！");
                 return;
             }
             FocusDatas.Clear();

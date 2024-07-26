@@ -700,7 +700,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 正方向 的本地化字符串。
+        ///   查找类似 正向移动 的本地化字符串。
         /// </summary>
         public static string Forward {
             get {
@@ -862,7 +862,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 相对位置 的本地化字符串。
+        ///   查找类似 步进距离 的本地化字符串。
         /// </summary>
         public static string RelaPos {
             get {
@@ -871,7 +871,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 反方向 的本地化字符串。
+        ///   查找类似 负向移动 的本地化字符串。
         /// </summary>
         public static string Reverse {
             get {
@@ -930,6 +930,24 @@ namespace MotionControl.Properties {
         public static string WriteAddrM {
             get {
                 return ResourceManager.GetString("WriteAddrM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 前进 的本地化字符串。
+        /// </summary>
+        public static string 前进 {
+            get {
+                return ResourceManager.GetString("前进", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 后退 的本地化字符串。
+        /// </summary>
+        public static string 后退 {
+            get {
+                return ResourceManager.GetString("后退", resourceCulture);
             }
         }
     }

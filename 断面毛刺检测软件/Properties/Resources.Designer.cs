@@ -583,5 +583,23 @@ namespace 断面毛刺检测软件.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   查找类似 轴报警 的本地化字符串。
+        /// </summary>
+        public static string 轴报警 {
+            get {
+                return ResourceManager.GetString("轴报警", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 驱动器报警 的本地化字符串。
+        /// </summary>
+        public static string 驱动器报警 {
+            get {
+                return ResourceManager.GetString("驱动器报警", resourceCulture);
+            }
+        }
     }
 }

@@ -30,18 +30,23 @@
                 x:Key="SuccessToBrushConverter"
                 FalseValue="{x:Null}"
                 TrueValue="{DynamicResource SuccessBrush}" />
-            <cov:BoolToBrushConverter
-                x:Key="AlarmToBrushConverter"
-                FalseValue="{x:Null}"
-                TrueValue="{DynamicResource DangerBrush}" />
+
             <cov:BoolToStringConverter
                 x:Key="BoolToStringConverter"
                 FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
                 TrueValue="{Binding [Connected], Source={x:Static local:CLang.s_Instance}}" />
             <cov:BoolToStringConverter
-    x:Key="FocusToStringConverter"
-    FalseValue="{Binding [AutoFocus], Source={x:Static local:CLang.s_Instance}}"
-    TrueValue="{Binding [Focusing], Source={x:Static local:CLang.s_Instance}}" />
+                x:Key="FocusToStringConverter"
+                FalseValue="{Binding [AutoFocus], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [Focusing], Source={x:Static local:CLang.s_Instance}}" />
+            <cov:BoolToBrushConverter
+                x:Key="StatusConverter"
+                FalseValue="{StaticResource BorderBrush}"
+                TrueValue="Lime" />
+            <cov:BoolToBrushConverter
+                x:Key="GotMaxDisConverter"
+                FalseValue="{StaticResource BorderBrush}"
+                TrueValue="Red" />
             <Style
                 x:Key="DataGrid1"
                 BasedOn="{StaticResource DataGrid.Small}"
@@ -52,8 +57,11 @@
     </UserControl.Resources>
     <TabControl Style="{StaticResource TabControlInLine}">
         <TabItem Header="{Binding [AxisControl], Source={x:Static local:CLang.s_Instance}}">
-            <StackPanel>
-                <UniformGrid Margin="5" Columns="3">
+            <DockPanel>
+                <UniformGrid
+                    Margin="5"
+                    Columns="3"
+                    DockPanel.Dock="Top">
                     <Button
                         Width="100"
                         Background="{Binding Connected, Converter={StaticResource SuccessToBrushConverter}}"
@@ -75,13 +83,14 @@
                     <Button
                         Width="100"
                         Margin="20,0"
+                        Command="{Binding AutoFocusCommand}"
                         Content="{Binding IsFocusing, Converter={StaticResource FocusToStringConverter}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" 
-                        Command="{Binding AutoFocusCommand}"/>
+                        Style="{DynamicResource ButtonPrimary}" />
                 </UniformGrid>
                 <GroupBox
                     Margin="5"
+                    DockPanel.Dock="Top"
                     Header="{Binding [OperateAxis], Source={x:Static local:CLang.s_Instance}}"
                     Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Resources>
@@ -91,150 +100,168 @@
                     </GroupBox.Resources>
                     <StackPanel>
                         <UniformGrid Columns="5">
-                            <Button
-                                Width="80"
-                                Command="{Binding EnableCommand}"
-                                Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonPrimary}" />
-                            <Button
-                                Width="80"
-                                Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonWarning}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDown">
-                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="PreviewMouseUp">
-                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
-                            <Button
-                                Width="80"
-                                Background="{DynamicResource SuccessBrush}"
-                                Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonSuccess}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDown">
-                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="PreviewMouseUp">
-                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
-                            <Button
-                                Width="80"
-                                Background="{DynamicResource SuccessBrush}"
-                                Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonSuccess}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDown">
-                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="PreviewMouseUp">
-                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
-                            <Button
-                                Width="80"
-                                Background="{DynamicResource DangerBrush}"
-                                Content="{Binding [Stop], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonDanger}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="PreviewMouseDown">
-                                        <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="PreviewMouseUp">
-                                        <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Button>
-                            <Label
+                            <UniformGrid.Resources>
+                                <Style TargetType="wh:StatusLight">
+                                    <Setter Property="Radius" Value="10" />
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                    <Setter Property="VerticalAlignment" Value="Top" />
+                                    <Setter Property="Margin" Value="10,10" />
+                                </Style>
+                            </UniformGrid.Resources>
+                            <hc:SimplePanel>
+                                <Button
+                                    Width="100"
+                                    Command="{Binding EnableCommand}"
+                                    Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <wh:StatusLight Fill="{Binding IsEnable, Converter={StaticResource StatusConverter}}" />
+                            </hc:SimplePanel>
+                            <hc:SimplePanel>
+
+                                <Button
+                                    Width="100"
+                                    Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDefault}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrGoHome}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusConverter}}" />
+                            </hc:SimplePanel>
+                            <hc:SimplePanel>
+
+                                <Button
+                                    Width="100"
+                                    Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDefault}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrFoward}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[1].HasSignal, Converter={StaticResource GotMaxDisConverter}}" />
+                            </hc:SimplePanel>
+                            <hc:SimplePanel>
+                                <Button
+                                    Width="100"
+                                    Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDefault}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrBackward}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <wh:StatusLight Fill="{Binding MotionConfig.SignalIns[0].HasSignal, Converter={StaticResource GotMaxDisConverter}}" />
+                            </hc:SimplePanel>
+                            <hc:SimplePanel>
+
+                                <Button
+                                    Width="100"
+                                    Background="{DynamicResource DangerBrush}"
+                                    Content="{Binding [Stop], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDanger}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseDown">
+                                            <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="PreviewMouseUp">
+                                            <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrStop}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                            </hc:SimplePanel>
+
+                            <!--<Label
                                 Width="80"
                                 Background="{Binding IsEnable, Converter={StaticResource SuccessToBrushConverter}}"
                                 Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}" />
-                            <Label Width="80" Content="{Binding [Home], Source={x:Static local:CLang.s_Instance}}" />
-                            <Label Width="80" Content="{Binding [PosLimitP], Source={x:Static local:CLang.s_Instance}}" />
-                            <Label Width="80" Content="{Binding [PosLimitN], Source={x:Static local:CLang.s_Instance}}" />
-                            <Label
+                            <Label Width="80" Content="{Binding [Home], Source={x:Static local:CLang.s_Instance}}" />-->
+                            <!--<Label Width="80" Content="{Binding [PosLimitP], Source={x:Static local:CLang.s_Instance}}" />
+                            <Label Width="80" Content="{Binding [PosLimitN], Source={x:Static local:CLang.s_Instance}}" />-->
+                            <!--<Label
                                 Width="80"
                                 Background="{Binding IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
                                 Content="{Binding [Alarm], Source={x:Static local:CLang.s_Instance}}" />
                             <Label
                                 Width="80"
                                 Background="{Binding IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
-                                Content="{Binding [DriveAlarm], Source={x:Static local:CLang.s_Instance}}" />
+                                Content="{Binding [DriveAlarm], Source={x:Static local:CLang.s_Instance}}" />-->
                         </UniformGrid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                            </Grid.ColumnDefinitions>
-                            <GroupBox
-                                Grid.Column="0"
-                                Margin="3"
-                                hc:TitleElement.TitlePlacement="Left"
-                                Style="{StaticResource GroupBoxOriginal}">
-                                <GroupBox.Header>
-                                    <TextBlock Text="{Binding [AbsPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}" />
-                                </GroupBox.Header>
+                        <StackPanel>
+                            <DockPanel Margin="50,5">
+
+                                <Button
+                                    Width="100"
+                                    Margin="5,0"
+                                    Command="{Binding AbsMoveCommand}"
+                                    CommandParameter="{Binding ElementName=num_abs, Path=Value}"
+                                    Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonPrimary}" />
+                                <TextBlock
+                                    Margin="5,0"
+                                    DockPanel.Dock="Right"
+                                    Text="mm" />
                                 <hc:NumericUpDown
                                     Name="num_abs"
+                                    hc:TitleElement.Title="{Binding [AbsPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
                                     Maximum="{Binding MotionConfig.SoftLimitP}"
-                                    Minimum="{Binding MotionConfig.SoftLimitN}" />
-                            </GroupBox>
-                            <TextBlock
-                                Grid.Column="1"
-                                Margin="2,0"
-                                Text="mm" />
-                            <Button
-                                Grid.Column="2"
-                                Command="{Binding AbsMoveCommand}"
-                                CommandParameter="{Binding ElementName=num_abs, Path=Value}"
-                                Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
-                                Style="{DynamicResource ButtonSuccess}" />
-                            <GroupBox
-                                Grid.Column="3"
-                                Margin="3"
-                                hc:TitleElement.TitlePlacement="Left"
-                                Style="{StaticResource GroupBoxOriginal}">
-                                <GroupBox.Header>
-                                    <TextBlock Text="{Binding [RelaPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}" />
-                                </GroupBox.Header>
-                                <hc:NumericUpDown Name="num_rela" Minimum="0" />
-                            </GroupBox>
-                            <TextBlock
-                                Grid.Column="4"
-                                Margin="2,0"
-                                Text="mm" />
-                            <Button
-                                Grid.Column="5"
-                                HorizontalAlignment="Right"
-                                Command="{Binding RelaMovePCommand}"
-                                CommandParameter="{Binding ElementName=num_rela, Path=Value}"
-                                Content="+"
-                                Style="{DynamicResource ButtonSuccess}" />
-                            <Button
-                                Grid.Column="5"
-                                HorizontalAlignment="Left"
-                                Command="{Binding RelaMoveNCommand}"
-                                CommandParameter="{Binding ElementName=num_rela, Path=Value}"
-                                Content="-"
-                                Style="{DynamicResource ButtonSuccess}" />
-                        </Grid>
+                                    Minimum="{Binding MotionConfig.SoftLimitN}"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+                            <DockPanel Margin="50,5">
+
+
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    Command="{Binding RelaMovePCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="{Binding [前进], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    Command="{Binding RelaMoveNCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="{Binding [后退], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                                <TextBlock
+                                    Margin="2,0"
+                                    DockPanel.Dock="Right"
+                                    Text="mm" />
+                                <hc:NumericUpDown
+                                    Name="num_rela"
+                                    hc:TitleElement.Title="{Binding [RelaPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
+                                    Minimum="0"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+
+                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox
                     Margin="5"
+                    DockPanel.Dock="Top"
                     Header="{Binding [ObserveAxis], Source={x:Static local:CLang.s_Instance}}"
                     Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Resources>
@@ -344,13 +371,12 @@
                 </GroupBox>
                 <GroupBox
                     Margin="5"
-                    Height="260"
                     Header="{Binding [FocusData], Source={x:Static local:CLang.s_Instance}}"
                     Style="{StaticResource GroupBoxTab}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
-                            <RowDefinition />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -406,7 +432,7 @@
                         </DataGrid>
                     </Grid>
                 </GroupBox>
-            </StackPanel>
+            </DockPanel>
         </TabItem>
         <TabItem Header="{Binding [IO], Source={x:Static local:CLang.s_Instance}}">
             <UniformGrid Columns="1">
@@ -441,10 +467,17 @@
                         Style="{StaticResource DataGrid1}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
-                            <DataGridCheckBoxColumn
+                            <DataGridTemplateColumn Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <wh:StatusLight Fill="{Binding HasSignal, Converter={StaticResource StatusConverter}}" Radius="10" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--<DataGridCheckBoxColumn
                                 Binding="{Binding HasSignal}"
                                 Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
-                                IsReadOnly="True" />
+                                IsReadOnly="True" />-->
                             <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                             <DataGridTextColumn
                                 Width="180"
@@ -480,21 +513,32 @@
                         HeadersVisibility="All"
                         ItemsSource="{Binding MotionConfig.SignalOuts}"
                         RowHeaderWidth="30"
-                        Style="{StaticResource DataGrid1}">
+                        Style="{DynamicResource DataGrid1}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
-                            <DataGridCheckBoxColumn
+                            <DataGridTemplateColumn Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <wh:StatusLight Fill="{Binding HasSignal, Converter={StaticResource StatusConverter}}" Radius="10" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--<DataGridCheckBoxColumn
                                 Binding="{Binding HasSignal}"
                                 Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
-                                IsReadOnly="True" />
+                                IsReadOnly="True" />-->
                             <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                             <DataGridTemplateColumn Header="{Binding [OpenOrClose], Source={x:Static local:CLang.s_Instance}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox
+                                        <ToggleButton
+                                            Width="30"
+                                            hc:VisualElement.HighlightBrush="Lime"
+                                            Background="{StaticResource SecondaryRegionBrush}"
                                             Command="{Binding ElementName=dataGrid2, Path=DataContext.SetOutputCommand}"
                                             CommandParameter="{Binding}"
-                                            IsChecked="{Binding Set, UpdateSourceTrigger=PropertyChanged}" />
+                                            IsChecked="{Binding Set, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

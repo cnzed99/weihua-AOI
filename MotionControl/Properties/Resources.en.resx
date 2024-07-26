@@ -408,4 +408,10 @@
   <data name="Focusing" xml:space="preserve">
     <value>Focusing</value>
   </data>
+  <data name="前进" xml:space="preserve">
+    <value>Step+</value>
+  </data>
+  <data name="后退" xml:space="preserve">
+    <value>Step-</value>
+  </data>
 </root>

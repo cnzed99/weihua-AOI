@@ -292,4 +292,10 @@
   <data name="ShowAllDefect" xml:space="preserve">
     <value>显示所有缺陷</value>
   </data>
+  <data name="轴报警" xml:space="preserve">
+    <value>轴报警</value>
+  </data>
+  <data name="驱动器报警" xml:space="preserve">
+    <value>驱动器报警</value>
+  </data>
 </root>

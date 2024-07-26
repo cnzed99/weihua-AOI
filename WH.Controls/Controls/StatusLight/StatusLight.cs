@@ -49,9 +49,6 @@ namespace WH.Controls
             }
         }
 
-        public StatusLight()
-        {
-            this.Fill = Brushes.Lime;
-        }
+        public StatusLight() { }
     }
 }
