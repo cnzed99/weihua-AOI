@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -166,6 +167,21 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         private ObservableCollection<FocusData> fineFocusDatas;
+
+        /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 通道数
+        /// </summary>
+        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(10)
+        {
+            FullMode = BoundedChannelFullMode.DropWrite
+        };
+
+        /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 对焦采集 图像队列
+        /// </summary>
+        public Channel<Cell> FocusWaitGetImageChannel = Channel.CreateBounded<Cell>(channelOptions);
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -577,12 +593,18 @@ namespace MotionControl
         {
             if (IsFocusing)
             {
-                if(HandyControl.Controls.MessageBox.Show("正在对焦中，是否停止对焦？", "Tips", MessageBoxButton.YesNo) == MessageBoxResult.OK)
+                if (
+                    HandyControl.Controls.MessageBox.Show(
+                        "正在对焦中，是否停止对焦？",
+                        "Tips",
+                        MessageBoxButton.YesNo
+                    ) == MessageBoxResult.OK
+                )
                 {
                     IsFocusing = false;
                     cancellFocus.Cancel();
                     return;
-                }    
+                }
             }
             cancellFocus = new CancellationTokenSource();
             if (CCameraManagement.CameraDict.Count == 0)
@@ -614,7 +636,11 @@ namespace MotionControl
                 {
                     IsFocusing = true;
                     cam.IsFocusing = true;
-                    for (float i = MotionConfig.SoftLimitN; i < MotionConfig.SoftLimitP; i += MotionConfig.StepCoarse)
+                    for (
+                        float i = MotionConfig.SoftLimitN;
+                        i < MotionConfig.SoftLimitP;
+                        i += MotionConfig.StepCoarse
+                    )
                     {
                         AbsMove(i);
                         while (Math.Abs(i - CurPos) > 0.01)
@@ -625,15 +651,26 @@ namespace MotionControl
                         cam.ExecuteSoftwareTrigger();
                         Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
                         CImage image = cell.Image;
-                        float distinct = CalcDistinct(cell.Image.ImageWidth, cell.Image.ImageHeight, cell.Image.StrideWidth, cell.Image.ImageData);
+                        float distinct = CalcDistinct(
+                            cell.Image.ImageWidth,
+                            cell.Image.ImageHeight,
+                            cell.Image.StrideWidth,
+                            cell.Image.ImageData
+                        );
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             FocusDatas.Add(new(i, distinct));
                         });
                     }
                     float focusPos = FocusDatas.MaxBy(o => o.data).data;
-                    float focusPosN = Math.Max(MotionConfig.SoftLimitN, focusPos - MotionConfig.FineRange / 2);
-                    float focusPosP = Math.Min(MotionConfig.SoftLimitP, focusPos + MotionConfig.FineRange / 2);
+                    float focusPosN = Math.Max(
+                        MotionConfig.SoftLimitN,
+                        focusPos - MotionConfig.FineRange / 2
+                    );
+                    float focusPosP = Math.Min(
+                        MotionConfig.SoftLimitP,
+                        focusPos + MotionConfig.FineRange / 2
+                    );
                     for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
                     {
                         AbsMove(i);
@@ -646,7 +683,12 @@ namespace MotionControl
                         Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
                         CImage image = cell.Image;
 
-                        float distinct = CalcDistinct(image.ImageWidth, image.ImageHeight, image.StrideWidth, image.ImageData);
+                        float distinct = CalcDistinct(
+                            image.ImageWidth,
+                            image.ImageHeight,
+                            image.StrideWidth,
+                            image.ImageData
+                        );
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             FineFocusDatas.Add(new(i, distinct));

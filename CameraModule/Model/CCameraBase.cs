@@ -106,20 +106,18 @@ namespace CameraModule
         //public Channel<Cell> triggerImageChannel = Channel.CreateBounded<Cell>(channelOptions);
 
         /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 采集 图像队列
+        /// 20240726 TCG
+        /// 输出图像队列
         /// </summary>
-        public static Channel<Cell> WaitGetImageChannel = Channel.CreateBounded<Cell>(
-            channelOptions
-        );
+        public Channel<Cell> OutputImageChannel = Channel.CreateBounded<Cell>(channelOptions);
 
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 对焦采集 图像队列
-        /// </summary>
-        public static Channel<Cell> FocusWaitGetImageChannel = Channel.CreateBounded<Cell>(
-            channelOptions
-        );
+        ///// <summary>
+        ///// 李焕彬 2024.7.24
+        ///// 对焦采集 图像队列
+        ///// </summary>
+        //public static Channel<Cell> FocusWaitGetImageChannel = Channel.CreateBounded<Cell>(
+        //    channelOptions
+        //);
 
         /// <summary>
         /// 20240725 TCG
@@ -364,15 +362,12 @@ namespace CameraModule
             try
             {
                 //需要增加判断是否是运行模式
-                if (!IsRuning && !IsFocusing)
+                if (!IsRuning)
                 {
                     Cell cell = new Cell();
                     cell.Image = outImage;
                     cell.FrameLoss = IsLostFrame;
                     GrabFinishEvent.Invoke(cell);
-                    noOver = false;
-                    isGrabing = false;
-                    GetImagetime.Stop();
                 }
                 else
                 {
@@ -384,19 +379,11 @@ namespace CameraModule
                         CamSerial = Setting.SerialNumber,
                         ProjGuid = Setting.ProjGuid
                     };
-                    if (IsRuning)
-                    {
-                        await WaitGetImageChannel.Writer.WriteAsync(cell);
-                    }
-                    else
-                    {
-                        await FocusWaitGetImageChannel.Writer.WriteAsync(cell);
-                    }
-                    GrabFinishEvent.Invoke(cell);
-                    noOver = false;
-                    isGrabing = false;
-                    GetImagetime.Stop();
+                    await OutputImageChannel.Writer.WriteAsync(cell);
                 }
+                noOver = false;
+                isGrabing = false;
+                GetImagetime.Stop();
                 return true;
             }
             catch (Exception ex)

@@ -25,6 +25,8 @@ using HistoryPlayback;
 using HistoryPlayback.Model;
 using Mapster;
 using MapsterMapper;
+using MarkControl;
+using MotionControl;
 using MySqlOperatesApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -88,7 +90,7 @@ namespace WH.DetectSystem.ViewModels
                 TokeVM.ProGuid = value.GUID;
             }
         }
-       
+
         /// <summary>
         /// 20240707 TCG
         /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息
@@ -278,6 +280,20 @@ namespace WH.DetectSystem.ViewModels
         [AdaptIgnore]
         [ObservableProperty]
         CSaveImageVM saveImageVM = new CSaveImageVM(); //存图
+
+        /// <summary>
+        /// 2024.7.15 李焕彬
+        /// 打标控制VM,初始化需要放在运动控制前面
+        /// </summary>
+        [ObservableProperty]
+        CMarkCtrlVM markCtrlVM = new CMarkCtrlVM();
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 运动控制VM
+        /// </summary>
+        [ObservableProperty]
+        CMotionCtrlVM motionCtrlVM = new CMotionCtrlVM();
 
         /// <summary>
         /// 数据库
@@ -540,8 +556,15 @@ namespace WH.DetectSystem.ViewModels
                 await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
                     WeakReferenceMessenger.Default.Send(cell.Image, TokeVM);
+                    if (MotionCtrlVM.IsFocusing)
+                    {
+                        await MotionCtrlVM.FocusWaitGetImageChannel.Writer.WriteAsync(cell);
+                    }
+                    else
+                    {
+                        await m_AlgorithmChannel.Writer.WriteAsync(cell);
+                    }
 
-                    await m_AlgorithmChannel.Writer.WriteAsync(cell);
                     //await Task.Delay(50);
                     //try
                     //{

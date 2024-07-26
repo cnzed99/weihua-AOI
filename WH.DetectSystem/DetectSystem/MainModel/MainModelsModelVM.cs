@@ -46,19 +46,6 @@ namespace WH.DetectSystem.ViewModels
         public CSystemSettingsVM SystemSettings { get; set; } =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
         public Version version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version;
-        /// <summary>
-        /// 2024.7.15 李焕彬
-        /// 打标控制VM,初始化需要放在运动控制前面
-        /// </summary>
-        [ObservableProperty]
-        CMarkCtrlVM markCtrlVM = new CMarkCtrlVM();
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 运动控制VM
-        /// </summary>
-        [ObservableProperty]
-        CMotionCtrlVM motionCtrlVM = new CMotionCtrlVM();
 
         /// <summary>
         /// 运行日志和报警日志
@@ -129,7 +116,6 @@ namespace WH.DetectSystem.ViewModels
             TypeAdapterConfig<Brush, Brush>.NewConfig().MapWith(des => des);
             TypeAdapterConfig<Token, Token>.NewConfig().MapWith(des => des);
             TypeAdapterConfig<dynamic, dynamic>.NewConfig().MapWith(des => des);
-            Task.Run(ImageTask);
         }
 
         #region 时间相关
@@ -316,26 +302,5 @@ namespace WH.DetectSystem.ViewModels
             ConfigAPI.Save(CMainMModel, ProjPath);
         }
         #endregion
-
-        private async void ImageTask()
-        {
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            await foreach (Cell cell in CCameraBase.WaitGetImageChannel.Reader.ReadAllAsync())
-            {
-                try
-                {
-                    string projGuid = cell.ProjGuid;
-                    int index = CMainVMs.ToList().FindIndex(MainVM => MainVM.GUID == projGuid);
-                    if (index >= 0)
-                    {
-                        CMainVMs[index].m_WaitImgChannel.Writer.TryWrite(cell);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SysLog.Error("取图主线程出错:" + ex.Message);
-                }
-            }
-        }
     }
 }
