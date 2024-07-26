@@ -45,6 +45,13 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         bool isToMysql = false;
 
+        /// <summary>
+        /// 2024.7.26 李焕彬
+        /// 是否显示所有缺陷
+        /// </summary>
+        [ObservableProperty]
+        bool showAllDefect = false;
+
         #region 数据清零参数
         /// <summary>
         /// 自动清零使能

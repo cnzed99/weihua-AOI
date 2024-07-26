@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -45,6 +46,7 @@ using WH.Entity.LogRecord;
 using WH.Entity.Messages;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using static Mysqlx.Crud.Order.Types;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -105,6 +107,8 @@ namespace WH.DetectSystem.ViewModels
 
             MaociMysqlConfig.SetSQL(MaociFilterConfig);
 
+            MotionCtrlVM.SetMotion(CameraSerial);
+
             AlarmSetVM.Reset();
             HistoryVM.Reset();
             QualityVM.Reset();
@@ -136,16 +140,32 @@ namespace WH.DetectSystem.ViewModels
             );
 
             #endregion
+
+            CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = m_WaitImgChannel;
         }
 
         [ObservableProperty]
         BitmapSource modelImage = new BitmapImage(new Uri("D://铝极.png"));
+
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 当前图像窗口操作对象
+        /// </summary>
+        [ObservableProperty]
+        ImageView curView;
 
         [ObservableProperty]
         Brush modelBrush = Brushes.White;
 
         [ObservableProperty]
         BitmapSource lastImage = new BitmapImage(new Uri("D://铝极.png"));
+
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 上一张图像窗口操作对象
+        /// </summary>
+        [ObservableProperty]
+        ImageView lastView;
 
         [ObservableProperty]
         Brush lastBrush = Brushes.White;
@@ -199,6 +219,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     CCameraManagement.StopImaging(this.GUID, this.CameraSerial);
                 }
+                MotionCtrlVM.SetRunning(IsStart);
             }
         }
 
@@ -777,138 +798,218 @@ namespace WH.DetectSystem.ViewModels
                         //    //textBuilder.Append(cell.QualityName);
 
                         //}));
-                        await m_AlarmChannel.Writer.WriteAsync(cell);
-                        _ = Task.Run(() => {
-                            #region 窗口显示
-                            //this.Invoke(new Action(() =>
+
+                        #region 窗口显示
+                        try
+                        {
+                            CurView.Dispatcher.Invoke(() =>
+                            {
+                                CurView.Clear();
+                                if (!cell.IsOK && cell.Detection != null)
+                                {
+                                    DefectFilter dstFilter = cell.Detection.DefectFilter;
+                                    StringBuilder textBuilder = new StringBuilder();
+                                    textBuilder.AppendLine(dstFilter.Name);
+                                    textBuilder.Append("质量:");
+                                    textBuilder.Append(dstFilter.QualityLevel.Name);
+                                    CurView.SetFontBrush(dstFilter.QualityLevel.ShowColor.Brush);
+                                    CurView.WinDrawText(
+                                        textBuilder.ToString(),
+                                        AlignmentX.Right,
+                                        AlignmentY.Top
+                                    );
+                                    //显示所有Region缺陷
+                                    if (SystemSettings.ShowAllDefect)
+                                    {
+                                        foreach (var detection in cell.Detections)
+                                        {
+                                            if (
+                                                detection.Result
+                                                || detection.Category != Category.区域
+                                            )
+                                                continue;
+                                            DefectFilter defectFilter = detection.DefectFilter;
+                                            CurView.SetPen(defectFilter.ShowColor.Brush);
+                                            CurView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                            foreach (var reg in detection.regionOut)
+                                            {
+                                                CurView.ImgDrawPoints(reg.points1);
+                                                CurView.ImgDrawText(
+                                                    detection.DetectLog.ToString(),
+                                                    reg.GetCenter()
+                                                );
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        DefectFilter defectFilter = cell.Detection.DefectFilter;
+                                        if (cell.Detection.Category == Category.区域)
+                                        {
+                                            CurView.SetPen(defectFilter.ShowColor.Brush);
+                                            CurView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                            foreach (var reg in cell.Detection.regionOut)
+                                            {
+                                                CurView.ImgDrawPoints(reg.points1);
+                                                CurView.ImgDrawText(
+                                                    cell.Detection.DetectLog.ToString(),
+                                                    reg.GetCenter()
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            //if (!cell.IsOK)
                             //{
-                            //    try
+                            //    LastView.Dispatcher.Invoke(() =>
                             //    {
-                            //        if (HWin_DispProduct.DispObjects != null) HWin_DispProduct.DispObjects.Clear();//todo:ZhuHM20230801   清除前张图片的regions，，只保存当前图片的Regions
-                            //        lb_GetImgTime.Text = cell.GetImageTime.TotalMilliseconds.ToString("F2");
-                            //        lb_PreprocessTime.Text = cell.PreTime.TotalMilliseconds.ToString("F2");
-                            //        lb_RecipeTime.Text = cell.RecipeTime.TotalMilliseconds.ToString("F2");
-                            //        lb_FilterTime.Text = cell.FilterTime.TotalMilliseconds.ToString("F2");
-                            //        lb_ColorValue.Text = cell.ColorValue.ToString();
-                            //        StringBuilder textBuilder = new StringBuilder();
+                            //        LastView.Clear();
+                            //        LastView.CopyDraw(CurView);
+                            //    });
+                            //}
+                        }
+                        catch (Exception ex)
+                        {
+                            SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                            Growl.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                        }
+                        finally
+                        {
+                            cell.Dispose(); //结束 清理
+                            GC.Collect();
+                        }
 
-                            //        string color = "green";
+                        await m_AlarmChannel.Writer.WriteAsync(cell);
 
-                            //        if (cell.Detection != null)
-                            //        {
-                            //            HWin_DispProduct.Background = WpfWFTransfer.WFColor2Wpf(cell.QualityColor);
+                        //this.Invoke(new Action(() =>
+                        //{
+                        //    try
+                        //    {
+                        //        if (HWin_DispProduct.DispObjects != null) HWin_DispProduct.DispObjects.Clear();//todo:ZhuHM20230801   清除前张图片的regions，，只保存当前图片的Regions
+                        //        lb_GetImgTime.Text = cell.GetImageTime.TotalMilliseconds.ToString("F2");
+                        //        lb_PreprocessTime.Text = cell.PreTime.TotalMilliseconds.ToString("F2");
+                        //        lb_RecipeTime.Text = cell.RecipeTime.TotalMilliseconds.ToString("F2");
+                        //        lb_FilterTime.Text = cell.FilterTime.TotalMilliseconds.ToString("F2");
+                        //        lb_ColorValue.Text = cell.ColorValue.ToString();
+                        //        StringBuilder textBuilder = new StringBuilder();
 
-                            //            textBuilder.AppendLine(cell.Detection.s_Name);
+                        //        string color = "green";
 
-                            //            color = cell.QualityColorStr;
-                            //            //窗口左上角显示定级缺陷名称，信号值
+                        //        if (cell.Detection != null)
+                        //        {
+                        //            HWin_DispProduct.Background = WpfWFTransfer.WFColor2Wpf(cell.QualityColor);
 
-                            //            // dataGridView1.Invalidate(dataGridView1.DisplayRectangle);
-                            //            //显示所有Region缺陷
-                            //            if (_projConfig.ProcessSet.ShowAllDefects)
-                            //            {
-                            //                List<(double, double, double, HObject, string, string)> lsArea = new List<(double, double, double, HObject, string, string)>();
-                            //                foreach (CellDetection detection in cell.Detections)
-                            //                {
-                            //                    if (detection.Result || detection.Category != Category.区域) continue;
-                            //                    HOperatorSet.SetColor(HWin_DispProduct.hWindow, detection.ShowColor);
-                            //                    HObject dispRegion = detection.UnionedRegion.Clone();
-                            //                    HWin_DispProduct.DispObj(dispRegion);
-                            //                    var split = detection.DetectLog.ToString().Split('\n');
-                            //                    HOperatorSet.AreaCenter(detection.UnionedRegion, out HTuple area, out HTuple row, out HTuple col);
-                            //                    if (split.Length >= 2 && area.Length > 0)
-                            //                    {
-                            //                        this.SaveShowText((HTuple)$"{split[0]}\n{split[1]}", "image", row, col, detection.ShowColor,
-                            //                                    new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
-                            //                        this.SaveShowText(detection.DetectLog.ToString(), "image", 0, 0, detection.ShowColor,
-                            //                                    new[] { "box_color", "shadow" }, new[] { "#00000040", "false" }, dispRegion);
-                            //                    }
-                            //                    for (int i = 0; i < area.Length; i++)
-                            //                    {
-                            //                        lsArea.Add((area[i].D, row[i].D, col[i].D, detection.UnionedRegion.SelectObj(i + 1), detection.DetectLog.ToString(), detection.ShowColor));
-                            //                    }
-                            //                }
-                            //                lsArea.Sort((left, right) => left.Item1.CompareTo(right.Item1));
-                            //                int countShow = Math.Min(3, lsArea.Count);//只显示面积最大的3个标签
-                            //                for (int i = lsArea.Count - 1; i >= lsArea.Count - countShow; i--)
-                            //                {
-                            //                    TextToFeatures(lsArea[i].Item4, lsArea[i].Item5, out string result);
-                            //                    HWin_DispProduct.hWindow.DispText(result, "image", lsArea[i].Item2,
-                            //                    lsArea[i].Item3, lsArea[i].Item6, new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
-                            //                }
-                            //            }
-                            //            else //只显示定级缺陷
-                            //            {
-                            //                switch (cell.Detection.Category)
-                            //                {
-                            //                    case Category.区域:
-                            //                        HOperatorSet.SetColor(HWin_DispProduct.hWindow,
-                            //                            cell.Detection.ShowColor);
-                            //                        HObject dispRegion = cell.Detection.UnionedRegion.Clone();
-                            //                        HWin_DispProduct.DispObj(dispRegion);
-                            //                        var split = cell.Detection.DetectLog.ToString().Split('\n');
-                            //                        HOperatorSet.AreaCenter(cell.Detection.UnionedRegion,
-                            //                                out HTuple area, out HTuple row, out HTuple col);
-                            //                        if (split.Length >= 2 && area.Length > 0)
-                            //                        {
-                            //                            HWin_DispProduct.hWindow.DispText(
-                            //                            (HTuple)$"{split[0]}\n{split[1]}", "image", row[0],
-                            //                                    col[0], (HTuple)cell.Detection.ShowColor,
-                            //                                    new[] { "box_color", "shadow" },
-                            //                                    new[] { "#00000040", "false" });
-                            //                            this.SaveShowText((HTuple)$"{split[0]}\n{split[1]}", "image", row, col, cell.Detection.ShowColor,
-                            //                                new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
-                            //                            this.SaveShowText(cell.Detection.DetectLog.ToString(), "image", row.D, col.D, cell.Detection.ShowColor,
-                            //                                new[] { "box_color", "shadow" }, new[] { "#00000040", "false" }, dispRegion);
-                            //                        }
-                            //                        break;
-                            //                    case Category.值:
-                            //                        if (cell.Detection.DetectLog.Length == 0) break;
-                            //                        HWin_DispProduct.hWindow.DispText(
-                            //                            cell.Detection.DetectLog.ToString(), "window", "top", "left", "green",
-                            //                            new[] { "box", "shadow" }, new[] { "false", "false" });
-                            //                        this.SaveShowText(cell.Detection.DetectLog.ToString(), "window", "top", "left", "green",
-                            //                            new[] { "box", "shadow" }, new[] { "false", "false" });//add by zhuhm 20230801将文本信息保存到list，便于特征窗口还原文本信息
-                            //                        break;
-                            //                }
-                            //            }
+                        //            textBuilder.AppendLine(cell.Detection.s_Name);
 
-                            //        }
+                        //            color = cell.QualityColorStr;
+                        //            //窗口左上角显示定级缺陷名称，信号值
 
-                            //        textBuilder.Append("信号:");
-                            //        textBuilder.Append(cell.QualitySignal);
-                            //        if (cell.ColorGrade != null)
-                            //        {
-                            //            textBuilder.Append("|");
-                            //            textBuilder.Append(cell.ColorSignel);
-                            //        }
-                            //        HWin_DispProduct.hWindow.DispText(textBuilder.ToString(), "window", "top", "right", color,
-                            //            new[] { "box", "shadow" }, new[] { "false", "false" });
+                        //            // dataGridView1.Invalidate(dataGridView1.DisplayRectangle);
+                        //            //显示所有Region缺陷
+                        //            if (_projConfig.ProcessSet.ShowAllDefects)
+                        //            {
+                        //                List<(double, double, double, HObject, string, string)> lsArea = new List<(double, double, double, HObject, string, string)>();
+                        //                foreach (CellDetection detection in cell.Detections)
+                        //                {
+                        //                    if (detection.Result || detection.Category != Category.区域) continue;
+                        //                    HOperatorSet.SetColor(HWin_DispProduct.hWindow, detection.ShowColor);
+                        //                    HObject dispRegion = detection.UnionedRegion.Clone();
+                        //                    HWin_DispProduct.DispObj(dispRegion);
+                        //                    var split = detection.DetectLog.ToString().Split('\n');
+                        //                    HOperatorSet.AreaCenter(detection.UnionedRegion, out HTuple area, out HTuple row, out HTuple col);
+                        //                    if (split.Length >= 2 && area.Length > 0)
+                        //                    {
+                        //                        this.SaveShowText((HTuple)$"{split[0]}\n{split[1]}", "image", row, col, detection.ShowColor,
+                        //                                    new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
+                        //                        this.SaveShowText(detection.DetectLog.ToString(), "image", 0, 0, detection.ShowColor,
+                        //                                    new[] { "box_color", "shadow" }, new[] { "#00000040", "false" }, dispRegion);
+                        //                    }
+                        //                    for (int i = 0; i < area.Length; i++)
+                        //                    {
+                        //                        lsArea.Add((area[i].D, row[i].D, col[i].D, detection.UnionedRegion.SelectObj(i + 1), detection.DetectLog.ToString(), detection.ShowColor));
+                        //                    }
+                        //                }
+                        //                lsArea.Sort((left, right) => left.Item1.CompareTo(right.Item1));
+                        //                int countShow = Math.Min(3, lsArea.Count);//只显示面积最大的3个标签
+                        //                for (int i = lsArea.Count - 1; i >= lsArea.Count - countShow; i--)
+                        //                {
+                        //                    TextToFeatures(lsArea[i].Item4, lsArea[i].Item5, out string result);
+                        //                    HWin_DispProduct.hWindow.DispText(result, "image", lsArea[i].Item2,
+                        //                    lsArea[i].Item3, lsArea[i].Item6, new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
+                        //                }
+                        //            }
+                        //            else //只显示定级缺陷
+                        //            {
+                        //                switch (cell.Detection.Category)
+                        //                {
+                        //                    case Category.区域:
+                        //                        HOperatorSet.SetColor(HWin_DispProduct.hWindow,
+                        //                            cell.Detection.ShowColor);
+                        //                        HObject dispRegion = cell.Detection.UnionedRegion.Clone();
+                        //                        HWin_DispProduct.DispObj(dispRegion);
+                        //                        var split = cell.Detection.DetectLog.ToString().Split('\n');
+                        //                        HOperatorSet.AreaCenter(cell.Detection.UnionedRegion,
+                        //                                out HTuple area, out HTuple row, out HTuple col);
+                        //                        if (split.Length >= 2 && area.Length > 0)
+                        //                        {
+                        //                            HWin_DispProduct.hWindow.DispText(
+                        //                            (HTuple)$"{split[0]}\n{split[1]}", "image", row[0],
+                        //                                    col[0], (HTuple)cell.Detection.ShowColor,
+                        //                                    new[] { "box_color", "shadow" },
+                        //                                    new[] { "#00000040", "false" });
+                        //                            this.SaveShowText((HTuple)$"{split[0]}\n{split[1]}", "image", row, col, cell.Detection.ShowColor,
+                        //                                new[] { "box_color", "shadow" }, new[] { "#00000040", "false" });
+                        //                            this.SaveShowText(cell.Detection.DetectLog.ToString(), "image", row.D, col.D, cell.Detection.ShowColor,
+                        //                                new[] { "box_color", "shadow" }, new[] { "#00000040", "false" }, dispRegion);
+                        //                        }
+                        //                        break;
+                        //                    case Category.值:
+                        //                        if (cell.Detection.DetectLog.Length == 0) break;
+                        //                        HWin_DispProduct.hWindow.DispText(
+                        //                            cell.Detection.DetectLog.ToString(), "window", "top", "left", "green",
+                        //                            new[] { "box", "shadow" }, new[] { "false", "false" });
+                        //                        this.SaveShowText(cell.Detection.DetectLog.ToString(), "window", "top", "left", "green",
+                        //                            new[] { "box", "shadow" }, new[] { "false", "false" });//add by zhuhm 20230801将文本信息保存到list，便于特征窗口还原文本信息
+                        //                        break;
+                        //                }
+                        //            }
 
-                            //        this.SaveShowText(textBuilder.ToString(), "window", "top", "right", color,
-                            //                            new[] { "box", "shadow" }, new[] { "false", "false" });//add by zhuhm 20230801将文本信息保存到list，便于特征窗口还原文本信息
-                            //        if (cell.Detection != null)
-                            //        {
-                            //            SaveDumpImage(cell); //存NG截图
-                            //        }
-                            //        // cell.Dispose(); //结束 清理
+                        //        }
 
-                            //        cell.ShowTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
+                        //        textBuilder.Append("信号:");
+                        //        textBuilder.Append(cell.QualitySignal);
+                        //        if (cell.ColorGrade != null)
+                        //        {
+                        //            textBuilder.Append("|");
+                        //            textBuilder.Append(cell.ColorSignel);
+                        //        }
+                        //        HWin_DispProduct.hWindow.DispText(textBuilder.ToString(), "window", "top", "right", color,
+                        //            new[] { "box", "shadow" }, new[] { "false", "false" });
 
-                            //    }
-                            //    catch (Exception ex)
-                            //    {
-                            //        SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
-                            //    }
-                            //    finally
-                            //    {
-                            //        cell.Dispose(); //结束 清理
-                            //        GC.Collect();
-                            //    }
+                        //        this.SaveShowText(textBuilder.ToString(), "window", "top", "right", color,
+                        //                            new[] { "box", "shadow" }, new[] { "false", "false" });//add by zhuhm 20230801将文本信息保存到list，便于特征窗口还原文本信息
+                        //        if (cell.Detection != null)
+                        //        {
+                        //            SaveDumpImage(cell); //存NG截图
+                        //        }
+                        //        // cell.Dispose(); //结束 清理
 
-                            //}));
-                            #endregion
-                        });
+                        //        cell.ShowTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
+
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                        //    }
+                        //    finally
+                        //    {
+                        //        cell.Dispose(); //结束 清理
+                        //        GC.Collect();
+                        //    }
+
+                        //}));
+                        #endregion
 
                         if (cell.isOnce)
                         {

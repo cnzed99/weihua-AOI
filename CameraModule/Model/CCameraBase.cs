@@ -127,12 +127,6 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 当前制程是否正在对焦
-        /// </summary>
-        public bool IsFocusing { get; set; } = false;
-
-        /// <summary>
-        /// 李焕彬 2024.7.24
         /// 图像传递委托
         /// </summary>
         public Action<Cell> GrabFinishEvent { get; set; }
@@ -367,7 +361,7 @@ namespace CameraModule
                     Cell cell = new Cell();
                     cell.Image = outImage;
                     cell.FrameLoss = IsLostFrame;
-                    GrabFinishEvent.Invoke(cell);
+                    GrabFinishEvent?.Invoke(cell);
                 }
                 else
                 {

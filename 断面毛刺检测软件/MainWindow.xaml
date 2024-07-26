@@ -367,13 +367,13 @@
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].ModelBrush}"
                     BorderThickness="3">
-                    <wh:ImageView Source="{Binding CMainVMs[0].ModelImage}" />
+                    <wh:ImageView Source="{Binding CMainVMs[0].ModelImage}" Operator="{Binding CMainVMs[0].CurView, Mode=OneWayToSource}"/>
                 </Border>
                 <Border
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].LastBrush}"
                     BorderThickness="3">
-                    <wh:ImageView d:Source="D://铝极.png" Source="{Binding CMainVMs[0].LastImage}" />
+                    <wh:ImageView d:Source="D://铝极.png" Source="{Binding CMainVMs[0].LastImage}" Operator="{Binding CMainVMs[0].LastView, Mode=OneWayToSource}"/>
                 </Border>
 
             </UniformGrid>
@@ -411,12 +411,12 @@
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <mark:MarkCtrl DataContext="{Binding MarkCtrlVM}" />
+                        <mark:MarkCtrl DataContext="{Binding CMainVMs[0].MarkCtrlVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <motion:MotionCtrl DataContext="{Binding MotionCtrlVM}" />
+                        <motion:MotionCtrl DataContext="{Binding CMainVMs[0].MotionCtrlVM}" />
                     </hc:SimplePanel>
                 </hc:TabItem>
                 <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">

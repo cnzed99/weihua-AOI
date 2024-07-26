@@ -138,9 +138,9 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("2.轴信息")]
-        [property: DisplayName("12.正限位")]
-        [property: Description("12.正限位")]
-        private float softLimitP = 10000;
+        [property: DisplayName("12.正限位(mm)")]
+        [property: Description("12.正限位(mm)")]
+        private float softLimitP = 16f;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -148,9 +148,9 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("2.轴信息")]
-        [property: DisplayName("13.负限位")]
-        [property: Description("13.负限位")]
-        private float softLimitN = -10000;
+        [property: DisplayName("13.负限位(mm)")]
+        [property: Description("13.负限位(mm)")]
+        private float softLimitN = -15f;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -359,6 +359,7 @@ namespace MotionControl
         [property: Category("5.对焦参数")]
         [property: DisplayName("11.最佳对焦位置(mm)")]
         [property: Description("11.最佳对焦位置(mm)")]
+        [property: ReadOnly(true)]
         [ObservableProperty]
         private float focusPos = 0;
 
@@ -370,7 +371,7 @@ namespace MotionControl
         [property: DisplayName("12.粗调步长(mm)")]
         [property: Description("12.粗调步长(mm)")]
         [ObservableProperty]
-        private float stepCoarse = 0;
+        private float stepCoarse = 0.1f;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -380,7 +381,7 @@ namespace MotionControl
         [property: DisplayName("13.精调步长(mm)")]
         [property: Description("13.精调步长(mm)")]
         [ObservableProperty]
-        private float stepFine = 0;
+        private float stepFine = 0.01f;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -400,7 +401,7 @@ namespace MotionControl
         [property: DisplayName("15.精调范围(mm)")]
         [property: Description("15.精调范围(mm)")]
         [ObservableProperty]
-        private float fineRange = 1;
+        private float fineRange = 0.3f;
 
         /// <summary>
         /// 2024.7.10 李焕彬

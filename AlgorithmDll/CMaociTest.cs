@@ -172,6 +172,11 @@ namespace AlgorithmDll
         {
             return new Rect(RegionInfo.X, RegionInfo.Y, RegionInfo.Width, RegionInfo.Height);
         }
+
+        public Point GetCenter()
+        {
+            return new Point(RegionInfo.X + RegionInfo.Width / 2, RegionInfo.Y + RegionInfo.Height / 2);
+        }
     }
 
     /// <summary>

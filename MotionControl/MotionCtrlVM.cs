@@ -28,7 +28,7 @@ namespace MotionControl
     /// 2024.7.9 李焕彬
     /// 对焦数据
     /// </summary>
-    public record FocusData(double pos, float data);
+    public record FocusData(float pos, float distinct);
 
     /// <summary>
     /// 2024.7.9 李焕彬
@@ -57,6 +57,38 @@ namespace MotionControl
             );
             InitControl();
         }
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 设置相机序列号
+        /// </summary>
+        /// <param name="cameraSerial">序列号</param>
+        public void SetMotion(string cameraSerial)
+        {
+            this.CameraSerial = cameraSerial;
+        }
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 设置当前制程是否启动
+        /// </summary>
+        /// <param name="isRuning">是否启动</param>
+        public void SetRunning(bool isRuning)
+        {
+            this.IsRuning = isRuning;
+        }
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 相机序列号
+        /// </summary>
+        private string CameraSerial { get; set; }
+
+        /// <summary>
+        /// 20240725 TCG
+        /// 当前制程是否启动
+        /// </summary>
+        private bool IsRuning { get; set; } = false;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -159,14 +191,14 @@ namespace MotionControl
         /// 粗对焦数据
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<FocusData> focusDatas;
+        private ObservableCollection<FocusData> focusDatas = new();
 
         /// <summary>
         /// 2024.7.12 李焕彬
         /// 精对焦数据
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<FocusData> fineFocusDatas;
+        private ObservableCollection<FocusData> fineFocusDatas = new();
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -591,6 +623,17 @@ namespace MotionControl
         [RelayCommand]
         public void AutoFocus()
         {
+            if (!CCameraManagement.CameraDict.ContainsKey(CameraSerial))
+            {
+                Growl.Error("没有相机！");
+                return;
+            }
+            CCameraBase cam = CCameraManagement.CameraDict[CameraSerial];
+            if (!cam.Connected)
+            {
+                Growl.Error("未打开相机！");
+                return;
+            }
             if (IsFocusing)
             {
                 if (
@@ -598,117 +641,129 @@ namespace MotionControl
                         "正在对焦中，是否停止对焦？",
                         "Tips",
                         MessageBoxButton.YesNo
-                    ) == MessageBoxResult.OK
+                    ) == MessageBoxResult.Yes
                 )
                 {
                     IsFocusing = false;
+                    cam.IsRuning = false;
                     cancellFocus.Cancel();
                     return;
                 }
             }
             cancellFocus = new CancellationTokenSource();
-            if (CCameraManagement.CameraDict.Count == 0)
-            {
-                Growl.Error("没有相机！");
-                return;
-            }
-            CCameraBase cam = CCameraManagement.CameraDict.First().Value;
-            if (!cam.Connected)
-            {
-                Growl.Error("未打开相机！");
-                return;
-            }
+
             if (!Connected)
             {
                 Growl.Error("运动控制未连接！");
                 return;
             }
-            if (cam.IsRuning)
+            if (IsRuning)
             {
                 Growl.Error("软件需要先暂停！");
                 return;
             }
             FocusDatas.Clear();
             FineFocusDatas.Clear();
-            Task.Factory.StartNew(async () =>
-            {
-                try
-                {
-                    IsFocusing = true;
-                    cam.IsFocusing = true;
-                    for (
-                        float i = MotionConfig.SoftLimitN;
-                        i < MotionConfig.SoftLimitP;
-                        i += MotionConfig.StepCoarse
-                    )
+            Task.Factory.StartNew(
+                (Func<Task>)(
+                    async () =>
                     {
-                        AbsMove(i);
-                        while (Math.Abs(i - CurPos) > 0.01)
+                        try
                         {
-                            Thread.Sleep(50);
-                            cancellFocus.Token.ThrowIfCancellationRequested();
-                        }
-                        cam.ExecuteSoftwareTrigger();
-                        Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
-                        CImage image = cell.Image;
-                        float distinct = CalcDistinct(
-                            cell.Image.ImageWidth,
-                            cell.Image.ImageHeight,
-                            cell.Image.StrideWidth,
-                            cell.Image.ImageData
-                        );
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            FocusDatas.Add(new(i, distinct));
-                        });
-                    }
-                    float focusPos = FocusDatas.MaxBy(o => o.data).data;
-                    float focusPosN = Math.Max(
-                        MotionConfig.SoftLimitN,
-                        focusPos - MotionConfig.FineRange / 2
-                    );
-                    float focusPosP = Math.Min(
-                        MotionConfig.SoftLimitP,
-                        focusPos + MotionConfig.FineRange / 2
-                    );
-                    for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
-                    {
-                        AbsMove(i);
-                        while (Math.Abs(i - CurPos) > 0.01)
-                        {
-                            Thread.Sleep(50);
-                            cancellFocus.Token.ThrowIfCancellationRequested();
-                        }
-                        cam.ExecuteSoftwareTrigger();
-                        Cell cell = await CCameraBase.FocusWaitGetImageChannel.Reader.ReadAsync();
-                        CImage image = cell.Image;
+                            cam.IsRuning = true;
+                            IsFocusing = true;
+                            for (
+                                float i = MotionConfig.SoftLimitN;
+                                i < MotionConfig.SoftLimitP;
+                                i += MotionConfig.StepCoarse
+                            )
+                            {
+                                AbsMove(i);
+                                while (Math.Abs(i - CurPos) > 0.01)
+                                {
+                                    Thread.Sleep(10);
+                                    cancellFocus.Token.ThrowIfCancellationRequested();
+                                    AbsMove(i);
+                                }
+                                cam.ExecuteSoftwareTrigger();
+                                Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
+                                CImage image = cell.Image;
+                                float distinct = CalcDistinct(
+                                    cell.Image.ImageWidth,
+                                    cell.Image.ImageHeight,
+                                    cell.Image.StrideWidth,
+                                    cell.Image.ImageData
+                                );
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    FocusDatas.Add(new(i, distinct));
+                                });
+                            }
+                            float focusPos = FocusDatas
+                                .MaxBy((Func<FocusData, float>)(o => o.distinct))
+                                .pos;
+                            float focusPosN = Math.Max(
+                                MotionConfig.SoftLimitN,
+                                focusPos - MotionConfig.FineRange / 2
+                            );
+                            float focusPosP = Math.Min(
+                                MotionConfig.SoftLimitP,
+                                focusPos + MotionConfig.FineRange / 2
+                            );
+                            for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
+                            {
+                                AbsMove(i);
+                                while (Math.Abs(i - CurPos) > 0.01)
+                                {
+                                    Thread.Sleep(10);
+                                    cancellFocus.Token.ThrowIfCancellationRequested();
+                                    AbsMove(i);
+                                }
+                                cam.ExecuteSoftwareTrigger();
+                                Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
+                                CImage image = cell.Image;
 
-                        float distinct = CalcDistinct(
-                            image.ImageWidth,
-                            image.ImageHeight,
-                            image.StrideWidth,
-                            image.ImageData
-                        );
-                        Application.Current.Dispatcher.Invoke(() =>
+                                float distinct = CalcDistinct(
+                                    image.ImageWidth,
+                                    image.ImageHeight,
+                                    image.StrideWidth,
+                                    image.ImageData
+                                );
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    FineFocusDatas.Add(new(i, distinct));
+                                });
+                            }
+                            MotionConfig.FocusPos = FineFocusDatas
+                                .MaxBy((Func<FocusData, float>)(o => o.distinct))
+                                .pos;
+                            AbsMove(MotionConfig.FocusPos);
+                            while (Math.Abs(MotionConfig.FocusPos - CurPos) > 0.01)
+                            {
+                                Thread.Sleep(50);
+                                cancellFocus.Token.ThrowIfCancellationRequested();
+                                AbsMove(MotionConfig.FocusPos);
+                            }
+                            cam.ExecuteSoftwareTrigger();
+                            await FocusWaitGetImageChannel.Reader.ReadAsync();
+                            modbusTcp.WriteRegisterD(
+                                MotionConfig.AddrFocusPos,
+                                MotionConfig.FocusPos
+                            );
+                            Growl.Success("对焦完成！");
+                        }
+                        catch (Exception ex)
                         {
-                            FineFocusDatas.Add(new(i, distinct));
-                        });
+                            Growl.Error("对焦异常！" + ex.Message);
+                        }
+                        finally
+                        {
+                            cam.IsRuning = false;
+                            IsFocusing = false;
+                        }
                     }
-                    MotionConfig.FocusPos = FineFocusDatas.MaxBy(o => o.data).data;
-                    AbsMove(MotionConfig.FocusPos);
-                    modbusTcp.WriteRegisterD(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
-                    Growl.Success("对焦完成！");
-                }
-                catch (Exception ex)
-                {
-                    Growl.Error("对焦异常！" + ex.Message);
-                }
-                finally
-                {
-                    cam.IsFocusing = false;
-                    IsFocusing = false;
-                }
-            });
+                )
+            );
         }
 
         /// <summary>

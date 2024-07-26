@@ -1,10 +1,10 @@
-﻿using HandyControl.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using HandyControl.Controls;
 
 namespace WH.Controls.Controls.PropertyGridLang
 {
@@ -12,7 +12,7 @@ namespace WH.Controls.Controls.PropertyGridLang
     /// 2024.7.24 李焕彬
     /// 属性编辑器数字控件扩展，绑定触发模式改为失去焦点触发
     /// </summary>
-    public class CPlainTextPropertyEditorProPro : PlainTextPropertyEditor
+    public class CNumberPropertyEditor : PlainTextPropertyEditor
     {
         /// <summary>
         /// 2024.7.24 李焕彬

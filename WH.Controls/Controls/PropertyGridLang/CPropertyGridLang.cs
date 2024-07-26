@@ -19,6 +19,7 @@ using HandyControl.Controls;
 using HandyControl.Data;
 using HandyControl.Interactivity;
 using HandyControl.Tools.Extension;
+using WH.Controls.Controls.PropertyGridLang;
 using WH.Entity.Attribute;
 
 namespace WH.Controls
@@ -408,7 +409,7 @@ namespace WH.Controls
                 }
                 else if (types.Contains(propertyDescriptor.PropertyType))
                 {
-                    propertyItem.Editor = new PlainTextPropertyEditor();
+                    propertyItem.Editor = new CNumberPropertyEditor();
                 }
                 else if (typeof(IList).IsAssignableFrom(propertyDescriptor.PropertyType))
                 {

@@ -344,7 +344,7 @@
                 </GroupBox>
                 <GroupBox
                     Margin="5"
-                    MinHeight="260"
+                    Height="260"
                     Header="{Binding [FocusData], Source={x:Static local:CLang.s_Instance}}"
                     Style="{StaticResource GroupBoxTab}">
                     <Grid>
@@ -377,7 +377,7 @@
                                     Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                                 <DataGridTextColumn
-                                    Binding="{Binding data, StringFormat={}{0:F2}}"
+                                    Binding="{Binding distinct, StringFormat={}{0:F2}}"
                                     Header="{Binding [Distinct], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                             </DataGrid.Columns>
@@ -399,7 +399,7 @@
                                     Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                                 <DataGridTextColumn
-                                    Binding="{Binding data, StringFormat={}{0:F2}}"
+                                    Binding="{Binding distinct, StringFormat={}{0:F2}}"
                                     Header="{Binding [Distinct], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                             </DataGrid.Columns>

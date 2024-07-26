@@ -159,7 +159,6 @@ namespace CameraModule
         [Category("通用参数")]
         [DisplayName("20.曝光时间(us)")]
         [Description("20.曝光时间(us)")]
-        [Editor(typeof(CPlainTextPropertyEditorProPro), typeof(CPlainTextPropertyEditorProPro))]
         public uint ExposureTime
         {
             get { return exposureTime; }
@@ -200,7 +199,6 @@ namespace CameraModule
         [Category("通用参数")]
         [DisplayName("21.增益")]
         [Description("21.增益")]
-        [Editor(typeof(CPlainTextPropertyEditorProPro), typeof(CPlainTextPropertyEditorProPro))]
         public float Gain
         {
             get { return gain; }
@@ -275,7 +273,6 @@ namespace CameraModule
         [Category("通用参数")]
         [DisplayName("23.触发延时")]
         [Description("23.触发延时")]
-        [Editor(typeof(CPlainTextPropertyEditorProPro), typeof(CPlainTextPropertyEditorProPro))]
         public uint TriggerDelay
         {
             get { return triggerDelay; }
@@ -314,7 +311,6 @@ namespace CameraModule
         [Category("通用参数")]
         [DisplayName("24.伽马值")]
         [Description("24.伽马值")]
-        [Editor(typeof(CPlainTextPropertyEditorProPro), typeof(CPlainTextPropertyEditorProPro))]
         public float Gamma
         {
             get { return gamma; }
@@ -369,7 +365,6 @@ namespace CameraModule
         [Category("通用参数")]
         [DisplayName("27.触发脉冲宽度")]
         [Description("27.触发脉冲宽度")]
-        [Editor(typeof(CPlainTextPropertyEditorProPro), typeof(CPlainTextPropertyEditorProPro))]
         public uint TriggerPulseWidth
         {
             get { return triggerPulseWidth; }

@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Autofac;
 using CameraModule;
+using CommunicationModule;
 using Microsoft.Win32;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -320,7 +321,7 @@ namespace 断面毛刺检测软件.Views
                     cell.GetImageExcute(!MMainVM.IsStart, 0);
 
                     //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
-                    await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
+                    await CCameraManagement.CameraDict[MMainVM.CameraSerial].OutputImageChannel.Writer.WriteAsync(cell);
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -457,6 +458,7 @@ namespace 断面毛刺检测软件.Views
         {
             try
             {
+                CCameraManagement.CameraDict[MMainVM.CameraSerial].ExecuteSoftwareTrigger();
                 //CCommunicationManagement.GetComFromCam(_projConfig.CamSerial, out string com);
                 //int num = _projConfig.Config.LevelProduce.TotalNum + 1;
                 //byte[] data = CCommunicationManagement.GetAutoID(_projConfig.CamSerial, num);

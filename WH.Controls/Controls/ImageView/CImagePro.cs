@@ -112,6 +112,11 @@ namespace WH.Controls
         /// </summary>
         private Point LastPos { get; set; }
         /// <summary>
+        /// 2024.7.26 李焕彬
+        /// 绘图互斥锁,防止绘制时添加删除
+        /// </summary>
+        private Object lockDraw = new object();
+        /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制直线集合
         /// </summary>
@@ -401,82 +406,85 @@ namespace WH.Controls
         {
             base.OnRender(dc);
 
-            foreach (var item in _Pens)
+            lock (lockDraw)
             {
-                item.Item1.Thickness = item.Item2 / scaleTransform.ScaleX;
-            }
+                foreach (var item in _Pens)
+                {
+                    item.Item1.Thickness = item.Item2 / scaleTransform.ScaleX;
+                }
 
-            double dRatio = this.ActualWidth / ImageWidth;
-            foreach (var line in Lines)
-            {
-                dc.DrawLine(line.pen, new Point(line.pt1.X * dRatio, line.pt1.Y * dRatio), new Point(line.pt2.X * dRatio, line.pt2.Y * dRatio));
-            }
-            foreach (var ellipse in Ellipses)
-            {
-                dc.DrawEllipse(FillEdge ? ellipse.pen.Brush : Brushes.Transparent, ellipse.pen, new Point(ellipse.center.X * dRatio, ellipse.center.Y * dRatio), ellipse.radiusX * dRatio, ellipse.radiusY * dRatio);
-            }
-            foreach (var rect in Rectangles)
-            {
-                dc.DrawRectangle(FillEdge ? rect.pen.Brush : Brushes.Transparent, rect.pen, new Rect(rect.rectangle.X * dRatio, rect.rectangle.Y * dRatio, rect.rectangle.Width * dRatio, rect.rectangle.Height * dRatio));
-            }
-            foreach (var region in Regions)
-            {
-                List<Point> tmp = new List<Point>();
-                foreach (var item in region.points)
+                double dRatio = this.ActualWidth / ImageWidth;
+                foreach (var line in Lines)
                 {
-                    tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                    dc.DrawLine(line.pen, new Point(line.pt1.X * dRatio, line.pt1.Y * dRatio), new Point(line.pt2.X * dRatio, line.pt2.Y * dRatio));
                 }
-                PathGeometry geometry = new PathGeometry();
-                PolyLineSegment polyLineSegment = new PolyLineSegment();
-                polyLineSegment.Points = new PointCollection(tmp);
-                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
-                geometry.Figures.Add(figure);
+                foreach (var ellipse in Ellipses)
+                {
+                    dc.DrawEllipse(FillEdge ? ellipse.pen.Brush : Brushes.Transparent, ellipse.pen, new Point(ellipse.center.X * dRatio, ellipse.center.Y * dRatio), ellipse.radiusX * dRatio, ellipse.radiusY * dRatio);
+                }
+                foreach (var rect in Rectangles)
+                {
+                    dc.DrawRectangle(FillEdge ? rect.pen.Brush : Brushes.Transparent, rect.pen, new Rect(rect.rectangle.X * dRatio, rect.rectangle.Y * dRatio, rect.rectangle.Width * dRatio, rect.rectangle.Height * dRatio));
+                }
+                foreach (var region in Regions)
+                {
+                    List<Point> tmp = new List<Point>();
+                    foreach (var item in region.points)
+                    {
+                        tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                    }
+                    PathGeometry geometry = new PathGeometry();
+                    PolyLineSegment polyLineSegment = new PolyLineSegment();
+                    polyLineSegment.Points = new PointCollection(tmp);
+                    PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
+                    geometry.Figures.Add(figure);
 
-                dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
-            }
-            foreach (var region in Regions)
-            {
-                List<Point> tmp = new List<Point>();
-                foreach (var item in region.points)
-                {
-                    tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                    dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
                 }
-                PathGeometry geometry = new PathGeometry();
-                PolyLineSegment polyLineSegment = new PolyLineSegment();
-                polyLineSegment.Points = new PointCollection(tmp);
-                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
-                geometry.Figures.Add(figure);
+                foreach (var region in Regions)
+                {
+                    List<Point> tmp = new List<Point>();
+                    foreach (var item in region.points)
+                    {
+                        tmp.Add(new Point(item.X * dRatio, item.Y * dRatio));
+                    }
+                    PathGeometry geometry = new PathGeometry();
+                    PolyLineSegment polyLineSegment = new PolyLineSegment();
+                    polyLineSegment.Points = new PointCollection(tmp);
+                    PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
+                    geometry.Figures.Add(figure);
 
-                dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
-            }
-            foreach (var text in Texts)
-            {
-                text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
-                dc.DrawText(text.formattedText, new Point(text.origin.X * dRatio, text.origin.Y * dRatio));
-            }
-            foreach (var text in TextAlignments)
-            {
-                text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
-                double x = 20, y = 20;
-                switch (text.alignmentX)
-                {
-                    case AlignmentX.Center:
-                        x = ImageWidth / 2 - text.formattedText.Width / dRatio / 2;
-                        break;
-                    case AlignmentX.Right:
-                        x = ImageWidth - text.formattedText.Width / dRatio - 20;
-                        break;
+                    dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
                 }
-                switch (text.alignmentY)
+                foreach (var text in Texts)
                 {
-                    case AlignmentY.Center:
-                        y = ImageHeight / 2 - text.formattedText.Height / dRatio / 2;
-                        break;
-                    case AlignmentY.Bottom:
-                        y = ImageHeight - text.formattedText.Height / dRatio - 20;
-                        break;
+                    text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
+                    dc.DrawText(text.formattedText, new Point(text.origin.X * dRatio, text.origin.Y * dRatio));
                 }
-                dc.DrawText(text.formattedText, new Point(x * dRatio, y * dRatio));
+                foreach (var text in TextAlignments)
+                {
+                    text.formattedText.SetFontSize(text.thickness / scaleTransform.ScaleX);
+                    double x = 20, y = 20;
+                    switch (text.alignmentX)
+                    {
+                        case AlignmentX.Center:
+                            x = ImageWidth / 2 - text.formattedText.Width / dRatio / 2;
+                            break;
+                        case AlignmentX.Right:
+                            x = ImageWidth - text.formattedText.Width / dRatio - 20;
+                            break;
+                    }
+                    switch (text.alignmentY)
+                    {
+                        case AlignmentY.Center:
+                            y = ImageHeight / 2 - text.formattedText.Height / dRatio / 2;
+                            break;
+                        case AlignmentY.Bottom:
+                            y = ImageHeight - text.formattedText.Height / dRatio - 20;
+                            break;
+                    }
+                    dc.DrawText(text.formattedText, new Point(x * dRatio, y * dRatio));
+                }
             }
         }
 
@@ -544,13 +552,16 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawText(string text, Point origin, bool isRender = true)
         {
-            if (bitmapImage != null)
+            lock (lockDraw) 
             {
-                Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
-                if (isRender) this.InvalidateVisual();
+                if (bitmapImage != null)
+                {
+                    Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                    new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
+                    
+                }
             }
-
+            if (isRender) this.InvalidateVisual();
         }
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -562,12 +573,16 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
         {
-            if (bitmapImage != null)
+            lock (lockDraw)
             {
-                TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
-                if (isRender) this.InvalidateVisual();
+                if (bitmapImage != null)
+                {
+                    TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                    new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
+                    
+                }
             }
+            if (isRender) this.InvalidateVisual();
         }
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -577,12 +592,16 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRegion(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
+            lock (lockDraw)
+            {
+                if (points.Count == 0) return;
 
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Regions.Add(new SDrawRegion(_Pen, points));
+                Regions.Add(new SDrawRegion(_Pen, points));
 
+                
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -593,25 +612,29 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawPoints(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
-
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
-
-            List<Point> region = new List<Point>();
-            foreach (var item in points)
+            lock (lockDraw)
             {
-                if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                if (points.Count == 0) return;
+
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+                List<Point> region = new List<Point>();
+                foreach (var item in points)
+                {
+                    if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                    {
+                        Regions.Add(new SDrawRegion(_Pen, region));
+                        region = new List<Point>();
+                    }
+                    region.Add(item);
+                }
+                if (region.Count > 0)
                 {
                     Regions.Add(new SDrawRegion(_Pen, region));
-                    region = new List<Point>();
                 }
-                region.Add(item);
-            }
-            if (region.Count > 0)
-            {
-                Regions.Add(new SDrawRegion(_Pen, region));
-            }
 
+                
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -623,9 +646,13 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawLine(Point pt1, Point pt2, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Lines.Add(new SDrawLine(_Pen, pt1, pt2));
+                Lines.Add(new SDrawLine(_Pen, pt1, pt2));
+                
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -638,9 +665,13 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
+                Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
+                
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -650,9 +681,13 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRectangle(Rect rectangle, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+                Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+                
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -669,13 +704,32 @@ namespace WH.Controls
         /// </summary>
         public void Clear()
         {
-            Lines.Clear();
-            Ellipses.Clear();
-            Rectangles.Clear();
-            Texts.Clear();
-            TextAlignments.Clear();
-            Regions.Clear();
-            _Pens.Clear();
+            lock (lockDraw)
+            {
+                Lines.Clear();
+                Ellipses.Clear();
+                Rectangles.Clear();
+                Texts.Clear();
+                TextAlignments.Clear();
+                Regions.Clear();
+                _Pens.Clear();
+            }
+            this.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 复制显示
+        /// </summary>
+        public void CopyDraw(CImagePro copy)
+        {
+            Lines = copy.Lines;
+            Ellipses = copy.Ellipses;
+            Rectangles = copy.Rectangles;
+            Texts = copy.Texts;
+            TextAlignments = copy.TextAlignments;
+            Regions = copy.Regions;
+            _Pens = copy._Pens;
 
             this.InvalidateVisual();
         }

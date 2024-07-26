@@ -16,11 +16,31 @@ namespace WH.Controls
         public ImageView()
         {
             InitializeComponent();
+            this.Loaded += ImageView_Loaded;
+        }
+
+        private void ImageView_Loaded(object sender, RoutedEventArgs e)
+        {
+            Operator = this;
         }
 
         /// <summary>
         /// 2024.7.8 李焕彬
-        /// 显示图像
+        /// 图像操作
+        /// </summary>
+        public ImageView Operator
+        {
+            get { return (ImageView)GetValue(OperatorProperty); }
+            set { SetValue(OperatorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Operator.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty OperatorProperty =
+            DependencyProperty.Register("Operator", typeof(ImageView), typeof(ImageView));
+
+        /// <summary>
+        /// 2024.7.8 李焕彬
+        /// 显示图像,需指定绑定模式为OneWayToSource
         /// </summary>
         public BitmapSource Source
         {
@@ -38,7 +58,7 @@ namespace WH.Controls
                     ImageView view = (ImageView)d;
                     //view.Image.Source = (BitmapSource)e.NewValue;
                     //view.Canvas.Source = (BitmapSource)e.NewValue;
-                    view.updateImg((BitmapSource)e.NewValue);
+                    view.UpdateImg((BitmapSource)e.NewValue);
                 }
             }));
 
@@ -59,7 +79,7 @@ namespace WH.Controls
         /// 更新图像
         /// </summary>
         /// <param name="img">待显示图像</param>
-        public void updateImg(BitmapSource img)
+        public void UpdateImg(BitmapSource img)
         {
             Image.Source = img;
             Canvas.Source = img;
@@ -82,7 +102,7 @@ namespace WH.Controls
         /// </summary>
         /// <param name="brush">画刷</param>
         /// <param name="thickness">厚度</param>
-        public void SetPen(Brush brush, double thickness)
+        public void SetPen(Brush brush, double thickness = 1)
         {
             this.Image.SetPen(brush, thickness);
             this.Canvas.SetPen(brush, thickness);
@@ -326,6 +346,16 @@ namespace WH.Controls
         {
             this.Image.InvalidateVisual();
             this.Canvas.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 复制显示
+        /// </summary>
+        public void CopyDraw(ImageView copy)
+        {
+            this.Image.CopyDraw(copy.Image);
+            this.Canvas.CopyDraw(copy.Canvas);
         }
 
         /// <summary>

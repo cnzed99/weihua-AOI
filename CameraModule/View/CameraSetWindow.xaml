@@ -5,10 +5,10 @@
     xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:CameraModule"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     Title="{Binding [CameraSet], Source={x:Static local:CLang.s_Instance}}"
     Width="1300"
     Height="750"
@@ -60,22 +60,29 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <ListBox Margin="5,0" ItemsSource="{Binding CamParamList}" SelectedItem="{Binding CamParamSelect}">
+                <ListBox
+                    Margin="5,0"
+                    ItemsSource="{Binding CamParamList}"
+                    SelectedItem="{Binding CamParamSelect}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Style="{StaticResource TextBlockDefault}">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}-{1}">
-                                        <Binding Path="SerialNumber"/>
-                                        <Binding Path="Name"/>
+                                        <Binding Path="SerialNumber" />
+                                        <Binding Path="Name" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <wh:CPropertyGridLang Grid.Column="1" SelectedObject="{Binding CamParamSelect}" lang="{x:Static local:CLang.s_Instance}"/>
+                <wh:CPropertyGridLang
+                    Grid.Column="1"
+                    SelectedObject="{Binding CamParamSelect}"
+                    lang="{x:Static local:CLang.s_Instance}" />
                 <UniformGrid
                     Grid.Row="1"
                     Grid.ColumnSpan="2"
@@ -83,33 +90,39 @@
                     Rows="1">
                     <UniformGrid.Resources>
                         <ResourceDictionary>
-                            <Style TargetType="Button" BasedOn="{StaticResource ButtonDefault}">
-                                <Setter Property="Width" Value="80"/>
-                                <Setter Property="Height" Value="40"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="Padding" Value="2"/>
-                                <Setter Property="FontSize" Value="15"/>
+                            <Style BasedOn="{StaticResource ButtonDefault}" TargetType="Button">
+                                <Setter Property="Width" Value="80" />
+                                <Setter Property="Height" Value="40" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="FontSize" Value="15" />
                             </Style>
                         </ResourceDictionary>
                     </UniformGrid.Resources>
                     <Button
+                        Background="{DynamicResource PrimaryBrush}"
                         Command="{Binding SearchCommand}"
-                        Content="{Binding [Search], Source={x:Static local:CLang.s_Instance}}"
-                        Background="{DynamicResource PrimaryBrush}"/>
+                        Content="{Binding [Search], Source={x:Static local:CLang.s_Instance}}" />
                     <Button
+                        Background="{DynamicResource PrimaryBrush}"
+                        Command="{Binding SoftWareTriggerCommand}"
                         Content="{Binding [SoftWare], Source={x:Static local:CLang.s_Instance}}"
-                        IsEnabled="{Binding IsContinuous, Converter={StaticResource Boolean2BooleanReConverter}}"
-                        Background="{DynamicResource PrimaryBrush}" 
-                        Command="{Binding SoftWareTriggerCommand}"/>
+                        IsEnabled="{Binding IsContinuous, Converter={StaticResource Boolean2BooleanReConverter}}" />
                     <Button
                         Background="{Binding IsContinuous, Converter={StaticResource BoolToBrushConverter1}}"
-                        Content="{Binding IsContinuous, Converter={StaticResource BoolToStringConverter1}}"
-                        Command="{Binding ContinuousCommand}"/>
+                        Command="{Binding ContinuousCommand}"
+                        Content="{Binding IsContinuous, Converter={StaticResource BoolToStringConverter1}}" />
                     <Button
-                        Content="{Binding [Save], Source={x:Static local:CLang.s_Instance}}"
                         Background="{DynamicResource PrimaryBrush}"
-                        Command="{Binding SaveCommand}"/>
+                        Command="{Binding SaveCommand}"
+                        Content="{Binding [Save], Source={x:Static local:CLang.s_Instance}}" />
                 </UniformGrid>
+                <TextBox
+                    Grid.Row="2"
+                    hc:TitleElement.Title="清晰度值："
+                    hc:TitleElement.TitlePlacement="Left"
+                    Style="{StaticResource TextBoxExtend}"
+                    Text="{Binding Distinct}" />
             </Grid>
         </GroupBox>
     </Grid>

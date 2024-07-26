@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -21,6 +22,18 @@ namespace CameraModule
     /// </summary>
     public partial class CCameraSetWindowVM : ObservableObject
     {
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 计算对焦清晰度
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="nLine"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [DllImport("MaociAlg.dll")]
+        public static extern float CalcDistinct(int width, int height, int nLine, IntPtr data);
+
         public CCameraSetWindowVM()
         {
             timer.Elapsed += Timer_Elapsed;
@@ -101,6 +114,13 @@ namespace CameraModule
         /// 接收cell
         /// </summary>
         private Cell cellRecv;
+
+        /// <summary>
+        /// 2024.7.22 李焕彬
+        /// 当前图片清晰度值
+        /// </summary>
+        [ObservableProperty]
+        private float distinct;
 
         /// <summary>
         /// 2024.7.22 李焕彬
@@ -207,6 +227,12 @@ namespace CameraModule
                     {
                         ImageShow = image.ToBitmapSource();
                     });
+                    Distinct = CalcDistinct(
+                            cell.Image.ImageWidth,
+                            cell.Image.ImageHeight,
+                            cell.Image.StrideWidth,
+                            cell.Image.ImageData
+                        );
                     cellRecv?.Dispose();
                     cellRecv = cell;
                 }

@@ -13,6 +13,11 @@ namespace WH.Controls
     public class CCanvasPro : Canvas
     {
         /// <summary>
+        /// 2024.7.26 李焕彬
+        /// 绘图互斥锁,防止绘制时添加删除
+        /// </summary>
+        private Object lockDraw = new object();
+        /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制直线集合
         /// </summary>
@@ -121,6 +126,10 @@ namespace WH.Controls
         {
             base.OnRender(dc);
 
+            lock (lockDraw)
+            {
+
+            }
             foreach (var line in Lines)
             {
                 dc.DrawLine(line.pen, new Point(line.pt1.X, line.pt1.Y), new Point(line.pt2.X, line.pt2.Y));
@@ -243,13 +252,16 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawText(string text, Point origin, bool isRender = true)
         {
-            if (Source != null && Source is BitmapSource)
+            lock (lockDraw)
             {
-                BitmapSource bitmapImage = (BitmapSource)Source;
-                Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
-                if (isRender) this.InvalidateVisual();
+                if (Source != null && Source is BitmapSource)
+                {
+                    BitmapSource bitmapImage = (BitmapSource)Source;
+                    Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                    new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
+                }
             }
+            if (isRender) this.InvalidateVisual();
         }
 
         /// <summary>
@@ -262,13 +274,17 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
         {
-            if (Source != null && Source is BitmapSource)
+            lock (lockDraw)
             {
-                BitmapSource bitmapImage = (BitmapSource)Source;
-                TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
-                if (isRender) this.InvalidateVisual();
+                if (Source != null && Source is BitmapSource)
+                {
+                    BitmapSource bitmapImage = (BitmapSource)Source;
+                    TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
+                    new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
+                   
+                }
             }
+            if (isRender) this.InvalidateVisual();
         }
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -278,11 +294,14 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRegion(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
+            lock (lockDraw)
+            {
+                if (points.Count == 0) return;
 
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Regions.Add(new SDrawRegion(_Pen, points));
+                Regions.Add(new SDrawRegion(_Pen, points));
+            }
 
             if (isRender) this.InvalidateVisual();
         }
@@ -294,23 +313,26 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawPoints(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
-
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
-
-            List<Point> region = new List<Point>();
-            foreach (var item in points)
+            lock (lockDraw)
             {
-                if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                if (points.Count == 0) return;
+
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+
+                List<Point> region = new List<Point>();
+                foreach (var item in points)
+                {
+                    if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                    {
+                        Regions.Add(new SDrawRegion(_Pen, region));
+                        region = new List<Point>();
+                    }
+                    region.Add(item);
+                }
+                if (region.Count > 0)
                 {
                     Regions.Add(new SDrawRegion(_Pen, region));
-                    region = new List<Point>();
                 }
-                region.Add(item);
-            }
-            if (region.Count > 0)
-            {
-                Regions.Add(new SDrawRegion(_Pen, region));
             }
 
             if (isRender) this.InvalidateVisual();
@@ -324,9 +346,13 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawLine(Point pt1, Point pt2, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Lines.Add(new SDrawLine(_Pen, pt1, pt2));
+                Lines.Add(new SDrawLine(_Pen, pt1, pt2));
+            }
+            
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -339,9 +365,13 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
+                Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
+            }
+            
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -351,9 +381,12 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRectangle(Rect rectangle, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
 
-            Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+                Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+            }
             if (isRender) this.InvalidateVisual();
         }
         /// <summary>
@@ -362,13 +395,33 @@ namespace WH.Controls
         /// </summary>
         public void Clear()
         {
-            Lines.Clear();
-            Ellipses.Clear();
-            Rectangles.Clear();
-            Texts.Clear();
-            TextAlignments.Clear();
-            Regions.Clear();
-            _Pens.Clear();
+            lock (lockDraw)
+            {
+                Lines.Clear();
+                Ellipses.Clear();
+                Rectangles.Clear();
+                Texts.Clear();
+                TextAlignments.Clear();
+                Regions.Clear();
+                _Pens.Clear();
+            }
+
+            this.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 2024.7.25 李焕彬
+        /// 复制显示
+        /// </summary>
+        public void CopyDraw(CCanvasPro copy)
+        {
+            Lines = copy.Lines;
+            Ellipses = copy.Ellipses;
+            Rectangles = copy.Rectangles;
+            Texts = copy.Texts;
+            TextAlignments = copy.TextAlignments;
+            Regions = copy.Regions;
+            _Pens = copy._Pens;
 
             this.InvalidateVisual();
         }

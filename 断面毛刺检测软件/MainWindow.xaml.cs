@@ -212,8 +212,8 @@ namespace 断面毛刺检测软件
                     CMainList.SaveCurrentProj();
                 }
                 CMainList.SystemSettings.SaveParameter();
-                CMainList.MotionCtrlVM.SaveParameter();
-                CMainList.MarkCtrlVM.SaveParameter();
+                CMainList.CMainVMs[0].MotionCtrlVM.SaveParameter();
+                CMainList.CMainVMs[0].MarkCtrlVM.SaveParameter();
                 CCommunicationManagement.SaveAllComConfig();
                 CCameraManagement.SaveAllCamConfig();
                 CCommunicationManagement.CloseAllComm();

@@ -511,7 +511,7 @@ namespace MindVisionCam
                 CameraSdkStatus status = MvApi.CameraGetAnalogGain(m_hCamera, ref gain);
                 if (status == CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
-                    value = gain;
+                    value = gain / 8;
                     return true;
                 }
                 else
@@ -541,7 +541,7 @@ namespace MindVisionCam
         {
             try
             {
-                CameraSdkStatus status = MvApi.CameraSetAnalogGain(m_hCamera, (int)value);
+                CameraSdkStatus status = MvApi.CameraSetAnalogGain(m_hCamera, (int)value * 8);
                 if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
                     CCameraManagement.CamLogger.Error(
@@ -572,7 +572,7 @@ namespace MindVisionCam
                 CameraSdkStatus status = MvApi.CameraGetGamma(m_hCamera, ref gamma);
                 if (status == CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
-                    value = gamma;
+                    value = gamma / 100;
                     return true;
                 }
                 else
@@ -602,7 +602,7 @@ namespace MindVisionCam
         {
             try
             {
-                CameraSdkStatus status = MvApi.CameraSetGamma(m_hCamera, (int)value);
+                CameraSdkStatus status = MvApi.CameraSetGamma(m_hCamera, (int)value * 100);
                 if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
                     CCameraManagement.CamLogger.Error(
