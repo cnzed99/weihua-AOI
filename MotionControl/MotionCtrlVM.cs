@@ -645,7 +645,7 @@ namespace MotionControl
                 )
                 {
                     IsFocusing = false;
-                    cam.IsRuning = false;
+                    cam.IsSetWindowShowed = false;
                     cancellFocus.Cancel();
                     return;
                 }
@@ -670,7 +670,7 @@ namespace MotionControl
                     {
                         try
                         {
-                            cam.IsRuning = true;
+                            cam.IsSetWindowShowed = true;
                             IsFocusing = true;
                             for (
                                 float i = MotionConfig.SoftLimitN;
@@ -758,7 +758,7 @@ namespace MotionControl
                         }
                         finally
                         {
-                            cam.IsRuning = false;
+                            cam.IsSetWindowShowed = false;
                             IsFocusing = false;
                         }
                     }

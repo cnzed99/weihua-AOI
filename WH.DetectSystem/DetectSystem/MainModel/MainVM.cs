@@ -211,14 +211,14 @@ namespace WH.DetectSystem.ViewModels
             set
             {
                 SetProperty(ref isStart, value);
-                if (value)
-                {
-                    CCameraManagement.StartImaging(this.GUID, this.CameraSerial);
-                }
-                else
-                {
-                    CCameraManagement.StopImaging(this.GUID, this.CameraSerial);
-                }
+                //if (value)
+                //{
+                //    CCameraManagement.StartImaging(this.GUID, this.CameraSerial);
+                //}
+                //else
+                //{
+                //    CCameraManagement.StopImaging(this.GUID, this.CameraSerial);
+                //}
                 MotionCtrlVM.SetRunning(IsStart);
             }
         }

@@ -78,10 +78,12 @@ namespace CameraModule
                 if (camParamSelect != null)
                 {
                     camSelect = CCameraManagement.CameraDict[camParamSelect.SerialNumber];
+                    camSelect.IsSetWindowShowed = true;
                     camSelect.GrabFinishEvent = ShowImage;
                 }
                 else
                 {
+                    camSelect.IsSetWindowShowed = false;
                     camSelect.GrabFinishEvent -= ShowImage;
                     camSelect = null;
                 }
@@ -131,6 +133,7 @@ namespace CameraModule
         {
             if (camSelect != null)
             {
+                camSelect.IsSetWindowShowed = false;
                 camSelect.GrabFinishEvent -= ShowImage;
                 camSelect = null;
             }
@@ -228,11 +231,11 @@ namespace CameraModule
                         ImageShow = image.ToBitmapSource();
                     });
                     Distinct = CalcDistinct(
-                            cell.Image.ImageWidth,
-                            cell.Image.ImageHeight,
-                            cell.Image.StrideWidth,
-                            cell.Image.ImageData
-                        );
+                        cell.Image.ImageWidth,
+                        cell.Image.ImageHeight,
+                        cell.Image.StrideWidth,
+                        cell.Image.ImageData
+                    );
                     cellRecv?.Dispose();
                     cellRecv = cell;
                 }
