@@ -38,7 +38,7 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class MainWindow
         : HandyControl.Controls.Window,
-            IRecipient<CImage>,
+            IRecipient<BitmapSource>,
             IRecipient<AlarmPopMessage>,
             IRecipient<AddOneNgImagePathMessage>
     {
@@ -377,7 +377,7 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 await CMainList.OpenProj(progress, header);
 
-                WeakReferenceMessenger.Default.Register<CImage, Token>(
+                WeakReferenceMessenger.Default.Register<BitmapSource, Token>(
                     this,
                     CMainList.CMainVMs[0].TokeVM
                 );
@@ -557,12 +557,12 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        public void Receive(CImage image)
+        public void Receive(BitmapSource image)
         {
             this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    mainVM.ModelImage = image.ToBitmapSource();
+                    mainVM.ModelImage = image;
                 })
             );
         }

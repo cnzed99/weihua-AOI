@@ -2,8 +2,8 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace WH.RecipeCellRootBase
@@ -175,13 +175,16 @@ namespace WH.RecipeCellRootBase
             StrideWidth = ImageWidth * ((PixelFormat.BitsPerPixel + 7) / 8);
             ImageSize = StrideWidth * ImageHeight;
             ImageData = Marshal.AllocHGlobal(ImageSize);
-            bitmap.CopyPixels(new Int32Rect(0, 0, ImageWidth, ImageHeight), ImageData, ImageSize, StrideWidth);
+            bitmap.CopyPixels(
+                new Int32Rect(0, 0, ImageWidth, ImageHeight),
+                ImageData,
+                ImageSize,
+                StrideWidth
+            );
         }
 
-        public CImage(string path) : this(new BitmapImage(new Uri(path)))
-        {
-
-        }
+        public CImage(string path)
+            : this(new BitmapImage(new Uri(path))) { }
 
         public CImage(int imageWidth, int imageHeight, nint imageData, PixelFormat pixelFormat)
         {
@@ -194,7 +197,13 @@ namespace WH.RecipeCellRootBase
             ImageSize = StrideWidth * ImageHeight;
         }
 
-        public CImage(int imageWidth, int imageHeight, int strideWidth, nint imageData, PixelFormat pixelFormat)
+        public CImage(
+            int imageWidth,
+            int imageHeight,
+            int strideWidth,
+            nint imageData,
+            PixelFormat pixelFormat
+        )
         {
             ImageWidth = imageWidth;
             ImageHeight = imageHeight;
@@ -211,17 +220,19 @@ namespace WH.RecipeCellRootBase
         /// <returns>BitmapSource</returns>
         public BitmapSource ToBitmapSource()
         {
-            return BitmapSource.Create(
-                            ImageWidth,
-                            ImageHeight,
-                            96,
-                            96,
-                            PixelFormat,
-                            null,
-                            ImageData,
-                            ImageSize,
-                            StrideWidth
-                        );
+            BitmapSource bitmapSource = BitmapSource.Create(
+                ImageWidth,
+                ImageHeight,
+                96,
+                96,
+                PixelFormat,
+                null,
+                ImageData,
+                ImageSize,
+                StrideWidth
+            );
+            bitmapSource.Freeze();
+            return bitmapSource;
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using HandyControl.Controls;
 
 namespace WH.Controls
 {
@@ -35,8 +36,11 @@ namespace WH.Controls
         }
 
         // Using a DependencyProperty as the backing store for Operator.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty OperatorProperty =
-            DependencyProperty.Register("Operator", typeof(ImageView), typeof(ImageView));
+        public static readonly DependencyProperty OperatorProperty = DependencyProperty.Register(
+            "Operator",
+            typeof(ImageView),
+            typeof(ImageView)
+        );
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -49,18 +53,24 @@ namespace WH.Controls
         }
 
         // Using a DependencyProperty as the backing store for BitmapSource.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(BitmapSource), typeof(ImageView), new PropertyMetadata(null, (d, e) =>
-            {
-                if (e.NewValue != null)
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            "Source",
+            typeof(BitmapSource),
+            typeof(ImageView),
+            new PropertyMetadata(
+                null,
+                (d, e) =>
                 {
-                    
-                    ImageView view = (ImageView)d;
-                    //view.Image.Source = (BitmapSource)e.NewValue;
-                    //view.Canvas.Source = (BitmapSource)e.NewValue;
-                    view.UpdateImg((BitmapSource)e.NewValue);
+                    if (e.NewValue != null)
+                    {
+                        ImageView view = (ImageView)d;
+                        //view.Image.Source = (BitmapSource)e.NewValue;
+                        //view.Canvas.Source = (BitmapSource)e.NewValue;
+                        view.UpdateImg((BitmapSource)e.NewValue);
+                    }
                 }
-            }));
+            )
+        );
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -205,7 +215,12 @@ namespace WH.Controls
         /// <param name="radiusX">待绘制椭圆X半径</param>
         /// <param name="radiusY">待绘制椭圆Y半径</param>
         /// <param name="isRender">是否刷新</param>
-        public void ImgDrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
+        public void ImgDrawEllipse(
+            Point center,
+            double radiusX,
+            double radiusY,
+            bool isRender = true
+        )
         {
             this.Image.DrawEllipse(center, radiusX, radiusY, isRender);
         }
@@ -240,7 +255,12 @@ namespace WH.Controls
         /// <param name="alignmentX">Y对齐</param>
         /// <param name="alignmentY">X对齐</param>
         /// <param name="isRender">是否刷新</param>
-        public void ImgDrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
+        public void ImgDrawText(
+            string text,
+            AlignmentX alignmentX,
+            AlignmentY alignmentY,
+            bool isRender = true
+        )
         {
             this.Image.DrawText(text, alignmentX, alignmentY, isRender);
         }
@@ -287,7 +307,12 @@ namespace WH.Controls
         /// <param name="radiusX">待绘制椭圆X半径</param>
         /// <param name="radiusY">待绘制椭圆Y半径</param>
         /// <param name="isRender">是否刷新</param>
-        public void WinDrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
+        public void WinDrawEllipse(
+            Point center,
+            double radiusX,
+            double radiusY,
+            bool isRender = true
+        )
         {
             this.Canvas.DrawEllipse(center, radiusX, radiusY, isRender);
         }
@@ -323,7 +348,12 @@ namespace WH.Controls
         /// <param name="alignmentX">X对齐</param>
         /// <param name="alignmentY">Y对齐</param>
         /// <param name="isRender">是否刷新</param>
-        public void WinDrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
+        public void WinDrawText(
+            string text,
+            AlignmentX alignmentX,
+            AlignmentY alignmentY,
+            bool isRender = true
+        )
         {
             this.Canvas.DrawText(text, alignmentX, alignmentY, isRender);
         }
@@ -355,12 +385,18 @@ namespace WH.Controls
         /// <param name="width">截图宽</param>
         /// <param name="height">截图高</param>
         /// <returns>输出图像</returns>
-        public BitmapSource GetImage(int width, int height)
+        public BitmapSource GetImage()
         {
-            //待实现方法
-            RenderTargetBitmap renderTargetBitmap = new(width, height, 96, 96, PixelFormats.Rgb24);
-            renderTargetBitmap.Render(this);
-
+            DrawingVisual drawingVisual = new DrawingVisual();
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+            drawingContext.DrawImage(Source, new Rect(0, 0, ImageWidth, ImageHeight));
+            this.Image.Draw(drawingContext, ImageWidth, 1, 50);
+            this.Canvas.Draw(drawingContext, ImageWidth, ImageHeight, 50);
+            drawingContext.Close();
+            RenderTargetBitmap renderTargetBitmap =
+                new(ImageWidth, ImageHeight, 96, 96, PixelFormats.Default);
+            renderTargetBitmap.Render(drawingVisual);
+            renderTargetBitmap.Freeze();
             return renderTargetBitmap;
         }
     }

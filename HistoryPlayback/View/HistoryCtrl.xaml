@@ -176,8 +176,7 @@
             Grid.Row="2"
             BorderBrush="White"
             BorderThickness="3">
-            <!--<wh:ImageView d:Source="D:\\铝极1.bmp" Source="{Binding ReadImage}" />-->
-            <Image Source="{Binding ReadImage}" />
+            <wh:ImageView Source="{Binding ReadImage}" />
         </Border>
 
     </Grid>

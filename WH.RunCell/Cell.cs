@@ -244,6 +244,12 @@ namespace WH.RunCell
             }
         }
 
+        /// <summary>
+        /// 2024.7.29 ¿Óª¿±Ú
+        /// ΩÿÕº
+        /// </summary>
+        public BitmapSource DumpImage { get; set; }
+
         public override void Dispose()
         {
             base.Dispose();

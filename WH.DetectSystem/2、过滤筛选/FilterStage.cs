@@ -137,10 +137,17 @@ namespace WH.DetectSystem
                                 break;
                             }
                         }
-                        SRegion maxRegion = new SRegion(); ;
+                        SRegion maxRegion = new SRegion();
                         if (detection.regionOut.Count > 0)
                         {
-                            detection.regionOut.Sort(delegate (SRegion l, SRegion r) { return l.RegionInfo.PeakHeight.CompareTo(r.RegionInfo.PeakHeight); });
+                            detection.regionOut.Sort(
+                                delegate(SRegion l, SRegion r)
+                                {
+                                    return l.RegionInfo.PeakHeight.CompareTo(
+                                        r.RegionInfo.PeakHeight
+                                    );
+                                }
+                            );
                             maxRegion = detection.regionOut.Last();
                         }
                         foreach (var item in de.ResultList)
@@ -177,9 +184,6 @@ namespace WH.DetectSystem
                                 default:
                                     break;
                             }
-                            detection.DetectLog.AppendLine(
-                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:"
-                            );
                         }
                         if (!detection.Result) //NG
                         {

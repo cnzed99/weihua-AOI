@@ -72,13 +72,17 @@ namespace WH.DetectSystem._5_存图操作
                             string filecropName = dirPath + cropName + detection.DefectFilter.Name;
                         }
 
-                        savePath = SaveDumpImage(cell, classPath); //存窗口截图 李工还未做
+                        savePath = SaveDumpImage(cell, classPath, saveImageConfig.SaveImageFormat); //存窗口截图 李工还未做
                     }
                 }
 
                 if (saveImageConfig.SaveImageEnable) //开启存原图
                 {
                     string fileName = classPath;
+                    if (Directory.Exists(Directory.GetParent(fileName).FullName))
+                    {
+                        Directory.CreateDirectory(Directory.GetParent(fileName).FullName);
+                    }
                     switch (saveImageConfig.SaveSelect)
                     {
                         case "0": //存所有图
@@ -140,14 +144,20 @@ namespace WH.DetectSystem._5_存图操作
         /// </summary>
         /// <param name="cell"></param>
         /// <param name="dumpImagePath"></param>
+        /// <param name="format">格式</param>
         /// <returns>保存路径</returns>
-        private static string SaveDumpImage(Cell cell, string dumpImagePath)
+        private static string SaveDumpImage(Cell cell, string dumpImagePath, string format)
         {
             string directory = Path.GetDirectoryName(dumpImagePath);
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(dumpImagePath);
-            string Dirpath = $"{directory}{"\\Jpg\\"}";
-            string path = $"{Dirpath}{fileNameWithoutExtension}{".jpg"}";
-            //保存截图。。。
+            string dirPath = $"{directory}{"\\Jpg\\"}";
+            string path = $"{dirPath}{fileNameWithoutExtension}{".jpg"}";
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            WriteImage(cell.DumpImage, path, format);
+
             return path;
         }
 
@@ -268,10 +278,12 @@ namespace WH.DetectSystem._5_存图操作
         }
 
         /// <summary>
+        /// 2024.7.29 李焕彬
         /// 保存图片
         /// </summary>
         /// <param name="bitImage">图片</param>
         /// <param name="filepath">存图路径</param>
+        /// <param name="format">图片格式</param>
         private static void WriteImage(CImage image, string filepath, string format)
         {
             if (image != null)
@@ -280,6 +292,26 @@ namespace WH.DetectSystem._5_存图操作
                 {
                     BitmapEncoder encoder = GetEncoder(format);
                     encoder.Frames.Add(BitmapFrame.Create(image.ToBitmapSource()));
+                    encoder.Save(stream);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.29 李焕彬
+        /// 保存图片
+        /// </summary>
+        /// <param name="bitImage">图片</param>
+        /// <param name="filepath">存图路径</param>
+        /// <param name="format">图片格式</param>
+        private static void WriteImage(BitmapSource bitmap, string filepath, string format)
+        {
+            if (bitmap != null)
+            {
+                using (FileStream stream = new FileStream(filepath, FileMode.Create))
+                {
+                    BitmapEncoder encoder = GetEncoder(format);
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
                     encoder.Save(stream);
                 }
             }
