@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using HandyControl.Controls;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 
@@ -19,7 +21,7 @@ namespace WH.LightControl
         /// 20240723 TCG
         /// 主通讯参数保存路径
         /// </summary>
-        public static string s_LightConfigPath = "./LightConfig.Json";
+        public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
 
         /// <summary>
         /// 20240724 TCG
@@ -28,8 +30,9 @@ namespace WH.LightControl
         [property: Category("基础信息")]
         [property: Description("1.串口号")]
         [property: DisplayName("串口号")]
+        [property: Editor(typeof(COMDevicePropertyEditor), typeof(PropertyEditorBase))]
         [ObservableProperty]
-        private ECOM port = ECOM.ECOM_COM1;
+        private COMDevice port;
 
         /// <summary>
         /// 20240724 TCG

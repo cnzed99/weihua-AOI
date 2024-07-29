@@ -31,11 +31,11 @@ namespace WH.LightControl
             {
                 if (Config.TriggerMode)
                 {
-                    this.SerialPort.Write("$TH#");
+                    Write("$TH#");
                 }
                 else
                 {
-                    this.SerialPort.Write("$TL#");
+                    Write("$TL#");
                 }
             }
         }
@@ -51,11 +51,11 @@ namespace WH.LightControl
             {
                 if (Config.TriggerEdge)
                 {
-                    this.SerialPort.Write("$HF#");
+                    Write("$HF#");
                 }
                 else
                 {
-                    this.SerialPort.Write("$LF#");
+                    Write("$LF#");
                 }
             }
         }
@@ -71,11 +71,11 @@ namespace WH.LightControl
             {
                 if (Config.WorkMode)
                 {
-                    this.SerialPort.Write("$WK#");
+                    Write("$WK#");
                 }
                 else
                 {
-                    this.SerialPort.Write("$DB#");
+                    Write("$DB#");
                 }
             }
         }
@@ -118,6 +118,9 @@ namespace WH.LightControl
         /// </summary>
         SemaphoreSlim slim = new SemaphoreSlim(1);
 
+        [ObservableProperty]
+        string errorMessage;
+
         public LSWLightControlVM()
             : base()
         {
@@ -129,7 +132,7 @@ namespace WH.LightControl
             {
                 this.Config = new LSWLightConfig();
             }
-            _ = this.Open();
+            //_ = this.Open();
         }
 
         public override bool Close()
@@ -143,19 +146,21 @@ namespace WH.LightControl
 
         public override void GetLightValues()
         {
-            slim.Wait();
-            message.Clear();
-            StringBuilder sb = new StringBuilder("$");
-            foreach (var light in Config.LightChannelList)
+            if (slim.Wait(2000))
             {
-                sb.Append("S");
-                sb.Append(light.Channel);
-                sb.Append("R&");
+                message.Clear();
+                StringBuilder sb = new StringBuilder("$");
+                foreach (var light in Config.LightChannelList)
+                {
+                    sb.Append("S");
+                    sb.Append(light.Channel);
+                    sb.Append("R&");
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append("#");
+                this.action = ReadLightValues;
+                Write(sb.ToString());
             }
-            sb.Remove(sb.Length - 1, 1);
-            sb.Append("#");
-            this.action = ReadLightValues;
-            this.SerialPort.WriteLine(sb.ToString());
         }
 
         /// <summary>
@@ -194,15 +199,17 @@ namespace WH.LightControl
         [RelayCommand]
         private async Task Open()
         {
-            base.Open(Config);
-            GetLightValues();
-            GetTriggerMode();
-            await Task.Delay(50);
-            OnTriggerModeChanged();
-            await Task.Delay(50);
-            OnTriggerEdgeChanged();
-            await Task.Delay(50);
-            OnWorkModeChanged();
+            if (base.Open(Config))
+            {
+                GetLightValues();
+                GetTriggerMode();
+                await Task.Delay(50);
+                OnTriggerModeChanged();
+                await Task.Delay(50);
+                OnTriggerEdgeChanged();
+                await Task.Delay(50);
+                OnWorkModeChanged();
+            }
         }
 
         [RelayCommand]
@@ -211,7 +218,7 @@ namespace WH.LightControl
             if (!IsOpen())
                 return;
             var str = $"$S{light.Channel}{light.Value:D3}#";
-            this.SerialPort.WriteLine(str);
+            Write(str);
         }
 
         [RelayCommand]
@@ -219,7 +226,7 @@ namespace WH.LightControl
         {
             if (!IsOpen())
                 return;
-            this.SerialPort.WriteLine("$REC#");
+            Write("$REC#");
             GetLightValues();
             GetTriggerMode();
         }
@@ -236,23 +243,25 @@ namespace WH.LightControl
         /// </summary>
         protected void GetTriggerMode()
         {
-            slim.Wait();
-            message.Clear();
-            action = s =>
+            if (slim.Wait(2000))
             {
-                switch (s)
+                message.Clear();
+                action = s =>
                 {
-                    case "$TH#":
-                        Config.TriggerMode = true;
-                        break;
-                    case "$TL#":
-                        Config.TriggerMode = false;
-                        break;
-                }
-                slim.Release();
-                action = null;
-            };
-            this.SerialPort.Write("$TR#");
+                    switch (s)
+                    {
+                        case "$TH#":
+                            Config.TriggerMode = true;
+                            break;
+                        case "$TL#":
+                            Config.TriggerMode = false;
+                            break;
+                    }
+                    slim.Release();
+                    action = null;
+                };
+                Write("$TR#");
+            }
         }
 
         protected override void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
@@ -263,6 +272,33 @@ namespace WH.LightControl
                 return;
 
             action?.Invoke(message.ToString());
+        }
+
+        protected async void Write(string msg)
+        {
+            try
+            {
+                ErrorMessage = string.Empty;
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        this.SerialPort.Write(msg);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                });
+            }
+            catch (TimeoutException e)
+            {
+                ErrorMessage = e.Message;
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = e.Message;
+            }
         }
     }
 }

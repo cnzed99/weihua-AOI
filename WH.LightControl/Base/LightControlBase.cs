@@ -26,6 +26,7 @@ namespace WH.LightControl
         {
             SerialPort.ReadBufferSize = 1024;
             SerialPort.WriteBufferSize = 1024;
+            serialPort.WriteTimeout = 2000;
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler); // 接收到数据时的事件
         }
 
@@ -48,14 +49,21 @@ namespace WH.LightControl
             {
                 this.SerialPort.Close();
             }
-            this.SerialPort.PortName = "COM" + (int)lightParams.Port; //lightParams.Port;
+            if (string.IsNullOrEmpty(lightParams.Port?.Name))
+                return false;
+            this.SerialPort.PortName = lightParams.Port.Name; //lightParams.Port;
             this.SerialPort.BaudRate = (int)lightParams.BaudRate;
             this.SerialPort.Parity = lightParams.Parity;
             this.SerialPort.DataBits = (int)lightParams.DataBits;
             this.SerialPort.StopBits = lightParams.StopBits;
             this.SerialPort.Handshake = lightParams.HandShake;
-            this.SerialPort.Open();
-            return true;
+            string[] ports = SerialPort.GetPortNames();
+            if (ports.Contains(this.SerialPort.PortName))
+            {
+                this.SerialPort.Open();
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

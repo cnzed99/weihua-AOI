@@ -29,6 +29,7 @@
 	  <PackageReference Include="log4net" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="Newtonsoft.Json" />
+	  <PackageReference Include="System.IO.Ports" />
   </ItemGroup>
 
   <ItemGroup>

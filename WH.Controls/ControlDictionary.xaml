@@ -1,12 +1,8 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    >
+﻿<!--  内部使用的样式  -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-
-        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/WH.Controls;component/Controls/ToggleButton/ToggleButtonStyles.xaml" />
+        <!--<ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />-->
         <ResourceDictionary>
             <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD" />
             <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070" />
@@ -129,7 +125,7 @@
                 <Setter Property="Background" Value="#FF0F4059" />
                 <Setter Property="BorderBrush" Value="#FF83B5DE" />
             </Style>
-            
+
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

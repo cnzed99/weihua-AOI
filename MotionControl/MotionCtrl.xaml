@@ -8,7 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:MotionControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DesignHeight="650"
     d:DesignWidth="550"
     mc:Ignorable="d">

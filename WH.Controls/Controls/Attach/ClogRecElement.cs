@@ -5,50 +5,44 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using log4net;
+using log4net.Util;
 using WH.Entity.LogRecord;
 
-namespace WH.Controls
+namespace WH.Controls.Controls.Attach
 {
-    /// <summary>
-    /// LogCtrl.xaml 的交互逻辑
-    /// </summary>
-    public partial class LogCtrl : UserControl
+    public static class ClogRecElement
     {
-        public SlogMessage LogMessage
+        public static SlogMessage GetLogMessage(DependencyObject obj)
         {
-            get { return (SlogMessage)GetValue(LogMessageProperty); }
-            set { SetValue(LogMessageProperty, value); }
+            return (SlogMessage)obj.GetValue(LogMessageProperty);
         }
 
-        // Using a DependencyProperty as the backing store for LogStr.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LogMessageProperty = DependencyProperty.Register(
-            "LogMessage",
-            typeof(SlogMessage),
-            typeof(LogCtrl),
-            new PropertyMetadata(LogMessageChanged)
-        );
+        public static void SetLogMessage(DependencyObject obj, SlogMessage value)
+        {
+            obj.SetValue(LogMessageProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for LogMessage.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LogMessageProperty =
+            DependencyProperty.RegisterAttached(
+                "LogMessage",
+                typeof(SlogMessage),
+                typeof(ClogRecElement),
+                new PropertyMetadata(LogMessageChanged)
+            );
 
         private static void LogMessageChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e
         )
         {
-            LogCtrl ctrl = (LogCtrl)d;
-            SlogMessage logMessage = (SlogMessage)e.NewValue;
-            ctrl.AddLogToListBox(logMessage.Message, logMessage.Log);
-        }
-
-        public LogCtrl()
-        {
-            InitializeComponent();
+            if (d is RichTextBox ctrl)
+            {
+                SlogMessage logMessage = (SlogMessage)e.NewValue;
+                ctrl.AddLogToListBox(logMessage.Message, logMessage.Log);
+            }
         }
 
         /// <summary>
@@ -57,7 +51,11 @@ namespace WH.Controls
         /// <param name="TargetListBox">目标ListBox控件</param>
         /// <param name="TargetText">需要添加的文本内容</param>
         /// <returns>执行结果</returns>
-        public bool AddLogToListBox(string targetText, LOG logType = LOG.LOG_INFO)
+        public static bool AddLogToListBox(
+            this RichTextBox ctrl,
+            string targetText,
+            LOG logType = LOG.LOG_INFO
+        )
         {
             if (string.IsNullOrEmpty(targetText))
             {
@@ -100,13 +98,13 @@ namespace WH.Controls
                         textColor = Brushes.DarkGray;
                         break;
                 }
-                this.Dispatcher.Invoke(
+                ctrl.Dispatcher.Invoke(
                     new Action(() =>
                     {
-                        int count = LogBox.Document.Blocks.Count;
+                        int count = ctrl.Document.Blocks.Count;
                         if (count > 150)
                         {
-                            LogBox.Document.Blocks.Clear();
+                            ctrl.Document.Blocks.Clear();
                         }
 
                         Run item = new Run(targetText);
@@ -115,8 +113,8 @@ namespace WH.Controls
                         paragraph.Margin = new Thickness(0, 5, 0, 0);
                         paragraph.LineHeight = 1;
                         paragraph.Foreground = textColor;
-                        LogBox.Document.Blocks.Add(paragraph);
-                        LogBox.ScrollToEnd();
+                        ctrl.Document.Blocks.Add(paragraph);
+                        ctrl.ScrollToEnd();
                     })
                 );
                 //TargetListBox.Focus();

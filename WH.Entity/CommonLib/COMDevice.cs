@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,40 +13,28 @@ namespace WH.Entity.CommonLib
     /// 2024.7.1 李焕彬
     /// Known颜色类，含颜色和颜色名
     /// </summary>
-    public class CKnownColor : IEquatable<CKnownColor>
+    public class COMDevice : IEquatable<COMDevice>
     {
-        public CKnownColor() { }
-
-        public CKnownColor(string name, Brush brush)
-        {
-            this.Name = name;
-            this.Brush = brush;
-        }
+        public COMDevice() { }
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 颜色名
+        /// 20240729 TCG
+        /// COM 口
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 颜色画刷
-        /// </summary>
-        public Brush Brush { get; set; }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
+        /// 20240729 TCG
         /// 重载等于
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public bool Equals(CKnownColor other)
+        public bool Equals(COMDevice other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
-            var kcolor = (CKnownColor)other;
+            var kcolor = (COMDevice)other;
             if (kcolor.Name == Name)
                 return true;
             else
@@ -53,7 +42,7 @@ namespace WH.Entity.CommonLib
         }
 
         /// <summary>
-        /// 2024.7.4 李焕彬
+        /// 20240729 TCG
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -68,37 +57,26 @@ namespace WH.Entity.CommonLib
     }
 
     /// <summary>
-    /// 2024.6.26 李焕彬
-    /// Known颜色集，含静态对象
+    /// 20240729 TCG
+    /// COM 集合
     /// </summary>
-    public class CBrushPro
+    public class COMSPro
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// Known颜色实例
-        /// </summary>
-        public static CBrushPro s_Instance = new CBrushPro();
-
         /// <summary>
         /// 2024.7.4 李焕彬
         /// Known颜色集
         /// </summary>
-        public List<CKnownColor> KnownColors { get; set; } = new List<CKnownColor>();
+        public List<COMDevice> COMDevices { get; set; } = new List<COMDevice>();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 初始化Known颜色集
         /// </summary>
-        public CBrushPro()
+        public COMSPro()
         {
-            PropertyInfo[] properties = typeof(Brushes).GetProperties();
-            foreach (var property in properties)
-            {
-                if (typeof(Brush).IsAssignableFrom(property.PropertyType))
-                {
-                    KnownColors.Add(new CKnownColor(property.Name, (Brush)property.GetValue(null)));
-                }
-            }
+            COMDevices.AddRange(
+                SerialPort.GetPortNames().ToList().ConvertAll(com => new COMDevice() { Name = com })
+            );
         }
     }
 }

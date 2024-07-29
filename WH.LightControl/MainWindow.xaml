@@ -8,7 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:WH.LightControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="光源控制"
     Width="800"
     Height="450"
@@ -72,18 +72,13 @@
                 <StackPanel>
                     <UniformGrid Columns="2">
                         <StackPanel Orientation="Horizontal">
-                            <wh:StatusLight
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                d:Fill="Lime"
-                                Fill="{Binding IsSerialPortOpen, Converter={StaticResource StatusBool2BrushConverter}}"
-                                Radius="10" />
                             <Button
                                 Width="100"
                                 Margin="10,0"
+                                wh:StatusDotElement.DotBrush="{Binding IsSerialPortOpen, Converter={StaticResource StatusBool2BrushConverter}}"
                                 Command="{Binding OpenCommand}"
                                 Content="{Binding [连接控制器], Source={x:Static local:CLang.LSWLightLang}}"
-                                Style="{StaticResource ButtonPrimary.Small}" />
+                                Style="{StaticResource StatusDotButtonPrimary.Small}" />
                         </StackPanel>
 
                         <Button
@@ -94,7 +89,10 @@
                             Style="{StaticResource ButtonPrimary.Small}" />
                     </UniformGrid>
 
-                    <wh:CPropertyGridLang Background="{x:Null}" SelectedObject="{Binding Config}" />
+                    <wh:CPropertyGridLang
+                        Height="320"
+                        Background="{x:Null}"
+                        SelectedObject="{Binding Config}" />
 
                     <Button
                         Width="100"
@@ -102,6 +100,7 @@
                         Command="{Binding ReSetCommand}"
                         Content="{Binding [恢复出厂], Source={x:Static local:CLang.LSWLightLang}}"
                         Style="{StaticResource ButtonDanger.Small}" />
+
                 </StackPanel>
             </hc:ScrollViewer>
 
@@ -153,6 +152,12 @@
             <GroupBox Header="{Binding [通道亮度], Source={x:Static local:CLang.LSWLightLang}}">
                 <ItemsControl ItemsSource="{Binding Config.LightChannelList}" />
             </GroupBox>
+            <hc:RunningBlock
+                BorderThickness="0"
+                IsRunning="{Binding IsMouseOver, RelativeSource={RelativeSource Self}, Converter={StaticResource Boolean2BooleanReConverter}}"
+                Duration="0:0:10">
+                <TextBlock Text="{Binding ErrorMessage}" Style="{StaticResource TextBlockDefaultDanger}"/>
+            </hc:RunningBlock>
         </StackPanel>
 
     </DockPanel>

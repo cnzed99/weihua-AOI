@@ -18,7 +18,7 @@
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title=""
     Width="1400"
     Height="850"
@@ -293,20 +293,20 @@
                             wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
                             wh:StatusDotElement.Radius="10"
                             Content="{Binding [轴报警], Source={x:Static local:CLang.Instance}}"
-                            Style="{StaticResource StatusDotLabel}" />
+                            Style="{StaticResource StatusDotLabel.Small}" />
                         <Label
                             Width="100"
                             wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
                             wh:StatusDotElement.Radius="10"
                             Content="{Binding [驱动器报警], Source={x:Static local:CLang.Instance}}"
-                            Style="{StaticResource StatusDotLabel}" />
+                            Style="{StaticResource StatusDotLabel.Small}" />
                     </UniformGrid>
                     <Button
                         Height="70"
                         Margin="10,0"
                         Click="ClearGrowlMessage_Click"
                         Content="清空报警"
-                        Style="{StaticResource ButtonDashedInfo}">
+                        Style="{StaticResource ButtonDashedPrimary}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
                                 <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseDownCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
@@ -491,15 +491,15 @@
                                 Style="{DynamicResource TabControlInLine}">
                                 <!--  运行日志  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:CLang.Instance}}">
-                                    <wh:LogCtrl LogMessage="{Binding SysLog.InfoMessage}" />
+                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding SysLog.InfoMessage}" />
                                 </hc:TabItem>
                                 <!--  报警错误日志  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:CLang.Instance}}">
-                                    <wh:LogCtrl LogMessage="{Binding SysLog.ErrorMessage}" />
+                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding SysLog.ErrorMessage}" />
                                 </hc:TabItem>
                                 <!--  操作记录  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:CLang.Instance}}">
-                                    <wh:LogCtrl LogMessage="{Binding OperateLog.AllMessage}" />
+                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding OperateLog.AllMessage}" />
                                 </hc:TabItem>
                             </hc:TabControl>
                         </hc:SimplePanel>
