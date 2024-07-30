@@ -57,47 +57,77 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>
-    <Style x:Key="StatusDotLabelPrimary" BasedOn="{StaticResource StatusDotLabel}" TargetType="Label">
-        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+    <Style
+        x:Key="StatusDotLabelPrimary"
+        BasedOn="{StaticResource StatusDotLabel}"
+        TargetType="Label">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
     </Style>
 
-    <Style x:Key="StatusDotLabelPrimary.Small" BasedOn="{StaticResource StatusDotLabelPrimary}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelPrimary.Small"
+        BasedOn="{StaticResource StatusDotLabelPrimary}"
+        TargetType="Label">
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>
 
-    <Style x:Key="StatusDotLabelSuccess" BasedOn="{StaticResource StatusDotLabel}" TargetType="Label">
-        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+    <Style
+        x:Key="StatusDotLabelSuccess"
+        BasedOn="{StaticResource StatusDotLabel}"
+        TargetType="Label">
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
     </Style>
 
-    <Style x:Key="StatusDotLabelSuccess.Small" BasedOn="{StaticResource StatusDotLabelSuccess}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelSuccess.Small"
+        BasedOn="{StaticResource StatusDotLabelSuccess}"
+        TargetType="Label">
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>
 
-    <Style x:Key="StatusDotLabelInfo" BasedOn="{StaticResource StatusDotLabel}" TargetType="Label">
-        <Setter Property="Background" Value="{DynamicResource InfoBrush}"/>
+    <Style
+        x:Key="StatusDotLabelInfo"
+        BasedOn="{StaticResource StatusDotLabel}"
+        TargetType="Label">
+        <Setter Property="Background" Value="{DynamicResource InfoBrush}" />
     </Style>
 
-    <Style x:Key="StatusDotLabelInfo.Small" BasedOn="{StaticResource StatusDotLabelInfo}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelInfo.Small"
+        BasedOn="{StaticResource StatusDotLabelInfo}"
+        TargetType="Label">
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>
 
-    <Style x:Key="StatusDotLabelWarning" BasedOn="{StaticResource StatusDotLabel}" TargetType="Label">
-        <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+    <Style
+        x:Key="StatusDotLabelWarning"
+        BasedOn="{StaticResource StatusDotLabel}"
+        TargetType="Label">
+        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
     </Style>
 
-    <Style x:Key="StatusDotLabelWarning.Small" BasedOn="{StaticResource StatusDotLabelWarning}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelWarning.Small"
+        BasedOn="{StaticResource StatusDotLabelWarning}"
+        TargetType="Label">
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>
 
-    <Style x:Key="StatusDotLabelDanger" BasedOn="{StaticResource StatusDotLabel}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelDanger"
+        BasedOn="{StaticResource StatusDotLabel}"
+        TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
     </Style>
 
-    <Style x:Key="StatusDotLabelDanger.Small" BasedOn="{StaticResource StatusDotLabelDanger}" TargetType="Label">
+    <Style
+        x:Key="StatusDotLabelDanger.Small"
+        BasedOn="{StaticResource StatusDotLabelDanger}"
+        TargetType="Label">
         <Setter Property="Height" Value="20" />
         <Setter Property="Padding" Value="6,0" />
     </Style>

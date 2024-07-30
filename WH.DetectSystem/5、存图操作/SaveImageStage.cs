@@ -202,7 +202,7 @@ namespace WH.DetectSystem._5_存图操作
                     nameBuilder.Append(cell.Quality?.Name); //质量等级名称
                     nameBuilder.Append("-");
 
-                    nameBuilder.Append(cell.Detection?.DefectFilter?.Name); //缺陷名称
+                    nameBuilder.Append(cell.Detection?.DefectFilter?.Name ?? string.Empty); //缺陷名称
                     nameBuilder.Append("-");
 
                     nameBuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F0")); //耗时

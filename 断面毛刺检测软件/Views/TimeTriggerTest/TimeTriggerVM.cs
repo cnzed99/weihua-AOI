@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Windows.Threading;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Xaml.Behaviors.Core;
 using WH.DetectSystem.ViewModels;
 
@@ -46,6 +48,7 @@ namespace 断面毛刺检测软件.Views
         DispatcherTimer triggerTimer;
 
         [ObservableProperty]
+        [property: MinLength(3)]
         int interval = 50;
 
         partial void OnIntervalChanged(int value)
@@ -57,6 +60,7 @@ namespace 断面毛刺检测软件.Views
         {
             Cam = cam;
             TriggerTimer = new DispatcherTimer();
+            TriggerTimer.Interval = TimeSpan.FromMilliseconds(Interval);
             TriggerTimer.Tick += TimerCallBack;
             TriggerTimer.Start();
             Name = name;

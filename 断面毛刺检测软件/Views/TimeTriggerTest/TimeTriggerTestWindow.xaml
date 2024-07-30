@@ -6,23 +6,57 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="在线检测"
-    Width="800"
+    Title="{Binding [手动调试], Source={x:Static local:CLang.TimeTriggerTest}}"
+    Width="400"
     Height="450"
+    Closed="Window_Closed"
+    Icon="/Resources/图片/工具/手动调试.png"
     ResizeMode="NoResize"
     SizeToContent="Height"
     Topmost="True"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <hc:Window.DataContext>
         <local:TimeCamTriggerVMs />
     </hc:Window.DataContext>
     <hc:Window.Resources>
-        <DataTemplate DataType="{x:Type local:TimerCamTriggerVM}" >
-            <GroupBox Header="{Binding Name}" Style="{StaticResource GroupBoxOriginal}">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Content="{Binding IsTriggerStart}"/>
-                    
-                </StackPanel>
+        <DataTemplate DataType="{x:Type local:TimerCamTriggerVM}">
+            <GroupBox Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}制程：{0} | 相机：{1} | 相机序列号：{2}">
+                                <Binding Path="Name" />
+                                <Binding Path="Cam.Setting.Name" />
+                                <Binding Path="Cam.Setting.SerialNumber" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                </GroupBox.Header>
+                <hc:UniformSpacingPanel Spacing="5">
+                    <DockPanel>
+
+                        <TextBlock
+                            Margin="5,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding [定时触发相机], Source={x:Static local:CLang.TimeTriggerTest}}" />
+                        <ToggleButton
+                            Background="{StaticResource RegionBrush}"
+                            IsChecked="{Binding IsTriggerStart}"
+                            Style="{StaticResource ToggleButtonSwitch}" />
+                    </DockPanel>
+
+                    <hc:NumericUpDown
+                        MinWidth="200"
+                        Margin="5,0"
+                        hc:TitleElement.Title="{Binding [触发间隔], Source={x:Static local:CLang.TimeTriggerTest}}"
+                        hc:TitleElement.TitlePlacement="Left"
+                        DecimalPlaces="0"
+                        Minimum="50"
+                        Style="{StaticResource NumericUpDownExtend}"
+                        Value="{Binding Interval, UpdateSourceTrigger=LostFocus}" />
+                </hc:UniformSpacingPanel>
             </GroupBox>
         </DataTemplate>
     </hc:Window.Resources>

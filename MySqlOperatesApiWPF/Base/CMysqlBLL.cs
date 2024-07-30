@@ -15,7 +15,8 @@ namespace MySqlOperatesApi
     public class CMysqlBLL : MySqlOperate
     {
         bool DBExists = false;
-        bool totalExists = false; //避免重复读取表是否存在
+
+        //bool totalExists = false; //避免重复读取表是否存在
         #region 表头名
 
         string tableName_total = "TotalRecord";

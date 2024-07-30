@@ -87,13 +87,23 @@ namespace 断面毛刺检测软件
                     .Throttle(TimeSpan.FromMilliseconds(500))
                     .Subscribe(_ =>
                     {
+                        if (mainVM.IsManualTest) //离线手动下，不允许启动
+                        {
+                            mainVM.StartStop = false;
+                            Growl.Warning("请退出设置或离线手动模式！");
+                            return;
+                        }
                         if (mainVM.IsStart == mainVM.StartStop)
                             return;
                         mainVM.IsStart = mainVM.StartStop;
                         if (mainVM.IsStart)
+                        {
                             OperateLog.Info(Properties.Resources.Start);
+                        }
                         else
+                        {
                             OperateLog.Info(Properties.Resources.Stop);
+                        }
                     });
 
                 this.IsEnabled = false;
@@ -507,14 +517,48 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 离线测试
+        #region 离线测试 手动调试
+        List<bool> switches = new List<bool>();
+
         private void OffLineTest_Click(object sender, RoutedEventArgs e)
         {
             OffLineTestWindow offLine = App.Container.Resolve<Lazy<OffLineTestWindow>>().Value;
+            offLine.Closed += ManualWindowClosed;
             offLine.Show();
             offLine.Activate();
+            mainVM.IsManualTest = true;
+            switches.Add(true);
             OperateLog.Info(Properties.Resources.Offline);
         }
+
+        //手动调试
+        private void ManualDebug_Click(object sender, RoutedEventArgs e)
+        {
+            TimeTriggerTestWindow timeTriggerWindow = App
+                .Container.Resolve<Lazy<TimeTriggerTestWindow>>()
+                .Value;
+            timeTriggerWindow.Closed += ManualWindowClosed;
+            timeTriggerWindow.Show();
+            timeTriggerWindow.Activate();
+            mainVM.IsManualTest = true;
+            switches.Add(true);
+            OperateLog.Info(Properties.Resources.手动调试);
+        }
+
+        /// <summary>
+        /// 计算手动调试时的开关量
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ManualWindowClosed(object sender, EventArgs e)
+        {
+            switches.RemoveAt(0);
+            if (switches.Count <= 0)
+            {
+                mainVM.IsManualTest = false;
+            }
+        }
+
         #endregion
 
         #region 数据库设置
@@ -547,6 +591,51 @@ namespace 断面毛刺检测软件
                 item.MaociDefectsProduce.Clear();
             }
             OperateLog.Info(Properties.Resources.DataClear);
+        }
+        #endregion
+
+        #region 相机通讯光控
+        //相机设置
+        private void CamSet_Click(object sender, RoutedEventArgs e)
+        {
+            CameraSetWindow cameraSetWindow = App.Container.Resolve<Lazy<CameraSetWindow>>().Value;
+            cameraSetWindow.Show();
+            cameraSetWindow.Activate();
+        }
+
+        /// <summary>
+        /// 通讯设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommSet_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCommunicationList openCommunicationList = App
+                .Container.Resolve<Lazy<OpenCommunicationList>>()
+                .Value;
+            openCommunicationList.Show();
+            openCommunicationList.Activate();
+        }
+
+        /// <summary>
+        /// 光源控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LightControl_Click(object sender, RoutedEventArgs e)
+        {
+            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            //lightProcess.Start();
+            lightProcess?.Start();
+        }
+        #endregion
+
+        #region 关于
+        //关于
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
         }
         #endregion
 
@@ -602,45 +691,6 @@ namespace 断面毛刺检测软件
                     }
                 })
             );
-        }
-
-        /// <summary>
-        /// 通讯设置
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CommSet_Click(object sender, RoutedEventArgs e)
-        {
-            OpenCommunicationList openCommunicationList = App
-                .Container.Resolve<Lazy<OpenCommunicationList>>()
-                .Value;
-            openCommunicationList.Show();
-            openCommunicationList.Activate();
-        }
-
-        /// <summary>
-        /// 光源控制
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LightControl_Click(object sender, RoutedEventArgs e)
-        {
-            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
-            //lightProcess.Start();
-            lightProcess?.Start();
-        }
-
-        private void CamSet_Click(object sender, RoutedEventArgs e)
-        {
-            CameraSetWindow cameraSetWindow = App.Container.Resolve<Lazy<CameraSetWindow>>().Value;
-            cameraSetWindow.Show();
-            cameraSetWindow.Activate();
-        }
-
-        private void About_Click(object sender, RoutedEventArgs e)
-        {
-            About about = new About();
-            about.ShowDialog();
         }
     }
 }

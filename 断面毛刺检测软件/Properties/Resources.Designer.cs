@@ -566,6 +566,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 手动调试 的本地化字符串。
+        /// </summary>
+        public static string 手动调试 {
+            get {
+                return ResourceManager.GetString("手动调试", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
         public static byte[] 组合_2 {

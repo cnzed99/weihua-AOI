@@ -23,5 +23,15 @@ namespace 断面毛刺检测软件.Views
         {
             InitializeComponent();
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            var vms = this.DataContext as TimeCamTriggerVMs;
+            foreach (var vm in vms.Timers)
+            {
+                vm.IsTriggerStart = false;
+                vm.TriggerTimer.Stop();
+            }
+        }
     }
 }

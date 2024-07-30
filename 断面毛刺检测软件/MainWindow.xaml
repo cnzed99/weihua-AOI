@@ -43,10 +43,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Menu
+                x:Name="MainMenu"
                 Grid.Column="0"
                 hc:MenuAttach.PopupHorizontalOffset="-125"
                 hc:WindowAttach.IsDragElement="True">
-                <MenuItem Header="{Binding [ProjManagement], Source={x:Static local:CLang.Instance}}">
+                <MenuItem
+                    Name="ProjMenu"
+                    Header="{Binding [ProjManagement], Source={x:Static local:CLang.Instance}}"
+                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <MenuItem.ItemContainerStyle>
                         <Style BasedOn="{StaticResource MenuItemBaseStyle}" TargetType="MenuItem">
                             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -97,7 +101,10 @@
 
                 </MenuItem>-->
 
-                <MenuItem Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}">
+                <MenuItem
+                    Name="CamComMenu"
+                    Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}"
+                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
@@ -118,7 +125,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
+                <MenuItem
+                    Name="SetMenu"
+                    Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}"
+                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
@@ -147,7 +157,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
+                <MenuItem Name="DataMenu" Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/数据统计/数据统计.svg" />
                     </MenuItem.Icon>
@@ -169,7 +179,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [Tools], Source={x:Static local:CLang.Instance}}">
+                <MenuItem
+                    Name="ToolMenu"
+                    Header="{Binding [Tools], Source={x:Static local:CLang.Instance}}"
+                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/工具/工具.svg" />
                     </MenuItem.Icon>
@@ -179,6 +192,14 @@
                         Header="{Binding [Offline], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/离线检测.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="ManualDebug_Click"
+                        Header="{Binding [手动调试], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/工具/手动调试.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
@@ -198,7 +219,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="{Binding [Help], Source={x:Static local:CLang.Instance}}">
+                <MenuItem Name="HelpMenu" Header="{Binding [Help], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/帮助/帮助.svg" />
                     </MenuItem.Icon>
@@ -323,7 +344,7 @@
                         Width="70"
                         Height="70"
                         Margin="10,0"
-                        IsChecked="{Binding CMainVMs[0].StartStop, Mode=OneWayToSource}"
+                        IsChecked="{Binding CMainVMs[0].StartStop}"
                         Style="{DynamicResource ToggleButtonFlip}">
                         <hc:StatusSwitchElement.CheckedElement>
                             <Border Margin="-2" Background="{DynamicResource DangerBrush}">

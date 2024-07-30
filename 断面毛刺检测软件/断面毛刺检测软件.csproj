@@ -72,6 +72,7 @@
     <None Remove="Resources\图标\图片设置.svg" />
     <None Remove="Resources\图标\太阳亮度天气.png" />
     <None Remove="Resources\图标\工具.svg" />
+    <None Remove="Resources\图标\工具\手动调试.svg" />
     <None Remove="Resources\图标\帮助.svg" />
     <None Remove="Resources\图标\帮助文档.svg" />
     <None Remove="Resources\图标\截屏保存.svg" />
@@ -100,6 +101,7 @@
     <None Remove="Resources\图片\图片管理\截屏保存.png" />
     <None Remove="Resources\图片\工具\光源.png" />
     <None Remove="Resources\图片\工具\工具.png" />
+    <None Remove="Resources\图片\工具\手动调试.png" />
     <None Remove="Resources\图片\工具\离线检测.png" />
     <None Remove="Resources\图片\工具\离线测试\右播放.png" />
     <None Remove="Resources\图片\工具\离线测试\图片.png" />
@@ -156,6 +158,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\logo1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\图标\工具\手动调试.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\图标\数据统计\数据库设置.svg" />
@@ -237,6 +242,7 @@
     <Resource Include="Resources\图片\图片管理\截屏保存.png" />
     <Resource Include="Resources\图片\工具\光源.png" />
     <Resource Include="Resources\图片\工具\工具.png" />
+    <Resource Include="Resources\图片\工具\手动调试.png" />
     <Resource Include="Resources\图片\工具\离线检测.png" />
     <Resource Include="Resources\图片\工具\离线测试\右播放.png" />
     <Resource Include="Resources\图片\工具\离线测试\图片.png" />
@@ -302,6 +308,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="Views\TimeTriggerTest\TimeTriggerTestResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TimeTriggerTestResources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -325,6 +336,10 @@
     <EmbeddedResource Update="Views\SystemSetting\SystemSettingResources.resx">
       <LastGenOutput>SystemSettingResources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TimeTriggerTest\TimeTriggerTestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TimeTriggerTestResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

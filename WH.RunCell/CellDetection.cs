@@ -68,7 +68,7 @@ namespace WH.RunCell
             detection.Type = this.Type;
             detection.Category = this.Category;
             detection.RecipeDefectName = this.RecipeDefectName;
-            detection.regionOut = this.regionOut.ToList();
+            detection.regionOut = this.regionOut?.ToList();
             detection.DefectFilter = this.DefectFilter;
             return detection;
         }

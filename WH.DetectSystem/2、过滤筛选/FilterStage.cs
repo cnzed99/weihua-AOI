@@ -138,7 +138,7 @@ namespace WH.DetectSystem
                             }
                         }
                         SRegion maxRegion = new SRegion();
-                        if (detection.regionOut.Count > 0)
+                        if (detection.regionOut?.Count > 0)
                         {
                             detection.regionOut.Sort(
                                 delegate(SRegion l, SRegion r)

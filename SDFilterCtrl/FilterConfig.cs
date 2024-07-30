@@ -726,37 +726,41 @@ namespace SDFilter
         public bool Excute(List<SRegion> sRegionIn, out List<SRegion> sRegionOut)
         {
             sRegionOut = new List<SRegion>();
-            switch (Character)
+            if (sRegionIn is not null)
             {
-                case EMFILTER.EMFILTER_PEAKHEI:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.PeakHeight));
-                    break;
-                case EMFILTER.EMFILTER_AREA:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Area));
-                    break;
-                case EMFILTER.EMFILTER_LONGLEN:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.LongLen));
-                    break;
-                case EMFILTER.EMFILTER_SHORTLEN:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ShorLen));
-                    break;
-                case EMFILTER.EMFILTER_PHI:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Phi));
-                    break;
-                case EMFILTER.EMFILTER_CONTLEN:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ContLen));
-                    break;
-                case EMFILTER.EMFILTER_WIDTH:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.WidthBound));
-                    break;
-                case EMFILTER.EMFILTER_HEIGHT:
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.HeightBound));
-                    break;
-                case EMFILTER.EMFILTER_NUM:
-                    if (Excute(sRegionIn.Count))
-                        sRegionOut = sRegionIn;
-                    break;
+                switch (Character)
+                {
+                    case EMFILTER.EMFILTER_PEAKHEI:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.PeakHeight));
+                        break;
+                    case EMFILTER.EMFILTER_AREA:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Area));
+                        break;
+                    case EMFILTER.EMFILTER_LONGLEN:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.LongLen));
+                        break;
+                    case EMFILTER.EMFILTER_SHORTLEN:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ShorLen));
+                        break;
+                    case EMFILTER.EMFILTER_PHI:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Phi));
+                        break;
+                    case EMFILTER.EMFILTER_CONTLEN:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ContLen));
+                        break;
+                    case EMFILTER.EMFILTER_WIDTH:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.WidthBound));
+                        break;
+                    case EMFILTER.EMFILTER_HEIGHT:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.HeightBound));
+                        break;
+                    case EMFILTER.EMFILTER_NUM:
+                        if (Excute(sRegionIn.Count))
+                            sRegionOut = sRegionIn;
+                        break;
+                }
             }
+
             return sRegionOut.Count == 0;
         }
     }

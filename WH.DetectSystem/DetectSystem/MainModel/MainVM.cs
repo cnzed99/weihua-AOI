@@ -211,17 +211,14 @@ namespace WH.DetectSystem.ViewModels
             set
             {
                 SetProperty(ref isStart, value);
-                //if (value)
-                //{
-                //    CCameraManagement.StartImaging(this.GUID, this.CameraSerial);
-                //}
-                //else
-                //{
-                //    CCameraManagement.StopImaging(this.GUID, this.CameraSerial);
-                //}
                 MotionCtrlVM.SetRunning(IsStart);
             }
         }
+
+        /// <summary>
+        /// 离线检测或手动调试
+        /// </summary>
+        public bool IsManualTest { get; set; } = false;
 
         /// <summary>
         /// 界面绑定变量，勿用此变量判断用户是否启动软件
@@ -417,15 +414,26 @@ namespace WH.DetectSystem.ViewModels
 
                 await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
-                    cell.ProjName = Name;
-                    WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
-                    if (MotionCtrlVM.IsFocusing)
+                    try
                     {
-                        await MotionCtrlVM.FocusWaitGetImageChannel.Writer.WriteAsync(cell);
+                        cell.ProjName = Name;
+                        WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
+                        if (MotionCtrlVM.IsFocusing)
+                        {
+                            await MotionCtrlVM.FocusWaitGetImageChannel.Writer.WriteAsync(cell);
+                        }
+                        else if (IsStart || IsManualTest)
+                        {
+                            await m_AlgorithmChannel.Writer.WriteAsync(cell);
+                        }
+                        else
+                        {
+                            cell.Dispose();
+                        }
                     }
-                    else
+                    catch (Exception)
                     {
-                        await m_AlgorithmChannel.Writer.WriteAsync(cell);
+                        SysLog.Error("取图出错！");
                     }
                 }
             });
@@ -470,6 +478,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         StringBuilder strbuilder = new StringBuilder("[");
+                        cell.Quality = MaociQualityConfig.GetBest();
                         MaociFilterConfig.FilterExute(cell);
                         cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Stop();
@@ -526,18 +535,18 @@ namespace WH.DetectSystem.ViewModels
                                 else
                                 {
                                     if (cell.IsOK)
-                                        return;
+                                        break;
                                     drawView = LastView;
                                 }
                                 drawView.Dispatcher.Invoke(() =>
                                 {
                                     drawView.Clear();
                                     drawView.SetPen(Brushes.Blue);
-                                    drawView.ImgDrawRegion(cell.MaociTestOut.DarkTopRegion, false);
-                                    drawView.ImgDrawRegion(cell.MaociTestOut.DarkBotRegion, false);
+                                    drawView.ImgDrawPoints(cell.MaociTestOut.DarkTopRegion, false);
+                                    drawView.ImgDrawPoints(cell.MaociTestOut.DarkBotRegion, false);
                                     drawView.SetPen(Brushes.Green);
-                                    drawView.ImgDrawRegion(cell.MaociTestOut.LightBotRegion, false);
-                                    drawView.ImgDrawRegion(cell.MaociTestOut.LightTopRegion, false);
+                                    drawView.ImgDrawPoints(cell.MaociTestOut.LightBotRegion, false);
+                                    drawView.ImgDrawPoints(cell.MaociTestOut.LightTopRegion, false);
                                     if (!cell.IsOK && cell.Detection != null)
                                     {
                                         DefectFilter dstFilter = cell.Detection.DefectFilter;
@@ -616,7 +625,7 @@ namespace WH.DetectSystem.ViewModels
                                             }
                                         }
                                     }
-                                    drawView.Invalidate();
+                                    //drawView.Invalidate();
                                 });
                             }
                         }
@@ -625,7 +634,6 @@ namespace WH.DetectSystem.ViewModels
                             SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
                             Growl.Error("显示线程出错: " + ex.Message + ex.StackTrace);
                         }
-                        finally { }
 
                         if (
                             MaociSaveImageConfig.SaveImageEnable
@@ -777,90 +785,6 @@ namespace WH.DetectSystem.ViewModels
             m_AlarmChannel.Writer.Complete();
             m_dataBaseChannel.Writer.Complete();
             m_SaveImageChannel.Writer.Complete();
-        }
-
-        /// <summary>
-        /// 获取图像成功 显示至窗口
-        /// </summary>
-        /// <param name="cell"></param>
-        private void GetImageSuccess(Cell cell)
-        {
-            try
-            {
-                //if (CSystemParamJson.SystemSetParam.ScaleEnable)
-                //{
-                //    HOperatorSet.Decompose3(cell.ColorImage, out HObject SelectR, out HObject SelectG, out HObject SelectB);
-                //    HOperatorSet.ScaleImage(SelectR, out HObject imageSaledR, CSystemParamJson.SystemSetParam.ScaleMult[0], 0);
-                //    HOperatorSet.ScaleImage(SelectG, out HObject imageSaledG, CSystemParamJson.SystemSetParam.ScaleMult[1], 0);
-                //    HOperatorSet.ScaleImage(SelectB, out HObject imageSaledB, CSystemParamJson.SystemSetParam.ScaleMult[2], 0);
-
-                //    HOperatorSet.Compose3(imageSaledR, imageSaledG, imageSaledB, out HObject mulitiChannelImage);
-                //    cell.ColorImage.Dispose();
-                //    cell.ColorImage = mulitiChannelImage;
-                //    SelectR.Dispose();
-                //    SelectG.Dispose();
-                //    SelectB.Dispose();
-                //    imageSaledR.Dispose();
-                //    imageSaledG.Dispose();
-                //    imageSaledB.Dispose();
-
-                //}
-                //this.BeginInvoke(new Action(() =>
-                //{
-
-                //    //if (CSystemParamJson.SystemSetParam.ShowChangeImage)
-                //    //{
-                //    //    if (cell.ChangleImgae != null)
-                //    //    {
-                //    //        if (cell.FrameLoss)
-                //    //        {
-                //    //            HWin_DispProduct.ModelImage = cell.ChangleImgae.Clone();
-                //    //            _isFirstImage = true;
-                //    //        }
-                //    //        else
-                //    //        {
-                //    //            if (_isFirstImage)
-                //    //            {
-                //    //                HWin_DispProduct.ModelImage = cell.ChangleImgae.Clone();
-                //    //                _isFirstImage = false;
-                //    //            }
-                //    //            else
-                //    //            {
-                //    //                HWin_DispProduct.Image = cell.ChangleImgae.Clone();
-                //    //            }
-                //    //        }
-                //    //    }
-
-                //    //}
-                //    //else
-                //    //{
-                //    //    if (cell.FrameLoss)
-                //    //    {
-                //    //        HWin_DispProduct.ModelImage = cell.ColorImage.Clone();
-                //    //        _isFirstImage = true;
-                //    //    }
-                //    //    else
-                //    //    {
-                //    //        if (_isFirstImage)
-                //    //        {
-                //    //            HWin_DispProduct.ModelImage = cell.ColorImage.Clone();
-                //    //            _isFirstImage = false;
-                //    //        }
-                //    //        else
-                //    //        {
-                //    //            HWin_DispProduct.Image = cell.ColorImage.Clone();
-                //    //        }
-                //    //    }
-                //    //}
-
-                //    //HWin_DispProduct.Background = System.Windows.Media.Brushes.Transparent;
-
-                //}));
-            }
-            catch (Exception ex)
-            {
-                SysLog.Error($"显示窗口出错:{ex.Message}");
-            }
         }
         #endregion
     }

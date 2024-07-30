@@ -57,7 +57,7 @@ namespace WH.RecipeCellRootBase
             Cell.Image = (CImage)this.Image.Clone();
             Cell.Detection = this.Detection?.Clone();
             foreach (T detection in this.Detections)
-                Cell.Detections.Add(detection.Clone());
+                Cell.Detections.Add(detection?.Clone());
             return Cell;
         }
     }

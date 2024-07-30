@@ -218,6 +218,12 @@ namespace 断面毛刺检测软件
             //光源控制
             var lightProcess = Invoke("./WH.LightControl.exe");
             builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
+            //手动调试
+            builder
+                .Register(c =>
+                    SingleInstance.Create<Lazy<TimeTriggerTestWindow>, TimeTriggerTestWindow>()
+                )
+                .InstancePerDependency();
 
             Container = builder.Build();
             CPublicServices.Container = Container;
