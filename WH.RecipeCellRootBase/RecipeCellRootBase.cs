@@ -23,7 +23,7 @@ namespace WH.RecipeCellRootBase
         private T _detection;
 
         /// <summary>
-        /// ¶¨¼¶È±ÏÝ
+        /// ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½
         /// </summary>
         public T Detection
         {
@@ -80,7 +80,7 @@ namespace WH.RecipeCellRootBase
         public float[] Value { get; set; }
 
         /// <summary>
-        /// ¼ì²âÈÕÖ¾
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
         /// </summary>
         public StringBuilder DetectLog { get; set; } = new StringBuilder();
 
@@ -126,7 +126,7 @@ namespace WH.RecipeCellRootBase
         float[] Value { get; set; }
 
         /// <summary>
-        /// ¼ì²âÈÕÖ¾
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
         /// </summary>
         StringBuilder DetectLog { get; set; }
 
@@ -137,33 +137,33 @@ namespace WH.RecipeCellRootBase
     [Serializable]
     public enum workType
     {
-        ÕýÃæAOI,
-        ·´ÃæAOI,
+        ï¿½ï¿½ï¿½ï¿½AOI,
+        ï¿½ï¿½ï¿½ï¿½AOI,
     }
 
     /// <summary>
-    /// È±ÏÝÏî·¶³ë
+    /// È±ï¿½ï¿½ï¿½î·¶ï¿½ï¿½
     /// </summary>
     [Serializable]
     public enum Category
     {
-        ÇøÓò,
+        ï¿½ï¿½ï¿½ï¿½,
         Öµ
     }
 
     /// <summary>
-    /// ¼ì²âÀàÐÍ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     [Serializable]
     public enum DefectType
     {
-        Ãæ»ý,
-        ÊýÖµ
+        ï¿½ï¿½ï¿½,
+        ï¿½ï¿½Öµ
     }
 
     /// <summary>
-    /// 2024.7.23
-    /// ×Ô¶¨ÒåÍ¼ÏñÀà
+    /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// ï¿½Ô¶ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public class CImage : IDisposable, ICloneable
     {
@@ -172,6 +172,7 @@ namespace WH.RecipeCellRootBase
             ImageWidth = bitmap.PixelWidth;
             ImageHeight = bitmap.PixelHeight;
             PixelFormat = bitmap.Format;
+            Palette = bitmap.Palette;
             StrideWidth = ImageWidth * ((PixelFormat.BitsPerPixel + 7) / 8);
             ImageSize = StrideWidth * ImageHeight;
             ImageData = Marshal.AllocHGlobal(ImageSize);
@@ -214,8 +215,8 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
-        /// ×ªBitmapSource·½·¨
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// ×ªBitmapSourceï¿½ï¿½ï¿½ï¿½
         /// </summary>
         /// <returns>BitmapSource</returns>
         public BitmapSource ToBitmapSource()
@@ -226,7 +227,7 @@ namespace WH.RecipeCellRootBase
                 96,
                 96,
                 PixelFormat,
-                null,
+                Palette,
                 ImageData,
                 ImageSize,
                 StrideWidth
@@ -236,44 +237,50 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼Ïñ¿í¶È
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public int ImageWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼Ïñ¸ß¶È
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ß¶ï¿½
         /// </summary>
         public int ImageHeight { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼ÏñÊý¾Ý
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public IntPtr ImageData { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼ÏñÐÐ¿í
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ï¿½Ð¿ï¿½
         /// </summary>
         public int StrideWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼ÏñÀàÐÍ
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public PixelFormat PixelFormat { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Í¼Ïñ´óÐ¡
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Í¼ï¿½ï¿½ï¿½Ð¡
         /// </summary>
         public int ImageSize { get; set; }
 
         /// <summary>
-        /// 2024.7.23
-        /// Dispose·½·¨
+        /// 2024.7.29 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// É«ï¿½ï¿½
+        /// </summary>
+        public BitmapPalette Palette { get; set; }
+
+        /// <summary>
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Disposeï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public void Dispose()
         {
@@ -281,8 +288,8 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
-        /// Clone·½·¨
+        /// 2024.7.23 ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// Cloneï¿½ï¿½ï¿½ï¿½
         /// </summary>
         public object Clone()
         {
