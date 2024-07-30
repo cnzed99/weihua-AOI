@@ -162,7 +162,7 @@ namespace WH.RecipeCellRootBase
     }
 
     /// <summary>
-    /// 2024.7.23
+    /// 2024.7.23 李焕彬
     /// 自定义图像类
     /// </summary>
     public class CImage : IDisposable, ICloneable
@@ -172,6 +172,7 @@ namespace WH.RecipeCellRootBase
             ImageWidth = bitmap.PixelWidth;
             ImageHeight = bitmap.PixelHeight;
             PixelFormat = bitmap.Format;
+            Palette = bitmap.Palette;
             StrideWidth = ImageWidth * ((PixelFormat.BitsPerPixel + 7) / 8);
             ImageSize = StrideWidth * ImageHeight;
             ImageData = Marshal.AllocHGlobal(ImageSize);
@@ -214,7 +215,7 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 转BitmapSource方法
         /// </summary>
         /// <returns>BitmapSource</returns>
@@ -226,7 +227,7 @@ namespace WH.RecipeCellRootBase
                 96,
                 96,
                 PixelFormat,
-                null,
+                Palette,
                 ImageData,
                 ImageSize,
                 StrideWidth
@@ -236,43 +237,49 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 图像宽度
         /// </summary>
         public int ImageWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 图像高度
         /// </summary>
         public int ImageHeight { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 图像数据
         /// </summary>
         public IntPtr ImageData { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 图像行宽
         /// </summary>
         public int StrideWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// 图像类型
         /// </summary>
         public PixelFormat PixelFormat { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
+        /// 图像色表
+        /// </summary>
+        public BitmapPalette Palette { get; set; }
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
         /// 图像大小
         /// </summary>
         public int ImageSize { get; set; }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// Dispose方法
         /// </summary>
         public void Dispose()
@@ -281,7 +288,7 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23
+        /// 2024.7.23 李焕彬
         /// Clone方法
         /// </summary>
         public object Clone()
