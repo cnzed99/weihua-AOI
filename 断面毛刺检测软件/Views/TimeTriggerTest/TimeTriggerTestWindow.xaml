@@ -1,0 +1,30 @@
+﻿<hc:Window
+    x:Class="断面毛刺检测软件.Views.TimeTriggerTestWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:断面毛刺检测软件.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="在线检测"
+    Width="800"
+    Height="450"
+    ResizeMode="NoResize"
+    SizeToContent="Height"
+    Topmost="True"
+    mc:Ignorable="d">
+    <hc:Window.DataContext>
+        <local:TimeCamTriggerVMs />
+    </hc:Window.DataContext>
+    <hc:Window.Resources>
+        <DataTemplate DataType="{x:Type local:TimerCamTriggerVM}" >
+            <GroupBox Header="{Binding Name}" Style="{StaticResource GroupBoxOriginal}">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="{Binding IsTriggerStart}"/>
+                    
+                </StackPanel>
+            </GroupBox>
+        </DataTemplate>
+    </hc:Window.Resources>
+    <ItemsControl ItemsSource="{Binding Timers}" />
+</hc:Window>
