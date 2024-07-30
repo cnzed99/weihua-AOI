@@ -23,7 +23,7 @@ namespace WH.RecipeCellRootBase
         private T _detection;
 
         /// <summary>
-        /// ����ȱ��
+        /// 定级缺陷
         /// </summary>
         public T Detection
         {
@@ -80,7 +80,7 @@ namespace WH.RecipeCellRootBase
         public float[] Value { get; set; }
 
         /// <summary>
-        /// �����־
+        /// 检测日志
         /// </summary>
         public StringBuilder DetectLog { get; set; } = new StringBuilder();
 
@@ -126,7 +126,7 @@ namespace WH.RecipeCellRootBase
         float[] Value { get; set; }
 
         /// <summary>
-        /// �����־
+        /// 检测日志
         /// </summary>
         StringBuilder DetectLog { get; set; }
 
@@ -137,33 +137,33 @@ namespace WH.RecipeCellRootBase
     [Serializable]
     public enum workType
     {
-        ����AOI,
-        ����AOI,
+        正面AOI,
+        反面AOI,
     }
 
     /// <summary>
-    /// ȱ�����
+    /// 缺陷项范畴
     /// </summary>
     [Serializable]
     public enum Category
     {
-        ����,
-        ֵ
+        区域,
+        值
     }
 
     /// <summary>
-    /// �������
+    /// 检测类型
     /// </summary>
     [Serializable]
     public enum DefectType
     {
-        ���,
-        ��ֵ
+        面积,
+        数值
     }
 
     /// <summary>
-    /// 2024.7.23 �����
-    /// �Զ���ͼ����
+    /// 2024.7.23
+    /// 自定义图像类
     /// </summary>
     public class CImage : IDisposable, ICloneable
     {
@@ -172,7 +172,6 @@ namespace WH.RecipeCellRootBase
             ImageWidth = bitmap.PixelWidth;
             ImageHeight = bitmap.PixelHeight;
             PixelFormat = bitmap.Format;
-            Palette = bitmap.Palette;
             StrideWidth = ImageWidth * ((PixelFormat.BitsPerPixel + 7) / 8);
             ImageSize = StrideWidth * ImageHeight;
             ImageData = Marshal.AllocHGlobal(ImageSize);
@@ -215,8 +214,8 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// תBitmapSource����
+        /// 2024.7.23
+        /// 转BitmapSource方法
         /// </summary>
         /// <returns>BitmapSource</returns>
         public BitmapSource ToBitmapSource()
@@ -227,7 +226,7 @@ namespace WH.RecipeCellRootBase
                 96,
                 96,
                 PixelFormat,
-                Palette,
+                null,
                 ImageData,
                 ImageSize,
                 StrideWidth
@@ -237,50 +236,44 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ�����
+        /// 2024.7.23
+        /// 图像宽度
         /// </summary>
         public int ImageWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ��߶�
+        /// 2024.7.23
+        /// 图像高度
         /// </summary>
         public int ImageHeight { get; set; }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ������
+        /// 2024.7.23
+        /// 图像数据
         /// </summary>
         public IntPtr ImageData { get; set; }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ���п�
+        /// 2024.7.23
+        /// 图像行宽
         /// </summary>
         public int StrideWidth { get; set; }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ������
+        /// 2024.7.23
+        /// 图像类型
         /// </summary>
         public PixelFormat PixelFormat { get; set; }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// ͼ���С
+        /// 2024.7.23
+        /// 图像大小
         /// </summary>
         public int ImageSize { get; set; }
 
         /// <summary>
-        /// 2024.7.29 �����
-        /// ɫ��
-        /// </summary>
-        public BitmapPalette Palette { get; set; }
-
-        /// <summary>
-        /// 2024.7.23 �����
-        /// Dispose����
+        /// 2024.7.23
+        /// Dispose方法
         /// </summary>
         public void Dispose()
         {
@@ -288,8 +281,8 @@ namespace WH.RecipeCellRootBase
         }
 
         /// <summary>
-        /// 2024.7.23 �����
-        /// Clone����
+        /// 2024.7.23
+        /// Clone方法
         /// </summary>
         public object Clone()
         {
