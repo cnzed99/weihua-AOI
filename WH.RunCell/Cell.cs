@@ -413,5 +413,15 @@ namespace WH.RunCell
         /// 接收到的信号数据
         /// </summary>
         public byte[] DataBytes { get; set; }
+
+        /// <summary>
+        /// 带标记截图保存路径
+        /// </summary>
+        public string DumpImagePath { get; set; }
+
+        /// <summary>
+        /// 原图保存路径
+        /// </summary>
+        public string OriginImagePath { get; set; }
     }
 }

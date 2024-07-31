@@ -370,22 +370,22 @@ namespace CameraModule
                 {
                     if (!OutputImageChannel.Writer.TryWrite(cell))
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Append("相机");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   cell入列失败，丢弃。");
-                        SysLog.Error(strbuilder.ToString());
+                        //StringBuilder strbuilder = new StringBuilder("[");
+                        //strbuilder.Append("相机");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   cell入列失败，丢弃。");
+                        //SysLog.Error(strbuilder.ToString());
                         cell.Dispose();
                     }
                     else
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Append("相机");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   cell入列完成。");
-                        SysLog.Info(strbuilder.ToString());
+                        //StringBuilder strbuilder = new StringBuilder("[");
+                        //strbuilder.Append("相机");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   cell入列完成。");
+                        //SysLog.Info(strbuilder.ToString());
                     }
                 }
                 noOver = false;

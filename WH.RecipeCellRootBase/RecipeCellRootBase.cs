@@ -203,7 +203,8 @@ namespace WH.RecipeCellRootBase
             int imageHeight,
             int strideWidth,
             nint imageData,
-            PixelFormat pixelFormat
+            PixelFormat pixelFormat,
+            BitmapPalette palette = null
         )
         {
             ImageWidth = imageWidth;
@@ -211,6 +212,7 @@ namespace WH.RecipeCellRootBase
             StrideWidth = strideWidth;
             ImageData = imageData;
             PixelFormat = pixelFormat;
+            Palette = palette;
             ImageSize = StrideWidth * ImageHeight;
         }
 
@@ -298,7 +300,7 @@ namespace WH.RecipeCellRootBase
             Marshal.Copy(ImageData, data, 0, ImageSize);
             Marshal.Copy(data, 0, ptrDst, ImageSize);
 
-            return new CImage(ImageWidth, ImageHeight, StrideWidth, ptrDst, PixelFormat);
+            return new CImage(ImageWidth, ImageHeight, StrideWidth, ptrDst, PixelFormat, Palette);
         }
     }
 }

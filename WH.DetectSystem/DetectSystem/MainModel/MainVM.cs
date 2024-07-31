@@ -333,7 +333,7 @@ namespace WH.DetectSystem.ViewModels
         /// <summary>
         /// 消息队列
         /// </summary>
-        private readonly Channel<string> m_InfoChannel = Channel.CreateBounded<string>(
+        private readonly Channel<PrintMsg> m_InfoChannel = Channel.CreateBounded<PrintMsg>(
             s_NormalChannelOptions
         );
 
@@ -398,9 +398,19 @@ namespace WH.DetectSystem.ViewModels
                 {
                     try
                     {
-                        string msg = await m_InfoChannel.Reader.ReadAsync();
+                        PrintMsg msg = await m_InfoChannel.Reader.ReadAsync();
                         await Task.Delay(10);
-                        SysLog.Info(msg);
+                        Action<string> act = msg.logType switch
+                        {
+                            LOG.LOG_INFO => SysLog.Info,
+                            LOG.LOG_ERROR => SysLog.Error,
+                            LOG.LOG_OK => SysLog.OK,
+                            LOG.LOG_NG => SysLog.NG,
+                            LOG.LOG_TIP => SysLog.Tip,
+                            LOG.LOG_WARN => SysLog.Warn,
+                            _ => SysLog.Info
+                        };
+                        act(msg.message);
                     }
                     catch (Exception e)
                     {
@@ -419,12 +429,6 @@ namespace WH.DetectSystem.ViewModels
                 {
                     try
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Append("取图");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   cell出列。");
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.ProjName = Name;
                         WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
                         if (MotionCtrlVM.IsFocusing)
@@ -436,22 +440,7 @@ namespace WH.DetectSystem.ViewModels
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
-                                strbuilder = new StringBuilder("[");
-                                strbuilder.Append("取图");
-                                strbuilder.Append("]     ");
-                                strbuilder.Append(cell.ID);
-                                strbuilder.Append("   cell入列失败，溢出。");
-                                await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                                 cell.Dispose();
-                            }
-                            else
-                            {
-                                strbuilder = new StringBuilder("[");
-                                strbuilder.Append("取图");
-                                strbuilder.Append("]     ");
-                                strbuilder.Append(cell.ID);
-                                strbuilder.Append("   cell入列完成。");
-                                await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                             }
                         }
                         else
@@ -476,41 +465,29 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Append("算法");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   配方开始执行。");
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        //strbuilder.Append("算法");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   配方开始执行。");
+                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         MaociAlgorParamConfig.MaociExcute(cell);
-                        if (cell.Skipthis) { }
+                        //if (cell.Skipthis) { }
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
-                        strbuilder = new StringBuilder("[");
+                        //strbuilder = new StringBuilder("[");
                         strbuilder.Append("算法");
                         strbuilder.Append("]     ");
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   配方执行完成,耗时:");
                         strbuilder.Append(cell.RecipeTime.TotalMilliseconds.ToString("F2"));
                         AlgorithmTime = cell.RecipeTime.TotalMilliseconds;
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg(strbuilder.ToString(), LOG.LOG_INFO)
+                        );
+
                         if (!m_FilterChannel.Writer.TryWrite(cell))
                         {
                             cell.Dispose();
-                            strbuilder = new StringBuilder("[");
-                            strbuilder.Append("算法");
-                            strbuilder.Append("]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   cell入列失败。");
-                            await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        }
-                        else
-                        {
-                            strbuilder = new StringBuilder("[");
-                            strbuilder.Append("算法");
-                            strbuilder.Append("]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   cell入列完成。");
-                            await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         }
                     }
                     catch (Exception ex)
@@ -530,7 +507,6 @@ namespace WH.DetectSystem.ViewModels
                 {
                     try
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
                         cell.Quality = MaociQualityConfig.GetBest();
                         if (!cell.Skipthis)
                             MaociFilterConfig.FilterExute(cell);
@@ -541,13 +517,26 @@ namespace WH.DetectSystem.ViewModels
                         cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Stop();
                         cell.ProcessTime = DateTime.Now - cell.CreateTime;
+                        StringBuilder strbuilder = new StringBuilder("[");
                         strbuilder.Clear();
                         strbuilder.Append("[结束]     ");
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   检测结束,耗时:");
                         strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
+                        if (cell.IsOK)
+                        {
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
+                            );
+                        }
+                        else
+                        {
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                            );
+                        }
                         FilterTime = cell.FilterTime.TotalMilliseconds;
-                        await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         if (!m_ShowImageChannel.Writer.TryWrite(cell))
                             cell.Dispose();
                     }
@@ -691,7 +680,7 @@ namespace WH.DetectSystem.ViewModels
                             SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
                             Growl.Error("显示线程出错: " + ex.Message + ex.StackTrace);
                         }
-
+                        #endregion
                         if (
                             MaociSaveImageConfig.SaveImageEnable
                             || MaociSaveImageConfig.PiantScreenEnable
@@ -717,7 +706,6 @@ namespace WH.DetectSystem.ViewModels
 
                         if (!m_AlarmChannel.Writer.TryWrite(cell))
                             cell.Dispose();
-                        #endregion
 
                         if (cell.isOnce) { }
                     }
@@ -799,7 +787,7 @@ namespace WH.DetectSystem.ViewModels
                             Growl.Warning(
                                 new GrowlInfo()
                                 {
-                                    Message = "Mysql数据库写入出错:",
+                                    Message = "Mysql数据库写入出错!",
                                     StaysOpen = false,
                                     WaitTime = 2,
                                 }
@@ -865,6 +853,18 @@ namespace WH.DetectSystem.ViewModels
                     Category = Category.值,
                 };
             }
+        }
+    }
+
+    public struct PrintMsg
+    {
+        public string message;
+        public LOG logType;
+
+        public PrintMsg(string msg, LOG type)
+        {
+            message = msg;
+            logType = type;
         }
     }
 }
