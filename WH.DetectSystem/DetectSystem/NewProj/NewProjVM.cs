@@ -34,7 +34,6 @@ namespace WH.DetectSystem.ViewModels
 
         string projPath;
 
-        [Required]
         public string ProjPath
         {
             get => projPath;
@@ -42,7 +41,6 @@ namespace WH.DetectSystem.ViewModels
         }
         string cameraSerial;
 
-        [Required]
         public string CameraSerial
         {
             get => cameraSerial;
@@ -68,8 +66,8 @@ namespace WH.DetectSystem.ViewModels
         public void ApplyChanges()
         {
             mainModelVM.ProjPath = this.ProjPath;
-            if (mainVM.Model is null)
-                mainVM.Model = new CMainModel();
+            mainModelVM.CMainMModel.CMainModels[0] = new CMainModel();
+            mainVM.Model = mainModelVM.CMainMModel.CMainModels[0];
             this.Adapt(mainVM);
         }
 
@@ -86,9 +84,16 @@ namespace WH.DetectSystem.ViewModels
                 return;
             this.mainVM.GUID = Guid.NewGuid().ToString(); //GUID
             this.ApplyChanges();
-            CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
-            CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
-                this.mainVM.m_WaitImgChannel;
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.mainVM.m_WaitImgChannel;
+            }
+
             mainModelVM.SaveCurrentProj();
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
                 new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }

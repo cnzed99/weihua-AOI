@@ -82,9 +82,15 @@ namespace WH.DetectSystem.ViewModels
             if (HasErrors)
                 return;
             this.ApplyChanges();
-            CCameraManagement.CamParamDict[cameraSerial].ProjGuid = this.mainVM.GUID;
-            CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
-                this.mainVM.m_WaitImgChannel;
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.mainVM.m_WaitImgChannel;
+            }
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
                 new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }
             );

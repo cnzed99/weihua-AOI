@@ -23,7 +23,10 @@ namespace 断面毛刺检测软件.Views
         public TimeCamTriggerVMs()
         {
             var mainModel = App.Container.Resolve<CMainModelsModelVM>().CMainVMs[0];
-            if (CCameraManagement.CameraDict.ContainsKey(mainModel.CameraSerial))
+            if (
+                !string.IsNullOrEmpty(mainModel.CameraSerial)
+                && CCameraManagement.CameraDict.ContainsKey(mainModel.CameraSerial)
+            )
             {
                 TimerCamTriggerVM triggerVM = new TimerCamTriggerVM(
                     CCameraManagement.CameraDict[mainModel.CameraSerial],
