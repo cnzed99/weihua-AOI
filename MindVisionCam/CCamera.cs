@@ -164,12 +164,12 @@ namespace MindVisionCam
         /// </summary>
         /// <param name="zoo">图像数据</param>
         /// <returns></returns>
-        public override async Task<bool> GetImageFunc(IntPtr zoo)
+        public override bool GetImageFunc(IntPtr zoo)
         {
             try
             {
                 IntPtr grabbedRawData = (IntPtr)this.imageQueue.Dequeue();
-                return await base.GetImageFunc(grabbedRawData);
+                return base.GetImageFunc(grabbedRawData);
             }
             catch (Exception ex)
             {

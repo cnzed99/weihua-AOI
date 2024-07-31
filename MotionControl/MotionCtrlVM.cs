@@ -235,6 +235,23 @@ namespace MotionControl
                         modbusTcp.SendXYData = ModbusTcp_SendXYData;
                         modbusTcp.SendMxData = ModbusTcp_SendMxData;
                         modbusTcp.SendDxData = ModbusTcp_SendDxData;
+                        Growl.Ask(
+                            "是否复位？",
+                            b =>
+                            {
+                                if (b)
+                                {
+                                    Thread.Sleep(20);
+                                    //回原点状态置true;
+                                    modbusTcp.WriteCoilM(MotionConfig.AddrGoHome, true);
+                                    Thread.Sleep(50);
+                                    //回原点状态置false
+                                    modbusTcp.WriteCoilM(MotionConfig.AddrGoHome, false);
+                                }
+                                return true;
+                            }
+                        );
+                        Growl.Success("驱动器链接成功！");
                     }
                     else
                     {

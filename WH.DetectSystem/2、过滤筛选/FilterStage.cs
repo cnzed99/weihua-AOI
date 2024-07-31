@@ -24,7 +24,7 @@ namespace WH.DetectSystem
         /// <param name="cell">检测对象</param>
         public static void FilterExute(this CFilterConfig filterConfig, Cell cell)
         {
-            if (cell._skipthis)
+            if (cell.Skipthis)
             {
                 return;
             }
@@ -32,6 +32,8 @@ namespace WH.DetectSystem
             //int deIndex = 0;
             foreach (var sp in AlgorithmOut.Specises)
             {
+                if (filterConfig[sp.Name].ReadOnly)
+                    continue;
                 filterConfig[sp.Name].Result = true;
                 foreach (var rp in sp.Recipes)
                 {
@@ -184,6 +186,9 @@ namespace WH.DetectSystem
                                 default:
                                     break;
                             }
+                            detection.DetectLog.AppendLine(
+                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:"
+                            );
                         }
                         if (!detection.Result) //NG
                         {

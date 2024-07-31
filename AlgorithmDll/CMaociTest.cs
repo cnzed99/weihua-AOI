@@ -15,6 +15,7 @@ namespace AlgorithmDll
         EMDR_NG_LIGHTEDGE = 1, //毛刺NG
         EMDR_NG_DARKEDGE = 2, //料区NG
         EMDR_NG_EMPTY = 3, //空白NG
+        EMDR_TIMEOUT = 4, //检测超时
     };
 
     /// <summary>
@@ -175,7 +176,10 @@ namespace AlgorithmDll
 
         public Point GetCenter()
         {
-            return new Point(RegionInfo.X + RegionInfo.Width / 2, RegionInfo.Y + RegionInfo.Height / 2);
+            return new Point(
+                RegionInfo.X + RegionInfo.Width / 2,
+                RegionInfo.Y + RegionInfo.Height / 2
+            );
         }
     }
 
@@ -185,6 +189,12 @@ namespace AlgorithmDll
     /// </summary>
     public struct SMaociAlgorParam
     {
+        /// <summary>
+        /// 2024.7.30 李焕彬
+        /// 计算超时时间，单位ms
+        /// </summary>
+        public uint TimeOut = 3000;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 自适应阈值邻域大小
@@ -241,6 +251,7 @@ namespace AlgorithmDll
             this.DarkThresh = param.DarkThresh;
             this.LightThresh = param.LightThresh;
             this.LightThick = param.LightThick;
+            this.TimeOut = param.TimeOut;
         }
     };
 
@@ -250,6 +261,12 @@ namespace AlgorithmDll
     /// </summary>
     public struct SMaociAlgorParamFpga
     {
+        /// <summary>
+        /// 2024.7.30 李焕彬
+        /// 计算超时时间，单位ms
+        /// </summary>
+        public uint TimeOut = 3000;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// //自适应阈值邻域大小
@@ -362,6 +379,7 @@ namespace AlgorithmDll
             this.PosLimitT = param.PosLimitT;
             this.PosLimitB = param.PosLimitB;
             this.LightPosOffest = param.LightPosOffest;
+            this.TimeOut = param.TimeOut;
         }
     };
 

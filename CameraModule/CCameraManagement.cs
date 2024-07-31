@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -117,11 +118,19 @@ namespace CameraModule
                                         Properties.Resources.InfoInit
                                             + Cam.Value.Setting.SerialNumber
                                     );
+                                    Growl.Success(
+                                        Properties.Resources.InfoInit
+                                            + Cam.Value.Setting.SerialNumber
+                                    );
                                 }
                                 else
                                 {
                                     CCameraManagement.CamLogger.Info(
                                         Properties.Resources.ErrorInit3
+                                            + Cam.Value.Setting.SerialNumber
+                                    );
+                                    Growl.Warning(
+                                        Properties.Resources.InfoInit
                                             + Cam.Value.Setting.SerialNumber
                                     );
                                 }

@@ -41,6 +41,18 @@ namespace 断面毛刺检测软件.Views
         [ObservableProperty]
         bool isTriggerStart;
 
+        partial void OnIsTriggerStartChanged(bool value)
+        {
+            if (IsTriggerStart)
+            {
+                TriggerTimer.Start();
+            }
+            else
+            {
+                TriggerTimer.Stop();
+            }
+        }
+
         [ObservableProperty]
         CCameraBase cam;
 
@@ -62,13 +74,12 @@ namespace 断面毛刺检测软件.Views
             TriggerTimer = new DispatcherTimer();
             TriggerTimer.Interval = TimeSpan.FromMilliseconds(Interval);
             TriggerTimer.Tick += TimerCallBack;
-            TriggerTimer.Start();
             Name = name;
         }
 
         private void TimerCallBack(object sender, EventArgs e)
         {
-            if (IsTriggerStart && Cam.Connected)
+            if (Cam.Connected)
             {
                 Cam.ExecuteSoftwareTrigger();
             }

@@ -17,7 +17,7 @@ namespace WH.RunCell
         /// <summary>
         /// 输出区域
         /// </summary>
-        public List<SRegion> regionOut { get; set; }
+        public List<SRegion> regionOut { get; set; } = new List<SRegion>();
 
         /// <summary>
         /// 缺陷顺序

@@ -66,6 +66,12 @@ namespace CameraModule
 
         /// <summary>
         /// 2024.7.19 李焕彬
+        /// 运行日志
+        /// </summary>
+        protected CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
+
+        /// <summary>
+        /// 2024.7.19 李焕彬
         /// 相机参数
         /// </summary>
         public CCameraParameterBase Setting { get; set; }
@@ -248,7 +254,7 @@ namespace CameraModule
         /// 取图
         /// </summary>
         /// <param name="grabbedRawData">图像数据</param>
-        public virtual async Task<bool> GetImageFunc(IntPtr grabbedRawData)
+        public virtual bool GetImageFunc(IntPtr grabbedRawData)
         {
             int widthNew = Setting.ImageWidth;
             int heightNew = Setting.ImageHeight;
@@ -291,7 +297,7 @@ namespace CameraModule
                     ? PixelFormats.Gray8
                     : PixelFormats.Rgb24
             );
-            await ExportImage(image);
+            ExportImage(image);
 
             return true;
         }
@@ -320,7 +326,7 @@ namespace CameraModule
                         if (LostImage != null)
                         {
                             IsLostFrame = true;
-                            await ExportImage(LostImage);
+                            ExportImage(LostImage);
                         }
                         textBuilder.Clear();
                         textBuilder.Append(Properties.Resources.ErrorLostImage2);
@@ -331,7 +337,7 @@ namespace CameraModule
                     if (this.imageQueue.Count > 0 && this.noOver)
                     {
                         IntPtr zero = IntPtr.Zero;
-                        await GetImageFunc(zero);
+                        GetImageFunc(zero);
                     }
                 }
             }
@@ -342,7 +348,7 @@ namespace CameraModule
         /// 传出图像
         /// </summary>
         /// <param name="outImage">图像</param>
-        public async Task<bool> ExportImage(CImage outImage)
+        public bool ExportImage(CImage outImage)
         {
             try
             {
@@ -351,7 +357,8 @@ namespace CameraModule
                     Image = outImage,
                     FrameLoss = IsLostFrame,
                     CamSerial = Setting.SerialNumber,
-                    ProjGuid = Setting.ProjGuid
+                    ProjGuid = Setting.ProjGuid,
+                    ID = grabCount.ToString(),
                 };
                 //需要增加判断是否是运行模式
                 if (IsSetWindowShowed)
@@ -361,7 +368,25 @@ namespace CameraModule
                 //Cell cell = await triggerImageChannel.Reader.ReadAsync();
                 else if (OutputImageChannel is not null)
                 {
-                    await OutputImageChannel.Writer.WriteAsync(cell);
+                    if (!OutputImageChannel.Writer.TryWrite(cell))
+                    {
+                        StringBuilder strbuilder = new StringBuilder("[");
+                        strbuilder.Append("相机");
+                        strbuilder.Append("]     ");
+                        strbuilder.Append(cell.ID);
+                        strbuilder.Append("   cell入列失败，丢弃。");
+                        SysLog.Error(strbuilder.ToString());
+                        cell.Dispose();
+                    }
+                    else
+                    {
+                        StringBuilder strbuilder = new StringBuilder("[");
+                        strbuilder.Append("相机");
+                        strbuilder.Append("]     ");
+                        strbuilder.Append(cell.ID);
+                        strbuilder.Append("   cell入列完成。");
+                        SysLog.Info(strbuilder.ToString());
+                    }
                 }
                 noOver = false;
                 isGrabing = false;

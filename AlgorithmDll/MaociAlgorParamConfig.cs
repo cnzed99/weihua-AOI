@@ -247,6 +247,16 @@ namespace AlgorithmDll
 
         /// <summary>
         /// 2024.7.4 李焕彬
+        /// 超时时间ms
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("超时时间(ms)")]
+        [property: Description("超时时间(ms)")]
+        private uint timeOut = 3000;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -431,6 +441,16 @@ namespace AlgorithmDll
         [property: DisplayName("铝层位置偏移值")]
         [property: Description("铝层位置偏移值")]
         private int lightPosOffest = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 超时时间ms
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("超时时间(ms)")]
+        [property: Description("超时时间(ms)")]
+        private uint timeOut = 3000;
 
         /// <summary>
         /// 2024.7.4 李焕彬

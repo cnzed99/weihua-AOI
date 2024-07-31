@@ -143,7 +143,8 @@
                         Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
                         BorderBrush="Transparent"
                         BorderThickness="1"
-                        IsExpanded="True">
+                        IsExpanded="True"
+                        Visibility="{Binding ReadOnly, Converter={StaticResource Boolean2VisibilityReConverter}}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>

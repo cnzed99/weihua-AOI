@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
@@ -48,13 +49,19 @@ namespace SDFilter
             var SpFilters = new ObservableCollection<SpeciesFilter>();
             foreach (var specie in CAlgorithmOut.s_Instance.Specises)
             {
-                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name);
+                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
                 foreach (var recipe in specie.Recipes)
                 {
                     speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name, token));
                 }
                 SpFilters.Add(speciesFilter);
             }
+
+            SpeciesFilter speciesException = new SpeciesFilter("异常类", token);
+            speciesException.RecipeDefects.Add(new RecipeDefect("超时", token, "超时"));
+            speciesException.ReadOnly = true;
+            SpFilters.Add(speciesException);
+
             SpeciesFilters = SpFilters;
         }
 
@@ -288,10 +295,11 @@ namespace SDFilter
             RecipeDefects = new ObservableCollection<RecipeDefect>();
         }
 
-        public SpeciesFilter(string name)
+        public SpeciesFilter(string name, Token token)
             : this()
         {
             this.Name = name;
+            this.token = token;
         }
 
         /// <summary>
@@ -318,6 +326,14 @@ namespace SDFilter
         [property: DisplayName("缺陷列表")]
         [ObservableProperty]
         private ObservableCollection<RecipeDefect> recipeDefects;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 只读
+        /// </summary>
+        [property: IgnoreModifyLog]
+        [ObservableProperty]
+        private bool readOnly = false;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -351,13 +367,13 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public RecipeDefect(string name, Token token)
+        public RecipeDefect(string name, Token token, string defectName = null)
         {
             this.token = token;
             this.Name = name;
             DefectFilters = new ObservableCollection<DefectFilter>()
             {
-                new DefectFilter(Name + "0", token)
+                new DefectFilter(defectName == null ? Name + "0" : defectName, token)
             };
         }
 

@@ -103,7 +103,11 @@ namespace WH.RunCell
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
-        public bool _skipthis = false;
+        /// <summary>
+        /// Ìø¹ý
+        /// </summary>
+        public bool Skipthis { get; set; } = false;
+
         private bool _timeOut = false;
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace WH.RunCell
                 _timeOut = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -135,7 +139,7 @@ namespace WH.RunCell
                 _preError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -153,7 +157,7 @@ namespace WH.RunCell
                 _recipeError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -171,7 +175,7 @@ namespace WH.RunCell
                 _isempty = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -189,7 +193,7 @@ namespace WH.RunCell
                 _ismix = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -207,7 +211,7 @@ namespace WH.RunCell
                 _isBurst = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -239,7 +243,7 @@ namespace WH.RunCell
                 _frameLoss = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -302,7 +306,7 @@ namespace WH.RunCell
             cell.Stopwatch = this.Stopwatch;
             cell.SaveImgTime = this.SaveImgTime;
             cell.TwoTrgTimeSpan = this.TwoTrgTimeSpan;
-            cell._skipthis = this._skipthis;
+            cell.Skipthis = this.Skipthis;
             cell.IsBurstBoard = this.IsBurstBoard;
             cell.IsMix = this.IsMix;
             cell.ImageFile = this.ImageFile;

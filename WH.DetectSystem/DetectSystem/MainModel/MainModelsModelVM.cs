@@ -259,10 +259,10 @@ namespace WH.DetectSystem.ViewModels
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(50);
-                foreach (var proj in SystemSettings.RecentProjs)
+                for (int i = SystemSettings.RecentProjs.Count - 1; i >= 0; i--)
                 {
-                    if (!File.Exists(proj))
-                        SystemSettings.RecentProjs.Remove(proj);
+                    if (!File.Exists(SystemSettings.RecentProjs[i]))
+                        SystemSettings.RecentProjs.Remove(SystemSettings.RecentProjs[i]);
                 }
                 while (SystemSettings.RecentProjs.Count > 10)
                 {
