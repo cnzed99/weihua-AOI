@@ -56,7 +56,7 @@
             <StackPanel>
 
                 <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding OfflineSave}" />
-                <ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />
+                <!--<ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />-->
                 <ToggleButton Content="{Binding [ShowAllDefect], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding ShowAllDefect}" />
             </StackPanel>
 

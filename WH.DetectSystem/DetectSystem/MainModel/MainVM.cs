@@ -775,7 +775,7 @@ namespace WH.DetectSystem.ViewModels
                     //}
                     #endregion
 
-                    if (SystemSettings.IsToMysql)
+                    if (MaociMysqlConfig.SqlEnable)
                     {
                         try
                         {

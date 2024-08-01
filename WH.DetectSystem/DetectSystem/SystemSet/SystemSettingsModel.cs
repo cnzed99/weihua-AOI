@@ -14,7 +14,8 @@ namespace WH.DetectSystem.Models
     public partial class CSystemSettingsModel : ObservableValidator
     {
         /// <summary>
-        /// 醉经打开的工程
+        /// 20240801 TCG
+        /// 最近打开的工程
         /// </summary>
         public ObservableCollection<string> RecentProjs { get; set; } =
             new ObservableCollection<string>()
@@ -23,6 +24,10 @@ namespace WH.DetectSystem.Models
                 "C:\\Users\\Mainvm233.Json"
             };
 
+        /// <summary>
+        /// 20240801 TCG
+        /// 中英文切换
+        /// </summary>
         [ObservableProperty]
         bool isEnglish = false;
 
@@ -39,11 +44,15 @@ namespace WH.DetectSystem.Models
             LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
 
+        /// <summary>
+        /// 20240801 TCG
+        /// 离线调试下是佛存图和数据库
+        /// </summary>
         [ObservableProperty]
         bool offlineSave = false;
 
-        [ObservableProperty]
-        bool isToMysql = false;
+        //[ObservableProperty]
+        //bool isToMysql = false;
 
         /// <summary>
         /// 2024.7.26 李焕彬
