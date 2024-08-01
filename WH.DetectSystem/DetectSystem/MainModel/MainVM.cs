@@ -43,6 +43,7 @@ using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
 using WH.Entity.CommonLib;
+using WH.Entity.DiskSpace;
 using WH.Entity.LogRecord;
 using WH.Entity.Messages;
 using WH.RecipeCellRootBase;
@@ -808,6 +809,8 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         //// int queCount = _waitSaveImageQueue.Count;
+                        long space = DiskSpace.GetHardDiskSpace(MaociSaveImageConfig.SaveImagePath);
+
                         string savePath = MaociSaveImageConfig.Excute(cell);
                         WeakReferenceMessenger.Default.Send(
                             new AddOneNgImagePathMessage() { Path = savePath },

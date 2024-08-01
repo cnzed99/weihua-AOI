@@ -315,7 +315,7 @@ namespace CameraModule
             {
                 if (!startGrab)
                 {
-                    Thread.Sleep(10);
+                    await Task.Delay(10);
                     continue;
                 }
                 if (this.noOver)
