@@ -83,7 +83,7 @@ namespace WH.DetectSystem._4_报警处理
                             alarm.TotalNG++;
                         break;
                     case ALARMTYPE.ALARMTYPE_DEFECT:
-                        if (cell.Quality == cell.Detection.DefectFilter)
+                        if (cell.Detection.DefectFilter == alarm.Source)
                             alarm.TotalNG++;
                         break;
                 }

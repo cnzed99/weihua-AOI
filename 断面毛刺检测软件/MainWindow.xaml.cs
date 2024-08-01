@@ -170,6 +170,7 @@ namespace 断面毛刺检测软件
         {
             LoginPage UserInfoFrm = new LoginPage(CMainList.LoginViewModel);
             UserInfoFrm.ShowDialog();
+            mainVM.OperateLog.UserName = CMainList.LoginViewModel.LoginPerson.UserName;
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 

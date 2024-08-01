@@ -38,7 +38,7 @@ namespace AlarmSetCtrl
         /// </summary>
         [property: JsonIgnore]
         [property: IgnoreModifyLog]
-        public CLogRec SysLog { get; set; } = CLogRec.Create("Info", "./Log", "Error");
+        public CLogRec SysLog { get; set; } = CLogRec.Default;
 
         public CAlarmSetConfig()
         {
@@ -266,7 +266,7 @@ namespace AlarmSetCtrl
         private bool isPopWin = true;
 
         [DisplayName("是否独立控制")]
-        public bool isIndependent => IsTimeLimit || IsTotalLimit;
+        public bool isIndependent => !IsTimeLimit && !IsTotalLimit;
 
         [property: DisplayName("报警源")]
         [ObservableProperty]
