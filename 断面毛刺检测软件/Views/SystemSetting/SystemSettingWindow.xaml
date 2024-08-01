@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [SystemSettings], Source={x:Static local:CLang.SystemSettings}}"
     Width="650"
     Height="330"
@@ -48,7 +49,7 @@
             <i:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <DockPanel>
+    <DockPanel IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <GroupBox
             Width="250"
             DockPanel.Dock="Left"

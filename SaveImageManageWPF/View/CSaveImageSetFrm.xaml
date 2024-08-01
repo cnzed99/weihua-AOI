@@ -82,7 +82,7 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </hc:Window.NonClientAreaContent>
-    <StackPanel>
+    <StackPanel  IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <GroupBox Margin="2" Header="{Binding [PiantImageSet], Source={x:Static local:CLang.s_SaveImageLang}}">
             <StackPanel Orientation="Horizontal">
                 <hc:ElementGroup>

@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [Title], Source={x:Static local:CLang.NewProj}}"
     Width="450"
     Height="330"
@@ -23,7 +24,7 @@
         </Style>
 
     </hc:Window.Resources>
-    <Grid>
+    <Grid  IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />

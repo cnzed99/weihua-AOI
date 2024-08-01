@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:AlarmSetCtrl.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DataContext="{d:DesignInstance Type=local:CAlarmSetConfigVM}"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -175,18 +176,21 @@
                     Width="100"
                     Command="{Binding AddAlarmCommand}"
                     Content="{Binding [Add], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                     Style="{StaticResource ButtonPrimary}" />
                 <Button
                     Width="100"
                     Command="{Binding RemoveAlarmCommand}"
                     CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
                     Content="{Binding [Delete], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                     Style="{StaticResource ButtonDanger}" />
                 <Button
                     Width="100"
                     Command="{Binding AmendAlarmCommand}"
                     CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
                     Content="{Binding [Change], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                     Style="{StaticResource ButtonPrimary}" />
             </UniformGrid>
             <hc:Divider

@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using QualityGrade;
 using SDFilter;
 using SVGImage.SVG.Filters;
+using WH.Controls;
 using WH.Entity.CommonLib;
 using WH.RunCell;
 using MessageBox = HandyControl.Controls.MessageBox;

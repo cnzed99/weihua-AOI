@@ -6,6 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [Title], Source={x:Static local:CLang.OffLineTest}}"
     d:Height="450"
     d:Width="800"
@@ -17,5 +18,5 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
     mc:Ignorable="d">
-    <StackPanel Name="ContainerPanel" />
+    <StackPanel Name="ContainerPanel" IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
 </hc:Window>

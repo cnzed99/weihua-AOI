@@ -6,6 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [手动调试], Source={x:Static local:CLang.TimeTriggerTest}}"
     Width="400"
     Height="450"
@@ -60,5 +61,5 @@
             </GroupBox>
         </DataTemplate>
     </hc:Window.Resources>
-    <ItemsControl ItemsSource="{Binding Timers}" />
+    <ItemsControl IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" ItemsSource="{Binding Timers}" />
 </hc:Window>
