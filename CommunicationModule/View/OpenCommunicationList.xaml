@@ -39,23 +39,22 @@
                 Width="80"
                 Command="{Binding AddCommand}"
                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonPrimary}" 
-                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                Style="{DynamicResource ButtonPrimary}" />
             <Button
                 Width="80"
                 Command="{Binding SetCommand}"
                 CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
                 Content="{Binding [Set], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonPrimary}"
                 IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
-                />
+                Style="{DynamicResource ButtonPrimary}" />
             <Button
                 Width="80"
                 Command="{Binding DelCommand}"
                 CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
                 Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonDanger}"
-                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                Style="{DynamicResource ButtonDanger}" />
         </UniformGrid>
         <DataGrid
             x:Name="dataGrid1"
@@ -65,8 +64,7 @@
             HeadersVisibility="All"
             ItemsSource="{Binding Settings}"
             RowHeaderWidth="30"
-            SelectionMode="Single"
-            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}">
+            SelectionMode="Single">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding SetCommand}" CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}" />

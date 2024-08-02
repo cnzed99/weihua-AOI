@@ -8,7 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:CommunicationModule"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [CommSet], Source={x:Static local:CLang.s_Instance}}"
     Width="1300"
     Height="750"
@@ -28,8 +28,8 @@
             </ResourceDictionary.MergedDictionaries>-->
             <cov:BoolToBrushConverter
                 x:Key="SuccessToBrushConverter"
-                FalseValue="{x:Null}"
-                TrueValue="{DynamicResource SuccessBrush}" />
+                FalseValue="{StaticResource BorderBrush}"
+                TrueValue="Lime" />
             <cov:BoolToBrushConverter
                 x:Key="SuccessToBrushConverter2"
                 FalseValue="{DynamicResource DangerBrush}"
@@ -58,6 +58,7 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
             </Style>
+            
         </ResourceDictionary>
     </hc:Window.Resources>
     <i:Interaction.Triggers>
@@ -78,7 +79,8 @@
             <UniformGrid Columns="2">
                 <Button
                     Width="200"
-                    Background="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter}}"
+                    Style="{StaticResource StatusDotButton}"
+                    wh:StatusDotElement.DotBrush="{Binding Com.IsConnected, Converter={StaticResource SuccessToBrushConverter}}"
                     Command="{Binding ConnectCommand}"
                     Content="{Binding Com.IsConnected, Converter={StaticResource ConnectToStringConverter}}"
                     IsEnabled="{Binding Com.IsConnected, Converter={StaticResource Boolean2BooleanReConverter}}" />
@@ -94,7 +96,7 @@
                 Margin="5"
                 BorderThickness="1">
                 <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" 
-                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
             </Border>
         </Grid>
         <UniformGrid Grid.Column="1" Rows="2">

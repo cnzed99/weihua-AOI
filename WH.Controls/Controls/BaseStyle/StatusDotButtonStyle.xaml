@@ -5,7 +5,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:wh="clr-namespace:WH.Controls">
     <Style
-        x:Key="StatusDotButton"
+        x:Key="StatusDotButtonBaseStyle"
         BasedOn="{StaticResource ButtonBaseBaseStyle}"
         TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
@@ -65,14 +65,30 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Opacity" Value=".9" />
+
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
+
                 <Setter Property="Opacity" Value=".6" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Opacity" Value="0.4" />
             </Trigger>
 
+        </Style.Triggers>
+    </Style>
+    <Style
+        x:Key="StatusDotButton"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
+        TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+            </Trigger>
         </Style.Triggers>
     </Style>
     <Style
@@ -85,7 +101,7 @@
     </Style>
     <Style
         x:Key="StatusDotButtonPrimary"
-        BasedOn="{StaticResource StatusDotButton}"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
@@ -102,7 +118,7 @@
 
     <Style
         x:Key="StatusDotButtonSuccess"
-        BasedOn="{StaticResource StatusDotButton}"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
@@ -119,7 +135,7 @@
 
     <Style
         x:Key="StatusDotButtonInfo"
-        BasedOn="{StaticResource StatusDotButton}"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource InfoBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource InfoBrush}" />
@@ -136,7 +152,7 @@
 
     <Style
         x:Key="StatusDotButtonWarning"
-        BasedOn="{StaticResource StatusDotButton}"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
@@ -153,7 +169,7 @@
 
     <Style
         x:Key="StatusDotButtonDanger"
-        BasedOn="{StaticResource StatusDotButton}"
+        BasedOn="{StaticResource StatusDotButtonBaseStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />

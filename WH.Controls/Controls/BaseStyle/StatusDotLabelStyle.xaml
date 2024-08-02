@@ -4,7 +4,7 @@
     xmlns:attach="clr-namespace:WH.Controls.Controls.Attach"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:wh="clr-namespace:WH.Controls">
-    <Style x:Key="StatusDotLabel" TargetType="Label">
+    <Style x:Key="StatusDotLabelBaseStyle" TargetType="Label">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
@@ -51,6 +51,13 @@
         </Style.Triggers>
     </Style>
     <Style
+     x:Key="StatusDotLabel"
+     BasedOn="{StaticResource StatusDotLabelBaseStyle}"
+     TargetType="Label">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style
         x:Key="StatusDotLabel.Small"
         BasedOn="{StaticResource StatusDotLabel}"
         TargetType="Label">
@@ -59,7 +66,7 @@
     </Style>
     <Style
         x:Key="StatusDotLabelPrimary"
-        BasedOn="{StaticResource StatusDotLabel}"
+        BasedOn="{StaticResource StatusDotLabelBaseStyle}"
         TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
     </Style>
@@ -74,7 +81,7 @@
 
     <Style
         x:Key="StatusDotLabelSuccess"
-        BasedOn="{StaticResource StatusDotLabel}"
+        BasedOn="{StaticResource StatusDotLabelBaseStyle}"
         TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
     </Style>
@@ -89,7 +96,7 @@
 
     <Style
         x:Key="StatusDotLabelInfo"
-        BasedOn="{StaticResource StatusDotLabel}"
+        BasedOn="{StaticResource StatusDotLabelBaseStyle}"
         TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource InfoBrush}" />
     </Style>
@@ -104,7 +111,7 @@
 
     <Style
         x:Key="StatusDotLabelWarning"
-        BasedOn="{StaticResource StatusDotLabel}"
+        BasedOn="{StaticResource StatusDotLabelBaseStyle}"
         TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
     </Style>
@@ -119,7 +126,7 @@
 
     <Style
         x:Key="StatusDotLabelDanger"
-        BasedOn="{StaticResource StatusDotLabel}"
+        BasedOn="{StaticResource StatusDotLabelBaseStyle}"
         TargetType="Label">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
     </Style>
