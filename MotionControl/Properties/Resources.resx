@@ -287,7 +287,7 @@
     <value>读取值</value>
   </data>
   <data name="Write" xml:space="preserve">
-    <value>写入值</value>
+    <value>写入</value>
   </data>
   <data name="Connected" xml:space="preserve">
     <value>已连接</value>
@@ -353,7 +353,7 @@
     <value>20.纠偏感应值</value>
   </data>
   <data name="SetOutputError" xml:space="preserve">
-    <value>写入地址M不能为空！</value>
+    <value>写入地址不能为空！</value>
   </data>
   <data name="5.对焦参数" xml:space="preserve">
     <value>5.对焦参数</value>
@@ -411,5 +411,35 @@
   </data>
   <data name="15.精调范围(mm)" xml:space="preserve">
     <value>15.精调范围(mm)</value>
+  </data>
+  <data name="AskGoHome" xml:space="preserve">
+    <value>是否复位？</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>驱动器连接成功！</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>没有相机！</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>未打开相机！</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>正在对焦中，是否停止对焦？</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>运动控制未连接！</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>软件需要先暂停！</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>对焦完成！</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>对焦异常！</value>
+  </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>全部写入</value>
   </data>
 </root>

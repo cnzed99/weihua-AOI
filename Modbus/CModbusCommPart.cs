@@ -110,6 +110,9 @@ namespace Modbus
                         CCommunicationManagement.ComLogger.Info(
                             "连接服务器:" + this.setting.RemoteIP + "成功!"
                         );
+                        CCommunicationManagement.SysLog.Info(
+                            "连接服务器:" + this.setting.RemoteIP + "成功!"
+                        );
                         ConnectedEventArgs?.Invoke(IsConnected, "连接状态:已连接");
                         taskRead = Task.Factory.StartNew(OnRefresh);
                     }

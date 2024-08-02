@@ -43,6 +43,12 @@ namespace CommunicationModule
 
         /// <summary>
         /// 2024.7.19 李焕彬
+        /// 运行日志
+        /// </summary>
+        public static CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
+
+        /// <summary>
+        /// 2024.7.19 李焕彬
         /// 通讯操作字典
         /// </summary>
         public static Dictionary<string, CCommunicationBase> CommDic =
@@ -184,7 +190,7 @@ namespace CommunicationModule
                         }
                         catch (Exception ex)
                         {
-                            ComLogger.Info(
+                            ComLogger.Error(
                                 $"{CommParamDic[Comm.Key].Name}连接服务器:{CommParamDic[Comm.Key].RemoteIP}失败:{ex.Message}"
                             );
                             result = false;
@@ -216,7 +222,7 @@ namespace CommunicationModule
                         }
                         catch (Exception ex)
                         {
-                            ComLogger.Info(
+                            ComLogger.Error(
                                 $"{CommParamDic[Comm.Key].Name}关闭服务器:{CommParamDic[Comm.Key].RemoteIP}失败:{ex.Message}"
                             );
                         }

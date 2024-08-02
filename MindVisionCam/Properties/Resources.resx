@@ -97,7 +97,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="专用参数" xml:space="preserve">
+  <data name="R" xml:space="preserve">
     <value>专用参数</value>
   </data>
   <data name="1.触发源" xml:space="preserve">
@@ -135,9 +135,6 @@
   </data>
   <data name="ErrorStop2" xml:space="preserve">
     <value>迈德威视相机停止采集发生异常,序列号:</value>
-  </data>
-  <data name="SoftWareOnce" xml:space="preserve">
-    <value>迈德威视相机执行软触发一次</value>
   </data>
   <data name="ErrorSoftWare" xml:space="preserve">
     <value>迈德威视相机:执行'软触发一次'失败,错误码:</value>

@@ -448,6 +448,15 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 迈德威视相机执行软触发一次 的本地化字符串。
+        /// </summary>
+        public static string SoftWareOnce {
+            get {
+                return ResourceManager.GetString("SoftWareOnce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 停止触发 的本地化字符串。
         /// </summary>
         public static string StopTrig {

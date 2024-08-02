@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     Title="{Binding [CommSet], Source={x:Static local:CLang.s_Instance}}"
-    Width="1000"
-    Height="650"
+    Width="1300"
+    Height="750"
     Background="{DynamicResource SecondaryRegionBrush}"
     Icon="/CommunicationModule;component/Resources/外接通讯数据.png"
     ResizeMode="NoResize"
@@ -93,7 +93,8 @@
                 Grid.Row="1"
                 Margin="5"
                 BorderThickness="1">
-                <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" />
+                <wh:CPropertyGridLang SelectedObject="{Binding Setting}" lang="{x:Static local:CLang.s_Instance}" 
+                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
             </Border>
         </Grid>
         <UniformGrid Grid.Column="1" Rows="2">
@@ -108,9 +109,10 @@
                             Width="80"
                             Margin="20,3"
                             Command="{Binding AddAlarmCommand}"
-                            Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                            Content="{Binding [AddAlarm], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
-                            Style="{StaticResource Button}" />
+                            Style="{StaticResource Button}" 
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
                     </DockPanel>
                 </GroupBox.Header>
                 <Grid>
@@ -126,15 +128,16 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="序号" />
-                        <TextBlock Grid.Column="1" Text="名称" />
-                        <TextBlock Grid.Column="3" Text="编辑" />
-                        <TextBlock Grid.Column="4" Text="删除" />
+                        <TextBlock Text="{Binding [Order], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="1" Text="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="2" Text="{Binding [Info], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="4" Text="{Binding [Del], Source={x:Static local:CLang.s_Instance}}" />
                     </Grid>
                     <ScrollViewer Grid.Row="1">
                         <ItemsControl AlternationCount="10000" ItemsSource="{Binding Setting.AlarmAgreements}">
@@ -152,27 +155,41 @@
                                             </Grid.Resources>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="50" />
-                                                <ColumnDefinition Width="140" />
+                                                <ColumnDefinition Width="80" />
                                                 <ColumnDefinition />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="80" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" />
-                                            <TextBox Grid.Column="1" Text="{Binding Name}" />
-                                            <Button
-                                                Grid.Column="4"
-                                                Width="60"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DelAlarmCommand}"
-                                                CommandParameter="{Binding}"
-                                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                                                Style="{StaticResource ButtonDanger}" />
+                                            <TextBox Grid.Column="1" Text="{Binding Name}" IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                                            <ItemsControl ItemsSource="{Binding Protocol}"  Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Name}" Margin="2"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
                                             <Button
                                                 Grid.Column="3"
                                                 Width="60"
                                                 Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.SetAlarmCommand}"
                                                 CommandParameter="{Binding}"
                                                 Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
-                                                Style="{StaticResource Button}" />
+                                                Style="{StaticResource Button}" 
+                                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                                            <Button
+                                                Grid.Column="4"
+                                                Width="60"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DelAlarmCommand}"
+                                                CommandParameter="{Binding}"
+                                                Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                                Style="{StaticResource ButtonDanger}" 
+                                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -181,7 +198,7 @@
                     </ScrollViewer>
                 </Grid>
             </GroupBox>
-            <Grid Name="testGrid" Margin="5" />
+            <Grid Name="testGrid" Margin="5" IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
         </UniformGrid>
     </Grid>
 </hc:Window>

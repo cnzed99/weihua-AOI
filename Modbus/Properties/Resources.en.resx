@@ -162,4 +162,7 @@
   <data name="5.描述" xml:space="preserve">
     <value>5.Note</value>
   </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>Write All</value>
+  </data>
 </root>

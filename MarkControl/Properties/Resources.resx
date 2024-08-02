@@ -276,4 +276,7 @@
   <data name="ManualSet2" xml:space="preserve">
     <value>批量点测试（加补偿值）</value>
   </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>驱动器连接成功！</value>
+  </data>
 </root>

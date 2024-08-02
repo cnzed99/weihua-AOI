@@ -19,6 +19,7 @@ using HandyControl.Controls;
 using Newtonsoft.Json.Linq;
 using WH.Entity;
 using WH.Entity.CommonLib;
+using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 
@@ -88,7 +89,8 @@ namespace MotionControl
         /// 20240725 TCG
         /// 当前制程是否启动
         /// </summary>
-        private bool IsRuning { get; set; } = false;
+        [ObservableProperty]
+        private bool isRuning = false;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -175,10 +177,17 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.12 李焕彬
-        /// 自动对焦状态
+        /// 正在对焦状态
         /// </summary>
         [ObservableProperty]
-        private bool isFocusing;
+        private bool isFocusing = false;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 是否已经对焦状态
+        /// </summary>
+        [ObservableProperty]
+        private bool isFocused = false;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -216,6 +225,12 @@ namespace MotionControl
         public Channel<Cell> FocusWaitGetImageChannel = Channel.CreateBounded<Cell>(channelOptions);
 
         /// <summary>
+        /// 2024.7.19 李焕彬
+        /// 运行日志
+        /// </summary>
+        public static CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
+
+        /// <summary>
         /// 2024.7.12 李焕彬
         /// 初始化控制，包含连接、写入初始参数
         /// </summary>
@@ -236,7 +251,7 @@ namespace MotionControl
                         modbusTcp.SendMxData = ModbusTcp_SendMxData;
                         modbusTcp.SendDxData = ModbusTcp_SendDxData;
                         Growl.Ask(
-                            "是否复位？",
+                            Properties.Resources.AskGoHome,
                             b =>
                             {
                                 if (b)
@@ -251,11 +266,13 @@ namespace MotionControl
                                 return true;
                             }
                         );
-                        Growl.Success("驱动器链接成功！");
+                        Growl.Success(Properties.Resources.SuccessConnect);
+                        SysLog.Info(Properties.Resources.SuccessConnect);
                     }
                     else
                     {
                         Growl.Error(Properties.Resources.ConnectError);
+                        SysLog.Error(Properties.Resources.ConnectError);
                     }
                 }
             };
@@ -355,20 +372,14 @@ namespace MotionControl
         }
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2024.8.1 李焕彬
         /// 删除读写寄存器
         /// </summary>
-        /// <param name="obj">寄存器集合</param>
+        /// <param name="registerSet">寄存器</param>
         [RelayCommand]
-        public void DelRegister(object obj)
+        public void DelRegister(CRegisterSet registerSet)
         {
-            if (obj is IList registers)
-            {
-                for (int i = registers.Count - 1; i >= 0; i--)
-                {
-                    MotionConfig.RegisterSets.Remove((CRegisterSet)registers[i]);
-                }
-            }
+            MotionConfig.RegisterSets.Remove(registerSet);
         }
 
         /// <summary>
@@ -382,6 +393,22 @@ namespace MotionControl
             {
                 if (reg.Addr != null)
                     modbusTcp.WriteRegisterD(reg.Addr, reg.ValueWrite);
+            }
+        }
+
+        /// <summary>
+        /// 2024.8.1 李焕彬
+        /// 写入单个寄存器
+        /// </summary>
+        /// <param name="registerSet">寄存器</param>
+        [RelayCommand]
+        public void WriteSingleRegister(CRegisterSet registerSet)
+        {
+            if (registerSet.Addr != null)
+                modbusTcp.WriteRegisterD(registerSet.Addr, registerSet.ValueWrite);
+            else
+            {
+                Growl.Warning(Properties.Resources.SetOutputError);
             }
         }
 
@@ -430,7 +457,8 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Warning(signal + ":" + ex.Message);
+                    Growl.Error(signal + ":" + ex.Message);
+                    SysLog.Error(signal + ":" + ex.Message);
                 }
             }
 
@@ -445,7 +473,8 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Warning(signal + ":" + ex.Message);
+                    Growl.Error(signal + ":" + ex.Message);
+                    SysLog.Error(signal + ":" + ex.Message);
                 }
             }
         }
@@ -465,7 +494,8 @@ namespace MotionControl
             }
             catch (Exception err)
             {
-                Growl.Warning(err.Message);
+                Growl.Error(err.Message);
+                SysLog.Error(err.Message);
             }
         }
 
@@ -494,7 +524,8 @@ namespace MotionControl
             }
             catch (Exception err)
             {
-                Growl.Warning(err.Message);
+                Growl.Error(err.Message);
+                SysLog.Error(err.Message);
             }
         }
 
@@ -577,7 +608,8 @@ namespace MotionControl
                 }
                 catch (Exception err)
                 {
-                    Growl.Warning(err.Message);
+                    Growl.Error(err.Message);
+                    SysLog.Error(err.Message);
                 }
             }
         }
@@ -598,7 +630,8 @@ namespace MotionControl
                 }
                 catch (Exception err)
                 {
-                    Growl.Warning(err.Message);
+                    Growl.Error(err.Message);
+                    SysLog.Error(err.Message);
                 }
             }
         }
@@ -668,20 +701,20 @@ namespace MotionControl
         {
             if (!CCameraManagement.CameraDict.ContainsKey(CameraSerial))
             {
-                Growl.Warning("没有相机！");
+                Growl.Warning(Properties.Resources.ErrorNoCam);
                 return;
             }
             CCameraBase cam = CCameraManagement.CameraDict[CameraSerial];
             if (!cam.Connected)
             {
-                Growl.Warning("未打开相机！");
+                Growl.Warning(Properties.Resources.ErrorNoOpenCam);
                 return;
             }
             if (IsFocusing)
             {
                 if (
                     HandyControl.Controls.MessageBox.Show(
-                        "正在对焦中，是否停止对焦？",
+                        Properties.Resources.AskStopFocus,
                         "Tips",
                         MessageBoxButton.YesNo
                     ) == MessageBoxResult.Yes
@@ -697,12 +730,12 @@ namespace MotionControl
 
             if (!Connected)
             {
-                Growl.Warning("运动控制未连接！");
+                Growl.Warning(Properties.Resources.ErrorNoConnect);
                 return;
             }
             if (IsRuning)
             {
-                Growl.Warning("软件需要先暂停！");
+                Growl.Warning(Properties.Resources.ErrorNeedStop);
                 return;
             }
             FocusDatas.Clear();
@@ -713,6 +746,7 @@ namespace MotionControl
                     {
                         try
                         {
+                            IsFocused = false;
                             IsFocusing = true;
                             SetSpeed(20);
                             WaitMoveTo(MotionConfig.SoftLimitN);
@@ -780,11 +814,14 @@ namespace MotionControl
                                 MotionConfig.FocusPos
                             );
                             WriteRegisterFix();
-                            Growl.Success("对焦完成！");
+                            Growl.Success(Properties.Resources.SuccessFocus);
+                            SysLog.Info(Properties.Resources.SuccessFocus);
+                            IsFocused = true;
                         }
                         catch (Exception ex)
                         {
-                            Growl.Error("对焦异常！" + ex.Message);
+                            Growl.Error(Properties.Resources.ErrorFocus + ex.Message);
+                            SysLog.Error(Properties.Resources.ErrorFocus + ex.Message);
                         }
                         finally
                         {

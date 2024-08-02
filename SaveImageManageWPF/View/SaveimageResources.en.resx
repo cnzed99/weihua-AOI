@@ -177,4 +177,7 @@
   <data name="byID" xml:space="preserve">
     <value>byID</value>
   </data>
+  <data name="FreeSpaceLimit" xml:space="preserve">
+    <value>Free Space Limit(GB)</value>
+  </data>
 </root>

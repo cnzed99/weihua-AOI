@@ -147,6 +147,9 @@ namespace UDPIP
                     CCommunicationManagement.ComLogger.Info(
                         "UDP连接服务器:" + this.setting.RemoteIP + "成功!"
                     );
+                    CCommunicationManagement.SysLog.Info(
+                        "UDP连接服务器:" + this.setting.RemoteIP + "成功!"
+                    );
                     ConnectedEventArgs?.Invoke(IsConnected, "UDP连接状态:已连接");
                     taskRecv = Task.Factory.StartNew(ReceiveData);
                 }
@@ -157,7 +160,7 @@ namespace UDPIP
             }
             catch (Exception ex)
             {
-                CCommunicationManagement.ComLogger.Info(
+                CCommunicationManagement.ComLogger.Error(
                     "UDP连接服务器:" + this.setting.RemoteIP + "失败:" + ex.Message
                 );
                 Close();

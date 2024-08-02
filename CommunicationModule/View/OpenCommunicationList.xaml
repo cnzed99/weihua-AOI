@@ -8,6 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:CommunicationModule"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     Title="{Binding [CommList], Source={x:Static local:CLang.s_Instance}}"
     Width="800"
     Height="300"
@@ -38,19 +39,23 @@
                 Width="80"
                 Command="{Binding AddCommand}"
                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonPrimary}" />
+                Style="{DynamicResource ButtonPrimary}" 
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
             <Button
                 Width="80"
                 Command="{Binding SetCommand}"
                 CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
                 Content="{Binding [Set], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonPrimary}" />
+                Style="{DynamicResource ButtonPrimary}"
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                />
             <Button
                 Width="80"
                 Command="{Binding DelCommand}"
                 CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
                 Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                Style="{DynamicResource ButtonDanger}" />
+                Style="{DynamicResource ButtonDanger}"
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
         </UniformGrid>
         <DataGrid
             x:Name="dataGrid1"
@@ -60,7 +65,8 @@
             HeadersVisibility="All"
             ItemsSource="{Binding Settings}"
             RowHeaderWidth="30"
-            SelectionMode="Single">
+            SelectionMode="Single"
+            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding SetCommand}" CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}" />

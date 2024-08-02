@@ -55,17 +55,11 @@ namespace Modbus
         /// 2024.7.12 李焕彬
         /// 删除元件
         /// </summary>
-        /// <param name="obj">元件集合</param>
+        /// <param name="elem">元件</param>
         [RelayCommand]
-        public void Del(object obj)
+        public void Del(CElement elem)
         {
-            if (obj is IList elems)
-            {
-                for (int i = elems.Count - 1; i >= 0; i--)
-                {
-                    Config.TestElems.Remove((CElement)elems[i]);
-                }
-            }
+            Config.TestElems.Remove(elem);
         }
 
         /// <summary>
@@ -96,6 +90,25 @@ namespace Modbus
                         Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 写入单个元件
+        /// </summary>
+        /// <param name="elem">元件</param>
+        [RelayCommand]
+        public void WriteSingle(CElement elem)
+        {
+            switch (elem.Type)
+            {
+                case EMELEMTYPE.EMELEMM:
+                    Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1 ? true : false);
+                    break;
+                case EMELEMTYPE.EMELEMD:
+                    Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
+                    break;
             }
         }
 

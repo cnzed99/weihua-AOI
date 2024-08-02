@@ -286,11 +286,20 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
-        ///   查找类似 新增报警 的本地化字符串。
+        ///   查找类似 新增 的本地化字符串。
         /// </summary>
         public static string Add {
             get {
                 return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增报警 的本地化字符串。
+        /// </summary>
+        public static string AddAlarm {
+            get {
+                return ResourceManager.GetString("AddAlarm", resourceCulture);
             }
         }
         
@@ -430,6 +439,24 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 时间段 的本地化字符串。
+        /// </summary>
+        public static string Hours {
+            get {
+                return ResourceManager.GetString("Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 信息 的本地化字符串。
+        /// </summary>
+        public static string Info {
+            get {
+                return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 目标IP 的本地化字符串。
         /// </summary>
         public static string IP {
@@ -462,6 +489,15 @@ namespace CommunicationModule.Properties {
         public static string Order {
             get {
                 return ResourceManager.GetString("Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 总缺陷占比 的本地化字符串。
+        /// </summary>
+        public static string Percent {
+            get {
+                return ResourceManager.GetString("Percent", resourceCulture);
             }
         }
         
@@ -592,6 +628,15 @@ namespace CommunicationModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 开始时间 的本地化字符串。
+        /// </summary>
+        public static string StartTime {
+            get {
+                return ResourceManager.GetString("StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 启用状态 的本地化字符串。
         /// </summary>
         public static string State {
@@ -606,6 +651,15 @@ namespace CommunicationModule.Properties {
         public static string Tips {
             get {
                 return ResourceManager.GetString("Tips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 生产数量 的本地化字符串。
+        /// </summary>
+        public static string Total {
+            get {
+                return ResourceManager.GetString("Total", resourceCulture);
             }
         }
         

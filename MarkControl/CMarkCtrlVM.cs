@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using WH.Entity;
 using WH.Entity.CommonLib;
+using WH.Entity.LogRecord;
 using Timer = System.Timers.Timer;
 
 namespace MarkControl
@@ -27,6 +28,23 @@ namespace MarkControl
                 MarkConfig.token
             );
             Connect();
+        }
+
+        /// <summary>
+        /// 20240801 李焕彬
+        /// 当前制程是否启动
+        /// </summary>
+        [ObservableProperty]
+        private bool isRuning = false;
+
+        /// <summary>
+        /// 20240801 李焕彬
+        /// 设置当前制程是否启动
+        /// </summary>
+        /// <param name="isRuning">是否启动</param>
+        public void SetRunning(bool isRuning)
+        {
+            this.IsRuning = isRuning;
         }
 
         /// <summary>
@@ -120,6 +138,12 @@ namespace MarkControl
         private int encoderSetValue = 0;
 
         /// <summary>
+        /// 2024.7.19 李焕彬
+        /// 运行日志
+        /// </summary>
+        protected CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
+
+        /// <summary>
         /// 2024.7.15 李焕彬
         /// 初始化控制，包含连接、写入初始参数
         /// </summary>
@@ -187,16 +211,21 @@ namespace MarkControl
                     Timer timer = new Timer(TimeSpan.FromMilliseconds(300));
                     timer.Elapsed += Timer_Elapsed;
                     timer.Enabled = true;
+
+                    Growl.Success(Properties.Resources.SuccessConnect);
+                    SysLog.Info(Properties.Resources.SuccessConnect);
                 }
                 else
                 {
                     Connected = false;
                     Growl.Error(Properties.Resources.ConnectError);
+                    SysLog.Error(Properties.Resources.ConnectError);
                 }
             }
             catch (Exception ex)
             {
                 Growl.Error(ex.Message);
+                SysLog.Error(ex.Message);
             }
         }
 

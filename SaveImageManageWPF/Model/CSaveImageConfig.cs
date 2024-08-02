@@ -155,7 +155,15 @@ namespace SaveImageManage
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("OK间隔存图片数")]
-        private int okIntervalCount;
+        private int okIntervalCount = 0;
+
+        /// <summary>
+        /// 2024.8.1 李焕彬
+        /// 存图磁盘可用空间限制(GB)
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("存图磁盘可用空间限制(GB)")]
+        private int freeSpaceLimit = 5;
 
         public void Receive(OperateMessage message)
         {

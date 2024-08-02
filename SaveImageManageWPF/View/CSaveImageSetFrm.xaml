@@ -51,9 +51,9 @@
             <DataTemplate DataType="{x:Type sysio:DriveInfo}">
                 <Border Background="{StaticResource ProgressBarIndicatorAnimatedFill}" CornerRadius="5">
                     <hc:UniformSpacingPanel
-                        HorizontalSpacing="5"
                         Margin="5,0"
                         VerticalAlignment="Center"
+                        HorizontalSpacing="5"
                         Orientation="Horizontal">
                         <TextBlock Style="{StaticResource TextBlockDefault}" Text="{Binding Name}" />
                         <TextBlock
@@ -135,21 +135,32 @@
                         IsChecked="{Binding Param.SaveSelect, Converter={StaticResource CheckConverter}, ConverterParameter=2}" />
                 </hc:ElementGroup>
 
-                <hc:ElementGroup>
+                <UniformGrid Columns="2">
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [OkDays], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.OkDays}" />
+                        Value="{Binding Param.OkDays}" 
+                        Minimum="1"/>
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [NGDays], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.NgDays}" />
+                        Value="{Binding Param.NgDays}" 
+                        Minimum="1"/>
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [OKIntervalCount], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.OkIntervalCount}" />
-
-                </hc:ElementGroup>
+                        Value="{Binding Param.OkIntervalCount}" 
+                        Minimum="0"/>
+                    <hc:NumericUpDown
+                        hc:TitleElement.Title="{Binding [FreeSpaceLimit], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
+                        InputScope="Number"
+                        Minimum="5"
+                        Value="{Binding Param.FreeSpaceLimit}" />
+                </UniformGrid>
 
             </StackPanel>
 
@@ -187,21 +198,21 @@
                         Content="{Binding [Proj], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SavebyProjName}" />
                     <CheckBox
-                        x:Name="uccb_SaveCamName"
-                        Content="{Binding [byCam], Source={x:Static local:CLang.s_SaveImageLang}}"
-                        IsChecked="{Binding Param.SavebyCamName}" />
-                    <CheckBox
                         x:Name="uccb_saveInhour"
                         Content="{Binding [byTime], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SavebyHour}" />
                     <CheckBox
+                        x:Name="uccb_SaveCamName"
+                        Content="{Binding [byCam], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        IsChecked="{Binding Param.SavebyCamName}" />
+                    <CheckBox
                         x:Name="uccb_saveDefectName"
                         Content="{Binding [byDefect], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SavebyDefectName}" />
-                    <CheckBox
+                    <!--<CheckBox
                         x:Name="uccb_savebyID"
-                        Content="{Binding [byID], Source={x:Static local:CLang.s_SaveImageLang}}"
-                        IsChecked="{Binding Param.SavebyID}" />
+                        Content="{Binding [byID],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        IsChecked="{Binding Param.SavebyID}" />-->
                 </StackPanel>
             </UniformGrid>
         </GroupBox>

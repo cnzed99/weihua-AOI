@@ -230,13 +230,26 @@ namespace WH.DetectSystem.ViewModels
                     loginPerson.Adapt(CLoginViewModel.SloinPerson);
                 }
                 MotionCtrlVM.SetRunning(IsStart);
+                MarkCtrlVM.SetRunning(IsStart);
             }
         }
 
+        private bool isManualTest = false;
+
         /// <summary>
+        /// 2024.8.1 李焕彬
         /// 离线检测或手动调试
         /// </summary>
-        public bool IsManualTest { get; set; } = false;
+        public bool IsManualTest
+        {
+            get { return isManualTest; }
+            set
+            {
+                isManualTest = value;
+                MotionCtrlVM.SetRunning(isManualTest);
+                MarkCtrlVM.SetRunning(isManualTest);
+            }
+        }
 
         /// <summary>
         /// 界面绑定变量，勿用此变量判断用户是否启动软件
@@ -445,6 +458,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
+                        cell.CamName = CCameraManagement.CamParamDict[CameraSerial].Name;
                         WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
                         if (MotionCtrlVM.IsFocusing)
                         {
@@ -455,6 +469,14 @@ namespace WH.DetectSystem.ViewModels
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
+                                StringBuilder strbuilder = new StringBuilder("[");
+                                strbuilder.Append("取图线程");
+                                strbuilder.Append("]     ");
+                                strbuilder.Append(cell.ID);
+                                strbuilder.Append("   cell入算法队列失败。");
+                                await m_InfoChannel.Writer.WriteAsync(
+                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                );
                                 cell.Dispose();
                             }
                         }
@@ -479,30 +501,37 @@ namespace WH.DetectSystem.ViewModels
                 {
                     try
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
+                        //StringBuilder strbuilder = new StringBuilder("[");
                         //strbuilder.Append("算法");
                         //strbuilder.Append("]     ");
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         MaociAlgorParamConfig.MaociExcute(cell);
-                        //if (cell.Skipthis) { }
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
                         //strbuilder = new StringBuilder("[");
-                        strbuilder.Append("算法");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   配方执行完成,耗时:");
-                        strbuilder.Append(cell.RecipeTime.TotalMilliseconds.ToString("F2"));
+                        //strbuilder.Append("算法");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   配方执行完成,耗时:");
+                        //strbuilder.Append(cell.RecipeTime.TotalMilliseconds.ToString("F2"));
                         AlgorithmTime = cell.RecipeTime.TotalMilliseconds;
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg(strbuilder.ToString(), LOG.LOG_INFO)
-                        );
+                        //await m_InfoChannel.Writer.WriteAsync(
+                        //    new PrintMsg(strbuilder.ToString(), LOG.LOG_INFO)
+                        //);
 
                         if (!m_FilterChannel.Writer.TryWrite(cell))
                         {
                             cell.Dispose();
+                            StringBuilder strbuilder = new StringBuilder("[");
+                            strbuilder.Append("算法线程");
+                            strbuilder.Append("]     ");
+                            strbuilder.Append(cell.ID);
+                            strbuilder.Append("   cell入筛选队列失败。");
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                            );
                         }
                     }
                     catch (Exception ex)
@@ -532,9 +561,7 @@ namespace WH.DetectSystem.ViewModels
                         cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Stop();
                         cell.ProcessTime = DateTime.Now - cell.CreateTime;
-                        StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Clear();
-                        strbuilder.Append("[结束]     ");
+                        StringBuilder strbuilder = new StringBuilder("[结束]     ");
                         strbuilder.Append(cell.ID);
                         strbuilder.Append("   检测结束,耗时:");
                         strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
@@ -551,9 +578,18 @@ namespace WH.DetectSystem.ViewModels
                             );
                         }
                         FilterTime = cell.FilterTime.TotalMilliseconds;
-                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         if (!m_ShowImageChannel.Writer.TryWrite(cell))
+                        {
                             cell.Dispose();
+                            strbuilder = new StringBuilder("[");
+                            strbuilder.Append("筛选线程");
+                            strbuilder.Append("]     ");
+                            strbuilder.Append(cell.ID);
+                            strbuilder.Append("   cell入显示队列失败。");
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                            );
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -608,15 +644,13 @@ namespace WH.DetectSystem.ViewModels
                                     drawView.SetPen(Brushes.Green);
                                     drawView.ImgDrawPoints(cell.MaociTestOut.LightBotRegion, false);
                                     drawView.ImgDrawPoints(cell.MaociTestOut.LightTopRegion, false);
-                                    if (!cell.IsOK && cell.Detection != null)
+                                    if (!cell.IsOK)
                                     {
                                         DefectFilter dstFilter = cell.Detection.DefectFilter;
                                         StringBuilder textBuilder = new StringBuilder();
                                         textBuilder.AppendLine(dstFilter.Name);
-                                        textBuilder.Append(dstFilter.QualityLevel.Name);
-                                        drawView.SetFontBrush(
-                                            dstFilter.QualityLevel.ShowColor.Brush
-                                        );
+                                        textBuilder.Append(cell.Quality.Name);
+                                        drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                         drawView.WinDrawText(
                                             textBuilder.ToString(),
                                             AlignmentX.Right,
@@ -686,6 +720,16 @@ namespace WH.DetectSystem.ViewModels
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                        drawView.WinDrawText(
+                                            "OK",
+                                            AlignmentX.Right,
+                                            AlignmentY.Top,
+                                            false
+                                        );
+                                    }
                                     //drawView.Invalidate();
                                 });
                             }
@@ -716,11 +760,23 @@ namespace WH.DetectSystem.ViewModels
                                 }
                             }
                             if (!m_SaveImageChannel.Writer.TryWrite(copy))
+                            {
                                 copy.Dispose();
+                            }
                         }
 
                         if (!m_AlarmChannel.Writer.TryWrite(cell))
+                        {
                             cell.Dispose();
+                            StringBuilder strbuilder = new StringBuilder("[");
+                            strbuilder.Append("显示线程");
+                            strbuilder.Append("]     ");
+                            strbuilder.Append(cell.ID);
+                            strbuilder.Append("   cell入报警队列失败。");
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                            );
+                        }
 
                         if (cell.isOnce) { }
                     }
@@ -785,7 +841,7 @@ namespace WH.DetectSystem.ViewModels
                     //}
                     //catch (Exception ex)
                     //{
-                    //    SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
+                    //    s_SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
                     //}
                     #endregion
 
@@ -818,18 +874,23 @@ namespace WH.DetectSystem.ViewModels
             Task waitSaveImgTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
+                int saveCount = 0; //存图间隔计数用
                 await foreach (Cell cell in m_SaveImageChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        //// int queCount = _waitSaveImageQueue.Count;
-                        long space = DiskSpace.GetHardDiskSpace(MaociSaveImageConfig.SaveImagePath);
-
-                        string savePath = MaociSaveImageConfig.Excute(cell);
-                        WeakReferenceMessenger.Default.Send(
-                            new AddOneNgImagePathMessage() { Path = savePath },
-                            TokeVM
+                        string savePath = MaociSaveImageConfig.Excute(
+                            SystemSettings,
+                            cell,
+                            ref saveCount
                         );
+                        if (savePath != null)
+                        {
+                            WeakReferenceMessenger.Default.Send(
+                                new AddOneNgImagePathMessage() { Path = savePath },
+                                TokeVM
+                            );
+                        }
                         cell.Dispose(); //这个cell是复制的clone 存图后清理
                     }
                     catch (Exception ex)
@@ -860,15 +921,33 @@ namespace WH.DetectSystem.ViewModels
         /// <param name="cell"></param>
         private void SetBadCell(Cell cell)
         {
-            if (cell.TimeOut)
+            cell.Quality = MaociQualityConfig.GetWorst();
+            cell.IsOK = false;
+            cell.Detection = new CellDetection() { Category = Category.值, };
+            switch (cell.AlgoriDetectResult)
             {
-                cell.Quality = MaociQualityConfig.GetWorst();
-                cell.IsOK = false;
-                cell.Detection = new CellDetection()
-                {
-                    DefectFilter = MaociFilterConfig["异常类"]["超时"]["超时"],
-                    Category = Category.值,
-                };
+                case EMDETECTRESULT.EMDR_OK:
+                    break;
+                case EMDETECTRESULT.EMDR_NG_LIGHTEDGE:
+                    break;
+                case EMDETECTRESULT.EMDR_NG_DARKEDGE:
+                    cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                        "异常类",
+                        "算法异常",
+                        "料区边缘Ng"
+                    );
+                    break;
+                case EMDETECTRESULT.EMDR_NG_EMPTY:
+                    break;
+                case EMDETECTRESULT.EMDR_TIMEOUT:
+                    cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                        "异常类",
+                        "算法异常",
+                        "超时"
+                    );
+                    break;
+                default:
+                    break;
             }
         }
     }

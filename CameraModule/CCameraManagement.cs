@@ -27,6 +27,12 @@ namespace CameraModule
         public static CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         /// <summary>
+        /// 2024.7.19 李焕彬
+        /// 运行日志
+        /// </summary>
+        public static CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
+
+        /// <summary>
         /// 2024.7.23 李焕彬
         /// 相机操作类字典,从文件打开软件时使用
         /// key:相机序列号 Value:相机操作对象
@@ -118,18 +124,18 @@ namespace CameraModule
                                         Properties.Resources.InfoInit
                                             + Cam.Value.Setting.SerialNumber
                                     );
-                                    Growl.Success(
+                                    SysLog.Info(
                                         Properties.Resources.InfoInit
                                             + Cam.Value.Setting.SerialNumber
                                     );
                                 }
                                 else
                                 {
-                                    CCameraManagement.CamLogger.Info(
+                                    CCameraManagement.CamLogger.Error(
                                         Properties.Resources.ErrorInit3
                                             + Cam.Value.Setting.SerialNumber
                                     );
-                                    Growl.Warning(
+                                    Growl.Error(
                                         Properties.Resources.InfoInit
                                             + Cam.Value.Setting.SerialNumber
                                     );

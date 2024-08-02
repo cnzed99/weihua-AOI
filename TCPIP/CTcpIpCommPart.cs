@@ -159,6 +159,9 @@ namespace TCPIP
                     CCommunicationManagement.ComLogger.Info(
                         "TCP连接服务器:" + this.setting.RemoteIP + "成功!"
                     );
+                    CCommunicationManagement.SysLog.Info(
+                        "TCP连接服务器:" + this.setting.RemoteIP + "成功!"
+                    );
                     ConnectedEventArgs?.Invoke(IsConnected, "TCP连接状态:已连接");
                     taskRecv = Task.Factory.StartNew(ReceiveData);
                 }

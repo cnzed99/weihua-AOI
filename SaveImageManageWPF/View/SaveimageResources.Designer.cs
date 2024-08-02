@@ -61,7 +61,7 @@ namespace SaveImageManage.View {
         }
         
         /// <summary>
-        ///   查找类似 按制程(相机)名称存 的本地化字符串。
+        ///   查找类似 按相机名称存 的本地化字符串。
         /// </summary>
         public static string byCam {
             get {
@@ -111,6 +111,15 @@ namespace SaveImageManage.View {
         public static string Format {
             get {
                 return ResourceManager.GetString("Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 存图磁盘可用空间限制(GB) 的本地化字符串。
+        /// </summary>
+        public static string FreeSpaceLimit {
+            get {
+                return ResourceManager.GetString("FreeSpaceLimit", resourceCulture);
             }
         }
         

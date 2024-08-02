@@ -30,7 +30,6 @@
                 x:Key="SuccessToBrushConverter"
                 FalseValue="{x:Null}"
                 TrueValue="{DynamicResource SuccessBrush}" />
-
             <cov:BoolToStringConverter
                 x:Key="BoolToStringConverter"
                 FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
@@ -61,51 +60,41 @@
     </UserControl.Resources>
     <TabControl Style="{StaticResource TabControlInLine}">
         <TabItem Header="{Binding [AxisControl], Source={x:Static local:CLang.s_Instance}}">
-            <DockPanel>
+            <DockPanel IsEnabled="{Binding IsRuning, Converter={StaticResource Boolean2BooleanReConverter}}">
                 <UniformGrid
                     Margin="5"
                     Columns="2"
                     DockPanel.Dock="Top">
                     <Button
                         Width="100"
-                        Background="{Binding Connected, Converter={StaticResource SuccessToBrushConverter}}"
+                        wh:StatusDotElement.DotBrush="{Binding Connected, Converter={StaticResource StatusConverter}}"
                         Command="{Binding ConnectCommand}"
-                        Content="{Binding Connected, Converter={StaticResource BoolToStringConverter}}" />
-                    <!--<Button
-                        Width="100"
-                        Content="{Binding [ClearAlarm], Source={x:Static local:CLang.s_Instance}}"
-                        Style="{DynamicResource ButtonWarning}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="PreviewMouseDown">
-                                <i:InvokeCommandAction Command="{Binding MouseDownCommand}" CommandParameter="{Binding MotionConfig.AddrReset}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="PreviewMouseUp">
-                                <i:InvokeCommandAction Command="{Binding MouseUpCommand}" CommandParameter="{Binding MotionConfig.AddrReset}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Button>-->
+                        Content="{Binding Connected, Converter={StaticResource BoolToStringConverter}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                        Style="{DynamicResource StatusDotButton}" />
                     <Button
                         Width="100"
                         Margin="20,0"
+                        wh:StatusDotElement.DotBrush="{Binding IsFocused, Converter={StaticResource StatusConverter}}"
                         Command="{Binding AutoFocusCommand}"
                         Content="{Binding IsFocusing, Converter={StaticResource FocusToStringConverter}}"
                         DockPanel.Dock="Right"
-                        
-                        Style="{DynamicResource ButtonDashedPrimary}" />
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                        Style="{DynamicResource StatusDotButton}" />
                 </UniformGrid>
                 <GroupBox
                     Margin="5"
                     DockPanel.Dock="Top"
                     Header="{Binding [OperateAxis], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding IsFocusing, Converter={StaticResource Boolean2BooleanReConverter}}"
                     Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Resources>
                         <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
                             <Setter Property="VerticalAlignment" Value="Center" />
                         </Style>
                     </GroupBox.Resources>
-                    <StackPanel>
+                    <StackPanel IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}">
                         <UniformGrid Columns="5">
-
                             <Button
                                 Width="100"
                                 wh:StatusDotElement.DotBrush="{Binding IsEnable, Converter={StaticResource StatusConverter}}"
@@ -433,6 +422,7 @@
                                 CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItems}"
                                 Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                                 Style="{DynamicResource ButtonDanger}" />
                             <Button
                                 Width="80"
@@ -440,6 +430,7 @@
                                 Command="{Binding AddInputCommand}"
                                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                                 Style="{DynamicResource ButtonPrimary}" />
                         </DockPanel>
                     </GroupBox.Header>
@@ -452,7 +443,14 @@
                         RowHeaderWidth="30"
                         Style="{StaticResource DataGrid1}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn
+                                Binding="{Binding Name}"
+                                Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                            <DataGridTextColumn
+                                Binding="{Binding Addr}"
+                                Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTemplateColumn Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -460,15 +458,11 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <!--<DataGridCheckBoxColumn
-                                Binding="{Binding HasSignal}"
-                                Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
-                                IsReadOnly="True" />-->
-                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                             <DataGridTextColumn
                                 Width="180"
                                 Binding="{Binding Description}"
-                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>
@@ -483,6 +477,7 @@
                                 CommandParameter="{Binding ElementName=dataGrid2, Path=SelectedItems}"
                                 Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                                 Style="{DynamicResource ButtonDanger}" />
                             <Button
                                 Width="80"
@@ -490,6 +485,7 @@
                                 Command="{Binding AddOutputCommand}"
                                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                                 Style="{DynamicResource ButtonPrimary}" />
                         </DockPanel>
                     </GroupBox.Header>
@@ -501,7 +497,8 @@
                         RowHeaderWidth="30"
                         Style="{DynamicResource DataGrid1}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" 
+                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTemplateColumn Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -513,7 +510,8 @@
                                 Binding="{Binding HasSignal}"
                                 Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
                                 IsReadOnly="True" />-->
-                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" 
+                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTemplateColumn Header="{Binding [OpenOrClose], Source={x:Static local:CLang.s_Instance}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -524,58 +522,35 @@
                                             Command="{Binding ElementName=dataGrid2, Path=DataContext.SetOutputCommand}"
                                             CommandParameter="{Binding}"
                                             IsChecked="{Binding Set, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" 
+                                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}" />
+                            <DataGridTextColumn Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}" 
+                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTextColumn
                                 Width="180"
                                 Binding="{Binding Description}"
-                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" 
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>
             </UniformGrid>
         </TabItem>
         <TabItem Header="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}">
-            <TabItem.Resources>
-                <!--<Style TargetType="DataGrid" BasedOn="{StaticResource DataGrid.Small}">
-                    <Setter Property="AutoGenerateColumns" Value="False"/>
-                    <Setter Property="ColumnHeaderStyle">
-                        <Setter.Value>
-                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                            </Style>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="CellStyle">
-                        <Setter.Value>
-                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle.Small}">
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                            </Style>
-                        </Setter.Value>
-                    </Setter>
-                </Style>-->
-            </TabItem.Resources>
             <GroupBox Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
                     <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
                         <TextBlock Text="{Binding [RegisterInfo], Source={x:Static local:CLang.s_Instance}}" />
                         <Button
                             Width="80"
-                            Margin="20,2"
-                            Command="{Binding DelRegisterCommand}"
-                            CommandParameter="{Binding ElementName=dataGrid3, Path=SelectedItems}"
-                            Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                            DockPanel.Dock="Right"
-                            Style="{DynamicResource ButtonDanger}" />
-                        <Button
-                            Width="80"
                             Margin="10,2"
                             Command="{Binding WriteRegisterCommand}"
-                            Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            Content="{Binding [WriteAll], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                             Style="{DynamicResource ButtonPrimary}" />
                         <Button
                             Width="80"
@@ -583,6 +558,7 @@
                             Command="{Binding AddRegisterCommand}"
                             Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                             Style="{DynamicResource ButtonPrimary}" />
 
                     </DockPanel>
@@ -590,22 +566,56 @@
                 <DataGrid
                     Name="dataGrid3"
                     hc:DataGridAttach.ShowRowNumber="True"
+                    AutoGenerateColumns="False"
                     HeadersVisibility="All"
                     ItemsSource="{Binding MotionConfig.RegisterSets}"
-                    RowHeaderWidth="30"
-                    Style="{StaticResource DataGrid1}">
+                    RowHeaderWidth="30">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                        <DataGridTextColumn
+                            Binding="{Binding Name}"
+                            Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                        <DataGridTextColumn
+                            Binding="{Binding Addr}"
+                            Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                         <DataGridTextColumn
                             Binding="{Binding ValueRead}"
                             Header="{Binding [Read], Source={x:Static local:CLang.s_Instance}}"
                             IsReadOnly="True" />
-                        <DataGridTextColumn Binding="{Binding ValueWrite}" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}" />
-                        <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
                         <DataGridTextColumn
-                            Width="180"
+                            Binding="{Binding ValueWrite}"
+                            Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                        <DataGridTemplateColumn Width="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Command="{Binding ElementName=dataGrid3, Path=DataContext.WriteSingleRegisterCommand}"
+                                        CommandParameter="{Binding}"
+                                        Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                        Style="{DynamicResource ButtonSuccess}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70" Header="{Binding [Del], Source={x:Static local:CLang.s_Instance}}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Command="{Binding ElementName=dataGrid3, Path=DataContext.DelRegisterCommand}"
+                                        CommandParameter="{Binding}"
+                                        Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                        Style="{DynamicResource ButtonDanger}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+                            Width="100"
                             Binding="{Binding Description}"
-                            Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
+                            Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </GroupBox>
@@ -620,11 +630,13 @@
                             Command="{Binding WriteRegisterFixCommand}"
                             Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                             Style="{DynamicResource ButtonPrimary}" />
                         <TextBlock Text="{Binding [AxisConfig], Source={x:Static local:CLang.s_Instance}}" />
                     </DockPanel>
                 </GroupBox.Header>
-                <wh:CPropertyGridLang SelectedObject="{Binding MotionConfig}" lang="{x:Static local:CLang.s_Instance}" />
+                <wh:CPropertyGridLang SelectedObject="{Binding MotionConfig}" lang="{x:Static local:CLang.s_Instance}" 
+                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
             </GroupBox>
         </TabItem>
     </TabControl>

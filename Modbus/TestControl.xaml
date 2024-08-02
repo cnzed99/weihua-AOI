@@ -29,14 +29,6 @@
                     <Button
                         Width="80"
                         Margin="10,2"
-                        Command="{Binding DelCommand}"
-                        CommandParameter="{Binding ElementName=dataGrid, Path=SelectedItems}"
-                        Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
-                        DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonDanger}" />
-                    <Button
-                        Width="80"
-                        Margin="10,2"
                         Command="{Binding WriteCommand}"
                         Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
@@ -73,8 +65,30 @@
                         Header="{Binding [Read], Source={x:Static local:CLang.s_Instance}}"
                         IsReadOnly="True" />
                     <DataGridTextColumn Binding="{Binding WriteValue}" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}" />
+                    <DataGridTemplateColumn Width="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Command="{Binding ElementName=dataGrid, Path=DataContext.WriteSingleCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonSuccess}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="70" Header="{Binding [Del], Source={x:Static local:CLang.s_Instance}}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Command="{Binding ElementName=dataGrid, Path=DataContext.DelCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                    Style="{DynamicResource ButtonDanger}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn
-                        Width="180"
+                        Width="130"
                         Binding="{Binding Description}"
                         Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
                 </DataGrid.Columns>

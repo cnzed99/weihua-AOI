@@ -43,17 +43,13 @@ namespace WH.DetectSystem
         /// <param name="cell">检测对象</param>
         public static void MaociExcute(this CMaociAlgorParamConfig paramMaoci, Cell cell)
         {
-            var result = cell.MaociTestOut.DetectImage(
+            cell.AlgoriDetectResult = cell.MaociTestOut.DetectImage(
                 cell.Image.ImageWidth,
                 cell.Image.ImageHeight,
                 cell.Image.StrideWidth,
                 cell.Image.ImageData,
                 paramMaoci.MaociAlgorParamUse
             );
-            if (result == EMDETECTRESULT.EMDR_TIMEOUT)
-            {
-                cell.TimeOut = true;
-            }
         }
     }
 }

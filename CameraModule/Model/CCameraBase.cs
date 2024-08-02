@@ -54,12 +54,6 @@ namespace CameraModule
 
         /// <summary>
         /// 2024.7.19 李焕彬
-        /// 相机回调日志
-        /// </summary>
-        protected CLogRec callbackLogger = CLogRec.Create("CamCallBack", "D:/Data");
-
-        /// <summary>
-        /// 2024.7.19 李焕彬
         /// 相机生成图日志
         /// </summary>
         protected CLogRec getImageLogger = CLogRec.Create("CamGetImage", "D:/Data");
@@ -310,7 +304,6 @@ namespace CameraModule
         public async virtual void GrabThread()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            StringBuilder textBuilder = new StringBuilder();
             while (true)
             {
                 if (!startGrab)
@@ -322,16 +315,15 @@ namespace CameraModule
                 {
                     if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
                     {
-                        getImageLogger.Info(Properties.Resources.ErrorLostImage);
                         if (LostImage != null)
                         {
                             IsLostFrame = true;
                             ExportImage(LostImage);
                         }
-                        textBuilder.Clear();
+                        StringBuilder textBuilder = new StringBuilder();
                         textBuilder.Append(Properties.Resources.ErrorLostImage2);
                         textBuilder.Append(timeOut.ElapsedMilliseconds);
-                        getImageLogger.Info(textBuilder.ToString());
+                        CCameraManagement.CamLogger.Error(textBuilder.ToString());
                     }
 
                     if (this.imageQueue.Count > 0 && this.noOver)
@@ -370,12 +362,12 @@ namespace CameraModule
                 {
                     if (!OutputImageChannel.Writer.TryWrite(cell))
                     {
-                        //StringBuilder strbuilder = new StringBuilder("[");
-                        //strbuilder.Append("相机");
-                        //strbuilder.Append("]     ");
-                        //strbuilder.Append(cell.ID);
-                        //strbuilder.Append("   cell入列失败，丢弃。");
-                        //SysLog.Error(strbuilder.ToString());
+                        StringBuilder strbuilder = new StringBuilder("[");
+                        strbuilder.Append("相机");
+                        strbuilder.Append("]     ");
+                        strbuilder.Append(cell.ID);
+                        strbuilder.Append("   cell入列失败，丢弃。");
+                        CCameraManagement.CamLogger.Error(strbuilder.ToString());
                         cell.Dispose();
                     }
                     else
@@ -411,6 +403,7 @@ namespace CameraModule
         /// </summary>
         public virtual void ExecuteSoftwareTrigger()
         {
+            CCameraManagement.CamLogger.Info(Properties.Resources.SoftWareOnce);
             startGrab = true;
             timeOut.Restart();
             imageQueue.Clear(); //拍照前清除

@@ -153,13 +153,13 @@ namespace WH.DetectSystem.ViewModels
                 //    SystemSettings = CSysSet.LoadParameter();
                 //    if (SystemSettings != null)
                 //    {
-                //        SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
+                //        s_SysLog.Info(SystemSettingResources.SystemSettingsReadSuccess);
 
                 //        //CLoading.DispText("读取系统配置成功...", 10);
                 //    }
                 //    else
                 //    {
-                //        SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
+                //        s_SysLog.Error(SystemSettingResources.SystemSettingsReadFailed);
                 //        //CLoading.DispText("读取系统配置失败...", 10);
                 //    }
                 //    progress.Report(10);

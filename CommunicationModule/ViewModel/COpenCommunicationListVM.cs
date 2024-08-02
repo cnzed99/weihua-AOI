@@ -54,8 +54,11 @@ namespace CommunicationModule
         [RelayCommand]
         void Set(CCommunicationSettingBase settingBase)
         {
-            OpenCommunication openCommunication = new OpenCommunication(settingBase);
-            openCommunication.Show();
+            if (settingBase != null)
+            {
+                OpenCommunication openCommunication = new OpenCommunication(settingBase);
+                openCommunication.Show();
+            }
         }
 
         /// <summary>
@@ -65,8 +68,11 @@ namespace CommunicationModule
         [RelayCommand]
         void Del(CCommunicationSettingBase settingBase)
         {
-            Settings.Remove(settingBase);
-            CCommunicationManagement.DelComm(settingBase.Guid);
+            if (settingBase != null)
+            {
+                Settings.Remove(settingBase);
+                CCommunicationManagement.DelComm(settingBase.Guid);
+            }
         }
     }
 }

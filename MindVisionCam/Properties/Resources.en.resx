@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="专用参数" xml:space="preserve">
+  <data name="R" xml:space="preserve">
     <value>Special</value>
   </data>
   <data name="1.触发源" xml:space="preserve">
@@ -155,9 +155,6 @@
   </data>
   <data name="ErrorStop2" xml:space="preserve">
     <value>Abnormality occurred when the Medway Vision camera stopped collecting, serial number:</value>
-  </data>
-  <data name="SoftWareOnce" xml:space="preserve">
-    <value>Medway sees the camera perform a soft trigger once</value>
   </data>
   <data name="ErrorSoftWare" xml:space="preserve">
     <value>Medway Vision Camera: Failed to execute 'Soft Trigger Once', Error Code:</value>

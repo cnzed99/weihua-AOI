@@ -194,5 +194,14 @@ namespace Modbus.Properties {
                 return ResourceManager.GetString("Write", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 写入全部 的本地化字符串。
+        /// </summary>
+        public static string WriteAll {
+            get {
+                return ResourceManager.GetString("WriteAll", resourceCulture);
+            }
+        }
     }
 }

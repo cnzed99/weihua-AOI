@@ -21,9 +21,7 @@ namespace WH.Entity.DiskSpace
             long totalSize = 0;
             if (File.Exists(str_HardDiskName) || Directory.Exists(str_HardDiskName))
             {
-                string diskName = Path.GetFullPath(str_HardDiskName)
-                    .Split(':', 1, StringSplitOptions.TrimEntries)[0];
-                diskName = diskName + ":\\";
+                string diskName = Path.GetPathRoot(str_HardDiskName);
                 System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
                 foreach (System.IO.DriveInfo drive in drives)
                 {

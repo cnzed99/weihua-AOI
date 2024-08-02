@@ -101,6 +101,7 @@ namespace MotionControl
                 catch (Exception err)
                 {
                     Growl.Error(err.Message);
+                    CMotionCtrlVM.SysLog.Error(err.Message);
                 }
             });
         }
@@ -301,6 +302,7 @@ namespace MotionControl
             catch (Exception ex)
             {
                 Growl.Error(ex.Message);
+                CMotionCtrlVM.SysLog.Error(ex.Message);
             }
         }
 
@@ -329,6 +331,7 @@ namespace MotionControl
             catch (Exception ex)
             {
                 Growl.Error(ex.Message);
+                CMotionCtrlVM.SysLog.Error(ex.Message);
                 return 0;
             }
         }
@@ -354,6 +357,7 @@ namespace MotionControl
             catch (Exception ex)
             {
                 Growl.Error(ex.Message);
+                CMotionCtrlVM.SysLog.Error(ex.Message);
             }
         }
 
@@ -379,6 +383,7 @@ namespace MotionControl
             catch (Exception ex)
             {
                 Growl.Error(ex.Message);
+                CMotionCtrlVM.SysLog.Error(ex.Message);
                 return false;
             }
         }

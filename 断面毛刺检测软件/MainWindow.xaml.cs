@@ -93,6 +93,12 @@ namespace 断面毛刺检测软件
                             Growl.Warning("请退出设置或离线手动模式！");
                             return;
                         }
+                        if (mainVM.MotionCtrlVM.IsFocusing)
+                        {
+                            mainVM.StartStop = false;
+                            Growl.Warning("正在对焦中，不能启动！");
+                            return;
+                        }
                         if (mainVM.IsStart == mainVM.StartStop)
                             return;
                         mainVM.IsStart = mainVM.StartStop;

@@ -187,6 +187,10 @@ namespace WH.Controls
                     .Select(CreatePropertyItem)
                     .Do(item => item.InitElement())
             );
+            foreach (UIElement item in _dataView)
+            {
+                item.IsEnabled = IsEditable;
+            }
 
             SortByCategory(null, null);
             _itemsControl.ItemsSource = _dataView;
@@ -303,22 +307,49 @@ namespace WH.Controls
                 default(LanguageManager.CLanguageManager),
                 (d, e) =>
                 {
-                    CPropertyGridLang PropertyGridLang = (CPropertyGridLang)d;
-                    if (PropertyGridLang.lang != null)
+                    CPropertyGridLang propertyGrid = (CPropertyGridLang)d;
+                    if (propertyGrid.lang != null)
                     {
-                        PropertyGridLang.lang.PropertyChanged += (o, k) =>
+                        propertyGrid.lang.PropertyChanged += (o, k) =>
                         {
-                            PropertyGridLang.OnSelectedObjectChanged(
-                                PropertyGridLang.SelectedObject,
-                                PropertyGridLang.SelectedObject
+                            propertyGrid.OnSelectedObjectChanged(
+                                propertyGrid.SelectedObject,
+                                propertyGrid.SelectedObject
                             );
                         };
-                        if (PropertyGridLang.SelectedObject != null)
+                        if (propertyGrid.SelectedObject != null)
                         {
-                            PropertyGridLang.OnSelectedObjectChanged(
-                                PropertyGridLang.SelectedObject,
-                                PropertyGridLang.SelectedObject
+                            propertyGrid.OnSelectedObjectChanged(
+                                propertyGrid.SelectedObject,
+                                propertyGrid.SelectedObject
                             );
+                        }
+                    }
+                }
+            )
+        );
+
+        public bool IsEditable
+        {
+            get { return (bool)GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsEditable.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
+            "IsEditable",
+            typeof(bool),
+            typeof(CPropertyGridLang),
+            new PropertyMetadata(
+                true,
+                (d, e) =>
+                {
+                    CPropertyGridLang propertyGrid = (CPropertyGridLang)d;
+                    if (propertyGrid._dataView != null)
+                    {
+                        foreach (UIElement item in propertyGrid._dataView)
+                        {
+                            item.IsEnabled = propertyGrid.IsEditable;
                         }
                     }
                 }

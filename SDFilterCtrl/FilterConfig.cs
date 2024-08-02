@@ -57,11 +57,6 @@ namespace SDFilter
                 SpFilters.Add(speciesFilter);
             }
 
-            SpeciesFilter speciesException = new SpeciesFilter("异常类", token);
-            speciesException.RecipeDefects.Add(new RecipeDefect("超时", token, "超时"));
-            speciesException.ReadOnly = true;
-            SpFilters.Add(speciesException);
-
             SpeciesFilters = SpFilters;
         }
 
@@ -147,6 +142,54 @@ namespace SDFilter
                     DefectList.RemoveAt(i);
                 }
             }
+        }
+
+        /// <summary>
+        /// 2024.7.31 李焕彬
+        /// 获取缺陷，没有时自动添加
+        /// </summary>
+        /// <param name="sp">类名</param>
+        /// <param name="rp">算法名</param>
+        /// <param name="de">缺陷名</param>
+        /// <returns>缺陷对象</returns>
+        public DefectFilter GetDefectFilter(string sp, string rp, string de)
+        {
+            var specie = SpeciesFilters.FirstOrDefault(o => o.Name == sp);
+            if (specie == null)
+            {
+                specie = new(sp, token);
+                specie.ReadOnly = true;
+                Application.Current.Dispatcher.Invoke(
+                    new Action(() =>
+                    {
+                        SpeciesFilters.Add(specie);
+                    })
+                );
+            }
+            var recipeDefect = specie.RecipeDefects.FirstOrDefault(o => o.Name == rp);
+            if (recipeDefect == null)
+            {
+                recipeDefect = new(rp, token, false);
+                Application.Current.Dispatcher.Invoke(
+                    new Action(() =>
+                    {
+                        specie.RecipeDefects.Add(recipeDefect);
+                    })
+                );
+            }
+            var defect = recipeDefect.DefectFilters.FirstOrDefault(o => o.Name == de);
+            if (defect == null)
+            {
+                defect = new(de, token);
+                Application.Current.Dispatcher.Invoke(
+                    new Action(() =>
+                    {
+                        recipeDefect.DefectFilters.Add(defect);
+                        UpdateDefectList();
+                    })
+                );
+            }
+            return defect;
         }
 
         /// <summary>
@@ -367,14 +410,21 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public RecipeDefect(string name, Token token, string defectName = null)
+        public RecipeDefect(string name, Token token, bool addDefect = true)
         {
             this.token = token;
             this.Name = name;
-            DefectFilters = new ObservableCollection<DefectFilter>()
+            if (addDefect)
             {
-                new DefectFilter(defectName == null ? Name + "0" : defectName, token)
-            };
+                DefectFilters = new ObservableCollection<DefectFilter>()
+                {
+                    new DefectFilter(Name + "0", token)
+                };
+            }
+            else
+            {
+                DefectFilters = new ObservableCollection<DefectFilter>();
+            }
         }
 
         /// <summary>

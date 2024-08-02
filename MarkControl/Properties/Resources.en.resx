@@ -276,4 +276,7 @@
   <data name="ManualSet2" xml:space="preserve">
     <value>Marks Test With Offest</value>
   </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>Drive connected successfully!</value>
+  </data>
 </root>

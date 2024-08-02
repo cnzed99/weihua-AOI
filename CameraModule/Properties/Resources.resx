@@ -238,4 +238,7 @@
   <data name="1.触发源" xml:space="preserve">
     <value>1.触发源</value>
   </data>
+  <data name="SoftWareOnce" xml:space="preserve">
+    <value>迈德威视相机执行软触发一次</value>
+  </data>
 </root>

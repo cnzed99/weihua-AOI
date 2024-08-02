@@ -108,6 +108,25 @@ namespace WH.RunCell
         /// </summary>
         public bool Skipthis { get; set; } = false;
 
+        private EMDETECTRESULT algoriDetectResult = EMDETECTRESULT.EMDR_OK;
+
+        /// <summary>
+        /// 2024.7.31 李焕彬
+        /// 算法检查结果.NG时跳过
+        /// </summary>
+        public EMDETECTRESULT AlgoriDetectResult
+        {
+            get { return algoriDetectResult; }
+            set
+            {
+                algoriDetectResult = value;
+                if (algoriDetectResult != EMDETECTRESULT.EMDR_OK)
+                {
+                    Skipthis = true;
+                }
+            }
+        }
+
         private bool _timeOut = false;
 
         /// <summary>
@@ -313,6 +332,7 @@ namespace WH.RunCell
             cell.LineName = this.LineName;
             cell.ProjName = this.ProjName;
             cell.CamSerial = this.CamSerial;
+            cell.CamName = this.CamName;
             cell.ProjGuid = this.ProjGuid;
             cell.ComGuid = this.ComGuid;
             // cell.DetectionOrColorOK = this.DetectionOrColorOK;
@@ -321,6 +341,7 @@ namespace WH.RunCell
             cell.DataBytes = this.DataBytes;
             cell.WaferID = this.WaferID;
             cell.ProductIndex = this.ProductIndex;
+            cell.AlgoriDetectResult = this.AlgoriDetectResult;
             return cell;
         }
 

@@ -142,4 +142,7 @@
   <data name="5.描述" xml:space="preserve">
     <value>5.描述</value>
   </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>写入全部</value>
+  </data>
 </root>

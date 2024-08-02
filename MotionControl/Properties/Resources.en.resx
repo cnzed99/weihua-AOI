@@ -373,7 +373,7 @@
     <value>20.SensorPos</value>
   </data>
   <data name="SetOutputError" xml:space="preserve">
-    <value>Write address M cannot be empty!</value>
+    <value>Write address cannot be empty!</value>
   </data>
   <data name="5.对焦参数" xml:space="preserve">
     <value>5.Focus Param</value>
@@ -431,5 +431,35 @@
   </data>
   <data name="15.精调范围(mm)" xml:space="preserve">
     <value>15.Fine Focus Range(mm)</value>
+  </data>
+  <data name="AskGoHome" xml:space="preserve">
+    <value>Reset?</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>Drive connected successfully!</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>No camera!</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>Camera is not on!</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>In Focus, Stop Focusing?</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>Motion control not connected!</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>Software needs to be paused first!</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>Focusing done!</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>Abnormal focus!</value>
+  </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>Write All</value>
   </data>
 </root>

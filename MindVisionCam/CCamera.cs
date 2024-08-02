@@ -132,16 +132,11 @@ namespace MindVisionCam
                 grabCount++;
                 StringBuilder textBuilder = new StringBuilder(Properties.Resources.InfoReceImage);
                 textBuilder.Append(grabCount);
-                callbackLogger.Info(textBuilder.ToString());
+                getImageLogger.Info(textBuilder.ToString());
 
                 mutex.WaitOne();
                 imageQueue.Enqueue(pFrameBuffer);
                 mutex.ReleaseMutex();
-
-                textBuilder.Clear();
-                textBuilder.Append(Properties.Resources.InfoReceImage2);
-                textBuilder.Append(grabCount);
-                callbackLogger.Info(textBuilder.ToString());
 
                 paramSetting.ImageWidth = pFrameHead.iWidth;
                 paramSetting.ImageHeight = pFrameHead.iHeight;
@@ -286,7 +281,6 @@ namespace MindVisionCam
             {
                 if (this.Connected)
                 {
-                    getImageLogger.Info(Properties.Resources.SoftWareOnce);
                     base.ExecuteSoftwareTrigger();
                     CameraSdkStatus status = MvApi.CameraSoftTriggerEx(m_hCamera, 1);
                     if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)

@@ -101,7 +101,7 @@
     <value>添加通讯</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>新增报警</value>
+    <value>新增</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>名称</value>
@@ -303,5 +303,23 @@
   </data>
   <data name="Edit" xml:space="preserve">
     <value>编辑</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>开始时间</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>生产数量</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>时间段</value>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>总缺陷占比</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="AddAlarm" xml:space="preserve">
+    <value>新增报警</value>
   </data>
 </root>

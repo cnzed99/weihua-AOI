@@ -81,6 +81,7 @@
                 </ListBox>
                 <wh:CPropertyGridLang
                     Grid.Column="1"
+                    IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
                     SelectedObject="{Binding CamParamSelect}"
                     lang="{x:Static local:CLang.s_Instance}" />
                 <UniformGrid
@@ -102,20 +103,23 @@
                     <Button
                         Background="{DynamicResource PrimaryBrush}"
                         Command="{Binding SearchCommand}"
-                        Content="{Binding [Search], Source={x:Static local:CLang.s_Instance}}" />
+                        Content="{Binding [Search], Source={x:Static local:CLang.s_Instance}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
                     <Button
                         Background="{DynamicResource PrimaryBrush}"
                         Command="{Binding SoftWareTriggerCommand}"
                         Content="{Binding [SoftWare], Source={x:Static local:CLang.s_Instance}}"
-                        IsEnabled="{Binding IsContinuous, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
                     <Button
                         Background="{Binding IsContinuous, Converter={StaticResource BoolToBrushConverter1}}"
                         Command="{Binding ContinuousCommand}"
-                        Content="{Binding IsContinuous, Converter={StaticResource BoolToStringConverter1}}" />
+                        Content="{Binding IsContinuous, Converter={StaticResource BoolToStringConverter1}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
                     <Button
                         Background="{DynamicResource PrimaryBrush}"
                         Command="{Binding SaveCommand}"
-                        Content="{Binding [Save], Source={x:Static local:CLang.s_Instance}}" />
+                        Content="{Binding [Save], Source={x:Static local:CLang.s_Instance}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
                 </UniformGrid>
                 <TextBox
                     Grid.Row="2"

@@ -484,6 +484,15 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 驱动器连接成功！ 的本地化字符串。
+        /// </summary>
+        public static string SuccessConnect {
+            get {
+                return ResourceManager.GetString("SuccessConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 待触发点表 的本地化字符串。
         /// </summary>
         public static string ToBeTrigger {

@@ -556,6 +556,24 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 是否复位？ 的本地化字符串。
+        /// </summary>
+        public static string AskGoHome {
+            get {
+                return ResourceManager.GetString("AskGoHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在对焦中，是否停止对焦？ 的本地化字符串。
+        /// </summary>
+        public static string AskStopFocus {
+            get {
+                return ResourceManager.GetString("AskStopFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 自动对焦 的本地化字符串。
         /// </summary>
         public static string AutoFocus {
@@ -696,6 +714,51 @@ namespace MotionControl.Properties {
         public static string Enable {
             get {
                 return ResourceManager.GetString("Enable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦异常！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorFocus {
+            get {
+                return ResourceManager.GetString("ErrorFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 软件需要先暂停！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNeedStop {
+            get {
+                return ResourceManager.GetString("ErrorNeedStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 没有相机！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoCam {
+            get {
+                return ResourceManager.GetString("ErrorNoCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 运动控制未连接！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoConnect {
+            get {
+                return ResourceManager.GetString("ErrorNoConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 未打开相机！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoOpenCam {
+            get {
+                return ResourceManager.GetString("ErrorNoOpenCam", resourceCulture);
             }
         }
         
@@ -934,7 +997,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 写入地址M不能为空！ 的本地化字符串。
+        ///   查找类似 写入地址不能为空！ 的本地化字符串。
         /// </summary>
         public static string SetOutputError {
             get {
@@ -961,7 +1024,25 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 写入值 的本地化字符串。
+        ///   查找类似 驱动器连接成功！ 的本地化字符串。
+        /// </summary>
+        public static string SuccessConnect {
+            get {
+                return ResourceManager.GetString("SuccessConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦完成！ 的本地化字符串。
+        /// </summary>
+        public static string SuccessFocus {
+            get {
+                return ResourceManager.GetString("SuccessFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入 的本地化字符串。
         /// </summary>
         public static string Write {
             get {
@@ -975,6 +1056,15 @@ namespace MotionControl.Properties {
         public static string WriteAddrM {
             get {
                 return ResourceManager.GetString("WriteAddrM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 全部写入 的本地化字符串。
+        /// </summary>
+        public static string WriteAll {
+            get {
+                return ResourceManager.GetString("WriteAll", resourceCulture);
             }
         }
         

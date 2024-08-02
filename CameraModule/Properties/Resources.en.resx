@@ -258,4 +258,7 @@
   <data name="CameraSet" xml:space="preserve">
     <value>CameraSet</value>
   </data>
+  <data name="SoftWareOnce" xml:space="preserve">
+    <value>Medway sees the camera perform a soft trigger once</value>
+  </data>
 </root>
