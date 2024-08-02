@@ -37,10 +37,10 @@ namespace WH.Controls
             if (value)
             {
                 IsAfterSale = true;
-                IsEngineer = true;
-                IsTechnologist = true;
-                IsOperator = true;
-                IsNoPermission = false;
+                //IsEngineer = true;
+                //IsTechnologist = true;
+                //IsOperator = true;
+                //IsNoPermission = false;
             }
         }
 
@@ -55,11 +55,11 @@ namespace WH.Controls
         {
             if (value)
             {
-                IsAdministrator = false;
+                //IsAdministrator = false;
                 IsEngineer = true;
-                IsTechnologist = true;
-                IsOperator = true;
-                IsNoPermission = false;
+                //IsTechnologist = true;
+                //IsOperator = true;
+                //IsNoPermission = false;
             }
         }
 
@@ -74,11 +74,11 @@ namespace WH.Controls
         {
             if (value)
             {
-                IsAdministrator = false;
-                IsAfterSale = true;
+                //IsAdministrator = false;
+                //IsAfterSale = true;
                 IsTechnologist = true;
-                IsOperator = true;
-                IsNoPermission = false;
+                //IsOperator = true;
+                //IsNoPermission = false;
             }
         }
 
@@ -93,11 +93,11 @@ namespace WH.Controls
         {
             if (value)
             {
-                IsAdministrator = false;
-                IsEngineer = false;
-                IsAfterSale = false;
+                //IsAdministrator = false;
+                //IsEngineer = false;
+                //IsAfterSale = false;
                 IsOperator = true;
-                IsNoPermission = false;
+                //IsNoPermission = false;
             }
         }
 
@@ -112,10 +112,10 @@ namespace WH.Controls
         {
             if (value)
             {
-                IsAdministrator = false;
-                IsEngineer = false;
-                IsAfterSale = false;
-                IsTechnologist = false;
+                //IsAdministrator = false;
+                //IsEngineer = false;
+                //IsAfterSale = false;
+                //IsTechnologist = false;
                 IsNoPermission = false;
             }
         }
@@ -165,6 +165,7 @@ namespace WH.Controls
             get { return privileageLevel; }
             set
             {
+                IsNoPermission = true;
                 switch (value)
                 {
                     case PRIVILEGE.AFTER_SALE:

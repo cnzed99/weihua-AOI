@@ -207,6 +207,11 @@ namespace WH.DetectSystem.ViewModels
         bool isStart = false;
 
         /// <summary>
+        /// 启动时用于保存当前账户信息 停止运行时用于恢复权限
+        /// </summary>
+        CLoginPerson loginPerson = new CLoginPerson();
+
+        /// <summary>
         /// 是否启动 后台使用此变量判断用户是否启动软件
         /// </summary>
         public bool IsStart
@@ -215,6 +220,15 @@ namespace WH.DetectSystem.ViewModels
             set
             {
                 SetProperty(ref isStart, value);
+                if (value)
+                {
+                    CLoginViewModel.SloinPerson.Adapt(loginPerson);
+                    CLoginViewModel.SloinPerson.IsNoPermission = true;
+                }
+                else
+                {
+                    loginPerson.Adapt(CLoginViewModel.SloinPerson);
+                }
                 MotionCtrlVM.SetRunning(IsStart);
             }
         }

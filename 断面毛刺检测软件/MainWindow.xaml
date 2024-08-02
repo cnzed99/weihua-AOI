@@ -47,10 +47,7 @@
                 Grid.Column="0"
                 hc:MenuAttach.PopupHorizontalOffset="-125"
                 hc:WindowAttach.IsDragElement="True">
-                <MenuItem
-                    Name="ProjMenu"
-                    Header="{Binding [ProjManagement], Source={x:Static local:CLang.Instance}}"
-                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <MenuItem Name="ProjMenu" Header="{Binding [ProjManagement], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.ItemContainerStyle>
                         <Style BasedOn="{StaticResource MenuItemBaseStyle}" TargetType="MenuItem">
                             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -101,10 +98,7 @@
 
                 </MenuItem>-->
 
-                <MenuItem
-                    Name="CamComMenu"
-                    Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}"
-                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <MenuItem Name="CamComMenu" Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
@@ -125,10 +119,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem
-                    Name="SetMenu"
-                    Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}"
-                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <MenuItem Name="SetMenu" Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
@@ -179,10 +170,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem
-                    Name="ToolMenu"
-                    Header="{Binding [Tools], Source={x:Static local:CLang.Instance}}"
-                    IsEnabled="{Binding CMainVMs[0].IsStart, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <MenuItem Name="ToolMenu" Header="{Binding [Tools], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/工具/工具.svg" />
                     </MenuItem.Icon>
@@ -512,11 +500,11 @@
                                 Style="{DynamicResource TabControlInLine}">
                                 <!--  运行日志  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:CLang.Instance}}">
-                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding InfoMessage,Source={x:Static wh:CLogRec.Default}}" />
+                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding InfoMessage, Source={x:Static wh:CLogRec.Default}}" />
                                 </hc:TabItem>
                                 <!--  报警错误日志  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:CLang.Instance}}">
-                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding ErrorMessage,Source={x:Static wh:CLogRec.Default}}"/>
+                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding ErrorMessage, Source={x:Static wh:CLogRec.Default}}" />
                                 </hc:TabItem>
                                 <!--  操作记录  -->
                                 <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:CLang.Instance}}">
