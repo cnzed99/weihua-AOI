@@ -99,6 +99,7 @@
                                 HorizontalAlignment="Stretch"
                                 hc:TitleElement.Title="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
                                 ItemsSource="{Binding AlarmAgreements}"
+                                DisplayMemberPath="Abbr"
                                 SelectedItem="{Binding MAlarm.AlarmAgreement}" />
                             <Button
                                 Grid.Column="1"
@@ -244,31 +245,32 @@
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="{x:Static prop:Resources.AlarmName}" />
+                        Header="{Binding [AlarmName], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding Type, Converter={StaticResource StringAttrEnumConverter}}"
-                        Header="{x:Static prop:Resources.AlarmType}" />
+                        Header="{Binding [AlarmType], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding Source}"
-                        Header="{x:Static prop:Resources.AlarmSource}" />
+                        Header="{Binding [AlarmSource], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="70"
-                        DisplayMemberBinding="{Binding AlarmAgreement}"
-                        Header="{x:Static prop:Resources.AlarmMode}" />
+                        DisplayMemberBinding="{Binding AlarmAgreement.Abbr}"
+                        Header="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" >
+                    </GridViewColumn>
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding IsPopWin}"
-                        Header="{x:Static prop:Resources.Popup}" />
+                        Header="{Binding [Popup], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding PermitLevel}"
-                        Header="{x:Static prop:Resources.Authoritylevel}" />
+                        Header="{Binding [Authoritylevel], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="auto"
                         DisplayMemberBinding="{Binding RegularShow}"
-                        Header="{x:Static prop:Resources.illustrate}" />
+                        Header="{Binding [illustrate], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                 </GridView>
             </ListView.View>
             <i:Interaction.Triggers>

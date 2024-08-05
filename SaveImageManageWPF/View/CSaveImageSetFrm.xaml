@@ -82,7 +82,7 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </hc:Window.NonClientAreaContent>
-    <StackPanel  IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
+    <StackPanel IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <GroupBox Margin="2" Header="{Binding [PiantImageSet], Source={x:Static local:CLang.s_SaveImageLang}}">
             <StackPanel Orientation="Horizontal">
                 <hc:ElementGroup>
@@ -140,20 +140,20 @@
                         hc:TitleElement.Title="{Binding [OkDays], Source={x:Static local:CLang.s_SaveImageLang}}"
                         hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.OkDays}" 
-                        Minimum="1"/>
+                        Minimum="1"
+                        Value="{Binding Param.OkDays}" />
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [NGDays], Source={x:Static local:CLang.s_SaveImageLang}}"
                         hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.NgDays}" 
-                        Minimum="1"/>
+                        Minimum="1"
+                        Value="{Binding Param.NgDays}" />
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [OKIntervalCount], Source={x:Static local:CLang.s_SaveImageLang}}"
                         hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value="{Binding Param.OkIntervalCount}" 
-                        Minimum="0"/>
+                        Minimum="0"
+                        Value="{Binding Param.OkIntervalCount}" />
                     <hc:NumericUpDown
                         hc:TitleElement.Title="{Binding [FreeSpaceLimit], Source={x:Static local:CLang.s_SaveImageLang}}"
                         hc:TitleElement.TitleWidth="160"

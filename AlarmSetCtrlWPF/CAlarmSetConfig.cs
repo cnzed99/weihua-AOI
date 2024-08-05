@@ -109,7 +109,10 @@ namespace AlarmSetCtrl
                 {
                     var index = comParams
                         .AlarmAgreements.ToList()
-                        .FindIndex(al => al.ToString() == alarm.AlarmAgreement.ToString());
+                        .FindIndex(al =>
+                            (al.Name == alarm.AlarmAgreement.Name)
+                            && (al.ComName == alarm.AlarmAgreement.ComName)
+                        );
                     if (index >= 0)
                     {
                         alarm.AlarmAgreement = comParams.AlarmAgreements[index];

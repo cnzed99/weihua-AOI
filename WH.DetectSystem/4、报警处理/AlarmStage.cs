@@ -45,7 +45,8 @@ namespace WH.DetectSystem._4_报警处理
                         alarmcell.Item2 = cell.Quality == (Quality)alarm.Source;
                         break;
                     case ALARMTYPE.ALARMTYPE_DEFECT:
-                        alarmcell.Item2 = cell.Detection.DefectFilter == (DefectFilter)alarm.Source;
+                        alarmcell.Item2 =
+                            cell.Detection?.DefectFilter == (DefectFilter)alarm.Source;
                         break;
                 }
                 alarm.TotalCellList.Add(alarmcell);

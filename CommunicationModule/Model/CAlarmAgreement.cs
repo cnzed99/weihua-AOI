@@ -17,9 +17,13 @@ namespace CommunicationModule
     /// </summary>
     public partial class CAlarmAgreement : ConfigModifyObservableBase
     {
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Abbr))]
+        string name;
+
         /// <summary>
         /// 20240723 TCG
-        /// 所属相机名
+        /// 所属通讯名
         /// </summary>
         [IgnoreModifyLog]
         public string ComName { get; set; }
@@ -53,12 +57,8 @@ namespace CommunicationModule
 
         /// <summary>
         /// 2024.7.19 李焕彬
-        /// ToString()
+        /// 缩写
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return ComName + ":" + Name;
-        }
+        public string Abbr => ComName + ":" + Name;
     }
 }

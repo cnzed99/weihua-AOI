@@ -497,8 +497,10 @@
                         RowHeaderWidth="30"
                         Style="{DynamicResource DataGrid1}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" 
-                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                            <DataGridTextColumn
+                                Binding="{Binding Addr}"
+                                Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTemplateColumn Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -510,8 +512,10 @@
                                 Binding="{Binding HasSignal}"
                                 Header="{Binding [State], Source={x:Static local:CLang.s_Instance}}"
                                 IsReadOnly="True" />-->
-                            <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" 
-                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                            <DataGridTextColumn
+                                Binding="{Binding Name}"
+                                Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTemplateColumn Header="{Binding [OpenOrClose], Source={x:Static local:CLang.s_Instance}}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -522,17 +526,19 @@
                                             Command="{Binding ElementName=dataGrid2, Path=DataContext.SetOutputCommand}"
                                             CommandParameter="{Binding}"
                                             IsChecked="{Binding Set, UpdateSourceTrigger=PropertyChanged}"
-                                            Style="{StaticResource ToggleButtonSwitch.Small}" 
-                                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
+                                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                            Style="{StaticResource ToggleButtonSwitch.Small}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}" 
-                                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                            <DataGridTextColumn
+                                Binding="{Binding AddrM, UpdateSourceTrigger=PropertyChanged}"
+                                Header="{Binding [WriteAddrM], Source={x:Static local:CLang.s_Instance}}"
+                                IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                             <DataGridTextColumn
                                 Width="180"
                                 Binding="{Binding Description}"
-                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" 
+                                Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}"
                                 IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -635,8 +641,10 @@
                         <TextBlock Text="{Binding [AxisConfig], Source={x:Static local:CLang.s_Instance}}" />
                     </DockPanel>
                 </GroupBox.Header>
-                <wh:CPropertyGridLang SelectedObject="{Binding MotionConfig}" lang="{x:Static local:CLang.s_Instance}" 
-                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                <wh:CPropertyGridLang
+                    IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                    SelectedObject="{Binding MotionConfig}"
+                    lang="{x:Static local:CLang.s_Instance}" />
             </GroupBox>
         </TabItem>
     </TabControl>

@@ -149,7 +149,7 @@ namespace WH.DetectSystem.ViewModels
         }
 
         [ObservableProperty]
-        BitmapSource modelImage = new BitmapImage(new Uri("D://铝极.png"));
+        BitmapSource modelImage; //= new BitmapImage(new Uri("D://铝极.png"));
 
         /// <summary>
         /// 2024.7.25 李焕彬
@@ -162,7 +162,7 @@ namespace WH.DetectSystem.ViewModels
         Brush modelBrush = Brushes.White;
 
         [ObservableProperty]
-        BitmapSource lastImage = new BitmapImage(new Uri("D://铝极.png"));
+        BitmapSource lastImage; //= new BitmapImage(new Uri("D://铝极.png"));
 
         /// <summary>
         /// 2024.7.25 李焕彬
@@ -487,7 +487,7 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception)
                     {
-                        SysLog.Error("取图出错！");
+                        await m_InfoChannel.Writer.WriteAsync(new PrintMsg("取图出错！", LOG.LOG_ERROR));
                     }
                 }
             });
@@ -536,7 +536,10 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SysLog.Error("配方执行线程出错：" + ex.Message);
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("配方执行线程出错：" + ex.Message, LOG.LOG_ERROR)
+                        );
+                        //SysLog.Error("配方执行线程出错：" + ex.Message);
                         GC.Collect();
                     }
                 }
@@ -593,7 +596,10 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SysLog.Error("筛选线程执行出错:" + ex.Message + ex.StackTrace);
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("筛选线程执行出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                        );
+                        //SysLog.Error("筛选线程执行出错:" + ex.Message + ex.StackTrace);
                         GC.Collect();
                     }
                 }
@@ -736,7 +742,9 @@ namespace WH.DetectSystem.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                            );
                             Growl.Error("显示线程出错: " + ex.Message + ex.StackTrace);
                         }
                         #endregion
@@ -782,7 +790,9 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SysLog.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                        );
                     }
                     finally
                     {
@@ -808,7 +818,9 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SysLog.Error("监控报警出错:" + ex.Message + ex.StackTrace);
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                        );
                     }
                     finally
                     {
@@ -854,7 +866,9 @@ namespace WH.DetectSystem.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            SysLog.Error("Mysql数据库写入出错:" + ex.Message);
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg("Mysql数据库写入出错:" + ex.Message, LOG.LOG_ERROR)
+                            );
                             Growl.Warning(
                                 new GrowlInfo()
                                 {
@@ -895,7 +909,9 @@ namespace WH.DetectSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SysLog.Error("存图线程出错:" + ex.Message + ex.StackTrace);
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("存图线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                        );
                     }
                 }
             });
