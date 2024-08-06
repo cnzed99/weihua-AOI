@@ -58,12 +58,15 @@
             Margin="5"
             Background="{StaticResource BorderBrush}"
             Style="{StaticResource RichTextBoxBaseStyle}">
-            <FlowDocument >
-                <Paragraph FontSize="15" TextAlignment="Center" Margin="0">
+            <FlowDocument>
+                <Paragraph
+                    Margin="0"
+                    FontSize="15"
+                    TextAlignment="Center">
                     软件安装许可协议
                 </Paragraph>
-                <Paragraph xml:space="preserve" Margin="0">
-    如果您安装、复制或以其它方式使用了本软件产品，则视为您已同意下列条款，并已和广州市威华智能技术有限公司（以下简称“威华智能”）签定了本《软件许可协议》（以下简称“协议”）。如您不同意本协议中的条款，请不要安装软件。如果您通过合法渠道从威华智能取得本软件的任何拷贝，则您拥有如下权利：
+                <Paragraph Margin="0" xml:space="preserve">
+    如果您安装、复制或以其它方式使用了本软件产品，则视为您已同意下列条款，并已和广东威华智能技术有限公司（以下简称“威华智能”）签定了本《软件许可协议》（以下简称“协议”）。如您不同意本协议中的条款，请不要安装软件。如果您通过合法渠道从威华智能取得本软件的任何拷贝，则您拥有如下权利：
     1：使用权
     您有权在计算机上安装本软件，并在业务范围内使用本软件，现本软件具有的全部功能。
     2：备份

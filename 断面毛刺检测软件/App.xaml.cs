@@ -23,6 +23,7 @@ using WH.Controls.SingleInstance;
 using WH.DetectSystem;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.LogRecord;
+using WH.Load;
 using 断面毛刺检测软件.Views;
 #if !NET40
 using System.Runtime;
@@ -54,6 +55,7 @@ namespace 断面毛刺检测软件
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Loadkey.GetNumber();
             AppMutex = new Mutex(true, "Metal_Burr", out var createdNew);
 
             if (!createdNew)

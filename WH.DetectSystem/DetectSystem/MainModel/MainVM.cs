@@ -461,7 +461,7 @@ namespace WH.DetectSystem.ViewModels
                         //从本地读图 没有相机时无需赋值
                         if (
                             !string.IsNullOrEmpty(CameraSerial)
-                            && !CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+                            && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
                         )
                         {
                             cell.CamName = CCameraManagement.CamParamDict[CameraSerial].Name;
