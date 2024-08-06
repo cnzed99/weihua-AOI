@@ -22,6 +22,7 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MotionControl
 {
@@ -248,8 +249,7 @@ namespace MotionControl
                     {
                         InitWrite();
                         modbusTcp.SendXYData = ModbusTcp_SendXYData;
-                        modbusTcp.SendMxData = ModbusTcp_SendMxData;
-                        modbusTcp.SendDxData = ModbusTcp_SendDxData;
+                        modbusTcp.ReadElemData = ModbusTcp_ReadElemData;
                         Growl.Ask(
                             Properties.Resources.AskGoHome,
                             b =>
@@ -258,10 +258,10 @@ namespace MotionControl
                                 {
                                     Thread.Sleep(20);
                                     //回原点状态置true;
-                                    modbusTcp.WriteCoilM(MotionConfig.AddrGoHome, true);
+                                    modbusTcp.WriteSingleCoil(MotionConfig.AddrGoHome, true);
                                     Thread.Sleep(50);
                                     //回原点状态置false
-                                    modbusTcp.WriteCoilM(MotionConfig.AddrGoHome, false);
+                                    modbusTcp.WriteSingleCoil(MotionConfig.AddrGoHome, false);
                                 }
                                 return true;
                             }
@@ -284,7 +284,7 @@ namespace MotionControl
         /// </summary>
         public void InitWrite()
         {
-            modbusTcp.WriteCoilM(MotionConfig.AddrEnable, true);
+            modbusTcp.WriteSingleCoil(MotionConfig.AddrEnable, true);
             WriteRegister();
             WriteRegisterFix();
             WriteSignal();
@@ -368,7 +368,7 @@ namespace MotionControl
         [RelayCommand]
         public void AddRegister()
         {
-            MotionConfig.RegisterSets.Add(new CRegisterSet(MotionConfig.token));
+            MotionConfig.RegisterSets.Add(new CElement(MotionConfig.token));
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace MotionControl
         /// </summary>
         /// <param name="registerSet">寄存器</param>
         [RelayCommand]
-        public void DelRegister(CRegisterSet registerSet)
+        public void DelRegister(CElement registerSet)
         {
             MotionConfig.RegisterSets.Remove(registerSet);
         }
@@ -391,8 +391,15 @@ namespace MotionControl
         {
             foreach (var reg in MotionConfig.RegisterSets)
             {
-                if (reg.Addr != null)
-                    modbusTcp.WriteRegisterD(reg.Addr, reg.ValueWrite);
+                switch (reg.Type)
+                {
+                    case EMELEMTYPE.EMELEMM:
+                        modbusTcp.WriteSingleCoil(reg.Addr, reg.WriteValue == 1);
+                        break;
+                    case EMELEMTYPE.EMELEMD:
+                        modbusTcp.WriteSingleRegister(reg.Addr, reg.WriteValue);
+                        break;
+                }
             }
         }
 
@@ -402,13 +409,16 @@ namespace MotionControl
         /// </summary>
         /// <param name="registerSet">寄存器</param>
         [RelayCommand]
-        public void WriteSingleRegister(CRegisterSet registerSet)
+        public void WriteSingleRegister(CElement registerSet)
         {
-            if (registerSet.Addr != null)
-                modbusTcp.WriteRegisterD(registerSet.Addr, registerSet.ValueWrite);
-            else
+            switch (registerSet.Type)
             {
-                Growl.Warning(Properties.Resources.SetOutputError);
+                case EMELEMTYPE.EMELEMM:
+                    modbusTcp.WriteSingleCoil(registerSet.Addr, registerSet.WriteValue == 1);
+                    break;
+                case EMELEMTYPE.EMELEMD:
+                    modbusTcp.WriteSingleRegister(registerSet.Addr, registerSet.WriteValue);
+                    break;
             }
         }
 
@@ -419,9 +429,9 @@ namespace MotionControl
         [RelayCommand]
         public void WriteRegisterFix()
         {
-            modbusTcp.WriteRegisterD(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
-            modbusTcp.WriteRegisterD(MotionConfig.AddrAcc, MotionConfig.Acc);
-            modbusTcp.WriteRegisterD(MotionConfig.AddrSpeed, MotionConfig.Speed);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrAcc, MotionConfig.Acc);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrSpeed, MotionConfig.Speed);
         }
 
         /// <summary>
@@ -433,8 +443,7 @@ namespace MotionControl
         {
             foreach (var signalOut in MotionConfig.SignalOuts)
             {
-                if (signalOut.AddrM != null)
-                    modbusTcp.WriteCoilM(signalOut.AddrM, signalOut.Set);
+                modbusTcp.WriteSingleCoil(signalOut.AddrM, signalOut.Set);
             }
         }
 
@@ -457,7 +466,6 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error(signal + ":" + ex.Message);
                     SysLog.Error(signal + ":" + ex.Message);
                 }
             }
@@ -473,7 +481,6 @@ namespace MotionControl
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error(signal + ":" + ex.Message);
                     SysLog.Error(signal + ":" + ex.Message);
                 }
             }
@@ -481,50 +488,39 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.12 李焕彬
-        /// 接收线圈状态并处理
+        /// 读取元件数据
         /// </summary>
-        /// <param name="mData">线圈状态集合</param>
-        private void ModbusTcp_SendMxData(bool[] mData)
+        private void ModbusTcp_ReadElemData()
         {
             try
             {
-                IsEnable = modbusTcp.ReadCoilM(mData, MotionConfig.AddrEnable);
-                IsAlarmAxis = modbusTcp.ReadCoilM(mData, MotionConfig.AddrIsAlarm);
-                IsDriveAlarm = modbusTcp.ReadCoilM(mData, MotionConfig.AddrDriveAlarm);
-            }
-            catch (Exception err)
-            {
-                Growl.Error(err.Message);
-                SysLog.Error(err.Message);
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 接收批量寄存器数据并处理
-        /// </summary>
-        /// <param name="dValue">寄存器数据集合</param>
-        private void ModbusTcp_SendDxData(ushort[] dValue)
-        {
-            try
-            {
-                CurPos = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrPosCur);
-                CurSpeed = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrSpdCur);
-                CurTarque = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrTorqueCur);
-                FocusPos = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrFocusPos);
-                FocusPosDst = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrFocusDst);
-                SensorPos = modbusTcp.ReadRegisterD(dValue, MotionConfig.AddrSensorPos);
-                foreach (var reg in MotionConfig.RegisterSets)
+                List<CElement> cElements = MotionConfig.RegisterSets.ToList();
+                foreach (CElement e in cElements)
                 {
-                    if (reg.Addr != null)
+                    switch (e.Type)
                     {
-                        reg.ValueRead = modbusTcp.ReadRegisterD(dValue, reg.Addr);
+                        case EMELEMTYPE.EMELEMM:
+                            e.ReadValue = modbusTcp.ReadCoil(e.Addr) ? 1 : 0;
+                            break;
+                        case EMELEMTYPE.EMELEMD:
+                            e.ReadValue = modbusTcp.ReadHoldingRegister(e.Addr);
+                            break;
                     }
                 }
+
+                IsEnable = modbusTcp.ReadCoil(MotionConfig.AddrEnable);
+                IsAlarmAxis = modbusTcp.ReadCoil(MotionConfig.AddrIsAlarm);
+                IsDriveAlarm = modbusTcp.ReadCoil(MotionConfig.AddrDriveAlarm);
+
+                CurPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrPosCur);
+                CurSpeed = modbusTcp.ReadHoldingRegister(MotionConfig.AddrSpdCur);
+                CurTarque = modbusTcp.ReadHoldingRegister(MotionConfig.AddrTorqueCur);
+                FocusPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrFocusPos);
+                FocusPosDst = modbusTcp.ReadHoldingRegister(MotionConfig.AddrFocusDst);
+                SensorPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrSensorPos);
             }
             catch (Exception err)
             {
-                Growl.Error(err.Message);
                 SysLog.Error(err.Message);
             }
         }
@@ -539,10 +535,10 @@ namespace MotionControl
         {
             if (dis >= MotionConfig.SoftLimitN && dis <= MotionConfig.SoftLimitP)
             {
-                modbusTcp.WriteRegisterD(MotionConfig.AddrPosAbs, (float)dis);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveAbs, true);
+                modbusTcp.WriteSingleRegister(MotionConfig.AddrPosAbs, (float)dis);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveAbs, true);
                 Thread.Sleep(50);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveAbs, false);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveAbs, false);
             }
             else
             {
@@ -560,10 +556,10 @@ namespace MotionControl
         {
             if (dis + CurPos <= MotionConfig.SoftLimitP)
             {
-                modbusTcp.WriteRegisterD(MotionConfig.AddrPosRela, (float)dis);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveRela, true);
+                modbusTcp.WriteSingleRegister(MotionConfig.AddrPosRela, (float)dis);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveRela, true);
                 Thread.Sleep(50);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveRela, false);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveRela, false);
             }
             else
             {
@@ -581,10 +577,10 @@ namespace MotionControl
         {
             if (CurPos - dis >= MotionConfig.SoftLimitN)
             {
-                modbusTcp.WriteRegisterD(MotionConfig.AddrPosRela, (float)-dis);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveRela, true);
+                modbusTcp.WriteSingleRegister(MotionConfig.AddrPosRela, (float)-dis);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveRela, true);
                 Thread.Sleep(50);
-                modbusTcp.WriteCoilM(MotionConfig.AddrMoveRela, false);
+                modbusTcp.WriteSingleCoil(MotionConfig.AddrMoveRela, false);
             }
             else
             {
@@ -600,11 +596,11 @@ namespace MotionControl
         [RelayCommand]
         public void MouseDown(object obj)
         {
-            if (obj is string para)
+            if (obj is ushort para)
             {
                 try
                 {
-                    modbusTcp.WriteCoilM(para, true);
+                    modbusTcp.WriteSingleCoil(para, true);
                 }
                 catch (Exception err)
                 {
@@ -622,11 +618,11 @@ namespace MotionControl
         [RelayCommand]
         public void MouseUp(object obj)
         {
-            if (obj is string para)
+            if (obj is ushort para)
             {
                 try
                 {
-                    modbusTcp.WriteCoilM(para, false);
+                    modbusTcp.WriteSingleCoil(para, false);
                 }
                 catch (Exception err)
                 {
@@ -647,7 +643,7 @@ namespace MotionControl
             {
                 InitWrite();
             }
-            modbusTcp.WriteCoilM(MotionConfig.AddrEnable, !IsEnable);
+            modbusTcp.WriteSingleCoil(MotionConfig.AddrEnable, !IsEnable);
         }
 
         /// <summary>
@@ -658,12 +654,7 @@ namespace MotionControl
         [RelayCommand]
         public void SetOutput(CSignalOut signalOut)
         {
-            if (String.IsNullOrEmpty(signalOut.AddrM))
-            {
-                Growl.Warning(Properties.Resources.SetOutputError);
-                return;
-            }
-            modbusTcp.WriteCoilM(signalOut.AddrM, signalOut.Set);
+            modbusTcp.WriteSingleCoil(signalOut.AddrM, signalOut.Set);
         }
 
         /// <summary>
@@ -673,7 +664,7 @@ namespace MotionControl
         /// <param name="dis">移动速度/param>
         public void SetSpeed(float speed)
         {
-            modbusTcp.WriteRegisterD(MotionConfig.AddrSpeed, speed);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrSpeed, speed);
         }
 
         /// <summary>
@@ -693,23 +684,18 @@ namespace MotionControl
         }
 
         /// <summary>
+        /// 2024.8.5 李焕彬
+        /// 相机旧触发模式
+        /// </summary>
+        private EMTRIGGERMODE oldTriggerMode;
+
+        /// <summary>
         /// 2024.7.12 李焕彬
         /// 自动对焦
         /// </summary>
         [RelayCommand]
         public void AutoFocus()
         {
-            if (!CCameraManagement.CameraDict.ContainsKey(CameraSerial))
-            {
-                Growl.Warning(Properties.Resources.ErrorNoCam);
-                return;
-            }
-            CCameraBase cam = CCameraManagement.CameraDict[CameraSerial];
-            if (!cam.Connected)
-            {
-                Growl.Warning(Properties.Resources.ErrorNoOpenCam);
-                return;
-            }
             if (IsFocusing)
             {
                 if (
@@ -725,6 +711,17 @@ namespace MotionControl
                     cancellFocus.Cancel();
                     return;
                 }
+            }
+            if (!CCameraManagement.CameraDict.ContainsKey(CameraSerial))
+            {
+                Growl.Warning(Properties.Resources.ErrorNoCam);
+                return;
+            }
+            CCameraBase cam = CCameraManagement.CameraDict[CameraSerial];
+            if (!cam.Connected)
+            {
+                Growl.Warning(Properties.Resources.ErrorNoOpenCam);
+                return;
             }
             cancellFocus = new CancellationTokenSource();
 
@@ -748,6 +745,8 @@ namespace MotionControl
                         {
                             IsFocused = false;
                             IsFocusing = true;
+                            oldTriggerMode = cam.Setting.TriggerMode;
+                            cam.Setting.TriggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
                             SetSpeed(20);
                             WaitMoveTo(MotionConfig.SoftLimitN);
                             SetSpeed(MotionConfig.SpeedFocus);
@@ -755,6 +754,7 @@ namespace MotionControl
                             AbsMove(MotionConfig.SoftLimitP);
                             while (Math.Abs(MotionConfig.SoftLimitP - CurPos) > 0.01)
                             {
+                                cancellFocus.Token.ThrowIfCancellationRequested();
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
                                 CImage image = cell.Image;
@@ -786,6 +786,7 @@ namespace MotionControl
                             SetSpeed(MotionConfig.SpeedFocus);
                             for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
                             {
+                                cancellFocus.Token.ThrowIfCancellationRequested();
                                 WaitMoveTo(i);
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
@@ -809,7 +810,7 @@ namespace MotionControl
                             WaitMoveTo(MotionConfig.FocusPos);
                             cam.ExecuteSoftwareTrigger();
                             await FocusWaitGetImageChannel.Reader.ReadAsync();
-                            modbusTcp.WriteRegisterD(
+                            modbusTcp.WriteSingleRegister(
                                 MotionConfig.AddrFocusPos,
                                 MotionConfig.FocusPos
                             );
@@ -826,6 +827,7 @@ namespace MotionControl
                         finally
                         {
                             IsFocusing = false;
+                            cam.Setting.TriggerMode = oldTriggerMode;
                         }
                     }
                 )

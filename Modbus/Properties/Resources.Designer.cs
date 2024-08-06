@@ -160,11 +160,11 @@ namespace Modbus.Properties {
         }
         
         /// <summary>
-        ///   查找类似 读取 的本地化字符串。
+        ///   查找类似 读取值 的本地化字符串。
         /// </summary>
-        public static string Read {
+        public static string ReadVal {
             get {
-                return ResourceManager.GetString("Read", resourceCulture);
+                return ResourceManager.GetString("ReadVal", resourceCulture);
             }
         }
         
@@ -201,6 +201,15 @@ namespace Modbus.Properties {
         public static string WriteAll {
             get {
                 return ResourceManager.GetString("WriteAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入值 的本地化字符串。
+        /// </summary>
+        public static string WriteVal {
+            get {
+                return ResourceManager.GetString("WriteVal", resourceCulture);
             }
         }
     }

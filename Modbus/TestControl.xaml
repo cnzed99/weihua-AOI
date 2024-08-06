@@ -51,8 +51,8 @@
                 ItemsSource="{Binding Config.TestElems}"
                 RowHeaderWidth="30">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Name}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
-                    <DataGridTextColumn Binding="{Binding Addr}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
+                    <DataGridTextColumn Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                    <DataGridTextColumn Binding="{Binding Addr, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [Addr], Source={x:Static local:CLang.s_Instance}}" />
                     <DataGridTemplateColumn Header="{Binding [Type], Source={x:Static local:CLang.s_Instance}}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -62,9 +62,9 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn
                         Binding="{Binding ReadValue}"
-                        Header="{Binding [Read], Source={x:Static local:CLang.s_Instance}}"
+                        Header="{Binding [ReadVal], Source={x:Static local:CLang.s_Instance}}"
                         IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding WriteValue}" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}" />
+                    <DataGridTextColumn Binding="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteVal], Source={x:Static local:CLang.s_Instance}}" />
                     <DataGridTemplateColumn Width="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -89,7 +89,7 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn
                         Width="130"
-                        Binding="{Binding Description}"
+                        Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                         Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}" />
                 </DataGrid.Columns>
             </DataGrid>

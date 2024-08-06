@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MindVisionCam.Properties {
+namespace HIKVisionCam.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace MindVisionCam.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MindVisionCam.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HIKVisionCam.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,7 +70,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机回调函数异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机回调函数异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorCallBack {
             get {
@@ -79,7 +79,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机关闭发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机关闭发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorClose {
             get {
@@ -97,7 +97,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 获取所有连接的迈德威视相机出现异常: 的本地化字符串。
+        ///   查找类似 获取所有连接的海康威视相机出现异常: 的本地化字符串。
         /// </summary>
         public static string ErrorEnumCam2 {
             get {
@@ -106,7 +106,25 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取当前曝光值发生异常&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取相机类型&apos;失败,错误码: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetCamType {
+            get {
+                return ResourceManager.GetString("ErrorGetCamType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机获取相机类型,序列号: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetCamType2 {
+            get {
+                return ResourceManager.GetString("ErrorGetCamType2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机:执行&apos;获取当前曝光值发生异常&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetExposureTime {
             get {
@@ -115,7 +133,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取当前曝光值发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取当前曝光值发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetExposureTime2 {
             get {
@@ -124,7 +142,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取增益值&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取增益值&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetGain {
             get {
@@ -133,7 +151,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取增益值,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取增益值,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetGain2 {
             get {
@@ -142,7 +160,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取Gamma&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取Gamma&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetGamma {
             get {
@@ -151,7 +169,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取Gamma失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取Gamma失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetGamma2 {
             get {
@@ -160,7 +178,25 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取触发延时&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取图像高度&apos;失败,错误码: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetHeight {
+            get {
+                return ResourceManager.GetString("ErrorGetHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机获取图像高度,序列号: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetHeight2 {
+            get {
+                return ResourceManager.GetString("ErrorGetHeight2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机:执行&apos;获取触发延时&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerDelay {
             get {
@@ -169,7 +205,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取触发延时失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取触发延时失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerDelay2 {
             get {
@@ -178,7 +214,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取触发模式&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取触发模式&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerMode {
             get {
@@ -187,7 +223,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取触发模式发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取触发模式发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerMode2 {
             get {
@@ -196,7 +232,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;获取输出脉冲宽度&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;获取输出脉冲宽度&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerPulseWidth {
             get {
@@ -205,11 +241,29 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机获取输出脉冲宽度失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机获取输出脉冲宽度失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorGetTriggerPulseWidth2 {
             get {
                 return ResourceManager.GetString("ErrorGetTriggerPulseWidth2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机:执行&apos;获取图像宽度&apos;失败,错误码: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetWidth {
+            get {
+                return ResourceManager.GetString("ErrorGetWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 海康威视相机获取图像宽度,序列号: 的本地化字符串。
+        /// </summary>
+        public static string ErrorGetWidth2 {
+            get {
+                return ResourceManager.GetString("ErrorGetWidth2", resourceCulture);
             }
         }
         
@@ -223,7 +277,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 初始化迈德威视相机创建相机对象失败,可能已经被占用: 的本地化字符串。
+        ///   查找类似 初始化海康威视相机创建相机对象失败,可能已经被占用: 的本地化字符串。
         /// </summary>
         public static string ErrorInitCam1 {
             get {
@@ -232,7 +286,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 初始化迈德威视相机出现异常: 的本地化字符串。
+        ///   查找类似 初始化海康威视相机出现异常: 的本地化字符串。
         /// </summary>
         public static string ErrorInitCam2 {
             get {
@@ -241,7 +295,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;设置曝光值&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;设置曝光值&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetExposureTime {
             get {
@@ -250,7 +304,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置曝光值发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置曝光值发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetExposureTime2 {
             get {
@@ -259,7 +313,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;设置增益&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;设置增益&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetGain {
             get {
@@ -268,7 +322,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置增益失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置增益失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetGain2 {
             get {
@@ -277,7 +331,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;设置Gamma&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;设置Gamma&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetGamma {
             get {
@@ -286,7 +340,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置Gamma失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置Gamma失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetGamma2 {
             get {
@@ -295,7 +349,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;设置触发延时&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;设置触发延时&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerDelay {
             get {
@@ -304,7 +358,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置触发延时失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置触发延时失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerDelay2 {
             get {
@@ -313,7 +367,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;设置触发模式&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;设置触发模式&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerMode {
             get {
@@ -322,7 +376,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置触发模式发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置触发模式发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerMode2 {
             get {
@@ -331,7 +385,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行设置&apos;输出脉冲宽度&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行设置&apos;输出脉冲宽度&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerPulseWidth {
             get {
@@ -340,7 +394,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机设置输出脉冲宽度失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机设置输出脉冲宽度失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerPulseWidth2 {
             get {
@@ -349,7 +403,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;选择触发源&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;选择触发源&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerSource {
             get {
@@ -358,7 +412,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机选择触发源发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机选择触发源发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSetTriggerSource2 {
             get {
@@ -367,7 +421,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;软触发一次&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;软触发一次&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorSoftWare {
             get {
@@ -376,7 +430,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机执行软触发一次发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机执行软触发一次发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorSoftWare2 {
             get {
@@ -385,7 +439,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;开始采集&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;开始采集&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorStart {
             get {
@@ -394,7 +448,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机开始采集发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机开始采集发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorStart2 {
             get {
@@ -403,7 +457,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;停止采集&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;停止采集&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorStop {
             get {
@@ -412,7 +466,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机停止采集发生异常,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机停止采集发生异常,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorStop2 {
             get {
@@ -421,7 +475,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;加载A组相机参数&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;加载A组相机参数&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorUserLoadParam {
             get {
@@ -430,7 +484,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机加载A组相机参数失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机加载A组相机参数失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorUserLoadParam2 {
             get {
@@ -439,7 +493,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机:执行&apos;保存A组相机参数&apos;失败,错误码: 的本地化字符串。
+        ///   查找类似 海康威视相机:执行&apos;保存A组相机参数&apos;失败,错误码: 的本地化字符串。
         /// </summary>
         public static string ErrorUserSaveParam {
             get {
@@ -448,7 +502,7 @@ namespace MindVisionCam.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机保存A组相机参数失败,序列号: 的本地化字符串。
+        ///   查找类似 海康威视相机保存A组相机参数失败,序列号: 的本地化字符串。
         /// </summary>
         public static string ErrorUserSaveParam2 {
             get {

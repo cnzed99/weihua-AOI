@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="R" xml:space="preserve">
+  <data name="专用参数" xml:space="preserve">
     <value>Special</value>
   </data>
   <data name="1.触发源" xml:space="preserve">
@@ -130,127 +130,127 @@
     <value>Exception getting all connected Medway cameras:</value>
   </data>
   <data name="ErrorInitCam1" xml:space="preserve">
-    <value>Initializing the Medway Vision Camera failed to create the camera object, it may already be occupied:</value>
+    <value>Initializing the MindVision Camera failed to create the camera object, it may already be occupied:</value>
   </data>
   <data name="ErrorInitCam2" xml:space="preserve">
-    <value>Exception initializing Medway Vision camera:</value>
+    <value>Exception initializing MindVision camera:</value>
   </data>
   <data name="ErrorCallBack" xml:space="preserve">
-    <value>Medway Vision camera callback function exception, serial number:</value>
+    <value>MindVision camera callback function exception, serial number:</value>
   </data>
   <data name="ErrorImageFunc" xml:space="preserve">
     <value>Camera image format conversion function exception, serial number:</value>
   </data>
   <data name="ErrorClose" xml:space="preserve">
-    <value>Medway vision camera shutdown abnormal, serial number:</value>
+    <value>MindVision camera shutdown abnormal, serial number:</value>
   </data>
   <data name="ErrorStart" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Start Acquisition', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Start Acquisition', Error Code:</value>
   </data>
   <data name="ErrorStart2" xml:space="preserve">
-    <value>An abnormality occurred when the Medway Vision camera started collecting, serial number:</value>
+    <value>An abnormality occurred when the MindVision camera started collecting, serial number:</value>
   </data>
   <data name="ErrorStop" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Stop Acquisition', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Stop Acquisition', Error Code:</value>
   </data>
   <data name="ErrorStop2" xml:space="preserve">
-    <value>Abnormality occurred when the Medway Vision camera stopped collecting, serial number:</value>
+    <value>Abnormality occurred when the MindVision camera stopped collecting, serial number:</value>
   </data>
   <data name="ErrorSoftWare" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Soft Trigger Once', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Soft Trigger Once', Error Code:</value>
   </data>
   <data name="ErrorSoftWare2" xml:space="preserve">
-    <value>An exception occurred once when the Medway Vision camera performed a soft trigger, serial number:</value>
+    <value>An exception occurred once when the MindVision camera performed a soft trigger, serial number:</value>
   </data>
   <data name="ErrorSetTriggerMode" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Set Trigger Mode', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Set Trigger Mode', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerMode2" xml:space="preserve">
-    <value>Medway Vision camera setting trigger mode exception, serial number:</value>
+    <value>MindVision camera setting trigger mode exception, serial number:</value>
   </data>
   <data name="ErrorGetTriggerMode" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Get Trigger Mode', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Get Trigger Mode', Error Code:</value>
   </data>
   <data name="ErrorGetTriggerMode2" xml:space="preserve">
-    <value>Exception occurred in Medway Vision camera acquisition trigger mode, serial number:</value>
+    <value>Exception occurred in MindVision camera acquisition trigger mode, serial number:</value>
   </data>
   <data name="ErrorGetExposureTime" xml:space="preserve">
-    <value>Medway Vision Camera: Executing 'Exception getting current exposure value' failed with error code:</value>
+    <value>MindVision Camera: Executing 'Exception getting current exposure value' failed with error code:</value>
   </data>
   <data name="ErrorGetExposureTime2" xml:space="preserve">
-    <value>Exception occurred in obtaining the current exposure value by the Medway Vision camera, serial number:</value>
+    <value>Exception occurred in obtaining the current exposure value by the MindVision camera, serial number:</value>
   </data>
   <data name="ErrorSetExposureTime" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Set Exposure Value', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Set Exposure Value', Error Code:</value>
   </data>
   <data name="ErrorSetExposureTime2" xml:space="preserve">
-    <value>Exception in Medway Vision Camera Setting Exposure Value, Serial Number:</value>
+    <value>Exception in MindVision Camera Setting Exposure Value, Serial Number:</value>
   </data>
   <data name="ErrorGetGain" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Get Gain Value', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Get Gain Value', Error Code:</value>
   </data>
   <data name="ErrorGetGain2" xml:space="preserve">
-    <value>The Medway Vision camera gets the gain value, serial number:</value>
+    <value>The MindVision camera gets the gain value, serial number:</value>
   </data>
   <data name="ErrorSetGain" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Set Gain', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Set Gain', Error Code:</value>
   </data>
   <data name="ErrorSetGain2" xml:space="preserve">
-    <value>Medway Vision Camera Set Gain Failed, Serial Number:</value>
+    <value>MindVision Camera Set Gain Failed, Serial Number:</value>
   </data>
   <data name="ErrorGetGamma" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Get Gamma', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Get Gamma', Error Code:</value>
   </data>
   <data name="ErrorGetGamma2" xml:space="preserve">
-    <value>Medway Vision Camera failed to get Gamma, Serial Number:</value>
+    <value>MindVision Camera failed to get Gamma, Serial Number:</value>
   </data>
   <data name="ErrorSetGamma" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Set Gamma', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Set Gamma', Error Code:</value>
   </data>
   <data name="ErrorSetGamma2" xml:space="preserve">
-    <value>Medway Vision Camera failed to set up Gamma, Serial Number:</value>
+    <value>MindVision Camera failed to set up Gamma, Serial Number:</value>
   </data>
   <data name="ErrorSetTriggerDelay" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Set Trigger Delay', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Set Trigger Delay', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerDelay2" xml:space="preserve">
-    <value>Medway Vision camera set trigger delay failed, serial number:</value>
+    <value>MindVision camera set trigger delay failed, serial number:</value>
   </data>
   <data name="ErrorGetTriggerDelay" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Get Trigger Delay', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Get Trigger Delay', Error Code:</value>
   </data>
   <data name="ErrorGetTriggerDelay2" xml:space="preserve">
-    <value>Medway Vision camera fetch trigger delay failed, serial number:</value>
+    <value>MindVision camera fetch trigger delay failed, serial number:</value>
   </data>
   <data name="ErrorSetTriggerPulseWidth" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute setup 'Output Pulse Width', Error Code:</value>
+    <value>MindVision Camera: Failed to execute setup 'Output Pulse Width', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerPulseWidth2" xml:space="preserve">
-    <value>Medway Vision Camera failed to set the output pulse width, serial number:</value>
+    <value>MindVision Camera failed to set the output pulse width, serial number:</value>
   </data>
   <data name="ErrorUserSaveParam" xml:space="preserve">
-    <value>Medway Vision Camera: Executing 'Save Group A Camera Parameters' failed with error code:</value>
+    <value>MindVision Camera: Executing 'Save Group A Camera Parameters' failed with error code:</value>
   </data>
   <data name="ErrorUserSaveParam2" xml:space="preserve">
-    <value>Medway Vision Camera failed to save Group A camera parameters, serial number:</value>
+    <value>MindVision Camera failed to save Group A camera parameters, serial number:</value>
   </data>
   <data name="ErrorUserLoadParam" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Load Group A Camera Parameters', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Load Group A Camera Parameters', Error Code:</value>
   </data>
   <data name="ErrorUserLoadParam2" xml:space="preserve">
-    <value>Medway Vision Camera failed to load Group A camera parameters, serial number:</value>
+    <value>MindVision Camera failed to load Group A camera parameters, serial number:</value>
   </data>
   <data name="ErrorGetTriggerPulseWidth" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Get Output Pulse Width', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Get Output Pulse Width', Error Code:</value>
   </data>
   <data name="ErrorGetTriggerPulseWidth2" xml:space="preserve">
-    <value>Medway Vision camera failed to get output pulse width, serial number:</value>
+    <value>MindVision camera failed to get output pulse width, serial number:</value>
   </data>
   <data name="ErrorSetTriggerSource" xml:space="preserve">
-    <value>Medway Vision Camera: Failed to execute 'Select Trigger Source', Error Code:</value>
+    <value>MindVision Camera: Failed to execute 'Select Trigger Source', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerSource2" xml:space="preserve">
-    <value>Medway Vision camera selection trigger source exception, serial number:</value>
+    <value>MindVision camera selection trigger source exception, serial number:</value>
   </data>
   <data name="InfoReceImage" xml:space="preserve">
     <value>Callback received picture:</value>

@@ -84,7 +84,7 @@ namespace Modbus
                 switch (elem.Type)
                 {
                     case EMELEMTYPE.EMELEMM:
-                        Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1 ? true : false);
+                        Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
                         break;
                     case EMELEMTYPE.EMELEMD:
                         Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
@@ -104,7 +104,7 @@ namespace Modbus
             switch (elem.Type)
             {
                 case EMELEMTYPE.EMELEMM:
-                    Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1 ? true : false);
+                    Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
                     break;
                 case EMELEMTYPE.EMELEMD:
                     Com.WriteSingleRegister(elem.Addr, elem.WriteValue);

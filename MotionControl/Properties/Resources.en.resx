@@ -300,8 +300,8 @@
   <data name="WriteAddrM" xml:space="preserve">
     <value>WriteAddrM</value>
   </data>
-  <data name="RegisterInfo" xml:space="preserve">
-    <value>RegisterInfo</value>
+  <data name="ElementRW" xml:space="preserve">
+    <value>Element RW</value>
   </data>
   <data name="Read" xml:space="preserve">
     <value>Read</value>
@@ -461,5 +461,11 @@
   </data>
   <data name="WriteAll" xml:space="preserve">
     <value>Write All</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="WriteVal" xml:space="preserve">
+    <value>Write Value</value>
   </data>
 </root>

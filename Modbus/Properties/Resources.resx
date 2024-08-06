@@ -118,8 +118,8 @@
   <data name="Type" xml:space="preserve">
     <value>类型</value>
   </data>
-  <data name="Read" xml:space="preserve">
-    <value>读取</value>
+  <data name="ReadVal" xml:space="preserve">
+    <value>读取值</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>描述</value>
@@ -144,5 +144,8 @@
   </data>
   <data name="WriteAll" xml:space="preserve">
     <value>写入全部</value>
+  </data>
+  <data name="WriteVal" xml:space="preserve">
+    <value>写入值</value>
   </data>
 </root>

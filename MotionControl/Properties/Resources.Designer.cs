@@ -709,6 +709,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 读写元件 的本地化字符串。
+        /// </summary>
+        public static string ElementRW {
+            get {
+                return ResourceManager.GetString("ElementRW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 使能 的本地化字符串。
         /// </summary>
         public static string Enable {
@@ -961,15 +970,6 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 寄存器信息 的本地化字符串。
-        /// </summary>
-        public static string RegisterInfo {
-            get {
-                return ResourceManager.GetString("RegisterInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 步进距离 的本地化字符串。
         /// </summary>
         public static string RelaPos {
@@ -1042,6 +1042,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 类型 的本地化字符串。
+        /// </summary>
+        public static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 写入 的本地化字符串。
         /// </summary>
         public static string Write {
@@ -1065,6 +1074,15 @@ namespace MotionControl.Properties {
         public static string WriteAll {
             get {
                 return ResourceManager.GetString("WriteAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入值 的本地化字符串。
+        /// </summary>
+        public static string WriteVal {
+            get {
+                return ResourceManager.GetString("WriteVal", resourceCulture);
             }
         }
         

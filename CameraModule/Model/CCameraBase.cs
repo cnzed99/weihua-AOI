@@ -8,6 +8,8 @@ using System.Threading.Channels;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CameraModule.Model;
+using HandyControl.Controls;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -18,7 +20,7 @@ namespace CameraModule
     /// 李焕彬 2024.7.24
     /// 相机操作基类
     /// </summary>
-    public abstract class CCameraBase
+    public abstract class CCameraBase : IVisionFuns
     {
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -70,15 +72,7 @@ namespace CameraModule
         /// </summary>
         public CCameraParameterBase Setting { get; set; }
 
-        public CCameraBase()
-        {
-            if (grabThread == null)
-            {
-                grabThread = new Thread(new ThreadStart(GrabThread));
-                grabThread.IsBackground = true;
-                grabThread.Start();
-            }
-        }
+        public CCameraBase() { }
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -88,6 +82,10 @@ namespace CameraModule
         public void Init(CCameraParameterBase parameters)
         {
             Setting = parameters;
+
+            grabThread = new Thread(new ThreadStart(GrabThread));
+            grabThread.IsBackground = true;
+            grabThread.Start();
         }
 
         /// <summary>
@@ -142,21 +140,15 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 超时计时
+        /// 超时计时,软触发拍照时间
         /// </summary>
         protected Stopwatch timeOut = new Stopwatch();
 
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 单帧回调时间
-        /// </summary>
-        protected Stopwatch callBacktime = new Stopwatch();
-
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 合成转换时间 从拍照到传出图像
-        /// </summary>
-        public Stopwatch GetImagetime { get; set; } = new Stopwatch();
+        ///// <summary>
+        ///// 李焕彬 2024.7.24
+        ///// 合成转换时间 从拍照到传出图像
+        ///// </summary>
+        //public Stopwatch GetImagetime { get; set; } = new Stopwatch();
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -166,27 +158,15 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 开启采图
+        /// 开启采图，软触发
         /// </summary>
-        protected bool startGrab = false;
+        protected bool startGrabSoft = false;
 
         /// <summary>
         /// 李焕彬 2024.7.24
         /// 防止丢帧时 再次传出图片
         /// </summary>
         protected bool canGo = false;
-
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 一个完整流程结束(无论正常还是丢帧) 限制循环进入
-        /// </summary>
-        protected bool noOver = false;
-
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 判断是否正在采集图片
-        /// </summary>
-        protected bool isGrabing = false;
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -301,32 +281,37 @@ namespace CameraModule
         /// 主动取流线程
         /// </summary>
         /// <param name="grabbedRawData">图像数据</param>
-        public async virtual void GrabThread()
+        public virtual void GrabThread()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             while (true)
             {
-                if (!startGrab)
+                if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
                 {
-                    await Task.Delay(10);
-                    continue;
-                }
-                if (this.noOver)
-                {
-                    if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
+                    if (startGrabSoft)
                     {
-                        if (LostImage != null)
+                        if (this.imageQueue.Count > 0)
                         {
-                            IsLostFrame = true;
-                            ExportImage(LostImage);
+                            IntPtr zero = IntPtr.Zero;
+                            GetImageFunc(zero);
                         }
-                        StringBuilder textBuilder = new StringBuilder();
-                        textBuilder.Append(Properties.Resources.ErrorLostImage2);
-                        textBuilder.Append(timeOut.ElapsedMilliseconds);
-                        CCameraManagement.CamLogger.Error(textBuilder.ToString());
+                        else if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
+                        {
+                            if (LostImage != null)
+                            {
+                                IsLostFrame = true;
+                                ExportImage(LostImage);
+                            }
+                            StringBuilder textBuilder = new StringBuilder();
+                            textBuilder.Append(Properties.Resources.ErrorLostImage2);
+                            textBuilder.Append(timeOut.ElapsedMilliseconds);
+                            CCameraManagement.CamLogger.Error(textBuilder.ToString());
+                        }
                     }
-
-                    if (this.imageQueue.Count > 0 && this.noOver)
+                }
+                else
+                {
+                    if (this.imageQueue.Count > 0)
                     {
                         IntPtr zero = IntPtr.Zero;
                         GetImageFunc(zero);
@@ -380,9 +365,12 @@ namespace CameraModule
                         //SysLog.Info(strbuilder.ToString());
                     }
                 }
-                noOver = false;
-                isGrabing = false;
-                GetImagetime.Stop();
+                if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+                {
+                    startGrabSoft = false;
+                    timeOut.Stop();
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -404,12 +392,9 @@ namespace CameraModule
         public virtual void ExecuteSoftwareTrigger()
         {
             CCameraManagement.CamLogger.Info(Properties.Resources.SoftWareOnce);
-            startGrab = true;
             timeOut.Restart();
             imageQueue.Clear(); //拍照前清除
-            callBacktime.Restart();
-            GetImagetime.Restart();
-            noOver = true;
+            startGrabSoft = true;
         }
 
         /// <summary>
@@ -419,12 +404,28 @@ namespace CameraModule
         /// <returns>true成功，false失败</returns>
         public bool InitializeCamera()
         {
-            if (OpenCamera())
+            try
             {
-                UserLoadParam();
-                SetCameraParam();
-                return true;
+                if (OpenCamera())
+                {
+                    UserLoadParam();
+                    SetCameraParam();
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.InfoInit + Setting.SerialNumber
+                    );
+                    SysLog.Info(Properties.Resources.InfoInit + Setting.SerialNumber);
+                    return true;
+                }
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.ErrorInit3 + Setting.SerialNumber
+                );
+                Growl.Error(Properties.Resources.ErrorInit3 + Setting.SerialNumber);
             }
+            catch (Exception ex)
+            {
+                CCameraManagement.CamLogger.Error(Properties.Resources.ErrorInit2 + ex.Message);
+            }
+
             return false;
         }
 
@@ -435,16 +436,16 @@ namespace CameraModule
         /// <returns></returns>
         public void EndCamera()
         {
-            UserSaveParam();
-            CloseCamera();
+            try
+            {
+                UserSaveParam();
+                CloseCamera();
+            }
+            catch (Exception ex)
+            {
+                CCameraManagement.CamLogger.Error(Properties.Resources.ErrorClose + ex.Message);
+            }
         }
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 初始化相机
-        /// </summary>
-        /// <returns>2024.7.23 李焕彬</returns>
-        public abstract bool OpenCamera();
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -472,150 +473,43 @@ namespace CameraModule
             Setting.TriggerPulseWidth = Setting.TriggerPulseWidth;
         }
 
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 关闭相机，关闭之前执行
-        /// </summary>
+        public void SetTriggerModePro(EMTRIGGERMODE mode)
+        {
+            startGrabSoft = false;
+            SetTriggerMode(mode);
+        }
+
+        public abstract bool OpenCamera();
         public abstract void CloseCamera();
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 开始采集
-        /// </summary>
-        /// <returns>true成功，false失败</returns>
         public abstract bool StartGrab();
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 停止采集
-        /// </summary>
-        /// <returns>true成功，false失败</returns>
         public abstract bool StopGrab();
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取图像宽度
-        /// </summary>
-        /// <param name="value">图像宽度</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetImageWidth(out int value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取图像高度
-        /// </summary>
-        /// <param name="value">图像高度</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetImageHeight(out int value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取图像类型
-        /// </summary>
-        /// <param name="cameraType">图像类型</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetCameraType(out EMCAMERATYPE cameraType);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 修改相机触发模式
-        /// </summary>
-        /// <param name="useTrigger">是否使用触发</param>
-        public abstract void SetTriggerMode(bool useTrigger);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取相机触发模式
-        /// </summary>
-        /// <param name="useTrigger">是否使用触发</param>
-        /// <returns>true成功，false失败</returns>
-        public abstract bool GetTriggerMode(out bool useTrigger);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取当前曝光值
-        /// </summary>
-        /// <param name="value">曝光值</param>
-        /// <returns>true成功，false失败</returns>
+        protected abstract void SetTriggerMode(EMTRIGGERMODE mode);
+        public abstract bool GetTriggerMode(out EMTRIGGERMODE mode);
         public abstract bool GetExposureTime(out uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 设置曝光值
-        /// </summary>
-        /// <param name="value">曝光值</param>
         public abstract void SetExposureTime(uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取增益值
-        /// </summary>
-        /// <param name="value">增益</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetGain(out float value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 设置增益
-        /// </summary>
-        /// <param name="value">增益</param>
         public abstract void SetGain(float value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取Gamma值
-        /// </summary>
-        /// <param name="value">Gamma值</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetGamma(out float value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 设置Gamma值
-        /// </summary>
-        /// <param name="value">Gamma值</param>
         public abstract void SetGamma(float value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 设置相机触发延时时间
-        /// </summary>
-        /// <param name="value">触发延时时间</param>
         public abstract void SetTriggerDelay(uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取相机触发延时时间
-        /// </summary>
-        /// <param name="value">触发延时时间</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetTriggerDelay(out uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        ///设置输出脉冲宽度
-        /// </summary>
-        /// <param name="value">输出脉冲宽度</param>
         public abstract void SetTriggerPulseWidth(uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取输出脉冲宽度
-        /// </summary>
-        /// <param name="value">输出脉冲宽度</param>
-        /// <returns>true成功，false失败</returns>
         public abstract bool GetTriggerPulseWidth(out uint value);
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 保存用户参数
-        /// </summary>
         public abstract void UserSaveParam();
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 加载用户参数
-        /// </summary>
         public abstract void UserLoadParam();
+        public abstract void SetStrobeEnable(bool enable);
+        public abstract void SetLineSelector(object line);
+        public abstract void SetStrobeDuration(uint value);
+        public abstract void SetLineSource(object source);
+        public abstract void SetLineInverter(bool enable);
+        public abstract void SetLineMode(object lineMode);
+        public abstract void LineTriggerSoftware();
+        public abstract void SetGammaEnable(bool enable);
+        public abstract float GetFps();
+        public abstract void SetFrameCount(int count);
+        public abstract void SetCustomParam(uint value);
     }
 }

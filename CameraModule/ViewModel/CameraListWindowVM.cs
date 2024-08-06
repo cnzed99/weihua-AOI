@@ -55,14 +55,13 @@ namespace CameraModule
                 {
                     if (!CCameraManagement.CameraDict.ContainsKey(info.SerialNumber))
                     {
-                        CCameraManagement.CamLogger.Info(
+                        CCameraManagement.OperateLog.Info(
                             $"{Properties.Resources.InfoAddCam}{info.Vender}" + info.SerialNumber
                         );
                         var _par = CCameraManagement
                             .CameraHelpers[info.Vender]
                             .CreatNewCam(info.SerialNumber, out CCameraBase camera);
                         CCameraManagement.CameraDict.Add(info.SerialNumber, camera);
-                        CCameraManagement.CamParamDict.Add(info.SerialNumber, _par);
                         try
                         {
                             if (!CCameraManagement.CameraDict[info.SerialNumber].Connected)
@@ -77,12 +76,16 @@ namespace CameraModule
                                     + ex.Message
                             );
                         }
+                        CCameraManagement.CamParamDict.Add(info.SerialNumber, _par); //InitializeCamera完后参数才添加进字典，不然初始化参数时会有操作记录产生
                     }
                 }
                 else
                 {
                     if (CCameraManagement.CameraDict.ContainsKey(info.SerialNumber))
                     {
+                        CCameraManagement.OperateLog.Info(
+                            $"{Properties.Resources.InfoDelCam}{info.Vender}" + info.SerialNumber
+                        );
                         try
                         {
                             CCameraManagement.CameraDict[info.SerialNumber].EndCamera();

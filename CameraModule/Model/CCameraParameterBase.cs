@@ -93,7 +93,7 @@ namespace CameraModule
         [property: DisplayName("14.启用本相机")]
         [property: Description("14.启用本相机")]
         [ObservableProperty]
-        private bool enable = false;
+        private bool enable = true;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -226,16 +226,21 @@ namespace CameraModule
             }
         }
 
-        private bool triggerMode = true;
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 触发模式
+        /// </summary>
+        private EMTRIGGERMODE triggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
 
         /// <summary>
         /// 2024.7.23 李焕彬
-        /// 启用触发
+        /// 触发模式
         /// </summary>
-        [Category("通用参数")]
-        [DisplayName("22.启用触发")]
-        [Description("22.启用触发")]
-        public bool TriggerMode
+        [property: Category("通用参数")]
+        [property: DisplayName("22.触发模式")]
+        [property: Description("22.触发模式")]
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        public EMTRIGGERMODE TriggerMode
         {
             get { return triggerMode; }
             set
@@ -244,7 +249,7 @@ namespace CameraModule
                 {
                     try
                     {
-                        CCameraManagement.CameraDict[SerialNumber].SetTriggerMode(value);
+                        CCameraManagement.CameraDict[SerialNumber].SetTriggerModePro(value);
                         if (
                             CCameraManagement
                                 .CameraDict[SerialNumber]
@@ -464,5 +469,33 @@ namespace CameraModule
         /// </summary>
         [EnumString("270度", "270")]
         EMROTATE270 = 3,
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 触发模式
+    /// </summary>
+    public enum EMTRIGGERMODE
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 无触发
+        /// </summary>
+        [EnumString("无触发", "NONE")]
+        EMTRIGGERNONE,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 软触发
+        /// </summary>
+        [EnumString("软触发", "SOFTWARE")]
+        EMTRIGGERSOFTWARE,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 硬触发
+        /// </summary>
+        [EnumString("硬触发", "HARDWARE")]
+        EMTRIGGERHARDWARE,
     }
 }

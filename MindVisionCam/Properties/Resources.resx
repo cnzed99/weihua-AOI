@@ -97,7 +97,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="R" xml:space="preserve">
+  <data name="专用参数" xml:space="preserve">
     <value>专用参数</value>
   </data>
   <data name="1.触发源" xml:space="preserve">

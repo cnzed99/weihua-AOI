@@ -195,8 +195,8 @@
   <data name="21.增益" xml:space="preserve">
     <value>21. Gain</value>
   </data>
-  <data name="22.启用触发" xml:space="preserve">
-    <value>22. Enable Trigger</value>
+  <data name="22.触发模式" xml:space="preserve">
+    <value>22. Trigger Mode</value>
   </data>
   <data name="23.触发延时" xml:space="preserve">
     <value>23. Trigger delay</value>
@@ -216,8 +216,8 @@
   <data name="专用参数" xml:space="preserve">
     <value>Special</value>
   </data>
-  <data name="1.触发源" xml:space="preserve">
-    <value>1.TriggerSource</value>
+  <data name="1.硬触发源" xml:space="preserve">
+    <value>1.HardWare TriggerSource</value>
   </data>
   <data name="IsUse" xml:space="preserve">
     <value>IsUse</value>
@@ -260,5 +260,11 @@
   </data>
   <data name="SoftWareOnce" xml:space="preserve">
     <value>Medway sees the camera perform a soft trigger once</value>
+  </data>
+  <data name="InfoDelCam" xml:space="preserve">
+    <value>Search Camera Interface = &gt; Del Camera</value>
+  </data>
+  <data name="软触发失败" xml:space="preserve">
+    <value>The trigger mode is hard trigger, you need to switch to soft trigger mode!</value>
   </data>
 </root>

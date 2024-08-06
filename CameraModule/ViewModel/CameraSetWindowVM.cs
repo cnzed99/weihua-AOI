@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 
@@ -172,7 +173,14 @@ namespace CameraModule
         [RelayCommand]
         public void SoftWareTrigger()
         {
-            camSelect?.ExecuteSoftwareTrigger();
+            if (camSelect?.Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+            {
+                camSelect?.ExecuteSoftwareTrigger();
+            }
+            else
+            {
+                Growl.WarningGlobal(Properties.Resources.软触发失败);
+            }
         }
 
         /// <summary>
@@ -182,14 +190,53 @@ namespace CameraModule
         [RelayCommand]
         public void Continuous()
         {
-            IsContinuous = !IsContinuous;
-            if (IsContinuous)
+            if (camSelect?.Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
             {
-                timer.Enabled = true;
+                IsContinuous = !IsContinuous;
+                if (IsContinuous)
+                {
+                    timer.Enabled = true;
+                }
+                else
+                {
+                    timer.Enabled = false;
+                }
             }
             else
             {
-                timer.Enabled = false;
+                Growl.WarningGlobal(Properties.Resources.软触发失败);
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.22 李焕彬
+        /// 删除相机
+        /// </summary>
+        [RelayCommand]
+        public void DelCam()
+        {
+            if (CamParamSelect != null)
+            {
+                if (CCameraManagement.CameraDict.ContainsKey(CamParamSelect.SerialNumber))
+                {
+                    try
+                    {
+                        CCameraManagement.OperateLog.Info(
+                            $"{Properties.Resources.InfoDelCam}" + CamParamSelect.SerialNumber
+                        );
+                        CCameraManagement.CameraDict[CamParamSelect.SerialNumber].EndCamera();
+                        CCameraManagement.CameraDict.Remove(CamParamSelect.SerialNumber);
+                        CCameraManagement.CamParamDict.Remove(CamParamSelect.SerialNumber);
+                        CamParamList.Remove(CamParamSelect);
+                    }
+                    catch (Exception ex)
+                    {
+                        CCameraManagement.CamLogger.Error(
+                            $"{Properties.Resources.ErrorCloseCam}-{CamParamSelect.SerialNumber}"
+                                + ex.Message
+                        );
+                    }
+                }
             }
         }
 

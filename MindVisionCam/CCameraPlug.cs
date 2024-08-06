@@ -16,9 +16,9 @@ namespace MindVisionCam
     {
         /// <summary>
         /// 2024.7.23 李焕彬
-        /// 枚举已连接的相机
+        /// 枚举相机
         /// </summary>
-        /// <returns>已连接的相机集合</returns>
+        /// <returns>相机集合</returns>
         public List<WHCameraInfo> EnumCamrea()
         {
             List<WHCameraInfo> CamList = new List<WHCameraInfo>();
@@ -47,13 +47,12 @@ namespace MindVisionCam
                         info.CamIp = portType[2].Replace("\0", "");
                         CamList.Add(info);
                     }
-                    return CamList;
                 }
-                else
+                else if (status != CameraSdkStatus.CAMERA_STATUS_NO_DEVICE_FOUND)
                 {
                     CCameraManagement.CamLogger.Error(Properties.Resources.ErrorEnumCam1);
-                    return CamList;
                 }
+                return CamList;
             }
             catch (Exception ex)
             {
@@ -72,8 +71,10 @@ namespace MindVisionCam
         /// <returns>相机参数</returns>
         public CCameraParameterBase Init(string path, int index, out CCameraBase cam)
         {
-            CCamera camera = new CCamera();
-            camera.paramSetting = ConfigAPI.LoadDeserialize<List<CParameterSetting>>(path)[index];
+            CMindVSCamera camera = new CMindVSCamera();
+            camera.paramSetting = ConfigAPI.LoadDeserialize<List<CMindVSParameterSetting>>(path)[
+                index
+            ];
             camera.Init(camera.paramSetting);
             cam = camera;
             return camera.paramSetting;
@@ -88,8 +89,8 @@ namespace MindVisionCam
         /// <returns>相机参数</returns>
         public CCameraParameterBase CreatNewCam(string serialNumber, out CCameraBase cam)
         {
-            CCamera camera = new CCamera();
-            camera.paramSetting = new CParameterSetting(
+            CMindVSCamera camera = new CMindVSCamera();
+            camera.paramSetting = new CMindVSParameterSetting(
                 serialNumber,
                 Assembly.GetExecutingAssembly().GetName().Name
             );

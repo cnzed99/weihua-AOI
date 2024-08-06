@@ -138,8 +138,8 @@
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="Read" xml:space="preserve">
-    <value>Read</value>
+  <data name="ReadVal" xml:space="preserve">
+    <value>Read Value</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Description</value>
@@ -164,5 +164,8 @@
   </data>
   <data name="WriteAll" xml:space="preserve">
     <value>Write All</value>
+  </data>
+  <data name="WriteVal" xml:space="preserve">
+    <value>Write Value</value>
   </data>
 </root>

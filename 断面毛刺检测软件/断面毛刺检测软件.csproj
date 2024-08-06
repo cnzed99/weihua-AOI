@@ -7,6 +7,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
     <AssemblyName>MetalBurrDetectionSys</AssemblyName>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

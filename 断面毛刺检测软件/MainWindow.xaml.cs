@@ -45,7 +45,7 @@ namespace 断面毛刺检测软件
         IObservable<Unit> StartStopSource;
         CMainModelsModelVM CMainList;
         CMainVM mainVM;
-        CProgress<double> progress;
+        CProgress<string> progress;
         CLogRec SysLog;
         CLogRec OperateLog;
 
@@ -62,15 +62,15 @@ namespace 断面毛刺检测软件
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            progress = new CProgress<double>(
-                value => LoadProgressBar.Value = value,
+            progress = new CProgress<string>(
+                value => LoadProgressBar.Text = value,
                 () =>
                 {
                     this.IsEnabled = true;
                     CMainList.IsLoading = false;
                     this.Activate();
                 },
-                100
+                "Loaded!"
             );
             try
             {
@@ -141,7 +141,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                ((IProgress<double>)progress).Report(100);
+                ((IProgress<string>)progress).Report("Loaded!");
             }
         }
 
@@ -287,7 +287,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                progress.Report(100);
+                progress.Report("Loaded!");
             }
         }
 
@@ -324,7 +324,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                progress.Report(100);
+                progress.Report("Loaded!");
             }
         }
         #endregion
@@ -376,7 +376,7 @@ namespace 断面毛刺检测软件
                 }
                 finally
                 {
-                    progress.Report(100);
+                    progress.Report("Loaded!");
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace 断面毛刺检测软件
                     return;
                 this.IsEnabled = false;
                 progress.Reset();
-                progress.Report(0);
+                progress.Report("Initializing...");
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 await CMainList.OpenProj(progress, header);
 

@@ -175,8 +175,8 @@
   <data name="21.增益" xml:space="preserve">
     <value>21.增益</value>
   </data>
-  <data name="22.启用触发" xml:space="preserve">
-    <value>22.启用触发</value>
+  <data name="22.触发模式" xml:space="preserve">
+    <value>22.触发模式</value>
   </data>
   <data name="23.触发延时" xml:space="preserve">
     <value>23.触发延时</value>
@@ -235,10 +235,16 @@
   <data name="专用参数" xml:space="preserve">
     <value>专用参数</value>
   </data>
-  <data name="1.触发源" xml:space="preserve">
-    <value>1.触发源</value>
+  <data name="1.硬触发源" xml:space="preserve">
+    <value>1.硬触发源</value>
   </data>
   <data name="SoftWareOnce" xml:space="preserve">
     <value>迈德威视相机执行软触发一次</value>
+  </data>
+  <data name="InfoDelCam" xml:space="preserve">
+    <value>搜索相机界面=&gt;移除相机</value>
+  </data>
+  <data name="软触发失败" xml:space="preserve">
+    <value>触发模式为硬触发，需要切换到软触发模式！</value>
   </data>
 </root>

@@ -14,15 +14,15 @@ namespace MindVisionCam
     /// 李焕彬 2024.7.24
     /// 相机操作派生类
     /// </summary>
-    public class CCamera : CCameraBase
+    public class CMindVSCamera : CCameraBase
     {
         /// <summary>
         /// 李焕彬 2024.7.24
         /// 相机参数
         /// </summary>
-        internal CParameterSetting paramSetting { get; set; }
+        internal CMindVSParameterSetting paramSetting { get; set; }
 
-        public CCamera()
+        public CMindVSCamera()
             : base() { }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace MindVisionCam
         {
             try
             {
-                startGrab = true;
+                startGrabSoft = true;
                 grabCount++;
                 StringBuilder textBuilder = new StringBuilder(Properties.Resources.InfoReceImage);
                 textBuilder.Append(grabCount);
@@ -246,7 +246,7 @@ namespace MindVisionCam
                 bool result = false;
                 if (this.Connected)
                 {
-                    startGrab = false;
+                    startGrabSoft = false;
                     CameraSdkStatus status = MvApi.CameraPause(m_hCamera);
                     if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                     {
@@ -346,36 +346,34 @@ namespace MindVisionCam
         }
 
         /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 修改相机触发模式
+        /// 李焕彬 2024.7.24
+        /// 设置触发源
         /// </summary>
-        /// <param name="useTrigger">是否使用触发</param>
-        public override void SetTriggerMode(bool useTrigger)
+        protected override void SetTriggerMode(EMTRIGGERMODE mode)
         {
             try
             {
-                if (useTrigger == true)
+                CameraSdkStatus status;
+                switch (mode)
                 {
-                    CameraSdkStatus status = MvApi.CameraSetTriggerMode(
-                        m_hCamera,
-                        (int)paramSetting.TriggerSource
-                    );
-                    if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
-                    {
-                        CCameraManagement.CamLogger.Error(
-                            Properties.Resources.ErrorSetTriggerMode + status.ToString()
-                        );
-                    }
+                    case EMTRIGGERMODE.EMTRIGGERNONE:
+                        status = MvApi.CameraSetTriggerMode(m_hCamera, 0);
+                        break;
+                    case EMTRIGGERMODE.EMTRIGGERSOFTWARE:
+                        status = MvApi.CameraSetTriggerMode(m_hCamera, 1);
+                        break;
+                    case EMTRIGGERMODE.EMTRIGGERHARDWARE:
+                        status = MvApi.CameraSetTriggerMode(m_hCamera, 2);
+                        break;
+                    default:
+                        status = MvApi.CameraSetTriggerMode(m_hCamera, 0);
+                        break;
                 }
-                else
+                if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
-                    CameraSdkStatus status = MvApi.CameraSetTriggerMode(m_hCamera, 0);
-                    if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
-                    {
-                        CCameraManagement.CamLogger.Error(
-                            Properties.Resources.ErrorSetTriggerMode + status.ToString()
-                        );
-                    }
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.ErrorSetTriggerMode + status.ToString()
+                    );
                 }
             }
             catch (Exception ex)
@@ -389,13 +387,7 @@ namespace MindVisionCam
             }
         }
 
-        /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 获取相机触发模式
-        /// </summary>
-        /// <param name="useTrigger">是否使用触发</param>
-        /// <returns>true成功，false失败</returns>
-        public override bool GetTriggerMode(out bool useTrigger)
+        public override bool GetTriggerMode(out EMTRIGGERMODE mode)
         {
             try
             {
@@ -403,12 +395,26 @@ namespace MindVisionCam
                 CameraSdkStatus status = MvApi.CameraGetTriggerMode(m_hCamera, ref getValue);
                 if (status == CameraSdkStatus.CAMERA_STATUS_SUCCESS)
                 {
-                    useTrigger = getValue > 0;
+                    switch (getValue)
+                    {
+                        case 0:
+                            mode = EMTRIGGERMODE.EMTRIGGERNONE;
+                            break;
+                        case 1:
+                            mode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
+                            break;
+                        case 2:
+                            mode = EMTRIGGERMODE.EMTRIGGERHARDWARE;
+                            break;
+                        default:
+                            mode = EMTRIGGERMODE.EMTRIGGERNONE;
+                            break;
+                    }
                     return true;
                 }
                 else
                 {
-                    useTrigger = false;
+                    mode = EMTRIGGERMODE.EMTRIGGERNONE;
                     CCameraManagement.CamLogger.Error(
                         Properties.Resources.ErrorGetTriggerMode + status.ToString()
                     );
@@ -809,37 +815,59 @@ namespace MindVisionCam
             }
         }
 
-        /// <summary>
-        /// 李焕彬 2024.7.24
-        /// 设置触发源
-        /// </summary>
-        public void SetTriggerSource()
+        public override void SetCustomParam(uint value)
         {
-            try
-            {
-                if (paramSetting.TriggerMode)
-                {
-                    CameraSdkStatus status = MvApi.CameraSetTriggerMode(
-                        m_hCamera,
-                        (int)paramSetting.TriggerSource
-                    );
-                    if (status != CameraSdkStatus.CAMERA_STATUS_SUCCESS)
-                    {
-                        CCameraManagement.CamLogger.Error(
-                            Properties.Resources.ErrorSetTriggerSource + status.ToString()
-                        );
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(
-                    Properties.Resources.ErrorSetTriggerSource2
-                        + paramSetting.SerialNumber
-                        + ex.Message
-                );
-                throw;
-            }
+            throw new NotImplementedException();
+        }
+
+        public override void SetStrobeEnable(bool Enable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLineSelector(object Line)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetStrobeDuration(uint Value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLineSource(object source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLineInverter(bool Enable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLineMode(object LineMode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LineTriggerSoftware()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetGammaEnable(bool Enable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override float GetFps()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetFrameCount(int count)
+        {
+            throw new NotImplementedException();
         }
     }
 }

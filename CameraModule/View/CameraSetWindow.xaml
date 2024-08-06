@@ -33,6 +33,7 @@
                 x:Key="BoolToStringConverter1"
                 FalseValue="{Binding [ContinuousTrig], Source={x:Static local:CLang.s_Instance}}"
                 TrueValue="{Binding [StopTrig], Source={x:Static local:CLang.s_Instance}}" />
+            <conv:SubtractConverter x:Key="WidthSubtractConverter" />
         </ResourceDictionary>
     </hc:Window.Resources>
     <i:Interaction.Triggers>
@@ -63,18 +64,27 @@
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <ListBox
+                    x:Name="list_cam"
                     Margin="5,0"
                     ItemsSource="{Binding CamParamList}"
                     SelectedItem="{Binding CamParamSelect}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Style="{StaticResource TextBlockDefault}">
+                            <TextBlock Tag="{Binding ElementName=list_cam, Path=DataContext}" Width="{Binding ElementName=list_cam, Path=ActualWidth, Converter={StaticResource WidthSubtractConverter}, ConverterParameter=40}" Style="{StaticResource TextBlockDefault}">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}-{1}">
                                         <Binding Path="SerialNumber" />
                                         <Binding Path="Name" />
                                     </MultiBinding>
                                 </TextBlock.Text>
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Tag}" IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}">
+                                        <MenuItem
+                                            Width="140"
+                                            Command="{Binding DelCamCommand}"
+                                            Header="删除相机" />
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
                             </TextBlock>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

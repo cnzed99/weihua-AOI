@@ -61,11 +61,11 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
-        ///   查找类似 1.触发源 的本地化字符串。
+        ///   查找类似 1.硬触发源 的本地化字符串。
         /// </summary>
-        public static string _1_触发源 {
+        public static string _1_硬触发源 {
             get {
-                return ResourceManager.GetString("1.触发源", resourceCulture);
+                return ResourceManager.GetString("1.硬触发源", resourceCulture);
             }
         }
         
@@ -169,11 +169,11 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
-        ///   查找类似 22.启用触发 的本地化字符串。
+        ///   查找类似 22.触发模式 的本地化字符串。
         /// </summary>
-        public static string _22_启用触发 {
+        public static string _22_触发模式 {
             get {
-                return ResourceManager.GetString("22.启用触发", resourceCulture);
+                return ResourceManager.GetString("22.触发模式", resourceCulture);
             }
         }
         
@@ -376,6 +376,15 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 搜索相机界面=&gt;移除相机 的本地化字符串。
+        /// </summary>
+        public static string InfoDelCam {
+            get {
+                return ResourceManager.GetString("InfoDelCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 初始化相机成功 的本地化字符串。
         /// </summary>
         public static string InfoInit {
@@ -480,6 +489,15 @@ namespace CameraModule.Properties {
         public static string 专用参数 {
             get {
                 return ResourceManager.GetString("专用参数", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 触发模式为硬触发，需要切换到软触发模式！ 的本地化字符串。
+        /// </summary>
+        public static string 软触发失败 {
+            get {
+                return ResourceManager.GetString("软触发失败", resourceCulture);
             }
         }
         

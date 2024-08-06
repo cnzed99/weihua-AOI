@@ -591,16 +591,22 @@
                 VerticalAlignment="Bottom"
                 hc:Growl.GrowlParent="True" />
         </ScrollViewer>
-        <hc:CircleProgressBar
-            Name="LoadProgressBar"
+        <StackPanel
             Grid.Row="1"
-            Width="200"
-            Height="200"
-            d:Visibility="Hidden"
-            ArcThickness="10"
-            FontSize="20"
-            Style="{DynamicResource ProgressBarInfoCircle}"
-            Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
-            Value="50" />
+            Width="300"
+            VerticalAlignment="Center"
+            d:Visibility="visible"
+            Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
+            <hc:LoadingLine
+                Height="10"
+                DotSpeed="2"
+                Style="{StaticResource LoadingLineLarge}" />
+            <TextBlock
+                Name="LoadProgressBar"
+                d:Text="loading"
+                Style="{StaticResource TextBlockDefaultPrimary}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
     </Grid>
 </hc:Window>

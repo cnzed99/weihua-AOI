@@ -141,7 +141,7 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public async Task LoadAsync(IProgress<double> progress)
+        public async Task LoadAsync(IProgress<string> progress)
         {
             IsLoading = true;
             await Task.Run(async () =>
@@ -164,12 +164,13 @@ namespace WH.DetectSystem.ViewModels
                 //    }
                 //    progress.Report(10);
 
-                await longtimefunc(progress);
+                //await longtimefunc(progress);
                 //}
                 //catch (Exception) { }
                 #endregion
 
                 #region 读取所有通讯参数文件并连接通讯
+                progress.Report("Loading comunication configuration...");
                 try
                 {
                     if (File.Exists(CCommunicationManagement.s_CommPath))
@@ -198,6 +199,7 @@ namespace WH.DetectSystem.ViewModels
                 #endregion
 
                 #region 读取所有相机参数文件并连接相机
+                progress.Report("loading camera configuration...");
                 try
                 {
                     if (File.Exists(CCameraManagement.s_CamPath))
@@ -231,13 +233,14 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public async Task OpenProj(IProgress<double> progress, string header)
+        public async Task OpenProj(IProgress<string> progress, string header)
         {
             IsLoading = true;
             //WeakReferenceMessenger.Default.Reset();
             #region 打开工程
             try
             {
+                progress.Report("正在打开。。。");
                 ProjPath = header;
                 WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlgorParamConfig);
                 WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociQualityConfig);
@@ -258,7 +261,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
-                progress.Report(50);
+                progress.Report("正在更新项目列表。。。");
                 for (int i = SystemSettings.RecentProjs.Count - 1; i >= 0; i--)
                 {
                     if (!File.Exists(SystemSettings.RecentProjs[i]))
@@ -278,12 +281,12 @@ namespace WH.DetectSystem.ViewModels
             #endregion
         }
 
-        async Task longtimefunc(IProgress<double> progress)
+        async Task longtimefunc(IProgress<string> progress)
         {
             for (int i = 0; i <= 100; i++)
             {
                 await Task.Delay(10);
-                progress.Report(i);
+                progress.Report(i.ToString());
             }
         }
         #endregion

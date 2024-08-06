@@ -106,49 +106,20 @@ namespace CameraModule
         /// <returns>成功打开的相机集合</returns>
         public void InitializeAllCamera()
         {
-            try
+            List<(string serialnumber, bool connected)> connects =
+                new List<(string serialnumber, bool connected)>();
+            if (CameraDict.Count > 0)
             {
-                List<(string serialnumber, bool connected)> connects =
-                    new List<(string serialnumber, bool connected)>();
-                if (CameraDict.Count > 0)
+                if (CameraDict != null)
                 {
-                    if (CameraDict != null)
+                    foreach (var Cam in CameraDict)
                     {
-                        foreach (var Cam in CameraDict)
+                        if (Cam.Value.Setting.Enable && !Cam.Value.Connected)
                         {
-                            if (Cam.Value.Setting.Enable && !Cam.Value.Connected)
-                            {
-                                if (Cam.Value.InitializeCamera())
-                                {
-                                    CCameraManagement.CamLogger.Info(
-                                        Properties.Resources.InfoInit
-                                            + Cam.Value.Setting.SerialNumber
-                                    );
-                                    SysLog.Info(
-                                        Properties.Resources.InfoInit
-                                            + Cam.Value.Setting.SerialNumber
-                                    );
-                                }
-                                else
-                                {
-                                    CCameraManagement.CamLogger.Error(
-                                        Properties.Resources.ErrorInit3
-                                            + Cam.Value.Setting.SerialNumber
-                                    );
-                                    Growl.Error(
-                                        Properties.Resources.InfoInit
-                                            + Cam.Value.Setting.SerialNumber
-                                    );
-                                }
-                            }
+                            Cam.Value.InitializeCamera();
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(Properties.Resources.ErrorInit2 + ex.Message);
-                throw;
             }
         }
 
@@ -158,26 +129,18 @@ namespace CameraModule
         /// </summary>
         public static void CloseAllCameras()
         {
-            try
+            if (CameraDict.Count > 0)
             {
-                if (CameraDict.Count > 0)
+                if (CameraDict != null)
                 {
-                    if (CameraDict != null)
+                    foreach (var Cam in CameraDict)
                     {
-                        foreach (var Cam in CameraDict)
+                        if (Cam.Value.Connected)
                         {
-                            if (Cam.Value.Connected)
-                            {
-                                Cam.Value.EndCamera();
-                            }
+                            Cam.Value.EndCamera();
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(Properties.Resources.ErrorClose + ex.Message);
-                throw;
             }
         }
 

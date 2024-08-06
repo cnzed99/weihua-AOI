@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,6 @@ namespace CommunicationModule
     /// </summary>
     public partial class CAlarmAgreement : ConfigModifyObservableBase
     {
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Abbr))]
-        string name;
-
         /// <summary>
         /// 20240723 TCG
         /// 所属通讯名
@@ -33,6 +30,15 @@ namespace CommunicationModule
         /// </summary>
         [IgnoreModifyLog]
         public string GUID { get; set; }
+
+        /// <summary>
+        /// 2024.8.6 李焕彬
+        /// 报警名称
+        /// </summary>
+        [property: DisplayName("报警名称")]
+        [NotifyPropertyChangedFor(nameof(Abbr))]
+        [ObservableProperty]
+        private string name = "自定义";
 
         public CAlarmAgreement()
         {
@@ -59,6 +65,17 @@ namespace CommunicationModule
         /// 2024.7.19 李焕彬
         /// 缩写
         /// </summary>
+        [IgnoreModifyLog]
         public string Abbr => ComName + ":" + Name;
+
+        /// <summary>
+        /// 2024.7.19 李焕彬
+        /// ToString()
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return ComName + ":" + Name;
+        }
     }
 }

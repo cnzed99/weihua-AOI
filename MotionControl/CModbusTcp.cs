@@ -42,15 +42,9 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.12 李焕彬
-        /// 传送M的状态
+        /// 读取元件事件
         /// </summary>
-        public Action<bool[]> SendMxData;
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 传送D区的数据
-        /// </summary>
-        public Action<ushort[]> SendDxData;
+        public Action ReadElemData;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -75,6 +69,12 @@ namespace MotionControl
         /// 比例转换,暂时用1
         /// </summary>
         public static float s_Convert = 1.0f;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 站地址
+        /// </summary>
+        private byte slaveAddress = 0x01;
 
         public CModbusTcp() { }
 
@@ -122,20 +122,14 @@ namespace MotionControl
                         bool[] xState = master.ReadInputs(0x01, 0xF800, 0x10);
                         //读取Y0-Y17状态   //0xFC00‑0xFFFF
                         bool[] yState = master.ReadCoils(0x01, 0xFC00, 0x10);
-                        //读取M0-M100状态   //0x0000‑0x1F3F
-                        bool[] mState = master.ReadCoils(0x01, 0x0000, 0x65);
-                        //读取D100 - D119的数值 //0x0000‑0x1F3F
-                        ushort[] dValue = master.ReadHoldingRegisters(0x01, 0x0064, 0x1E);
                         List<bool> xyState = new List<bool>();
                         //数组合并
                         xyState.AddRange(xState);
                         xyState.AddRange(yState);
                         //触发事件，传递XY的状态
                         SendXYData?.Invoke(xState, yState);
-                        //触发事件，传递M的状态
-                        SendMxData?.Invoke(mState);
-                        //触发事件，传递D的数据
-                        SendDxData?.Invoke(dValue);
+                        //触发事件，读取元件
+                        ReadElemData?.Invoke();
                         //plc连接事件
                         actionConnect.Invoke(true);
                         Thread.Sleep(10);
@@ -278,113 +272,76 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.12 李焕彬
-        /// 写寄存器值
+        /// 读取线圈状态
         /// </summary>
-        /// <param name="register">寄存器地址</param>
-        /// <param name="value">写入值</param>
-        public async void WriteRegisterD(string register, float value)
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>状态</returns>
+        public bool ReadCoil(ushort startAddress)
         {
-            try
+            if (tcpClient.Connected)
             {
-                var regex = Regex.Match(register, "D[0-9]+");
-                if (!regex.Success)
-                    throw new($"输入地址{register}有误！");
-                string addr = regex.Value.Substring(1);
-                ushort coilAddress = Convert.ToUInt16(addr);
+                bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
+                if (bools.Length == 1)
+                {
+                    return bools[0];
+                }
+            }
 
-                byte[] fData = BitConverter.GetBytes(value * s_Convert);
+            return false;
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public float ReadHoldingRegister(ushort startAddress)
+        {
+            if (tcpClient.Connected)
+            {
+                var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
+                if (value.Length == 2)
+                {
+                    byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
+                    return BitConverter.ToSingle(data, 0);
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 写入单个线圈的数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleCoil(ushort startAddress, bool value)
+        {
+            if (tcpClient.Connected)
+            {
+                master.WriteSingleCoil(slaveAddress, startAddress, value);
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 写入单个寄存器
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegister(ushort registerAddress, float value)
+        {
+            if (tcpClient.Connected)
+            {
+                byte[] fData = BitConverter.GetBytes(value);
                 ushort[] Data = new ushort[2];
                 Data[0] = (ushort)((fData[1] << 8) + fData[0]);
                 Data[1] = (ushort)((fData[3] << 8) + fData[2]);
 
-                await WriteMultipleRegistersAsync(0x01, coilAddress, Data);
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(ex.Message);
-                CMotionCtrlVM.SysLog.Error(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 读取寄存器值
-        /// </summary>
-        /// <param name="dValue">寄存器数据集合</param>
-        /// <param name="register">寄存器地址</param>
-        /// <returns></returns>
-        public float ReadRegisterD(ushort[] dValue, string register)
-        {
-            try
-            {
-                //D100-D119共20个寄存器都是Float型，占2个寄存器,需要转换
-                var regex = Regex.Match(register, "D[0-9]+");
-                if (!regex.Success)
-                    throw new($"{register}:" + Properties.Resources.AddrError);
-                string addr = regex.Value.Substring(1);
-                int coilAddress = Convert.ToUInt16(addr) - 100;
-                byte[] data = BitConverter.GetBytes(
-                    dValue[coilAddress] + (dValue[coilAddress + 1] << 16)
-                );
-                return BitConverter.ToSingle(data, 0) / s_Convert;
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(ex.Message);
-                CMotionCtrlVM.SysLog.Error(ex.Message);
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 写线圈
-        /// </summary>
-        /// <param name="coil">线圈地址</param>
-        /// <param name="bTrue"></param>
-        public async void WriteCoilM(string coil, bool bTrue)
-        {
-            try
-            {
-                var regex = Regex.Match(coil, "M[0-9]+");
-                if (!regex.Success)
-                    throw new($"{coil}:" + Properties.Resources.AddrError);
-                string addr = regex.Value.Substring(1);
-                ushort coilAddress = Convert.ToUInt16(addr);
-
-                await WriteSingleCoilAsync(0x01, (ushort)(coilAddress + 0x0000), bTrue);
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(ex.Message);
-                CMotionCtrlVM.SysLog.Error(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 读线圈
-        /// </summary>
-        /// <param name="mData">线圈数据集合</param>
-        /// <param name="coil">线圈地址</param>
-        /// <returns></returns>
-        public bool ReadCoilM(bool[] mData, string coil)
-        {
-            try
-            {
-                var regex = Regex.Match(coil, "M[0-9]+");
-                if (!regex.Success)
-                    throw new($"{coil}:" + Properties.Resources.AddrError);
-                string addr = regex.Value.Substring(1);
-                ushort coilAddress = Convert.ToUInt16(addr);
-
-                return mData[coilAddress];
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(ex.Message);
-                CMotionCtrlVM.SysLog.Error(ex.Message);
-                return false;
+                master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
             }
         }
     }

@@ -698,8 +698,11 @@ namespace WH.DetectSystem.ViewModels
                                         {
                                             DefectFilter defectFilter = cell.Detection.DefectFilter;
                                             if (
-                                                cell.Detection.Category == Category.区域
-                                                || cell.Detection.regionOut.Count == 0
+                                                !(
+                                                    cell.Detection.Result
+                                                    || cell.Detection.Category != Category.区域
+                                                    || cell.Detection.regionOut.Count == 0
+                                                )
                                             )
                                             {
                                                 drawView.SetPen(defectFilter.ShowColor.Brush);
