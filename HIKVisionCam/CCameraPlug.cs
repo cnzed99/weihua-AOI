@@ -73,7 +73,7 @@ namespace HIKVisionCam
                         );
                         info.SerialNumber = gigeInfo.chSerialNumber;
                         info.CamIp = GetIP(gigeInfo.nCurrentIp);
-                        info.CamType = "网口相机";
+                        info.CamType = "GIGE";
                         isHikcamera =
                             gigeInfo.chManufacturerName == "Hikrobot"
                             || gigeInfo.chManufacturerName == "GEV";
@@ -86,7 +86,7 @@ namespace HIKVisionCam
                         );
                         info.SerialNumber = usbInfo.chSerialNumber;
                         info.CamIp = GetIP(usbInfo.idProduct);
-                        info.CamType = "USB相机";
+                        info.CamType = "USB";
                         isHikcamera =
                             usbInfo.chManufacturerName == "Hikrobot"
                             || usbInfo.chManufacturerName == "GEV";

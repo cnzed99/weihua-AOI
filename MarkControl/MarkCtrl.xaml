@@ -47,7 +47,7 @@
     </UserControl.Resources>
     <TabControl Style="{StaticResource TabControlInLine}">
         <TabItem Header="{Binding [Debug], Source={x:Static local:CLang.s_Instance}}">
-            <Grid>
+            <Grid Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -66,21 +66,21 @@
                     wh2:StatusDotElement.DotBrush="{Binding Connected, Converter={StaticResource StatusConverter}}"
                     Command="{Binding ConnectCommand}"
                     Content="{Binding Connected, Converter={StaticResource BoolToStringConverter}}"
-                    Style="{DynamicResource StatusDotButton}" 
-                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource StatusDotButton}" />
                 <Button
                     Grid.Column="1"
                     Width="100"
                     Command="{Binding MarkTestCommand}"
                     Content="{Binding [ManualTrig], Source={x:Static local:CLang.s_Instance}}"
-                    Style="{DynamicResource ButtonPrimary}" 
-                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource ButtonPrimary}" />
                 <TextBox
                     Grid.Row="1"
                     Margin="5"
                     hc:TitleElement.Title="{Binding [EncoderData], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
                     hc:TitleElement.TitlePlacement="Left"
-                    hc:TitleElement.TitleWidth="100"
+                    hc:TitleElement.TitleWidth="130"
                     IsReadOnly="True"
                     Style="{StaticResource TextBoxExtend}"
                     Text="{Binding EncoderCount}" />
@@ -97,7 +97,7 @@
                     Margin="5"
                     hc:TitleElement.Title="{Binding [TriggerData], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
                     hc:TitleElement.TitlePlacement="Left"
-                    hc:TitleElement.TitleWidth="100"
+                    hc:TitleElement.TitleWidth="130"
                     IsReadOnly="True"
                     Style="{StaticResource TextBoxExtend}"
                     Text="{Binding TrigCount}" />
@@ -107,26 +107,25 @@
                     Width="100"
                     Command="{Binding SetZeroTrigsCommand}"
                     Content="{Binding [SetZero], Source={x:Static local:CLang.s_Instance}}"
-                    Style="{DynamicResource ButtonDefault}" 
-                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource ButtonDefault}" />
                 <TextBox
                     Grid.Row="3"
                     Margin="5"
                     hc:TitleElement.Title="{Binding [WaitTrigCnt], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
                     hc:TitleElement.TitlePlacement="Left"
-                    hc:TitleElement.TitleWidth="100"
+                    hc:TitleElement.TitleWidth="130"
                     IsReadOnly="True"
                     Style="{StaticResource TextBoxExtend}"
                     Text="{Binding WaitTrigCount}" />
                 <Button
                     Grid.Row="3"
                     Grid.Column="2"
-                    Width="100"
                     Command="{Binding ClearTrigsCommand}"
-                    Content="{Binding [Clear], Source={x:Static local:CLang.s_Instance}}"
-                    Style="{DynamicResource ButtonDefault}" 
-                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
-                <TextBox
+                    Content="{Binding [SetZero2], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource ButtonDefault}" />
+                <!--<TextBox
                     Grid.Row="4"
                     Margin="5"
                     hc:TitleElement.Title="{Binding [SetValue], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
@@ -140,6 +139,19 @@
                     Width="100"
                     Command="{Binding SetEncoderValueCommand}"
                     Content="{Binding [EncoderSet], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource ButtonPrimary}" />-->
+                <Button
+                    Grid.Row="4"
+                    Command="{Binding StartLineCompTestCommand}"
+                    Content="{Binding [StartLineComp], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                    Style="{DynamicResource ButtonPrimary}" />
+                <Button
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Command="{Binding StopLineCompTestCommand}"
+                    Content="{Binding [StopLineComp], Source={x:Static local:CLang.s_Instance}}"
                     IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
                     Style="{DynamicResource ButtonPrimary}" />
                 <GroupBox
@@ -156,8 +168,8 @@
                                 Command="{Binding ClearCommand}"
                                 Content="{Binding [Clear], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
-                                Style="{DynamicResource ButtonPrimary}" 
-                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"
+                                Style="{DynamicResource ButtonPrimary}" />
                         </DockPanel>
                     </GroupBox.Header>
                     <DataGrid
@@ -174,7 +186,7 @@
                                 Header="{Binding [DateTime], Source={x:Static local:CLang.s_Instance}}"
                                 IsReadOnly="True" />
                             <DataGridTextColumn
-                                Width="300"
+                                Width="200"
                                 Binding="{Binding Pos}"
                                 Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
                                 IsReadOnly="True" />
@@ -190,23 +202,21 @@
                         <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
                             <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{Binding [ManualTest], Source={x:Static local:CLang.s_Instance}}" />
                             <Button
-                                Width="100"
                                 Margin="20,2"
                                 Command="{Binding MarksTestCommand}"
-                                CommandParameter="false"
                                 Content="{Binding [ManualSet], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
-                                Style="{DynamicResource ButtonPrimary}" 
-                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
-                            <Button
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                Style="{DynamicResource ButtonPrimary}" />
+                            <!--<Button
                                 Width="160"
                                 Margin="10,2"
                                 Command="{Binding MarksTestCommand}"
                                 CommandParameter="true"
                                 Content="{Binding [ManualSet2], Source={x:Static local:CLang.s_Instance}}"
                                 DockPanel.Dock="Right"
-                                Style="{DynamicResource ButtonPrimary}" 
-                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                                Style="{DynamicResource ButtonPrimary}"
+                                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>-->
                         </DockPanel>
                     </GroupBox.Header>
                     <DataGrid
@@ -220,7 +230,7 @@
                         Style="{StaticResource DataGrid.Small}">
                         <DataGrid.Columns>
                             <DataGridTextColumn
-                                Width="300"
+                                Width="100"
                                 Binding="{Binding Pos}"
                                 Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}" />
                         </DataGrid.Columns>
@@ -238,17 +248,18 @@
                     <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
                         <TextBlock Style="{StaticResource TextBlockDefault}" Text="{Binding [MarkConfig], Source={x:Static local:CLang.s_Instance}}" />
                         <Button
-                            Width="80"
                             Margin="20,2"
                             Command="{Binding InitControlCommand}"
                             Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                             DockPanel.Dock="Right"
-                            Style="{DynamicResource ButtonPrimary}" 
-                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                            Style="{DynamicResource ButtonPrimary}" />
                     </DockPanel>
                 </GroupBox.Header>
-                <wh:CPropertyGridLang SelectedObject="{Binding MarkConfig}" lang="{x:Static local:CLang.s_Instance}" 
-                                      IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"/>
+                <wh:CPropertyGridLang
+                    IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                    SelectedObject="{Binding MarkConfig}"
+                    lang="{x:Static local:CLang.s_Instance}" />
             </GroupBox>
         </TabItem>
     </TabControl>

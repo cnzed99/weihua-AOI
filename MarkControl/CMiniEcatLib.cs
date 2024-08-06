@@ -467,6 +467,20 @@ namespace MarkControl
             ref int Interval
         );
 
+        /// <summary>
+        /// 设置线性比较器的使能状态
+        /// </summary>
+        /// <param name="SlaveNo">从站号，自动从1开始</param>
+        /// <param name="LineCompareNo">线性比较器号，从0开始</param>
+        /// <param name="Enable">使能状态 0-关闭 1-开启</param>
+        /// <returns></returns>
+        [DllImport("MiniEcatLib.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int Mb_E4O4LineCmp_SetEnable(
+            int SlaveNo,
+            int LineCompareNo,
+            int Enable
+        );
+
         //=====分段式线性比较器绑定触发输出通道=====
         //=== SlaveNo--从站号
         //=== TriggerOutNum--触发输出通道号  0~3

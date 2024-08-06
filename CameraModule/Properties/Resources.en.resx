@@ -267,4 +267,7 @@
   <data name="软触发失败" xml:space="preserve">
     <value>The trigger mode is hard trigger, you need to switch to soft trigger mode!</value>
   </data>
+  <data name="DeleteCam" xml:space="preserve">
+    <value>Delete Cam</value>
+  </data>
 </root>

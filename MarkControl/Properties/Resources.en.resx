@@ -130,7 +130,7 @@
     <value>Connected</value>
   </data>
   <data name="EncoderData" xml:space="preserve">
-    <value>EncoderData</value>
+    <value>Current EncoderData</value>
   </data>
   <data name="TriggerData" xml:space="preserve">
     <value>TriggerData</value>
@@ -140,9 +140,6 @@
   </data>
   <data name="SetTriggers" xml:space="preserve">
     <value>SetTriggers</value>
-  </data>
-  <data name="DynamicList" xml:space="preserve">
-    <value>DynamicList</value>
   </data>
   <data name="Pos" xml:space="preserve">
     <value>Pos</value>
@@ -161,9 +158,6 @@
   </data>
   <data name="ManualTest" xml:space="preserve">
     <value>ManualTest</value>
-  </data>
-  <data name="ManualSet" xml:space="preserve">
-    <value>Marks Test</value>
   </data>
   <data name="SetZero" xml:space="preserve">
     <value>SetZero</value>
@@ -278,5 +272,23 @@
   </data>
   <data name="SuccessConnect" xml:space="preserve">
     <value>Drive connected successfully!</value>
+  </data>
+  <data name="DynamicList" xml:space="preserve">
+    <value>Mark record (including marked and to-be-marked)</value>
+  </data>
+  <data name="SetZero2" xml:space="preserve">
+    <value>Reset (no more markings)</value>
+  </data>
+  <data name="ManualSet" xml:space="preserve">
+    <value>Add the following marking points</value>
+  </data>
+  <data name="AskMarkNeedOffest" xml:space="preserve">
+    <value>Does the marking position need to be compensated by marking?</value>
+  </data>
+  <data name="StartLineComp" xml:space="preserve">
+    <value>Start Line Comp</value>
+  </data>
+  <data name="StopLineComp" xml:space="preserve">
+    <value>Stop Line Comp</value>
   </data>
 </root>

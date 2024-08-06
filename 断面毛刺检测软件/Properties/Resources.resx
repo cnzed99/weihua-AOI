@@ -298,4 +298,7 @@
   <data name="手动调试" xml:space="preserve">
     <value>手动调试</value>
   </data>
+  <data name="清空报警" xml:space="preserve">
+    <value>清空报警</value>
+  </data>
 </root>

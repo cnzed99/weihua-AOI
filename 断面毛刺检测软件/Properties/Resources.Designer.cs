@@ -575,6 +575,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 清空报警 的本地化字符串。
+        /// </summary>
+        public static string 清空报警 {
+            get {
+                return ResourceManager.GetString("清空报警", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
         public static byte[] 组合_2 {

@@ -130,10 +130,10 @@
     <value>已连接</value>
   </data>
   <data name="EncoderData" xml:space="preserve">
-    <value>编码器计数</value>
+    <value>编码器当前计数值</value>
   </data>
   <data name="TriggerData" xml:space="preserve">
-    <value>触发计数</value>
+    <value>已打标点数</value>
   </data>
   <data name="Clear" xml:space="preserve">
     <value>清空</value>
@@ -142,7 +142,7 @@
     <value>设置触发点</value>
   </data>
   <data name="DynamicList" xml:space="preserve">
-    <value>动态点表</value>
+    <value>打标点位记录（含已打标、待打标）</value>
   </data>
   <data name="Pos" xml:space="preserve">
     <value>点位</value>
@@ -160,10 +160,10 @@
     <value>待触发点表</value>
   </data>
   <data name="ManualTest" xml:space="preserve">
-    <value>手动测试点表</value>
+    <value>打标测试</value>
   </data>
   <data name="ManualSet" xml:space="preserve">
-    <value>批量点测试</value>
+    <value>添加如下打标点位</value>
   </data>
   <data name="SetZero" xml:space="preserve">
     <value>清零</value>
@@ -172,7 +172,7 @@
     <value>写入配置</value>
   </data>
   <data name="WaitTrigCnt" xml:space="preserve">
-    <value>等待触发点数</value>
+    <value>待打标点数</value>
   </data>
   <data name="1.卡配置" xml:space="preserve">
     <value>1.卡配置</value>
@@ -274,9 +274,21 @@
     <value>设置数值</value>
   </data>
   <data name="ManualSet2" xml:space="preserve">
-    <value>批量点测试（加补偿值）</value>
+    <value>添加如下打标位置（增加打标补偿值）</value>
   </data>
   <data name="SuccessConnect" xml:space="preserve">
     <value>驱动器连接成功！</value>
+  </data>
+  <data name="SetZero2" xml:space="preserve">
+    <value>清零（不再打标）</value>
+  </data>
+  <data name="AskMarkNeedOffest" xml:space="preserve">
+    <value>打标位置是否需要加上打标补偿？</value>
+  </data>
+  <data name="StartLineComp" xml:space="preserve">
+    <value>开启线性比较器测试</value>
+  </data>
+  <data name="StopLineComp" xml:space="preserve">
+    <value>关闭线性比较器测试</value>
   </data>
 </root>

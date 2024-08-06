@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:DataQuery.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="数据查询"
+    Title="{x:Static prop:Resources.DataQuery}"
     Width="700"
     Height="700"
     d:DataContext="{d:DesignInstance Type=local:CDataQueryVM}"

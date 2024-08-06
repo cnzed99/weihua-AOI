@@ -247,4 +247,7 @@
   <data name="软触发失败" xml:space="preserve">
     <value>触发模式为硬触发，需要切换到软触发模式！</value>
   </data>
+  <data name="DeleteCam" xml:space="preserve">
+    <value>删除相机</value>
+  </data>
 </root>

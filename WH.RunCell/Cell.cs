@@ -273,6 +273,12 @@ namespace WH.RunCell
         /// </summary>
         public BitmapSource DumpImage { get; set; }
 
+        /// <summary>
+        /// 2024.8.6 ¿Óª¿±Ú
+        /// ±‡¬Î∆˜Œª÷√
+        /// </summary>
+        public int EncoderPos { get; set; } = 0;
+
         public override void Dispose()
         {
             base.Dispose();
@@ -342,6 +348,7 @@ namespace WH.RunCell
             cell.WaferID = this.WaferID;
             cell.ProductIndex = this.ProductIndex;
             cell.AlgoriDetectResult = this.AlgoriDetectResult;
+            cell.EncoderPos = this.EncoderPos;
             return cell;
         }
 

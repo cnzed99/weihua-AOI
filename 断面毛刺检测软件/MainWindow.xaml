@@ -315,7 +315,7 @@
                         Height="70"
                         Margin="10,0"
                         Click="ClearGrowlMessage_Click"
-                        Content="清空报警"
+                        Content="{Binding [清空报警], Source={x:Static local:CLang.Instance}}"
                         Style="{StaticResource ButtonDashedPrimary}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">

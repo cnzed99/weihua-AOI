@@ -268,6 +268,15 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 删除相机 的本地化字符串。
+        /// </summary>
+        public static string DeleteCam {
+            get {
+                return ResourceManager.GetString("DeleteCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 关闭相机出现错误: 的本地化字符串。
         /// </summary>
         public static string ErrorClose {

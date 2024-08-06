@@ -65,7 +65,7 @@
                         Header="{Binding [ReadVal], Source={x:Static local:CLang.s_Instance}}"
                         IsReadOnly="True" />
                     <DataGridTextColumn Binding="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteVal], Source={x:Static local:CLang.s_Instance}}" />
-                    <DataGridTemplateColumn Width="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
+                    <DataGridTemplateColumn MinWidth="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
@@ -76,7 +76,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="70" Header="{Binding [Del], Source={x:Static local:CLang.s_Instance}}">
+                    <DataGridTemplateColumn MinWidth="70" Header="{Binding [Del], Source={x:Static local:CLang.s_Instance}}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button

@@ -24,17 +24,5 @@ namespace CameraModule
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// 2024.7.22 李焕彬
-        /// 鼠标拖动修改
-        /// </summary>
-        private void DockPanel_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove();
-            }
-        }
     }
 }

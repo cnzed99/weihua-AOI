@@ -458,6 +458,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
+                        cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
                         //从本地读图 没有相机时无需赋值
                         if (
                             !string.IsNullOrEmpty(CameraSerial)
@@ -585,6 +586,10 @@ namespace WH.DetectSystem.ViewModels
                         {
                             await m_InfoChannel.Writer.WriteAsync(
                                 new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                            );
+                            int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg($"检测NG,增加打标位置{markPos}！", LOG.LOG_NG)
                             );
                         }
                         FilterTime = cell.FilterTime.TotalMilliseconds;

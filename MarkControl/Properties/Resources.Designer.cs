@@ -205,6 +205,15 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 打标位置是否需要加上打标补偿？ 的本地化字符串。
+        /// </summary>
+        public static string AskMarkNeedOffest {
+            get {
+                return ResourceManager.GetString("AskMarkNeedOffest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 清空 的本地化字符串。
         /// </summary>
         public static string Clear {
@@ -277,7 +286,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 动态点表 的本地化字符串。
+        ///   查找类似 打标点位记录（含已打标、待打标） 的本地化字符串。
         /// </summary>
         public static string DynamicList {
             get {
@@ -286,7 +295,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 编码器计数 的本地化字符串。
+        ///   查找类似 编码器当前计数值 的本地化字符串。
         /// </summary>
         public static string EncoderData {
             get {
@@ -331,7 +340,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 批量点测试 的本地化字符串。
+        ///   查找类似 添加如下打标点位 的本地化字符串。
         /// </summary>
         public static string ManualSet {
             get {
@@ -340,7 +349,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 批量点测试（加补偿值） 的本地化字符串。
+        ///   查找类似 添加如下打标位置（增加打标补偿值） 的本地化字符串。
         /// </summary>
         public static string ManualSet2 {
             get {
@@ -349,7 +358,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 手动测试点表 的本地化字符串。
+        ///   查找类似 打标测试 的本地化字符串。
         /// </summary>
         public static string ManualTest {
             get {
@@ -475,11 +484,38 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 清零（不再打标） 的本地化字符串。
+        /// </summary>
+        public static string SetZero2 {
+            get {
+                return ResourceManager.GetString("SetZero2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 从站号，从1开始！ 的本地化字符串。
         /// </summary>
         public static string SlaveIdInfo {
             get {
                 return ResourceManager.GetString("SlaveIdInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 开启线性比较器测试 的本地化字符串。
+        /// </summary>
+        public static string StartLineComp {
+            get {
+                return ResourceManager.GetString("StartLineComp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 关闭线性比较器测试 的本地化字符串。
+        /// </summary>
+        public static string StopLineComp {
+            get {
+                return ResourceManager.GetString("StopLineComp", resourceCulture);
             }
         }
         
@@ -502,7 +538,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 触发计数 的本地化字符串。
+        ///   查找类似 已打标点数 的本地化字符串。
         /// </summary>
         public static string TriggerData {
             get {
@@ -529,7 +565,7 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 等待触发点数 的本地化字符串。
+        ///   查找类似 待打标点数 的本地化字符串。
         /// </summary>
         public static string WaitTrigCnt {
             get {

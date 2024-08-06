@@ -133,4 +133,7 @@
   <data name="Hours" xml:space="preserve">
     <value>时间段</value>
   </data>
+  <data name="DataQuery" xml:space="preserve">
+    <value>数据查询</value>
+  </data>
 </root>

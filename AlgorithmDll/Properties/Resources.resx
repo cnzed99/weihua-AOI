@@ -175,4 +175,7 @@
   <data name="WriteFpga" xml:space="preserve">
     <value>写入FPGA</value>
   </data>
+  <data name="超时时间(ms)" xml:space="preserve">
+    <value>超时时间(ms)</value>
+  </data>
 </root>

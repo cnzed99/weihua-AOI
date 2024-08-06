@@ -33,7 +33,7 @@
             <TextBox hc:TitleElement.Title="{Binding [ProjName], Source={x:Static local:CLang.NewProj}}" Text="{Binding Name}" />
             <ComboBox
                 Margin="5"
-                hc:TitleElement.Title="相机："
+                hc:TitleElement.Title="{Binding [Cam], Source={x:Static local:CLang.NewProj}}"
                 hc:TitleElement.TitlePlacement="Left"
                 ItemsSource="{Binding Keys, Source={x:Static cam:CCameraManagement.CamParamDict}}"
                 SelectedItem="{Binding CameraSerial}"
