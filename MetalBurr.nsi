@@ -37,7 +37,7 @@
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}°²×°°ü${PRODUCT_VERSION}.exe"
-InstallDir "$PROGRAMFILES\Ã«´Ì¼ì²â"
+InstallDir "D:\Ã«´Ì¼ì²âÈí¼þ"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
