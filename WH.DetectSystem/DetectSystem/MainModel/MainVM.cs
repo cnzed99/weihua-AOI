@@ -458,7 +458,14 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
-                        cell.CamName = CCameraManagement.CamParamDict[CameraSerial].Name;
+                        //从本地读图 没有相机时无需赋值
+                        if (
+                            !string.IsNullOrEmpty(CameraSerial)
+                            && !CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+                        )
+                        {
+                            cell.CamName = CCameraManagement.CamParamDict[CameraSerial].Name;
+                        }
                         WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
                         if (MotionCtrlVM.IsFocusing)
                         {
