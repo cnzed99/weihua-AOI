@@ -126,7 +126,7 @@ namespace 断面毛刺检测软件
                     );
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
-                ((IProgress<double>)progress).Report(100);
+                ((IProgress<string>)progress).Report("Loaded!");
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
                     "断面毛刺检测软件"

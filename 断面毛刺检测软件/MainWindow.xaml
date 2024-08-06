@@ -84,6 +84,7 @@
                     </MenuItem>
                     <MenuItem
                         Header="{Binding [RecentProj], Source={x:Static local:CLang.Instance}}"
+                        IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                         ItemsSource="{Binding SystemSettings.RecentProjs}"
                         MenuItem.Click="Recent_Click">
                         <MenuItem.Icon>
