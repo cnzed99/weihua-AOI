@@ -1,0 +1,11 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="clr-namespace:WH.Controls.Controls"
+    xmlns:local="clr-namespace:WH.Controls">
+    <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:CPropertyGridLang}" />
+    <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type local:EnumComboBox}" />
+    <Style BasedOn="{StaticResource ButtonDefault}" TargetType="{x:Type local:CCollectionButton}" />
+    <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type ctrl:COMSComboBox}" />
+    <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type local:ColorComboBox}" />
+</ResourceDictionary>

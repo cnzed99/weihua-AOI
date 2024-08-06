@@ -170,7 +170,7 @@
     <value>数据统计</value>
   </data>
   <data name="Statistics" xml:space="preserve">
-    <value>数据统计</value>
+    <value>数据库设置</value>
   </data>
   <data name="DataClear" xml:space="preserve">
     <value>数据清空</value>
@@ -288,5 +288,17 @@
   </data>
   <data name="AlgorParam" xml:space="preserve">
     <value>算法参数</value>
+  </data>
+  <data name="轴报警" xml:space="preserve">
+    <value>轴报警</value>
+  </data>
+  <data name="驱动器报警" xml:space="preserve">
+    <value>驱动器报警</value>
+  </data>
+  <data name="手动调试" xml:space="preserve">
+    <value>手动调试</value>
+  </data>
+  <data name="清空报警" xml:space="preserve">
+    <value>清空报警</value>
   </data>
 </root>

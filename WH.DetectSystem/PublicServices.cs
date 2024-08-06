@@ -1,10 +1,10 @@
-﻿using Autofac;
-using HandyControl.Interactivity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using HandyControl.Interactivity;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.LogRecord;
 
@@ -17,15 +17,23 @@ namespace WH.DetectSystem
     public class CPublicServices
     {
         public static IContainer Container { get; set; }
+
         public static ContainerBuilder ConfigureServices()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(CLogRec.Create("Info", "./Log", "Error")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS).SingleInstance();
-            builder.RegisterInstance(CLogRec.Create("Operate", "D:/Data")).Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE).SingleInstance();
-            
+            builder
+                .RegisterInstance(CLogRec.Default)
+                .Keyed<CLogRec>(LOGTYPE.LOGTYPE_SYS)
+                .SingleInstance();
+            builder
+                .RegisterInstance(CLogRec.Create("Operate", "D:/Data"))
+                .Keyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE)
+                .SingleInstance();
+
             return builder;
         }
     }
+
     /// <summary>
     /// 20240704 TCG
     /// 日志类型，目前两类 系统日志和操作日志

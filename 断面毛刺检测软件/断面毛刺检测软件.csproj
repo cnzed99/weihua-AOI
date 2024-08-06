@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+	  <LangVersion>10.0</LangVersion>
     <UseWindowsForms>False</UseWindowsForms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+    <AssemblyName>MetalBurrDetectionSys</AssemblyName>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -70,6 +75,7 @@
     <None Remove="Resources\图标\图片设置.svg" />
     <None Remove="Resources\图标\太阳亮度天气.png" />
     <None Remove="Resources\图标\工具.svg" />
+    <None Remove="Resources\图标\工具\手动调试.svg" />
     <None Remove="Resources\图标\帮助.svg" />
     <None Remove="Resources\图标\帮助文档.svg" />
     <None Remove="Resources\图标\截屏保存.svg" />
@@ -81,6 +87,8 @@
     <None Remove="Resources\图标\数据监控.svg" />
     <None Remove="Resources\图标\数据监控.svg.ldenc" />
     <None Remove="Resources\图标\数据统计.svg" />
+    <None Remove="Resources\图标\数据统计\数据库设置.svg" />
+    <None Remove="Resources\图标\数据统计\数据查询.svg" />
     <None Remove="Resources\图标\新建工程.svg" />
     <None Remove="Resources\图标\最近打开.svg" />
     <None Remove="Resources\图标\相机.svg" />
@@ -96,6 +104,7 @@
     <None Remove="Resources\图片\图片管理\截屏保存.png" />
     <None Remove="Resources\图片\工具\光源.png" />
     <None Remove="Resources\图片\工具\工具.png" />
+    <None Remove="Resources\图片\工具\手动调试.png" />
     <None Remove="Resources\图片\工具\离线检测.png" />
     <None Remove="Resources\图片\工具\离线测试\右播放.png" />
     <None Remove="Resources\图片\工具\离线测试\图片.png" />
@@ -116,6 +125,8 @@
     <None Remove="Resources\图片\帮助\关于.png" />
     <None Remove="Resources\图片\帮助\帮助.png" />
     <None Remove="Resources\图片\帮助\帮助文档.png" />
+    <None Remove="Resources\图片\数据统计\数据库设置.png" />
+    <None Remove="Resources\图片\数据统计\数据查询.png" />
     <None Remove="Resources\图片\数据统计\数据清空.png" />
     <None Remove="Resources\图片\数据统计\数据监控.png" />
     <None Remove="Resources\图片\数据统计\数据统计.png" />
@@ -126,6 +137,17 @@
     <None Remove="Resources\图片\系统设置\系统设置.png" />
     <None Remove="Resources\图片\风险盾牌安全.png" />
     <None Remove="Resources\组合-2.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\net8.0-windows\MaociAlg.dll" />
+    <None Include="bin\Debug\net8.0-windows\MiniEcatLib.dll" />
+    <None Include="bin\Debug\net8.0-windows\opencv_world490.dll" />
+    <None Include="bin\Debug\net8.0-windows\WH.LightControl.exe" />
   </ItemGroup>
 
   <ItemGroup>
@@ -145,6 +167,11 @@
     <Resource Include="Resources\logo1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\图标\工具\手动调试.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\图标\数据统计\数据库设置.svg" />
+    <Resource Include="Resources\图标\数据统计\数据查询.svg" />
     <Resource Include="Resources\图标\文件\主页.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -222,6 +249,7 @@
     <Resource Include="Resources\图片\图片管理\截屏保存.png" />
     <Resource Include="Resources\图片\工具\光源.png" />
     <Resource Include="Resources\图片\工具\工具.png" />
+    <Resource Include="Resources\图片\工具\手动调试.png" />
     <Resource Include="Resources\图片\工具\离线检测.png" />
     <Resource Include="Resources\图片\工具\离线测试\右播放.png" />
     <Resource Include="Resources\图片\工具\离线测试\图片.png" />
@@ -242,6 +270,8 @@
     <Resource Include="Resources\图片\帮助\关于.png" />
     <Resource Include="Resources\图片\帮助\帮助.png" />
     <Resource Include="Resources\图片\帮助\帮助文档.png" />
+    <Resource Include="Resources\图片\数据统计\数据库设置.png" />
+    <Resource Include="Resources\图片\数据统计\数据查询.png" />
     <Resource Include="Resources\图片\数据统计\数据清空.png" />
     <Resource Include="Resources\图片\数据统计\数据监控.png" />
     <Resource Include="Resources\图片\数据统计\数据统计.png" />
@@ -285,6 +315,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Update="Views\TimeTriggerTest\TimeTriggerTestResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TimeTriggerTestResources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -309,17 +344,32 @@
       <LastGenOutput>SystemSettingResources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Views\TimeTriggerTest\TimeTriggerTestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TimeTriggerTestResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrl.csproj" />
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+    <ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+    <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
+    <ProjectReference Include="..\DataQuery\DataQuery.csproj" />
+    <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
+    <ProjectReference Include="..\MotionControl\MotionControl.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
+    <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApi.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
+    <ProjectReference Include="..\SaveImageManageWPF\SaveImageManage.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
     <ProjectReference Include="..\WH.DetectSystem\WH.DetectSystem.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+    <ProjectReference Include="..\WH.Load\WH.Load.csproj" />
+    <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
 

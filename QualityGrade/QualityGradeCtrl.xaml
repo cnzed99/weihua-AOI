@@ -7,7 +7,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:QualityGrade"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DesignHeight="450"
     d:DesignWidth="550"
     mc:Ignorable="d">
@@ -29,78 +29,131 @@
                 <Setter Property="hc:InfoElement.TitleWidth" Value="70" />
             </Style>
             <Style TargetType="GridViewColumnHeader">
-                <Setter Property="IsHitTestVisible" Value="False" />
+                <Setter Property="IsHitTestVisible" Value="True" />
             </Style>
+            <DataTemplate DataType="local:Quality">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                        Style="{StaticResource Textbox1}"
+                        Text="{Binding QualitySet.Name}" />
+                    <TextBox
+                        Grid.Column="1"
+                        hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                        IsReadOnly="True"
+                        Style="{StaticResource Textbox1}"
+                        Text="{Binding QualitySet.Priority}" />
+                    <wh:ColorComboBox
+                        Grid.Column="2"
+                        Margin="5,0"
+                        hc:TitleElement.Title="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                        hc:TitleElement.TitlePlacement="Left"
+                        SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}"
+                        Style="{StaticResource ComboBoxExtend.Small}" />
+                    <TextBox
+                        Grid.Row="1"
+                        hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                        Style="{StaticResource Textbox1}"
+                        Text="{Binding QualitySet.Signal}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        hc:InfoElement.Title="{Binding [Description], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                        Style="{StaticResource Textbox1}"
+                        Text="{Binding QualitySet.Description}" />
+                </Grid>
+
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="60" />
             <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Button
-            Grid.Row="2"
-            Grid.Column="0"
-            Width="80"
-            Margin="10,2"
-            Command="{Binding AddCommand}"
-            Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
-            Style="{StaticResource ButtonPrimary}" />
-        <Button
-            Grid.Row="2"
-            Grid.Column="1"
-            Width="80"
-            Margin="10,2"
-            Command="{Binding RemoveCommand}"
-            Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
-            Style="{StaticResource ButtonDanger}" />
-        <Button
-            Grid.Row="2"
-            Grid.Column="2"
-            Width="80"
-            Margin="10,2"
-            Command="{Binding EditCommand}"
-            Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
-            Style="{StaticResource ButtonPrimary}" />
-        <TextBox
-            hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
-            Style="{StaticResource Textbox1}"
-            Text="{Binding QualitySet.Name}" />
-        <TextBox
-            Grid.Column="1"
-            hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
-            IsReadOnly="True"
-            Style="{StaticResource Textbox1}"
-            Text="{Binding QualitySet.Priority}" />
-        <wh:ColorComboBox
-            Grid.Column="2"
-            Margin="5,0"
-            hc:TitleElement.Title="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
-            hc:TitleElement.TitlePlacement="Left"
-            SelectColor="{Binding QualitySet.ShowColor, Mode=TwoWay}"
-            Style="{StaticResource ComboBoxExtend.Small}" />
-        <TextBox
-            Grid.Row="1"
-            hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
-            Style="{StaticResource Textbox1}"
-            Text="{Binding QualitySet.Signal}" />
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            hc:InfoElement.Title="{Binding [Description], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
-            Style="{StaticResource Textbox1}"
-            Text="{Binding QualitySet.Description}" />
+        <UniformGrid Grid.Row="1" Rows="1">
+            <Button
+                Width="80"
+                Margin="10,2"
+                Command="{Binding AddCommand}"
+                Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                Style="{StaticResource ButtonPrimary}" />
+            <Button
+                Width="80"
+                Margin="10,2"
+                Command="{Binding RemoveCommand}"
+                Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                Style="{StaticResource ButtonDanger}" />
+            <Button
+                Width="80"
+                Margin="10,2"
+                Command="{Binding EditCommand}"
+                Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                Style="{StaticResource ButtonPrimary}" />
+        </UniformGrid>
+
+        <hc:SimplePanel Grid.Row="0" DataContext="{Binding QualitySet}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    hc:InfoElement.Title="{Binding [QualityGrade], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                    Style="{StaticResource Textbox1}"
+                    Text="{Binding Name}" />
+                <TextBox
+                    Grid.Column="1"
+                    hc:InfoElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                    IsReadOnly="True"
+                    Style="{StaticResource Textbox1}"
+                    Text="{Binding Priority}" />
+                <wh:ColorComboBox
+                    Grid.Column="2"
+                    Margin="5,0"
+                    hc:TitleElement.Title="{Binding [ShowColor], Mode=OneWay, Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    SelectColor="{Binding ShowColor, Mode=TwoWay}"
+                    Style="{StaticResource ComboBoxExtend.Small}" />
+                <TextBox
+                    Grid.Row="1"
+                    hc:InfoElement.Title="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                    Style="{StaticResource Textbox1}"
+                    Text="{Binding Signal}" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    hc:InfoElement.Title="{Binding [Description], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                    Style="{StaticResource Textbox1}"
+                    Text="{Binding Description}" />
+            </Grid>
+        </hc:SimplePanel>
         <ListView
-            Grid.Row="3"
-            Grid.ColumnSpan="3"
+            Grid.Row="2"
             ItemsSource="{Binding QualityConfig.Qualities}"
             SelectedItem="{Binding QualitySelect}"
             SelectionMode="Single">
@@ -142,7 +195,7 @@
                         Width="80"
                         DisplayMemberBinding="{Binding Priority}"
                         Header="{Binding [Priority], Source={x:Static local:CLang.s_Instance}}" />
-                    <GridViewColumn Width="80" Header="{Binding [ShowColor], Source={x:Static local:CLang.s_Instance}}">
+                    <GridViewColumn Width="90" Header="{Binding [ShowColor], Source={x:Static local:CLang.s_Instance}}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Label

@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +7,9 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using WH.Entity.Messages;
 
 namespace WH.Controls
@@ -20,22 +20,21 @@ namespace WH.Controls
     /// </summary>
     public partial class CLoginViewModel : ObservableObject
     {
-      
         /// <summary>
         /// 选择用户改变时传出委托
         /// </summary>
-        public Action<CLoginPerson,bool> UserChangeAction { get; set; }
+        public Action<CLoginPerson, bool> UserChangeAction { get; set; }
+
         /// <summary>
         /// 剩余登录时间传出委托
         /// </summary>
-        public Action<int,int, bool> TimeRemainingAction { get; set; }
+        public Action<int, int, bool> TimeRemainingAction { get; set; }
 
         [ObservableProperty]
         private string errorMsg = "";
-       
-
 
         private List<string> itemList = new List<string>();
+
         /// <summary>
         /// 用户名列表
         /// </summary>
@@ -52,7 +51,7 @@ namespace WH.Controls
             }
             set
             {
-               
+
                 SetProperty(ref itemList, value);
             }
         }
@@ -62,70 +61,73 @@ namespace WH.Controls
         /// </summary>
         public bool LoggedSuccess = false;
 
+        private int leftTimeMinute = 30;
 
-        private int leftTimeMinute=30;
         /// <summary>
         /// 从界面获取的剩余时间设置
         /// </summary>
-        public  int LoginLeftTimeMinute
+        public int LoginLeftTimeMinute
         {
-            get 
+            get
             {
                 //ILoginLeftTimeMinute = leftTimeMinute;
-               // ILoginLeftTimeSecond = 0;
-                return leftTimeMinute; 
+                // ILoginLeftTimeSecond = 0;
+                return leftTimeMinute;
             }
             set
             {
-                leftTimeMinute= value;
+                leftTimeMinute = value;
                 ILoginLeftTimeMinute = value;
                 ILoginLeftTimeSecond = 0;
                 //DoNotify();
             }
         }
 
-
         /// <summary>
         /// 登录时间【分钟】
         /// </summary>
         [ObservableProperty]
         private int iLoginLeftTimeMinute = 0;
+
         /// <summary>
         /// 登录剩余时间【秒钟】
         /// </summary>
         [ObservableProperty]
-        private  int iLoginLeftTimeSecond = 0;
+        private int iLoginLeftTimeSecond = 0;
 
         /// <summary>
         /// 登录计时
         /// </summary>
-        private  DispatcherTimer tmrCheckAuthorizationLeftTime = new DispatcherTimer();
+        private DispatcherTimer tmrCheckAuthorizationLeftTime = new DispatcherTimer();
 
         /// <summary>
         /// 选择的用户
         /// </summary>
         public CLoginPerson LoginPerson { get; set; } = new CLoginPerson();
+
+        /// <summary>
+        /// 20240801 TCG
+        /// 全局静态 当前用户对象
+        /// </summary>
+        public static CLoginPerson SloinPerson { set; get; } = new CLoginPerson();
+
         public CLoginViewModel()
         {
             bool ret = LoginLoad.LoadUsers();
             if (ret)
             {
-
-                LoginPerson = new CLoginPerson();
+                LoginPerson = SloinPerson;
 
                 tmrCheckAuthorizationLeftTime.Tick += TmrCheckAuthorizationLeftTime_Tick;
                 tmrCheckAuthorizationLeftTime.Interval = TimeSpan.FromSeconds(1);
                 tmrCheckAuthorizationLeftTime.Start();
-
-
-
             }
             else
             {
                 ErrorMsg = "读取用户登录文件失败,请检查文件User.WH";
             }
-            
         }
+
         /// <summary>
         /// 登录时间倒计时
         /// </summary>
@@ -151,15 +153,14 @@ namespace WH.Controls
                     {
                         LogoutButton();
                     }
-                    TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
+                    TimeRemainingAction?.Invoke(
+                        ILoginLeftTimeMinute,
+                        ILoginLeftTimeSecond,
+                        LoggedSuccess
+                    );
                 }
-
-
             }
-            catch (Exception)
-            {
-
-            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -198,22 +199,24 @@ namespace WH.Controls
                 }
                 LoggedSuccess = true;
                 LoginPerson.PrivileageLevel = person.PrivileageLevel;
-               
+
                 UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
                 ErrorMsg = Properties.Resources.LoginSucceed;
-              
-                ILoginLeftTimeMinute = LoginLeftTimeMinute-1;
+
+                ILoginLeftTimeMinute = LoginLeftTimeMinute - 1;
                 ILoginLeftTimeSecond = 59;
                 if (LoggedSuccess)
                 {
-                    WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this)});
+                    WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                        new CloseWindowMessage() { Sender = new WeakReference(this) }
+                    );
                     if (LoginPerson != null)
                     {
                         LoginPerson.PassWord = "";
                         ErrorMsg = "";
                     }
                 }
-                if (LoginPerson?.UserName=="管理员")
+                if (LoginPerson?.UserName == "管理员")
                 {
                     LoginSetting setting = new LoginSetting();
                     setting.ShowDialog();
@@ -227,8 +230,6 @@ namespace WH.Controls
                     LogoutButton();
                     LoginPerson.PassWord = "";
                 }
-                
-             
             }
             catch (Exception ex)
             {
@@ -249,13 +250,9 @@ namespace WH.Controls
             UserChangeAction?.Invoke(LoginPerson, LoggedSuccess);
             ILoginLeftTimeMinute = 0;
             ILoginLeftTimeSecond = 0;
-      
+
             TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
             ErrorMsg = Properties.Resources.Logout;
-
         }
-
-      
-
     }
 }

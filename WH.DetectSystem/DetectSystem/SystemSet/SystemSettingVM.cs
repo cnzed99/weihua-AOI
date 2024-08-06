@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using WH.Controls;
-using WH.Entity;
 using CommunityToolkit.Mvvm.Input;
+using WH.Controls;
 using WH.DetectSystem.Models;
+using WH.Entity;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -15,19 +15,18 @@ namespace WH.DetectSystem.ViewModels
     /// 20240704 TCG
     /// 系统设置 视图模型 继承自系统设置模型
     /// </summary>
-    public partial class CSystemSettingsVM:CSystemSettingsModel
+    public partial class CSystemSettingsVM : CSystemSettingsModel
     {
-
         [RelayCommand]
         private void Close(System.ComponentModel.CancelEventArgs e)
         {
             if (HasErrors)
             {
-
                 e.Cancel = true;
             }
         }
     }
+
     /// <summary>
     /// 20240704 TCG
     /// 系统设置静态路径，提供保存扩展方法和读取方法
@@ -38,6 +37,7 @@ namespace WH.DetectSystem.ViewModels
         /// 系统参数保存的路径
         /// </summary>
         public static string ParameterPath = "..\\SystemConfig\\SystemSetting.Json";
+
         #region 保存参数
 
         public static void SaveParameter(this CSystemSettingsModel settingsModel)
@@ -46,9 +46,7 @@ namespace WH.DetectSystem.ViewModels
             {
                 ConfigAPI.Save(settingsModel, ParameterPath);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
         }
         #endregion
 
@@ -59,7 +57,6 @@ namespace WH.DetectSystem.ViewModels
             CSystemSettingsVM settingsModel = new CSystemSettingsVM();
             try
             {
-                
                 if (File.Exists(ParameterPath))
                 {
                     settingsModel = ConfigAPI.Load<CSystemSettingsVM>(ParameterPath);

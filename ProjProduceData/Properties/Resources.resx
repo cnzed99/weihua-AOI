@@ -109,4 +109,16 @@
   <data name="PercentOfAll" xml:space="preserve">
     <value>占所有检测数比</value>
   </data>
+  <data name="总数" xml:space="preserve">
+    <value>总数：</value>
+  </data>
+  <data name="良率" xml:space="preserve">
+    <value>良率：</value>
+  </data>
+  <data name="良品" xml:space="preserve">
+    <value>良品：</value>
+  </data>
+  <data name="不良" xml:space="preserve">
+    <value>不良：</value>
+  </data>
 </root>

@@ -3,12 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [SystemSettings], Source={x:Static local:CLang.SystemSettings}}"
     Width="650"
     Height="330"
@@ -45,10 +46,10 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True"/>
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <DockPanel>
+    <DockPanel IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <GroupBox
             Width="250"
             DockPanel.Dock="Left"
@@ -56,9 +57,8 @@
             <StackPanel>
 
                 <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding OfflineSave}" />
-                <ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />
-
-
+                <!--<ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />-->
+                <ToggleButton Content="{Binding [ShowAllDefect], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding ShowAllDefect}" />
             </StackPanel>
 
         </GroupBox>

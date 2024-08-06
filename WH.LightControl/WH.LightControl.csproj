@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net8.0-windows</TargetFramework>
+	  <OutputType>WinExe</OutputType>
+	  <UseWindowsForms>False</UseWindowsForms>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\光源.png" />
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="System.IO.Ports" />
+		<PackageReference Include="ValueConverters" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="Resources\光源.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>

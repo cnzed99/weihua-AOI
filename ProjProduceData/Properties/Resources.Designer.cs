@@ -95,5 +95,41 @@ namespace ProjProduceData.Properties {
                 return ResourceManager.GetString("PercentOfAll", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 不良： 的本地化字符串。
+        /// </summary>
+        public static string 不良 {
+            get {
+                return ResourceManager.GetString("不良", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 总数： 的本地化字符串。
+        /// </summary>
+        public static string 总数 {
+            get {
+                return ResourceManager.GetString("总数", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 良品： 的本地化字符串。
+        /// </summary>
+        public static string 良品 {
+            get {
+                return ResourceManager.GetString("良品", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 良率： 的本地化字符串。
+        /// </summary>
+        public static string 良率 {
+            get {
+                return ResourceManager.GetString("良率", resourceCulture);
+            }
+        }
     }
 }

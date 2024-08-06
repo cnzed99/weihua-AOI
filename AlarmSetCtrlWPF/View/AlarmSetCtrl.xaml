@@ -1,0 +1,284 @@
+﻿<UserControl
+    x:Class="AlarmSetCtrl.AlarmSetCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:AlarmSetCtrl"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prop="clr-namespace:AlarmSetCtrl.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
+    d:DataContext="{d:DesignInstance Type=local:CAlarmSetConfigVM}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="3,0" />
+            </Style>
+            <Style BasedOn="{StaticResource TextBoxExtend.Small}" TargetType="TextBox">
+
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Top" />
+            </Style>
+            <Style BasedOn="{StaticResource ComboBoxExtend.Small}" TargetType="ComboBox">
+                <Setter Property="Margin" Value="3,0" />
+                <Setter Property="hc:TitleElement.TitlePlacement" Value="Top" />
+            </Style>
+            <Style BasedOn="{StaticResource CheckBoxBaseStyle}" TargetType="CheckBox">
+                <Setter Property="Margin" Value="3,0" />
+            </Style>
+            <Style TargetType="GridViewColumnHeader">
+                <Setter Property="Background" Value="White" />
+            </Style>
+            <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
+            <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <hc:SimplePanel>
+                <!--<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:AlarmSetCtrl}}, Path=AlarmSetConfig}">-->
+                <DockPanel>
+                    <StackPanel>
+                        <UniformGrid
+                            Width="270"
+                            Height="80"
+                            Margin="5"
+                            Rows="2">
+                            <TextBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmName], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                Text="{Binding MAlarm.Name}" />
+                            <ComboBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmType], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding MAlarm.Type, Converter={StaticResource EnumProviderConverter}}"
+                                SelectedItem="{Binding MAlarm.Type, Converter={StaticResource StringAttrEnumConverter}}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding SelectedAlarmTypeChangedCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ComboBox>
+                            <ComboBox
+                                Margin="0,0,5,0"
+                                hc:TitleElement.Title="{Binding [AlarmSource], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding SourceList}"
+                                SelectedItem="{Binding MAlarm.Source}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <CheckBox
+                                Margin="0,0,5,6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Content="{Binding [Popup], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                IsChecked="{Binding MAlarm.IsPopWin}" />
+
+
+                        </UniformGrid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox
+                                HorizontalAlignment="Stretch"
+                                hc:TitleElement.Title="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                ItemsSource="{Binding AlarmAgreements}"
+                                DisplayMemberPath="Abbr"
+                                SelectedItem="{Binding MAlarm.AlarmAgreement}" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="0,15,0,0"
+                                Command="{Binding RefreshAlarmAgreementsCommand}"
+                                Content="Refresh"
+                                Style="{StaticResource ButtonPrimary.Small}" />
+                        </Grid>
+
+                    </StackPanel>
+
+                    <UniformGrid Rows="3">
+                        <DockPanel>
+                            <CheckBox
+                                Name="ChkTime"
+                                Content="{Binding [TimeControl], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                IsChecked="{Binding MAlarm.IsTimeLimit}" />
+                            <StackPanel
+                                Grid.Column="1"
+                                Orientation="Horizontal"
+                                Visibility="{Binding ElementName=ChkTime, Path=IsChecked, Converter={StaticResource Boolean2VisibilityConverter}}">
+
+                                <TextBox
+                                    Width="100"
+                                    hc:TitleElement.Title="{Binding [Continuous], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    Text="{Binding MAlarm.Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ComboBox
+                                    VerticalAlignment="Center"
+                                    ItemsSource="{Binding MAlarm.TimeUnit, Converter={StaticResource EnumProviderConverter}}"
+                                    SelectedItem="{Binding MAlarm.TimeUnit, Converter={StaticResource StringAttrEnumConverter}}" />
+                                <TextBlock Text="内" />
+                            </StackPanel>
+                        </DockPanel>
+                        <DockPanel>
+                            <CheckBox
+                                Name="ChkTotal"
+                                Content="{Binding [TotalsControl], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                IsChecked="{Binding MAlarm.IsTotalLimit}" />
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=ChkTotal, Path=IsChecked, Converter={StaticResource Boolean2VisibilityConverter}}">
+                                <TextBlock Text="" />
+                                <TextBox
+                                    Width="100"
+                                    hc:TitleElement.Title="{Binding [Recently], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    Text="{Binding MAlarm.Total}" />
+                                <TextBlock Text="{Binding [pcs], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                            </StackPanel>
+                        </DockPanel>
+                        <DockPanel>
+                            <CheckBox
+                                Content="{Binding [IndependentControl], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                IsChecked="{Binding MAlarm.isIndependent, Mode=OneWay}"
+                                IsEnabled="False" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox
+                                    Width="100"
+                                    hc:TitleElement.Title="{Binding [Find], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    Text="{Binding MAlarm.NgCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{Binding [DefectiveProducts], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                            </StackPanel>
+                        </DockPanel>
+
+                    </UniformGrid>
+                </DockPanel>
+            </hc:SimplePanel>
+            <hc:Divider
+                Margin="0,5"
+                LineStroke="{StaticResource SecondaryBorderBrush}"
+                LineStrokeThickness="1"
+                Orientation="Horizontal" />
+            <UniformGrid Grid.Row="1" Columns="3">
+                <Button
+                    Width="100"
+                    Command="{Binding AddAlarmCommand}"
+                    Content="{Binding [Add], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    Style="{StaticResource ButtonPrimary}" />
+                <Button
+                    Width="100"
+                    Command="{Binding RemoveAlarmCommand}"
+                    CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
+                    Content="{Binding [Delete], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    Style="{StaticResource ButtonDanger}" />
+                <Button
+                    Width="100"
+                    Command="{Binding AmendAlarmCommand}"
+                    CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
+                    Content="{Binding [Change], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
+                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    Style="{StaticResource ButtonPrimary}" />
+            </UniformGrid>
+            <hc:Divider
+                Margin="0,5"
+                LineStroke="{StaticResource SecondaryBorderBrush}"
+                LineStrokeThickness="1"
+                Orientation="Horizontal" />
+        </StackPanel>
+        <ListView
+            x:Name="listView"
+            Grid.Row="1"
+            AlternationCount="10000"
+            Background="{x:Null}"
+            ItemsSource="{Binding CAlarmSet.AlarmList}"
+            SelectionMode="Single">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border
+                                    x:Name="Bd"
+                                    HorizontalAlignment="Stretch"
+                                    Background="{TemplateBinding Background}">
+                                    <GridViewRowPresenter
+                                        Margin="3"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="Red" />
+                                        <Setter Property="Background" Value="Black" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Panel.Background" Value="Black" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn
+                        Width="40"
+                        DisplayMemberBinding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}"
+                        Header="序号" />
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding Name}"
+                        Header="{Binding [AlarmName], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding Type, Converter={StaticResource StringAttrEnumConverter}}"
+                        Header="{Binding [AlarmType], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding Source}"
+                        Header="{Binding [AlarmSource], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding AlarmAgreement.Abbr}"
+                        Header="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" >
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding IsPopWin}"
+                        Header="{Binding [Popup], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                    <GridViewColumn
+                        Width="70"
+                        DisplayMemberBinding="{Binding PermitLevel}"
+                        Header="{Binding [Authoritylevel], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                    <GridViewColumn
+                        Width="auto"
+                        DisplayMemberBinding="{Binding RegularShow}"
+                        Header="{Binding [illustrate], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
+                </GridView>
+            </ListView.View>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectedAlarmChangedCommand}" CommandParameter="{Binding ElementName=listView, Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+        </ListView>
+    </Grid>
+</UserControl>

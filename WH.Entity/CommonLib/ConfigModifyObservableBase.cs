@@ -1,13 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WH.Entity.Attribute;
 
 namespace WH.Entity.CommonLib
@@ -21,16 +22,25 @@ namespace WH.Entity.CommonLib
     public record OperateMessage(object obj, string message);
 
     /// <summary>
-    /// 2024.7.2 李焕彬
-    /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
+    /// 记录参数修改的基类 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
-    public abstract class ConfigModifyObservableBase : ObservableObject
+    public abstract partial class ConfigModifyObservableBase : ObservableRecipient
     {
+        public ConfigModifyObservableBase() { }
+
+        /// <summary>
+        /// 20240712 TCG
+        /// 名称
+        /// </summary>
+        [ObservableProperty]
+        string name;
+
         /// <summary>
         /// 20240706 TCG
         /// 参数修改消息通道
         /// </summary>
         public Token token;
+
         /// <summary>
         /// 2024.7.2 李焕彬
         /// 属性旧值
@@ -46,24 +56,51 @@ namespace WH.Entity.CommonLib
         {
             base.OnPropertyChanged(e);
             var newValue = this.GetType().GetProperty(e.PropertyName).GetValue(this);
-            var ignore = (IgnoreModifyLogAttribute)this.GetType().GetProperty(e.PropertyName).GetCustomAttribute(typeof(IgnoreModifyLogAttribute));
-            if (ignore is not null) return;
+            var ignore = (IgnoreModifyLogAttribute)
+                this.GetType()
+                    .GetProperty(e.PropertyName)
+                    .GetCustomAttribute(typeof(IgnoreModifyLogAttribute));
+            if (ignore is not null)
+                return;
             ///要加特特性，不准跳过
-            var attr = (DisplayNameAttribute)this.GetType().GetProperty(e.PropertyName).GetCustomAttribute(typeof(DisplayNameAttribute));
+            var attr = (DisplayNameAttribute)
+                this.GetType()
+                    .GetProperty(e.PropertyName)
+                    .GetCustomAttribute(typeof(DisplayNameAttribute));
             var sb = new StringBuilder();
             if (newValue is not null && newValue is INotifyCollectionChanged collect)
             {
-                collect.CollectionChanged += (s, ee) => { CollectionChanged(ee, attr.DisplayName); };
+                collect.CollectionChanged += (s, ee) =>
+                {
+                    CollectionChanged(ee, attr?.DisplayName);
+                };
             }
-            if (oldValue == null || newValue == null||oldValue.ToString() == newValue.ToString()) return;
-           
-            sb.Append(attr.DisplayName);
+            if (oldValue == null || newValue == null || oldValue.ToString() == newValue.ToString())
+                return;
+
+            sb.Append(attr?.DisplayName);
             sb.Append(":");
-            sb.Append(oldValue?.ToString());
+            //枚举类型均需加上特性 EnumString
+            if (oldValue is Enum oldEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(oldEnum));
+            }
+            else
+            {
+                sb.Append(oldValue?.ToString());
+            }
+
             sb.Append("=>");
-            sb.Append(newValue.ToString());
-            
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            if (newValue is Enum newEnum)
+            {
+                sb.Append(EnumStringAttribute.GetEnumName(newEnum));
+            }
+            else
+            {
+                sb.Append(newValue.ToString());
+            }
+
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
 
         /// <summary>
@@ -99,26 +136,28 @@ namespace WH.Entity.CommonLib
                 sb.Append(e.OldItems[0].ToString());
             }
 
-            WeakReferenceMessenger.Default.Send(new OperateMessage(this, sb.ToString()), token);
+            Messenger.Send(new OperateMessage(this, sb.ToString()), token);
         }
-        public static void UpdateToken(object instance,Token token)
+
+        public static void UpdateToken(object instance, Token token)
         {
-            if(instance is ConfigModifyObservableBase config)
+            if (instance is ConfigModifyObservableBase config)
             {
                 config.token = token;
                 var properties = instance.GetType().GetRuntimeFields();
                 foreach (var property in properties)
                 {
-                    
                     var value = property.GetValue(instance);
-                    if (value is null) continue;
+                    if (value is null)
+                        continue;
 
                     UpdateToken(value, token);
                 }
             }
-            if (instance.GetType().IsGenericType
-                    && instance.GetType().GetGenericTypeDefinition() == typeof(ObservableCollection<>)
-                    )
+            if (
+                instance.GetType().IsGenericType
+                && instance.GetType().GetGenericTypeDefinition() == typeof(ObservableCollection<>)
+            )
             {
                 Type genericType = instance.GetType().GetGenericArguments()[0];
                 PropertyInfo itemsProperty = instance.GetType().GetRuntimeProperties().ToList()[1];
@@ -135,20 +174,21 @@ namespace WH.Entity.CommonLib
                     }
                 }
             }
-            
         }
     }
 
     /// <summary>
     /// 20240706 TCG
     /// 消息通道类型
+    ///
     /// </summary>
-    public class Token:IEquatable<Token>
+    public class Token : IEquatable<Token>
     {
         public string ProGuid { get; set; }
 
-        public string SubChannel {  get; set; }
-        public Token(string projGuid,string subChannel) 
+        public string SubChannel { get; set; }
+
+        public Token(string projGuid, string subChannel)
         {
             this.ProGuid = projGuid;
             this.SubChannel = subChannel;
@@ -156,12 +196,16 @@ namespace WH.Entity.CommonLib
 
         public bool Equals(Token other)
         {
-            if (ProGuid == other.ProGuid
-            && SubChannel == other.SubChannel)
+            if (ProGuid == other.ProGuid && SubChannel == other.SubChannel)
             {
                 return true;
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (ProGuid + SubChannel).GetHashCode();
         }
     }
 }

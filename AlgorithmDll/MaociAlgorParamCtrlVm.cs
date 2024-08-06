@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using WH.Entity.LogRecord;
 
 namespace AlgorithmDll
@@ -43,14 +43,14 @@ namespace AlgorithmDll
             int index = 1;
             for (int i = Config.PcParams.Count - 1; i >= 0; i--)
             {
-                var match = Regex.Match(Config.PcParams[i].Name, c_ParamName+"[0-9]+");
+                var match = Regex.Match(Config.PcParams[i].Name, c_ParamName + "[0-9]+");
                 if (match.Success)
                 {
                     index = int.Parse(match.Value.Substring(2)) + 1;
                     break;
                 }
             }
-            Config.PcParams.Add(new MaociAlgorParam(c_ParamName + index));
+            Config.PcParams.Add(new CMaociAlgorParam(c_ParamName + index, Config.token));
             Config.PcSelect = c_ParamName + index;
         }
 
@@ -60,10 +60,11 @@ namespace AlgorithmDll
         /// </summary>
         /// <param name="maociAlgorParam">删除的参数</param>
         [RelayCommand]
-        public void RemovePcParam(MaociAlgorParam maociAlgorParam)
+        public void RemovePcParam(CMaociAlgorParam maociAlgorParam)
         {
-            int index = Math.Max(Config.PcParams.IndexOf(maociAlgorParam)-1, 0);
-            if(Config.PcParams.Count > 1) Config.PcParams.Remove(maociAlgorParam);
+            int index = Math.Max(Config.PcParams.IndexOf(maociAlgorParam) - 1, 0);
+            if (Config.PcParams.Count > 1)
+                Config.PcParams.Remove(maociAlgorParam);
             Config.PcSelect = Config.PcParams[index].Name;
         }
 
@@ -84,7 +85,7 @@ namespace AlgorithmDll
                     break;
                 }
             }
-            Config.FpgaParams.Add(new MaociAlgorParamFpga(c_ParamName + index));
+            Config.FpgaParams.Add(new CMaociAlgorParamFpga(c_ParamName + index, Config.token));
             Config.FpgaSelect = c_ParamName + index;
         }
 
@@ -94,10 +95,11 @@ namespace AlgorithmDll
         /// </summary>
         /// <param name="maociAlgorParamFpga">删除的参数</param>
         [RelayCommand]
-        public void RemoveFpgaParam(MaociAlgorParamFpga maociAlgorParamFpga)
+        public void RemoveFpgaParam(CMaociAlgorParamFpga maociAlgorParamFpga)
         {
             int index = Math.Max(Config.FpgaParams.IndexOf(maociAlgorParamFpga) - 1, 0);
-            if (Config.FpgaParams.Count > 1) Config.FpgaParams.Remove(maociAlgorParamFpga);
+            if (Config.FpgaParams.Count > 1)
+                Config.FpgaParams.Remove(maociAlgorParamFpga);
             Config.FpgaSelect = Config.FpgaParams[index].Name;
         }
 
@@ -107,9 +109,6 @@ namespace AlgorithmDll
         /// </summary>
         /// <param name="maociAlgorParamFpga">写入的参数</param>
         [RelayCommand]
-        public void WriteFpga(MaociAlgorParamFpga maociAlgorParamFpga)
-        {
-
-        }
+        public void WriteFpga(CMaociAlgorParamFpga maociAlgorParamFpga) { }
     }
 }

@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\图片.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="HandyControl" />
+    <!--<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />-->
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+	  <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+    <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\图片.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\SaveimageResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SaveimageResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="View\SaveimageResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SaveimageResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

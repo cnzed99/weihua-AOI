@@ -160,6 +160,15 @@ namespace 断面毛刺检测软件.Views.SystemSetting {
         }
         
         /// <summary>
+        ///   查找类似 显示所有缺陷 的本地化字符串。
+        /// </summary>
+        internal static string ShowAllDefect {
+            get {
+                return ResourceManager.GetString("ShowAllDefect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 系统设置 的本地化字符串。
         /// </summary>
         internal static string SystemSettings {

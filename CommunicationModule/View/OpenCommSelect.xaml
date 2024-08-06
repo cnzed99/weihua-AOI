@@ -1,0 +1,73 @@
+﻿<hc:Window
+    x:Class="CommunicationModule.OpenCommSelect"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:CommunicationModule"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prop="clr-namespace:CommunicationModule.Properties"
+    Title="{x:Static prop:Resources.AddComm}"
+    Width="500"
+    Height="300"
+    Background="{DynamicResource SecondaryRegionBrush}"
+    Icon="/CommunicationModule;component/Resources/外接通讯数据.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <d:Window.DataContext>
+        <local:COpenCommSelectVM />
+    </d:Window.DataContext>
+    <hc:Window.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <local:NameConverter x:Key="NameConverter" />
+        </ResourceDictionary>
+    </hc:Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <ListBox
+            x:Name="listBox"
+            Grid.RowSpan="2"
+            Margin="5"
+            ItemsSource="{Binding Keys}" />
+        <TextBox
+            x:Name="textBox"
+            Grid.Column="1"
+            Margin="15"
+            VerticalAlignment="Center"
+            hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+            hc:TitleElement.TitlePlacement="Left"
+            hc:TitleElement.TitleWidth="80"
+            Style="{StaticResource TextBoxExtend}"
+            Text="{Binding ElementName=listBox, Path=SelectedItem, Mode=OneWay, Converter={StaticResource NameConverter}}" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="120"
+            Command="{Binding AddCommand}"
+            Content="{x:Static prop:Resources.Add}"
+            Style="{DynamicResource ButtonPrimary}">
+            <Button.CommandParameter>
+                <MultiBinding>
+                    <MultiBinding.Converter>
+                        <entity:CommMultiParamConverter />
+                    </MultiBinding.Converter>
+                    <Binding ElementName="listBox" Path="SelectedItem" />
+                    <Binding ElementName="textBox" Path="Text" />
+                </MultiBinding>
+            </Button.CommandParameter>
+        </Button>
+    </Grid>
+</hc:Window>

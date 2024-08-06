@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using QualityGrade;
@@ -19,9 +19,9 @@ namespace SDFilter
     /// </summary>
     public partial class CDefectFilterSetVM : ObservableValidator
     {
-        public List<EMFILTER> FilterCharacters { get; set; } 
-        
-        public CDefectFilterSetVM() 
+        public List<EMFILTER> FilterCharacters { get; set; }
+
+        public CDefectFilterSetVM()
         {
             FilterCharacters = new List<EMFILTER>()
             {
@@ -35,13 +35,19 @@ namespace SDFilter
                 EMFILTER.EMFILTER_HEIGHT
             };
         }
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 构造
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">类别</param>
-        public CDefectFilterSetVM(DefectFilter defectFilter, SpeciesFilter speciesFilter,CQualityConfig qualityConfig) :this()
+        public CDefectFilterSetVM(
+            DefectFilter defectFilter,
+            SpeciesFilter speciesFilter,
+            CQualityConfig qualityConfig
+        )
+            : this()
         {
             this.DefectFilter = defectFilter;
             RecipeDefects = speciesFilter.RecipeDefects.ToList();
@@ -84,9 +90,17 @@ namespace SDFilter
             set
             {
                 var oldValue = defectName;
-                if(SetProperty(ref defectName, value, true))
+                if (SetProperty(ref defectName, value, true))
                 {
-                    WeakReferenceMessenger.Default.Send<PropertyChangedMessage<string>, string>(new PropertyChangedMessage<string>(this, nameof(DefectName), oldValue, defectName), nameof(DefectName));
+                    WeakReferenceMessenger.Default.Send<PropertyChangedMessage<string>, string>(
+                        new PropertyChangedMessage<string>(
+                            this,
+                            nameof(DefectName),
+                            oldValue,
+                            defectName
+                        ),
+                        nameof(DefectName)
+                    );
                 }
                 if (GetErrors(nameof(DefectName)).Count() == 0)
                 {
@@ -121,7 +135,12 @@ namespace SDFilter
                 return new ValidationResult(Properties.Resource1.NameNotNull);
             if (!s_Instance.IsValidString(name))
                 return new ValidationResult(Properties.Resource1.NameInValid);
-            if (s_Instance.RecipeDefects.Exists(o => o.DefectFilters.ToList().Exists(o => o != s_Instance.DefectFilter && o.Name == name)))
+            if (
+                s_Instance.RecipeDefects.Exists(o =>
+                    o.DefectFilters.ToList()
+                        .Exists(o => o != s_Instance.DefectFilter && o.Name == name)
+                )
+            )
                 return new ValidationResult(Properties.Resource1.NameRepeat);
             return ValidationResult.Success;
         }
@@ -145,13 +164,13 @@ namespace SDFilter
         public RecipeDefect RecipeDefect
         {
             get { return recipeDefect; }
-            set {
+            set
+            {
                 recipeDefect.DefectFilters.Remove(DefectFilter);
                 SetProperty(ref recipeDefect, value);
                 recipeDefect.DefectFilters.Add(DefectFilter);
             }
         }
-
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -160,7 +179,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddFilterConfig()
         {
-            DefectFilter?.FilterList.Add(new FilterAndSelect());
+            DefectFilter?.FilterList.Add(new FilterAndSelect(DefectFilter.token));
         }
 
         /// <summary>
@@ -182,7 +201,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddSelectConfig(FilterAndSelect filterConfig)
         {
-            filterConfig.Filter.Add(new SelectConfig());
+            filterConfig.Filter.Add(new SelectConfig(filterConfig.token));
         }
 
         /// <summary>
@@ -193,7 +212,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddSelectConfig2(FilterAndSelect filterConfig)
         {
-            filterConfig.SelectList.Add(new SelectConfig());
+            filterConfig.SelectList.Add(new SelectConfig(filterConfig.token));
         }
 
         /// <summary>
@@ -208,8 +227,10 @@ namespace SDFilter
             if (objArr != null && objArr.Length == 2)
             {
                 SelectConfig selectConfig = objArr[0] as SelectConfig;
-                ObservableCollection<SelectConfig> selectConfigs = objArr[1] as ObservableCollection<SelectConfig>;
-                if(selectConfigs != null && selectConfig != null) selectConfigs.Remove(selectConfig);
+                ObservableCollection<SelectConfig> selectConfigs =
+                    objArr[1] as ObservableCollection<SelectConfig>;
+                if (selectConfigs != null && selectConfig != null)
+                    selectConfigs.Remove(selectConfig);
             }
         }
 
@@ -221,7 +242,7 @@ namespace SDFilter
         [RelayCommand]
         public void AddOneSelectParam(SelectConfig selectConfig)
         {
-            selectConfig.SelectParams.Add(new OneSelectParams());
+            selectConfig.SelectParams.Add(new OneSelectParams(selectConfig.token));
         }
 
         /// <summary>
@@ -236,9 +257,11 @@ namespace SDFilter
             if (objArr != null && objArr.Length == 2)
             {
                 OneSelectParams oneSelectParams = objArr[0] as OneSelectParams;
-                ObservableCollection<OneSelectParams> lsSelectParams = objArr[1] as ObservableCollection<OneSelectParams>;
-                if (oneSelectParams != null && lsSelectParams != null) lsSelectParams.Remove(oneSelectParams);
-            }     
+                ObservableCollection<OneSelectParams> lsSelectParams =
+                    objArr[1] as ObservableCollection<OneSelectParams>;
+                if (oneSelectParams != null && lsSelectParams != null)
+                    lsSelectParams.Remove(oneSelectParams);
+            }
         }
     }
 }

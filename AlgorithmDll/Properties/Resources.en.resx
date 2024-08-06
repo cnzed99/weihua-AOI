@@ -195,4 +195,7 @@
   <data name="WriteFpga" xml:space="preserve">
     <value>WriteFpga</value>
   </data>
+  <data name="超时时间(ms)" xml:space="preserve">
+    <value>Overtime(ms)</value>
+  </data>
 </root>

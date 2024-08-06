@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using WH.Entity.CommonLib;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
-using WH.Entity.LogRecord;
 using WH.Entity.Attribute;
+using WH.Entity.CommonLib;
+using WH.Entity.LogRecord;
 
 namespace AlgorithmDll
 {
@@ -14,7 +14,9 @@ namespace AlgorithmDll
     /// 2024.7.4 李焕彬
     /// 算法参数配置管理类
     /// </summary>
-    public partial class CMaociAlgorParamConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CMaociAlgorParamConfig
+        : ConfigModifyObservableBase,
+            IRecipient<OperateMessage>
     {
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -24,13 +26,18 @@ namespace AlgorithmDll
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
-        public CMaociAlgorParamConfig() 
+        public CMaociAlgorParamConfig()
         {
-            this.token = new Token("",this.GetType().Namespace);
-            PcParams = new ObservableCollection<MaociAlgorParam>() { new MaociAlgorParam(c_ParamName) };
-            FpgaParams = new ObservableCollection<MaociAlgorParamFpga>() { new MaociAlgorParamFpga(c_ParamName) };
+            this.token = new Token("", this.GetType().Namespace);
+            PcParams = new ObservableCollection<CMaociAlgorParam>()
+            {
+                new CMaociAlgorParam(c_ParamName, token)
+            };
+            FpgaParams = new ObservableCollection<CMaociAlgorParamFpga>()
+            {
+                new CMaociAlgorParamFpga(c_ParamName, token)
+            };
             UpdataMaociAlgorParamUse();
-            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace AlgorithmDll
             }
             foreach (var qua in PcParams)
             {
-                if (message.obj.GetType() == typeof(MaociAlgorParam))
+                if (message.obj.GetType() == typeof(CMaociAlgorParam))
                 {
                     if (qua == message.obj)
                     {
@@ -61,7 +68,7 @@ namespace AlgorithmDll
             }
             foreach (var qua in FpgaParams)
             {
-                if (message.obj.GetType() == typeof(MaociAlgorParamFpga))
+                if (message.obj.GetType() == typeof(CMaociAlgorParamFpga))
                 {
                     if (qua == message.obj)
                     {
@@ -86,7 +93,7 @@ namespace AlgorithmDll
         /// </summary>
         [property: DisplayName("参数列表")]
         [ObservableProperty]
-        private ObservableCollection<MaociAlgorParam> pcParams;
+        private ObservableCollection<CMaociAlgorParam> pcParams;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -102,7 +109,7 @@ namespace AlgorithmDll
         /// </summary>
         [property: DisplayName("预处理参数列表")]
         [ObservableProperty]
-        private ObservableCollection<MaociAlgorParamFpga> fpgaParams;
+        private ObservableCollection<CMaociAlgorParamFpga> fpgaParams;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -124,10 +131,20 @@ namespace AlgorithmDll
         /// </summary>
         public SMaociAlgorParamFpga MaociAlgorParamFpgaUse { get; set; }
 
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 更新毛刺参数结构体
+        /// </summary>
         private void UpdataMaociAlgorParamUse()
         {
-            MaociAlgorParamUse = new(PcParams.FirstOrDefault(o => o.Name == PcSelect));
-            MaociAlgorParamFpgaUse = new(FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect));
+            if (PcParams.FirstOrDefault(o => o.Name == PcSelect) != null)
+            {
+                MaociAlgorParamUse = new(PcParams.FirstOrDefault(o => o.Name == PcSelect));
+            }
+            if (FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect) != null)
+            {
+                MaociAlgorParamFpgaUse = new(FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect));
+            }
         }
     }
 
@@ -135,14 +152,16 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// PC算法参数
     /// </summary>
-    public partial class MaociAlgorParam : ConfigModifyObservableBase
+    public partial class CMaociAlgorParam : ConfigModifyObservableBase
     {
-        public MaociAlgorParam()
+        public CMaociAlgorParam()
         {
             this.token = new Token("", this.GetType().Namespace);
         }
-        public MaociAlgorParam(string name):this()
+
+        public CMaociAlgorParam(string name, Token token)
         {
+            this.token = token;
             Name = name;
         }
 
@@ -228,6 +247,16 @@ namespace AlgorithmDll
 
         /// <summary>
         /// 2024.7.4 李焕彬
+        /// 超时时间ms
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("超时时间(ms)")]
+        [property: Description("超时时间(ms)")]
+        private uint timeOut = 3000;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -239,14 +268,16 @@ namespace AlgorithmDll
     /// <summary>
     /// FPGA算法参数
     /// </summary>
-    public partial class MaociAlgorParamFpga : ConfigModifyObservableBase
+    public partial class CMaociAlgorParamFpga : ConfigModifyObservableBase
     {
-        public MaociAlgorParamFpga()
+        public CMaociAlgorParamFpga()
         {
             this.token = new Token("", this.GetType().Namespace);
         }
-        public MaociAlgorParamFpga(string name):this()
+
+        public CMaociAlgorParamFpga(string name, Token token)
         {
+            this.token = token;
             Name = name;
         }
 
@@ -410,6 +441,16 @@ namespace AlgorithmDll
         [property: DisplayName("铝层位置偏移值")]
         [property: Description("铝层位置偏移值")]
         private int lightPosOffest = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 超时时间ms
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("超时时间(ms)")]
+        [property: Description("超时时间(ms)")]
+        private uint timeOut = 3000;
 
         /// <summary>
         /// 2024.7.4 李焕彬

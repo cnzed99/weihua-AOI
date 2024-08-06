@@ -135,4 +135,7 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Cam" xml:space="preserve">
+    <value>Cam:</value>
+  </data>
 </root>

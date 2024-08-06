@@ -1,16 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HandyControl.Controls;
 using HandyControl.Data;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 
@@ -20,40 +21,36 @@ namespace QualityGrade
     /// 2024.6.26 李焕彬
     /// 质量等级控件VM
     /// </summary>
-    public partial class CQualityCtrlVM :ObservableObject
+    public partial class CQualityCtrlVM : ObservableObject
     {
-        public CQualityCtrlVM() 
-        {
-            //返回请求的质量等级集合
-            //WeakReferenceMessenger.Default.Register<RequestMessage<ObservableCollection<Quality>>, string>(this, "GetQuality");
-        }
+        public CQualityCtrlVM() { }
+
+        private CQualityConfig qualityConfig; //不要在这里赋值
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 回复消息，过滤分选设置用
-        /// </summary>
-        /// <param name="message">质量列表</param>
-        //public void Receive(RequestMessage<ObservableCollection<Quality>> message)
-        //{
-        //    if (message.HasReceivedResponse) return;
-        //    message.Reply(CQualityConfig.Qualities);
-        //}
-
-        /// <summary>
-        /// 2024.7.5 TCG
+        /// 20240716 TCG
         /// 质量等级配置
         /// </summary>
-        [ObservableProperty]
-        private CQualityConfig qualityConfig;//不要在这里赋值
+        public CQualityConfig QualityConfig
+        {
+            get => qualityConfig;
+            set { SetProperty(ref qualityConfig, value); }
+        }
+
+        public void Reset()
+        {
+            QualitySelect = null;
+            QualitySet = new Quality();
+        }
 
         /// <summary>
         /// 2024.7.5 TCG
         /// 当前设置质量 不要赋值
         /// </summary>
         [ObservableProperty]
-        private Quality qualitySet;//不要在这里赋值
+        private Quality qualitySet; //不要在这里赋值
 
-        private Quality qualitySelect;//不要在这里赋值
+        private Quality qualitySelect; //不要在这里赋值
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -62,7 +59,8 @@ namespace QualityGrade
         public Quality QualitySelect
         {
             get { return qualitySelect; }
-            set { 
+            set
+            {
                 SetProperty(ref qualitySelect, value);
                 if (value != null)
                 {
@@ -96,8 +94,12 @@ namespace QualityGrade
                 else
                 {
                     var qua = QualitySet.Clone();
-                    if (QualityConfig.Qualities.Count > 0) qua.Priority = QualityConfig.Qualities[QualityConfig.Qualities.Count - 1].Priority + 1;
+                    qua.Priority = 0;
+                    if (QualityConfig.Qualities.Count > 0)
+                        qua.Priority =
+                            QualityConfig.Qualities[QualityConfig.Qualities.Count - 1].Priority + 1;
                     QualityConfig.Qualities.Add(qua);
+                    qua.token.ProGuid = QualityConfig.token.ProGuid;
                     //WeakReferenceMessenger.Default.Send<CQualityConfig>(CQualityConfig);
                 }
             }
@@ -126,7 +128,10 @@ namespace QualityGrade
         {
             if (QualitySelect != null)
             {
-                if (QualitySelect.Name != QualitySet.Name && QualityConfig.Qualities.ToList().Exists(o => o.Name == QualitySet.Name))
+                if (
+                    QualitySelect.Name != QualitySet.Name
+                    && QualityConfig.Qualities.ToList().Exists(o => o.Name == QualitySet.Name)
+                )
                 {
                     Growl.Error(Properties.Resource1.NameErrorInfo);
                 }

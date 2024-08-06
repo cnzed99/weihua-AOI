@@ -8,6 +8,7 @@
 		<PackageReference Include="log4net" />
 		<PackageReference Include="Mapster" />
 		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="System.IO.Ports" />
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>
 </Project>

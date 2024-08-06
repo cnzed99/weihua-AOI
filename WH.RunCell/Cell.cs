@@ -1,8 +1,9 @@
-
-using AlgorithmDll;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AlgorithmDll;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell
@@ -20,12 +21,13 @@ namespace WH.RunCell
         /// <summary>
         /// 图像文件
         /// </summary>
-        public string ImageFile;
+        public string ImageFile = string.Empty;
 
         /// <summary>
         /// 缺陷位置图像
         /// </summary>
         public BitmapSource DefectPartImg { get; set; }
+
         /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
         /// </summary>
@@ -47,21 +49,23 @@ namespace WH.RunCell
         /// <summary>
         /// 是否是OK产品
         /// </summary>
-        public bool IsOK { get; set; } = false;
+        public bool IsOK { get; set; } = true;
 
         /// <summary>
         /// 用来存储是质量OK还是颜色OK [0]=质量 [1]=颜色;
         /// </summary>
-       // public bool[] DetectionOrColorOK { get; set; } = new bool[2];
+        // public bool[] DetectionOrColorOK { get; set; } = new bool[2];
 
         /// <summary>
         /// 流水号
         /// </summary>
-        public string ID { get; set; }
+        public string ID { get; set; } = string.Empty;
+
         /// <summary>
-        /// 产品ID 
+        /// 产品ID
         /// </summary>
-        public string WaferID { get; set; }
+        public string WaferID { get; set; } = string.Empty;
+
         /// <summary>
         /// 当前班次的产品序号
         /// </summary>
@@ -75,7 +79,8 @@ namespace WH.RunCell
         /// <summary>
         /// 发送信息字典
         /// </summary>
-        public Dictionary<string, string> OtherInfoSend { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> OtherInfoSend { get; set; } =
+            new Dictionary<string, string>();
 
         ///// <summary>
         ///// 原图像== Image
@@ -98,7 +103,30 @@ namespace WH.RunCell
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
-        public bool _skipthis = false;
+        /// <summary>
+        /// 跳过
+        /// </summary>
+        public bool Skipthis { get; set; } = false;
+
+        private EMDETECTRESULT algoriDetectResult = EMDETECTRESULT.EMDR_OK;
+
+        /// <summary>
+        /// 2024.7.31 李焕彬
+        /// 算法检查结果.NG时跳过
+        /// </summary>
+        public EMDETECTRESULT AlgoriDetectResult
+        {
+            get { return algoriDetectResult; }
+            set
+            {
+                algoriDetectResult = value;
+                if (algoriDetectResult != EMDETECTRESULT.EMDR_OK)
+                {
+                    Skipthis = true;
+                }
+            }
+        }
+
         private bool _timeOut = false;
 
         /// <summary>
@@ -112,7 +140,7 @@ namespace WH.RunCell
                 _timeOut = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -130,7 +158,7 @@ namespace WH.RunCell
                 _preError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -148,7 +176,7 @@ namespace WH.RunCell
                 _recipeError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -166,7 +194,7 @@ namespace WH.RunCell
                 _isempty = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -184,7 +212,7 @@ namespace WH.RunCell
                 _ismix = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -202,60 +230,20 @@ namespace WH.RunCell
                 _isBurst = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
 
-        /// <summary>
-        /// 颜色等级
-        /// </summary>
-        // public ColorGradeParamConfig ColorGrade { get; set; }
-
-        /// <summary>
-        /// 颜色等级信号
-        /// </summary>
-        //  public int ColorSignel { get; set; }
-
-        /// <summary>
-        /// 颜色值
-        /// </summary>
-        // public double ColorValue { get; set; }
-
-        //  public int QualitySignal { get; set; }
-
-        /// <summary>
-        /// 缺陷等级颜色
-        /// </summary>
-        //public Brush QualityColor { get; set; } = Brushes.White;
-
-        /// <summary>
-        /// 缺陷等级颜色名称
-        /// </summary>
-        //  public string QualityColorStr { get; set; } = "White";
-
-        public string DefectType { get; set; }
+        public string DefectType { get; set; } = string.Empty;
 
         public List<string> DetectedDef { get; set; }
 
-        ///// <summary>
-        ///// 缺陷等级 越低质量越高
-        ///// </summary>
-        //public int QualityLevel { get; set; } = 0;
-
-        ///// <summary>
-        ///// 质量信号
-        ///// </summary>
-        //public int QualitySignal { get; set; }
-
-        ///// <summary>
-        ///// 质量等级名称G1 G2
-        ///// </summary>
-        //public string QualityName { get; set; } = "G1";
         /// <summary>
         /// 质量等级
         /// </summary>
         public dynamic Quality { get; set; }
+
         /// <summary>
         /// 计时
         /// </summary>
@@ -274,10 +262,22 @@ namespace WH.RunCell
                 _frameLoss = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
+
+        /// <summary>
+        /// 2024.7.29 李焕彬
+        /// 截图
+        /// </summary>
+        public BitmapSource DumpImage { get; set; }
+
+        /// <summary>
+        /// 2024.8.6 李焕彬
+        /// 编码器位置
+        /// </summary>
+        public int EncoderPos { get; set; } = 0;
 
         public override void Dispose()
         {
@@ -300,9 +300,7 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
-
         }
-
 
         public override Cell Clone()
         {
@@ -311,7 +309,7 @@ namespace WH.RunCell
             cell.ID = this.ID;
             cell.IsOK = this.IsOK;
             cell.IsEmpty = this.IsEmpty;
-            this.Image.WriteTo(cell.Image);
+            //this.Image.WriteTo(cell.Image);
             cell.DownImage = this.DownImage?.Clone();
             // cell.QualityColorStr = this.QualityColorStr;
             cell.SmallImage = this.SmallImage?.Clone();
@@ -333,13 +331,14 @@ namespace WH.RunCell
             cell.Stopwatch = this.Stopwatch;
             cell.SaveImgTime = this.SaveImgTime;
             cell.TwoTrgTimeSpan = this.TwoTrgTimeSpan;
-            cell._skipthis = this._skipthis;
+            cell.Skipthis = this.Skipthis;
             cell.IsBurstBoard = this.IsBurstBoard;
             cell.IsMix = this.IsMix;
             cell.ImageFile = this.ImageFile;
             cell.LineName = this.LineName;
-            cell.ProjectName = this.ProjectName;
+            cell.ProjName = this.ProjName;
             cell.CamSerial = this.CamSerial;
+            cell.CamName = this.CamName;
             cell.ProjGuid = this.ProjGuid;
             cell.ComGuid = this.ComGuid;
             // cell.DetectionOrColorOK = this.DetectionOrColorOK;
@@ -348,6 +347,8 @@ namespace WH.RunCell
             cell.DataBytes = this.DataBytes;
             cell.WaferID = this.WaferID;
             cell.ProductIndex = this.ProductIndex;
+            cell.AlgoriDetectResult = this.AlgoriDetectResult;
+            cell.EncoderPos = this.EncoderPos;
             return cell;
         }
 
@@ -416,31 +417,29 @@ namespace WH.RunCell
         /// <summary>
         /// 制程绑定的相机序列号
         /// </summary>
-        public string CamSerial { get; set; }
+        public string CamSerial { get; set; } = string.Empty;
+        public string CamName { get; set; } = string.Empty;
 
         /// <summary>
         /// 制程绑定的通讯
         /// </summary>
-        public string ComGuid { get; set; }
+        public string ComGuid { get; set; } = string.Empty;
 
         /// <summary>
         /// 制程绑定的唯一ID
         /// </summary>
-        public string ProjGuid { get; set; }
+        public string ProjGuid { get; set; } = string.Empty;
+
+        public string ProjName { get; set; } = string.Empty;
+
         /// <summary>
         /// 线名称（属于哪条产线）
         /// </summary>
-        public string LineName { get; set; }
+        public string LineName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// 制程名
-        /// </summary>
-        public string ProjectName { get; set; }
         /// <summary>
         /// 接收到的信号数据
         /// </summary>
         public byte[] DataBytes { get; set; }
-
     }
-
 }

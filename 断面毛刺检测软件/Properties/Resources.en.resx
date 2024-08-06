@@ -163,7 +163,7 @@
     <value>Data Statistics</value>
   </data>
   <data name="Statistics" xml:space="preserve">
-    <value>Statistics</value>
+    <value>SqlSet</value>
   </data>
   <data name="DataClear" xml:space="preserve">
     <value>Clear</value>
@@ -281,5 +281,17 @@
   </data>
   <data name="AlgorParam" xml:space="preserve">
     <value>AlgorParam</value>
+  </data>
+  <data name="轴报警" xml:space="preserve">
+    <value>Axis Error</value>
+  </data>
+  <data name="驱动器报警" xml:space="preserve">
+    <value>Driver Error</value>
+  </data>
+  <data name="手动调试" xml:space="preserve">
+    <value>Manual Debug</value>
+  </data>
+  <data name="清空报警" xml:space="preserve">
+    <value>Clear Alarm</value>
   </data>
 </root>

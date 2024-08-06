@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddComm" xml:space="preserve">
+    <value>添加通讯</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="CommList" xml:space="preserve">
+    <value>通讯列表</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>序号</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>协议类型</value>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>连接设备</value>
+  </data>
+  <data name="IP" xml:space="preserve">
+    <value>目标IP</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>启用状态</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>断开</value>
+  </data>
+  <data name="SendData" xml:space="preserve">
+    <value>发送数据</value>
+  </data>
+  <data name="RecvData" xml:space="preserve">
+    <value>接收数据</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>发送</value>
+  </data>
+  <data name="ConvertData" xml:space="preserve">
+    <value>转码后↓字段值</value>
+  </data>
+  <data name="Tips" xml:space="preserve">
+    <value>信息提示</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="CommSet" xml:space="preserve">
+    <value>通讯设置</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="CloseInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击关闭界面</value>
+  </data>
+  <data name="SaveInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击保存</value>
+  </data>
+  <data name="SaveSuccesInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;保存成功</value>
+  </data>
+  <data name="SaveError" xml:space="preserve">
+    <value>保存通讯配置文件出错,</value>
+  </data>
+  <data name="ConnectInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击连接</value>
+  </data>
+  <data name="ConnectError" xml:space="preserve">
+    <value>通讯设置界面=&gt;连接远程设备出现异常:</value>
+  </data>
+  <data name="DisConectInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击断开连接:</value>
+  </data>
+  <data name="SendInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击发送:</value>
+  </data>
+  <data name="SendError" xml:space="preserve">
+    <value>发送数据出错,</value>
+  </data>
+  <data name="PingInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;点击执行Ping</value>
+  </data>
+  <data name="PingError" xml:space="preserve">
+    <value>Ping出错,</value>
+  </data>
+  <data name="RecvTrigger" xml:space="preserve">
+    <value>收到触发信号！</value>
+  </data>
+  <data name="CommInfo" xml:space="preserve">
+    <value>通讯设置界面=&gt;</value>
+  </data>
+  <data name="RecvError" xml:space="preserve">
+    <value>接收信号转换出错:</value>
+  </data>
+  <data name="AlarmProtocol" xml:space="preserve">
+    <value>报警协议</value>
+  </data>
+  <data name="通讯基础信息" xml:space="preserve">
+    <value>通讯基础信息</value>
+  </data>
+  <data name="受控相机" xml:space="preserve">
+    <value>受控相机</value>
+  </data>
+  <data name="通讯基础设置" xml:space="preserve">
+    <value>通讯基础设置</value>
+  </data>
+  <data name="1.名称" xml:space="preserve">
+    <value>1.名称</value>
+  </data>
+  <data name="2.通讯类型" xml:space="preserve">
+    <value>2.通讯类型</value>
+  </data>
+  <data name="3.当前版本" xml:space="preserve">
+    <value>3.当前版本</value>
+  </data>
+  <data name="1.连接设备" xml:space="preserve">
+    <value>1.连接设备</value>
+  </data>
+  <data name="2.目标IP" xml:space="preserve">
+    <value>2.目标IP</value>
+  </data>
+  <data name="3.目标端口" xml:space="preserve">
+    <value>3.目标端口</value>
+  </data>
+  <data name="4.是否启用" xml:space="preserve">
+    <value>4.是否启用</value>
+  </data>
+  <data name="5.默认转码类型" xml:space="preserve">
+    <value>5.默认转码类型</value>
+  </data>
+  <data name="6.默认进制转换" xml:space="preserve">
+    <value>6.默认进制转换</value>
+  </data>
+  <data name="1.控制相机" xml:space="preserve">
+    <value>1.控制相机</value>
+  </data>
+  <data name="1.相机名" xml:space="preserve">
+    <value>1.相机名</value>
+  </data>
+  <data name="2.结果分组" xml:space="preserve">
+    <value>2.结果分组</value>
+  </data>
+  <data name="选择结果分组,同一组的检测结果合并发送" xml:space="preserve">
+    <value>选择结果分组,同一组的检测结果合并发送</value>
+  </data>
+  <data name="基本参数" xml:space="preserve">
+    <value>基本参数</value>
+  </data>
+  <data name="1.字段类型" xml:space="preserve">
+    <value>1.字段类型</value>
+  </data>
+  <data name="2.字段名" xml:space="preserve">
+    <value>2.字段名</value>
+  </data>
+  <data name="3.字段索引" xml:space="preserve">
+    <value>3.字段索引</value>
+  </data>
+  <data name="4.字段值" xml:space="preserve">
+    <value>4.字段值</value>
+  </data>
+  <data name="5.字段长度" xml:space="preserve">
+    <value>5.字段长度</value>
+  </data>
+  <data name="6.转码类型" xml:space="preserve">
+    <value>6.转码类型</value>
+  </data>
+  <data name="7.进制转换" xml:space="preserve">
+    <value>7.进制转换</value>
+  </data>
+  <data name="8.说明" xml:space="preserve">
+    <value>8.说明</value>
+  </data>
+  <data name="应用相机" xml:space="preserve">
+    <value>应用相机</value>
+  </data>
+  <data name="应用到" xml:space="preserve">
+    <value>应用到</value>
+  </data>
+  <data name="1.基础设置" xml:space="preserve">
+    <value>1.基础设置</value>
+  </data>
+  <data name="1.本地IP" xml:space="preserve">
+    <value>1.本地IP</value>
+  </data>
+  <data name="2.本地端口" xml:space="preserve">
+    <value>2.本地端口</value>
+  </data>
+  <data name="3.默认转码类型" xml:space="preserve">
+    <value>3.默认转码类型</value>
+  </data>
+  <data name="4.默认进制转换" xml:space="preserve">
+    <value>4.默认进制转换</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>开始时间</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>生产数量</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>时间段</value>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>总缺陷占比</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="AddAlarm" xml:space="preserve">
+    <value>新增报警</value>
+  </data>
+</root>
