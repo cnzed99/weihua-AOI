@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ using Autofac;
 using CameraModule;
 using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using HistoryPlayback;
@@ -33,6 +36,7 @@ using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
 using WH.Entity;
 using WH.Entity.CommonLib;
+using WH.Entity.IIService;
 using WH.Entity.LogRecord;
 using WH.RunCell;
 
@@ -303,6 +307,26 @@ namespace WH.DetectSystem.ViewModels
             SystemSettings.RecentProjs.Remove(ProjPath);
             SystemSettings.RecentProjs.Insert(0, ProjPath);
             ConfigAPI.Save(CMainMModel, ProjPath);
+        }
+        #endregion
+
+        #region 帮助文档
+        [RelayCommand]
+        private void HelpLocalHost()
+        {
+            try
+            {
+                string path = @"D:\HelpFile\毛刺检测软件\dist";
+                string name = "WH_MetalBurr";
+                int port = 91;
+                string sourceUri = "http://localhost:" + port;
+                WH_IIService.OpenHelpFile(path, name, port);
+                Process.Start(new ProcessStartInfo(sourceUri) { UseShellExecute = true });
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("打开失败，权限不够、托管服务未安装或缺少帮助文档");
+            }
         }
         #endregion
     }

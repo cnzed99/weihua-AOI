@@ -653,6 +653,8 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
+        #region 消息通道处理
+        //取图显示
         public void Receive(BitmapSource image)
         {
             this.Dispatcher.BeginInvoke(
@@ -663,6 +665,7 @@ namespace 断面毛刺检测软件
             );
         }
 
+        //报警弹窗
         public void Receive(AlarmPopMessage message)
         {
             this.Dispatcher.BeginInvoke(
@@ -685,6 +688,7 @@ namespace 断面毛刺检测软件
             );
         }
 
+        //NG回放
         public void Receive(AddOneNgImagePathMessage message)
         {
             this.Dispatcher.BeginInvoke(
@@ -699,5 +703,6 @@ namespace 断面毛刺检测软件
                 })
             );
         }
+        #endregion
     }
 }

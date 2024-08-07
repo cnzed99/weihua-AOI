@@ -37,7 +37,7 @@
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}安装包${PRODUCT_VERSION}.exe"
-InstallDir "D:\毛刺检测软件"
+InstallDir "D:\Program Files\毛刺检测软件"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show

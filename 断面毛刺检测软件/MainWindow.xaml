@@ -92,12 +92,6 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <!--<MenuItem Header="{Binding [ImageManagement], Source={x:Static local:CLang.Instance}}">
-                    <MenuItem.Icon>
-                        <svg1:SVGImage Source="/Resources/图标/图片设置/图片设置.svg" />
-                    </MenuItem.Icon>
-
-                </MenuItem>-->
 
                 <MenuItem Name="CamComMenu" Header="{Binding [CamCom], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
@@ -212,7 +206,10 @@
                     <MenuItem.Icon>
                         <svg1:SVGImage Source="/Resources/图标/帮助/帮助.svg" />
                     </MenuItem.Icon>
-                    <MenuItem Width="100" Header="{Binding [HelpDoc], Source={x:Static local:CLang.Instance}}">
+                    <MenuItem
+                        Width="100"
+                        Command="{Binding HelpLocalHostCommand}"
+                        Header="{Binding [HelpDoc], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/帮助/帮助文档.svg" />
                         </MenuItem.Icon>
@@ -225,17 +222,7 @@
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/语言/语言.svg" />
                         </MenuItem.Icon>
-                        <!--<MenuItem.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource MenuItemBaseStyle}" TargetType="MenuItem">
-                                <Setter Property="Width" Value="100" />
-                            </Style>
-                        </MenuItem.ItemContainerStyle>-->
-                        <!--<CheckBox
-                            Name="cbLang"
-                            Checked="Lang_Checked"
-                            Content="en_US"
-                            IsChecked="{Binding SystemSettings.IsEnglish}"
-                            Unchecked="Lang_Checked" />-->
+
                     </MenuItem>
                     <MenuItem
                         Width="100"
@@ -598,14 +585,18 @@
             VerticalAlignment="Center"
             d:Visibility="visible"
             Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
-            <hc:LoadingLine
-                Height="10"
-                DotSpeed="2"
-                Style="{StaticResource LoadingLineLarge}" />
+            <hc:AnimationPath
+                Data="{DynamicResource logo}"
+                Stretch="Uniform"
+                StrokeThickness="2"
+                Width="150"
+                IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
+                Duration="00:00:03" Stroke="{StaticResource InfoBrush}"/>
             <TextBlock
                 Name="LoadProgressBar"
+                Margin="0,10"
                 d:Text="loading"
-                Style="{StaticResource TextBlockDefaultPrimary}"
+                Style="{StaticResource TextBlockDefaultInfo}"
                 TextWrapping="Wrap" />
         </StackPanel>
 

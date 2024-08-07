@@ -43,10 +43,10 @@
             Columns="2"
             DataContext="{Binding DefectsProduce}"
             Rows="2">
-            <TextBox hc:TitleElement.Title="{Binding [总数],Source={x:Static local:CLang.s_Instance}}" Text="{Binding Total}" />
-            <TextBox hc:TitleElement.Title="{Binding [良品],Source={x:Static local:CLang.s_Instance}}" Text="{Binding OK}" />
-            <TextBox hc:TitleElement.Title="{Binding [良率],Source={x:Static local:CLang.s_Instance}}" Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
-            <TextBox hc:TitleElement.Title="{Binding [不良],Source={x:Static local:CLang.s_Instance}}" Text="{Binding Ng}" />
+            <TextBox hc:TitleElement.Title="{Binding [总数], Source={x:Static local:CLang.s_Instance}}" Text="{Binding Total}" />
+            <TextBox hc:TitleElement.Title="{Binding [良品], Source={x:Static local:CLang.s_Instance}}" Text="{Binding OK}" />
+            <TextBox hc:TitleElement.Title="{Binding [良率], Source={x:Static local:CLang.s_Instance}}" Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
+            <TextBox hc:TitleElement.Title="{Binding [不良], Source={x:Static local:CLang.s_Instance}}" Text="{Binding Ng}" />
             <!--<hc:SimplePanel />
             <TextBox
                 Width="100"
