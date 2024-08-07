@@ -362,10 +362,11 @@ namespace WH.Controls
         /// 2024.7.8 李焕彬
         /// 清除显示
         /// </summary>
-        public void Clear()
+        /// <param name="isRender">是否刷新</param>
+        public void Clear(bool isRender = true)
         {
-            this.Image.Clear();
-            this.Canvas.Clear();
+            this.Image.Clear(isRender);
+            this.Canvas.Clear(isRender);
         }
 
         /// <summary>

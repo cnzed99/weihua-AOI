@@ -655,7 +655,7 @@ namespace WH.DetectSystem.ViewModels
                                 }
                                 drawView.Dispatcher.Invoke(() =>
                                 {
-                                    drawView.Clear();
+                                    drawView.Clear(false);
                                     drawView.SetPen(Brushes.Blue);
                                     drawView.ImgDrawPoints(cell.MaociTestOut.DarkTopRegion, false);
                                     drawView.ImgDrawPoints(cell.MaociTestOut.DarkBotRegion, false);
@@ -751,7 +751,7 @@ namespace WH.DetectSystem.ViewModels
                                             false
                                         );
                                     }
-                                    //drawView.Invalidate();
+                                    drawView.Invalidate();
                                 });
                             }
                         }
