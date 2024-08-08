@@ -173,6 +173,8 @@ namespace CameraModule
         [RelayCommand]
         public void SoftWareTrigger()
         {
+            if (camSelect == null)
+                return;
             if (camSelect?.Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
             {
                 camSelect?.ExecuteSoftwareTrigger();
@@ -190,6 +192,8 @@ namespace CameraModule
         [RelayCommand]
         public void Continuous()
         {
+            if (camSelect == null)
+                return;
             if (camSelect?.Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
             {
                 IsContinuous = !IsContinuous;
