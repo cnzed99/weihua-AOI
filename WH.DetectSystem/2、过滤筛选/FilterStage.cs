@@ -187,7 +187,7 @@ namespace WH.DetectSystem
                                     break;
                             }
                             detection.DetectLog.AppendLine(
-                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:"
+                                $"{EnumStringAttribute.GetEnumName(item.Feature)}:{item.Value}"
                             );
                         }
                         if (!detection.Result) //NG

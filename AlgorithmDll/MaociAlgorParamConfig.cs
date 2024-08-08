@@ -172,7 +172,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("1.GroupName")]
         [property: DisplayName("分组名")]
-        [property: Description("分组名")]
+        [property: Description("自定义名称")]
         private string name = "";
 
         /// <summary>
@@ -181,8 +181,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("自适应阈值邻域大小")]
-        [property: Description("自适应阈值邻域大小")]
+        [property: DisplayName("铝层自适应阈值邻域大小")]
+        [property: Description("铝层自适应阈值说明")]
         private uint adaptiveSize = 14;
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("自适应阈值增加值")]
-        [property: Description("自适应阈值增加值")]
+        [property: DisplayName("铝层自适应阈值增加值")]
+        [property: Description("铝层自适应阈值说明")]
         private int adaptiveAddGray = 20;
 
         /// <summary>
@@ -201,8 +201,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("过滤矩阵邻域大小")]
-        [property: Description("过滤矩阵邻域大小")]
+        [property: DisplayName("铝层过滤矩阵邻域大小")]
+        [property: Description("铝层过滤矩阵说明")]
         private uint neighbSize = 5;
 
         /// <summary>
@@ -211,8 +211,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("过滤矩阵邻域点数量限制")]
-        [property: Description("过滤矩阵邻域点数量限制")]
+        [property: DisplayName("铝层过滤矩阵邻域点数量限制")]
+        [property: Description("铝层过滤矩阵说明")]
         private uint neighbLightPoint = 30;
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("料区阈值")]
-        [property: Description("料区阈值")]
+        [property: Description("料区阈值说明")]
         private uint darkThresh = 30;
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("铝层阈值")]
-        [property: Description("铝层阈值")]
+        [property: Description("铝层阈值说明")]
         private uint lightThresh = 80;
 
         /// <summary>
@@ -241,8 +241,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层厚度")]
-        [property: Description("铝层厚度")]
+        [property: DisplayName("铝层厚度(um)")]
+        [property: Description("铝层厚度(um)")]
         private uint lightThick = 6;
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("超时时间(ms)")]
-        [property: Description("超时时间(ms)")]
+        [property: Description("超时时间说明")]
         private uint timeOut = 3000;
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("1.GroupName")]
         [property: DisplayName("分组名")]
-        [property: Description("分组名")]
+        [property: Description("自定义名称")]
         private string name = "";
 
         /// <summary>
@@ -298,8 +298,8 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: EditorAttribute()]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("自适应阈值邻域大小")]
-        [property: Description("自适应阈值邻域大小")]
+        [property: DisplayName("铝层自适应阈值邻域大小")]
+        [property: Description("铝层自适应阈值说明")]
         private uint adaptiveSize = 14;
 
         /// <summary>
@@ -308,8 +308,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("自适应阈值增加值")]
-        [property: Description("自适应阈值增加值")]
+        [property: DisplayName("铝层自适应阈值增加值")]
+        [property: Description("铝层自适应阈值说明")]
         private int adaptiveAddGray = 20;
 
         /// <summary>
@@ -318,8 +318,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("过滤矩阵邻域大小")]
-        [property: Description("过滤矩阵邻域大小")]
+        [property: DisplayName("铝层过滤矩阵邻域大小")]
+        [property: Description("铝层过滤矩阵说明")]
         private uint neighbSize = 5;
 
         /// <summary>
@@ -328,8 +328,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("2.Algorithm")]
-        [property: DisplayName("过滤矩阵邻域点数量限制")]
-        [property: Description("过滤矩阵邻域点数量限制")]
+        [property: DisplayName("铝层过滤矩阵邻域点数量限制")]
+        [property: Description("铝层过滤矩阵说明")]
         private uint neighbLightPoint = 30;
 
         /// <summary>
@@ -339,7 +339,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("料区阈值")]
-        [property: Description("料区阈值")]
+        [property: Description("料区阈值说明")]
         private uint darkThresh = 30;
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("铝层阈值")]
-        [property: Description("铝层阈值")]
+        [property: Description("铝层阈值说明")]
         private uint lightThresh = 80;
 
         /// <summary>
@@ -358,8 +358,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度限制")]
-        [property: Description("料区厚度限制")]
+        [property: DisplayName("料区厚度限制(um)")]
+        [property: Description("料区厚度限制说明")]
         private uint darkThickLimit = 30;
 
         /// <summary>
@@ -368,8 +368,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度NG连续长度限制")]
-        [property: Description("料区厚度NG连续长度限制")]
+        [property: DisplayName("料区厚度NG连续长度限制(um)")]
+        [property: Description("料区NG连续长度说明")]
         private uint darkThickContinueLen = 5;
 
         /// <summary>
@@ -378,8 +378,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度")]
-        [property: Description("料区厚度")]
+        [property: DisplayName("料区厚度(um)")]
+        [property: Description("料区厚度限制说明")]
         private uint darkThick = 84;
 
         /// <summary>
@@ -388,8 +388,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度限制")]
-        [property: Description("铝层厚度限制")]
+        [property: DisplayName("铝层厚度限制(um)")]
+        [property: Description("铝层厚度限制说明")]
         private uint lightThickLimit = 7;
 
         /// <summary>
@@ -398,8 +398,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度NG连续长度限制")]
-        [property: Description("铝层厚度NG连续长度限制")]
+        [property: DisplayName("铝层厚度NG连续长度限制(um)")]
+        [property: Description("铝层NG连续长度说明")]
         private uint lightThickContinueLen = 0;
 
         /// <summary>
@@ -408,8 +408,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度")]
-        [property: Description("铝层厚度")]
+        [property: DisplayName("铝层厚度(um)")]
+        [property: Description("铝层厚度限制说明")]
         private uint lightThick = 6;
 
         /// <summary>
@@ -418,8 +418,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层在料区中心位置限制上")]
-        [property: Description("铝层在料区中心位置限制上")]
+        [property: DisplayName("铝层在料区中心位置限制上(um)")]
+        [property: Description("料区中心位置限制说明")]
         private uint posLimitT = 20;
 
         /// <summary>
@@ -428,8 +428,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层在料区中心位置限制下")]
-        [property: Description("铝层在料区中心位置限制下")]
+        [property: DisplayName("铝层在料区中心位置限制下(um)")]
+        [property: Description("料区中心位置限制说明")]
         private uint posLimitB = 20;
 
         /// <summary>
@@ -438,8 +438,8 @@ namespace AlgorithmDll
         /// </summary>
         [ObservableProperty]
         [property: Category("3.Judge")]
-        [property: DisplayName("铝层位置偏移值")]
-        [property: Description("铝层位置偏移值")]
+        [property: DisplayName("铝层位置偏移值(um)")]
+        [property: Description("料区中心位置限制说明")]
         private int lightPosOffest = 0;
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace AlgorithmDll
         [ObservableProperty]
         [property: Category("2.Algorithm")]
         [property: DisplayName("超时时间(ms)")]
-        [property: Description("超时时间(ms)")]
+        [property: Description("超时时间说明")]
         private uint timeOut = 3000;
 
         /// <summary>

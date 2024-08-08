@@ -132,17 +132,17 @@
   <data name="Judge" xml:space="preserve">
     <value>Judge</value>
   </data>
-  <data name="自适应阈值邻域大小" xml:space="preserve">
-    <value>AdaptiveSize</value>
+  <data name="铝层自适应阈值邻域大小" xml:space="preserve">
+    <value>Metal AdaptiveSize</value>
   </data>
-  <data name="自适应阈值增加值" xml:space="preserve">
-    <value>AdaptiveAddGray</value>
+  <data name="铝层自适应阈值增加值" xml:space="preserve">
+    <value>Metal AdaptiveAddGray</value>
   </data>
-  <data name="过滤矩阵邻域大小" xml:space="preserve">
-    <value>NeighbSize</value>
+  <data name="铝层过滤矩阵邻域大小" xml:space="preserve">
+    <value>Metal NeighbSize</value>
   </data>
-  <data name="过滤矩阵邻域点数量限制" xml:space="preserve">
-    <value>NeighbLightPoint</value>
+  <data name="铝层过滤矩阵邻域点数量限制" xml:space="preserve">
+    <value>Metal NeighbLightPoint</value>
   </data>
   <data name="料区阈值" xml:space="preserve">
     <value>DarkThresh</value>
@@ -150,32 +150,32 @@
   <data name="铝层阈值" xml:space="preserve">
     <value>LightThresh</value>
   </data>
-  <data name="铝层厚度" xml:space="preserve">
-    <value>LightThick</value>
+  <data name="铝层厚度(um)" xml:space="preserve">
+    <value>LightThick(um)</value>
   </data>
-  <data name="料区厚度限制" xml:space="preserve">
-    <value>DarkThickLimit</value>
+  <data name="料区厚度限制(um)" xml:space="preserve">
+    <value>DarkThickLimit(um)</value>
   </data>
-  <data name="料区厚度NG连续长度限制" xml:space="preserve">
-    <value>DarkThickContinueLen</value>
+  <data name="料区厚度NG连续长度限制(um)" xml:space="preserve">
+    <value>DarkThickContinueLen(um)</value>
   </data>
-  <data name="料区厚度" xml:space="preserve">
-    <value>DarkThick</value>
+  <data name="料区厚度(um)" xml:space="preserve">
+    <value>DarkThick(um)</value>
   </data>
-  <data name="铝层厚度限制" xml:space="preserve">
-    <value>LightThickLimit</value>
+  <data name="铝层厚度限制(um)" xml:space="preserve">
+    <value>LightThickLimit(um)</value>
   </data>
-  <data name="铝层厚度NG连续长度限制" xml:space="preserve">
-    <value>LightThickContinueLen</value>
+  <data name="铝层厚度NG连续长度限制(um)" xml:space="preserve">
+    <value>LightThickContinueLen(um)</value>
   </data>
-  <data name="铝层在料区中心位置限制上" xml:space="preserve">
-    <value>PosLimitT</value>
+  <data name="铝层在料区中心位置限制上(um)" xml:space="preserve">
+    <value>PosLimitT(um)</value>
   </data>
-  <data name="铝层在料区中心位置限制下" xml:space="preserve">
-    <value>PosLimitB</value>
+  <data name="铝层在料区中心位置限制下(um)" xml:space="preserve">
+    <value>PosLimitB(um)</value>
   </data>
-  <data name="铝层位置偏移值" xml:space="preserve">
-    <value>LightPosOffest</value>
+  <data name="铝层位置偏移值(um)" xml:space="preserve">
+    <value>LightPosOffest(um)</value>
   </data>
   <data name="1.GroupName" xml:space="preserve">
     <value>1.GroupName</value>
@@ -197,5 +197,35 @@
   </data>
   <data name="超时时间(ms)" xml:space="preserve">
     <value>Overtime(ms)</value>
+  </data>
+  <data name="铝层自适应阈值说明" xml:space="preserve">
+    <value>Aluminum layer adaptive threshold = adaptive matrix calculation value + adaptive threshold increase value, neighborhood size input range 0 ~ 50.</value>
+  </data>
+  <data name="铝层过滤矩阵说明" xml:space="preserve">
+    <value>When the number of bright spots in the filter matrix is ≥ the number limit, the aluminum layer is determined, and the neighborhood size input range is 0 ~ 50.</value>
+  </data>
+  <data name="料区阈值说明" xml:space="preserve">
+    <value>When the gray level is ≥ n, it is determined to be the material area search area, and the input range is 0 ~ 255.</value>
+  </data>
+  <data name="铝层阈值说明" xml:space="preserve">
+    <value>When the gray level is ≥ n, it is determined to be the aluminum layer search area, and the input range is 0 ~ 255.</value>
+  </data>
+  <data name="超时时间说明" xml:space="preserve">
+    <value>Detection timeout time, timeout judgment NG, display timeout defect.</value>
+  </data>
+  <data name="料区厚度限制说明" xml:space="preserve">
+    <value>| Actual Inspection Thickness - Material Area Thickness | ≥ Material Area Thickness Limit is Material Area Thickness NG.</value>
+  </data>
+  <data name="料区NG连续长度说明" xml:space="preserve">
+    <value>When the thickness of the continuous material area NG length ≥ length limit, NG is detected, and the image is uploaded.</value>
+  </data>
+  <data name="铝层厚度限制说明" xml:space="preserve">
+    <value>| Actual Inspection Thickness - Aluminum Thickness | Aluminum Thickness NG when ≥ Aluminum Thickness Limit.</value>
+  </data>
+  <data name="铝层NG连续长度说明" xml:space="preserve">
+    <value>When the continuous aluminum layer thickness NG length ≥ length limit is detected NG, upload the image.</value>
+  </data>
+  <data name="料区中心位置限制说明" xml:space="preserve">
+    <value>Upper edge of aluminium layer - (Center of material area + Offset value of aluminium layer position) &gt; Limit upper || (Center of material area + Offset value of aluminium layer position) - Lower edge of aluminium layer - Upload image for detecting NG when limit lower.</value>
   </data>
 </root>

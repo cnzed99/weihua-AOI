@@ -112,17 +112,17 @@
   <data name="Judge" xml:space="preserve">
     <value>判定参数</value>
   </data>
-  <data name="自适应阈值邻域大小" xml:space="preserve">
-    <value>自适应阈值邻域大小</value>
+  <data name="铝层自适应阈值邻域大小" xml:space="preserve">
+    <value>铝层自适应阈值邻域大小</value>
   </data>
-  <data name="自适应阈值增加值" xml:space="preserve">
-    <value>自适应阈值增加值</value>
+  <data name="铝层自适应阈值增加值" xml:space="preserve">
+    <value>铝层自适应阈值增加值</value>
   </data>
-  <data name="过滤矩阵邻域大小" xml:space="preserve">
-    <value>过滤矩阵邻域大小</value>
+  <data name="铝层过滤矩阵邻域大小" xml:space="preserve">
+    <value>铝层过滤矩阵邻域大小</value>
   </data>
-  <data name="过滤矩阵邻域点数量限制" xml:space="preserve">
-    <value>过滤矩阵邻域点数量限制</value>
+  <data name="铝层过滤矩阵邻域点数量限制" xml:space="preserve">
+    <value>铝层过滤矩阵邻域点数量限制</value>
   </data>
   <data name="料区阈值" xml:space="preserve">
     <value>料区阈值</value>
@@ -130,32 +130,32 @@
   <data name="铝层阈值" xml:space="preserve">
     <value>铝层阈值</value>
   </data>
-  <data name="铝层厚度" xml:space="preserve">
-    <value>铝层厚度</value>
+  <data name="铝层厚度(um)" xml:space="preserve">
+    <value>铝层厚度(um)</value>
   </data>
-  <data name="料区厚度限制" xml:space="preserve">
-    <value>料区厚度限制</value>
+  <data name="料区厚度限制(um)" xml:space="preserve">
+    <value>料区厚度限制(um)</value>
   </data>
-  <data name="料区厚度NG连续长度限制" xml:space="preserve">
-    <value>料区厚度NG连续长度限制</value>
+  <data name="料区厚度NG连续长度限制(um)" xml:space="preserve">
+    <value>料区厚度NG连续长度限制(um)</value>
   </data>
-  <data name="料区厚度" xml:space="preserve">
-    <value>料区厚度</value>
+  <data name="料区厚度(um)" xml:space="preserve">
+    <value>料区厚度(um)</value>
   </data>
-  <data name="铝层厚度限制" xml:space="preserve">
-    <value>铝层厚度限制</value>
+  <data name="铝层厚度限制(um)" xml:space="preserve">
+    <value>铝层厚度限制(um)</value>
   </data>
-  <data name="铝层厚度NG连续长度限制" xml:space="preserve">
-    <value>铝层厚度NG连续长度限制</value>
+  <data name="铝层厚度NG连续长度限制(um)" xml:space="preserve">
+    <value>铝层厚度NG连续长度限制(um)</value>
   </data>
-  <data name="铝层在料区中心位置限制上" xml:space="preserve">
-    <value>铝层在料区中心位置限制上</value>
+  <data name="铝层在料区中心位置限制上(um)" xml:space="preserve">
+    <value>铝层在料区中心位置限制上(um)</value>
   </data>
-  <data name="铝层在料区中心位置限制下" xml:space="preserve">
-    <value>铝层在料区中心位置限制下</value>
+  <data name="铝层在料区中心位置限制下(um)" xml:space="preserve">
+    <value>铝层在料区中心位置限制下(um)</value>
   </data>
-  <data name="铝层位置偏移值" xml:space="preserve">
-    <value>铝层位置偏移值</value>
+  <data name="铝层位置偏移值(um)" xml:space="preserve">
+    <value>铝层位置偏移值(um)</value>
   </data>
   <data name="1.GroupName" xml:space="preserve">
     <value>1.分组名</value>
@@ -177,5 +177,35 @@
   </data>
   <data name="超时时间(ms)" xml:space="preserve">
     <value>超时时间(ms)</value>
+  </data>
+  <data name="铝层自适应阈值说明" xml:space="preserve">
+    <value>铝层自适应阈值=自适应矩阵计算值+自适应阈值增加值，邻域大小输入范围0~50。</value>
+  </data>
+  <data name="铝层过滤矩阵说明" xml:space="preserve">
+    <value>过滤矩阵内亮点数量 ≥ 数量限制时判定为铝层，邻域大小输入范围0~50。</value>
+  </data>
+  <data name="料区阈值说明" xml:space="preserve">
+    <value>灰度≥n时判定为料区查找区域，输入范围0~255。</value>
+  </data>
+  <data name="铝层阈值说明" xml:space="preserve">
+    <value>灰度≥n时判定为铝层查找区域，输入范围0~255。</value>
+  </data>
+  <data name="超时时间说明" xml:space="preserve">
+    <value>检测超时时间，超时判NG，显示超时缺陷。</value>
+  </data>
+  <data name="料区厚度限制说明" xml:space="preserve">
+    <value>|实际检测厚度-料区厚度| ≥ 料区厚度限制时为料区厚度NG。</value>
+  </data>
+  <data name="料区NG连续长度说明" xml:space="preserve">
+    <value>连续料区厚度NG长度 ≥ 长度限制时为检测NG，上传图像。</value>
+  </data>
+  <data name="铝层厚度限制说明" xml:space="preserve">
+    <value>|实际检测厚度-铝层厚度| ≥ 铝层厚度限制时为铝层厚度NG。</value>
+  </data>
+  <data name="铝层NG连续长度说明" xml:space="preserve">
+    <value>连续铝层厚度NG长度 ≥ 长度限制时为检测NG，上传图像。</value>
+  </data>
+  <data name="料区中心位置限制说明" xml:space="preserve">
+    <value>铝层上边缘 -（料区中心+铝层位置偏移值）＞ 限制上 || （料区中心+铝层位置偏移值）- 铝层下边缘＞ 限制下时为检测NG，上传图像。</value>
   </data>
 </root>
