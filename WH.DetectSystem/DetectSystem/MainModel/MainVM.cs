@@ -37,7 +37,6 @@ using QualityGrade;
 using SaveImageManage;
 using SDFilter;
 using WH.Controls;
-using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;

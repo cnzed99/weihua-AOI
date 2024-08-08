@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MySqlOperatesApi
+namespace DataQuery
 {
-    public class CDQLang
+    public class CLang
     {
         public static LanguageManager.CLanguageManager instance =
             new LanguageManager.CLanguageManager(
                 "DataQuery.Properties.Resources",
-                typeof(CDQLang).Assembly
+                typeof(CLang).Assembly
             );
     }
 }

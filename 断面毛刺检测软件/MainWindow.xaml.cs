@@ -17,6 +17,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DataQuery;
 using HandyControl.Controls;
 using HandyControl.Data;
+using HandyControl.Tools;
 using HistoryPlayback.Model;
 using Microsoft.Win32;
 using MySqlOperatesApi;
@@ -119,11 +120,11 @@ namespace 断面毛刺检测软件
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
-
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
                     Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(
                         languageCode
                     );
+                    ConfigHelper.Instance.SetLang("en");
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<string>)progress).Report("Loaded!");

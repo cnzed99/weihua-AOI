@@ -3,6 +3,8 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Properties.Langs;
+using HandyControl.Tools;
 using WH.Entity.Attribute;
 
 namespace WH.DetectSystem.Models
@@ -38,10 +40,11 @@ namespace WH.DetectSystem.Models
             {
                 languageCode = "en-US";
             }
-            //OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            ConfigHelper.Instance.SetLang(languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+            //OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@
     xmlns:prop="clr-namespace:MySqlOperatesApi.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
-    Title="{x:Static prop:Resources.SQLSetParam}"
+    Title="{Binding [SQLSetParam],Source={x:Static local:CLang.instance}}"
     Width="850"
     Height="250"
     d:DataContext="{d:DesignInstance Type=local:SQLBase}"
@@ -35,7 +35,7 @@
             Grid.Row="0"
             IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
             Orientation="Vertical">
-            <GroupBox Margin="0,5,0,0" Header="{x:Static prop:Resources.MySQLSetParam}">
+            <GroupBox Margin="0,5,0,0" Header="{Binding [MySQLSetParam],Source={x:Static local:CLang.instance}}">
                 <StackPanel Orientation="Vertical">
 
                     <StackPanel Orientation="Horizontal">
@@ -43,14 +43,14 @@
                             HorizontalAlignment="Left"
                             hc:ToggleButtonAttach.ShowLabel="True"
                             Background="Gray"
-                            Content="{x:Static prop:Resources.Enable}"
+                            Content="{Binding [Enable],Source={x:Static local:CLang.instance}}"
                             IsChecked="{Binding MysqlExecute.SqlEnable}" />
                         <ComboBox
                             x:Name="cb_mysql"
                             Width="160"
                             Margin="5"
                             d:SelectedIndex="0"
-                            hc:InfoElement.Title="{x:Static prop:Resources.UserSelect}"
+                            hc:InfoElement.Title="{Binding [UserSelect],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             ItemsSource="{StaticResource UserStr}"
                             SelectedItem="{Binding MysqlExecute.UseSelect}"
@@ -59,7 +59,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.UserName}"
+                            hc:InfoElement.Title="{Binding [UserName],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.UserID}" />
@@ -69,7 +69,7 @@
                             Margin="5"
                             VerticalAlignment="Center"
                             hc:InfoElement.Placeholder="请输入密码"
-                            hc:InfoElement.Title="{x:Static prop:Resources.PassWord}"
+                            hc:InfoElement.Title="{Binding [PassWord],Source={x:Static local:CLang.instance}}"
                             hc:PasswordBoxAttach.PasswordLength="0"
                             hc:TitleElement.TitlePlacement="Left"
                             IsSafeEnabled="false"
@@ -83,7 +83,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.ServerName}"
+                            hc:InfoElement.Title="{Binding [ServerName],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.DataBaseName}" />
@@ -92,7 +92,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.RemoteIP}"
+                            hc:InfoElement.Title="{Binding [RemoteIP],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.RemoteIP}" />
@@ -101,7 +101,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.RemoteProt}"
+                            hc:InfoElement.Title="{Binding [RemoteProt],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.RemotePort}" />
@@ -111,7 +111,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.LineName}"
+                            hc:InfoElement.Title="{Binding [LineName],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.LineName}" />
@@ -120,7 +120,7 @@
                             Width="160"
                             Margin="5"
                             VerticalAlignment="Center"
-                            hc:InfoElement.Title="{x:Static prop:Resources.DBDeviceName}"
+                            hc:InfoElement.Title="{Binding [DBDeviceName],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.DBDeviceName}" />
@@ -140,7 +140,7 @@
                 Height="40"
                 Margin="10"
                 Command="{Binding SaveParamCommand}"
-                Content="{x:Static prop:Resources.Save}"
+                Content="{Binding [Save],Source={x:Static local:CLang.instance}}"
                 Style="{StaticResource ButtonPrimary}" />
         </StackPanel>
 
