@@ -61,6 +61,33 @@ namespace 断面毛刺检测软件.Views.TimeTriggerTest {
         }
         
         /// <summary>
+        ///   查找类似 相机： 的本地化字符串。
+        /// </summary>
+        internal static string Cam {
+            get {
+                return ResourceManager.GetString("Cam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 制程： 的本地化字符串。
+        /// </summary>
+        internal static string Proj {
+            get {
+                return ResourceManager.GetString("Proj", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 相机序列号： 的本地化字符串。
+        /// </summary>
+        internal static string Serial {
+            get {
+                return ResourceManager.GetString("Serial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 定时触发相机 的本地化字符串。
         /// </summary>
         internal static string 定时触发相机 {

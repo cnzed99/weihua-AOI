@@ -301,4 +301,7 @@
   <data name="清空报警" xml:space="preserve">
     <value>清空报警</value>
   </data>
+  <data name="NewFailed" xml:space="preserve">
+    <value>新建工程失败！</value>
+  </data>
 </root>

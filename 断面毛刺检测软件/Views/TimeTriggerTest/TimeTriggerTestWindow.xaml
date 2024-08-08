@@ -26,9 +26,12 @@
                 <GroupBox.Header>
                     <TextBlock>
                         <TextBlock.Text>
-                            <MultiBinding StringFormat="{}制程：{0} | 相机：{1} | 相机序列号：{2}">
+                            <MultiBinding StringFormat="{}{0} {1} | {2} {3} | {4} {5}">
+                                <Binding Path="[Proj]" Source="{x:Static local:CLang.TimeTriggerTest}"/>
                                 <Binding Path="Name" />
+                                <Binding Path="[Cam]" Source="{x:Static local:CLang.TimeTriggerTest}"/>
                                 <Binding Path="Cam.Setting.Name" />
+                                <Binding Path="[Serial]" Source="{x:Static local:CLang.TimeTriggerTest}"/>
                                 <Binding Path="Cam.Setting.SerialNumber" />
                             </MultiBinding>
                         </TextBlock.Text>

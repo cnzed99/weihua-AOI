@@ -106,7 +106,7 @@ namespace CommunicationModule
         [property: DisplayName("4.是否启用")]
         [property: Description("4.是否启用")]
         [ObservableProperty]
-        private bool enable = false;
+        private bool enable = true;
 
         #endregion
 

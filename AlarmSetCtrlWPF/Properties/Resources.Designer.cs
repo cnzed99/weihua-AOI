@@ -169,6 +169,15 @@ namespace AlarmSetCtrl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 内 的本地化字符串。
+        /// </summary>
+        public static string In {
+            get {
+                return ResourceManager.GetString("In", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 独立控制 的本地化字符串。
         /// </summary>
         public static string IndependentControl {

@@ -155,7 +155,7 @@ namespace 断面毛刺检测软件
             switch (act)
             {
                 case "mainform": //打开主界面
-                    ((IProgress<double>)progress).Report(100);
+                    ((IProgress<string>)progress).Report("Loaded!");
                     //this.Visible = true;
                     //新建项目ToolStripMenuItem_Click(null, null);
                     break;
@@ -263,7 +263,19 @@ namespace 断面毛刺检测软件
             OperateLog.Info(Properties.Resources.NewProj);
             if (newProj.ShowDialog() is true)
             {
-                await OpenProjAsync(CMainList.ProjPath);
+                try
+                {
+                    await OpenProjAsync(CMainList.ProjPath);
+                }
+                catch (Exception exception)
+                {
+                    OperateLog.Error(Properties.Resources.NewFailed + "\r\n" + exception.Message);
+                    Growl.Warning(Properties.Resources.NewFailed + "\r\n" + exception.Message);
+                }
+                finally
+                {
+                    progress.Report("Loaded!");
+                }
             }
         }
         #endregion

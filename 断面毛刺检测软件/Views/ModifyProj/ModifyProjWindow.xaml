@@ -24,17 +24,21 @@
         </Style>
 
     </hc:Window.Resources>
-    <Grid  IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
+    <Grid IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10">
-            <TextBox hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.ModifyProj}}" Text="{Binding Name}" />
+            <TextBox
+                hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.ModifyProj}}"
+                hc:TitleElement.TitleWidth="60"
+                Text="{Binding Name}" />
             <ComboBox
                 Margin="5"
                 hc:TitleElement.Title="{Binding [Cam], Source={x:Static local:CLang.ModifyProj}}"
                 hc:TitleElement.TitlePlacement="Left"
+                hc:TitleElement.TitleWidth="60"
                 ItemsSource="{Binding Keys, Source={x:Static cam:CCameraManagement.CamParamDict}}"
                 SelectedItem="{Binding CameraSerial}"
                 Style="{StaticResource ComboBoxExtend}" />
@@ -42,6 +46,7 @@
                 x:Name="tb_path"
                 hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:CLang.ModifyProj}}"
                 hc:TitleElement.Title="{Binding [Path], Source={x:Static local:CLang.ModifyProj}}"
+                hc:TitleElement.TitleWidth="60"
                 IsReadOnly="True"
                 PreviewMouseDoubleClick="SelectPath_DoubleClick"
                 Text="{Binding ProjPath}" />

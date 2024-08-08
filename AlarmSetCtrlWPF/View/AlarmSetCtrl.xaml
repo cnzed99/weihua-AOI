@@ -131,7 +131,7 @@
                                     VerticalAlignment="Center"
                                     ItemsSource="{Binding MAlarm.TimeUnit, Converter={StaticResource EnumProviderConverter}}"
                                     SelectedItem="{Binding MAlarm.TimeUnit, Converter={StaticResource StringAttrEnumConverter}}" />
-                                <TextBlock Text="内" />
+                                <TextBlock Text="{Binding [In], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                             </StackPanel>
                         </DockPanel>
                         <DockPanel>

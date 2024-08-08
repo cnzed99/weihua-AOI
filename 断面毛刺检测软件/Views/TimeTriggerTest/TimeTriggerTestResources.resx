@@ -106,4 +106,13 @@
   <data name="触发间隔" xml:space="preserve">
     <value>触发间隔(ms)</value>
   </data>
+  <data name="Proj" xml:space="preserve">
+    <value>制程：</value>
+  </data>
+  <data name="Cam" xml:space="preserve">
+    <value>相机：</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>相机序列号：</value>
+  </data>
 </root>
