@@ -146,7 +146,7 @@
     <value>按工程名称存</value>
   </data>
   <data name="byCam" xml:space="preserve">
-    <value>按制程(相机)名称存</value>
+    <value>按相机名称存</value>
   </data>
   <data name="byTime" xml:space="preserve">
     <value>按小时存</value>
@@ -156,5 +156,8 @@
   </data>
   <data name="byID" xml:space="preserve">
     <value>按流水号存</value>
+  </data>
+  <data name="FreeSpaceLimit" xml:space="preserve">
+    <value>存图磁盘可用空间限制(GB)</value>
   </data>
 </root>

@@ -1,17 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using Mapster;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CameraModule;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Mapster;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.Messages;
-
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -23,29 +23,41 @@ namespace WH.DetectSystem.ViewModels
     {
         #region 需要配置的属性 必需项
         string name;
+
         [Required]
         public string Name
         {
             get => name;
-            set=>SetProperty(ref name, value,true);
+            set => SetProperty(ref name, value, true);
         }
 
         string projPath;
+
         [Required]
         public string ProjPath
         {
             get => projPath;
-            set => SetProperty(ref projPath, value,true);
+            set => SetProperty(ref projPath, value, true);
+        }
+        string cameraSerial;
+
+        [Required]
+        public string CameraSerial
+        {
+            get => cameraSerial;
+            set => SetProperty(ref cameraSerial, value, true);
         }
         #endregion
         CMainModelsModelVM mainModelVM;
         CMainVM mainVM;
+
         public CModifyProjVM(CMainModelsModelVM mainVM)
         {
             mainModelVM = mainVM;
             this.mainVM = mainVM.CMainVMs[0];
             this.mainVM.Adapt(this);
             this.ProjPath = mainModelVM.ProjPath;
+            //var key = CCameraManagement.CamParamDict.Keys;
         }
 
         #region 应用或丢弃当前工程变更
@@ -56,8 +68,8 @@ namespace WH.DetectSystem.ViewModels
         {
             mainModelVM.ProjPath = this.ProjPath;
             this.Adapt(mainVM);
-
         }
+
         /// <summary>
         /// 丢弃当前工程的修改
         /// </summary>
@@ -67,15 +79,30 @@ namespace WH.DetectSystem.ViewModels
         [RelayCommand]
         void Sure()
         {
-            if (HasErrors) return;
+            if (HasErrors)
+                return;
             this.ApplyChanges();
-            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this) });
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.mainVM.m_WaitImgChannel;
+            }
+            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }
+            );
         }
+
         [RelayCommand]
         void Cancel()
         {
             this.DiscardChanges();
-            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this) });
+            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                new CloseWindowMessage() { Sender = new WeakReference(this) }
+            );
         }
     }
 }

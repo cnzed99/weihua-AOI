@@ -1,20 +1,21 @@
 ﻿<hc:Window
-    x:Class="MySqlOperatesApiWPF.SQLSetWindow"
+    x:Class="MySqlOperatesApi.SQLSetWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:local="clr-namespace:MySqlOperatesApiWPF"
+    xmlns:local="clr-namespace:MySqlOperatesApi"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:prop="clr-namespace:MySqlOperatesApiWPF.Properties"
+    xmlns:prop="clr-namespace:MySqlOperatesApi.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{x:Static prop:Resources.SQLSetParam}"
     Width="850"
     Height="250"
+    d:DataContext="{d:DesignInstance Type=local:SQLBase}"
+    Icon="/MySqlOperatesApi;component/Resources/数据库设置.png"
     ResizeMode="NoResize"
     SizeToContent="Height"
-    d:DataContext="{d:DesignInstance Type=local:SQLBase}"
-    Icon="/MySqlOperatesApiWPF;component/Resources/数据库.png"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
@@ -30,7 +31,10 @@
             <RowDefinition Height="2.5*" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Vertical">
+        <StackPanel
+            Grid.Row="0"
+            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+            Orientation="Vertical">
             <GroupBox Margin="0,5,0,0" Header="{x:Static prop:Resources.MySQLSetParam}">
                 <StackPanel Orientation="Vertical">
 
@@ -40,7 +44,7 @@
                             hc:ToggleButtonAttach.ShowLabel="True"
                             Background="Gray"
                             Content="{x:Static prop:Resources.Enable}"
-                            IsChecked="{Binding mysqlExecute.SqlEnable}" />
+                            IsChecked="{Binding MysqlExecute.SqlEnable}" />
                         <ComboBox
                             x:Name="cb_mysql"
                             Width="160"
@@ -49,7 +53,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.UserSelect}"
                             hc:InfoElement.TitlePlacement="Left"
                             ItemsSource="{StaticResource UserStr}"
-                            SelectedItem="{Binding mysqlExecute.UseSelect}"
+                            SelectedItem="{Binding MysqlExecute.UseSelect}"
                             Style="{StaticResource ComboBoxExtend}" />
                         <TextBox
                             Width="160"
@@ -58,7 +62,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.UserName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.UserID}" />
+                            Text="{Binding MysqlExecute.UserID}" />
 
                         <hc:PasswordBox
                             Width="160"
@@ -71,7 +75,7 @@
                             IsSafeEnabled="false"
                             PasswordChar="*"
                             ShowEyeButton="True"
-                            UnsafePassword="{Binding mysqlExecute.Password, Mode=TwoWay}" />
+                            UnsafePassword="{Binding MysqlExecute.Password, Mode=TwoWay}" />
 
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -82,7 +86,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.ServerName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.DataBaseName}" />
+                            Text="{Binding MysqlExecute.DataBaseName}" />
 
                         <TextBox
                             Width="160"
@@ -91,7 +95,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.RemoteIP}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.RemoteIP}" />
+                            Text="{Binding MysqlExecute.RemoteIP}" />
 
                         <TextBox
                             Width="160"
@@ -100,7 +104,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.RemoteProt}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.RemotePort}" />
+                            Text="{Binding MysqlExecute.RemotePort}" />
 
 
                         <TextBox
@@ -110,7 +114,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.LineName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.LineName}" />
+                            Text="{Binding MysqlExecute.LineName}" />
 
                         <TextBox
                             Width="160"
@@ -119,7 +123,7 @@
                             hc:InfoElement.Title="{x:Static prop:Resources.DBDeviceName}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding mysqlExecute.DBDeviceName}" />
+                            Text="{Binding MysqlExecute.DBDeviceName}" />
                     </StackPanel>
 
                 </StackPanel>

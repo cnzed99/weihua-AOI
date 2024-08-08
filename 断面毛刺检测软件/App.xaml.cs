@@ -10,17 +10,20 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using Autofac;
+using CameraModule;
+using CommunicationModule;
 using DataQuery;
 using HandyControl.Data;
 using HandyControl.Properties.Langs;
 using HandyControl.Tools;
-using MySqlOperatesApiWPF;
+using MySqlOperatesApi;
 using Newtonsoft.Json;
 using SaveImageManage;
 using WH.Controls.SingleInstance;
 using WH.DetectSystem;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.LogRecord;
+using WH.Load;
 using 断面毛刺检测软件.Views;
 #if !NET40
 using System.Runtime;
@@ -52,6 +55,7 @@ namespace 断面毛刺检测软件
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Loadkey.GetNumber();
             AppMutex = new Mutex(true, "Metal_Burr", out var createdNew);
 
             if (!createdNew)
@@ -93,6 +97,16 @@ namespace 断面毛刺检测软件
         {
             base.OnExit(e);
             GlobalData.Save();
+            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            try
+            {
+                if (lightProcess != null && lightProcess.Threads != null)
+                    lightProcess?.Kill();
+            }
+            catch (Exception)
+            {
+                //退出程序
+            }
         }
 
         internal void UpdateSkin(SkinType skin)
@@ -143,9 +157,8 @@ namespace 断面毛刺检测软件
             var cmodel = new WH.DetectSystem.Models.CMainModel();
             viewModel.CMainMModel.CMainModels.Add(cmodel);
             CMainVM mainVM = new CMainVM();
-            mainVM.Model = cmodel;
+            //mainVM.Model = cmodel;
             viewModel.CMainVMs.Add(mainVM);
-
             var mainWindow = Container.Resolve<MainWindow>();
             mainWindow.DataContext = viewModel;
             mainWindow?.Show();
@@ -156,8 +169,10 @@ namespace 断面毛刺检测软件
         private static void ConfigureServices()
         {
             var builder = CPublicServices.ConfigureServices();
+            builder.Register(c => CSysSet.LoadParameter()).SingleInstance();
             builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
+
             //系统设置
             builder
                 .Register(c =>
@@ -192,9 +207,40 @@ namespace 断面毛刺检测软件
             builder
                 .Register(c => SingleInstance.Create<Lazy<DataQueryWindow>, DataQueryWindow>())
                 .InstancePerDependency();
+            //通讯配置
+            builder
+                .Register(c =>
+                    SingleInstance.Create<Lazy<OpenCommunicationList>, OpenCommunicationList>()
+                )
+                .InstancePerDependency();
+            //相机配置
+            builder
+                .Register(c => SingleInstance.Create<Lazy<CameraSetWindow>, CameraSetWindow>())
+                .InstancePerDependency();
+            //光源控制
+            var lightProcess = Invoke("./WH.LightControl.exe");
+            builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
+            //手动调试
+            builder
+                .Register(c =>
+                    SingleInstance.Create<Lazy<TimeTriggerTestWindow>, TimeTriggerTestWindow>()
+                )
+                .InstancePerDependency();
 
             Container = builder.Build();
             CPublicServices.Container = Container;
+        }
+
+        public static Process Invoke(string file)
+        {
+            if (file != null && File.Exists(file))
+            {
+                Process Opener = new Process();
+                Opener.StartInfo.FileName = file;
+                Opener.StartInfo.UseShellExecute = false;
+                return Opener;
+            }
+            return null;
         }
     }
 

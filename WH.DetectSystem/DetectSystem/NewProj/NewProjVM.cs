@@ -1,15 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using Mapster;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CameraModule;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Mapster;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
+using WH.Entity;
 using WH.Entity.Messages;
 
 namespace WH.DetectSystem.ViewModels
@@ -18,32 +20,41 @@ namespace WH.DetectSystem.ViewModels
     /// 20240704 TCG
     /// 新建工程 视图模型
     /// </summary>
-    public partial class CNewProjVM:ObservableValidator
+    public partial class CNewProjVM : ObservableValidator
     {
         #region 需要配置的属性 必需项
         string name;
+
         [Required]
         public string Name
         {
             get => name;
-            set=>SetProperty(ref name, value,true);
+            set => SetProperty(ref name, value, true);
         }
 
         string projPath;
-        [Required]
+
         public string ProjPath
         {
             get => projPath;
-            set => SetProperty(ref projPath, value,true);
+            set => SetProperty(ref projPath, value, true);
+        }
+        string cameraSerial;
+
+        public string CameraSerial
+        {
+            get => cameraSerial;
+            set => SetProperty(ref cameraSerial, value, true);
         }
         #endregion
         CMainModelsModelVM mainModelVM;
         CMainVM mainVM;
+
         public CNewProjVM(CMainModelsModelVM mainVM)
         {
             mainModelVM = mainVM;
             this.mainVM = mainVM.CMainVMs[0];
-            this.mainVM.GUID = Guid.NewGuid().ToString();//GUID
+
             this.mainVM.Adapt(this);
             this.ProjPath = mainModelVM.ProjPath;
         }
@@ -55,10 +66,11 @@ namespace WH.DetectSystem.ViewModels
         public void ApplyChanges()
         {
             mainModelVM.ProjPath = this.ProjPath;
-            if (mainVM.Model is null) mainVM.Model = new CMainModel();
+            mainModelVM.CMainMModel.CMainModels[0] = new CMainModel();
+            mainVM.Model = mainModelVM.CMainMModel.CMainModels[0];
             this.Adapt(mainVM);
-            
         }
+
         /// <summary>
         /// 丢弃当前工程的修改
         /// </summary>
@@ -68,15 +80,33 @@ namespace WH.DetectSystem.ViewModels
         [RelayCommand]
         void Sure()
         {
-            if (HasErrors) return;
+            if (HasErrors)
+                return;
+            this.mainVM.GUID = Guid.NewGuid().ToString(); //GUID
             this.ApplyChanges();
-            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this) });
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.mainVM.m_WaitImgChannel;
+            }
+
+            mainModelVM.SaveCurrentProj();
+            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }
+            );
         }
+
         [RelayCommand]
         void Cancel()
         {
             this.DiscardChanges();
-            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(new CloseWindowMessage() { Sender = new WeakReference(this) });
+            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = false }
+            );
         }
     }
 }

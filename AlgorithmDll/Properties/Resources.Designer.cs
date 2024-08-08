@@ -214,6 +214,15 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
+        ///   查找类似 超时时间(ms) 的本地化字符串。
+        /// </summary>
+        public static string 超时时间_ms_ {
+            get {
+                return ResourceManager.GetString("超时时间(ms)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 过滤矩阵邻域大小 的本地化字符串。
         /// </summary>
         public static string 过滤矩阵邻域大小 {

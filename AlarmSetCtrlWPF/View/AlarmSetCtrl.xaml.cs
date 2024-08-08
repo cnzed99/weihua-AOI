@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace AlarmSetCtrlWPF
+namespace AlarmSetCtrl
 {
     /// <summary>
     /// AlarmSetCtrl.xaml 的交互逻辑

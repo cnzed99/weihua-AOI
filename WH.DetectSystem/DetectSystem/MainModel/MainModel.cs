@@ -5,14 +5,16 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using AlarmSetCtrlWPF;
+using AlarmSetCtrl;
 using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HistoryPlayback;
+using HistoryPlayback.Model;
+using Mapster;
 using MotionControl;
-using MySqlOperatesApiWPF;
+using MySqlOperatesApi;
 using Newtonsoft.Json;
 using ProjProduceData;
 using QualityGrade;
@@ -33,6 +35,7 @@ namespace WH.DetectSystem.Models
         /// 制程GUID
         /// </summary>
         public string GUID { get; set; }
+        public string CameraSerial { get; set; }
 
         [ObservableProperty]
         string name = "毛刺检测";
@@ -80,8 +83,9 @@ namespace WH.DetectSystem.Models
         /// 20240706 TCG
         /// 数据库
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public MySqlViewModel MySqlVM { get; set; } = new MySqlViewModel(); //数据库
+        [JsonIgnore]
+        [AdaptIgnore]
+        public SQLBase MaociMysqlConfig { get; set; } //数据库
 
         /// <summary>
         /// 20240706 TCG
@@ -95,7 +99,7 @@ namespace WH.DetectSystem.Models
         /// 历史图查看
         /// </summary>
         [JsonProperty(Order = 7)]
-        public CHistoryVM MaociHistoryVM { get; set; } = new CHistoryVM(); //历史回看
+        public CHistoryModel MaociHistoryModel { get; set; } = new CHistoryModel(); //历史回看
 
         /// <summary>
         /// 20240706 TCG

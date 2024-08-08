@@ -120,7 +120,7 @@ namespace WH.Entity.Attribute
                 }
             }
 
-            return null;
+            return value.ToString();
         }
 
         /// <summary>

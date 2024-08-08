@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Autofac;
+using CameraModule;
+using CommunicationModule;
 using Microsoft.Win32;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -281,26 +283,10 @@ namespace 断面毛刺检测软件.Views
         /// </summary>
         private async void PreDllExcute(bool once = false)
         {
-            MMainVM.isStart = false;
             if (imgFiles.Count > ImgIndex && File.Exists(imgFiles[ImgIndex]))
             {
                 try
                 {
-                    if (!MMainVM.isStart)
-                    {
-                        if (!once) //连续离线
-                        {
-                            Thread.Sleep(30);
-                        }
-                        else //单张离线
-                        { }
-                    }
-
-                    if (!brushes.MoveNext())
-                    {
-                        brushes.Reset();
-                        brushes.MoveNext();
-                    }
                     Cell cell = new Cell()
                     {
                         ID = "002",
@@ -308,18 +294,18 @@ namespace 断面毛刺检测软件.Views
                         Quality = mainVM.MaociQualityConfig.Qualities[0],
                         ImageFile = ImgFiles[ImgIndex],
                         CancelSource = this.CancelToken,
-                        ProjGuid = "001",
-                        CamSerial = "002",
+                        ProjGuid = MMainVM.GUID,
+                        CamSerial = MMainVM.CameraSerial,
                         ComGuid = "com"
                     };
                     if (random.Next(10) > 5)
                         cell.IsOK = true;
-                    //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
+                    //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
                     // _waitTriggerImageQueue.Enqueue(cell);
-                    cell.GetImageExcute(!MMainVM.isStart, 0);
+                    cell.GetImageExcute(true, 0);
 
-                    //await CCameraBase.WaitGetImageChannel.Writer.WriteAsync(cell);
-                    await CMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                    //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
+                    await MMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -456,6 +442,7 @@ namespace 断面毛刺检测软件.Views
         {
             try
             {
+                CCameraManagement.CameraDict[MMainVM.CameraSerial].ExecuteSoftwareTrigger();
                 //CCommunicationManagement.GetComFromCam(_projConfig.CamSerial, out string com);
                 //int num = _projConfig.Config.LevelProduce.TotalNum + 1;
                 //byte[] data = CCommunicationManagement.GetAutoID(_projConfig.CamSerial, num);

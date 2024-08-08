@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -30,6 +31,40 @@ namespace MotionControl
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreModifyLog]
+        string[] XIOName = new string[10]
+        {
+            "负限位",
+            "正限位",
+            "原点",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用"
+        };
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreModifyLog]
+        string[] YIOName = new string[10]
+        {
+            "脉冲",
+            "方向",
+            "使能",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用",
+            "备用"
+        };
+
         public CMotionConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
@@ -45,12 +80,7 @@ namespace MotionControl
                 signalOut.Add(new CSignalOut(token, $"Y{i}", i));
             }
             this.SignalOuts = signalOut;
-            this.RegisterSets = new ObservableCollection<CRegisterSet>()
-            {
-                new(this.token, "速度", "D100"),
-                new(this.token, "加速度", "D116")
-            };
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
+            this.RegisterSets = new ObservableCollection<CElement>() { };
         }
 
         /// <summary>
@@ -91,7 +121,7 @@ namespace MotionControl
             }
             foreach (var reg in RegisterSets)
             {
-                if (message.obj.GetType() == typeof(CRegisterSet))
+                if (message.obj.GetType() == typeof(CElement))
                 {
                     if (reg == message.obj)
                     {
@@ -139,9 +169,9 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("2.轴信息")]
-        [property: DisplayName("12.正限位")]
-        [property: Description("12.正限位")]
-        private float softLimitP = 10000;
+        [property: DisplayName("12.正限位(mm)")]
+        [property: Description("12.正限位(mm)")]
+        private float softLimitP = 16f;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -149,19 +179,29 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("2.轴信息")]
-        [property: DisplayName("13.负限位")]
-        [property: Description("13.负限位")]
-        private float softLimitN = -10000;
+        [property: DisplayName("13.负限位(mm)")]
+        [property: Description("13.负限位(mm)")]
+        private float softLimitN = -15f;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 对焦基准位
+        /// 2024.7.9 李焕彬
+        /// 运行（纠偏）速度
         /// </summary>
-        [property: Category("2.轴信息")]
-        [property: DisplayName("14.对焦基准位")]
-        [property: Description("14.对焦基准位")]
         [ObservableProperty]
-        private float focusPos = 0;
+        [property: Category("2.轴信息")]
+        [property: DisplayName("14.运行速度(mm/s)")]
+        [property: Description("14.运行速度(mm/s)")]
+        private float speed = 10;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 加速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.轴信息")]
+        [property: DisplayName("15.加速度(mm²/s)")]
+        [property: Description("15.加速度(mm²/s)")]
+        private float acc = 50;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -171,7 +211,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("11.回原点")]
         [property: Description("11.回原点")]
-        private string addrGoHome = "M101";
+        private ushort addrGoHome = 101;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -181,7 +221,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("12.使能")]
         [property: Description("12.使能")]
-        private string addrEnable = "M100";
+        private ushort addrEnable = 100;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -191,7 +231,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("13.相对运动")]
         [property: Description("13.相对运动")]
-        private string addrMoveRela = "M13";
+        private ushort addrMoveRela = 13;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -201,7 +241,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("14.绝对运动")]
         [property: Description("14.绝对运动")]
-        private string addrMoveAbs = "M14";
+        private ushort addrMoveAbs = 14;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -211,7 +251,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("15.故障复位")]
         [property: Description("15.故障复位")]
-        private string addrReset = "M10";
+        private ushort addrReset = 10;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -221,7 +261,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("16.停止运动")]
         [property: Description("16.停止运动")]
-        private string addrStop = "M16";
+        private ushort addrStop = 16;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -231,7 +271,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("17.正转")]
         [property: Description("17.正转")]
-        private string addrFoward = "M11";
+        private ushort addrFoward = 11;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -241,7 +281,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("18.反转")]
         [property: Description("18.反转")]
-        private string addrBackward = "M12";
+        private ushort addrBackward = 12;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -251,7 +291,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("19.轴报警信号")]
         [property: Description("19.轴报警信号")]
-        private string addrIsAlarm = "M90";
+        private ushort addrIsAlarm = 90;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -261,7 +301,7 @@ namespace MotionControl
         [property: Category("3.地址信息M")]
         [property: DisplayName("20.驱动报警信号")]
         [property: Description("20.驱动报警信号")]
-        private string addrDriveAlarm = "M92";
+        private ushort addrDriveAlarm = 92;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -271,7 +311,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("11.当前位置")]
         [property: Description("11.当前位置")]
-        private string addrPosCur = "D104";
+        private ushort addrPosCur = 104;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -281,7 +321,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("12.绝对位置")]
         [property: Description("12.绝对位置")]
-        private string addrPosAbs = "D102";
+        private ushort addrPosAbs = 102;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -291,7 +331,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("13.相对位置")]
         [property: Description("13.相对位置")]
-        private string addrPosRela = "D102";
+        private ushort addrPosRela = 102;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -301,7 +341,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("14.当前速度")]
         [property: Description("14.当前速度")]
-        private string addrSpdCur = "D108";
+        private ushort addrSpdCur = 108;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -311,27 +351,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("15.当前扭矩")]
         [property: Description("15.当前扭矩")]
-        private string addrTorqueCur = "D112";
-
-        /// <summary>
-        /// 2024.7.9 李焕彬
-        /// 正限位
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("4.地址信息D")]
-        [property: DisplayName("16.正限位")]
-        [property: Description("16.正限位")]
-        private string addrSoftLimitP = "D122";
-
-        /// <summary>
-        /// 2024.7.9 李焕彬
-        /// 负限位
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("4.地址信息D")]
-        [property: DisplayName("17.负限位")]
-        [property: Description("17.负限位")]
-        private string addrSoftLimitN = "D124";
+        private ushort addrTorqueCur = 112;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -341,7 +361,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("18.对焦基准位")]
         [property: Description("18.对焦基准位")]
-        private string addrFocusPos = "D118";
+        private ushort addrFocusPos = 118;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -351,7 +371,7 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("19.纠偏期望位")]
         [property: Description("19.纠偏期望位")]
-        private string addrFocusDst = "D120";
+        private ushort addrFocusDst = 120;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -361,7 +381,88 @@ namespace MotionControl
         [property: Category("4.地址信息D")]
         [property: DisplayName("20.纠偏感应值")]
         [property: Description("20.纠偏感应值")]
-        private string addrSensorPos = "D126";
+        private ushort addrSensorPos = 126;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 速度地址
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("21.速度")]
+        [property: Description("21.速度")]
+        private ushort addrSpeed = 100;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 加速度地址
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("22.加速度")]
+        [property: Description("22.加速度")]
+        private ushort addrAcc = 116;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 对焦基准位
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("11.最佳对焦位置(mm)")]
+        [property: Description("11.最佳对焦位置(mm)")]
+        [property: ReadOnly(true)]
+        [ObservableProperty]
+        private float focusPos = 0;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 粗调步长
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("12.粗调步长(mm)")]
+        [property: Description("12.粗调步长(mm)")]
+        [ObservableProperty]
+        private float stepCoarse = 0.1f;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 精调步长
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("13.精调步长(mm)")]
+        [property: Description("13.精调步长(mm)")]
+        [ObservableProperty]
+        private float stepFine = 0.01f;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 最小清晰度
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("14.最小清晰度")]
+        [property: Description("14.最小清晰度")]
+        [ObservableProperty]
+        private float minDistinct = 10;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 精调范围
+        /// </summary>
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("15.精调范围(mm)")]
+        [property: Description("15.精调范围(mm)")]
+        [ObservableProperty]
+        private float fineRange = 0.3f;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 对焦速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("5.对焦参数")]
+        [property: DisplayName("16.对焦速度(mm/s)")]
+        [property: Description("16.对焦速度(mm/s)")]
+        private float speedFocus = 5;
 
         /// <summary>
         /// 2024.7.10 李焕彬
@@ -389,8 +490,7 @@ namespace MotionControl
         [property: Browsable(false)]
         [property: DisplayName("寄存器读写")]
         [ObservableProperty]
-        private ObservableCollection<CRegisterSet> registerSets =
-            new ObservableCollection<CRegisterSet>();
+        private ObservableCollection<CElement> registerSets = new ObservableCollection<CElement>();
     }
 
     /// <summary>
@@ -476,34 +576,66 @@ namespace MotionControl
         /// </summary>
         [property: DisplayName("写入地址M")]
         [ObservableProperty]
-        private string addrM;
+        private ushort addrM;
     }
 
     /// <summary>
-    /// 2024.7.12 李焕彬
-    /// 寄存器D写入读取
+    /// 2024.7.10 李焕彬
+    /// 元件
     /// </summary>
-    public partial class CRegisterSet : ConfigModifyObservableBase
+    public partial class CElement : ConfigModifyObservableBase
     {
-        public CRegisterSet()
+        public CElement()
+            : base()
         {
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public CRegisterSet(Token token, string name = null, string addr = null)
+        public CElement(Token token)
         {
             this.token = token;
-            this.Name = name;
-            this.Addr = addr;
         }
+
+        /// <summary>
+        /// 2024.7.10 李焕彬
+        /// 名称
+        /// </summary>
+        [property: Category("1.配置")]
+        [property: DisplayName("1.名称")]
+        [property: Description("1.名称")]
+        [ObservableProperty]
+        private string name = "自定义";
+
+        /// <summary>
+        /// 2024.7.10 李焕彬
+        /// 类型
+        /// </summary>
+        [property: Category("1.配置")]
+        [property: DisplayName("2.类型")]
+        [property: Description("2.类型")]
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        [ObservableProperty]
+        private EMELEMTYPE type;
 
         /// <summary>
         /// 2024.7.10 李焕彬
         /// 地址
         /// </summary>
-        [property: DisplayName("地址")]
+        [property: Category("1.配置")]
+        [property: DisplayName("3.地址")]
+        [property: Description("3.地址")]
         [ObservableProperty]
-        private string addr;
+        private ushort addr;
+
+        /// <summary>
+        /// 2024.7.10 李焕彬
+        /// 写入值
+        /// </summary>
+        [property: Category("1.配置")]
+        [property: DisplayName("4.写入值")]
+        [property: Description("4.写入值")]
+        [ObservableProperty]
+        private float writeValue;
 
         /// <summary>
         /// 2024.7.10 李焕彬
@@ -512,35 +644,47 @@ namespace MotionControl
         [property: JsonIgnore]
         [property: IgnoreModifyLog]
         [ObservableProperty]
-        private float valueRead;
-
-        /// <summary>
-        /// 2024.7.10 李焕彬
-        /// 写入值
-        /// </summary>
-        [property: DisplayName("写入值")]
-        [ObservableProperty]
-        private float valueWrite = 5;
-
-        /// <summary>
-        /// 2024.7.10 李焕彬
-        /// 名称
-        /// </summary>
-        [property: DisplayName("名称")]
-        [ObservableProperty]
-        private string name = "自定义";
+        private float readValue = 0;
 
         /// <summary>
         /// 2024.7.10 李焕彬
         /// 描述
         /// </summary>
-        [property: DisplayName("描述")]
+        [property: Category("1.配置")]
+        [property: DisplayName("5.描述")]
+        [property: Description("5.描述")]
         [ObservableProperty]
         private string description;
 
+        /// <summary>
+        /// 2024.7.21 李焕彬
+        /// ToString
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return $"{Addr}-{Name}";
+            return $"{Name}";
         }
+    }
+
+    /// <summary>
+    /// 2024.7.17 李焕彬
+    /// 元件类型
+    /// </summary>
+    public enum EMELEMTYPE
+    {
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 线圈
+        /// </summary>
+        [EnumString("线圈", "M")]
+        EMELEMM,
+
+        /// <summary>
+        /// 2024.7.17 李焕彬
+        /// 寄存器
+        /// </summary>
+        [EnumString("寄存器", "D")]
+        EMELEMD,
     }
 }

@@ -1,34 +1,25 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Text.Json.Nodes;
-using System.Threading.Channels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AlarmSetCtrlWPF;
+using AlarmSetCtrl;
 using Autofac;
+using CameraModule;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.Messaging;
 using DataQuery;
 using HandyControl.Controls;
 using HandyControl.Data;
-using Mapster;
+using HistoryPlayback.Model;
 using Microsoft.Win32;
-using MySqlOperatesApiWPF;
-using Newtonsoft.Json;
-using ProjProduceData;
+using MySqlOperatesApi;
 using SaveImageManage;
 using WH.Controls;
 using WH.DetectSystem;
@@ -36,7 +27,7 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
-using WH.RunCell;
+using WH.RecipeCellRootBase;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -47,13 +38,14 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class MainWindow
         : HandyControl.Controls.Window,
-            IRecipient<MemoryStream>,
-            IRecipient<AlarmPopMessage>
+            IRecipient<BitmapSource>,
+            IRecipient<AlarmPopMessage>,
+            IRecipient<AddOneNgImagePathMessage>
     {
         IObservable<Unit> StartStopSource;
         CMainModelsModelVM CMainList;
         CMainVM mainVM;
-        CProgress<double> progress;
+        CProgress<string> progress;
         CLogRec SysLog;
         CLogRec OperateLog;
 
@@ -70,15 +62,15 @@ namespace 断面毛刺检测软件
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            progress = new CProgress<double>(
-                value => LoadProgressBar.Value = value,
+            progress = new CProgress<string>(
+                value => LoadProgressBar.Text = value,
                 () =>
                 {
                     this.IsEnabled = true;
                     CMainList.IsLoading = false;
                     this.Activate();
                 },
-                100
+                "Loaded!"
             );
             try
             {
@@ -95,13 +87,29 @@ namespace 断面毛刺检测软件
                     .Throttle(TimeSpan.FromMilliseconds(500))
                     .Subscribe(_ =>
                     {
-                        if (mainVM.isStart == mainVM.StartStop)
+                        if (mainVM.IsManualTest) //离线手动下，不允许启动
+                        {
+                            mainVM.StartStop = false;
+                            Growl.Warning("请退出设置或离线手动模式！");
                             return;
-                        mainVM.isStart = mainVM.StartStop;
-                        if (mainVM.isStart)
+                        }
+                        if (mainVM.MotionCtrlVM.IsFocusing)
+                        {
+                            mainVM.StartStop = false;
+                            Growl.Warning("正在对焦中，不能启动！");
+                            return;
+                        }
+                        if (mainVM.IsStart == mainVM.StartStop)
+                            return;
+                        mainVM.IsStart = mainVM.StartStop;
+                        if (mainVM.IsStart)
+                        {
                             OperateLog.Info(Properties.Resources.Start);
+                        }
                         else
+                        {
                             OperateLog.Info(Properties.Resources.Stop);
+                        }
                     });
 
                 this.IsEnabled = false;
@@ -118,7 +126,7 @@ namespace 断面毛刺检测软件
                     );
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
-                ((IProgress<double>)progress).Report(100);
+                ((IProgress<string>)progress).Report("Loaded!");
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
                     "断面毛刺检测软件"
@@ -133,7 +141,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                ((IProgress<double>)progress).Report(100);
+                ((IProgress<string>)progress).Report("Loaded!");
             }
         }
 
@@ -168,6 +176,7 @@ namespace 断面毛刺检测软件
         {
             LoginPage UserInfoFrm = new LoginPage(CMainList.LoginViewModel);
             UserInfoFrm.ShowDialog();
+            mainVM.OperateLog.UserName = CMainList.LoginViewModel.LoginPerson.UserName;
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 
@@ -220,9 +229,14 @@ namespace 断面毛刺检测软件
                     CMainList.SaveCurrentProj();
                 }
                 CMainList.SystemSettings.SaveParameter();
-                CMainList.MotionCtrlVM.SaveParameter();
+                CMainList.CMainVMs[0].MotionCtrlVM.SaveParameter();
+                CMainList.CMainVMs[0].MarkCtrlVM.SaveParameter();
+                CCommunicationManagement.SaveAllComConfig();
+                CCameraManagement.SaveAllCamConfig();
+                CCommunicationManagement.CloseAllComm();
+                CCameraManagement.CloseAllCameras();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
-                Environment.Exit(0);
+                Application.Current.Shutdown();
             }
             catch (Exception exception)
             {
@@ -241,12 +255,15 @@ namespace 断面毛刺检测软件
 
         #region 新建工程
 
-        private void NewProj_Click(object sender, RoutedEventArgs e)
+        private async void NewProj_Click(object sender, RoutedEventArgs e)
         {
             NewProjWindow newProj = App.Container.Resolve<Lazy<NewProjWindow>>().Value;
 
             OperateLog.Info(Properties.Resources.NewProj);
-            newProj.ShowDialog();
+            if (newProj.ShowDialog() is true)
+            {
+                await OpenProjAsync(CMainList.ProjPath);
+            }
         }
         #endregion
 
@@ -270,7 +287,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                progress.Report(100);
+                progress.Report("Loaded!");
             }
         }
 
@@ -307,7 +324,7 @@ namespace 断面毛刺检测软件
             }
             finally
             {
-                progress.Report(100);
+                progress.Report("Loaded!");
             }
         }
         #endregion
@@ -359,7 +376,7 @@ namespace 断面毛刺检测软件
                 }
                 finally
                 {
-                    progress.Report(100);
+                    progress.Report("Loaded!");
                 }
             }
         }
@@ -369,22 +386,26 @@ namespace 断面毛刺检测软件
         {
             try
             {
+                if (!File.Exists(header))
+                    return;
                 this.IsEnabled = false;
                 progress.Reset();
-                progress.Report(0);
+                progress.Report("Initializing...");
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 await CMainList.OpenProj(progress, header);
 
-                WeakReferenceMessenger.Default.Register<MemoryStream, Token>(
+                WeakReferenceMessenger.Default.Register<BitmapSource, Token>(
                     this,
                     CMainList.CMainVMs[0].TokeVM
                 );
-
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage, Token>(
                     this,
                     CMainList.CMainVMs[0].MaociAlarmSetConfig.token
                 );
-
+                WeakReferenceMessenger.Default.Register<AddOneNgImagePathMessage, Token>(
+                    this,
+                    CMainList.CMainVMs[0].TokeVM
+                );
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
@@ -416,15 +437,15 @@ namespace 断面毛刺检测软件
         #region 语言切换
         private void Lang_Checked(object sender, RoutedEventArgs e)
         {
-            var languageCode = "zh-CN";
-            if (cbLang.IsChecked ?? true)
-            {
-                languageCode = "en-US";
-            }
-            OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
-            LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
+            //var languageCode = "zh-CN";
+            //if (cbLang.IsChecked ?? true)
+            //{
+            //    languageCode = "en-US";
+            //}
+            //OperateLog.Info(Properties.Resources.LanguageChanged + languageCode);
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+            //LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
 
         #endregion
@@ -503,14 +524,48 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 离线测试
+        #region 离线测试 手动调试
+        List<bool> switches = new List<bool>();
+
         private void OffLineTest_Click(object sender, RoutedEventArgs e)
         {
             OffLineTestWindow offLine = App.Container.Resolve<Lazy<OffLineTestWindow>>().Value;
+            offLine.Closed += ManualWindowClosed;
             offLine.Show();
             offLine.Activate();
+            mainVM.IsManualTest = true;
+            switches.Add(true);
             OperateLog.Info(Properties.Resources.Offline);
         }
+
+        //手动调试
+        private void ManualDebug_Click(object sender, RoutedEventArgs e)
+        {
+            TimeTriggerTestWindow timeTriggerWindow = App
+                .Container.Resolve<Lazy<TimeTriggerTestWindow>>()
+                .Value;
+            timeTriggerWindow.Closed += ManualWindowClosed;
+            timeTriggerWindow.Show();
+            timeTriggerWindow.Activate();
+            mainVM.IsManualTest = true;
+            switches.Add(true);
+            OperateLog.Info(Properties.Resources.手动调试);
+        }
+
+        /// <summary>
+        /// 计算手动调试时的开关量
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ManualWindowClosed(object sender, EventArgs e)
+        {
+            switches.RemoveAt(0);
+            if (switches.Count <= 0)
+            {
+                mainVM.IsManualTest = false;
+            }
+        }
+
         #endregion
 
         #region 数据库设置
@@ -528,6 +583,7 @@ namespace 断面毛刺检测软件
         private void DataQuery_Click(object sender, RoutedEventArgs e)
         {
             DataQueryWindow sqlSetwindow = App.Container.Resolve<Lazy<DataQueryWindow>>().Value;
+            sqlSetwindow.DataContext = new CDataQueryVM(CMainList.CMainVMs[0].MySqlVM);
             sqlSetwindow.Show();
             sqlSetwindow.Activate();
             OperateLog.Info(Properties.Resources.DataStatistics);
@@ -543,25 +599,73 @@ namespace 断面毛刺检测软件
             }
             OperateLog.Info(Properties.Resources.DataClear);
         }
-
         #endregion
 
-        public void Receive(MemoryStream imgStream)
+        #region 相机通讯光控
+        //相机设置
+        private void CamSet_Click(object sender, RoutedEventArgs e)
+        {
+            CameraSetWindow cameraSetWindow = App.Container.Resolve<Lazy<CameraSetWindow>>().Value;
+            cameraSetWindow.Show();
+            cameraSetWindow.Activate();
+        }
+
+        /// <summary>
+        /// 通讯设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommSet_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCommunicationList openCommunicationList = App
+                .Container.Resolve<Lazy<OpenCommunicationList>>()
+                .Value;
+            openCommunicationList.Show();
+            openCommunicationList.Activate();
+        }
+
+        /// <summary>
+        /// 光源控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LightControl_Click(object sender, RoutedEventArgs e)
+        {
+            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            //lightProcess.Start();
+            lightProcess?.Start();
+        }
+        #endregion
+
+        #region 关于
+        //关于
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog();
+        }
+        #endregion
+
+        #region 清空Growl消息
+        private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
+        {
+            Growl.Clear();
+        }
+        #endregion
+
+        #region 消息通道处理
+        //取图显示
+        public void Receive(BitmapSource image)
         {
             this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.StreamSource = new MemoryStream();
-                    imgStream.WriteTo(bitmap.StreamSource);
-                    bitmap.EndInit();
-                    mainVM.ModelImage = bitmap;
+                    mainVM.ModelImage = image;
                 })
             );
         }
 
+        //报警弹窗
         public void Receive(AlarmPopMessage message)
         {
             this.Dispatcher.BeginInvoke(
@@ -584,9 +688,21 @@ namespace 断面毛刺检测软件
             );
         }
 
-        private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
+        //NG回放
+        public void Receive(AddOneNgImagePathMessage message)
         {
-            Growl.Clear();
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    if (!string.IsNullOrEmpty(message.Path))
+                    {
+                        if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count >= 500)
+                            mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(0);
+                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Add(message.Path);
+                    }
+                })
+            );
         }
+        #endregion
     }
 }

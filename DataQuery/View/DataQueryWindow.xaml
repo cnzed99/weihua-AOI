@@ -10,10 +10,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:DataQuery.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="数据查询"
+    Title="{x:Static prop:Resources.DataQuery}"
     Width="700"
     Height="700"
     d:DataContext="{d:DesignInstance Type=local:CDataQueryVM}"
+    Icon="/DataQuery;component/Resources/数据查询.png"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
@@ -35,7 +36,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="5*" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <DockPanel HorizontalAlignment="Left">
                 <RadioButton
@@ -95,20 +96,24 @@
                 </hc:ElementGroup>
             </Grid>
 
-            <Button
+            <ToggleButton
                 Grid.Column="2"
-                Width="70"
+                Width="100"
                 Height="40"
                 Command="{Binding SearchCommand}"
                 Content="{x:Static prop:Resources.Query}"
-                Style="{StaticResource ButtonPrimary}" />
+                IsChecked="{Binding SearchCommand.IsRunning, Mode=OneWay}"
+                Style="{StaticResource ToggleButtonLoadingPrimary}" />
 
         </Grid>
 
-        <TextBlock Grid.Row="1" Text="{Binding MessageText}" />
+        <TextBlock
+            Grid.Row="1"
+            Text="{Binding MessageText}"
+            TextWrapping="Wrap" />
 
-        <ListView Grid.Row="2" ItemsSource="{Binding DataViews}">
-            <ListView.View>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DataViews}">
+            <!--<ListView.View>
                 <GridView>
                     <GridViewColumn
                         Width="150"
@@ -135,8 +140,8 @@
                         DisplayMemberBinding="{Binding Path=划伤数量}"
                         Header="划伤数量" />
                 </GridView>
-            </ListView.View>
-        </ListView>
+            </ListView.View>-->
+        </DataGrid>
 
 
     </Grid>

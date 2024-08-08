@@ -30,7 +30,7 @@ namespace QualityGrade
         public CQualityConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
-            Qualities = new ObservableCollection<Quality>() { new Quality("G1") };
+            Qualities = new ObservableCollection<Quality>() { new Quality("G1") { Priority = 0 } };
             //参数修改
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
@@ -58,6 +58,22 @@ namespace QualityGrade
                     continue;
                 }
             }
+        }
+
+        public Quality GetBest()
+        {
+            if (Qualities.Count > 0)
+                return Qualities[0];
+            else
+                return new Quality("G1") { Priority = 0 };
+        }
+
+        public Quality GetWorst()
+        {
+            if (Qualities.Count > 0)
+                return Qualities.Last();
+            else
+                return new Quality("G1") { Priority = 0 };
         }
     }
 

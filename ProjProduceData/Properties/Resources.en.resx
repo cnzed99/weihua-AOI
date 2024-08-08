@@ -129,4 +129,16 @@
   <data name="PercentOfAll" xml:space="preserve">
     <value>Percent Of All</value>
   </data>
+  <data name="总数" xml:space="preserve">
+    <value>All：</value>
+  </data>
+  <data name="良率" xml:space="preserve">
+    <value>YR：</value>
+  </data>
+  <data name="良品" xml:space="preserve">
+    <value>OK：</value>
+  </data>
+  <data name="不良" xml:space="preserve">
+    <value>NG：</value>
+  </data>
 </root>

@@ -1,0 +1,143 @@
+﻿<hc:Window
+    x:Class="CameraModule.CameraSetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:CameraModule"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    Title="{Binding [CameraSet], Source={x:Static local:CLang.s_Instance}}"
+    Width="1300"
+    Height="750"
+    Icon="/CameraModule;component/Resources/cam.png"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:CCameraSetWindowVM />
+    </Window.DataContext>
+    <hc:Window.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <conv:BoolToBrushConverter
+                x:Key="BoolToBrushConverter1"
+                FalseValue="{DynamicResource PrimaryBrush}"
+                TrueValue="{DynamicResource DangerBrush}" />
+            <conv:BoolToStringConverter
+                x:Key="BoolToStringConverter1"
+                FalseValue="{Binding [ContinuousTrig], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [StopTrig], Source={x:Static local:CLang.s_Instance}}" />
+            <conv:SubtractConverter x:Key="WidthSubtractConverter" />
+        </ResourceDictionary>
+    </hc:Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid Margin="3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="0.8*" />
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <wh:ImageView Source="{Binding ImageShow}" />
+        </Border>
+        <GroupBox
+            Grid.Column="1"
+            Header="{Binding [ParaSet], Source={x:Static local:CLang.s_Instance}}"
+            Style="{StaticResource GroupBoxTab}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <ListBox
+                    x:Name="list_cam"
+                    Margin="5,0"
+                    ItemsSource="{Binding CamParamList}"
+                    SelectedItem="{Binding CamParamSelect}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Tag="{Binding ElementName=list_cam, Path=DataContext}" Width="{Binding ElementName=list_cam, Path=ActualWidth, Converter={StaticResource WidthSubtractConverter}, ConverterParameter=40}" Style="{StaticResource TextBlockDefault}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}-{1}">
+                                        <Binding Path="SerialNumber" />
+                                        <Binding Path="Name" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Tag}" IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}">
+                                        <MenuItem
+                                            Width="140"
+                                            Command="{Binding DelCamCommand}"
+                                            Header="{Binding [DeleteCam], Source={x:Static local:CLang.s_Instance}}" />
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <wh:CPropertyGridLang
+                    Grid.Column="1"
+                    IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                    SelectedObject="{Binding CamParamSelect}"
+                    lang="{x:Static local:CLang.s_Instance}" />
+                <UniformGrid
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Height="60"
+                    Rows="1">
+                    <UniformGrid.Resources>
+                        <ResourceDictionary>
+                            <Style BasedOn="{StaticResource ButtonDefault}" TargetType="Button">
+                                <Setter Property="MinWidth"  Value="80" />
+                                <Setter Property="Height" Value="40" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="FontSize" Value="15" />
+                            </Style>
+                        </ResourceDictionary>
+                    </UniformGrid.Resources>
+                    <Button
+                        Background="{DynamicResource PrimaryBrush}"
+                        Command="{Binding SearchCommand}"
+                        Content="{Binding [Search], Source={x:Static local:CLang.s_Instance}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
+                    <Button
+                        Background="{DynamicResource PrimaryBrush}"
+                        Command="{Binding SoftWareTriggerCommand}"
+                        Content="{Binding [SoftWare], Source={x:Static local:CLang.s_Instance}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
+                    <Button
+                        Background="{Binding IsContinuous, Converter={StaticResource BoolToBrushConverter1}}"
+                        Command="{Binding ContinuousCommand}"
+                        Content="{Binding IsContinuous, Converter={StaticResource BoolToStringConverter1}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
+                    <Button
+                        Background="{DynamicResource PrimaryBrush}"
+                        Command="{Binding SaveCommand}"
+                        Content="{Binding [Save], Source={x:Static local:CLang.s_Instance}}"
+                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}" />
+                </UniformGrid>
+                <TextBox
+                    Grid.Row="2"
+                    hc:TitleElement.Title="清晰度值："
+                    hc:TitleElement.TitlePlacement="Left"
+                    Style="{StaticResource TextBoxExtend}"
+                    Text="{Binding Distinct}" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</hc:Window>

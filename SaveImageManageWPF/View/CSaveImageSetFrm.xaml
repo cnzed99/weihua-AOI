@@ -9,7 +9,9 @@
     xmlns:local="clr-namespace:SaveImageManage"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="{Binding [SaveImageSet],Source={x:Static local:CLang.s_SaveImageLang}}"
+    xmlns:sysio="clr-namespace:System.IO;assembly=mscorlib"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
+    Title="{Binding [SaveImageSet], Source={x:Static local:CLang.s_SaveImageLang}}"
     Width="700"
     Height="450"
     d:DataContext="{d:DesignInstance local:CSaveImageVM}"
@@ -41,6 +43,29 @@
                 <Setter Property="Minimum" Value="0" />
             </Style>
             <entity:CheckConverter x:Key="CheckConverter" />
+            <wh:Byte2GbConverter x:Key="Byte2GbConverter" />
+            <ObjectDataProvider
+                x:Key="DrivesInfo"
+                MethodName="GetDrives"
+                ObjectType="{x:Type sysio:DriveInfo}" />
+            <DataTemplate DataType="{x:Type sysio:DriveInfo}">
+                <Border Background="{StaticResource ProgressBarIndicatorAnimatedFill}" CornerRadius="5">
+                    <hc:UniformSpacingPanel
+                        Margin="5,0"
+                        VerticalAlignment="Center"
+                        HorizontalSpacing="5"
+                        Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource TextBlockDefault}" Text="{Binding Name}" />
+                        <TextBlock
+                            Foreground="Lime"
+                            Style="{StaticResource TextBlockDefault}"
+                            Text="{Binding AvailableFreeSpace, Mode=OneWay, Converter={StaticResource Byte2GbConverter}}" />
+                        <TextBlock Style="{StaticResource TextBlockDefault}" Text="GB" />
+                    </hc:UniformSpacingPanel>
+                </Border>
+
+
+            </DataTemplate>
         </ResourceDictionary>
     </hc:Window.Resources>
     <i:Interaction.Triggers>
@@ -48,8 +73,17 @@
             <i:InvokeCommandAction Command="{Binding CloseCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <StackPanel>
-        <GroupBox Margin="2" Header="{Binding [PiantImageSet],Source={x:Static local:CLang.s_SaveImageLang}}">
+    <hc:Window.NonClientAreaContent>
+        <ItemsControl Margin="10,0" ItemsSource="{Binding Source={StaticResource DrivesInfo}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <hc:UniformSpacingPanel HorizontalSpacing="5" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </hc:Window.NonClientAreaContent>
+    <StackPanel IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
+        <GroupBox Margin="2" Header="{Binding [PiantImageSet], Source={x:Static local:CLang.s_SaveImageLang}}">
             <StackPanel Orientation="Horizontal">
                 <hc:ElementGroup>
                     <ToggleButton
@@ -57,7 +91,7 @@
                         HorizontalAlignment="Left"
                         hc:ToggleButtonAttach.ShowLabel="True"
                         Background="Gray"
-                        Content="{Binding [PiantScreenEnable],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [PiantScreenEnable], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.PiantScreenEnable}" />
                 </hc:ElementGroup>
                 <Separator Width="15" />
@@ -67,14 +101,14 @@
                         HorizontalAlignment="Left"
                         hc:ToggleButtonAttach.ShowLabel="True"
                         Background="Gray"
-                        Content="{Binding [OKScreenShot],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [OKScreenShot], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.OKScreenShot}" />
                 </hc:ElementGroup>
             </StackPanel>
 
         </GroupBox>
 
-        <GroupBox Margin="2" Header="{Binding [SaveImageSet],Source={x:Static local:CLang.s_SaveImageLang}}">
+        <GroupBox Margin="2" Header="{Binding [SaveImageSet], Source={x:Static local:CLang.s_SaveImageLang}}">
             <StackPanel Orientation="Vertical">
                 <hc:ElementGroup>
                     <ToggleButton
@@ -82,45 +116,56 @@
                         HorizontalAlignment="Left"
                         hc:ToggleButtonAttach.ShowLabel="True"
                         Background="Gray"
-                        Content="{Binding [SaveImageEnable],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [SaveImageEnable], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SaveImageEnable}" />
                     <RadioButton
                         x:Name="ucrb_SaveAll"
-                        Content="{Binding [SaveAll],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [SaveAll], Source={x:Static local:CLang.s_SaveImageLang}}"
                         GroupName="Options"
                         IsChecked="{Binding Param.SaveSelect, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
                     <RadioButton
                         x:Name="ucrb_SaveNG"
-                        Content="{Binding [SaveNG],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [SaveNG], Source={x:Static local:CLang.s_SaveImageLang}}"
                         GroupName="Options"
                         IsChecked="{Binding Param.SaveSelect, Converter={StaticResource CheckConverter}, ConverterParameter=1}" />
                     <RadioButton
                         x:Name="ucrb_SaveOK"
-                        Content="{Binding [SaveOK],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [SaveOK], Source={x:Static local:CLang.s_SaveImageLang}}"
                         GroupName="Options"
                         IsChecked="{Binding Param.SaveSelect, Converter={StaticResource CheckConverter}, ConverterParameter=2}" />
                 </hc:ElementGroup>
 
-                <hc:ElementGroup>
+                <UniformGrid Columns="2">
                     <hc:NumericUpDown
-                        hc:TitleElement.Title="{Binding [OkDays],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.Title="{Binding [OkDays], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
-                        Value ="{Binding Param.OkDays}" />
+                        Minimum="1"
+                        Value="{Binding Param.OkDays}" />
                     <hc:NumericUpDown
-                        hc:TitleElement.Title="{Binding [NGDays],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.Title="{Binding [NGDays], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
+                        Minimum="1"
                         Value="{Binding Param.NgDays}" />
                     <hc:NumericUpDown
-                        hc:TitleElement.Title="{Binding [OKIntervalCount],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.Title="{Binding [OKIntervalCount], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
                         InputScope="Number"
+                        Minimum="0"
                         Value="{Binding Param.OkIntervalCount}" />
-
-                </hc:ElementGroup>
+                    <hc:NumericUpDown
+                        hc:TitleElement.Title="{Binding [FreeSpaceLimit], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:TitleElement.TitleWidth="160"
+                        InputScope="Number"
+                        Minimum="5"
+                        Value="{Binding Param.FreeSpaceLimit}" />
+                </UniformGrid>
 
             </StackPanel>
 
         </GroupBox>
-        <GroupBox Margin="2" Header="{Binding [FolderSet],Source={x:Static local:CLang.s_SaveImageLang}}">
+        <GroupBox Margin="2" Header="{Binding [FolderSet], Source={x:Static local:CLang.s_SaveImageLang}}">
             <UniformGrid Rows="2">
                 <DockPanel Grid.Row="0">
                     <ComboBox
@@ -133,16 +178,16 @@
                         Margin="5,0"
                         VerticalAlignment="Center"
                         DockPanel.Dock="Right"
-                        Text="{Binding [Format],Source={x:Static local:CLang.s_SaveImageLang}}" />
+                        Text="{Binding [Format], Source={x:Static local:CLang.s_SaveImageLang}}" />
                     <Button
                         x:Name="btn_selectPath"
                         Command="{Binding SelectPathCommand}"
-                        Content="{Binding [Select],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [Select], Source={x:Static local:CLang.s_SaveImageLang}}"
                         DockPanel.Dock="Right" />
                     <TextBox
                         x:Name="txt_path"
                         hc:InfoElement.Necessary="True"
-                        hc:InfoElement.Placeholder="{Binding [Select],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        hc:InfoElement.Placeholder="{Binding [Select], Source={x:Static local:CLang.s_SaveImageLang}}"
                         DockPanel.Dock="Left"
                         Style="{StaticResource TextBoxExtend}"
                         Text="{Binding Param.SaveImagePath}" />
@@ -150,24 +195,24 @@
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <CheckBox
                         x:Name="uccb_SaveProj"
-                        Content="{Binding [Proj],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [Proj], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SavebyProjName}" />
                     <CheckBox
-                        x:Name="uccb_SaveCamName"
-                        Content="{Binding [byCam],Source={x:Static local:CLang.s_SaveImageLang}}"
-                        IsChecked="{Binding Param.SavebyCamName}" />
-                    <CheckBox
                         x:Name="uccb_saveInhour"
-                        Content="{Binding [byTime],Source={x:Static local:CLang.s_SaveImageLang}}"
+                        Content="{Binding [byTime], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.SavebyHour}" />
                     <CheckBox
-                        x:Name="uccb_saveDefectName"
-                        Content="{Binding [byDefect],Source={x:Static local:CLang.s_SaveImageLang}}"
-                        IsChecked="{Binding Param.SavebyDefectName}" />
+                        x:Name="uccb_SaveCamName"
+                        Content="{Binding [byCam], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        IsChecked="{Binding Param.SavebyCamName}" />
                     <CheckBox
+                        x:Name="uccb_saveDefectName"
+                        Content="{Binding [byDefect], Source={x:Static local:CLang.s_SaveImageLang}}"
+                        IsChecked="{Binding Param.SavebyDefectName}" />
+                    <!--<CheckBox
                         x:Name="uccb_savebyID"
                         Content="{Binding [byID],Source={x:Static local:CLang.s_SaveImageLang}}"
-                        IsChecked="{Binding Param.SavebyID}" />
+                        IsChecked="{Binding Param.SavebyID}" />-->
                 </StackPanel>
             </UniformGrid>
         </GroupBox>

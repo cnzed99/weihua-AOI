@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MySqlOperatesApiWPF.Properties
-{
+namespace MySqlOperatesApi.Properties {
     using System;
-
-
+    
+    
     /// <summary>
     ///   一个强类型的资源类，用于查找本地化的字符串等。
     /// </summary>
@@ -23,184 +22,150 @@ namespace MySqlOperatesApiWPF.Properties
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources
-    {
-
+    public class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MySqlOperatesApiWPF.Properties.Resources", typeof(Resources).Assembly);
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MySqlOperatesApi.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   重写当前线程的 CurrentUICulture 属性，对
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   查找类似 设备名 的本地化字符串。
         /// </summary>
-        public static string DBDeviceName
-        {
-            get
-            {
+        public static string DBDeviceName {
+            get {
                 return ResourceManager.GetString("DBDeviceName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   查找类似 开启存储 的本地化字符串。
         /// </summary>
-        public static string Enable
-        {
-            get
-            {
+        public static string Enable {
+            get {
                 return ResourceManager.GetString("Enable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   查找类似 产线名 的本地化字符串。
         /// </summary>
-        public static string LineName
-        {
-            get
-            {
+        public static string LineName {
+            get {
                 return ResourceManager.GetString("LineName", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   查找类似 MySQL设置 的本地化字符串。
+        ///   查找类似 MySQL数据库设置 的本地化字符串。
         /// </summary>
-        public static string MySQLSetParam
-        {
-            get
-            {
+        public static string MySQLSetParam {
+            get {
                 return ResourceManager.GetString("MySQLSetParam", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   查找类似 密码 的本地化字符串。
         /// </summary>
-        public static string PassWord
-        {
-            get
-            {
+        public static string PassWord {
+            get {
                 return ResourceManager.GetString("PassWord", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   查找类似 服务器IP 的本地化字符串。
         /// </summary>
-        public static string RemoteIP
-        {
-            get
-            {
+        public static string RemoteIP {
+            get {
                 return ResourceManager.GetString("RemoteIP", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   查找类似 服务器端口 的本地化字符串。
         /// </summary>
-        public static string RemoteProt
-        {
-            get
-            {
+        public static string RemoteProt {
+            get {
                 return ResourceManager.GetString("RemoteProt", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   查找类似 用户名 的本地化字符串。
-        /// </summary>
-        public static string UserName
-        {
-            get
-            {
-                return ResourceManager.GetString("UserName", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 客户 的本地化字符串。
-        /// </summary>
-        public static string UserSelect
-        {
-            get
-            {
-                return ResourceManager.GetString("UserSelect", resourceCulture);
-            }
-        }
-
-
-        /// <summary>
-        ///   查找类似 数据库设置 的本地化字符串。
-        /// </summary>
-        public static string SQLSetParam
-        {
-            get
-            {
-                return ResourceManager.GetString("SQLSetParam", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 服务器名称 的本地化字符串。
-        /// </summary>
-        public static string ServerName
-        {
-            get
-            {
-                return ResourceManager.GetString("ServerName", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   查找类似 保存 的本地化字符串。
         /// </summary>
-        public static string Save
-        {
-            get
-            {
+        public static string Save {
+            get {
                 return ResourceManager.GetString("Save", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   查找类似 服务器名称 的本地化字符串。
+        /// </summary>
+        public static string ServerName {
+            get {
+                return ResourceManager.GetString("ServerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 数据库设置 的本地化字符串。
+        /// </summary>
+        public static string SQLSetParam {
+            get {
+                return ResourceManager.GetString("SQLSetParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用户名 的本地化字符串。
+        /// </summary>
+        public static string UserName {
+            get {
+                return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 客户 的本地化字符串。
+        /// </summary>
+        public static string UserSelect {
+            get {
+                return ResourceManager.GetString("UserSelect", resourceCulture);
+            }
+        }
     }
 }

@@ -61,6 +61,15 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
+        ///   查找类似 相机： 的本地化字符串。
+        /// </summary>
+        internal static string Cam {
+            get {
+                return ResourceManager.GetString("Cam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 取消 的本地化字符串。
         /// </summary>
         internal static string Cancel {

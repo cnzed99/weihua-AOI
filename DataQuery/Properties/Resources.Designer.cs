@@ -61,6 +61,15 @@ namespace DataQuery.Properties {
         }
         
         /// <summary>
+        ///   查找类似 数据查询 的本地化字符串。
+        /// </summary>
+        public static string DataQuery {
+            get {
+                return ResourceManager.GetString("DataQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 结束日期 的本地化字符串。
         /// </summary>
         public static string EndDate {
@@ -75,6 +84,15 @@ namespace DataQuery.Properties {
         public static string EndTime {
             get {
                 return ResourceManager.GetString("EndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 时间段 的本地化字符串。
+        /// </summary>
+        public static string Hours {
+            get {
+                return ResourceManager.GetString("Hours", resourceCulture);
             }
         }
         
@@ -102,6 +120,15 @@ namespace DataQuery.Properties {
         public static string Percent {
             get {
                 return ResourceManager.GetString("Percent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 查询 的本地化字符串。
+        /// </summary>
+        public static string Query {
+            get {
+                return ResourceManager.GetString("Query", resourceCulture);
             }
         }
         
@@ -147,26 +174,6 @@ namespace DataQuery.Properties {
         public static string Total {
             get {
                 return ResourceManager.GetString("Total", resourceCulture);
-            }
-        }
-        /// <summary>
-        ///   查找类似 查询 的本地化字符串。
-        /// </summary>
-        public static string Query
-        {
-            get
-            {
-                return ResourceManager.GetString("Query", resourceCulture);
-            }
-        }
-        /// <summary>
-        ///   查找类似 生产数量 的本地化字符串。
-        /// </summary>
-        public static string Hours
-        {
-            get
-            {
-                return ResourceManager.GetString("Hours", resourceCulture);
             }
         }
     }

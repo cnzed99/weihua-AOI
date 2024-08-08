@@ -12,12 +12,10 @@ namespace WH.Entity.CommonLib
     /// 2024.7.1 李焕彬
     /// Known颜色类，含颜色和颜色名
     /// </summary>
-    public class CKnownColor:IEquatable<CKnownColor>
+    public class CKnownColor : IEquatable<CKnownColor>
     {
-        public CKnownColor()
-        {
-            
-        }
+        public CKnownColor() { }
+
         public CKnownColor(string name, Brush brush)
         {
             this.Name = name;
@@ -45,10 +43,13 @@ namespace WH.Entity.CommonLib
         /// <exception cref="ArgumentNullException"></exception>
         public bool Equals(CKnownColor other)
         {
-            if (other == null) throw new ArgumentNullException(nameof(other));
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
             var kcolor = (CKnownColor)other;
-            if (kcolor.Name == Name) return true;
-            else return false;
+            if (kcolor.Name == Name)
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
@@ -58,6 +59,11 @@ namespace WH.Entity.CommonLib
         public override string ToString()
         {
             return Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
     }
 
@@ -95,6 +101,4 @@ namespace WH.Entity.CommonLib
             }
         }
     }
-
-
 }

@@ -153,4 +153,7 @@
   <data name="SystemSettings" xml:space="preserve">
     <value>系统设置</value>
   </data>
+  <data name="ShowAllDefect" xml:space="preserve">
+    <value>显示所有缺陷</value>
+  </data>
 </root>

@@ -26,47 +26,10 @@ namespace SDFilter
         [ObservableProperty]
         private CFilterConfig filterConfig;
 
-        private CQualityConfig qualityConfig;
-
-        public void SetSDFilterVM(CFilterConfig filterConfig, CQualityConfig qualityConfig)
-        {
-            FilterConfig = filterConfig;
-            this.qualityConfig = qualityConfig;
-            Synchronization(qualityConfig);
-        }
-
         /// <summary>
-        /// 20240715 TCG
-        /// 同步毛刺等级实例
+        /// 质量等级配置
         /// </summary>
-        /// <param name="MaociQuality"></param>
-        private void Synchronization(CQualityConfig MaociQuality)
-        {
-            #region 同步毛刺过滤配置
-            foreach (var spFilter in FilterConfig.SpeciesFilters)
-            {
-                foreach (var reFilger in spFilter.RecipeDefects)
-                {
-                    foreach (var deFilter in reFilger.DefectFilters)
-                    {
-                        //新建配方 质量等级没有赋值时赋值最差
-                        if (deFilter.QualityLevel is null)
-                        {
-                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
-                        }
-                        else
-                        {
-                            var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
-                                o.Priority == deFilter.QualityLevel.Priority
-                            );
-                            deFilter.QualityLevel = null;
-                            deFilter.QualityLevel = findquality;
-                        }
-                    }
-                }
-            }
-            #endregion
-        }
+        public CQualityConfig QualityConfig { get; set; }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -95,7 +58,7 @@ namespace SDFilter
             recipeDefect.DefectFilters.Add(
                 new DefectFilter(recipeDefect.Name + index, FilterConfig.token)
             );
-            WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
+            //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
         }
 
         /// <summary>
@@ -112,7 +75,7 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
                 recipeDefect.DefectFilters.Remove(defectFilter);
-                WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
+                //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
             }
         }
 
@@ -130,7 +93,7 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 SpeciesFilter speciesFilter = (SpeciesFilter)objArr[1];
                 DefectFilterSetWin defectFilterSetWin = SingleInstance.Add(
-                    new DefectFilterSetWin(defectFilter, speciesFilter, qualityConfig),
+                    new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig),
                     defectFilter.Name
                 );
                 defectFilterSetWin.Title = defectFilter.Name;

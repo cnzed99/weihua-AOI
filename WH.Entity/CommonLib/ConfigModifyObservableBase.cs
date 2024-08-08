@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,8 +22,7 @@ namespace WH.Entity.CommonLib
     public record OperateMessage(object obj, string message);
 
     /// <summary>
-    /// 2024.7.2 李焕彬
-    /// 记录参数修改 在属性或集合发生变化时在默认通道发送OperateMessage
+    /// 记录参数修改的基类 在属性或集合发生变化时在默认通道发送OperateMessage
     /// </summary>
     public abstract partial class ConfigModifyObservableBase : ObservableRecipient
     {

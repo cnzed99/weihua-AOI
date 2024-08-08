@@ -34,12 +34,13 @@ namespace QualityGrade
         public CQualityConfig QualityConfig
         {
             get => qualityConfig;
-            set
-            {
-                SetProperty(ref qualityConfig, value);
-                QualitySelect = null;
-                QualitySet = new Quality();
-            }
+            set { SetProperty(ref qualityConfig, value); }
+        }
+
+        public void Reset()
+        {
+            QualitySelect = null;
+            QualitySet = new Quality();
         }
 
         /// <summary>
@@ -93,6 +94,7 @@ namespace QualityGrade
                 else
                 {
                     var qua = QualitySet.Clone();
+                    qua.Priority = 0;
                     if (QualityConfig.Qualities.Count > 0)
                         qua.Priority =
                             QualityConfig.Qualities[QualityConfig.Qualities.Count - 1].Priority + 1;

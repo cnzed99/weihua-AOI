@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AlgorithmDll;
@@ -47,7 +49,7 @@ namespace WH.RunCell
         /// <summary>
         /// 是否是OK产品
         /// </summary>
-        public bool IsOK { get; set; } = false;
+        public bool IsOK { get; set; } = true;
 
         /// <summary>
         /// 用来存储是质量OK还是颜色OK [0]=质量 [1]=颜色;
@@ -101,7 +103,30 @@ namespace WH.RunCell
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
-        public bool _skipthis = false;
+        /// <summary>
+        /// 跳过
+        /// </summary>
+        public bool Skipthis { get; set; } = false;
+
+        private EMDETECTRESULT algoriDetectResult = EMDETECTRESULT.EMDR_OK;
+
+        /// <summary>
+        /// 2024.7.31 李焕彬
+        /// 算法检查结果.NG时跳过
+        /// </summary>
+        public EMDETECTRESULT AlgoriDetectResult
+        {
+            get { return algoriDetectResult; }
+            set
+            {
+                algoriDetectResult = value;
+                if (algoriDetectResult != EMDETECTRESULT.EMDR_OK)
+                {
+                    Skipthis = true;
+                }
+            }
+        }
+
         private bool _timeOut = false;
 
         /// <summary>
@@ -115,7 +140,7 @@ namespace WH.RunCell
                 _timeOut = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -133,7 +158,7 @@ namespace WH.RunCell
                 _preError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -151,7 +176,7 @@ namespace WH.RunCell
                 _recipeError = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -169,7 +194,7 @@ namespace WH.RunCell
                 _isempty = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -187,7 +212,7 @@ namespace WH.RunCell
                 _ismix = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -205,7 +230,7 @@ namespace WH.RunCell
                 _isBurst = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
@@ -237,10 +262,22 @@ namespace WH.RunCell
                 _frameLoss = value;
                 if (value)
                 {
-                    _skipthis = true;
+                    Skipthis = true;
                 }
             }
         }
+
+        /// <summary>
+        /// 2024.7.29 李焕彬
+        /// 截图
+        /// </summary>
+        public BitmapSource DumpImage { get; set; }
+
+        /// <summary>
+        /// 2024.8.6 李焕彬
+        /// 编码器位置
+        /// </summary>
+        public int EncoderPos { get; set; } = 0;
 
         public override void Dispose()
         {
@@ -272,7 +309,7 @@ namespace WH.RunCell
             cell.ID = this.ID;
             cell.IsOK = this.IsOK;
             cell.IsEmpty = this.IsEmpty;
-            this.Image.WriteTo(cell.Image);
+            //this.Image.WriteTo(cell.Image);
             cell.DownImage = this.DownImage?.Clone();
             // cell.QualityColorStr = this.QualityColorStr;
             cell.SmallImage = this.SmallImage?.Clone();
@@ -294,13 +331,14 @@ namespace WH.RunCell
             cell.Stopwatch = this.Stopwatch;
             cell.SaveImgTime = this.SaveImgTime;
             cell.TwoTrgTimeSpan = this.TwoTrgTimeSpan;
-            cell._skipthis = this._skipthis;
+            cell.Skipthis = this.Skipthis;
             cell.IsBurstBoard = this.IsBurstBoard;
             cell.IsMix = this.IsMix;
             cell.ImageFile = this.ImageFile;
             cell.LineName = this.LineName;
             cell.ProjName = this.ProjName;
             cell.CamSerial = this.CamSerial;
+            cell.CamName = this.CamName;
             cell.ProjGuid = this.ProjGuid;
             cell.ComGuid = this.ComGuid;
             // cell.DetectionOrColorOK = this.DetectionOrColorOK;
@@ -309,6 +347,8 @@ namespace WH.RunCell
             cell.DataBytes = this.DataBytes;
             cell.WaferID = this.WaferID;
             cell.ProductIndex = this.ProductIndex;
+            cell.AlgoriDetectResult = this.AlgoriDetectResult;
+            cell.EncoderPos = this.EncoderPos;
             return cell;
         }
 

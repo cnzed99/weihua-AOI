@@ -24,9 +24,7 @@ namespace 断面毛刺检测软件.Views
                     {
                         if (File.Exists(cell.ImageFile))
                         {
-                            MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(cell.ImageFile));
-
-                            cell.Image = memoryStream;
+                            cell.Image = new(cell.ImageFile);
                             return;
                         }
 

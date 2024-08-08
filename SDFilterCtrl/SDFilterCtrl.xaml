@@ -8,6 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:SDFilter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DesignHeight="450"
     d:DesignWidth="550"
     mc:Ignorable="d">
@@ -143,7 +144,8 @@
                         Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
                         BorderBrush="Transparent"
                         BorderThickness="1"
-                        IsExpanded="True">
+                        IsExpanded="True"
+                        Visibility="{Binding ReadOnly, Converter={StaticResource Boolean2VisibilityReConverter}}">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -159,6 +161,7 @@
                                 <Button
                                     Grid.Column="2"
                                     Margin="2"
+                                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                     Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AddFilterCommand}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding [AddDefect], Source={x:Static local:CLang.s_Instance}}"
@@ -240,6 +243,7 @@
                                                             Grid.Column="3"
                                                             Width="55"
                                                             Margin="5,2,0,0"
+                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.EditFilterCommand}"
                                                             Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
                                                             Style="{DynamicResource Button}">
@@ -254,6 +258,7 @@
                                                             Grid.Column="4"
                                                             Width="55"
                                                             Margin="5,2,5,0"
+                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.RemoveFilterCommand}"
                                                             Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                                                             Style="{DynamicResource DelButton}">

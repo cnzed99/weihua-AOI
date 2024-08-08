@@ -153,4 +153,7 @@
   <data name="Hours" xml:space="preserve">
     <value>Hours</value>
   </data>
+  <data name="DataQuery" xml:space="preserve">
+    <value>Data Query</value>
+  </data>
 </root>

@@ -14,6 +14,7 @@ namespace WH.Entity.Messages
     public class CloseWindowMessage
     {
         public WeakReference Sender { get; set; }
+        public bool DialogResult { get; set; }
     }
 
     public class CMessengers : IMessenger

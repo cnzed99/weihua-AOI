@@ -126,11 +126,11 @@
   <data name="4.脉冲毫米比" xml:space="preserve">
     <value>4.PulsePerUnit</value>
   </data>
-  <data name="12.正限位" xml:space="preserve">
-    <value>12.SoftLimitP</value>
+  <data name="12.正限位(mm)" xml:space="preserve">
+    <value>12.SoftLimitP(mm)</value>
   </data>
-  <data name="13.负限位" xml:space="preserve">
-    <value>13.SoftLimitN</value>
+  <data name="13.负限位(mm)" xml:space="preserve">
+    <value>13.SoftLimitN(mm)</value>
   </data>
   <data name="4.软限位使能" xml:space="preserve">
     <value>4.SoftLimitEnable</value>
@@ -300,8 +300,8 @@
   <data name="WriteAddrM" xml:space="preserve">
     <value>WriteAddrM</value>
   </data>
-  <data name="RegisterInfo" xml:space="preserve">
-    <value>RegisterInfo</value>
+  <data name="ElementRW" xml:space="preserve">
+    <value>Element RW</value>
   </data>
   <data name="Read" xml:space="preserve">
     <value>Read</value>
@@ -366,13 +366,106 @@
   <data name="FocusDst" xml:space="preserve">
     <value>FocusDst</value>
   </data>
-  <data name="14.对焦基准位" xml:space="preserve">
-    <value>14.FocusPos</value>
-  </data>
   <data name="SensorPos" xml:space="preserve">
     <value>SensorPos</value>
   </data>
   <data name="20.纠偏感应值" xml:space="preserve">
     <value>20.SensorPos</value>
+  </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>Write address cannot be empty!</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.Focus Param</value>
+  </data>
+  <data name="11.最佳对焦位置(mm)" xml:space="preserve">
+    <value>11.Best Pos</value>
+  </data>
+  <data name="12.粗调步长(mm)" xml:space="preserve">
+    <value>12.Step Coarse</value>
+  </data>
+  <data name="13.精调步长(mm)" xml:space="preserve">
+    <value>13.Step Fine</value>
+  </data>
+  <data name="14.最小清晰度" xml:space="preserve">
+    <value>14.Min Distinct</value>
+  </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>Coarse Data</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>Fine Data</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>Pos</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>Distinct</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>Focus Data</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>Focusing</value>
+  </data>
+  <data name="前进" xml:space="preserve">
+    <value>Step+</value>
+  </data>
+  <data name="后退" xml:space="preserve">
+    <value>Step-</value>
+  </data>
+  <data name="14.运行速度(mm/s)" xml:space="preserve">
+    <value>14.Speed(mm/s)</value>
+  </data>
+  <data name="15.加速度(mm²/s)" xml:space="preserve">
+    <value>15.Acc(mm²/s)</value>
+  </data>
+  <data name="21.速度" xml:space="preserve">
+    <value>21.Speed</value>
+  </data>
+  <data name="22.加速度" xml:space="preserve">
+    <value>22.Acc</value>
+  </data>
+  <data name="16.对焦速度(mm/s)" xml:space="preserve">
+    <value>16.Speed Focus(mm/s)</value>
+  </data>
+  <data name="15.精调范围(mm)" xml:space="preserve">
+    <value>15.Fine Focus Range(mm)</value>
+  </data>
+  <data name="AskGoHome" xml:space="preserve">
+    <value>Reset?</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>Drive connected successfully!</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>No camera!</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>Camera is not on!</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>In Focus, Stop Focusing?</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>Motion control not connected!</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>Software needs to be paused first!</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>Focusing done!</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>Abnormal focus!</value>
+  </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>Write All</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="WriteVal" xml:space="preserve">
+    <value>Write Value</value>
   </data>
 </root>

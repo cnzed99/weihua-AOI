@@ -22,7 +22,7 @@ namespace HistoryPlayback.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace HistoryPlayback.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HistoryPlayback.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace HistoryPlayback.Properties {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 按缺陷分类 的本地化字符串。
         /// </summary>
-        internal static string byDefect {
+        public static string byDefect {
             get {
                 return ResourceManager.GetString("byDefect", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 按时间分类 的本地化字符串。
         /// </summary>
-        internal static string byTime {
+        public static string byTime {
             get {
                 return ResourceManager.GetString("byTime", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 缺陷名称 的本地化字符串。
         /// </summary>
-        internal static string DefectName {
+        public static string DefectName {
             get {
                 return ResourceManager.GetString("DefectName", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 流水号 的本地化字符串。
         /// </summary>
-        internal static string ID {
+        public static string ID {
             get {
                 return ResourceManager.GetString("ID", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 质量等级 的本地化字符串。
         /// </summary>
-        internal static string QualityLev {
+        public static string QualityLev {
             get {
                 return ResourceManager.GetString("QualityLev", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 耗时 的本地化字符串。
         /// </summary>
-        internal static string TakeTime {
+        public static string TakeTime {
             get {
                 return ResourceManager.GetString("TakeTime", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找类似 检测时间 的本地化字符串。
         /// </summary>
-        internal static string Time {
+        public static string Time {
             get {
                 return ResourceManager.GetString("Time", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
-        internal static byte[] 上一张 {
+        public static byte[] 上一张 {
             get {
                 object obj = ResourceManager.GetObject("上一张", resourceCulture);
                 return ((byte[])(obj));
@@ -136,7 +136,7 @@ namespace HistoryPlayback.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
-        internal static byte[] 下一张 {
+        public static byte[] 下一张 {
             get {
                 object obj = ResourceManager.GetObject("下一张", resourceCulture);
                 return ((byte[])(obj));

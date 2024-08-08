@@ -10,7 +10,6 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using log4net;
-using WH.Entity.LogRecord;
 
 namespace WH.Entity.LogRecord
 {
@@ -30,7 +29,17 @@ namespace WH.Entity.LogRecord
     /// </summary>
     public partial class CLogRec : ObservableObject
     {
+        /// <summary>
+        /// 默认日志
+        /// </summary>
+        public static CLogRec Default = new CLogRec("Info", "./Log", "Error");
         static Hashtable logList = new Hashtable();
+
+        static CLogRec()
+        {
+            logList.Add("Info", Default);
+        }
+
         public string UserName { get; set; }
         SlogMessage infoMessage;
         public SlogMessage InfoMessage
@@ -80,7 +89,9 @@ namespace WH.Entity.LogRecord
             if (string.IsNullOrEmpty(errorLog))
                 this.errorLog = infoLog;
             else
+            {
                 this.errorLog = new ClogSetting(errorLog, errorLog) { RootDir = pathDir }.Create();
+            }
         }
 
         public static CLogRec Create(string logName, string pathDir, string errorLog = null)
@@ -102,6 +113,7 @@ namespace WH.Entity.LogRecord
             if (logType == LOG.LOG_ERROR)
             {
                 ErrorMessage = logInfo;
+                Default.ErrorMessage = logInfo; //错误消息打印到默认日志
             }
             else
             {

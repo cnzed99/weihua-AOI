@@ -106,11 +106,11 @@
   <data name="4.脉冲毫米比" xml:space="preserve">
     <value>4.脉冲毫米比</value>
   </data>
-  <data name="12.正限位" xml:space="preserve">
-    <value>12.正限位</value>
+  <data name="12.正限位(mm)" xml:space="preserve">
+    <value>12.正限位(mm)</value>
   </data>
-  <data name="13.负限位" xml:space="preserve">
-    <value>13.负限位</value>
+  <data name="13.负限位(mm)" xml:space="preserve">
+    <value>13.负限位(mm)</value>
   </data>
   <data name="4.软限位使能" xml:space="preserve">
     <value>4.软限位使能</value>
@@ -167,10 +167,10 @@
     <value>回原点</value>
   </data>
   <data name="Forward" xml:space="preserve">
-    <value>正方向</value>
+    <value>正向移动</value>
   </data>
   <data name="Reverse" xml:space="preserve">
-    <value>反方向</value>
+    <value>负向移动</value>
   </data>
   <data name="CurPos" xml:space="preserve">
     <value>当前位置</value>
@@ -179,7 +179,7 @@
     <value>绝对位置</value>
   </data>
   <data name="RelaPos" xml:space="preserve">
-    <value>相对位置</value>
+    <value>步进距离</value>
   </data>
   <data name="Stop" xml:space="preserve">
     <value>停止</value>
@@ -280,14 +280,14 @@
   <data name="WriteAddrM" xml:space="preserve">
     <value>写入地址M</value>
   </data>
-  <data name="RegisterInfo" xml:space="preserve">
-    <value>寄存器信息</value>
+  <data name="ElementRW" xml:space="preserve">
+    <value>读写元件</value>
   </data>
   <data name="Read" xml:space="preserve">
     <value>读取值</value>
   </data>
   <data name="Write" xml:space="preserve">
-    <value>写入值</value>
+    <value>写入</value>
   </data>
   <data name="Connected" xml:space="preserve">
     <value>已连接</value>
@@ -346,13 +346,106 @@
   <data name="FocusDst" xml:space="preserve">
     <value>对焦期望位</value>
   </data>
-  <data name="14.对焦基准位" xml:space="preserve">
-    <value>14.对焦基准位</value>
-  </data>
   <data name="SensorPos" xml:space="preserve">
     <value>纠偏感应值</value>
   </data>
   <data name="20.纠偏感应值" xml:space="preserve">
     <value>20.纠偏感应值</value>
+  </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>写入地址不能为空！</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.对焦参数</value>
+  </data>
+  <data name="11.最佳对焦位置(mm)" xml:space="preserve">
+    <value>11.最佳对焦位置(mm)</value>
+  </data>
+  <data name="12.粗调步长(mm)" xml:space="preserve">
+    <value>12.粗调步长(mm)</value>
+  </data>
+  <data name="13.精调步长(mm)" xml:space="preserve">
+    <value>13.精调步长(mm)</value>
+  </data>
+  <data name="14.最小清晰度" xml:space="preserve">
+    <value>14.最小清晰度</value>
+  </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>粗定位数据</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>精定位数据</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>清晰度</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>对焦数据</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>正在对焦</value>
+  </data>
+  <data name="前进" xml:space="preserve">
+    <value>前进</value>
+  </data>
+  <data name="后退" xml:space="preserve">
+    <value>后退</value>
+  </data>
+  <data name="14.运行速度(mm/s)" xml:space="preserve">
+    <value>14.运行速度(mm/s)</value>
+  </data>
+  <data name="15.加速度(mm²/s)" xml:space="preserve">
+    <value>15.加速度(mm²/s)</value>
+  </data>
+  <data name="21.速度" xml:space="preserve">
+    <value>21.速度</value>
+  </data>
+  <data name="22.加速度" xml:space="preserve">
+    <value>22.加速度</value>
+  </data>
+  <data name="16.对焦速度(mm/s)" xml:space="preserve">
+    <value>16.对焦速度(mm/s)</value>
+  </data>
+  <data name="15.精调范围(mm)" xml:space="preserve">
+    <value>15.精调范围(mm)</value>
+  </data>
+  <data name="AskGoHome" xml:space="preserve">
+    <value>是否复位？</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>驱动器连接成功！</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>没有相机！</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>未打开相机！</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>正在对焦中，是否停止对焦？</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>运动控制未连接！</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>软件需要先暂停！</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>对焦完成！</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>对焦异常！</value>
+  </data>
+  <data name="WriteAll" xml:space="preserve">
+    <value>全部写入</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="WriteVal" xml:space="preserve">
+    <value>写入值</value>
   </data>
 </root>

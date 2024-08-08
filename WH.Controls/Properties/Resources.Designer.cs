@@ -61,6 +61,15 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 添加 的本地化字符串。
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 修改 的本地化字符串。
         /// </summary>
         public static string Adjust {
@@ -75,6 +84,24 @@ namespace WH.Controls.Properties {
         public static string Administrator {
             get {
                 return ResourceManager.GetString("Administrator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 （集合） 的本地化字符串。
+        /// </summary>
+        public static string Collection {
+            get {
+                return ResourceManager.GetString("Collection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 集合编辑器 的本地化字符串。
+        /// </summary>
+        public static string CollectionEditor {
+            get {
+                return ResourceManager.GetString("CollectionEditor", resourceCulture);
             }
         }
         
@@ -273,6 +300,15 @@ namespace WH.Controls.Properties {
         public static string RegisterUser {
             get {
                 return ResourceManager.GetString("RegisterUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 移除 的本地化字符串。
+        /// </summary>
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         

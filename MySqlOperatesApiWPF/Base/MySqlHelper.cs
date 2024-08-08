@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public class MySqlHelper
     {
@@ -19,7 +19,6 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public int ExecuteNonQuery(string cmdText, MySqlParameter[] paramArray = null)
         {
-
             if (connString != string.Empty)
             {
                 MySqlConnection conn = new MySqlConnection(connString);
@@ -35,7 +34,11 @@ namespace MySqlOperatesApiWPF
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("执行public static int ExecuteNonQuery(string cmdText, OleDbParameter[] paramArray = null)方法发生异常" + ex.Message + ex.StackTrace);
+                    throw new Exception(
+                        "执行public static int ExecuteNonQuery(string cmdText, OleDbParameter[] paramArray = null)方法发生异常"
+                            + ex.Message
+                            + ex.StackTrace
+                    );
                 }
                 finally
                 {
@@ -45,16 +48,12 @@ namespace MySqlOperatesApiWPF
                     command = null;
                     conn = null;
                 }
-
-
             }
             else
             {
                 throw new Exception("connString 连接字符串为空,请检查connString是否赋值");
             }
         }
-
-
 
         #region 查询
         /// <summary>
@@ -65,7 +64,6 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public object ExecuteScalar(string cmdText, MySqlParameter[] paramArray = null)
         {
-
             if (connString != string.Empty)
             {
                 MySqlConnection conn = new MySqlConnection(connString);
@@ -81,7 +79,9 @@ namespace MySqlOperatesApiWPF
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"执行public static object ExecuteScalar(string cmdText, OleDbParameter[] paramArray = null)方法发生异常:{ex.Message}{ex.StackTrace}");
+                    throw new Exception(
+                        $"执行public static object ExecuteScalar(string cmdText, OleDbParameter[] paramArray = null)方法发生异常:{ex.Message}{ex.StackTrace}"
+                    );
                 }
                 finally
                 {
@@ -91,7 +91,6 @@ namespace MySqlOperatesApiWPF
                     command = null;
                     conn = null;
                 }
-
             }
             else
             {
@@ -99,16 +98,19 @@ namespace MySqlOperatesApiWPF
             }
         }
 
-
         /// <summary>
         /// 2024.6.23 鲍赞宝
         /// 执行返回一个只读结果集的查询
         /// </summary>
         /// <param name="cmdText"></param>
         /// <returns></returns>
-        public MySqlDataReader ExecuteReader(string cmdText, MySqlParameter[] paramArray = null)
+        public void ExecuteReader(
+            string cmdText,
+            Action<MySqlDataReader> action = null,
+            MySqlParameter[] paramArray = null
+        )
         {
-
+            List<object> results = new List<object>();
             if (connString != string.Empty)
             {
                 MySqlConnection conn = new MySqlConnection(connString);
@@ -120,11 +122,17 @@ namespace MySqlOperatesApiWPF
                 try
                 {
                     conn.Open();
-                    return command.ExecuteReader(CommandBehavior.CloseConnection);
+                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                    action?.Invoke(reader);
+                    reader.Close();
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("执行public static MySqlDataReader ExecuteReader(string cmdText, OleDbParameter[] paramArray = null)方法发生异常" + ex.Message + ex.StackTrace);
+                    throw new Exception(
+                        "执行public static MySqlDataReader ExecuteReader(string cmdText, OleDbParameter[] paramArray = null)方法发生异常"
+                            + ex.Message
+                            + ex.StackTrace
+                    );
                 }
                 finally
                 {
@@ -134,13 +142,11 @@ namespace MySqlOperatesApiWPF
                     command = null;
                     conn = null;
                 }
-
             }
             else
             {
                 throw new Exception("connString 连接字符串为空,请检查connString是否赋值");
             }
-
         }
 
         /// <summary>
@@ -152,7 +158,6 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public DataSet GetDataSet(string sql, string tableName = null)
         {
-
             if (connString != string.Empty)
             {
                 MySqlConnection conn = new MySqlConnection(connString);
@@ -171,7 +176,11 @@ namespace MySqlOperatesApiWPF
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("执行 public DataSet GetDataSet(string sql, string tableName = null)方法发生异常：" + ex.Message + ex.StackTrace);
+                    throw new Exception(
+                        "执行 public DataSet GetDataSet(string sql, string tableName = null)方法发生异常："
+                            + ex.Message
+                            + ex.StackTrace
+                    );
                 }
                 finally
                 {
@@ -183,15 +192,12 @@ namespace MySqlOperatesApiWPF
                     command = null;
                     conn = null;
                 }
-
             }
             else
             {
                 throw new Exception("connString 连接字符串为空,请检查connString是否赋值");
             }
-
         }
-
 
         /// <summary>
         /// 2024.6.23 鲍赞宝
@@ -201,7 +207,6 @@ namespace MySqlOperatesApiWPF
         /// <returns></returns>
         public DataSet GetDataSet(Dictionary<string, string> dicTableAndSql)
         {
-
             if (connString != string.Empty)
             {
                 MySqlConnection conn = new MySqlConnection(connString);
@@ -222,7 +227,11 @@ namespace MySqlOperatesApiWPF
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("执行 public DataSet GetDataSet(string sql, string tableName = null)方法发生异常：" + ex.Message + ex.StackTrace);
+                    throw new Exception(
+                        "执行 public DataSet GetDataSet(string sql, string tableName = null)方法发生异常："
+                            + ex.Message
+                            + ex.StackTrace
+                    );
                 }
                 finally
                 {
@@ -234,15 +243,12 @@ namespace MySqlOperatesApiWPF
                     command = null;
                     conn = null;
                 }
-
             }
             else
             {
                 throw new Exception("connString 连接字符串为空,请检查connString是否赋值");
             }
-
         }
         #endregion
-
     }
 }

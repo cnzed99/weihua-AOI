@@ -13,65 +13,84 @@ namespace WH.Controls
     public class CCanvasPro : Canvas
     {
         /// <summary>
+        /// 2024.7.26 李焕彬
+        /// 绘图互斥锁,防止绘制时添加删除
+        /// </summary>
+        private Object lockDraw = new object();
+
+        /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制直线集合
         /// </summary>
         public List<SDrawLine> Lines { get; set; } = new List<SDrawLine>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制椭圆集合
         /// </summary>
         public List<SDrawEllipse> Ellipses { get; set; } = new List<SDrawEllipse>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制矩形集合
         /// </summary>
         public List<SDrawRectangle> Rectangles { get; set; } = new List<SDrawRectangle>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制文字集合
         /// </summary>
         public List<SDrawText> Texts { get; set; } = new List<SDrawText>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制文字集合
         /// </summary>
-        public List<SDrawTextAlignment> TextAlignments { get; set; } = new List<SDrawTextAlignment>();
+        public List<SDrawTextAlignment> TextAlignments { get; set; } =
+            new List<SDrawTextAlignment>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制区域集合
         /// </summary>
         public List<SDrawRegion> Regions { get; set; } = new List<SDrawRegion>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 当前画笔
         /// </summary>
         private Pen _Pen { get; set; } = new Pen(Brushes.Red, 1);
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 已用画笔集合
         /// </summary>
         private List<(Pen, double)> _Pens { get; set; } = new List<(Pen, double)>();
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体
         /// </summary>
         private FontFamily _FontFamily { get; set; } = new FontFamily("宋体");
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体风格
         /// </summary>
         private FontStyle _FontStyle { get; set; } = FontStyles.Normal;
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 加粗
         /// </summary>
         private FontWeight _FontWeight { get; set; } = FontWeights.Normal;
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体大小
         /// </summary>
         private int _FontSize { get; set; } = 15;
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体画刷
@@ -98,6 +117,7 @@ namespace WH.Controls
             this.Background = Brushes.Transparent;
             this.IsHitTestVisible = false;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 图像
@@ -109,8 +129,12 @@ namespace WH.Controls
         }
 
         // Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(CCanvasPro), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            "Source",
+            typeof(ImageSource),
+            typeof(CCanvasPro),
+            new PropertyMetadata(null)
+        );
 
         /// <summary>
         /// 2024.7.8 李焕彬
@@ -120,62 +144,101 @@ namespace WH.Controls
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
+            Draw(dc, this.ActualWidth, this.ActualHeight);
+        }
 
-            foreach (var line in Lines)
+        /// <summary>
+        /// 2024.7.29 李焕彬
+        /// 在dc尚绘制图形
+        /// </summary>
+        /// <param name="drawingContext">目标dc</param>
+        /// <param name="width">绘图窗口宽度</param>
+        /// <param name="height">绘图窗口高度</param>
+        /// <param name="fontSize">字体大小，=0时用默认字体大小</param>
+        public void Draw(DrawingContext dc, double width, double height, int fontSize = 0)
+        {
+            lock (lockDraw)
             {
-                dc.DrawLine(line.pen, new Point(line.pt1.X, line.pt1.Y), new Point(line.pt2.X, line.pt2.Y));
-            }
-            foreach (var ellipse in Ellipses)
-            {
-                dc.DrawEllipse(FillEdge ? ellipse.pen.Brush : Brushes.Transparent, ellipse.pen, new Point(ellipse.center.X, ellipse.center.Y), ellipse.radiusX, ellipse.radiusY);
-            }
-            foreach (var rect in Rectangles)
-            {
-                dc.DrawRectangle(FillEdge ? rect.pen.Brush : Brushes.Transparent, rect.pen, new Rect(rect.rectangle.X, rect.rectangle.Y, rect.rectangle.Width, rect.rectangle.Height));
-            }
-            foreach (var region in Regions)
-            {
-                List<Point> tmp = new List<Point>();
-                foreach (var item in region.points)
+                foreach (var line in Lines)
                 {
-                    tmp.Add(new Point(item.X, item.Y));
+                    dc.DrawLine(
+                        line.pen,
+                        new Point(line.pt1.X, line.pt1.Y),
+                        new Point(line.pt2.X, line.pt2.Y)
+                    );
                 }
-                PathGeometry geometry = new PathGeometry();
-                PolyLineSegment polyLineSegment = new PolyLineSegment();
-                polyLineSegment.Points = new PointCollection(tmp);
-                PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
-                geometry.Figures.Add(figure);
+                foreach (var ellipse in Ellipses)
+                {
+                    dc.DrawEllipse(
+                        FillEdge ? ellipse.pen.Brush : Brushes.Transparent,
+                        ellipse.pen,
+                        new Point(ellipse.center.X, ellipse.center.Y),
+                        ellipse.radiusX,
+                        ellipse.radiusY
+                    );
+                }
+                foreach (var rect in Rectangles)
+                {
+                    dc.DrawRectangle(
+                        FillEdge ? rect.pen.Brush : Brushes.Transparent,
+                        rect.pen,
+                        new Rect(
+                            rect.rectangle.X,
+                            rect.rectangle.Y,
+                            rect.rectangle.Width,
+                            rect.rectangle.Height
+                        )
+                    );
+                }
+                foreach (var region in Regions)
+                {
+                    List<Point> tmp = new List<Point>();
+                    foreach (var item in region.points)
+                    {
+                        tmp.Add(new Point(item.X, item.Y));
+                    }
+                    PathGeometry geometry = new PathGeometry();
+                    PolyLineSegment polyLineSegment = new PolyLineSegment();
+                    polyLineSegment.Points = new PointCollection(tmp);
+                    PathFigure figure = new PathFigure(tmp[0], new[] { polyLineSegment }, false);
+                    geometry.Figures.Add(figure);
 
-                dc.DrawGeometry(FillEdge ? region.pen.Brush : Brushes.Transparent, region.pen, geometry);
-            }
-            foreach (var text in Texts)
-            {
-                text.formattedText.SetFontSize(text.thickness);
-                dc.DrawText(text.formattedText, new Point(text.origin.X, text.origin.Y));
-            }
-            foreach (var text in TextAlignments)
-            {
-                text.formattedText.SetFontSize(text.thickness);
-                double x = 20, y = 20;
-                switch (text.alignmentX)
-                {
-                    case AlignmentX.Center:
-                        x = this.ActualWidth / 2 - text.formattedText.Width / 2;
-                        break;
-                    case AlignmentX.Right:
-                        x = this.ActualWidth - text.formattedText.Width - 20;
-                        break;
+                    dc.DrawGeometry(
+                        FillEdge ? region.pen.Brush : Brushes.Transparent,
+                        region.pen,
+                        geometry
+                    );
                 }
-                switch (text.alignmentY)
+                foreach (var text in Texts)
                 {
-                    case AlignmentY.Center:
-                        y = this.ActualHeight / 2 - text.formattedText.Height / 2;
-                        break;
-                    case AlignmentY.Bottom:
-                        y = this.ActualHeight - text.formattedText.Height - 20;
-                        break;
+                    text.formattedText.SetFontSize(fontSize == 0 ? text.thickness : fontSize);
+                    dc.DrawText(text.formattedText, new Point(text.origin.X, text.origin.Y));
                 }
-                dc.DrawText(text.formattedText, new Point(x, y));
+                foreach (var text in TextAlignments)
+                {
+                    text.formattedText.SetFontSize(fontSize == 0 ? text.thickness : fontSize);
+                    double x = 20,
+                        y = 20;
+                    switch (text.alignmentX)
+                    {
+                        case AlignmentX.Center:
+                            x = width / 2 - text.formattedText.Width / 2;
+                            break;
+                        case AlignmentX.Right:
+                            x = width - text.formattedText.Width - 20;
+                            break;
+                    }
+                    switch (text.alignmentY)
+                    {
+                        case AlignmentY.Center:
+                            y = height / 2 - text.formattedText.Height / 2;
+                            break;
+                        case AlignmentY.Bottom:
+                            y = height - text.formattedText.Height - 20;
+                            break;
+                    }
+                    dc.DrawText(text.formattedText, new Point(x, y));
+                }
             }
         }
 
@@ -189,6 +252,7 @@ namespace WH.Controls
         {
             _Pen = new Pen(brush, thickness);
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体类型
@@ -198,6 +262,7 @@ namespace WH.Controls
         {
             _FontFamily = fontFamily;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体风格
@@ -207,6 +272,7 @@ namespace WH.Controls
         {
             _FontStyle = fontStyle;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体加粗
@@ -216,6 +282,7 @@ namespace WH.Controls
         {
             _FontWeight = fontWeight;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体大小
@@ -225,6 +292,7 @@ namespace WH.Controls
         {
             _FontSize = fontSize;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 字体画刷
@@ -234,6 +302,7 @@ namespace WH.Controls
         {
             _FontBrush = fontBrush;
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 显示文字
@@ -243,13 +312,35 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawText(string text, Point origin, bool isRender = true)
         {
-            if (Source != null && Source is BitmapSource)
+            lock (lockDraw)
             {
-                BitmapSource bitmapImage = (BitmapSource)Source;
-                Texts.Add(new SDrawText(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, origin));
-                if (isRender) this.InvalidateVisual();
+                if (Source != null && Source is BitmapSource)
+                {
+                    BitmapSource bitmapImage = (BitmapSource)Source;
+                    Texts.Add(
+                        new SDrawText(
+                            new FormattedText(
+                                text,
+                                CultureInfo.InvariantCulture,
+                                FlowDirection.LeftToRight,
+                                new Typeface(
+                                    _FontFamily,
+                                    _FontStyle,
+                                    _FontWeight,
+                                    FontStretches.Normal
+                                ),
+                                _FontSize,
+                                _FontBrush,
+                                bitmapImage.DpiX / 96f
+                            ),
+                            _FontSize,
+                            origin
+                        )
+                    );
+                }
             }
+            if (isRender)
+                this.InvalidateVisual();
         }
 
         /// <summary>
@@ -260,16 +351,45 @@ namespace WH.Controls
         /// <param name="alignmentX">Y对齐</param>
         /// <param name="alignmentY">X对齐</param>
         /// <param name="isRender">是否刷新</param>
-        public void DrawText(string text, AlignmentX alignmentX, AlignmentY alignmentY, bool isRender = true)
+        public void DrawText(
+            string text,
+            AlignmentX alignmentX,
+            AlignmentY alignmentY,
+            bool isRender = true
+        )
         {
-            if (Source != null && Source is BitmapSource)
+            lock (lockDraw)
             {
-                BitmapSource bitmapImage = (BitmapSource)Source;
-                TextAlignments.Add(new SDrawTextAlignment(new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                new Typeface(_FontFamily, _FontStyle, _FontWeight, FontStretches.Normal), _FontSize, _FontBrush, bitmapImage.DpiX / 96f), _FontSize, alignmentX, alignmentY));
-                if (isRender) this.InvalidateVisual();
+                if (Source != null && Source is BitmapSource)
+                {
+                    BitmapSource bitmapImage = (BitmapSource)Source;
+                    TextAlignments.Add(
+                        new SDrawTextAlignment(
+                            new FormattedText(
+                                text,
+                                CultureInfo.InvariantCulture,
+                                FlowDirection.LeftToRight,
+                                new Typeface(
+                                    _FontFamily,
+                                    _FontStyle,
+                                    _FontWeight,
+                                    FontStretches.Normal
+                                ),
+                                _FontSize,
+                                _FontBrush,
+                                bitmapImage.DpiX / 96f
+                            ),
+                            _FontSize,
+                            alignmentX,
+                            alignmentY
+                        )
+                    );
+                }
             }
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制连贯区域
@@ -278,14 +398,21 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRegion(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
+            lock (lockDraw)
+            {
+                if (points.Count == 0)
+                    return;
 
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+                if (!_Pens.Exists(e => e.Item1 == _Pen))
+                    _Pens.Add((_Pen, _Pen.Thickness));
 
-            Regions.Add(new SDrawRegion(_Pen, points));
+                Regions.Add(new SDrawRegion(_Pen, points));
+            }
 
-            if (isRender) this.InvalidateVisual();
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制不连贯区域
@@ -294,27 +421,40 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawPoints(List<Point> points, bool isRender = true)
         {
-            if (points.Count == 0) return;
-
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
-
-            List<Point> region = new List<Point>();
-            foreach (var item in points)
+            lock (lockDraw)
             {
-                if (region.Count > 0 && Math.Sqrt((region.Last().X - item.X) * (region.Last().X - item.X) + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)) > 2)
+                if (points.Count == 0)
+                    return;
+
+                if (!_Pens.Exists(e => e.Item1 == _Pen))
+                    _Pens.Add((_Pen, _Pen.Thickness));
+
+                List<Point> region = new List<Point>();
+                foreach (var item in points)
+                {
+                    if (
+                        region.Count > 0
+                        && Math.Sqrt(
+                            (region.Last().X - item.X) * (region.Last().X - item.X)
+                                + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)
+                        ) > 2
+                    )
+                    {
+                        Regions.Add(new SDrawRegion(_Pen, region));
+                        region = new List<Point>();
+                    }
+                    region.Add(item);
+                }
+                if (region.Count > 0)
                 {
                     Regions.Add(new SDrawRegion(_Pen, region));
-                    region = new List<Point>();
                 }
-                region.Add(item);
-            }
-            if (region.Count > 0)
-            {
-                Regions.Add(new SDrawRegion(_Pen, region));
             }
 
-            if (isRender) this.InvalidateVisual();
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制直线
@@ -324,11 +464,18 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawLine(Point pt1, Point pt2, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen))
+                    _Pens.Add((_Pen, _Pen.Thickness));
 
-            Lines.Add(new SDrawLine(_Pen, pt1, pt2));
-            if (isRender) this.InvalidateVisual();
+                Lines.Add(new SDrawLine(_Pen, pt1, pt2));
+            }
+
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 绘制椭圆形
@@ -339,11 +486,18 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawEllipse(Point center, double radiusX, double radiusY, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen))
+                    _Pens.Add((_Pen, _Pen.Thickness));
 
-            Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
-            if (isRender) this.InvalidateVisual();
+                Ellipses.Add(new SDrawEllipse(_Pen, center, radiusX, radiusY));
+            }
+
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 绘制矩形
         /// </summary>
@@ -351,24 +505,33 @@ namespace WH.Controls
         /// <param name="isRender">是否刷新</param>
         public void DrawRectangle(Rect rectangle, bool isRender = true)
         {
-            if (!_Pens.Exists(e => e.Item1 == _Pen)) _Pens.Add((_Pen, _Pen.Thickness));
+            lock (lockDraw)
+            {
+                if (!_Pens.Exists(e => e.Item1 == _Pen))
+                    _Pens.Add((_Pen, _Pen.Thickness));
 
-            Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
-            if (isRender) this.InvalidateVisual();
+                Rectangles.Add(new SDrawRectangle(_Pen, rectangle));
+            }
+            if (isRender)
+                this.InvalidateVisual();
         }
+
         /// <summary>
         /// 2024.7.8 李焕彬
         /// 清除显示
         /// </summary>
         public void Clear()
         {
-            Lines.Clear();
-            Ellipses.Clear();
-            Rectangles.Clear();
-            Texts.Clear();
-            TextAlignments.Clear();
-            Regions.Clear();
-            _Pens.Clear();
+            lock (lockDraw)
+            {
+                Lines.Clear();
+                Ellipses.Clear();
+                Rectangles.Clear();
+                Texts.Clear();
+                TextAlignments.Clear();
+                Regions.Clear();
+                _Pens.Clear();
+            }
 
             this.InvalidateVisual();
         }

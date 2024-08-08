@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,9 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.IO;
-using System.ComponentModel;
-using System.Threading;
 
 namespace WH.Controls
 {
@@ -26,7 +26,8 @@ namespace WH.Controls
         public Action<string> useraction;
 
         private bool unclicked = true;
-        public WelComePage(List<string> recentpros,string Title)
+
+        public WelComePage(List<string> recentpros, string Title)
         {
             InitializeComponent();
             this.lb_Title.Text = Title;
@@ -35,14 +36,14 @@ namespace WH.Controls
             int i = 0;
             foreach (var pro in recentpros)
             {
-                if (!CheckExist(pro)) continue;
+                if (!CheckExist(pro))
+                    continue;
                 var btnPro1 = new Button();
                 var lbPro1Path = new TextBlock();
-                // 
+                //
                 // lbPro1Path
-                // 
+                //
                 lbPro1Path.Style = PathStyle;
-
 
                 lbPro1Path.Margin = new Thickness(0, 25 + 46 * i, 0, 0);
                 //lbPro1Path.Width = 305;
@@ -52,9 +53,9 @@ namespace WH.Controls
                 lbPro1Path.Foreground = Brushes.LightGray;
                 lbPro1Path.HorizontalAlignment = HorizontalAlignment.Left;
                 lbPro1Path.VerticalAlignment = VerticalAlignment.Top;
-                // 
+                //
                 // btnPro1
-                // 
+                //
                 btnPro1.Style = buttonStyle;
                 btnPro1.Margin = new Thickness(0, 46 * i, 0, 0);
                 Binding db = new Binding();
@@ -83,21 +84,17 @@ namespace WH.Controls
                 //alphaFormMarker2.Location = new Point(alphaFormMarker2.Location.X, alphaFormMarker2.Location.Y + 4);
                 i++;
             }
-            
-
         }
 
         private void BtnPro1_Click(object sender, RoutedEventArgs e)
         {
             if (unclicked)
             {
-
                 if (sender is Button btn && (string)btn.Content != string.Empty)
                 {
                     unclicked = false;
                     Sure(btn.Tag.ToString());
                     //useraction?.Invoke(btn.Tag.ToString());
-                    
                 }
             }
         }
@@ -106,6 +103,7 @@ namespace WH.Controls
         {
             return File.Exists(filename);
         }
+
         private void btnOpen_Click(object sender, EventArgs e)
         {
             if (unclicked)
@@ -113,32 +111,31 @@ namespace WH.Controls
                 unclicked = false;
                 Sure("openfile");
                 //useraction?.Invoke("openfile");
-               
             }
-
-
         }
+
         private void btn_MainFrm_Click(object sender, RoutedEventArgs e)
         {
             if (unclicked)
             {
                 unclicked = false;
                 Sure("mainform");
-                 //useraction?.Invoke("mainform");
-               
+                //useraction?.Invoke("mainform");
             }
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
             Storyboard std = this.Resources["OnCloseWindow"] as Storyboard;
 
-            std.Completed += delegate { this.Close(); Environment.Exit(0); };
+            std.Completed += delegate
+            {
+                this.Close();
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            };
 
             std.Begin();
         }
-
 
         private void window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -147,18 +144,18 @@ namespace WH.Controls
                 DragMove();
             }
         }
-      
-       private void Sure(string command)
+
+        private void Sure(string command)
         {
             Storyboard std = this.Resources["OnCloseWindow"] as Storyboard;
 
-            std.Completed += delegate {
+            std.Completed += delegate
+            {
                 this.Close();
                 useraction?.Invoke(command);
             };
 
             std.Begin();
         }
-       
     }
 }

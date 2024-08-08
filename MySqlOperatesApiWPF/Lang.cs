@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MySqlOperatesApiWPF
+namespace MySqlOperatesApi
 {
     public class CLang
     {
         public static LanguageManager.CLanguageManager instance =
             new LanguageManager.CLanguageManager(
-                "MySqlOperatesApiWPF.Properties.Resources",
+                "MySqlOperatesApi.Properties.Resources",
                 typeof(CLang).Assembly
             );
     }

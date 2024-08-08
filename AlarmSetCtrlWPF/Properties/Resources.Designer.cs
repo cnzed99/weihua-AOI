@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AlarmSetCtrlWPF.Properties {
+namespace AlarmSetCtrl.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace AlarmSetCtrlWPF.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AlarmSetCtrlWPF.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AlarmSetCtrl.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -124,6 +124,15 @@ namespace AlarmSetCtrlWPF.Properties {
         }
         
         /// <summary>
+        ///   查找类似 连续 的本地化字符串。
+        /// </summary>
+        public static string Continuous {
+            get {
+                return ResourceManager.GetString("Continuous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 不良品 的本地化字符串。
         /// </summary>
         public static string DefectiveProducts {
@@ -169,6 +178,15 @@ namespace AlarmSetCtrlWPF.Properties {
         }
         
         /// <summary>
+        ///   查找类似 片中 的本地化字符串。
+        /// </summary>
+        public static string pcs {
+            get {
+                return ResourceManager.GetString("pcs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 是否弹窗 的本地化字符串。
         /// </summary>
         public static string Popup {
@@ -178,7 +196,7 @@ namespace AlarmSetCtrlWPF.Properties {
         }
         
         /// <summary>
-        ///   查找类似  的本地化字符串。
+        ///   查找类似 最近 的本地化字符串。
         /// </summary>
         public static string Recently {
             get {

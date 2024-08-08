@@ -46,15 +46,22 @@ namespace WH.Controls
         /// 选中颜色属性
         /// </summary>
         // Using a DependencyProperty as the backing store for SelectColor.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectBrushProperty =
-            DependencyProperty.Register("SelectColor", typeof(CKnownColor), typeof(ColorComboBox), new PropertyMetadata(default(CKnownColor), (d, e) =>
-            {
-                if (e.NewValue != null)
+        public static readonly DependencyProperty SelectBrushProperty = DependencyProperty.Register(
+            "SelectColor",
+            typeof(CKnownColor),
+            typeof(ColorComboBox),
+            new PropertyMetadata(
+                default(CKnownColor),
+                (d, e) =>
                 {
-                    ColorComboBox cmb = (ColorComboBox)d;
-                    cmb.CmbColor.SelectedItem = e.NewValue;
+                    if (e.NewValue != null)
+                    {
+                        ColorComboBox cmb = (ColorComboBox)d;
+                        cmb.CmbColor.SelectedItem = e.NewValue;
+                    }
                 }
-            }));
+            )
+        );
 
         /// <summary>
         /// 选中改变事件

@@ -7,7 +7,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:QualityGrade"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DesignHeight="450"
     d:DesignWidth="550"
     mc:Ignorable="d">
@@ -90,18 +90,21 @@
                 Margin="10,2"
                 Command="{Binding AddCommand}"
                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                 Style="{StaticResource ButtonPrimary}" />
             <Button
                 Width="80"
                 Margin="10,2"
                 Command="{Binding RemoveCommand}"
                 Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                 Style="{StaticResource ButtonDanger}" />
             <Button
                 Width="80"
                 Margin="10,2"
                 Command="{Binding EditCommand}"
                 Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
+                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                 Style="{StaticResource ButtonPrimary}" />
         </UniformGrid>
 

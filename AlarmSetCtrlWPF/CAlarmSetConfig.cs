@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RunCell;
 
-namespace AlarmSetCtrlWPF
+namespace AlarmSetCtrl
 {
     /// <summary>
     /// 20240715 TCG
@@ -37,11 +38,97 @@ namespace AlarmSetCtrlWPF
         /// </summary>
         [property: JsonIgnore]
         [property: IgnoreModifyLog]
-        public CLogRec SysLog { get; set; } = CLogRec.Create("Info", "./Log", "Error");
+        public CLogRec SysLog { get; set; } = CLogRec.Default;
 
         public CAlarmSetConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
+        }
+
+        /// <summary>
+        /// 20240711 TCG
+        /// 初始化报警
+        /// </summary>
+        /// <param name="cAlarmSet"></param>
+        /// <param name="filterConfig"></param>
+        /// <param name="qualityConfig"></param>
+        public void SetCAlarm(CFilterConfig filterConfig, CQualityConfig qualityConfig)
+        {
+            this.DefectList = filterConfig.DefectList;
+            this.Qualities = qualityConfig.Qualities;
+
+            Synchronization();
+        }
+
+        /// <summary>
+        /// 20240715 TCG
+        /// 同步缺陷和质量等级实例，同时移除不适用的报警源 报警配置
+        /// </summary>
+        protected void Synchronization()
+        {
+            var DeList = DefectList.ToList();
+            var QaList = Qualities.ToList();
+
+            var alarmNeedRemove = new List<Alarm>();
+            foreach (var alarm in AlarmList)
+            {
+                if (alarm.Source is DefectFilter de)
+                {
+                    var index = DeList.FindIndex(d => d.Name == de.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = DeList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+                else if (alarm.Source is Quality qa)
+                {
+                    var index = QaList.FindIndex(d => d.Name == qa.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = QaList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+            }
+
+            foreach (var alarm in AlarmList)
+            {
+                if (
+                    CCommunicationManagement.CommParamDic.TryGetValue(
+                        alarm.AlarmAgreement?.GUID,
+                        out CCommunicationSettingBase comParams
+                    )
+                )
+                {
+                    var index = comParams
+                        .AlarmAgreements.ToList()
+                        .FindIndex(al =>
+                            (al.Name == alarm.AlarmAgreement.Name)
+                            && (al.ComName == alarm.AlarmAgreement.ComName)
+                        );
+                    if (index >= 0)
+                    {
+                        alarm.AlarmAgreement = comParams.AlarmAgreements[index];
+                    }
+                }
+                else
+                {
+                    alarmNeedRemove.Add(alarm);
+                }
+            }
+
+            //移除不适用的报警设置
+            foreach (var alarm in alarmNeedRemove)
+            {
+                AlarmList.Remove(alarm);
+            }
         }
 
         /// <summary>
@@ -145,14 +232,6 @@ namespace AlarmSetCtrlWPF
                 }
             }
         }
-
-        public void Excute(Cell cell)
-        {
-            foreach (Alarm alarm in AlarmList)
-            {
-                if (alarm.AddCellAndJudge(cell)) { }
-            }
-        }
     }
 
     /// <summary>
@@ -175,14 +254,6 @@ namespace AlarmSetCtrlWPF
 
         /// <summary>
         ///  2024.6.25 鲍赞宝
-        /// 报警模式
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("报警模式")]
-        private AlarmMode mode = AlarmMode.报警信号;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
         /// 报警类型
         /// </summary>
         [ObservableProperty]
@@ -198,7 +269,7 @@ namespace AlarmSetCtrlWPF
         private bool isPopWin = true;
 
         [DisplayName("是否独立控制")]
-        public bool isIndependent => IsTimeLimit || IsTotalLimit;
+        public bool isIndependent => !IsTimeLimit && !IsTotalLimit;
 
         [property: DisplayName("报警源")]
         [ObservableProperty]
@@ -225,8 +296,8 @@ namespace AlarmSetCtrlWPF
 
         partial void OnIsTimeLimitChanged(bool value)
         {
-            TimeCellList.Clear();
-            totalNG = 0;
+            TotalCellList.Clear();
+            TotalNG = 0;
         }
 
         /// <summary>
@@ -282,7 +353,7 @@ namespace AlarmSetCtrlWPF
         partial void OnIsTotalLimitChanged(bool value)
         {
             TotalCellList.Clear();
-            totalNG = 0;
+            TotalNG = 0;
         }
 
         private int total = 500;
@@ -304,6 +375,8 @@ namespace AlarmSetCtrlWPF
                         NgCount = value;
                     }
                 }
+                TotalNG = 0;
+                TotalCellList.Clear();
                 SetProperty(ref total, value);
                 OnPropertyChanged(nameof(RegularShow));
             }
@@ -329,6 +402,8 @@ namespace AlarmSetCtrlWPF
                         value = total;
                     }
                 }
+                TotalCellList.Clear();
+                TotalNG = 0;
                 SetProperty(ref ngCount, value);
                 OnPropertyChanged(nameof(RegularShow));
             }
@@ -348,164 +423,32 @@ namespace AlarmSetCtrlWPF
                 if (IsTimeLimit)
                     sb.Append($"在最近{Time}{EnumStringAttribute.GetEnumName(TimeUnit)}内");
                 if (IsTotalLimit)
-                    sb.Append($"/连续{Total}片中");
+                    sb.Append($"连续{Total}片中");
                 sb.Append($"出现{NgCount}片{Source}");
                 return sb.ToString();
             }
         }
 
         /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 报警信号
+        /// 20240723 TCG
+        /// 通讯报警协议
         /// </summary>
+        [property: DisplayName("报警协议")]
         [ObservableProperty]
-        [property: DisplayName("报警信号")]
-        private int alarmSignal = 0;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 停机信号
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("停机信号")]
-        private int stopSignal = 0;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 打标信号
-        /// </summary>
-        [ObservableProperty]
-        [property: DisplayName("打标信号")]
-        private int markSignal = 0;
-
-        private int tempSignal = 0;
-
-        /// <summary>
-        /// 2024.6.25 鲍赞宝
-        /// 用于临时显示信号 待定
-        /// </summary>
-        [DisplayName("信号")]
-        public int TempSignal
-        {
-            get { return tempSignal; }
-            set
-            {
-                switch (Mode)
-                {
-                    case AlarmMode.报警信号:
-                        AlarmSignal = value;
-                        break;
-                    case AlarmMode.停机信号:
-                        StopSignal = value;
-                        break;
-                    case AlarmMode.打标信号:
-                        MarkSignal = value;
-                        break;
-                }
-                SetProperty(ref tempSignal, value);
-            }
-        }
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 时间规则列表
-        /// </summary>
-        [JsonIgnore]
-        private List<(DateTime createTime, bool isCellNg)> TimeCellList = new();
+        CAlarmAgreement alarmAgreement = new();
 
         /// <summary>
         /// 20240715 TCG
         /// 总数规则列表
         /// </summary>
         [JsonIgnore]
-        private List<(DateTime createTime, bool isCellNg)> TotalCellList = new();
+        public List<(DateTime createTime, bool isCellNg)> TotalCellList = new();
 
         /// <summary>
         /// 20240712 TCG
         /// 独立控制的 总NG数量
         /// </summary>
-        int totalNG;
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 增加Cell并判断规则
-        /// </summary>
-        /// <param name="cell"></param>
-        /// <returns>规则NG数量满足为true,否则为false</returns>
-        public bool AddCellAndJudge(Cell cell)
-        {
-            bool ret = false;
-            if (IsTimeLimit || IsTotalLimit)
-            {
-                var alarmcell = (cell.CreateTime, true);
-                switch (Type)
-                {
-                    case ALARMTYPE.ALARMTYPE_GRADE:
-                        alarmcell.Item2 = cell.Quality == (Quality)Source;
-                        break;
-                    case ALARMTYPE.ALARMTYPE_DEFECT:
-                        alarmcell.Item2 = cell.Detection.DefectFilter == (DefectFilter)Source;
-                        break;
-                }
-
-                //在规定时间内出现指定数量NG
-                if (IsTimeLimit)
-                {
-                    TimeCellList.Add(alarmcell);
-                    var firstNg = TimeCellList[0];
-                    //超时限 删除
-                    while (cell.CreateTime - TimeCellList[0].createTime > TimeSpan)
-                    {
-                        TimeCellList.RemoveAt(0);
-                    }
-                    //规定时限内NG数量
-                    int ngNumber = TimeCellList.FindAll(a => a.isCellNg).Count();
-                    if (ngNumber >= NgCount) //达到报警标准
-                    {
-                        WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        ret = true;
-                    }
-                }
-                if (IsTotalLimit)
-                {
-                    TotalCellList.Add(alarmcell);
-                    //保持最近限定数量内
-                    while (TotalCellList.Count > Total)
-                    {
-                        TotalCellList.RemoveAt(0);
-                    }
-                    int ngNumber = TotalCellList.FindAll(a => a.isCellNg).Count();
-                    if (ngNumber >= NgCount) //达到报警标准
-                    {
-                        WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                        ret = true;
-                    }
-                }
-                return ret;
-            }
-            else //NG数量达标即报警
-            {
-                TimeCellList.Clear();
-                switch (Type)
-                {
-                    case ALARMTYPE.ALARMTYPE_GRADE:
-                        if (cell.Quality == Source)
-                            totalNG++;
-                        break;
-                    case ALARMTYPE.ALARMTYPE_DEFECT:
-                        if (cell.Quality == cell.Detection.DefectFilter)
-                            totalNG++;
-                        break;
-                }
-                if (totalNG >= NgCount)
-                {
-                    totalNG = 0;
-                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(this), token);
-                    return true;
-                }
-                return false;
-            }
-        }
+        public int TotalNG;
 
         /// <summary>
         /// 20240715 鲍赞宝
@@ -515,7 +458,6 @@ namespace AlarmSetCtrlWPF
         public void Copy(Alarm a)
         {
             this.Name = a.Name;
-            this.Mode = a.Mode;
             this.Type = a.Type;
             this.IsPopWin = a.IsPopWin;
             this.Source = a.Source;
@@ -526,35 +468,13 @@ namespace AlarmSetCtrlWPF
             this.TimeUnit = a.TimeUnit;
             this.Total = a.Total;
             this.NgCount = a.NgCount;
-            this.AlarmSignal = a.AlarmSignal;
-            this.StopSignal = a.StopSignal;
-            this.MarkSignal = a.MarkSignal;
-            this.TempSignal = a.TempSignal;
+            this.AlarmAgreement = a.AlarmAgreement;
         }
 
         public override string ToString()
         {
             return RegularShow;
         }
-    }
-
-    /// <summary>
-    /// 20240711 TCG
-    /// 枚举格式 未改 要在通讯配置里添加信号 从列表绑定到这里
-    /// </summary>
-    public enum AlarmMode
-    {
-        [EnumString("报警信号", "AlarmSignal")]
-        报警信号 = 1,
-
-        [EnumString("停机信号", "AlarmSignal")]
-        停机信号 = 2,
-
-        [EnumString("打标信号", "AlarmSignal")]
-        打标信号 = 4,
-
-        [EnumString("同时发送", "AlarmSignal")]
-        同时发送 = 8
     }
 
     /// <summary>

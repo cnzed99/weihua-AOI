@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace 断面毛刺检测软件.Views
+{
+    /// <summary>
+    /// TimeTriggerTestWindow.xaml 的交互逻辑
+    /// </summary>
+    public partial class TimeTriggerTestWindow : HandyControl.Controls.Window
+    {
+        public TimeTriggerTestWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            var vms = this.DataContext as TimeCamTriggerVMs;
+            foreach (var vm in vms.Timers)
+            {
+                vm.IsTriggerStart = false;
+                vm.TriggerTimer.Stop();
+            }
+        }
+    }
+}

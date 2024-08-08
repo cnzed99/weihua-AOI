@@ -207,4 +207,16 @@
   <data name="ModifyError" xml:space="preserve">
     <value>修改出错:</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Collection" xml:space="preserve">
+    <value>（集合）</value>
+  </data>
+  <data name="CollectionEditor" xml:space="preserve">
+    <value>集合编辑器</value>
+  </data>
 </root>

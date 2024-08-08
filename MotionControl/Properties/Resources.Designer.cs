@@ -106,6 +106,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 11.最佳对焦位置(mm) 的本地化字符串。
+        /// </summary>
+        public static string _11_最佳对焦位置_mm_ {
+            get {
+                return ResourceManager.GetString("11.最佳对焦位置(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 11.轴名称 的本地化字符串。
         /// </summary>
         public static string _11_轴名称 {
@@ -124,11 +133,20 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 12.正限位 的本地化字符串。
+        ///   查找类似 12.正限位(mm) 的本地化字符串。
         /// </summary>
-        public static string _12_正限位 {
+        public static string _12_正限位_mm_ {
             get {
-                return ResourceManager.GetString("12.正限位", resourceCulture);
+                return ResourceManager.GetString("12.正限位(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 12.粗调步长(mm) 的本地化字符串。
+        /// </summary>
+        public static string _12_粗调步长_mm_ {
+            get {
+                return ResourceManager.GetString("12.粗调步长(mm)", resourceCulture);
             }
         }
         
@@ -160,20 +178,20 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 13.负限位 的本地化字符串。
+        ///   查找类似 13.精调步长(mm) 的本地化字符串。
         /// </summary>
-        public static string _13_负限位 {
+        public static string _13_精调步长_mm_ {
             get {
-                return ResourceManager.GetString("13.负限位", resourceCulture);
+                return ResourceManager.GetString("13.精调步长(mm)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 14.对焦基准位 的本地化字符串。
+        ///   查找类似 13.负限位(mm) 的本地化字符串。
         /// </summary>
-        public static string _14_对焦基准位 {
+        public static string _13_负限位_mm_ {
             get {
-                return ResourceManager.GetString("14.对焦基准位", resourceCulture);
+                return ResourceManager.GetString("13.负限位(mm)", resourceCulture);
             }
         }
         
@@ -187,11 +205,29 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 14.最小清晰度 的本地化字符串。
+        /// </summary>
+        public static string _14_最小清晰度 {
+            get {
+                return ResourceManager.GetString("14.最小清晰度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 14.绝对运动 的本地化字符串。
         /// </summary>
         public static string _14_绝对运动 {
             get {
                 return ResourceManager.GetString("14.绝对运动", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 14.运行速度(mm/s) 的本地化字符串。
+        /// </summary>
+        public static string _14_运行速度_mm_s_ {
+            get {
+                return ResourceManager.GetString("14.运行速度(mm/s)", resourceCulture);
             }
         }
         
@@ -214,11 +250,29 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 15.精调范围(mm) 的本地化字符串。
+        /// </summary>
+        public static string _15_精调范围_mm_ {
+            get {
+                return ResourceManager.GetString("15.精调范围(mm)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 16.停止运动 的本地化字符串。
         /// </summary>
         public static string _16_停止运动 {
             get {
                 return ResourceManager.GetString("16.停止运动", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 16.对焦速度(mm/s) 的本地化字符串。
+        /// </summary>
+        public static string _16_对焦速度_mm_s_ {
+            get {
+                return ResourceManager.GetString("16.对焦速度(mm/s)", resourceCulture);
             }
         }
         
@@ -349,6 +403,24 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 21.速度 的本地化字符串。
+        /// </summary>
+        public static string _21_速度 {
+            get {
+                return ResourceManager.GetString("21.速度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 22.加速度 的本地化字符串。
+        /// </summary>
+        public static string _22_加速度 {
+            get {
+                return ResourceManager.GetString("22.加速度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 3.停止速度 的本地化字符串。
         /// </summary>
         public static string _3_停止速度 {
@@ -408,6 +480,15 @@ namespace MotionControl.Properties {
         public static string _4_软限位使能 {
             get {
                 return ResourceManager.GetString("4.软限位使能", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 5.对焦参数 的本地化字符串。
+        /// </summary>
+        public static string _5_对焦参数 {
+            get {
+                return ResourceManager.GetString("5.对焦参数", resourceCulture);
             }
         }
         
@@ -475,6 +556,24 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 是否复位？ 的本地化字符串。
+        /// </summary>
+        public static string AskGoHome {
+            get {
+                return ResourceManager.GetString("AskGoHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在对焦中，是否停止对焦？ 的本地化字符串。
+        /// </summary>
+        public static string AskStopFocus {
+            get {
+                return ResourceManager.GetString("AskStopFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 自动对焦 的本地化字符串。
         /// </summary>
         public static string AutoFocus {
@@ -507,6 +606,15 @@ namespace MotionControl.Properties {
         public static string ClearAlarm {
             get {
                 return ResourceManager.GetString("ClearAlarm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 粗定位数据 的本地化字符串。
+        /// </summary>
+        public static string CoarseData {
+            get {
+                return ResourceManager.GetString("CoarseData", resourceCulture);
             }
         }
         
@@ -583,11 +691,29 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 清晰度 的本地化字符串。
+        /// </summary>
+        public static string Distinct {
+            get {
+                return ResourceManager.GetString("Distinct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 驱动报警 的本地化字符串。
         /// </summary>
         public static string DriveAlarm {
             get {
                 return ResourceManager.GetString("DriveAlarm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 读写元件 的本地化字符串。
+        /// </summary>
+        public static string ElementRW {
+            get {
+                return ResourceManager.GetString("ElementRW", resourceCulture);
             }
         }
         
@@ -601,11 +727,83 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 对焦异常！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorFocus {
+            get {
+                return ResourceManager.GetString("ErrorFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 软件需要先暂停！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNeedStop {
+            get {
+                return ResourceManager.GetString("ErrorNeedStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 没有相机！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoCam {
+            get {
+                return ResourceManager.GetString("ErrorNoCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 运动控制未连接！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoConnect {
+            get {
+                return ResourceManager.GetString("ErrorNoConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 未打开相机！ 的本地化字符串。
+        /// </summary>
+        public static string ErrorNoOpenCam {
+            get {
+                return ResourceManager.GetString("ErrorNoOpenCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 精定位数据 的本地化字符串。
+        /// </summary>
+        public static string FineData {
+            get {
+                return ResourceManager.GetString("FineData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦数据 的本地化字符串。
+        /// </summary>
+        public static string FocusData {
+            get {
+                return ResourceManager.GetString("FocusData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 对焦期望位 的本地化字符串。
         /// </summary>
         public static string FocusDst {
             get {
                 return ResourceManager.GetString("FocusDst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在对焦 的本地化字符串。
+        /// </summary>
+        public static string Focusing {
+            get {
+                return ResourceManager.GetString("Focusing", resourceCulture);
             }
         }
         
@@ -619,7 +817,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 正方向 的本地化字符串。
+        ///   查找类似 正向移动 的本地化字符串。
         /// </summary>
         public static string Forward {
             get {
@@ -727,6 +925,15 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 位置 的本地化字符串。
+        /// </summary>
+        public static string Pos {
+            get {
+                return ResourceManager.GetString("Pos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 负限位 的本地化字符串。
         /// </summary>
         public static string PosLimitN {
@@ -763,16 +970,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 寄存器信息 的本地化字符串。
-        /// </summary>
-        public static string RegisterInfo {
-            get {
-                return ResourceManager.GetString("RegisterInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 相对位置 的本地化字符串。
+        ///   查找类似 步进距离 的本地化字符串。
         /// </summary>
         public static string RelaPos {
             get {
@@ -781,7 +979,7 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 反方向 的本地化字符串。
+        ///   查找类似 负向移动 的本地化字符串。
         /// </summary>
         public static string Reverse {
             get {
@@ -795,6 +993,15 @@ namespace MotionControl.Properties {
         public static string SensorPos {
             get {
                 return ResourceManager.GetString("SensorPos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入地址不能为空！ 的本地化字符串。
+        /// </summary>
+        public static string SetOutputError {
+            get {
+                return ResourceManager.GetString("SetOutputError", resourceCulture);
             }
         }
         
@@ -817,7 +1024,34 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 写入值 的本地化字符串。
+        ///   查找类似 驱动器连接成功！ 的本地化字符串。
+        /// </summary>
+        public static string SuccessConnect {
+            get {
+                return ResourceManager.GetString("SuccessConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦完成！ 的本地化字符串。
+        /// </summary>
+        public static string SuccessFocus {
+            get {
+                return ResourceManager.GetString("SuccessFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 类型 的本地化字符串。
+        /// </summary>
+        public static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入 的本地化字符串。
         /// </summary>
         public static string Write {
             get {
@@ -831,6 +1065,42 @@ namespace MotionControl.Properties {
         public static string WriteAddrM {
             get {
                 return ResourceManager.GetString("WriteAddrM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 全部写入 的本地化字符串。
+        /// </summary>
+        public static string WriteAll {
+            get {
+                return ResourceManager.GetString("WriteAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 写入值 的本地化字符串。
+        /// </summary>
+        public static string WriteVal {
+            get {
+                return ResourceManager.GetString("WriteVal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 前进 的本地化字符串。
+        /// </summary>
+        public static string 前进 {
+            get {
+                return ResourceManager.GetString("前进", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 后退 的本地化字符串。
+        /// </summary>
+        public static string 后退 {
+            get {
+                return ResourceManager.GetString("后退", resourceCulture);
             }
         }
     }

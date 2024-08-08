@@ -7,7 +7,10 @@
 		<PackageReference Include="HandyControl" />
 		<PackageReference Include="log4net" />
 		<PackageReference Include="Mapster" />
+		<PackageReference Include="Microsoft.Web.Administration" />
 		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="System.IO.Ports" />
+		<PackageReference Include="System.Management" />
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>
 </Project>

@@ -566,12 +566,48 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 手动调试 的本地化字符串。
+        /// </summary>
+        public static string 手动调试 {
+            get {
+                return ResourceManager.GetString("手动调试", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 清空报警 的本地化字符串。
+        /// </summary>
+        public static string 清空报警 {
+            get {
+                return ResourceManager.GetString("清空报警", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
         public static byte[] 组合_2 {
             get {
                 object obj = ResourceManager.GetObject("组合-2", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 轴报警 的本地化字符串。
+        /// </summary>
+        public static string 轴报警 {
+            get {
+                return ResourceManager.GetString("轴报警", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 驱动器报警 的本地化字符串。
+        /// </summary>
+        public static string 驱动器报警 {
+            get {
+                return ResourceManager.GetString("驱动器报警", resourceCulture);
             }
         }
     }

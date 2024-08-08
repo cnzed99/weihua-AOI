@@ -11,56 +11,32 @@ using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HistoryPlayback.Model;
+using QualityGrade;
+using SDFilter;
 
 namespace HistoryPlayback
 {
     public partial class CHistoryVM : ObservableObject
     {
+        public CHistoryModel HistoryModel { get; set; }
+
         /// <summary>
         /// 2024.7.6鲍赞宝
         /// 单张图片信息
         /// </summary>
         [ObservableProperty]
-        CHistoryParam imageInfo = new CHistoryParam();
+        CellInfo selectedCellInfo = new CellInfo();
 
         /// <summary>
-        /// 2024.7.6鲍赞宝
-        /// 图片路径集合
+        /// 20240711 TCG
+        /// 重置报警选项
         /// </summary>
-
-        private ObservableCollection<string> imagePaths;
-
-        /// <summary>
-        /// 2024.7.6鲍赞宝
-        /// 图片地址
-        /// </summary>
-
-        public ObservableCollection<string> ImagePaths
+        public void Reset()
         {
-            get { return imagePaths; }
-            set
-            {
-                SetProperty(ref imagePaths, value);
-                FileIndex = 0;
-                switch (SelectClassify)
-                {
-                    case 0:
-                        FileNames = imagePaths;
-                        break;
-                    case 1:
-                        var defectFilePath = ImagePaths
-                            .Where(p => p.Contains(SelectedDefectName))
-                            .ToList();
-                        if (defectFilePath != null)
-                        {
-                            FileNames = new ObservableCollection<string>(defectFilePath);
-                        }
-                        break;
-                    default:
-                        FileNames = imagePaths;
-                        break;
-                }
-            }
+            SelectedCellInfo = new CellInfo();
+            SelectClassify = 0;
+            OnPropertyChanged(nameof(FileNames));
         }
 
         /// <summary>
@@ -68,14 +44,38 @@ namespace HistoryPlayback
         /// 选择排版方式
         /// </summary>
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(FileNames))]
         int selectClassify = 0;
 
         /// <summary>
-        /// 2024.7.6鲍赞宝
+        /// 20240717 TCG
         /// 图片名称
         /// </summary>
-        [ObservableProperty]
-        ObservableCollection<string> fileNames;
+        public ObservableCollection<string> FileNames
+        {
+            get
+            {
+                switch (SelectClassify)
+                {
+                    case 0:
+                        return HistoryModel.NgImagePaths;
+
+                    case 1:
+                        if (SelectedDefect is null)
+                            break;
+                        var defectFilePath = HistoryModel
+                            .NgImagePaths.Where(p => p.Contains(SelectedDefect?.Name))
+                            .ToList();
+
+                        if (defectFilePath != null)
+                        {
+                            return new ObservableCollection<string>(defectFilePath);
+                        }
+                        break;
+                }
+                return HistoryModel.NgImagePaths;
+            }
+        }
 
         /// <summary>
         /// 2024.7.6鲍赞宝
@@ -83,13 +83,6 @@ namespace HistoryPlayback
         /// </summary>
         [ObservableProperty]
         int fileIndex;
-
-        /// <summary>
-        /// 2024.7.6鲍赞宝
-        /// 缺陷名列表
-        /// </summary>
-        [ObservableProperty]
-        ObservableCollection<string> filters = new ObservableCollection<string>();
 
         /// <summary>
         /// 2024.7.6鲍赞宝
@@ -103,7 +96,8 @@ namespace HistoryPlayback
         /// 选择的缺陷名称
         /// </summary>
         [ObservableProperty]
-        string selectedDefectName = "毛刺";
+        [NotifyPropertyChangedFor(nameof(FileNames))]
+        DefectFilter selectedDefect;
 
         /// <summary>
         /// 2024.7.6鲍赞宝
@@ -167,43 +161,38 @@ namespace HistoryPlayback
                 DateTime fileCreateTime = File.GetCreationTime(selectedobj);
 
                 string[] spiltName = name.Split("-");
-                ImageInfo.ID = spiltName[1];
-                ImageInfo.CreateTime = fileCreateTime.ToString("F");
+                SelectedCellInfo.ID = spiltName[1];
+                SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
 
-                ImageInfo.Level = spiltName[3];
-                ImageInfo.DefectName = spiltName[4];
-                ImageInfo.TakeTime = spiltName[5];
+                SelectedCellInfo.Level = spiltName[3];
+                SelectedCellInfo.DefectName = spiltName[4];
+                SelectedCellInfo.TakeTime = spiltName[5];
             }
         }
 
-        /// <summary>
-        /// 2024.7.6鲍赞宝
-        /// 查看方式切换
-        /// </summary>
-        [RelayCommand]
-        void RbCheck()
+        private void Receive(CFilterConfig filter)
         {
-            switch (SelectClassify)
+            List<string> strings = new List<string>();
+            foreach (var sp in filter.SpeciesFilters)
             {
-                case 0:
-                    FileNames = imagePaths;
-                    break;
-                case 1:
-                    if (SelectedDefectName != null && ImagePaths != null)
+                foreach (var rp in sp.RecipeDefects)
+                {
+                    foreach (var de in rp.DefectFilters)
                     {
-                        var defectFilePath = ImagePaths
-                            .Where(p => p.Contains(SelectedDefectName))
-                            .ToList();
-                        if (defectFilePath != null)
+                        if (!HistoryModel.DefectList.Contains(de))
                         {
-                            FileNames = new ObservableCollection<string>(defectFilePath);
+                            HistoryModel.DefectList.Add(de);
                         }
+                        strings.Add(de.Name);
                     }
-
-                    break;
-                default:
-                    FileNames = imagePaths;
-                    break;
+                }
+            }
+            for (int i = HistoryModel.DefectList.Count - 1; i >= 0; i--)
+            {
+                if (!strings.Contains(HistoryModel.DefectList[i].Name))
+                {
+                    HistoryModel.DefectList.RemoveAt(i);
+                }
             }
         }
     }

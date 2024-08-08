@@ -45,7 +45,8 @@
                             BorderThickness="0"
                             Foreground="White"
                             Header="{Binding Name}"
-                            IsExpanded="True">
+                            IsExpanded="True"
+                            Visibility="{Binding ReadOnly, Converter={StaticResource Boolean2VisibilityReConverter}}">
                             <ItemsControl ItemsSource="{Binding RecipeDefects}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
