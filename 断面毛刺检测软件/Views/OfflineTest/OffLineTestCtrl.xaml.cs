@@ -278,6 +278,12 @@ namespace 断面毛刺检测软件.Views
         }
 
         /// <summary>
+        /// 2024.8.9 李焕彬
+        /// 写入m_WaitImgChannel队列数，当作ID
+        /// </summary>
+        int getImageCount = 0;
+
+        /// <summary>
         /// 自动根据 ImgIndex 及预处理库选择项进行读图处理
         /// 另开线程 调试线程
         /// </summary>
@@ -289,7 +295,7 @@ namespace 断面毛刺检测软件.Views
                 {
                     Cell cell = new Cell()
                     {
-                        ID = "002",
+                        ID = getImageCount.ToString(),
                         isOnce = once,
                         Quality = mainVM.MaociQualityConfig.Qualities[0],
                         ImageFile = ImgFiles[ImgIndex],
@@ -306,6 +312,7 @@ namespace 断面毛刺检测软件.Views
 
                     //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
                     await MMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                    getImageCount++;
                 }
                 catch (TaskCanceledException ex)
                 {

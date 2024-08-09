@@ -216,6 +216,14 @@ namespace MarkControl
         private double mmPerPulse;
 
         /// <summary>
+        /// 2024.8.9 李焕彬
+        /// 线性比较器触发间隔
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("线性比较器触发间隔")]
+        private int lineCompInterval = 38;
+
+        /// <summary>
         /// 2024.7.15 李焕彬
         /// 更新毫米每脉冲
         /// </summary>

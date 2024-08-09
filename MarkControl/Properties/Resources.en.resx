@@ -291,4 +291,7 @@
   <data name="StopLineComp" xml:space="preserve">
     <value>Stop Line Comp</value>
   </data>
+  <data name="TriggerInterval" xml:space="preserve">
+    <value>Trigger Interval</value>
+  </data>
 </root>

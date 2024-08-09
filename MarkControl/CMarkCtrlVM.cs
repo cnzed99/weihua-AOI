@@ -145,12 +145,21 @@ namespace MarkControl
         protected CLogRec SysLog = CLogRec.Create("Info", "D:/Data");
 
         /// <summary>
+        /// 2024.8.9 李焕彬
+        /// 线性比较器是否开启
+        /// </summary>
+        [ObservableProperty]
+        private bool lineComparing = false;
+
+        /// <summary>
         /// 2024.7.15 李焕彬
         /// 初始化控制，包含连接、写入初始参数
         /// </summary>
         [RelayCommand]
         public void InitControl()
         {
+            if (!Connected)
+                return;
             //初始化编码器，使能
             CMiniEcatLib.Mb_E4O4Encoder_Initial(
                 MarkConfig.SlaveId,
@@ -237,6 +246,8 @@ namespace MarkControl
         [RelayCommand]
         public void MarkTest()
         {
+            if (!Connected)
+                return;
             CMiniEcatLib.Mb_E4O4TrigOut_SetManualPulseOutput(
                 MarkConfig.SlaveId,
                 MarkConfig.TriggerId
@@ -250,6 +261,8 @@ namespace MarkControl
         [RelayCommand]
         public void SetZeroEncoder()
         {
+            if (!Connected)
+                return;
             CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(MarkConfig.SlaveId, MarkConfig.EncoderId, 0);
         }
 
@@ -260,6 +273,8 @@ namespace MarkControl
         [RelayCommand]
         public void SetZeroTrigs()
         {
+            if (!Connected)
+                return;
             CMiniEcatLib.Mb_E4O4TrigOut_ResetCounter(MarkConfig.SlaveId, MarkConfig.TriggerId);
         }
 
@@ -270,6 +285,8 @@ namespace MarkControl
         [RelayCommand]
         public void ClearTrigs()
         {
+            if (!Connected)
+                return;
             CMiniEcatLib.Mb_E4O4DynamicCmp_ClrFifoData(MarkConfig.SlaveId, MarkConfig.CmpNO);
         }
 
@@ -280,6 +297,8 @@ namespace MarkControl
         [RelayCommand]
         public void MarksTest()
         {
+            if (!Connected)
+                return;
             if (TestPoses.Count > 0)
             {
                 bool needOffest = false;
@@ -310,17 +329,18 @@ namespace MarkControl
         /// <param name="needAddoffest">true需要加补偿值，false不需要</param>
         public int AddMark(int pos, bool needAddoffest = true)
         {
+            if (needAddoffest)
+            {
+                pos += (int)MarkConfig.GetPulseOffest();
+            }
+            if (!Connected)
+                return pos;
             int encoderCnt = 0;
             CMiniEcatLib.Mb_E4O4Encoder_GetEncoderData(
                 MarkConfig.SlaveId,
                 MarkConfig.EncoderId,
                 ref encoderCnt
             );
-            if (needAddoffest)
-            {
-                pos += (int)MarkConfig.GetPulseOffest();
-            }
-
             int[] posArray = new int[] { (int)pos };
             CMiniEcatLib.Mb_E4O4DynamicCmp_SetFifoData(
                 MarkConfig.SlaveId,
@@ -349,6 +369,8 @@ namespace MarkControl
         [RelayCommand]
         public void Clear()
         {
+            if (!Connected)
+                return;
             TrigPoses.Clear();
         }
 
@@ -359,6 +381,8 @@ namespace MarkControl
         [RelayCommand]
         public void SetEncoderValue()
         {
+            if (!Connected)
+                return;
             CMiniEcatLib.Mb_E4O4Encoder_SetCurrentData(
                 MarkConfig.SlaveId,
                 MarkConfig.EncoderId,
@@ -373,6 +397,8 @@ namespace MarkControl
         /// <returns>编码器值</returns>
         public int GetEncoderCount()
         {
+            if (!Connected)
+                return 0;
             int encoderCnt = 0;
             CMiniEcatLib.Mb_E4O4Encoder_GetEncoderData(
                 MarkConfig.SlaveId,
@@ -395,6 +421,23 @@ namespace MarkControl
         [RelayCommand]
         public void StartLineCompTest()
         {
+            if (!Connected)
+                return;
+            if (LineComparing)
+            {
+                //关闭
+                CMiniEcatLib.Mb_E4O4LineCmp_SetEnable(MarkConfig.SlaveId, lineCompNo, 0);
+                CMiniEcatLib.Mb_E4O4LineCmp_SetTriggerData(
+                    MarkConfig.SlaveId,
+                    lineCompNo,
+                    0,
+                    999999,
+                    500
+                );
+                LineComparing = false;
+                return;
+            }
+            //开启
             int triggerId = 0;
             CMiniEcatLib.Mb_E4O4TrigOut_BandingCompare(
                 MarkConfig.SlaveId,
@@ -411,31 +454,15 @@ namespace MarkControl
             CMiniEcatLib.Mb_E4O4LineCmp_SetTriggerData(
                 MarkConfig.SlaveId,
                 lineCompNo,
-                0,
+                1000,
                 int.MaxValue,
-                38
+                MarkConfig.LineCompInterval
             );
             CMiniEcatLib.Mb_E4O4TrigOut_SetPulseWidth(MarkConfig.SlaveId, triggerId, 100000);
             SetZeroEncoder();
             CMiniEcatLib.Mb_E4O4LineCmp_SetEnable(MarkConfig.SlaveId, lineCompNo, 0);
             CMiniEcatLib.Mb_E4O4LineCmp_SetEnable(MarkConfig.SlaveId, lineCompNo, 1);
-        }
-
-        /// <summary>
-        /// 2024.8.6 李焕彬
-        /// 关闭线性比较器测试
-        /// </summary>
-        [RelayCommand]
-        public void StopLineCompTest()
-        {
-            CMiniEcatLib.Mb_E4O4LineCmp_SetEnable(MarkConfig.SlaveId, lineCompNo, 0);
-            CMiniEcatLib.Mb_E4O4LineCmp_SetTriggerData(
-                MarkConfig.SlaveId,
-                lineCompNo,
-                0,
-                999999,
-                500
-            );
+            LineComparing = true;
         }
 
         /// <summary>

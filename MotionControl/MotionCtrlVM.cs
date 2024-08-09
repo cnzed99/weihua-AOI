@@ -216,7 +216,7 @@ namespace MotionControl
         /// </summary>
         private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(10)
         {
-            FullMode = BoundedChannelFullMode.DropWrite
+            FullMode = BoundedChannelFullMode.Wait
         };
 
         /// <summary>

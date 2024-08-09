@@ -353,11 +353,11 @@ namespace WH.DetectSystem.ViewModels
         CancellationTokenSource m_cts = new CancellationTokenSource();
 
         public static readonly BoundedChannelOptions s_NormalChannelOptions =
-            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
+            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
-            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
+            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
         public static readonly BoundedChannelOptions s_SinglechannelOptions =
-            new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.DropWrite };
+            new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait };
 
         /// <summary>
         /// 消息队列
@@ -391,7 +391,7 @@ namespace WH.DetectSystem.ViewModels
         /// 显示 图像队列
         /// </summary>
         private readonly Channel<Cell> m_ShowImageChannel = Channel.CreateBounded<Cell>(
-            s_NormalChannelOptions
+            s_SinglechannelOptions
         );
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace WH.DetectSystem.ViewModels
         /// 存储 图像队列
         /// </summary>
         private readonly Channel<Cell> m_SaveImageChannel = Channel.CreateBounded<Cell>(
-            s_SaveImgchannelOptions
+            s_SinglechannelOptions
         );
 
         public AutoResetEvent WaitSignal = new AutoResetEvent(false);
@@ -459,7 +459,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
-                        //cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
+                        cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
                         //从本地读图 没有相机时无需赋值
                         if (
                             !string.IsNullOrEmpty(CameraSerial)
@@ -478,14 +478,14 @@ namespace WH.DetectSystem.ViewModels
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
-                                StringBuilder strbuilder = new StringBuilder("[");
-                                strbuilder.Append("取图线程");
-                                strbuilder.Append("]     ");
-                                strbuilder.Append(cell.ID);
-                                strbuilder.Append("   cell入算法队列失败。");
-                                await m_InfoChannel.Writer.WriteAsync(
-                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                                );
+                                //StringBuilder strbuilder = new StringBuilder("[");
+                                //strbuilder.Append("取图线程");
+                                //strbuilder.Append("]     ");
+                                //strbuilder.Append(cell.ID);
+                                //strbuilder.Append("   cell入算法队列失败。");
+                                //await m_InfoChannel.Writer.WriteAsync(
+                                //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                //);
                                 cell.Dispose();
                             }
                         }
@@ -516,6 +516,7 @@ namespace WH.DetectSystem.ViewModels
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
+                        cell.Stopwatch.Restart();
                         MaociAlgorParamConfig.MaociExcute(cell);
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
@@ -533,14 +534,14 @@ namespace WH.DetectSystem.ViewModels
                         if (!m_FilterChannel.Writer.TryWrite(cell))
                         {
                             cell.Dispose();
-                            StringBuilder strbuilder = new StringBuilder("[");
-                            strbuilder.Append("算法线程");
-                            strbuilder.Append("]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   cell入筛选队列失败。");
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                            );
+                            //StringBuilder strbuilder = new StringBuilder("[");
+                            //strbuilder.Append("算法线程");
+                            //strbuilder.Append("]     ");
+                            //strbuilder.Append(cell.ID);
+                            //strbuilder.Append("   cell入筛选队列失败。");
+                            //await m_InfoChannel.Writer.WriteAsync(
+                            //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                            //);
                         }
                     }
                     catch (Exception ex)
@@ -585,27 +586,32 @@ namespace WH.DetectSystem.ViewModels
                         }
                         else
                         {
+                            int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
+                            strbuilder.Append($",检测NG,增加打标位置{markPos}！");
                             await m_InfoChannel.Writer.WriteAsync(
                                 new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
                             );
-                            int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
-                            //await m_InfoChannel.Writer.WriteAsync(
-                            //    new PrintMsg($"检测NG,增加打标位置{markPos}！", LOG.LOG_NG)
-                            //);
                         }
                         FilterTime = cell.FilterTime.TotalMilliseconds;
                         if (!m_ShowImageChannel.Writer.TryWrite(cell))
                         {
                             cell.Dispose();
-                            strbuilder = new StringBuilder("[");
-                            strbuilder.Append("筛选线程");
-                            strbuilder.Append("]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   cell入显示队列失败。");
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                            );
+                            //strbuilder = new StringBuilder("[");
+                            //strbuilder.Append("筛选线程");
+                            //strbuilder.Append("]     ");
+                            //strbuilder.Append(cell.ID);
+                            //strbuilder.Append("   cell入显示队列失败。");
+                            //await m_InfoChannel.Writer.WriteAsync(
+                            //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                            //);
                         }
+                        ModelBrush = cell.Quality.ShowColor.Brush;
+                        if (!cell.IsOK)
+                        {
+                            LastBrush = ModelBrush;
+                            LastImage = ModelImage;
+                        }
+                        MaociDefectsProduce.Excute(cell);
                     }
                     catch (Exception ex)
                     {
@@ -623,25 +629,16 @@ namespace WH.DetectSystem.ViewModels
             Task waitShowTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
                 await foreach (Cell cell in m_ShowImageChannel.Reader.ReadAllAsync())
                 {
                     try
                     {
-                        ModelBrush = cell.Quality.ShowColor.Brush;
-                        if (!cell.IsOK)
-                        {
-                            LastBrush = ModelBrush;
-                            LastImage = ModelImage;
-                        }
-                        MaociDefectsProduce.Excute(cell);
-                        WeakReferenceMessenger.Default.Send(cell, TokeVM);
-                        Console.WriteLine(DateTime.Now.Millisecond);
+                        //Console.WriteLine(DateTime.Now.Millisecond);
 
                         #region 窗口显示
                         try
                         {
-                            for (int i = 0; i < 1; i++)
+                            for (int i = 0; i < 2; i++)
                             {
                                 ImageView drawView;
                                 if (i == 0)
@@ -773,19 +770,6 @@ namespace WH.DetectSystem.ViewModels
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();
-                            //存截图
-                            if (MaociSaveImageConfig.PiantScreenEnable)
-                            {
-                                if (!cell.IsOK || MaociSaveImageConfig.OKScreenShot)
-                                {
-                                    await CurView.Dispatcher.BeginInvoke(
-                                        new Action(() =>
-                                        {
-                                            copy.DumpImage = CurView.GetImage();
-                                        })
-                                    );
-                                }
-                            }
                             if (!m_SaveImageChannel.Writer.TryWrite(copy))
                             {
                                 copy.Dispose();

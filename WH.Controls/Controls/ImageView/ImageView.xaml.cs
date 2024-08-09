@@ -379,26 +379,26 @@ namespace WH.Controls
             this.Canvas.InvalidateVisual();
         }
 
-        /// <summary>
-        /// 2024.7.5 李焕彬
-        /// 获取窗口截图
-        /// </summary>
-        /// <param name="width">截图宽</param>
-        /// <param name="height">截图高</param>
-        /// <returns>输出图像</returns>
-        public BitmapSource GetImage()
-        {
-            DrawingVisual drawingVisual = new DrawingVisual();
-            DrawingContext drawingContext = drawingVisual.RenderOpen();
-            drawingContext.DrawImage(Source, new Rect(0, 0, ImageWidth, ImageHeight));
-            this.Image.Draw(drawingContext, ImageWidth, 1, 50);
-            this.Canvas.Draw(drawingContext, ImageWidth, ImageHeight, 50);
-            drawingContext.Close();
-            RenderTargetBitmap renderTargetBitmap =
-                new(ImageWidth, ImageHeight, 96, 96, PixelFormats.Default);
-            renderTargetBitmap.Render(drawingVisual);
-            renderTargetBitmap.Freeze();
-            return renderTargetBitmap;
-        }
+        ///// <summary>
+        ///// 2024.7.5 李焕彬
+        ///// 获取窗口截图
+        ///// </summary>
+        ///// <param name="width">截图宽</param>
+        ///// <param name="height">截图高</param>
+        ///// <returns>输出图像</returns>
+        //public BitmapSource GetImage()
+        //{
+        //    DrawingVisual drawingVisual = new DrawingVisual();
+        //    DrawingContext drawingContext = drawingVisual.RenderOpen();
+        //    drawingContext.DrawImage(Source, new Rect(0, 0, ImageWidth, ImageHeight));
+        //    this.Image.Draw(drawingContext, ImageWidth, 1, 50);
+        //    this.Canvas.Draw(drawingContext, ImageWidth, ImageHeight, 50);
+        //    drawingContext.Close();
+        //    RenderTargetBitmap renderTargetBitmap =
+        //        new(ImageWidth, ImageHeight, 96, 96, PixelFormats.Default);
+        //    renderTargetBitmap.Render(drawingVisual);
+        //    renderTargetBitmap.Freeze();
+        //    return renderTargetBitmap;
+        //}
     }
 }

@@ -556,6 +556,15 @@ namespace MarkControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 比较器触发间隔 的本地化字符串。
+        /// </summary>
+        public static string TriggerInterval {
+            get {
+                return ResourceManager.GetString("TriggerInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 0-脉冲信号，1-电平翻转！ 的本地化字符串。
         /// </summary>
         public static string TrigModeInfo {

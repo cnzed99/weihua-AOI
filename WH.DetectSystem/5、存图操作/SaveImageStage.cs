@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Mysqlx.Crud;
 using SaveImageManage;
+using SDFilter;
 using WH.DetectSystem.Models;
 using WH.Entity.DiskSpace;
 using WH.Entity.LogRecord;
@@ -111,7 +109,12 @@ namespace WH.DetectSystem._5_存图操作
                 {
                     if (saveImageConfig.PiantScreenEnable)
                     {
-                        savePath = SaveDumpImage(cell, classPath, saveImageConfig.SaveImageFormat);
+                        savePath = SaveDumpImage(
+                            cell,
+                            classPath,
+                            saveImageConfig.SaveImageFormat,
+                            systemSettings.ShowAllDefect
+                        );
                     }
                 }
 
@@ -185,8 +188,106 @@ namespace WH.DetectSystem._5_存图操作
         /// <param name="dumpImagePath"></param>
         /// <param name="format">格式</param>
         /// <returns>保存路径</returns>
-        private static string SaveDumpImage(Cell cell, string dumpImagePath, string format)
+        private static string SaveDumpImage(
+            Cell cell,
+            string dumpImagePath,
+            string format,
+            bool showAllDefect
+        )
         {
+            DrawingVisual drawingVisual = new DrawingVisual();
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+            drawingContext.DrawImage(
+                cell.Image.ToBitmapSource(),
+                new Rect(0, 0, cell.Image.ImageWidth, cell.Image.ImageHeight)
+            );
+            Pen penB = new Pen(Brushes.Blue, 1);
+            DrawPoints(cell.MaociTestOut.DarkTopRegion, penB);
+            DrawPoints(cell.MaociTestOut.DarkBotRegion, penB);
+            Pen penG = new Pen(Brushes.Green, 1);
+            DrawPoints(cell.MaociTestOut.LightBotRegion, penG);
+            DrawPoints(cell.MaociTestOut.LightTopRegion, penG);
+            if (!cell.IsOK)
+            {
+                DefectFilter dstFilter = cell.Detection.DefectFilter;
+                StringBuilder textBuilder = new StringBuilder();
+                textBuilder.AppendLine(dstFilter.Name);
+                textBuilder.Append(cell.Quality.Name);
+                DrawTextAlignment(
+                    textBuilder.ToString(),
+                    AlignmentX.Right,
+                    AlignmentY.Top,
+                    cell.Quality.ShowColor.Brush
+                );
+                //显示所有Region缺陷
+                if (showAllDefect)
+                {
+                    foreach (var detection in cell.Detections)
+                    {
+                        if (
+                            detection.Result
+                            || detection.Category != Category.区域
+                            || detection.regionOut.Count == 0
+                        )
+                            continue;
+                        DefectFilter defectFilter = detection.DefectFilter;
+                        Pen penDraw = new Pen(defectFilter.ShowColor.Brush, 1);
+                        for (int i = 0; i < detection.regionOut.Count; i++)
+                        {
+                            DrawPoints(detection.regionOut[i].points1, penDraw);
+                            if (i == detection.regionOut.Count - 1)
+                            {
+                                DrawText(
+                                    detection.DetectLog.ToString(),
+                                    detection.regionOut[i].GetCenter(),
+                                    defectFilter.ShowColor.Brush
+                                );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    DefectFilter defectFilter = cell.Detection.DefectFilter;
+                    if (
+                        !(
+                            cell.Detection.Result
+                            || cell.Detection.Category != Category.区域
+                            || cell.Detection.regionOut.Count == 0
+                        )
+                    )
+                    {
+                        Pen penDraw = new Pen(defectFilter.ShowColor.Brush, 1);
+                        for (int i = 0; i < cell.Detection.regionOut.Count; i++)
+                        {
+                            DrawPoints(cell.Detection.regionOut[i].points1, penDraw);
+                            if (i == cell.Detection.regionOut.Count - 1)
+                            {
+                                DrawText(
+                                    cell.Detection.DetectLog.ToString(),
+                                    cell.Detection.regionOut[i].GetCenter(),
+                                    defectFilter.ShowColor.Brush
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                DrawTextAlignment(
+                    "OK",
+                    AlignmentX.Right,
+                    AlignmentY.Top,
+                    cell.Quality.ShowColor.Brush
+                );
+            }
+            drawingContext.Close();
+            RenderTargetBitmap renderTargetBitmap =
+                new(cell.Image.ImageWidth, cell.Image.ImageHeight, 96, 96, PixelFormats.Default);
+            renderTargetBitmap.Render(drawingVisual);
+            renderTargetBitmap.Freeze();
+
             string directory = Path.GetDirectoryName(dumpImagePath);
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(dumpImagePath);
             string dirPath = $"{directory}{"\\Jpg\\"}";
@@ -195,7 +296,105 @@ namespace WH.DetectSystem._5_存图操作
             {
                 Directory.CreateDirectory(dirPath);
             }
-            WriteImage(cell.DumpImage, path, format);
+            WriteImage(renderTargetBitmap, path, format);
+
+            #region 绘制区域、文字方法
+            void DrawGeometry(List<Point> points, Pen pen)
+            {
+                PathGeometry geometry = new PathGeometry();
+                PolyLineSegment polyLineSegment = new PolyLineSegment();
+                polyLineSegment.Points = new PointCollection(points);
+                PathFigure figure = new PathFigure(points[0], new[] { polyLineSegment }, false);
+                geometry.Figures.Add(figure);
+
+                drawingContext.DrawGeometry(Brushes.Transparent, pen, geometry);
+            }
+
+            void DrawPoints(List<Point> points, Pen pen)
+            {
+                List<Point> region = new List<Point>();
+                foreach (var item in points)
+                {
+                    if (
+                        region.Count > 0
+                        && Math.Sqrt(
+                            (region.Last().X - item.X) * (region.Last().X - item.X)
+                                + (region.Last().Y - item.Y) * (region.Last().Y - item.Y)
+                        ) > 2
+                    )
+                    {
+                        DrawGeometry(region, pen);
+                        region = new List<Point>();
+                    }
+                    region.Add(item);
+                }
+                if (region.Count > 0)
+                {
+                    DrawGeometry(region, pen);
+                }
+            }
+
+            void DrawTextAlignment(
+                string text,
+                AlignmentX alignmentX,
+                AlignmentY alignmentY,
+                Brush fontBrush
+            )
+            {
+                int fontSize = 50;
+                FontFamily fontFamily = new FontFamily("宋体");
+                FontStyle fontStyle = FontStyles.Normal;
+                FontWeight fontWeight = FontWeights.Normal;
+                FormattedText formattedText = new FormattedText(
+                    text,
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface(fontFamily, fontStyle, fontWeight, FontStretches.Normal),
+                    fontSize,
+                    fontBrush,
+                    1
+                );
+                double x = 20;
+                double y = 20;
+                switch (alignmentX)
+                {
+                    case AlignmentX.Center:
+                        x = cell.Image.ImageWidth / 2 - formattedText.Width / 2;
+                        break;
+                    case AlignmentX.Right:
+                        x = cell.Image.ImageWidth - formattedText.Width - 20;
+                        break;
+                }
+                switch (alignmentY)
+                {
+                    case AlignmentY.Center:
+                        y = cell.Image.ImageHeight / 2 - formattedText.Height / 2;
+                        break;
+                    case AlignmentY.Bottom:
+                        y = cell.Image.ImageHeight - formattedText.Height - 20;
+                        break;
+                }
+                drawingContext.DrawText(formattedText, new Point(x, y));
+            }
+
+            void DrawText(string text, Point origin, Brush fontBrush)
+            {
+                int fontSize = 50;
+                FontFamily fontFamily = new FontFamily("宋体");
+                FontStyle fontStyle = FontStyles.Normal;
+                FontWeight fontWeight = FontWeights.Normal;
+                FormattedText formattedText = new FormattedText(
+                    text,
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface(fontFamily, fontStyle, fontWeight, FontStretches.Normal),
+                    fontSize,
+                    fontBrush,
+                    1
+                );
+                drawingContext.DrawText(formattedText, origin);
+            }
+            #endregion
 
             return path;
         }
