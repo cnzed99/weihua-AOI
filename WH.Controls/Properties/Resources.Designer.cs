@@ -160,7 +160,7 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
-        ///   查找类似 有效时间 的本地化字符串。
+        ///   查找类似 时间 的本地化字符串。
         /// </summary>
         public static string LoginPeriod {
             get {
@@ -349,7 +349,7 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
-        ///   查找类似 用户名 的本地化字符串。
+        ///   查找类似 账户 的本地化字符串。
         /// </summary>
         public static string UserName {
             get {

@@ -581,22 +581,25 @@
         </ScrollViewer>
         <StackPanel
             Grid.Row="1"
-            Width="300"
+            Width="400"
             VerticalAlignment="Center"
             d:Visibility="visible"
             Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
             <hc:AnimationPath
+                Width="300"
                 Data="{DynamicResource logo}"
-                Stretch="Uniform"
-                StrokeThickness="2"
-                Width="150"
                 IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
-                Duration="00:00:03" Stroke="{StaticResource InfoBrush}"/>
+                Stretch="Uniform"
+                Stroke="Cyan"
+                PathLength="400"
+                StrokeThickness="1"
+                Duration="00:00:5" />
             <TextBlock
                 Name="LoadProgressBar"
                 Margin="0,10"
                 d:Text="loading"
-                Style="{StaticResource TextBlockDefaultInfo}"
+                Style="{StaticResource TextBlockDefault}"
+                Foreground="Cyan"
                 TextWrapping="Wrap" />
         </StackPanel>
 

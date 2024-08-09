@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UserName" xml:space="preserve">
-    <value>用户名</value>
+    <value>账户</value>
   </data>
   <data name="PassWord" xml:space="preserve">
     <value>密码</value>
   </data>
   <data name="LoginPeriod" xml:space="preserve">
-    <value>有效时间</value>
+    <value>时间</value>
   </data>
   <data name="Minute" xml:space="preserve">
     <value>分钟</value>

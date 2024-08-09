@@ -20,6 +20,7 @@
     <None Remove="Controls\UserLogin\Imgs\组合-3.png" />
     <None Remove="Controls\UserLogin\Imgs\经纪人管理.png" />
     <None Remove="Images\清理.png" />
+    <None Remove="Resources\组合-2.png" />
     <None Remove="Resources\设置面板.svg" />
   </ItemGroup>
 
@@ -54,6 +55,9 @@
     <Resource Include="Controls\UserLogin\Imgs\组合-3.png" />
     <Resource Include="Controls\UserLogin\Imgs\经纪人管理.png" />
     <Resource Include="Images\清理.png" />
+    <Resource Include="Resources\组合-2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\设置面板.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

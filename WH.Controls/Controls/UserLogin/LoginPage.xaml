@@ -10,12 +10,11 @@
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
     x:Name="window"
     Title="{Binding [LoginTitle], Source={x:Static prop:LangManager.instance}}"
-    Width="350"
-    Height="500"
-    d:DataContext="{d:DesignInstance Type=local:LoginViewModel}"
+    Width="400"
+    Height="300"
+    d:DataContext="{d:DesignInstance Type=local:CLoginViewModel}"
     AllowsTransparency="True"
     Background="{x:Null}"
-    Foreground="White"
     MouseLeftButtonDown="WinMove_LeftButtonDown"
     ResizeMode="NoResize"
     Topmost="True"
@@ -45,13 +44,18 @@
 
     <Grid x:Name="grid">
         <Grid.Background>
-            <ImageBrush ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/登录页面黑.png" />
+            <ImageBrush ImageSource="pack://application:,,,/WH.Controls;component/Controls/UserLogin/Imgs/欢迎页.png" />
         </Grid.Background>
-
-
+        <TextBlock
+            Margin="30"
+            VerticalAlignment="Top"
+            FontFamily="Yu Gothic UI Semibold"
+            FontSize="20"
+            Foreground="White"
+            Text="{Binding [LoginTitle], Source={x:Static prop:LangManager.instance}}" />
         <Button
             x:Name="btn_Close"
-            Margin="0,20,0,0"
+            Margin="0,10,15,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Background="{x:Null}"
@@ -72,105 +76,96 @@
             </Button.RenderTransform>
         </Button>
 
-        <TextBlock
-            Width="50"
-            Margin="69,160,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
-        <ComboBox
-            Height="25"
-            Margin="129,154,75,0"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            FontSize="14"
-            ItemsSource="{Binding ItemList}"
-            SelectedItem="{Binding LoginPerson.UserName}"
-            Style="{StaticResource comboxStyle}" />
-        <TextBlock
-            Width="50"
-            Margin="69,222,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
-        <TextBlock
-            Width="50"
-            Margin="69,287,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            FontFamily="Yu Gothic UI Semibold"
-            Foreground="#43FFFFFF"
-            Text="{Binding [LoginPeriod], Source={x:Static prop:LangManager.instance}}" />
-        <hc:PasswordBox
-            Height="25"
-            Margin="129,216,75,0"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            
-            BorderBrush="DarkCyan"
-            FontSize="14"
-            
-            IsSafeEnabled="false"
-            ShowEyeButton="True"
-            UnsafePassword="{Binding LoginPerson.PassWord}">
-            <hc:PasswordBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
-            </hc:PasswordBox.InputBindings>
-        </hc:PasswordBox>
+        <hc:UniformSpacingPanel
+            Width="250"
+            Margin="0,80,0,0"
+            Orientation="Vertical"
+            VerticalSpacing="10">
+            <DockPanel>
+                <TextBlock
+                    FontStretch="Expanded"
+                    Foreground="White"
+                    Style="{StaticResource TextBlockDefault}"
+                    Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
+                <ComboBox
+                    Margin="5,0"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    ItemsSource="{Binding ItemList}"
+                    SelectedItem="{Binding LoginPerson.UserName}"
+                    Style="{StaticResource ComboBoxExtend}" />
+            </DockPanel>
+            <DockPanel>
+                <TextBlock
+                    Foreground="White"
+                    Style="{StaticResource TextBlockDefault}"
+                    Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
+                <hc:PasswordBox
+                    Margin="5,0"
+                    HorizontalContentAlignment="Center"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    Foreground="White"
+                    IsSafeEnabled="false"
+                    ShowEyeButton="True"
+                    UnsafePassword="{Binding LoginPerson.PassWord}">
+                    <hc:PasswordBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
+                    </hc:PasswordBox.InputBindings>
+                </hc:PasswordBox>
 
-        <!--<TextBox Margin="50,205,0,0" VerticalAlignment="Top" Width="150" Height="25" Background="Transparent" FontSize="14" Text="{Binding LoginPerson.PassWord}"/>-->
-        <TextBox
-            Height="25"
-            Margin="129,279,75,0"
-            VerticalAlignment="Top"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Background="Transparent"
-            BorderBrush="DarkCyan"
-            FontSize="13"
-            Foreground="#FFE3ECEC"
-            Style="{DynamicResource TextBoxExtend}"
-            Text="{Binding LoginLeftTimeMinute, UpdateSourceTrigger=PropertyChanged}">
-            <TextBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <TextBlock
-            Width="34"
-            Height="16"
-            Margin="276,287,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Text="{Binding [Minute], Source={x:Static prop:LangManager.instance}}" />
-        <Button
-            Name="btn_LoginButton"
-            Width="178"
-            Height="29"
-            Margin="82,339,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Command="{Binding LoginButtonCommand}"
-            Content="{Binding [Login], Source={x:Static prop:LangManager.instance}}" />
-        <Button
-            Name="btn_Exit"
-            Width="178"
-            Height="29"
-            Margin="82,382,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Command="{Binding LogoutButtonCommand}"
-            Content="{Binding [Logout], Source={x:Static prop:LangManager.instance}}" />
+            </DockPanel>
+            <DockPanel>
+                <TextBlock
+                    Foreground="White"
+                    Style="{StaticResource TextBlockDefault}"
+                    Text="{Binding [LoginPeriod], Source={x:Static prop:LangManager.instance}}" />
+                <hc:TextBox
+                    Margin="5,0"
+                    HorizontalContentAlignment="Center"
+                    hc:InfoElement.ShowClearButton="True"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    Foreground="White"
+                    Style="{DynamicResource TextBoxPlusBaseStyle}"
+                    Text="{Binding LoginLeftTimeMinute, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
+                    </TextBox.InputBindings>
+                </hc:TextBox>
+            </DockPanel>
+            <UniformGrid Columns="2">
+                <Button
+                    Name="btn_LoginButton"
+                    Width="120"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    Command="{Binding LoginButtonCommand}"
+                    Content="{Binding [Login], Source={x:Static prop:LangManager.instance}}" />
+                <Button
+                    Name="btn_Exit"
+                    Width="120"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    Command="{Binding LogoutButtonCommand}"
+                    Content="{Binding [Logout], Source={x:Static prop:LangManager.instance}}" />
+            </UniformGrid>
+        </hc:UniformSpacingPanel>
+
+
+
         <Image
-            Height="40"
-            Margin="70,62,44,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            Height="42"
+            Margin="20,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
             Source="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" />
 
         <TextBlock
             Width="200"
-            Margin="0,0,40,40"
+            Margin="0,0,40,10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Foreground="Cyan"

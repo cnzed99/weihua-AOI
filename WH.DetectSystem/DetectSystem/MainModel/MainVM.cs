@@ -356,6 +356,8 @@ namespace WH.DetectSystem.ViewModels
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.DropWrite };
+        public static readonly BoundedChannelOptions s_SinglechannelOptions =
+            new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.DropWrite };
 
         /// <summary>
         /// 消息队列
@@ -457,7 +459,7 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
-                        cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
+                        //cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
                         //从本地读图 没有相机时无需赋值
                         if (
                             !string.IsNullOrEmpty(CameraSerial)
@@ -587,9 +589,9 @@ namespace WH.DetectSystem.ViewModels
                                 new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
                             );
                             int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg($"检测NG,增加打标位置{markPos}！", LOG.LOG_NG)
-                            );
+                            //await m_InfoChannel.Writer.WriteAsync(
+                            //    new PrintMsg($"检测NG,增加打标位置{markPos}！", LOG.LOG_NG)
+                            //);
                         }
                         FilterTime = cell.FilterTime.TotalMilliseconds;
                         if (!m_ShowImageChannel.Writer.TryWrite(cell))
@@ -639,7 +641,7 @@ namespace WH.DetectSystem.ViewModels
                         #region 窗口显示
                         try
                         {
-                            for (int i = 0; i < 2; i++)
+                            for (int i = 0; i < 1; i++)
                             {
                                 ImageView drawView;
                                 if (i == 0)
@@ -652,7 +654,7 @@ namespace WH.DetectSystem.ViewModels
                                         break;
                                     drawView = LastView;
                                 }
-                                drawView.Dispatcher.Invoke(() =>
+                                await drawView.Dispatcher.BeginInvoke(() =>
                                 {
                                     drawView.Clear(false);
                                     drawView.SetPen(Brushes.Blue);
@@ -763,8 +765,11 @@ namespace WH.DetectSystem.ViewModels
                         }
                         #endregion
                         if (
-                            MaociSaveImageConfig.SaveImageEnable
-                            || MaociSaveImageConfig.PiantScreenEnable
+                            (SystemSettings.OfflineSave || isStart)
+                            && (
+                                MaociSaveImageConfig.SaveImageEnable
+                                || MaociSaveImageConfig.PiantScreenEnable
+                            )
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();
@@ -773,7 +778,7 @@ namespace WH.DetectSystem.ViewModels
                             {
                                 if (!cell.IsOK || MaociSaveImageConfig.OKScreenShot)
                                 {
-                                    CurView.Dispatcher.Invoke(
+                                    await CurView.Dispatcher.BeginInvoke(
                                         new Action(() =>
                                         {
                                             copy.DumpImage = CurView.GetImage();
