@@ -160,29 +160,56 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
-        ///   查找类似 料区厚度 的本地化字符串。
+        ///   查找类似 连续料区厚度NG长度 ≥ 长度限制时为检测NG，上传图像。 的本地化字符串。
         /// </summary>
-        public static string 料区厚度 {
+        public static string 料区NG连续长度说明 {
             get {
-                return ResourceManager.GetString("料区厚度", resourceCulture);
+                return ResourceManager.GetString("料区NG连续长度说明", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 料区厚度NG连续长度限制 的本地化字符串。
+        ///   查找类似 铝层上边缘 -（料区中心+铝层位置偏移值）＞ 限制上 || （料区中心+铝层位置偏移值）- 铝层下边缘＞ 限制下时为检测NG，上传图像。 的本地化字符串。
         /// </summary>
-        public static string 料区厚度NG连续长度限制 {
+        public static string 料区中心位置限制说明 {
             get {
-                return ResourceManager.GetString("料区厚度NG连续长度限制", resourceCulture);
+                return ResourceManager.GetString("料区中心位置限制说明", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 料区厚度限制 的本地化字符串。
+        ///   查找类似 料区厚度(um) 的本地化字符串。
         /// </summary>
-        public static string 料区厚度限制 {
+        public static string 料区厚度_um_ {
             get {
-                return ResourceManager.GetString("料区厚度限制", resourceCulture);
+                return ResourceManager.GetString("料区厚度(um)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区厚度NG连续长度限制(um) 的本地化字符串。
+        /// </summary>
+        public static string 料区厚度NG连续长度限制_um_ {
+            get {
+                return ResourceManager.GetString("料区厚度NG连续长度限制(um)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 料区厚度限制(um) 的本地化字符串。
+        /// </summary>
+        public static string 料区厚度限制_um_ {
+            get {
+                return ResourceManager.GetString("料区厚度限制(um)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 |实际检测厚度-料区厚度| ≥ 料区厚度限制时为料区厚度NG。 的本地化字符串。
+        /// </summary>
+        public static string 料区厚度限制说明 {
+            get {
+                return ResourceManager.GetString("料区厚度限制说明", resourceCulture);
             }
         }
         
@@ -196,20 +223,11 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
-        ///   查找类似 自适应阈值增加值 的本地化字符串。
+        ///   查找类似 灰度≥n时判定为料区查找区域，输入范围0~255。 的本地化字符串。
         /// </summary>
-        public static string 自适应阈值增加值 {
+        public static string 料区阈值说明 {
             get {
-                return ResourceManager.GetString("自适应阈值增加值", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 自适应阈值邻域大小 的本地化字符串。
-        /// </summary>
-        public static string 自适应阈值邻域大小 {
-            get {
-                return ResourceManager.GetString("自适应阈值邻域大小", resourceCulture);
+                return ResourceManager.GetString("料区阈值说明", resourceCulture);
             }
         }
         
@@ -223,74 +241,137 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
-        ///   查找类似 过滤矩阵邻域大小 的本地化字符串。
+        ///   查找类似 检测超时时间，超时判NG，显示超时缺陷。 的本地化字符串。
         /// </summary>
-        public static string 过滤矩阵邻域大小 {
+        public static string 超时时间说明 {
             get {
-                return ResourceManager.GetString("过滤矩阵邻域大小", resourceCulture);
+                return ResourceManager.GetString("超时时间说明", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 过滤矩阵邻域点数量限制 的本地化字符串。
+        ///   查找类似 连续铝层厚度NG长度 ≥ 长度限制时为检测NG，上传图像。 的本地化字符串。
         /// </summary>
-        public static string 过滤矩阵邻域点数量限制 {
+        public static string 铝层NG连续长度说明 {
             get {
-                return ResourceManager.GetString("过滤矩阵邻域点数量限制", resourceCulture);
+                return ResourceManager.GetString("铝层NG连续长度说明", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层位置偏移值 的本地化字符串。
+        ///   查找类似 铝层位置偏移值(um) 的本地化字符串。
         /// </summary>
-        public static string 铝层位置偏移值 {
+        public static string 铝层位置偏移值_um_ {
             get {
-                return ResourceManager.GetString("铝层位置偏移值", resourceCulture);
+                return ResourceManager.GetString("铝层位置偏移值(um)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层厚度 的本地化字符串。
+        ///   查找类似 铝层厚度(um) 的本地化字符串。
         /// </summary>
-        public static string 铝层厚度 {
+        public static string 铝层厚度_um_ {
             get {
-                return ResourceManager.GetString("铝层厚度", resourceCulture);
+                return ResourceManager.GetString("铝层厚度(um)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层厚度NG连续长度限制 的本地化字符串。
+        ///   查找类似 铝层厚度NG连续长度限制(um) 的本地化字符串。
         /// </summary>
-        public static string 铝层厚度NG连续长度限制 {
+        public static string 铝层厚度NG连续长度限制_um_ {
             get {
-                return ResourceManager.GetString("铝层厚度NG连续长度限制", resourceCulture);
+                return ResourceManager.GetString("铝层厚度NG连续长度限制(um)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层厚度限制 的本地化字符串。
+        ///   查找类似 铝层厚度限制(um) 的本地化字符串。
         /// </summary>
-        public static string 铝层厚度限制 {
+        public static string 铝层厚度限制_um_ {
             get {
-                return ResourceManager.GetString("铝层厚度限制", resourceCulture);
+                return ResourceManager.GetString("铝层厚度限制(um)", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层在料区中心位置限制上 的本地化字符串。
+        ///   查找类似 |实际检测厚度-铝层厚度| ≥ 铝层厚度限制时为铝层厚度NG。 的本地化字符串。
         /// </summary>
-        public static string 铝层在料区中心位置限制上 {
+        public static string 铝层厚度限制说明 {
             get {
-                return ResourceManager.GetString("铝层在料区中心位置限制上", resourceCulture);
+                return ResourceManager.GetString("铝层厚度限制说明", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 铝层在料区中心位置限制下 的本地化字符串。
+        ///   查找类似 铝层在料区中心位置限制上(um) 的本地化字符串。
         /// </summary>
-        public static string 铝层在料区中心位置限制下 {
+        public static string 铝层在料区中心位置限制上_um_ {
             get {
-                return ResourceManager.GetString("铝层在料区中心位置限制下", resourceCulture);
+                return ResourceManager.GetString("铝层在料区中心位置限制上(um)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层在料区中心位置限制下(um) 的本地化字符串。
+        /// </summary>
+        public static string 铝层在料区中心位置限制下_um_ {
+            get {
+                return ResourceManager.GetString("铝层在料区中心位置限制下(um)", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层自适应阈值增加值 的本地化字符串。
+        /// </summary>
+        public static string 铝层自适应阈值增加值 {
+            get {
+                return ResourceManager.GetString("铝层自适应阈值增加值", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层自适应阈值=自适应矩阵计算值+自适应阈值增加值，邻域大小输入范围0~50。 的本地化字符串。
+        /// </summary>
+        public static string 铝层自适应阈值说明 {
+            get {
+                return ResourceManager.GetString("铝层自适应阈值说明", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层自适应阈值邻域大小 的本地化字符串。
+        /// </summary>
+        public static string 铝层自适应阈值邻域大小 {
+            get {
+                return ResourceManager.GetString("铝层自适应阈值邻域大小", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 过滤矩阵内亮点数量 ≥ 数量限制时判定为铝层，邻域大小输入范围0~50。 的本地化字符串。
+        /// </summary>
+        public static string 铝层过滤矩阵说明 {
+            get {
+                return ResourceManager.GetString("铝层过滤矩阵说明", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层过滤矩阵邻域大小 的本地化字符串。
+        /// </summary>
+        public static string 铝层过滤矩阵邻域大小 {
+            get {
+                return ResourceManager.GetString("铝层过滤矩阵邻域大小", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 铝层过滤矩阵邻域点数量限制 的本地化字符串。
+        /// </summary>
+        public static string 铝层过滤矩阵邻域点数量限制 {
+            get {
+                return ResourceManager.GetString("铝层过滤矩阵邻域点数量限制", resourceCulture);
             }
         }
         
@@ -300,6 +381,15 @@ namespace AlgorithmDll.Properties {
         public static string 铝层阈值 {
             get {
                 return ResourceManager.GetString("铝层阈值", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 灰度≥n时判定为铝层查找区域，输入范围0~255。 的本地化字符串。
+        /// </summary>
+        public static string 铝层阈值说明 {
+            get {
+                return ResourceManager.GetString("铝层阈值说明", resourceCulture);
             }
         }
     }

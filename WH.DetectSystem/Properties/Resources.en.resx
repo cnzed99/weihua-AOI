@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,10 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SystemSettingsReadSuccess" xml:space="preserve">
-    <value>读取系统配置成功 </value>
+  <data name="正在加载通讯配置" xml:space="preserve">
+    <value>Loading comunication configuration...</value>
   </data>
-  <data name="SystemSettingsReadFailed" xml:space="preserve">
-    <value>读取系统配置失败</value>
+  <data name="正在加载相机配置" xml:space="preserve">
+    <value>loading camera configuration...</value>
+  </data>
+  <data name="通讯连接失败" xml:space="preserve">
+    <value>Com  connect failed!</value>
+  </data>
+  <data name="相机连接失败" xml:space="preserve">
+    <value>Camera connect failed!</value>
+  </data>
+  <data name="正在打开" xml:space="preserve">
+    <value>Opening...</value>
+  </data>
+  <data name="正在更新项目列表" xml:space="preserve">
+    <value>Updating projects list...</value>
+  </data>
+  <data name="帮助文档打开失败" xml:space="preserve">
+    <value>Open failed, No permission、service or doc.</value>
   </data>
 </root>

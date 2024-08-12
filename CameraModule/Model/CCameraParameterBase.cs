@@ -307,7 +307,7 @@ namespace CameraModule
             }
         }
 
-        private float gamma = 100.00f;
+        private float gamma = 1f;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -349,7 +349,7 @@ namespace CameraModule
         [property: DisplayName("25.像素当量(mm)")]
         [property: Description("25.像素当量(mm)")]
         [ObservableProperty]
-        private double mmPerPixel = 0.01;
+        private double mmPerPixel = 0.00225;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -361,7 +361,7 @@ namespace CameraModule
         [ObservableProperty]
         private int timeOut = 2000;
 
-        private uint triggerPulseWidth = 50;
+        private uint triggerPulseWidth = 10;
 
         /// <summary>
         /// 2024.7.23 李焕彬

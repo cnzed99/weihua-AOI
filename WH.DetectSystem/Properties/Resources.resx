@@ -97,22 +97,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="手动调试" xml:space="preserve">
-    <value>手动调试</value>
+  <data name="正在加载通讯配置" xml:space="preserve">
+    <value>正在加载通讯配置...</value>
   </data>
-  <data name="定时触发相机" xml:space="preserve">
-    <value>定时触发相机</value>
+  <data name="正在加载相机配置" xml:space="preserve">
+    <value>正在加载相机配置...</value>
   </data>
-  <data name="触发间隔" xml:space="preserve">
-    <value>触发间隔(ms)</value>
+  <data name="通讯连接失败" xml:space="preserve">
+    <value>连接通讯失败，请检查参数表！</value>
   </data>
-  <data name="Proj" xml:space="preserve">
-    <value>制程：</value>
+  <data name="相机连接失败" xml:space="preserve">
+    <value>读取相机参数发生异常,请检查参数表是否损坏!</value>
   </data>
-  <data name="Cam" xml:space="preserve">
-    <value>相机：</value>
+  <data name="正在打开" xml:space="preserve">
+    <value>正在打开。。。</value>
   </data>
-  <data name="Serial" xml:space="preserve">
-    <value>相机序列号：</value>
+  <data name="正在更新项目列表" xml:space="preserve">
+    <value>正在更新项目列表。。。</value>
+  </data>
+  <data name="帮助文档打开失败" xml:space="preserve">
+    <value>打开失败，权限不够、托管服务未安装或缺少帮助文档</value>
   </data>
 </root>

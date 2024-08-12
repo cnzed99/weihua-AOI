@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace 断面毛刺检测软件.Views.TimeTriggerTest {
+namespace WH.DetectSystem.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace 断面毛刺检测软件.Views.TimeTriggerTest {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class TimeTriggerTestResources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TimeTriggerTestResources() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace 断面毛刺检测软件.Views.TimeTriggerTest {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("断面毛刺检测软件.Views.TimeTriggerTest.TimeTriggerTestResources", typeof(TimeTriggerTestResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WH.DetectSystem.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,56 +61,65 @@ namespace 断面毛刺检测软件.Views.TimeTriggerTest {
         }
         
         /// <summary>
-        ///   查找类似 相机： 的本地化字符串。
+        ///   查找类似 打开失败，权限不够、托管服务未安装或缺少帮助文档 的本地化字符串。
         /// </summary>
-        internal static string Cam {
+        internal static string 帮助文档打开失败 {
             get {
-                return ResourceManager.GetString("Cam", resourceCulture);
+                return ResourceManager.GetString("帮助文档打开失败", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 制程： 的本地化字符串。
+        ///   查找类似 正在加载相机配置... 的本地化字符串。
         /// </summary>
-        internal static string Proj {
+        internal static string 正在加载相机配置 {
             get {
-                return ResourceManager.GetString("Proj", resourceCulture);
+                return ResourceManager.GetString("正在加载相机配置", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 相机序列号： 的本地化字符串。
+        ///   查找类似 正在加载通讯配置... 的本地化字符串。
         /// </summary>
-        internal static string Serial {
+        internal static string 正在加载通讯配置 {
             get {
-                return ResourceManager.GetString("Serial", resourceCulture);
+                return ResourceManager.GetString("正在加载通讯配置", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 定时触发相机 的本地化字符串。
+        ///   查找类似 正在打开。。。 的本地化字符串。
         /// </summary>
-        internal static string 定时触发相机 {
+        internal static string 正在打开 {
             get {
-                return ResourceManager.GetString("定时触发相机", resourceCulture);
+                return ResourceManager.GetString("正在打开", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 手动调试 的本地化字符串。
+        ///   查找类似 正在更新项目列表。。。 的本地化字符串。
         /// </summary>
-        internal static string 手动调试 {
+        internal static string 正在更新项目列表 {
             get {
-                return ResourceManager.GetString("手动调试", resourceCulture);
+                return ResourceManager.GetString("正在更新项目列表", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 触发间隔(ms) 的本地化字符串。
+        ///   查找类似 读取相机参数发生异常,请检查参数表是否损坏! 的本地化字符串。
         /// </summary>
-        internal static string 触发间隔 {
+        internal static string 相机连接失败 {
             get {
-                return ResourceManager.GetString("触发间隔", resourceCulture);
+                return ResourceManager.GetString("相机连接失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 连接通讯失败，请检查参数表！ 的本地化字符串。
+        /// </summary>
+        internal static string 通讯连接失败 {
+            get {
+                return ResourceManager.GetString("通讯连接失败", resourceCulture);
             }
         }
     }

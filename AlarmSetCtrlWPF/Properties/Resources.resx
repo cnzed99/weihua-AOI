@@ -174,4 +174,7 @@
   <data name="pcs" xml:space="preserve">
     <value>片中</value>
   </data>
+  <data name="In" xml:space="preserve">
+    <value>内</value>
+  </data>
 </root>

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace WH.Entity.CommonLib
 {
@@ -32,7 +33,19 @@ namespace WH.Entity.CommonLib
         /// 2024.7.4 李焕彬
         /// 颜色画刷
         /// </summary>
+        [JsonIgnore]
         public Brush Brush { get; set; }
+
+        public Color Color
+        {
+            get => Brush != null ? ((SolidColorBrush)Brush).Color : Brushes.AliceBlue.Color;
+            set
+            {
+                Brush = CBrushPro
+                    .s_Instance.KnownColors.FirstOrDefault(o => o.Color == value)
+                    ?.Brush;
+            }
+        }
 
         /// <summary>
         /// 2024.7.4 李焕彬

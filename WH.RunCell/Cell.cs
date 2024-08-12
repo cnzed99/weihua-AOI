@@ -268,12 +268,6 @@ namespace WH.RunCell
         }
 
         /// <summary>
-        /// 2024.7.29 ¿Óª¿±Ú
-        /// ΩÿÕº
-        /// </summary>
-        public BitmapSource DumpImage { get; set; }
-
-        /// <summary>
         /// 2024.8.6 ¿Óª¿±Ú
         /// ±‡¬Î∆˜Œª÷√
         /// </summary>
@@ -349,6 +343,7 @@ namespace WH.RunCell
             cell.ProductIndex = this.ProductIndex;
             cell.AlgoriDetectResult = this.AlgoriDetectResult;
             cell.EncoderPos = this.EncoderPos;
+            cell.MaociTestOut = (CMaociTest)this.MaociTestOut.Clone();
             return cell;
         }
 

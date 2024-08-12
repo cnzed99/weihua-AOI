@@ -104,7 +104,7 @@ namespace WH.RecipeCellRootBase
             //{
             //    detection.Region = this.Region.Clone();
             //}
-            //detection.DetectLog = new StringBuilder(this.DetectLog.ToString());
+            detection.DetectLog = new StringBuilder(this.DetectLog.ToString());
             //if (this.UnionedRegion != null)
             //{
             //    detection.UnionedRegion = this.UnionedRegion.Clone();
@@ -218,67 +218,77 @@ namespace WH.RecipeCellRootBase
 
         /// <summary>
         /// 2024.7.23 李焕彬
-        /// 转BitmapSource方法
-        /// </summary>
-        /// <returns>BitmapSource</returns>
-        public BitmapSource ToBitmapSource()
-        {
-            BitmapSource bitmapSource = BitmapSource.Create(
-                ImageWidth,
-                ImageHeight,
-                96,
-                96,
-                PixelFormat,
-                Palette,
-                ImageData,
-                ImageSize,
-                StrideWidth
-            );
-            bitmapSource.Freeze();
-            return bitmapSource;
-        }
-
-        /// <summary>
-        /// 2024.7.23 李焕彬
         /// 图像宽度
         /// </summary>
-        public int ImageWidth { get; set; }
+        public int ImageWidth { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像高度
         /// </summary>
-        public int ImageHeight { get; set; }
+        public int ImageHeight { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像数据
         /// </summary>
-        public IntPtr ImageData { get; set; }
+        public IntPtr ImageData { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像行宽
         /// </summary>
-        public int StrideWidth { get; set; }
+        public int StrideWidth { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像类型
         /// </summary>
-        public PixelFormat PixelFormat { get; set; }
+        public PixelFormat PixelFormat { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像色表
         /// </summary>
-        public BitmapPalette Palette { get; set; }
+        public BitmapPalette Palette { get; }
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 图像大小
         /// </summary>
-        public int ImageSize { get; set; }
+        public int ImageSize { get; }
+
+        /// <summary>
+        /// 2024.8.9 李焕彬
+        /// bitmapSource
+        /// </summary>
+        private BitmapSource bitmapSource;
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 转BitmapSource方法
+        /// </summary>
+        /// <returns>BitmapSource</returns>
+        public BitmapSource ToBitmapSource()
+        {
+            if (this.bitmapSource == null)
+            {
+                this.bitmapSource = BitmapSource.Create(
+                    ImageWidth,
+                    ImageHeight,
+                    96,
+                    96,
+                    PixelFormat,
+                    Palette,
+                    ImageData,
+                    ImageSize,
+                    StrideWidth
+                );
+                this.bitmapSource.Freeze();
+            }
+
+            return this.bitmapSource;
+        }
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -299,8 +309,17 @@ namespace WH.RecipeCellRootBase
             byte[] data = new byte[ImageSize];
             Marshal.Copy(ImageData, data, 0, ImageSize);
             Marshal.Copy(data, 0, ptrDst, ImageSize);
+            CImage image = new CImage(
+                ImageWidth,
+                ImageHeight,
+                StrideWidth,
+                ptrDst,
+                PixelFormat,
+                Palette
+            );
+            image.bitmapSource = bitmapSource;
 
-            return new CImage(ImageWidth, ImageHeight, StrideWidth, ptrDst, PixelFormat, Palette);
+            return image;
         }
     }
 }

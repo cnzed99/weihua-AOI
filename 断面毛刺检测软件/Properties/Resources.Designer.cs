@@ -314,6 +314,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 新建工程失败！ 的本地化字符串。
+        /// </summary>
+        public static string NewFailed {
+            get {
+                return ResourceManager.GetString("NewFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 新建工程 的本地化字符串。
         /// </summary>
         public static string NewProj {

@@ -126,4 +126,13 @@
   <data name="触发间隔" xml:space="preserve">
     <value>Interval</value>
   </data>
+  <data name="Proj" xml:space="preserve">
+    <value>Project:</value>
+  </data>
+  <data name="Cam" xml:space="preserve">
+    <value>Cam:</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>Serial:</value>
+  </data>
 </root>

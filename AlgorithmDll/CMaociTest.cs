@@ -387,7 +387,7 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// 毛刺检测算法接口
     /// </summary>
-    public class CMaociTest
+    public class CMaociTest : ICloneable
     {
         #region 获取区域边缘点集合
         /// <summary>
@@ -666,6 +666,19 @@ namespace AlgorithmDll
             AlgorithmOut[CAlgorithmOut.c_SpThick][CAlgorithmOut.c_DeThick].Region = ThickRegions;
 
             return result;
+        }
+
+        public object Clone()
+        {
+            CMaociTest copy = new CMaociTest();
+            copy.DarkTopRegion = DarkTopRegion.ToList();
+            copy.DarkBotRegion = DarkBotRegion.ToList();
+            copy.LightTopRegion = LightTopRegion.ToList();
+            copy.LightBotRegion = LightBotRegion.ToList();
+            copy.MaociRegions = MaociRegions.ToList();
+            copy.ThickRegions = ThickRegions.ToList();
+
+            return copy;
         }
     }
 }

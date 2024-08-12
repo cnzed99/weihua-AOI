@@ -291,4 +291,7 @@
   <data name="StopLineComp" xml:space="preserve">
     <value>关闭线性比较器测试</value>
   </data>
+  <data name="TriggerInterval" xml:space="preserve">
+    <value>比较器触发间隔</value>
+  </data>
 </root>

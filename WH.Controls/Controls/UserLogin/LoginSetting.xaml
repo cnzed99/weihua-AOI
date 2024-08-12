@@ -11,9 +11,9 @@
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
     Name="window"
     Title="{Binding [UserManagement], Source={x:Static prop:LangManager.instance}}"
-    Width="320"
-    Height="425"
-    d:DataContext="{d:DesignInstance Type=local:SettingViewModel}"
+    Width="400"
+    Height="380"
+    d:DataContext="{d:DesignInstance Type=local:CLoginViewModel}"
     AllowsTransparency="True"
     Background="{x:Null}"
     MouseLeftButtonDown="WinMove_LeftButtonDown"
@@ -48,233 +48,159 @@
             <BeginStoryboard x:Name="OnMouseLeave1_BeginStoryboard" Storyboard="{StaticResource OnMouseLeave1}" />
         </EventTrigger>
     </Window.Triggers>
-
-
-
     <Grid>
 
         <Grid.Background>
             <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/欢迎页.png" />
         </Grid.Background>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5.5*" />
-
-        </Grid.ColumnDefinitions>
-        <Border
-            Margin="10,30,8,0"
-            VerticalAlignment="Center"
-            BorderBrush="DarkCyan"
-            BorderThickness="0,0,0,1" />
         <TextBlock
-            Width="200"
-            Height="15"
-            Margin="20,210,0,0"
+            Grid.Row="0"
+            Margin="0,30"
+            HorizontalAlignment="Center"
             VerticalAlignment="Top"
+            FontSize="20"
+            Foreground="White"
+            Text="{Binding [UserManagement], Source={x:Static prop:LangManager.instance}}" />
+        <Button
+            x:Name="btn_Close"
+            Grid.Row="0"
+            Margin="0,10,15,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{x:Null}"
+            BorderBrush="{x:Null}"
+            Click="btn_Close_Click"
+            Content="✖"
+            Foreground="Cyan"
+            RenderTransformOrigin="0.5,0.5"
+            Style="{StaticResource CloseButton}">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+
+
+
+        <hc:UniformSpacingPanel
+            Margin="80,70,80,0"
+            Orientation="Vertical"
+            VerticalSpacing="5">
+
+            <hc:UniformSpacingPanel Orientation="Vertical" VerticalSpacing="5">
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
+                    <ComboBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        ItemsSource="{Binding ItemList}"
+                        SelectedItem="{Binding SelectItem}"
+                        Style="{StaticResource comboxStyle}" />
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
+                    <hc:PasswordBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        Foreground="White"
+                        IsSafeEnabled="False"
+                        ShowEyeButton="True"
+                        UnsafePassword="{Binding LoginPerson.PassWord}" />
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [Permission], Source={x:Static prop:LangManager.instance}}" />
+                    <ComboBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        ItemsSource="{Binding LoginPerson.PrivileageLevel, Converter={StaticResource EnumProviderConverter}}"
+                        SelectedItem="{Binding LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}"
+                        Style="{StaticResource comboxStyle}" />
+                </DockPanel>
+                <UniformGrid Margin="22,0,0,0" Columns="2">
+                    <Button
+                        Name="btn_ChangeButton"
+                        Width="100"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        Command="{Binding ChangeButtonCommand}"
+                        Content="{Binding [Adjust], Source={x:Static prop:LangManager.instance}}" />
+                    <Button
+                        Name="btn_DeleteButton"
+                        Width="100"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        Command="{Binding DeleteButtonCommand}"
+                        Content="{Binding [Delete], Source={x:Static prop:LangManager.instance}}" />
+                </UniformGrid>
+
+                <Border BorderBrush="DarkCyan" BorderThickness="0,0,0,1" />
+            </hc:UniformSpacingPanel>
+
+            <hc:UniformSpacingPanel Orientation="Vertical" VerticalSpacing="5">
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
+                    <hc:TextBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        hc:InfoElement.ShowClearButton="True"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        Foreground="White"
+                        Style="{StaticResource TextBoxPlusBaseStyle}"
+                        Text="{Binding AddUserName}" />
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
+                    <hc:TextBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        hc:InfoElement.ShowClearButton="True"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        Foreground="White"
+                        Style="{StaticResource TextBoxPlusBaseStyle}"
+                        Text="{Binding AddPassword}" />
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock Foreground="White" Text="{Binding [Permission], Source={x:Static prop:LangManager.instance}}" />
+                    <ComboBox
+                        Margin="5,0"
+                        HorizontalContentAlignment="Center"
+                        Background="#CC135D7F"
+                        BorderBrush="Cyan"
+                        ItemsSource="{Binding PrivileageList, Converter={StaticResource Enums2StringsConverter}}"
+                        SelectedItem="{Binding AddPrivlege, Converter={StaticResource StringAttrEnumConverter}}"
+                        Style="{StaticResource comboxStyle}" />
+                </DockPanel>
+                <Button
+                    Name="btn_register"
+                    Width="200"
+                    Margin="22,0,0,0"
+                    Background="#CC135D7F"
+                    BorderBrush="Cyan"
+                    Command="{Binding AddButtonCommand}"
+                    Content="{Binding [Register], Source={x:Static prop:LangManager.instance}}" />
+            </hc:UniformSpacingPanel>
+
+
+        </hc:UniformSpacingPanel>
+        <TextBlock
+            Margin="0,0,0,5"
+            VerticalAlignment="Bottom"
             Foreground="DarkGray"
             Text="{Binding ErrorMsg}" />
-
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="5*" />
-                <RowDefinition Height="5*" />
-            </Grid.RowDefinitions>
-
-            <TextBlock
-                Grid.Row="0"
-                Height="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                FontSize="18"
-                Foreground="LightGray"
-                Text="{Binding [UserManagement], Source={x:Static prop:LangManager.instance}}" />
-
-            <Button
-                x:Name="btn_Close"
-                Grid.Row="0"
-                Margin="0,6,10,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Background="{x:Null}"
-                BorderBrush="{x:Null}"
-                Click="btn_Close_Click"
-                Content="✖"
-                Foreground="#33FFFFFF"
-                RenderTransformOrigin="0.5,0.5"
-                Style="{StaticResource CloseButton}">
-                <Button.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Button.RenderTransform>
-            </Button>
-
-            <ComboBox
-                Grid.Row="0"
-                Width="180"
-                Height="25"
-                Margin="85,40,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                FontSize="14"
-                ItemsSource="{Binding ItemList}"
-                SelectedItem="{Binding SelectItem}"
-                Style="{StaticResource comboxStyle}" />
-            <hc:PasswordBox
-                Grid.Row="0"
-                Width="180"
-                Height="25"
-                Margin="85,80,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                BorderBrush="DarkCyan"
-                FontSize="14"
-                IsSafeEnabled="False"
-                ShowEyeButton="True"
-                UnsafePassword="{Binding LoginPerson.PassWord}" />
-
-            <ComboBox
-                Grid.Row="0"
-                Width="180"
-                Height="25"
-                Margin="85,120,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                FontSize="14"
-                ItemsSource="{Binding LoginPerson.PrivileageLevel, Converter={StaticResource EnumProviderConverter}}"
-                SelectedItem="{Binding LoginPerson.PrivileageLevel, Converter={StaticResource StringAttrEnumConverter}}"
-                Style="{StaticResource comboxStyle}" />
-            <Button
-                Name="btn_ChangeButton"
-                Grid.Row="0"
-                Width="75"
-                Height="30"
-                Margin="60,170,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Command="{Binding ChangeButtonCommand}"
-                Content="{Binding [Adjust], Source={x:Static prop:LangManager.instance}}" />
-            <Button
-                Name="btn_DeleteButton"
-                Grid.Row="0"
-                Width="75"
-                Height="30"
-                Margin="200,170,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Command="{Binding DeleteButtonCommand}"
-                Content="{Binding [Delete], Source={x:Static prop:LangManager.instance}}" />
-            <TextBlock
-                Grid.Row="0"
-                Width="64"
-                Height="17"
-                Margin="16,45,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
-            <TextBlock
-                Grid.Row="0"
-                Width="64"
-                Height="17"
-                Margin="16,87,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
-            <TextBlock
-                Grid.Row="0"
-                Width="64"
-                Height="18"
-                Margin="16,126,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Foreground="#43FFFFFF"
-                Text="{Binding [Permission], Source={x:Static prop:LangManager.instance}}" />
-
-            <TextBox
-                Grid.Row="1"
-                Width="180"
-                Height="25"
-                Margin="85,35,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="Transparent"
-                BorderBrush="DarkCyan"
-                FontSize="14"
-                Foreground="#FFFFFFFF"
-                Text="{Binding AddUserName}" />
-            <TextBox
-                Grid.Row="1"
-                Width="180"
-                Height="25"
-                Margin="85,75,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="Transparent"
-                BorderBrush="DarkCyan"
-                FontSize="14"
-                Foreground="#FFFFFFFF"
-                Text="{Binding AddPassword}" />
-            <ComboBox
-                Grid.Row="1"
-                Width="180"
-                Height="25"
-                Margin="85,115,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                HorizontalContentAlignment="Center"
-                FontSize="14"
-                ItemsSource="{Binding PrivileageList, Converter={StaticResource Enums2StringsConverter}}"
-                SelectedItem="{Binding AddPrivlege, Converter={StaticResource StringAttrEnumConverter}}"
-                Style="{StaticResource comboxStyle}" />
-            <TextBlock
-                Grid.Row="1"
-                Width="64"
-                Height="18"
-                Margin="16,40,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Foreground="#43FFFFFF"
-                Text="{Binding [UserName], Source={x:Static prop:LangManager.instance}}" />
-            <TextBlock
-                Grid.Row="1"
-                Width="64"
-                Height="14"
-                Margin="16,84,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Foreground="#43FFFFFF"
-                Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
-            <TextBlock
-                Grid.Row="1"
-                Width="64"
-                Height="14"
-                Margin="16,122,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Foreground="#43FFFFFF"
-                Text="{Binding [Permission], Source={x:Static prop:LangManager.instance}}" />
-            <Button
-                Name="btn_register"
-                Grid.Row="1"
-                Width="150"
-                Height="30"
-                Margin="20,0,0,20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Command="{Binding AddButtonCommand}"
-                Content="{Binding [Register], Source={x:Static prop:LangManager.instance}}" />
-        </Grid>
-
     </Grid>
 
 

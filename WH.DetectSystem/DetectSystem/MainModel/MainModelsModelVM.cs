@@ -32,7 +32,6 @@ using SaveImageManage;
 using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
-using WH.DetectSystem.DetectSystem.SystemSet;
 using WH.DetectSystem.Models;
 using WH.Entity;
 using WH.Entity.CommonLib;
@@ -174,7 +173,7 @@ namespace WH.DetectSystem.ViewModels
                 #endregion
 
                 #region 读取所有通讯参数文件并连接通讯
-                progress.Report("Loading comunication configuration...");
+                progress.Report(Properties.Resources.正在加载通讯配置);
                 try
                 {
                     if (File.Exists(CCommunicationManagement.s_CommPath))
@@ -193,17 +192,17 @@ namespace WH.DetectSystem.ViewModels
                     );
                     if (!CommManagement.OpenAllComm())
                     {
-                        Growl.Error("连接通讯失败，请检查参数表！");
+                        Growl.Error(Properties.Resources.通讯连接失败);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error("读取通讯参数发生异常,请检查参数表是否损坏:\r\n" + ex.Message);
+                    Growl.Error(Properties.Resources.通讯连接失败 + "\r\n" + ex.Message);
                 }
                 #endregion
 
                 #region 读取所有相机参数文件并连接相机
-                progress.Report("loading camera configuration...");
+                progress.Report(Properties.Resources.正在加载相机配置);
                 try
                 {
                     if (File.Exists(CCameraManagement.s_CamPath))
@@ -223,7 +222,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    Growl.Error("读取相机参数发生异常,请检查参数表是否损坏:\r\n" + ex.Message);
+                    Growl.Error(Properties.Resources.相机连接失败 + "\r\n" + ex.Message);
                 }
                 #endregion
             });
@@ -244,7 +243,7 @@ namespace WH.DetectSystem.ViewModels
             #region 打开工程
             try
             {
-                progress.Report("正在打开。。。");
+                progress.Report(Properties.Resources.正在打开);
                 ProjPath = header;
                 WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlgorParamConfig);
                 WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociQualityConfig);
@@ -265,7 +264,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
-                progress.Report("正在更新项目列表。。。");
+                progress.Report(Properties.Resources.正在更新项目列表);
                 for (int i = SystemSettings.RecentProjs.Count - 1; i >= 0; i--)
                 {
                     if (!File.Exists(SystemSettings.RecentProjs[i]))
@@ -325,7 +324,7 @@ namespace WH.DetectSystem.ViewModels
             }
             catch (Exception)
             {
-                MessageBox.Show("打开失败，权限不够、托管服务未安装或缺少帮助文档");
+                MessageBox.Show(Properties.Resources.帮助文档打开失败);
             }
         }
         #endregion

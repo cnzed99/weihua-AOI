@@ -84,7 +84,7 @@ namespace MotionControl
         /// 2024.7.9 李焕彬
         /// 相机序列号
         /// </summary>
-        private string CameraSerial { get; set; }
+        private string CameraSerial { get; set; } = "";
 
         /// <summary>
         /// 20240725 TCG
@@ -216,7 +216,7 @@ namespace MotionControl
         /// </summary>
         private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(10)
         {
-            FullMode = BoundedChannelFullMode.DropWrite
+            FullMode = BoundedChannelFullMode.Wait
         };
 
         /// <summary>

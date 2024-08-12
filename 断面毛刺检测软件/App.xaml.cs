@@ -80,8 +80,6 @@ namespace 断面毛刺检测软件
 
                 ShutdownMode = ShutdownMode.OnMainWindowClose;
                 GlobalData.Init();
-                ConfigHelper.Instance.SetLang(GlobalData.Config.Lang);
-                //LangProvider.Culture = new CultureInfo(GlobalData.Config.Lang);
 
                 if (GlobalData.Config.Skin != SkinType.Dark) //默认暗色系
                 {
@@ -286,8 +284,6 @@ namespace 断面毛刺检测软件
     {
         public static readonly string SavePath =
             $"{AppDomain.CurrentDomain.BaseDirectory}AppConfig.json";
-
-        public string Lang { get; set; } = "zh-cn";
 
         public SkinType Skin { get; set; }
     }

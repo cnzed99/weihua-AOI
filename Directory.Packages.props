@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac" Version="7.1.0" />
+    <PackageVersion Include="HandyControl.Lang.en" Version="3.5.1" />
     <PackageVersion Include="log4net" Version="2.0.17" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Web.Administration" Version="11.1.0" />
