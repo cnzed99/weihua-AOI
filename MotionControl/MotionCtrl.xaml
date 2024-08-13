@@ -305,7 +305,7 @@
                             hc:TitleElement.TitlePlacement="Left"
                             hc:TitleElement.TitleWidth="100"
                             IsEnabled="False"
-                            Text="{Binding FocusPos, StringFormat={}{0:F3}}" />
+                            Text="{Binding MotionConfig.FocusPos, StringFormat={}{0:F3}}" />
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="4"
