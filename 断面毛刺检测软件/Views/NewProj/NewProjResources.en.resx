@@ -127,7 +127,7 @@
     <value>Path：</value>
   </data>
   <data name="SelectPath" xml:space="preserve">
-    <value>Click and Select Path</value>
+    <value>Double Click and Select Path</value>
   </data>
   <data name="Sure" xml:space="preserve">
     <value>Sure</value>
@@ -137,5 +137,12 @@
   </data>
   <data name="Cam" xml:space="preserve">
     <value>Cam:</value>
+  </data>
+  <data name="Enterprojectname" xml:space="preserve">
+    <value>Enter project name</value>
+  </data>
+  <data name="SelectCam" xml:space="preserve">
+    <value>Select the camera serial number to which the project is bound
+</value>
   </data>
 </root>

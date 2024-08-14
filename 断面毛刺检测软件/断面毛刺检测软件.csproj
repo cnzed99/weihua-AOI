@@ -111,6 +111,7 @@
     <None Remove="Resources\图片\工具\离线测试\左播放.png" />
     <None Remove="Resources\图片\工具\离线测试\当前.png" />
     <None Remove="Resources\图片\工具\离线测试\循环.png" />
+    <None Remove="Resources\图片\工具\离线测试\执行一次.png" />
     <None Remove="Resources\图片\工具\离线测试\播放2.png" />
     <None Remove="Resources\图片\工具\离线测试\文件夹.png" />
     <None Remove="Resources\图片\工具\离线测试\暂停.png" />
@@ -257,6 +258,7 @@
     <Resource Include="Resources\图片\工具\离线测试\左播放.png" />
     <Resource Include="Resources\图片\工具\离线测试\当前.png" />
     <Resource Include="Resources\图片\工具\离线测试\循环.png" />
+    <Resource Include="Resources\图片\工具\离线测试\执行一次.png" />
     <Resource Include="Resources\图片\工具\离线测试\播放2.png" />
     <Resource Include="Resources\图片\工具\离线测试\文件夹.png" />
     <Resource Include="Resources\图片\工具\离线测试\暂停.png" />

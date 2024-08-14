@@ -619,6 +619,13 @@ namespace SDFilter
         [property: DisplayName("分选器")]
         [ObservableProperty]
         private ObservableCollection<SelectConfig> selectList;
+        /// <summary>
+        /// 2024.8.13 鲍赞宝
+        /// 是否启用过滤分选器
+        /// </summary>
+        [property: DisplayName("是否启用过滤分选器")]
+        [ObservableProperty]
+        private bool filterSelectEnable=true;
 
         /// <summary>
         /// 2024.7.4 李焕彬

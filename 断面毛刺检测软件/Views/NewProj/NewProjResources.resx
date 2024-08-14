@@ -127,7 +127,7 @@
     <value>路径：</value>
   </data>
   <data name="SelectPath" xml:space="preserve">
-    <value>点击选择路径</value>
+    <value>双击选择路径</value>
   </data>
   <data name="Sure" xml:space="preserve">
     <value>确认</value>
@@ -137,5 +137,11 @@
   </data>
   <data name="Cam" xml:space="preserve">
     <value>相机：</value>
+  </data>
+  <data name="Enterprojectname" xml:space="preserve">
+    <value>输入工程名称</value>
+  </data>
+  <data name="SelectCam" xml:space="preserve">
+    <value>选择工程绑定的相机序列号</value>
   </data>
 </root>

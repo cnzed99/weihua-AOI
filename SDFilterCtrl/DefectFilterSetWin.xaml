@@ -83,7 +83,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="650" />
+                                    <ColumnDefinition Width="690" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
@@ -320,7 +320,9 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="10" />
-                                            <ColumnDefinition Width="450" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="45" />
+                                            <ColumnDefinition Width="325" />
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="77" />
                                         </Grid.ColumnDefinitions>
@@ -340,8 +342,11 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
+                                        <CheckBox Content="启用" 
+                                                  Grid.Column="2" 
+                                                  IsChecked="{Binding FilterSelectEnable}"/>
                                         <ComboBox
-                                            Grid.Column="2"
+                                            Grid.Column="4"
                                             Width="180"
                                             Margin="2"
                                             ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}"
@@ -349,7 +354,7 @@
                                             Style="{StaticResource ComboBoxExtend}" />
                                         <Button
                                             Name="btn_DeleteFilter"
-                                            Grid.Column="3"
+                                            Grid.Column="5"
                                             Margin="5,0,5,0"
                                             HorizontalAlignment="Right"
                                             Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteFilterConfigCommand}"

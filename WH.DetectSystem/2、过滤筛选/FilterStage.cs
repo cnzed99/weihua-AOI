@@ -55,6 +55,10 @@ namespace WH.DetectSystem
                         foreach (var filter in de.FilterList) //过滤分选器
                         {
                             filter.Result = true;
+                            if (!filter.FilterSelectEnable)
+                            {
+                                continue;
+                            }
                             List<SRegion> detectRegion = AlgorithmOut[sp.Name][rp.Name].Region;
                             switch (filter.UnionMethod)
                             {
@@ -104,6 +108,8 @@ namespace WH.DetectSystem
                                 }
                                 filterOuts.AddRange(selRegion); //||
                             }
+                            bool once = false;
+                            List<SRegion> selRegionALL = new List<SRegion>();//所有分选的缺陷区域 add by bzb 20240813
                             foreach (var select in filter.SelectList) //分选
                             {
                                 List<SRegion> selRegion = filterOuts;
@@ -116,21 +122,28 @@ namespace WH.DetectSystem
                                     else
                                         bResult = selParam.Excute(selRegion, out selRegion); //&&
                                 }
-                                if (!bResult)
-                                    detection.regionOut = selRegion;
+                                //if (!bResult)
+                                //    detection.regionOut = selRegion;
                                 if (oneSelectParams != null)
                                     bResult = oneSelectParams.Excute(selRegion, out selRegion); //数量判断
                                 if (!bResult)
                                 {
-                                    detection.regionOut = selRegion;
-                                    detection.DetectLog.AppendLine(detection.DefectFilter.Name);
+                                    // detection.regionOut = selRegion;
+                                    selRegionALL.AddRange(selRegion);
+                                    if (!once)
+                                    {
+                                        detection.DetectLog.AppendLine(detection.DefectFilter.Name);
+                                        once = true;
+                                    }                                
                                     detection.DetectLog.AppendLine(
                                         $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
                                     );
                                     detection.Result = false;
-                                    break; //有一个分选不合格就跳出，不执行剩下的分选（||）
+                                   // break; //有一个分选不合格就跳出，不执行剩下的分选（||）
                                 }
                             }
+                            detection.regionOut = selRegionALL;
+
                             //有一个过滤分选器不合格就跳出，不执行剩下的过滤分选器（||）
                             if (!detection.Result)
                             {

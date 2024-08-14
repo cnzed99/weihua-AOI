@@ -79,6 +79,15 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
+        ///   查找类似 输入工程名称 的本地化字符串。
+        /// </summary>
+        internal static string Enterprojectname {
+            get {
+                return ResourceManager.GetString("Enterprojectname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 路径： 的本地化字符串。
         /// </summary>
         internal static string Path {
@@ -97,7 +106,16 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
-        ///   查找类似 点击选择路径 的本地化字符串。
+        ///   查找类似 选择工程绑定的相机序列号 的本地化字符串。
+        /// </summary>
+        internal static string SelectCam {
+            get {
+                return ResourceManager.GetString("SelectCam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 双击选择路径 的本地化字符串。
         /// </summary>
         internal static string SelectPath {
             get {

@@ -73,8 +73,12 @@
                         Name="ucdpe_DayShift"
                         hc:TitleElement.Title="{Binding [Day], Source={x:Static local:CLang.SystemSettings}}"
                         DockPanel.Dock="Left"
-                        SelectedTime="{Binding DayShift}"
-                        TimeFormat="HH:mm" />
+                        SelectedTime="{Binding DayShift}"                       
+                        TimeFormat="HH:mm">
+                        <hc:TimePicker.Clock>
+                            <hc:ListClock />
+                        </hc:TimePicker.Clock>
+                    </hc:TimePicker>
                     <hc:ElementGroup>
                         <RadioButton
                             x:Name="ucrb_EveryShift"
@@ -98,7 +102,12 @@
                         Name="ucdpe_NightShift"
                         hc:TitleElement.Title="{Binding [Night], Source={x:Static local:CLang.SystemSettings}}"
                         SelectedTime="{Binding NightShift}"
-                        TimeFormat="HH:mm" />
+                        TimeFormat="HH:mm" >
+                        <hc:TimePicker.Clock>
+                        <hc:ListClock />
+                        </hc:TimePicker.Clock>
+                    </hc:TimePicker>
+
                     <TextBox
                         hc:TitleElement.Title="{Binding [NextClearTime], Source={x:Static local:CLang.SystemSettings}}"
                         hc:TitleElement.TitlePlacement="Left"

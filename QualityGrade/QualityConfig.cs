@@ -30,7 +30,11 @@ namespace QualityGrade
         public CQualityConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
-            Qualities = new ObservableCollection<Quality>() { new Quality("G1") { Priority = 0 } };
+            Qualities = new ObservableCollection<Quality>()
+            {
+                new Quality("G1") { Priority = 0},
+                new Quality("G2") { Priority = 1}
+            };
             //参数修改
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }

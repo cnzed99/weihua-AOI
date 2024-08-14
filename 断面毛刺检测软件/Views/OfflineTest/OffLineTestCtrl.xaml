@@ -69,7 +69,18 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding [RunOnce], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
+                            </Button.Content>
+                        </Button>
 
+                        <Button x:Name="BtnRunAgain" Click="BtnRunAgain_Click">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/图片/工具/离线测试/执行一次.png" />
+                                    <TextBlock
+                                 Margin="5,0"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding [RunAgain], Source={x:Static local:CLang.OffLineTest}}" />
+                                </StackPanel>
                             </Button.Content>
                         </Button>
 
