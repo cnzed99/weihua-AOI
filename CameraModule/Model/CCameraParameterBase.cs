@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HandyControl.Controls;
 using Newtonsoft.Json;
 using WH.Controls;
-using WH.Controls.Controls.PropertyGridLang;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
+
 
 namespace CameraModule
 {
@@ -32,8 +35,8 @@ namespace CameraModule
         /// 是否已连接
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("11.是否已连接")]
-        [Description("11.是否已连接")]
+        [DisplayName("01.是否已连接")]
+        [Description("01.是否已连接")]
         [JsonIgnore]
         public bool Connected
         {
@@ -67,20 +70,66 @@ namespace CameraModule
         /// 2024.7.23 李焕彬
         /// 相机序列号
         /// </summary>
-        [property: Category("通用参数")]
-        [property: DisplayName("12.相机序列号")]
-        [property: Description("12.相机序列号")]
-        [property: ReadOnly(true)]
-        [ObservableProperty]
+
+
+
         private string serialNumber = "";
+        [property: Category("通用参数")]
+        [property: DisplayName("02.相机序列号")]
+        [property: Description("02.相机序列号")]
+        [property: Editor(typeof(CComboxEditorPro), typeof(CComboxEditorPro))]
+        // [ObservableProperty]
+        public string SerialNumber
+        {
+            get { return serialNumber; }
+            set
+            {
+                string old = serialNumber;
+                SetProperty(ref serialNumber, value);
+                if (old != serialNumber)
+                {
+                    try
+                    {
+                        if (CCameraManagement.CameraDict.ContainsKey(old))
+                        {
+                            if (!CCameraManagement.CameraDict.Keys.Contains(serialNumber) && !CCameraManagement.CamParamDict.Keys.Contains(serialNumber))
+                            {
+                                CCameraBase Camtemp = CCameraManagement.CameraDict[old];
+                                //Camtemp.SerialNumber = serialNumber;
+                                CCameraParameterBase paramtemp = CCameraManagement.CamParamDict[old];
+
+                                CCameraManagement.CameraDict.Add(serialNumber, Camtemp);
+                                CCameraManagement.CamParamDict.Add(serialNumber, paramtemp);
+
+                                CCameraManagement.CameraDict[old].CloseCamera();
+
+                                CCameraManagement.CameraDict.Remove(old);
+                                CCameraManagement.CamParamDict.Remove(old);
+                                var cam = CCameraManagement.CameraDict[serialNumber];
+                                if (!cam.Connected)
+                                {
+                                    cam.InitializeCamera();
+                                }
+                            }
+
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                }
+            }
+        }
+
 
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 相机品牌
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("13.相机品牌")]
-        [property: Description("13.相机品牌")]
+        [property: DisplayName("03.相机品牌")]
+        [property: Description("03.相机品牌")]
         [property: ReadOnly(true)]
         [ObservableProperty]
         private string cameraSupplier;
@@ -90,8 +139,8 @@ namespace CameraModule
         /// 启用本相机
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("14.启用本相机")]
-        [property: Description("14.启用本相机")]
+        [property: DisplayName("04.启用本相机")]
+        [property: Description("04.启用本相机")]
         [ObservableProperty]
         private bool enable = true;
 
@@ -100,8 +149,8 @@ namespace CameraModule
         /// 相机名
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("15.相机名")]
-        [property: Description("15.相机名")]
+        [property: DisplayName("05.相机名")]
+        [property: Description("05.相机名")]
         [ObservableProperty]
         private string name = "工位";
 
@@ -110,8 +159,8 @@ namespace CameraModule
         /// 相机类型
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("16.相机类型")]
-        [property: Description("16.相机类型")]
+        [property: DisplayName("06.相机类型")]
+        [property: Description("06.相机类型")]
         [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
         [property: ReadOnly(true)]
         [ObservableProperty]
@@ -122,8 +171,8 @@ namespace CameraModule
         /// 图片旋转
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("17.图片旋转")]
-        [property: Description("17.图片旋转")]
+        [property: DisplayName("07.图片旋转")]
+        [property: Description("07.图片旋转")]
         [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
         [ObservableProperty]
         private EMIMAGEROTATE imageRotate;
@@ -133,8 +182,8 @@ namespace CameraModule
         /// 图像宽度(像素)
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("18.图像宽度(像素)")]
-        [property: Description("18.图像宽度(像素)")]
+        [property: DisplayName("08.图像宽度(像素)")]
+        [property: Description("08.图像宽度(像素)")]
         [property: ReadOnly(true)]
         [ObservableProperty]
         private int imageWidth;
@@ -144,8 +193,8 @@ namespace CameraModule
         /// 图像高度(像素)
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("19.图像高度(像素)")]
-        [property: Description("19.图像高度(像素)")]
+        [property: DisplayName("09.图像高度(像素)")]
+        [property: Description("09.图像高度(像素)")]
         [property: ReadOnly(true)]
         [ObservableProperty]
         private int imageHeight;
@@ -157,8 +206,8 @@ namespace CameraModule
         /// 曝光时间(us)
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("20.曝光时间(us)")]
-        [Description("20.曝光时间(us)")]
+        [DisplayName("10.曝光时间(us)")]
+        [Description("10.曝光时间(us)")]
         public uint ExposureTime
         {
             get { return exposureTime; }
@@ -197,8 +246,8 @@ namespace CameraModule
         /// 增益
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("21.增益")]
-        [Description("21.增益")]
+        [DisplayName("11.增益")]
+        [Description("11.增益")]
         public float Gain
         {
             get { return gain; }
@@ -237,8 +286,8 @@ namespace CameraModule
         /// 触发模式
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("22.触发模式")]
-        [property: Description("22.触发模式")]
+        [property: DisplayName("12.触发模式")]
+        [property: Description("12.触发模式")]
         [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
         public EMTRIGGERMODE TriggerMode
         {
@@ -276,8 +325,8 @@ namespace CameraModule
         /// 触发延时
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("23.触发延时")]
-        [Description("23.触发延时")]
+        [DisplayName("13.触发延时")]
+        [Description("13.触发延时")]
         public uint TriggerDelay
         {
             get { return triggerDelay; }
@@ -314,8 +363,8 @@ namespace CameraModule
         /// 伽马值
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("24.伽马值")]
-        [Description("24.伽马值")]
+        [DisplayName("14.伽马值")]
+        [Description("14.伽马值")]
         public float Gamma
         {
             get { return gamma; }
@@ -346,8 +395,8 @@ namespace CameraModule
         /// 像素当量(mm)
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("25.像素当量(mm)")]
-        [property: Description("25.像素当量(mm)")]
+        [property: DisplayName("15.像素当量(mm)")]
+        [property: Description("15.像素当量(mm)")]
         [ObservableProperty]
         private double mmPerPixel = 0.00225;
 
@@ -356,8 +405,8 @@ namespace CameraModule
         /// 单帧超时时间(ms)
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("26.单帧超时时间(ms)")]
-        [property: Description("26.单帧超时时间(ms)")]
+        [property: DisplayName("16.单帧超时时间(ms)")]
+        [property: Description("16.单帧超时时间(ms)")]
         [ObservableProperty]
         private int timeOut = 2000;
 
@@ -368,8 +417,8 @@ namespace CameraModule
         /// 触发脉冲宽度
         /// </summary>
         [Category("通用参数")]
-        [DisplayName("27.触发脉冲宽度")]
-        [Description("27.触发脉冲宽度")]
+        [DisplayName("17.触发脉冲宽度")]
+        [Description("17.触发脉冲宽度")]
         public uint TriggerPulseWidth
         {
             get { return triggerPulseWidth; }
@@ -498,4 +547,68 @@ namespace CameraModule
         [EnumString("硬触发", "HARDWARE")]
         EMTRIGGERHARDWARE,
     }
+
+
+   
+    public class CComboxEditorPro : PropertyEditorBase
+    {
+        PropertyItem _propertyItem;
+
+        HandyControl.Controls.ComboBox comboBox;
+        public override FrameworkElement CreateElement(PropertyItem propertyItem)
+        {
+            _propertyItem = propertyItem;
+            var proptemp = propertyItem.Value as CCameraParameterBase;
+            if (proptemp != null)
+            {
+                comboBox = new HandyControl.Controls.ComboBox();
+                comboBox.ItemsSource = new List<string>() { proptemp?.SerialNumber };
+                comboBox.Width = 293;
+                comboBox.Margin = new Thickness(-120, 0, 0, 0);
+                comboBox.DropDownOpened += ComboBox_DropDownOpened;
+                comboBox.VerticalAlignment = VerticalAlignment.Bottom;
+                comboBox.HorizontalAlignment = HorizontalAlignment.Left;
+
+                comboBox.SetBinding(HandyControl.Controls.ComboBox.SelectedItemProperty,
+                    new Binding("SerialNumber") { Mode = BindingMode.TwoWay, Source = propertyItem });
+            }
+            return comboBox;
+        }
+
+        public override DependencyProperty GetDependencyProperty() =>
+            HandyControl.Controls.ComboBox.SelectedItemProperty;
+
+        private void ComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            List<string> camlist = new List<string>();
+            if (_propertyItem!=null)
+            {
+                CCameraParameterBase cam = _propertyItem.Value as CCameraParameterBase;
+                if (cam != null)
+                {
+                    string suppli = cam.CameraSupplier;
+                    var camsupplis = CCameraManagement.CameraHelpers.Where(c => c.Key == suppli);
+
+                    foreach (var camFunc in camsupplis)
+                    {
+                        try
+                        {
+                            List<WHCameraInfo> whinfolist = camFunc.Value.EnumCamrea();
+                            for (int i = 0; i < whinfolist.Count; i++)
+                            {
+                                camlist.Add(whinfolist[i].SerialNumber);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+                comboBox.ItemsSource = camlist;
+            }
+           
+        }
+    }
+
+
 }

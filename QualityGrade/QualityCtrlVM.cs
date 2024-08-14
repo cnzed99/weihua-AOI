@@ -85,8 +85,13 @@ namespace QualityGrade
         [RelayCommand]
         public void Add()
         {
-            if (QualitySet != null)
+            if (QualitySet != null&& !string.IsNullOrWhiteSpace(QualitySet.Name))
             {
+                if (QualitySet.ShowColor==null)
+                {
+                    Growl.Info(Properties.Resource1.ShowColorStr);
+                    return;
+                }
                 if (QualityConfig.Qualities.ToList().Exists(o => o.Name == QualitySet.Name))
                 {
                     Growl.Error(Properties.Resource1.NameErrorInfo);
@@ -102,6 +107,10 @@ namespace QualityGrade
                     qua.token.ProGuid = QualityConfig.token.ProGuid;
                     //WeakReferenceMessenger.Default.Send<CQualityConfig>(CQualityConfig);
                 }
+            }
+            else
+            {
+                Growl.Info(Properties.Resource1.NullRemind);
             }
         }
 

@@ -144,4 +144,10 @@
   <data name="NameErrorInfo" xml:space="preserve">
     <value>A level with the same name is already included, please change the name!</value>
   </data>
+  <data name="NullRemind" xml:space="preserve">
+    <value>Please select an item and then proceed</value>
+  </data>
+  <data name="ShowColorStr" xml:space="preserve">
+    <value>The color cannot be empty</value>
+  </data>
 </root>

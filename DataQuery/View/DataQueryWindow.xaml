@@ -59,13 +59,13 @@
                 <hc:ElementGroup Grid.Row="0" VerticalAlignment="Center">
                     <hc:DatePicker
                         Margin="5"
-                        hc:InfoElement.ShowClearButton="True"
+                        hc:InfoElement.ShowClearButton="False"
                         hc:InfoElement.Title="{Binding [StartDate],Source={x:Static local:CLang.instance}}"
                         hc:InfoElement.TitlePlacement="Left"
                         SelectedDate="{Binding StartDate}" />
                     <hc:DatePicker
                         Margin="5"
-                        hc:InfoElement.ShowClearButton="True"
+                        hc:InfoElement.ShowClearButton="False"
                         hc:InfoElement.Title="{Binding [EndDate],Source={x:Static local:CLang.instance}}"
                         hc:InfoElement.TitlePlacement="Left"
                         SelectedDate="{Binding EndDate}" />

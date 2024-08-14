@@ -474,5 +474,10 @@ namespace 断面毛刺检测软件.Views
                 return;
             propertyChanged((object)this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private void BtnRunAgain_Click(object sender, RoutedEventArgs e)
+        {
+            cb_CurImgFile_SelectedIndexChanged(null, null);
+        }
     }
 }

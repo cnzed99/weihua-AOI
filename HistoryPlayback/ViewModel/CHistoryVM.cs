@@ -113,7 +113,7 @@ namespace HistoryPlayback
         [RelayCommand]
         void NextImage()
         {
-            if (FileNames != null)
+            if (FileNames != null&& FileNames.Count>0)
             {
                 FileIndex++;
                 if (FileIndex >= FileNames.Count)
@@ -131,7 +131,7 @@ namespace HistoryPlayback
         [RelayCommand]
         void FrontImage()
         {
-            if (FileNames != null)
+            if (FileNames != null && FileNames.Count > 0)
             {
                 FileIndex--;
                 if (FileIndex >= FileNames.Count)

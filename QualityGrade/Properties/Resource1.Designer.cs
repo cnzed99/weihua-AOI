@@ -106,6 +106,15 @@ namespace QualityGrade.Properties {
         }
         
         /// <summary>
+        ///   查找类似 请选择一个等级项再进行操作 的本地化字符串。
+        /// </summary>
+        public static string NullRemind {
+            get {
+                return ResourceManager.GetString("NullRemind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 优先级 的本地化字符串。
         /// </summary>
         public static string Priority {
@@ -138,6 +147,15 @@ namespace QualityGrade.Properties {
         public static string ShowColor {
             get {
                 return ResourceManager.GetString("ShowColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 颜色不能为空 的本地化字符串。
+        /// </summary>
+        public static string ShowColorStr {
+            get {
+                return ResourceManager.GetString("ShowColorStr", resourceCulture);
             }
         }
     }

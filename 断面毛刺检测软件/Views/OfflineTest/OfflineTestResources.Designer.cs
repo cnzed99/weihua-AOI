@@ -106,6 +106,15 @@ namespace 断面毛刺检测软件.Views.OfflineTest {
         }
         
         /// <summary>
+        ///   查找类似 检测当前图片 的本地化字符串。
+        /// </summary>
+        internal static string RunAgain {
+            get {
+                return ResourceManager.GetString("RunAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 遍历一次图像列表 的本地化字符串。
         /// </summary>
         internal static string RunOnce {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,13 +78,34 @@ namespace SaveImageManage
         [property: DisplayName("选择存图内容")]
         private string saveSelect = "1";
 
+
+
+
+        private string saveImagePath = "E:\\WH-Image";
         /// <summary>
         /// 2024.6.28 鲍赞宝
         /// 存图主路径
         /// </summary>
-        [ObservableProperty]
+        // [ObservableProperty]
         [property: DisplayName("存图主路径")]
-        private string saveImagePath = "E:\\WH-Image";
+        public string SaveImagePath
+        {
+            get { return saveImagePath; }
+            set 
+            {
+                DriveInfo info = new DriveInfo("E://");
+                if (!info.IsReady)
+                {
+                    string valuetemp = value.Replace("E:", "D:");
+                    SetProperty(ref saveImagePath, valuetemp);
+                }
+                else
+                {
+                    SetProperty(ref saveImagePath, value);
+                }
+            }
+        }
+
 
         /// <summary>
         /// 2024.6.28 鲍赞宝
@@ -91,7 +113,7 @@ namespace SaveImageManage
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("存图片的格式")]
-        private string saveImageFormat = ".tiff";
+        private string saveImageFormat = ".bmp";
 
         /// <summary>
         /// 2024.6.28 鲍赞宝

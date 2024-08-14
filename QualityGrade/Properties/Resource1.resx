@@ -124,4 +124,10 @@
   <data name="NameErrorInfo" xml:space="preserve">
     <value>已包含相同名称的等级，请更改名称！</value>
   </data>
+  <data name="NullRemind" xml:space="preserve">
+    <value>请选择一个等级项再进行操作</value>
+  </data>
+  <data name="ShowColorStr" xml:space="preserve">
+    <value>颜色不能为空</value>
+  </data>
 </root>
