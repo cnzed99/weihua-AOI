@@ -113,7 +113,7 @@ namespace HistoryPlayback
         [RelayCommand]
         void NextImage()
         {
-            if (FileNames != null&& FileNames.Count>0)
+            if (FileNames != null && FileNames.Count > 0)
             {
                 FileIndex++;
                 if (FileIndex >= FileNames.Count)
@@ -160,7 +160,7 @@ namespace HistoryPlayback
                 string name = Path.GetFileNameWithoutExtension(selectedobj);
                 DateTime fileCreateTime = File.GetCreationTime(selectedobj);
 
-                string[] spiltName = name.Split("-");
+                string[] spiltName = name.Split('-');
                 SelectedCellInfo.ID = spiltName[1];
                 SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
 

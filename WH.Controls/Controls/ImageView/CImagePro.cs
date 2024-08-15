@@ -14,7 +14,19 @@ namespace WH.Controls
     /// <param name="pen">画笔</param>
     /// <param name="pt1">点1</param>
     /// <param name="pt2">点2</param>
-    public record SDrawLine(Pen pen, Point pt1, Point pt2);
+    public class SDrawLine
+    {
+        public Pen pen { get; set; }
+        public Point pt1 { get; set; }
+        public Point pt2 { get; set; }
+
+        public SDrawLine(Pen pen, Point pt1, Point pt2)
+        {
+            this.pen = pen;
+            this.pt1 = pt1;
+            this.pt2 = pt2;
+        }
+    }
 
     /// <summary>
     /// 2024.7.8 李焕彬
@@ -24,7 +36,21 @@ namespace WH.Controls
     /// <param name="center">中心</param>
     /// <param name="radiusX">X半径</param>
     /// <param name="radiusY">Y半径</param>
-    public record SDrawEllipse(Pen pen, Point center, double radiusX, double radiusY);
+    public class SDrawEllipse
+    {
+        public Pen pen { get; set; }
+        public Point center { get; set; }
+        public double radiusX { get; set; }
+        public double radiusY { get; set; }
+
+        public SDrawEllipse(Pen pen, Point center, double radiusX, double radiusY)
+        {
+            this.pen = pen;
+            this.center = center;
+            this.radiusX = radiusX;
+            this.radiusY = radiusY;
+        }
+    }
 
     /// <summary>
     /// 2024.7.8 李焕彬
@@ -32,7 +58,17 @@ namespace WH.Controls
     /// </summary>
     /// <param name="pen">画笔</param>
     /// <param name="rectangle">矩形</param>
-    public record SDrawRectangle(Pen pen, Rect rectangle);
+    public class SDrawRectangle
+    {
+        public Pen pen { get; set; }
+        public Rect rectangle { get; set; }
+
+        public SDrawRectangle(Pen pen, Rect rectangle)
+        {
+            this.pen = pen;
+            this.rectangle = rectangle;
+        }
+    }
 
     /// <summary>
     /// 2024.7.8 李焕彬
@@ -41,7 +77,19 @@ namespace WH.Controls
     /// <param name="formattedText">文字</param>
     /// <param name="thickness">厚度</param>
     /// <param name="origin">位置</param>
-    public record SDrawText(FormattedText formattedText, int thickness, Point origin);
+    public class SDrawText
+    {
+        public FormattedText formattedText { get; set; }
+        public int thickness { get; set; }
+        public Point origin { get; set; }
+
+        public SDrawText(FormattedText formattedText, int thickness, Point origin)
+        {
+            this.formattedText = formattedText;
+            this.thickness = thickness;
+            this.origin = origin;
+        }
+    }
 
     /// <summary>
     /// 2024.7.8 李焕彬
@@ -51,12 +99,26 @@ namespace WH.Controls
     /// <param name="thickness">厚度</param>
     /// <param name="alignmentX">X对齐</param>
     /// <param name="alignmentY">Y对齐</param>
-    public record SDrawTextAlignment(
-        FormattedText formattedText,
-        int thickness,
-        AlignmentX alignmentX,
-        AlignmentY alignmentY
-    );
+    public class SDrawTextAlignment
+    {
+        public FormattedText formattedText { set; get; }
+        public int thickness { get; set; }
+        public AlignmentX alignmentX { get; set; }
+        public AlignmentY alignmentY { get; set; }
+
+        public SDrawTextAlignment(
+            FormattedText formattedText,
+            int thickness,
+            AlignmentX alignmentX,
+            AlignmentY alignmentY
+        )
+        {
+            this.formattedText = formattedText;
+            this.thickness = thickness;
+            this.alignmentX = alignmentX;
+            this.alignmentY = alignmentY;
+        }
+    }
 
     /// <summary>
     /// 2024.7.8 李焕彬
@@ -64,7 +126,17 @@ namespace WH.Controls
     /// </summary>
     /// <param name="pen">画笔</param>
     /// <param name="points">点集</param>
-    public record SDrawRegion(Pen pen, List<Point> points);
+    public class SDrawRegion
+    {
+        public Pen pen { get; set; }
+        public List<Point> points { get; set; }
+
+        public SDrawRegion(Pen pen, List<Point> points)
+        {
+            this.pen = pen;
+            this.points = points;
+        }
+    }
 
     /// <summary>
     /// 2024.7.4 李焕彬

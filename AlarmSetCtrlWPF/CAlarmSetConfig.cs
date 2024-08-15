@@ -527,5 +527,13 @@ namespace AlarmSetCtrl
     /// 弹窗消息 通过消息通道发送
     /// </summary>
     /// <param name="alarm"></param>
-    public record AlarmPopMessage(Alarm alarm);
+    public class AlarmPopMessage
+    {
+        public Alarm alarm { get; set; }
+
+        public AlarmPopMessage(Alarm alarm)
+        {
+            this.alarm = alarm;
+        }
+    }
 }

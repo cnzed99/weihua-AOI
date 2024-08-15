@@ -114,8 +114,8 @@ namespace MySqlOperatesApi
                     cell.FilterTime.TotalMilliseconds.ToString("F1"),
                     cell.ShowTime.TotalMilliseconds.ToString("F1"),
                     cell.ProcessTime.TotalMilliseconds.ToString("F1"),
-                    cell.Quality.Name,
-                    cell.Quality.Signal,
+                    cell.Quality?.Name,
+                    cell.Quality?.Signal,
                     cell.IsOK ? "OK" : "NG",
                     cell.Detection?.Type,
                     cell.Detection?.DefectFilter?.Name

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <LangVersion>10.0</LangVersion>
-    <TargetFramework>net8.0-windows</TargetFramework>
+   
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -28,4 +28,8 @@
     <PackageVersion Include="System.Threading.Channels" Version="9.0.0-preview.3.24172.9" />
     <PackageVersion Include="ValueConverters" Version="3.0.26" />
   </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageVersion Include="Mapster" Version="7.2.0"/>
+		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0"/>
+	</ItemGroup>
 </Project>

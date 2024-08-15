@@ -19,7 +19,17 @@ namespace WH.Entity.CommonLib
     /// </summary>
     /// <param name="obj">对象实例</param>
     /// <param name="message">消息</param>
-    public record OperateMessage(object obj, string message);
+    public class OperateMessage
+    {
+        public object obj { get; set; }
+        public string message { get; set; }
+
+        public OperateMessage(object obj, string message)
+        {
+            this.obj = obj;
+            this.message = message;
+        }
+    }
 
     /// <summary>
     /// 记录参数修改的基类 在属性或集合发生变化时在默认通道发送OperateMessage

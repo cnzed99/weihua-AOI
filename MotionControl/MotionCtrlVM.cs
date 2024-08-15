@@ -22,7 +22,6 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MotionControl
 {
@@ -30,7 +29,22 @@ namespace MotionControl
     /// 2024.7.9 李焕彬
     /// 对焦数据
     /// </summary>
-    public record FocusData(float pos, float distinct);
+    public class FocusData : IComparable<FocusData>
+    {
+        public float pos { get; set; }
+        public float distinct { get; set; }
+
+        public FocusData(float pos, float distinct)
+        {
+            this.pos = pos;
+            this.distinct = distinct;
+        }
+
+        public int CompareTo(FocusData other)
+        {
+            return (int)Math.Abs((this.distinct - other.distinct) * 100000);
+        }
+    }
 
     /// <summary>
     /// 2024.7.9 李焕彬
@@ -770,9 +784,7 @@ namespace MotionControl
                                 });
                             }
 
-                            float focusPos = FocusDatas
-                                .MaxBy((Func<FocusData, float>)(o => o.distinct))
-                                .pos;
+                            float focusPos = FocusDatas.Max().pos;
                             float focusPosN = Math.Max(
                                 MotionConfig.SoftLimitN,
                                 focusPos - MotionConfig.FineRange / 2
@@ -803,9 +815,7 @@ namespace MotionControl
                                     FineFocusDatas.Add(new(i, distinct));
                                 });
                             }
-                            MotionConfig.FocusPos = FineFocusDatas
-                                .MaxBy((Func<FocusData, float>)(o => o.distinct))
-                                .pos;
+                            MotionConfig.FocusPos = FineFocusDatas.Max().pos;
                             SetSpeed(20);
                             WaitMoveTo(MotionConfig.FocusPos);
                             cam.ExecuteSoftwareTrigger();
