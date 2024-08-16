@@ -399,7 +399,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="320" />
             </Grid.ColumnDefinitions>
-            <UniformGrid Grid.Column="0" Rows="2">
+            <UniformGrid Grid.Column="0" Columns="1">
                 <Border
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].ModelBrush}"
@@ -409,7 +409,8 @@
                 <Border
                     Background="{DynamicResource RegionBrush}"
                     BorderBrush="{Binding CMainVMs[0].LastBrush}"
-                    BorderThickness="3">
+                    BorderThickness="3"
+                    Visibility="Collapsed">
                     <wh:ImageView
                         d:Source="D://铝极.png"
                         Operator="{Binding CMainVMs[0].LastView, Mode=OneWayToSource}"
@@ -589,17 +590,17 @@
                 Width="300"
                 Data="{DynamicResource logo}"
                 IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
+                PathLength="400"
                 Stretch="Uniform"
                 Stroke="Cyan"
-                PathLength="400"
                 StrokeThickness="1"
                 Duration="00:00:5" />
             <TextBlock
                 Name="LoadProgressBar"
                 Margin="0,10"
                 d:Text="loading"
-                Style="{StaticResource TextBlockDefault}"
                 Foreground="Cyan"
+                Style="{StaticResource TextBlockDefault}"
                 TextWrapping="Wrap" />
         </StackPanel>
 

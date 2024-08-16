@@ -404,6 +404,26 @@ namespace MotionControl
         private ushort addrAcc = 116;
 
         /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 启动纠偏
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("23.启动纠偏")]
+        [property: Description("23.启动纠偏")]
+        private ushort addrStartFocus = 111;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 纠偏归零
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.地址信息D")]
+        [property: DisplayName("24.纠偏归零")]
+        [property: Description("24.纠偏归零")]
+        private ushort addrSetZero = 113;
+
+        /// <summary>
         /// 2024.7.12 李焕彬
         /// 对焦基准位
         /// </summary>
@@ -432,7 +452,7 @@ namespace MotionControl
         [property: DisplayName("13.精调步长(mm)")]
         [property: Description("13.精调步长(mm)")]
         [ObservableProperty]
-        private float stepFine = 0.01f;
+        private float stepFine = 0.002f;
 
         /// <summary>
         /// 2024.7.12 李焕彬

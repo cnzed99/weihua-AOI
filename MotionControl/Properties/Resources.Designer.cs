@@ -421,6 +421,24 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 23.启动纠偏 的本地化字符串。
+        /// </summary>
+        public static string _23_启动纠偏 {
+            get {
+                return ResourceManager.GetString("23.启动纠偏", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 24.纠偏归零 的本地化字符串。
+        /// </summary>
+        public static string _24_纠偏归零 {
+            get {
+                return ResourceManager.GetString("24.纠偏归零", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 3.停止速度 的本地化字符串。
         /// </summary>
         public static string _3_停止速度 {

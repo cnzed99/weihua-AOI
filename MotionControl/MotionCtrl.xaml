@@ -305,7 +305,7 @@
                             hc:TitleElement.TitlePlacement="Left"
                             hc:TitleElement.TitleWidth="100"
                             IsEnabled="False"
-                            Text="{Binding FocusPos, StringFormat={}{0:F3}}" />
+                            Text="{Binding MotionConfig.FocusPos, StringFormat={}{0:F3}}" />
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="4"
@@ -396,11 +396,11 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn
                                     Width="80"
-                                    Binding="{Binding pos, StringFormat={}{0:F2}}"
+                                    Binding="{Binding pos, StringFormat={}{0:F3}}"
                                     Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                                 <DataGridTextColumn
-                                    Binding="{Binding distinct, StringFormat={}{0:F2}}"
+                                    Binding="{Binding distinct, StringFormat={}{0:F3}}"
                                     Header="{Binding [Distinct], Source={x:Static local:CLang.s_Instance}}"
                                     IsReadOnly="True" />
                             </DataGrid.Columns>
@@ -593,7 +593,7 @@
                             Header="{Binding [Read], Source={x:Static local:CLang.s_Instance}}"
                             IsReadOnly="True" />
                         <DataGridTextColumn
-                            Binding="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}"
+                            Binding="{Binding WriteValue, UpdateSourceTrigger=LostFocus}"
                             Header="{Binding [WriteVal], Source={x:Static local:CLang.s_Instance}}"
                             IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
                         <DataGridTemplateColumn Width="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">

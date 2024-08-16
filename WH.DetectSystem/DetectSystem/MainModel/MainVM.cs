@@ -1,37 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
 using CameraModule;
-using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using HandyControl.Data;
 using HistoryPlayback;
 using HistoryPlayback.Model;
 using Mapster;
-using MapsterMapper;
 using MarkControl;
 using MotionControl;
 using MySqlOperatesApi;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using ProjProduceData;
 using QualityGrade;
 using SaveImageManage;
@@ -40,14 +24,10 @@ using WH.Controls;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
-using WH.Entity;
 using WH.Entity.CommonLib;
-using WH.Entity.DiskSpace;
 using WH.Entity.LogRecord;
-using WH.Entity.Messages;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using static Mysqlx.Crud.Order.Types;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -943,30 +923,41 @@ namespace WH.DetectSystem.ViewModels
             cell.Quality = MaociQualityConfig.GetWorst();
             cell.IsOK = false;
             cell.Detection = new CellDetection() { Category = Category.值, };
-            switch (cell.AlgoriDetectResult)
+            if (cell.FrameLoss)
             {
-                case EMDETECTRESULT.EMDR_OK:
-                    break;
-                case EMDETECTRESULT.EMDR_NG_LIGHTEDGE:
-                    break;
-                case EMDETECTRESULT.EMDR_NG_DARKEDGE:
-                    cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                        "异常类",
-                        "算法异常",
-                        "料区边缘Ng"
-                    );
-                    break;
-                case EMDETECTRESULT.EMDR_NG_EMPTY:
-                    break;
-                case EMDETECTRESULT.EMDR_TIMEOUT:
-                    cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                        "异常类",
-                        "算法异常",
-                        "超时"
-                    );
-                    break;
-                default:
-                    break;
+                cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                    "异常类",
+                    "拍照异常",
+                    "丢帧"
+                );
+            }
+            else
+            {
+                switch (cell.AlgoriDetectResult)
+                {
+                    case EMDETECTRESULT.EMDR_OK:
+                        break;
+                    case EMDETECTRESULT.EMDR_NG_LIGHTEDGE:
+                        break;
+                    case EMDETECTRESULT.EMDR_NG_DARKEDGE:
+                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                            "异常类",
+                            "算法异常",
+                            "料区边缘Ng"
+                        );
+                        break;
+                    case EMDETECTRESULT.EMDR_NG_EMPTY:
+                        break;
+                    case EMDETECTRESULT.EMDR_TIMEOUT:
+                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                            "异常类",
+                            "算法异常",
+                            "超时"
+                        );
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
