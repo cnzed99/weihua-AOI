@@ -43,16 +43,18 @@ namespace SaveImageManage
             {
 #if NET8_0_OR_GREATER
                 var dialog = new OpenFolderDialog();
-
-#else
-                var dialog = new OpenFileDialog();
-
-#endif
-
                 if (dialog.ShowDialog() is true)
                 {
                     Param.SaveImagePath = dialog.FolderName;
                 }
+
+#else
+                var dialog = new FolderBrowserDialog();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    Param.SaveImagePath = dialog.SelectedPath;
+                }
+#endif
             }
             catch (Exception)
             {

@@ -60,8 +60,12 @@ namespace 断面毛刺检测软件.Views
         /// </summary>
         private AutoResetEvent waitSignal;
         OpenFileDialog imgFileDialog = new OpenFileDialog();
+#if NET8_0_OR_GREATER
         OpenFolderDialog imgFolderDialog = new OpenFolderDialog();
-
+#else
+        System.Windows.Forms.FolderBrowserDialog imgFolderDialog =
+            new System.Windows.Forms.FolderBrowserDialog();
+#endif
         IEnumerator<CKnownColor> brushes = new CBrushPro().KnownColors.GetEnumerator();
         Random random = new Random(50);
 
@@ -89,8 +93,13 @@ namespace 断面毛刺检测软件.Views
             //
             // ImgFolderDialog
             //
+#if NET8_0_OR_GREATER
             this.imgFolderDialog.Title = "选择图像文件夹";
             this.imgFolderDialog.DefaultDirectory = "D:\\";
+#else
+
+            this.imgFolderDialog.SelectedPath = "D:\\";
+#endif
             this.DataContext = this;
             //cbAngle.SelectedIndex = cbAngle.Items.IndexOf(_projConfig.ProcessSet.Angle.ToString());
         }
@@ -398,9 +407,15 @@ namespace 断面毛刺检测软件.Views
 
         private void btn_ImgDir_Click(object sender, RoutedEventArgs e)
         {
+#if NET8_0_OR_GREATER
             if (imgFolderDialog.ShowDialog() is true)
             {
                 string[] Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
+#else
+            if (imgFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string[] Allfiles = Directory.GetFiles(imgFolderDialog.SelectedPath);
+#endif
                 List<string> imgs = new List<string>();
                 foreach (var file in Allfiles)
                 {

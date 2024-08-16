@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,17 +25,14 @@
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
-	<ItemGroup>
+	<ItemGroup >
 		<PackageReference Include="Autofac" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
-	
 		<PackageReference Include="Mapster" />
-	
 		<PackageReference Include="Newtonsoft.Json" />
-	
 		<PackageReference Include="System.Threading.Channels" />
-	
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">
 	    <DesignTime>True</DesignTime>
