@@ -78,6 +78,7 @@ namespace MotionControl
         public void SetRunning(bool isRuning)
         {
             this.IsRuning = isRuning;
+            modbusTcp.WriteSingleCoil(MotionConfig.AddrStartFocus, isRuning);
         }
 
         /// <summary>
@@ -154,13 +155,6 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         private double curTarque;
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 对焦基准位
-        /// </summary>
-        [ObservableProperty]
-        private double focusPos;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -515,7 +509,6 @@ namespace MotionControl
                 CurPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrPosCur);
                 CurSpeed = modbusTcp.ReadHoldingRegister(MotionConfig.AddrSpdCur);
                 CurTarque = modbusTcp.ReadHoldingRegister(MotionConfig.AddrTorqueCur);
-                FocusPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrFocusPos);
                 FocusPosDst = modbusTcp.ReadHoldingRegister(MotionConfig.AddrFocusDst);
                 SensorPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrSensorPos);
             }
@@ -665,6 +658,17 @@ namespace MotionControl
         public void SetSpeed(float speed)
         {
             modbusTcp.WriteSingleRegister(MotionConfig.AddrSpeed, speed);
+        }
+
+        /// <summary>
+        /// 2024.8.12 李焕彬
+        /// 纠偏归零
+        /// </summary>
+        public void SetZero()
+        {
+            modbusTcp.WriteSingleCoil(MotionConfig.AddrSetZero, true);
+            Thread.Sleep(100);
+            modbusTcp.WriteSingleCoil(MotionConfig.AddrSetZero, false);
         }
 
         /// <summary>
@@ -818,6 +822,7 @@ namespace MotionControl
                             Growl.Success(Properties.Resources.SuccessFocus);
                             SysLog.Info(Properties.Resources.SuccessFocus);
                             IsFocused = true;
+                            SetZero();
                         }
                         catch (Exception ex)
                         {

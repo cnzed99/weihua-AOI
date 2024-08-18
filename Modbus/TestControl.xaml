@@ -64,7 +64,7 @@
                         Binding="{Binding ReadValue}"
                         Header="{Binding [ReadVal], Source={x:Static local:CLang.s_Instance}}"
                         IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}" Header="{Binding [WriteVal], Source={x:Static local:CLang.s_Instance}}" />
+                    <DataGridTextColumn Binding="{Binding WriteValue, UpdateSourceTrigger=LostFocus}" Header="{Binding [WriteVal], Source={x:Static local:CLang.s_Instance}}" />
                     <DataGridTemplateColumn MinWidth="70" Header="{Binding [Write], Source={x:Static local:CLang.s_Instance}}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

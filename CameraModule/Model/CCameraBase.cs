@@ -152,12 +152,6 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 是否丢帧
-        /// </summary>
-        protected bool IsLostFrame { get; set; } = false;
-
-        /// <summary>
-        /// 李焕彬 2024.7.24
         /// 开启采图，软触发
         /// </summary>
         protected bool startGrabSoft = false;
@@ -299,8 +293,7 @@ namespace CameraModule
                         {
                             if (LostImage != null)
                             {
-                                IsLostFrame = true;
-                                ExportImage(LostImage);
+                                ExportImage(LostImage, true);
                             }
                             StringBuilder textBuilder = new StringBuilder();
                             textBuilder.Append(Properties.Resources.ErrorLostImage2);
@@ -325,14 +318,14 @@ namespace CameraModule
         /// 传出图像
         /// </summary>
         /// <param name="outImage">图像</param>
-        public bool ExportImage(CImage outImage)
+        public bool ExportImage(CImage outImage, bool isLostFrame = false)
         {
             try
             {
                 Cell cell = new Cell()
                 {
                     Image = outImage,
-                    FrameLoss = IsLostFrame,
+                    FrameLoss = isLostFrame,
                     CamSerial = Setting.SerialNumber,
                     ProjGuid = Setting.ProjGuid,
                     ID = grabCount.ToString(),
