@@ -142,7 +142,6 @@ Section "MainSection" SEC01
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.Controls.dll"
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.DetectSystem.dll"
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.Entity.dll"
-  File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.LightControl.dll"
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.LightControl.exe"
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.LightControl.runtimeconfig.json"
   File "¶ÏÃæÃ«´Ì¼ì²âÈí¼ş\bin\Debug\net8.0-windows\WH.Load.dll"
