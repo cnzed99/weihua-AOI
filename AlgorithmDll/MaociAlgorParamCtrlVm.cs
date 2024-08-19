@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Newtonsoft.Json;
 using WH.Entity.LogRecord;
 
 namespace AlgorithmDll

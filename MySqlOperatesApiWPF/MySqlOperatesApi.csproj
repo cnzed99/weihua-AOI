@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -12,20 +12,27 @@
     <None Remove="Resources\数据库设置.png" />
     <None Remove="Resources\数据查询.png" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="HandyControl" />
-    <PackageReference Include="MySql.Data" />
+	
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+	  <PackageReference  Include="CommunityToolkit.Mvvm" />
+	  <PackageReference  Include="HandyControl" />
+	  <PackageReference  Include="MySql.Data" />
+	
   </ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageReference  Include="CommunityToolkit.Mvvm" />
+		<PackageReference  Include="HandyControl" />
+		<PackageReference  Include="MySql.Data" />
+		<PackageReference  Include="Microsoft.CSharp"/>
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
-
+	
   <ItemGroup>
     <Resource Include="Resources\数据库设置.png" />
     <Resource Include="Resources\数据查询.png" />

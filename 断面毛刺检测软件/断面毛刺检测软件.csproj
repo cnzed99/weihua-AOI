@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <OutputType>WinExe</OutputType>
 	  <LangVersion>10.0</LangVersion>
     <UseWindowsForms>False</UseWindowsForms>
@@ -145,6 +146,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\net48\en\HandyControl.resources.dll" />
+    <None Include="bin\Debug\net48\MaociAlg.dll" />
+    <None Include="bin\Debug\net48\MiniEcatLib.dll" />
+    <None Include="bin\Debug\net48\opencv_world490.dll" />
+    <None Include="bin\Debug\net48\WH.LightControl.exe" />
     <None Include="bin\Debug\net8.0-windows\en\HandyControl.resources.dll" />
     <None Include="bin\Debug\net8.0-windows\MaociAlg.dll" />
     <None Include="bin\Debug\net8.0-windows\MiniEcatLib.dll" />

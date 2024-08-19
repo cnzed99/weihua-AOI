@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
 		<PackageReference Include="log4net" />
-		<PackageReference Include="Mapster" />
+		
 		<PackageReference Include="Microsoft.Web.Administration" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="System.IO.Ports" />

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using WH.Entity;
 using WH.RunCell;
+#if NET8_0_OR_GREATER
+using Microsoft.Win32;
+#else
+using System.Windows.Forms;
+#endif
 
 namespace SaveImageManage
 {
@@ -43,12 +41,20 @@ namespace SaveImageManage
         {
             try
             {
+#if NET8_0_OR_GREATER
                 var dialog = new OpenFolderDialog();
-
                 if (dialog.ShowDialog() is true)
                 {
                     Param.SaveImagePath = dialog.FolderName;
                 }
+
+#else
+                var dialog = new FolderBrowserDialog();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    Param.SaveImagePath = dialog.SelectedPath;
+                }
+#endif
             }
             catch (Exception)
             {

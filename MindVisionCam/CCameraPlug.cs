@@ -42,7 +42,7 @@ namespace MindVisionCam
                             .Replace("\0", "");
                         string[] portType = Encoding
                             .Default.GetString(cameraInfo.acPortType)
-                            .Split("-");
+                            .Split('-');
                         info.CamType = portType[0];
                         info.CamIp = portType[2].Replace("\0", "");
                         CamList.Add(info);
