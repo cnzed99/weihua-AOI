@@ -29,8 +29,8 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\net8.0-windows\ComPlug\$(TargetName)\ /d /y" />
-		<Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\net8.0-windows\en\ /d /y" />
+		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ComPlug\$(TargetName)\ /d /y" />
+		<Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\en\ /d /y" />
 	</Target>
 
 </Project>
