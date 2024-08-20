@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+	  <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="HandyControl" />
-    <!--<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />-->
+   
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
 	  <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>

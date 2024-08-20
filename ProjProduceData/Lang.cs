@@ -12,6 +12,10 @@ namespace ProjProduceData
     /// </summary>
     public class CLang
     {
-        public static LanguageManager.CLanguageManager s_Instance = new LanguageManager.CLanguageManager("ProjProduceData.Properties.Resources", typeof(CLang).Assembly);
+        public static LanguageManager.CLanguageManager s_Instance =
+            new LanguageManager.CLanguageManager(
+                "ProjProduceData.Properties.Resources",
+                typeof(CLang).Assembly
+            );
     }
 }

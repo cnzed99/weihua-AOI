@@ -8,7 +8,6 @@
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:WH.Controls.Properties"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
     Name="window"
     Title="{Binding [UserManagement], Source={x:Static prop:LangManager.instance}}"
     Width="400"

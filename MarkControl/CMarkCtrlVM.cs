@@ -218,7 +218,7 @@ namespace MarkControl
                 {
                     Connected = true;
                     InitControl();
-                    Timer timer = new Timer(TimeSpan.FromMilliseconds(300));
+                    Timer timer = new Timer(300);
                     timer.Elapsed += Timer_Elapsed;
                     timer.Enabled = true;
 

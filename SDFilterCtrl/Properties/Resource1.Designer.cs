@@ -214,6 +214,15 @@ namespace SDFilter.Properties {
         }
         
         /// <summary>
+        ///   查找类似 检测设置 的本地化字符串。
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 类型 的本地化字符串。
         /// </summary>
         public static string Type {

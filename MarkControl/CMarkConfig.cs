@@ -229,7 +229,7 @@ namespace MarkControl
         /// </summary>
         private void UpdateMmPerPulse()
         {
-            MmPerPulse = double.Pi * Diameter / ((int)PulsePerRound * (int)EncoderMode);
+            MmPerPulse = Math.PI * Diameter / ((int)PulsePerRound * (int)EncoderMode);
         }
 
         /// <summary>
