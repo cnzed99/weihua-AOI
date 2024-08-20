@@ -92,15 +92,29 @@ Section "MainSection" SEC01
 
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
-
+!define HELPPATH "D:\HelpFile\Ã«´Ì¼ì²âÈí¼þ\dist"
+!define HELPFILE "..\EditorRunHelpFile\BatteryHelpFile\"
 Section "Helpbook" SEC02
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-  File "¶ÏÃæÃ«´Ì¼ì²âÈí¼þ\bin\Debug\net48\Ã«Ï¸¼ì²âÈí¼þËµÃ÷Êé.exe"
+  SetOutPath HELPPATH
+  SetOverwrite try
+  File "${HELPFILE}docs\.vuepress\dist\*.*"
+  SetOutPath "${HELPPATH}\assets\css"
+  File "${HELPFILE}docs\.vuepress\dist\assets\css\*.*"
+  SetOutPath "${HELPPATH}\assets\img"
+  File "${HELPFILE}docs\.vuepress\dist\assets\img\*.*"
 
-; Shortcuts
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-  !insertmacro MUI_STARTMENU_WRITE_END
+  SetOutPath "${HELPPATH}\assets\js"
+  File "${HELPFILE}docs\.vuepress\dist\assets\js\*.*"
+
+  SetOutPath "${HELPPATH}\assets\media"
+  File "${HELPFILE}docs\.vuepress\dist\assets\media\*.*"
+
+  SetOutPath "${HELPPATH}"
+  File "${HELPFILE}docs\.vuepress\dist\*.*"
+  SetOutPath "${HELPPATH}\RuningSingle"
+  File "${HELPFILE}docs\.vuepress\dist\RuningSingle\*.*"
+  SetOutPath "${HELPPATH}"
+  File "${HELPFILE}docs\.vuepress\dist\×é*.*"
 SectionEnd
 
 Section -AdditionalIcons
@@ -145,7 +159,19 @@ Section Uninstall
 
   Delete "$INSTDIR\net48\LostImage\LostImage.png"
   Delete "$INSTDIR\net48\en\*.dll"
- 
+  
+  Delete "${HELPPATH}\*.*"
+  Delete "${HELPPATH}\RuningSingle\*.*"
+  Delete "${HELPPATH}\assets\media\*.*"
+  Delete "${HELPPATH}\assets\js\*.*"
+  Delete "${HELPPATH}\assets\img\*.*"
+  Delete "${HELPPATH}\Ã«´ÌÈí¼þÊÖ²á\Uninstall.lnk"
+  RMDir "${HELPPATH}\Ã«´ÌÈí¼þÊÖ²á"
+  RMDir "${HELPPATH}\RuningSingle"
+  RMDir "${HELPPATH}\assets\media"
+  RMDir "${HELPPATH}\assets\js"
+  RMDir "${HELPPATH}\assets\img"
+  RMDir "${HELPPATH}\assets\css"
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$DESKTOP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk"
