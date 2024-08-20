@@ -271,21 +271,19 @@
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="143" />
-                    <ColumnDefinition Width="46"/>
-                    <ColumnDefinition Width="85*" />
-                    <ColumnDefinition Width="529*"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto" />
 
                 </Grid.ColumnDefinitions>
                 <Border
                     Grid.Column="0"
-                    Margin="5,5,5,5"
+                    Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
-                    CornerRadius="10" Grid.ColumnSpan="2">
+                    CornerRadius="10">
                     <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="529,0,0,0">
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <UniformGrid Columns="1">
                         <Label
                             Width="100"
