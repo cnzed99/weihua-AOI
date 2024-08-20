@@ -70,7 +70,7 @@ namespace SDFilter
         [RelayCommand]
         void RemoveFilter(object obj)
         {
-            Growl.Ask(Properties.Resource1.DelecteAsk, b =>
+            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
             {
                 if (b)
                 {

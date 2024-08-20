@@ -149,7 +149,7 @@ namespace AlarmSetCtrl
         {
             if (alarm != null)
             {
-                Growl.Ask(Properties.Resources.DelecteAsk, b =>
+                Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
                 {
                     if (b)
                     {

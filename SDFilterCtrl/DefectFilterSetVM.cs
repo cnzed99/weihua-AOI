@@ -191,7 +191,7 @@ namespace SDFilter
         [RelayCommand]
         public void DeleteFilterConfig(FilterAndSelect filterConfig)
         {
-            Growl.Ask(Properties.Resource1.DelecteAsk, b =>
+            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
             {
                 if (b)
                 {

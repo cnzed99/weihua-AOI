@@ -123,7 +123,7 @@ namespace QualityGrade
         {
             if (QualitySelect != null)
             {
-                Growl.Ask(Properties.Resource1.DelecteAsk, b =>
+                Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
                 {
                     if (b)
                     {

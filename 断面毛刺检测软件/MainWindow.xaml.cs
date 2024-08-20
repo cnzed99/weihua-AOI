@@ -606,7 +606,7 @@ namespace 断面毛刺检测软件
         #region 数据清空
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Ask(Properties.Resources.CleraAsk, b =>
+            Growl.AskGlobal(Properties.Resources.CleraAsk, b =>
             {
                 if (b)
                 {

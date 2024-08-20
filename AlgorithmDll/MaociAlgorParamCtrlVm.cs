@@ -62,7 +62,7 @@ namespace AlgorithmDll
         [RelayCommand]
         public void RemovePcParam(CMaociAlgorParam maociAlgorParam)
         {
-            Growl.Ask(Properties.Resources.DelecteAsk, b =>
+            Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
             {
                 if (b)
                 {
@@ -106,7 +106,7 @@ namespace AlgorithmDll
         public void RemoveFpgaParam(CMaociAlgorParamFpga maociAlgorParamFpga)
         {
 
-            Growl.Ask(Properties.Resources.DelecteAsk, b =>
+            Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
             {
                 if (b)
                 {

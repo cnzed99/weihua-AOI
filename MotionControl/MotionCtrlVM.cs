@@ -258,7 +258,7 @@ namespace MotionControl
                         InitWrite();
                         modbusTcp.SendXYData = ModbusTcp_SendXYData;
                         modbusTcp.ReadElemData = ModbusTcp_ReadElemData;
-                        Growl.Ask(
+                        Growl.AskGlobal(
                             Properties.Resources.AskGoHome,
                             b =>
                             {
@@ -340,7 +340,7 @@ namespace MotionControl
                 if (signalIns.Count > 0)
                 {
 
-                    Growl.Ask(Properties.Resources.DelecteAsk, b =>
+                    Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
                     {
                         if (b)
                         {
@@ -377,7 +377,7 @@ namespace MotionControl
             {
                 if (signalOuts.Count > 0)
                 {
-                    Growl.Ask(Properties.Resources.DelecteAsk, b =>
+                    Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
                     {
                         if (b)
                         {
@@ -411,7 +411,7 @@ namespace MotionControl
         [RelayCommand]
         public void DelRegister(CElement registerSet)
         {
-            Growl.Ask(Properties.Resources.DelecteAsk, b =>
+            Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
             {
                 if (b)
                 {
