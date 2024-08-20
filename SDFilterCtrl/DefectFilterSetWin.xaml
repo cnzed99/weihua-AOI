@@ -15,7 +15,6 @@
     Width="810"
     Height="610"
     d:DataContext="{d:DesignInstance local:CDefectFilterSetVM}"
-    Background="{StaticResource SecondaryRegionBrush}"
     Icon="/SDFilter;component/Resources/检测设置.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -321,8 +320,8 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="10" />
                                             <ColumnDefinition Width="100" />
-                                            <ColumnDefinition Width="45" />
-                                            <ColumnDefinition Width="325" />
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="310" />
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="77" />
                                         </Grid.ColumnDefinitions>
@@ -342,9 +341,9 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <CheckBox Content="启用" 
+                                        <CheckBox Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
                                                   Grid.Column="2" 
-                                                  IsChecked="{Binding FilterSelectEnable}"/>
+                                                  IsChecked="{Binding FilterSelectEnable}" Foreground="White"/>
                                         <ComboBox
                                             Grid.Column="4"
                                             Width="180"
