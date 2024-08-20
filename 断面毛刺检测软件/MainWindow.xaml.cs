@@ -606,11 +606,19 @@ namespace 断面毛刺检测软件
         #region 数据清空
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var item in CMainList.CMainVMs)
+            Growl.Ask(Properties.Resources.CleraAsk, b =>
             {
-                item.MaociDefectsProduce.Clear();
-            }
-            OperateLog.Info(Properties.Resources.DataClear);
+                if (b)
+                {
+                    foreach (var item in CMainList.CMainVMs)
+                    {
+                        item.MaociDefectsProduce.Clear();
+                    }
+                    OperateLog.Info(Properties.Resources.DataClear);
+                }
+                return true;
+            });
+            
         }
         #endregion
 

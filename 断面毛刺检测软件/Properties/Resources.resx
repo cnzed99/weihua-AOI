@@ -304,4 +304,7 @@
   <data name="NewFailed" xml:space="preserve">
     <value>新建工程失败！</value>
   </data>
+  <data name="CleraAsk" xml:space="preserve">
+    <value>确认清空数据?</value>
+  </data>
 </root>
