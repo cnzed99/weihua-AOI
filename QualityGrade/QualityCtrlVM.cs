@@ -123,8 +123,15 @@ namespace QualityGrade
         {
             if (QualitySelect != null)
             {
-                QualityConfig.Qualities.Remove(QualitySelect);
-                WeakReferenceMessenger.Default.Send<CQualityConfig>(QualityConfig);
+                Growl.Ask(Properties.Resource1.DelecteAsk, b =>
+                {
+                    if (b)
+                    {
+                        QualityConfig.Qualities.Remove(QualitySelect);
+                        WeakReferenceMessenger.Default.Send<CQualityConfig>(QualityConfig);
+                    }
+                    return true;
+                });
             }
         }
 

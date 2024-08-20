@@ -180,4 +180,7 @@
   <data name="In" xml:space="preserve">
     <value>In</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>Confirm whether to delete?</value>
+  </data>
 </root>

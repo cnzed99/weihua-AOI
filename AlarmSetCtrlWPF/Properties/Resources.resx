@@ -177,4 +177,7 @@
   <data name="In" xml:space="preserve">
     <value>内</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>确认是否删除？</value>
+  </data>
 </root>

@@ -130,4 +130,7 @@
   <data name="ShowColorStr" xml:space="preserve">
     <value>颜色不能为空</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>确认是否删除？</value>
+  </data>
 </root>

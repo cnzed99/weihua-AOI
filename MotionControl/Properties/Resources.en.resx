@@ -474,4 +474,7 @@
   <data name="24.纠偏归零" xml:space="preserve">
     <value>23.AddrFocusZero</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>Confirm whether to delete?</value>
+  </data>
 </root>

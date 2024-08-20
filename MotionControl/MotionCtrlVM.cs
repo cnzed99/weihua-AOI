@@ -333,11 +333,24 @@ namespace MotionControl
         [RelayCommand]
         public void DelInput(object obj)
         {
+          
+
             if (obj is IList signalIns)
             {
-                for (int i = signalIns.Count - 1; i >= 0; i--)
+                if (signalIns.Count > 0)
                 {
-                    MotionConfig.SignalIns.Remove((CSignalIn)signalIns[i]);
+
+                    Growl.Ask(Properties.Resources.DelecteAsk, b =>
+                    {
+                        if (b)
+                        {
+                            for (int i = signalIns.Count - 1; i >= 0; i--)
+                            {
+                                MotionConfig.SignalIns.Remove((CSignalIn)signalIns[i]);
+                            }
+                        }
+                        return true;
+                    });
                 }
             }
         }
@@ -362,9 +375,20 @@ namespace MotionControl
         {
             if (obj is IList signalOuts)
             {
-                for (int i = signalOuts.Count - 1; i >= 0; i--)
+                if (signalOuts.Count > 0)
                 {
-                    MotionConfig.SignalOuts.Remove((CSignalOut)signalOuts[i]);
+                    Growl.Ask(Properties.Resources.DelecteAsk, b =>
+                    {
+                        if (b)
+                        {
+                            for (int i = signalOuts.Count - 1; i >= 0; i--)
+                            {
+                                MotionConfig.SignalOuts.Remove((CSignalOut)signalOuts[i]);
+                            }
+                        }
+                        return true;
+                    });
+                  
                 }
             }
         }
@@ -387,7 +411,15 @@ namespace MotionControl
         [RelayCommand]
         public void DelRegister(CElement registerSet)
         {
-            MotionConfig.RegisterSets.Remove(registerSet);
+            Growl.Ask(Properties.Resources.DelecteAsk, b =>
+            {
+                if (b)
+                {
+                    MotionConfig.RegisterSets.Remove(registerSet);
+                }
+                return true;
+            });
+            
         }
 
         /// <summary>

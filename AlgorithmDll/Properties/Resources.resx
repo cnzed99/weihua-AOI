@@ -208,4 +208,7 @@
   <data name="料区中心位置限制说明" xml:space="preserve">
     <value>铝层上边缘 -（料区中心+铝层位置偏移值）＞ 限制上 || （料区中心+铝层位置偏移值）- 铝层下边缘＞ 限制下时为检测NG，上传图像。</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>确认是否删除？</value>
+  </data>
 </root>
