@@ -709,9 +709,9 @@ namespace 断面毛刺检测软件
                 {
                     if (!string.IsNullOrEmpty(message.Path))
                     {
-                        if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count >= 500)
-                            mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(0);
-                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Add(message.Path);
+                        if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
+                            mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
+                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Insert(0,message.Path);
                     }
                 })
             );

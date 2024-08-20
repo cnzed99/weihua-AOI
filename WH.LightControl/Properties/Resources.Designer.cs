@@ -22,7 +22,7 @@ namespace WH.LightControl.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace WH.LightControl.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WH.LightControl.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace WH.LightControl.Properties {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 上升沿 的本地化字符串。
         /// </summary>
-        internal static string 上升沿 {
+        public static string 上升沿 {
             get {
                 return ResourceManager.GetString("上升沿", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 下降沿 的本地化字符串。
         /// </summary>
-        internal static string 下降沿 {
+        public static string 下降沿 {
             get {
                 return ResourceManager.GetString("下降沿", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 低电平 的本地化字符串。
         /// </summary>
-        internal static string 低电平 {
+        public static string 低电平 {
             get {
                 return ResourceManager.GetString("低电平", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 保存配置 的本地化字符串。
         /// </summary>
-        internal static string 保存配置 {
+        public static string 保存配置 {
             get {
                 return ResourceManager.GetString("保存配置", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 光源控制 的本地化字符串。
         /// </summary>
-        internal static string 光源控制 {
+        public static string 光源控制 {
             get {
                 return ResourceManager.GetString("光源控制", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 基本参数 的本地化字符串。
         /// </summary>
-        internal static string 基本参数 {
+        public static string 基本参数 {
             get {
                 return ResourceManager.GetString("基本参数", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 增亮 的本地化字符串。
         /// </summary>
-        internal static string 增亮 {
+        public static string 增亮 {
             get {
                 return ResourceManager.GetString("增亮", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 工作模式： 的本地化字符串。
         /// </summary>
-        internal static string 工作模式 {
+        public static string 工作模式 {
             get {
                 return ResourceManager.GetString("工作模式", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 恢复出厂 的本地化字符串。
         /// </summary>
-        internal static string 恢复出厂 {
+        public static string 恢复出厂 {
             get {
                 return ResourceManager.GetString("恢复出厂", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 调试 的本地化字符串。
         /// </summary>
-        internal static string 调试 {
+        public static string 调试 {
             get {
                 return ResourceManager.GetString("调试", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 边沿触发： 的本地化字符串。
         /// </summary>
-        internal static string 边沿触发 {
+        public static string 边沿触发 {
             get {
                 return ResourceManager.GetString("边沿触发", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 连接控制器 的本地化字符串。
         /// </summary>
-        internal static string 连接控制器 {
+        public static string 连接控制器 {
             get {
                 return ResourceManager.GetString("连接控制器", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 通道亮度 的本地化字符串。
         /// </summary>
-        internal static string 通道亮度 {
+        public static string 通道亮度 {
             get {
                 return ResourceManager.GetString("通道亮度", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 高低电平： 的本地化字符串。
         /// </summary>
-        internal static string 高低电平 {
+        public static string 高低电平 {
             get {
                 return ResourceManager.GetString("高低电平", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace WH.LightControl.Properties {
         /// <summary>
         ///   查找类似 高电平 的本地化字符串。
         /// </summary>
-        internal static string 高电平 {
+        public static string 高电平 {
             get {
                 return ResourceManager.GetString("高电平", resourceCulture);
             }
