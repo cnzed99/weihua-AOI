@@ -343,7 +343,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewProj\NewProjResources.resx">
       <LastGenOutput>NewProjResources.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\OfflineTest\OfflineTestResources.resx">
       <LastGenOutput>OfflineTestResources.Designer.cs</LastGenOutput>

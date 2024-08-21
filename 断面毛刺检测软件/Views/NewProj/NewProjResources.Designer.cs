@@ -22,7 +22,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class NewProjResources {
+    public class NewProjResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("断面毛刺检测软件.Views.NewProj.NewProjResources", typeof(NewProjResources).Assembly);
@@ -51,7 +51,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 相机： 的本地化字符串。
         /// </summary>
-        internal static string Cam {
+        public static string Cam {
             get {
                 return ResourceManager.GetString("Cam", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 取消 的本地化字符串。
         /// </summary>
-        internal static string Cancel {
+        public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 输入工程名称 的本地化字符串。
         /// </summary>
-        internal static string Enterprojectname {
+        public static string Enterprojectname {
             get {
                 return ResourceManager.GetString("Enterprojectname", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 路径： 的本地化字符串。
         /// </summary>
-        internal static string Path {
+        public static string Path {
             get {
                 return ResourceManager.GetString("Path", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 名称： 的本地化字符串。
         /// </summary>
-        internal static string ProjName {
+        public static string ProjName {
             get {
                 return ResourceManager.GetString("ProjName", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 选择工程绑定的相机序列号 的本地化字符串。
         /// </summary>
-        internal static string SelectCam {
+        public static string SelectCam {
             get {
                 return ResourceManager.GetString("SelectCam", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 双击选择路径 的本地化字符串。
         /// </summary>
-        internal static string SelectPath {
+        public static string SelectPath {
             get {
                 return ResourceManager.GetString("SelectPath", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 确认 的本地化字符串。
         /// </summary>
-        internal static string Sure {
+        public static string Sure {
             get {
                 return ResourceManager.GetString("Sure", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace 断面毛刺检测软件.Views.NewProj {
         /// <summary>
         ///   查找类似 新建工程 的本地化字符串。
         /// </summary>
-        internal static string Title {
+        public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
             }

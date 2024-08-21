@@ -116,6 +116,9 @@
     <value>正在更新项目列表。。。</value>
   </data>
   <data name="帮助文档打开失败" xml:space="preserve">
-    <value>打开失败，权限不够、托管服务未安装或缺少帮助文档</value>
+    <value>打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist</value>
+  </data>
+  <data name="UnfinishedError" xml:space="preserve">
+    <value>工程未配置完整,请重新配置</value>
   </data>
 </root>
