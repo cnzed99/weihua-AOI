@@ -272,7 +272,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
 
                 </Grid.ColumnDefinitions>
@@ -281,7 +281,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
+                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15"/>
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <UniformGrid Columns="1">
