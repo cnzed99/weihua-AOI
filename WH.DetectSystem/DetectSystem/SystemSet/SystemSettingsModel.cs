@@ -218,6 +218,12 @@ namespace WH.DetectSystem.Models
         #endregion
 
         #region 获取下一次的清零时间
+        /// <summary>
+        /// 数据清零事件
+        /// </summary>
+        public event Action<DateTime> ClearProduceEvent;
+
+        DateTime oldtime;
         public DateTime NextClearTime
         {
             get
@@ -288,6 +294,12 @@ namespace WH.DetectSystem.Models
                         DateTime minDay = next.AddDays(0 - weekDay); // 第0天 周日
                         next = minDay.AddDays(8); //下个周一
                         break;
+                }
+
+                if (oldtime != next)
+                {
+                    ClearProduceEvent?.Invoke(oldtime);
+                    oldtime = next;
                 }
 
                 return next;

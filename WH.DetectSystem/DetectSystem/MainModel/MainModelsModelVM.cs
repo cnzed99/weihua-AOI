@@ -134,6 +134,17 @@ namespace WH.DetectSystem.ViewModels
             SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
             var runTimeSpan = DateTime.Now - StartTime;
             RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
+            if (CMainVMs.Count > 0)
+            {
+                DateTime t = CMainVMs[0].SystemSettings.NextClearTime;
+                //if (DateTime.Now >= e)
+                //{
+                //    if (CMainVMs[0].SystemSettings.AutoClearEnable)
+                //    {
+                //        CMainVMs[0].MaociDefectsProduce.Clear();
+                //    }
+                //}
+            }
         }
         #endregion
 

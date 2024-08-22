@@ -28,12 +28,15 @@ namespace WH.Entity.Attribute
                                                             //获取实例属性 B
                 otherValue = instance.GetType().GetProperty(PropertyName).GetValue(instance);
 
-            if (((IComparable)value).CompareTo(otherValue) > 0)
+            TimeSpan thisvalue = ((DateTime)value).TimeOfDay;
+            TimeSpan otherTime = ((DateTime)otherValue).TimeOfDay;
+
+            if (((IComparable)thisvalue).CompareTo(otherTime) > 0)
             {
                 return ValidationResult.Success;
             }
 
-            return new("The current value is smaller than the other one");
+            return new("当前值应大于另一个值");
         }
     }
     /// <summary>
@@ -57,12 +60,15 @@ namespace WH.Entity.Attribute
                                                             //获取实例属性 B
                 otherValue = instance.GetType().GetProperty(PropertyName).GetValue(instance);
 
-            if (((IComparable)value).CompareTo(otherValue) < 0)
+            TimeSpan thisvalue = ((DateTime)value).TimeOfDay;
+            TimeSpan otherTime = ((DateTime)otherValue).TimeOfDay;
+
+            if (((IComparable)thisvalue).CompareTo(otherTime) < 0)
             {
                 return ValidationResult.Success;
             }
 
-            return new("The current value is smaller than the other one");
+            return new("当前值应小于另一个值");
         }
     }
 }
