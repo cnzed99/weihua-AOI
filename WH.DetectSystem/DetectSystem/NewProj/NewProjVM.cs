@@ -8,6 +8,7 @@ using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using Mapster;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
@@ -82,6 +83,11 @@ namespace WH.DetectSystem.ViewModels
         {
             if (HasErrors)
                 return;
+            if (string.IsNullOrEmpty(this.ProjPath))
+            {
+                Growl.Warning(Properties.Resources.UnfinishedError);
+                return;
+            }
             this.mainVM.GUID = Guid.NewGuid().ToString(); //GUID
             this.ApplyChanges();
             if (

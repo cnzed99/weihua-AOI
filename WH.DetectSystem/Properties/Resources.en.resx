@@ -138,4 +138,7 @@
   <data name="帮助文档打开失败" xml:space="preserve">
     <value>Open failed, No permission、service or doc.</value>
   </data>
+  <data name="UnfinishedError" xml:space="preserve">
+    <value>The project is not fully configured. Please reconfigure it</value>
+  </data>
 </root>

@@ -61,7 +61,16 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
-        ///   查找类似 打开失败，权限不够、托管服务未安装或缺少帮助文档 的本地化字符串。
+        ///   查找类似 工程未配置完整,请重新配置 的本地化字符串。
+        /// </summary>
+        internal static string UnfinishedError {
+            get {
+                return ResourceManager.GetString("UnfinishedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist 的本地化字符串。
         /// </summary>
         internal static string 帮助文档打开失败 {
             get {

@@ -228,4 +228,7 @@
   <data name="料区中心位置限制说明" xml:space="preserve">
     <value>Upper edge of aluminium layer - (Center of material area + Offset value of aluminium layer position) &gt; Limit upper || (Center of material area + Offset value of aluminium layer position) - Lower edge of aluminium layer - Upload image for detecting NG when limit lower.</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>Confirm whether to delete?</value>
+  </data>
 </root>

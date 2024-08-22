@@ -70,6 +70,15 @@ namespace QualityGrade.Properties {
         }
         
         /// <summary>
+        ///   查找类似 确认是否删除？ 的本地化字符串。
+        /// </summary>
+        public static string DelecteAsk {
+            get {
+                return ResourceManager.GetString("DelecteAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 删除 的本地化字符串。
         /// </summary>
         public static string Delete {

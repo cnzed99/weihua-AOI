@@ -115,6 +115,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 确认清空数据? 的本地化字符串。
+        /// </summary>
+        public static string CleraAsk {
+            get {
+                return ResourceManager.GetString("CleraAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 通讯 的本地化字符串。
         /// </summary>
         public static string Communication {
