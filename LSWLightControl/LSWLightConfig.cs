@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WH.LightControl;
+using WH.Entity;
 
-namespace WH.LightControl
+
+namespace LSWLightControl
 {
     public partial class LSWLightConfig : LightParamsBase
     {
