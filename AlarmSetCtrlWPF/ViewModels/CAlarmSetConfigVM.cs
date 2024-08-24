@@ -149,7 +149,15 @@ namespace AlarmSetCtrl
         {
             if (alarm != null)
             {
-                CAlarmSet.AlarmList.Remove(alarm);
+                Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
+                {
+                    if (b)
+                    {
+                        CAlarmSet.AlarmList.Remove(alarm);
+                    }
+                    return true;
+                });
+               
             }
         }
 

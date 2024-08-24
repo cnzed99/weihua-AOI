@@ -297,4 +297,7 @@
   <data name="NewFailed" xml:space="preserve">
     <value>New Project Failed!</value>
   </data>
+  <data name="CleraAsk" xml:space="preserve">
+    <value>Do you want to clear data?</value>
+  </data>
 </root>

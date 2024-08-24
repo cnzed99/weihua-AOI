@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using QualityGrade;
 using WH.Controls.SingleInstance;
 
@@ -69,14 +70,21 @@ namespace SDFilter
         [RelayCommand]
         void RemoveFilter(object obj)
         {
-            var objArr = obj as object[];
-            if (objArr != null && objArr.Length == 2)
+            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
             {
-                DefectFilter defectFilter = (DefectFilter)objArr[0];
-                RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
-                recipeDefect.DefectFilters.Remove(defectFilter);
-                //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
-            }
+                if (b)
+                {
+                    var objArr = obj as object[];
+                    if (objArr != null && objArr.Length == 2)
+                    {
+                        DefectFilter defectFilter = (DefectFilter)objArr[0];
+                        RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
+                        recipeDefect.DefectFilters.Remove(defectFilter);
+                        //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
+                    }
+                }
+                return true;
+            });         
         }
 
         /// <summary>

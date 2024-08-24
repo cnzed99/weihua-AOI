@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using HandyControl.Controls;
 using QualityGrade;
 
 namespace SDFilter
@@ -190,7 +191,15 @@ namespace SDFilter
         [RelayCommand]
         public void DeleteFilterConfig(FilterAndSelect filterConfig)
         {
-            DefectFilter?.FilterList.Remove(filterConfig);
+            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
+            {
+                if (b)
+                {
+                    DefectFilter?.FilterList.Remove(filterConfig);
+                }
+                return true;
+            });
+           
         }
 
         /// <summary>

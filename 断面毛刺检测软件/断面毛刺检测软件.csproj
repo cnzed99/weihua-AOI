@@ -6,7 +6,7 @@
 	  <LangVersion>10.0</LangVersion>
     <UseWindowsForms>False</UseWindowsForms>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\maociLOGO.ico</ApplicationIcon>
     <AssemblyName>MetalBurrDetectionSys</AssemblyName>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -142,10 +142,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\logo.ico" />
+    <Content Include="Resources\maociLOGO .ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\iis.bat" />
     <None Include="bin\Debug\net48\en\HandyControl.resources.dll" />
     <None Include="bin\Debug\net48\MaociAlg.dll" />
     <None Include="bin\Debug\net48\MiniEcatLib.dll" />
@@ -156,6 +157,7 @@
     <None Include="bin\Debug\net8.0-windows\MiniEcatLib.dll" />
     <None Include="bin\Debug\net8.0-windows\opencv_world490.dll" />
     <None Include="bin\Debug\net8.0-windows\WH.LightControl.exe" />
+    <None Include="bin\Debug\removeWeb.bat" />
   </ItemGroup>
 
   <ItemGroup>
@@ -343,7 +345,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewProj\NewProjResources.resx">
       <LastGenOutput>NewProjResources.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\OfflineTest\OfflineTestResources.resx">
       <LastGenOutput>OfflineTestResources.Designer.cs</LastGenOutput>

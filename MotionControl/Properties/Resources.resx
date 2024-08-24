@@ -454,4 +454,7 @@
   <data name="24.纠偏归零" xml:space="preserve">
     <value>24.纠偏归零</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>确认是否删除？</value>
+  </data>
 </root>

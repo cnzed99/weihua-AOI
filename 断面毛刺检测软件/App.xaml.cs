@@ -111,7 +111,7 @@ namespace 断面毛刺检测软件
         {
             var skins0 = Resources.MergedDictionaries[0];
             skins0.Source = new Uri(
-                $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                $"pack://application:,,,/MetalBurrDetectionSys;component/Themes/Skin{skin}.xaml"
             );
             skins0.MergedDictionaries.Clear();
             skins0.MergedDictionaries.Add(
@@ -126,13 +126,13 @@ namespace 断面毛刺检测软件
                 new ResourceDictionary
                 {
                     Source = new Uri(
-                        $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                        $"pack://application:,,,/MetalBurrDetectionSys;component/Themes/Skin{skin}.xaml"
                     )
                 }
             );
             var skins1 = Resources.MergedDictionaries[1];
             skins1.Source = new Uri(
-                $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                $"pack://application:,,,/MetalBurrDetectionSys;component/Themes/Skin{skin}.xaml"
             );
             skins1.MergedDictionaries.Clear();
             skins1.MergedDictionaries.Add(

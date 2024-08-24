@@ -3,7 +3,7 @@
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "毛刺检测"
 !define PRODUCT_VERSION "1.0"
-!define PRODUCT_PUBLISHER "广东威华"
+!define PRODUCT_PUBLISHER "广东威华智能技术有限公司"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\MetalBurrDetectionSys.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -14,7 +14,7 @@
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-!define MUI_ICON "断面毛刺检测软件\Resources\logo.ico"
+!define MUI_ICON "断面毛刺检测软件\Resources\maociLOGO.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 ; Welcome page
@@ -34,7 +34,10 @@ var ICONS_GROUP
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\毛细检测软件说明书.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\net48\MetalBurrDetectionSys.exe"
+!define MUI_FINISHPAGE_SHOWREADME
+!define MUI_FINISHPAGE_SHOWREADME_Function AutoBoot
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "开机自启动"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -52,75 +55,34 @@ InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
-Section "MainSection" SEC01
-  SetOutPath "$INSTDIR\net48"
-  SetOverwrite try
-  File "断面毛刺检测软件\bin\Debug\net48\*.dll"
+RequestExecutionLevel admin
+Section "Helpbook" SEC01
+  nsExec::Exec '$INSTDIR/removeWeb.bat'
+  SetOutPath "D:\HelpFile\毛刺检测软件\dist"
+  File /r "..\EditorRunHelpFile\BatteryHelpFile\docs\.vuepress\dist\*.*"
+  nsExec::Exec '$INSTDIR/iis.bat'
+SectionEnd
 
-  SetOutPath "$INSTDIR\net48\CamPlug\HIKVisionCam"
-  File "断面毛刺检测软件\bin\Debug\net48\CamPlug\HIKVisionCam\*.dll"
-  SetOutPath "$INSTDIR\net48\CamPlug\MindVisionCam"
-  File "断面毛刺检测软件\bin\Debug\net48\CamPlug\MindVisionCam\*.dll"
+Section "MainSection" SEC02
+  nsExec::Exec "taskkill /im MetalBurrDetectionSys.exe /f"
 
-  SetOutPath "$INSTDIR\net48\ComPlug\Modbus"
-  File "断面毛刺检测软件\bin\Debug\net48\ComPlug\Modbus\*.dll"
-  SetOutPath "$INSTDIR\net48\ComPlug\TCPIP"
-  File "断面毛刺检测软件\bin\Debug\net48\ComPlug\TCPIP\*.dll"
-  SetOutPath "$INSTDIR\net48\ComPlug\UDPIP"
-  File "断面毛刺检测软件\bin\Debug\net48\ComPlug\UDPIP\*.dll"
-
-  SetOutPath "$INSTDIR\net48\en"
-  File "断面毛刺检测软件\bin\Debug\net48\en\*.dll"
-
-  SetOutPath "$INSTDIR\net48\LostImage"
-  File "断面毛刺检测软件\bin\Debug\net48\LostImage\*.png"
-  SetOutPath "$INSTDIR\net48"
-  File "断面毛刺检测软件\bin\Debug\net48\MetalBurrDetectionSys.exe"
-  CreateDirectory "$SMPROGRAMS\毛刺检测"
-  CreateShortCut "$SMPROGRAMS\毛刺检测\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk" "$INSTDIR\net48\MetalBurrDetectionSys.exe"
-  CreateShortCut "$DESKTOP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk" "$INSTDIR\net48\MetalBurrDetectionSys.exe"
-  File "断面毛刺检测软件\bin\Debug\net48\*.config"
- 
-  File "断面毛刺检测软件\bin\Debug\net48\Users.WH"
-  File "断面毛刺检测软件\bin\Debug\net48\WH.LightControl.exe"
-
-  File "A:\毛刺检测加密\*.dll"
   SetOutPath "$INSTDIR\SystemConfig"
+  SetOverwrite ifnewer
+  File /r "断面毛刺检测软件\bin\Debug\SystemConfig\*.json"
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  File  "断面毛刺检测软件\bin\Debug\*.*"
 
-; Shortcuts
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-
-  !insertmacro MUI_STARTMENU_WRITE_END
-SectionEnd
-!define HELPPATH "D:\HelpFile\毛刺检测软件\dist"
-!define HELPFILE "..\EditorRunHelpFile\BatteryHelpFile\"
-Section "Helpbook" SEC02
-  SetOutPath HELPPATH
-  SetOverwrite try
-  File "${HELPFILE}docs\.vuepress\dist\*.*"
-  SetOutPath "${HELPPATH}\assets\css"
-  File "${HELPFILE}docs\.vuepress\dist\assets\css\*.*"
-  SetOutPath "${HELPPATH}\assets\img"
-  File "${HELPFILE}docs\.vuepress\dist\assets\img\*.*"
-
-  SetOutPath "${HELPPATH}\assets\js"
-  File "${HELPFILE}docs\.vuepress\dist\assets\js\*.*"
-
-  SetOutPath "${HELPPATH}\assets\media"
-  File "${HELPFILE}docs\.vuepress\dist\assets\media\*.*"
-
-  SetOutPath "${HELPPATH}"
-  File "${HELPFILE}docs\.vuepress\dist\*.*"
-  SetOutPath "${HELPPATH}\RuningSingle"
-  File "${HELPFILE}docs\.vuepress\dist\RuningSingle\*.*"
-  SetOutPath "${HELPPATH}"
-  File "${HELPFILE}docs\.vuepress\dist\组*.*"
-SectionEnd
-
-Section -AdditionalIcons
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
-  !insertmacro MUI_STARTMENU_WRITE_END
+  SetOutPath "$INSTDIR\net48"
+  SetOverwrite ifnewer
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.dll"
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.json"
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.config"
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.WH"
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.png"
+  File "A:\毛刺检测加密\*.dll"
+  File /r "断面毛刺检测软件\bin\Debug\net48\*.exe"
+  
 SectionEnd
 
 Section -Post
@@ -131,65 +93,55 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\net48\MetalBurrDetectionSys.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+   ;针对当前用户有效
+  WriteRegStr HKCU "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\net48\MetalBurrDetectionSys.exe" "RUNASADMIN"
+  ;针对所有用户有效
+  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\net48\MetalBurrDetectionSys.exe" "RUNASADMIN"
 SectionEnd
 
+Section -AdditionalIcons
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk" "$INSTDIR\net48\MetalBurrDetectionSys.exe"
+  CreateShortCut "$DESKTOP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk" "$INSTDIR\net48\MetalBurrDetectionSys.exe"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  !insertmacro MUI_STARTMENU_WRITE_END
+SectionEnd
+
+Section Uninstall
+  !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
+  nsExec::Exec '$INSTDIR/removeWeb.bat'
+  Delete "$INSTDIR\uninst.exe"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
+  Delete "$DESKTOP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk"
+  RMDir "$SMPROGRAMS\$ICONS_GROUP"
+  RMDir /r "D:\HelpFile\毛刺检测软件\dist"
+  RMDir /r "$INSTDIR\SystemConfig"
+  RMDir /r "$INSTDIR\net48"
+  
+  RMDir /r "$INSTDIR"
+
+  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
+  DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "MetalBurrKey"
+  SetAutoClose true
+SectionEnd
+
+Function AutoBoot
+         WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "MetalBurrKey" '"$INSTDIR\net48\MetalBurrDetectionSys.exe"'
+FunctionEnd
 
 Function un.onUninstSuccess
   HideWindow
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "MetalBurrKey"
   MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) 已成功地从你的计算机移除。"
 FunctionEnd
 
 Function un.onInit
+
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "你确实要完全移除 $(^Name) ，其及所有的组件？" IDYES +2
   Abort
 FunctionEnd
 
-Section Uninstall
-  !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
-  Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\毛细检测软件说明书.exe"
-  Delete "$INSTDIR\SystemConfig\*.Json"
 
-  Delete "$INSTDIR\net48\*.dll"
-
-  Delete "$INSTDIR\net48\Users.WH"
-   Delete "$INSTDIR\net48\*.json"
-  Delete "$INSTDIR\net48\*.config"
-  Delete "$INSTDIR\net48\*.exe"
-
-  Delete "$INSTDIR\net48\LostImage\LostImage.png"
-  Delete "$INSTDIR\net48\en\*.dll"
-  
-  Delete "${HELPPATH}\*.*"
-  Delete "${HELPPATH}\RuningSingle\*.*"
-  Delete "${HELPPATH}\assets\media\*.*"
-  Delete "${HELPPATH}\assets\js\*.*"
-  Delete "${HELPPATH}\assets\img\*.*"
-  Delete "${HELPPATH}\毛刺软件手册\Uninstall.lnk"
-  RMDir "${HELPPATH}\毛刺软件手册"
-  RMDir "${HELPPATH}\RuningSingle"
-  RMDir "${HELPPATH}\assets\media"
-  RMDir "${HELPPATH}\assets\js"
-  RMDir "${HELPPATH}\assets\img"
-  RMDir "${HELPPATH}\assets\css"
-
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
-  Delete "$DESKTOP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\${PRODUCT_NAME} ${PRODUCT_VERSION}.lnk"
-
-  RMDir "$SMPROGRAMS\$ICONS_GROUP"
-  RMDir "$INSTDIR\SystemConfig"
-  RMDir "$INSTDIR\net48\LostImage"
-  RMDir "$INSTDIR\net48\en"
-  RMDir "$INSTDIR\net48\ComPlug\UDPIP"
-  RMDir "$INSTDIR\net48\ComPlug\TCPIP"
-  RMDir "$INSTDIR\net48\ComPlug\Modbus"
-  RMDir "$INSTDIR\net48\CamPlug\MindVisionCam"
-  RMDir "$INSTDIR\net48\CamPlug\HIKVisionCam"
-  RMDir "$INSTDIR\net48"
-  RMDir "$INSTDIR"
-
-  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
-  DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-  SetAutoClose true
-SectionEnd

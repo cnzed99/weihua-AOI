@@ -161,10 +161,10 @@
                                 <Button
                                     Grid.Column="2"
                                     Margin="2"
-                                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                     Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AddFilterCommand}"
                                     CommandParameter="{Binding}"
                                     Content="{Binding [AddDefect], Source={x:Static local:CLang.s_Instance}}"
+                                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                     Style="{DynamicResource Button}" />
                             </Grid>
                         </Expander.Header>
@@ -243,9 +243,9 @@
                                                             Grid.Column="3"
                                                             Width="55"
                                                             Margin="5,2,0,0"
-                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.EditFilterCommand}"
                                                             Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
+                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Style="{DynamicResource Button}">
                                                             <Button.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
@@ -258,9 +258,9 @@
                                                             Grid.Column="4"
                                                             Width="55"
                                                             Margin="5,2,5,0"
-                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.RemoveFilterCommand}"
                                                             Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
+                                                            IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                                                             Style="{DynamicResource DelButton}">
                                                             <Button.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
