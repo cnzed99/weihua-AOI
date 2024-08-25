@@ -18,6 +18,23 @@ namespace WH.LightControl
         /// 主通讯参数保存路径
         /// </summary>
         public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
+        /// <summary>
+        /// 光源品牌名称
+        /// </summary>
+        [property: Category("基础信息")]
+        [property: Description("1.光源品牌")]
+        [property: DisplayName("光源品牌")]
+        [ObservableProperty]
+        private string lightBrandName;
+
+        /// <summary>
+        /// 光源工位名称
+        /// </summary>
+        [property: Category("基础信息")]
+        [property: Description("1.光源工位名称")]
+        [property: DisplayName("光源工位名称")]
+        [ObservableProperty]
+        private string lightStationName="光源1";
 
         /// <summary>
         /// 20240724 TCG

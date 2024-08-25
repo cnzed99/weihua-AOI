@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WH.LightControl;
 using WH.Entity;
 
-namespace WH.LightControl
+namespace LSWLightControl
 {
     /// <summary>
     /// 20240724 TCG
@@ -124,14 +125,14 @@ namespace WH.LightControl
         public LSWLightControlVM()
             : base()
         {
-            if (File.Exists(LightParamsBase.s_LightConfigPath))
-            {
-                this.Config = ConfigAPI.Load<LSWLightConfig>(LightParamsBase.s_LightConfigPath);
-            }
-            else
-            {
-                this.Config = new LSWLightConfig();
-            }
+            //if (File.Exists(LightParamsBase.s_LightConfigPath))
+            //{
+            //    this.Config = ConfigAPI.Load<LSWLightConfig>(LightParamsBase.s_LightConfigPath);
+            //}
+            //else
+            //{
+            //    this.Config = new LSWLightConfig();
+            //}
             //_ = this.Open();
         }
 

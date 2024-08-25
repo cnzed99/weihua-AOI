@@ -19,9 +19,13 @@ namespace WH.LightControl
         public MainWindow()
         {
             InitializeComponent();
-            var vm = new LSWLightControlVM();
 
-            this.DataContext = vm;
+            CLinghtManagement.LoadLightParams();
+
+            //var vm = new LSWLightControlVM();
+
+            //this.DataContext = vm;
+            this.DataContext = CLinghtManagement.LightControlDic.Values.First();
         }
     }
 }

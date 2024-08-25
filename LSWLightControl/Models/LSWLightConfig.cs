@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WH.LightControl;
-using WH.Entity;
 
 
 namespace LSWLightControl
@@ -15,7 +14,7 @@ namespace LSWLightControl
     {
         public LSWLightConfig()
         {
-            this.token = new Entity.CommonLib.Token("", this.GetType().Namespace);
+            this.token = new WH.Entity.CommonLib.Token("", this.GetType().Namespace);
             LightChannelList = new()
             {
                 new CLight("A"),
