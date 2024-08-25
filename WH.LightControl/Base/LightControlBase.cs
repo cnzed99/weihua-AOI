@@ -14,6 +14,8 @@ namespace WH.LightControl
 {
     public abstract partial class LightControlBase : ObservableObject
     {
+
+
         /// <summary>
         /// 20240724 TCG
         /// 串口号

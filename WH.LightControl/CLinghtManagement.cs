@@ -29,7 +29,7 @@ namespace WH.LightControl
         /// <summary>
         /// 光源插件字典
         /// </summary>
-        public static Dictionary<string, ILinght> LightHelpers = new Dictionary<string, ILinght>();
+        public static Dictionary<string, ILight> LightHelpers = new Dictionary<string, ILight>();
 
         public static Dictionary<string, LightControlBase> LightControlDic = new Dictionary<string, LightControlBase>();
 

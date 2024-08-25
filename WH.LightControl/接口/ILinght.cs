@@ -12,7 +12,7 @@ namespace WH.LightControl
     /// 光源接口
     /// 2024.08.23 鲍赞宝
     /// </summary>
-    public  interface ILinght
+    public  interface ILight
     {
 
         void Init(string path, int index, out LightControlBase cam);
@@ -35,7 +35,7 @@ namespace WH.LightControl
                     Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
                     if (type != null&& !CLinghtManagement.LightHelpers.ContainsKey(Path.GetFileNameWithoutExtension(item)))
                     {
-                        ILinght light = Activator.CreateInstance(type) as ILinght;
+                        ILight light = Activator.CreateInstance(type) as ILight;
                         CLinghtManagement.LightHelpers.Add(Path.GetFileNameWithoutExtension(item), light);
                     }
                 }
