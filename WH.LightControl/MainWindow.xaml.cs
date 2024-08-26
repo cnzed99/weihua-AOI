@@ -25,7 +25,23 @@ namespace WH.LightControl
             //var vm = new LSWLightControlVM();
 
             //this.DataContext = vm;
-            this.DataContext = CLinghtManagement.LightControlDic.Values.First();
+
+            this.DataContext = CLinghtManagement.LightControlDict.Values.ToList()[0];
+
+
+            foreach (var item in CLinghtManagement.LightControlDict.Values)
+            {
+                item.BaseConfig.DataContextChangedEvent += (d) =>
+                {
+                    if (d != null)
+                    {
+                        this.DataContext = d;
+                    }
+                };
+            }
+
+
+
         }
     }
 }

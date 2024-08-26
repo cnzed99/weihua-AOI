@@ -142,4 +142,13 @@
   <data name="光源控制" xml:space="preserve">
     <value>光源控制</value>
   </data>
+  <data name="新增" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="删除" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DeleteAsk" xml:space="preserve">
+    <value>确认删除当前的光源控制器?</value>
+  </data>
 </root>

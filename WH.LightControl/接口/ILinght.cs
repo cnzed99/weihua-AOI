@@ -14,8 +14,22 @@ namespace WH.LightControl
     /// </summary>
     public  interface ILight
     {
-
-        void Init(string path, int index, out LightControlBase cam);
+        /// <summary>
+        /// 初始化光源
+        /// 2024.08.23 鲍赞宝
+        /// </summary>
+        /// <param name="path">参数文件路径</param>
+        /// <param name="index">索引</param>
+        /// <param name="LightObj">光源实例</param>
+        /// <returns>参数</returns>
+        CLightParamsBase Init(string path, int index, out CLightControlBase LightObj);
+        /// <summary>
+        /// 创建一个新的光源实例
+        /// 2024.08.23 鲍赞宝
+        /// </summary>
+        /// <param name="LightObj">光源实例</param>
+        /// <returns></returns>
+       // CLightParamsBase CreatNewLight(out CLightControlBase LightObj);
     }
 
 

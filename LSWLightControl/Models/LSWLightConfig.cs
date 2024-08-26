@@ -10,7 +10,7 @@ using WH.LightControl;
 
 namespace LSWLightControl
 {
-    public partial class LSWLightConfig : LightParamsBase
+    public partial class LSWLightConfig : CLightParamsBase
     {
         public LSWLightConfig()
         {

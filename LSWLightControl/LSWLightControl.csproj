@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\LightPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)WH.LightControl\bin\Debug\$(TargetFramework)\LightPlug\$(TargetName)\ /d /y" />
     <Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\en\ /d /y" />
   </Target>
 
@@ -16,6 +16,21 @@
   <ItemGroup>
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
     <ProjectReference Include="..\WH.LightControl\WH.LightControl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

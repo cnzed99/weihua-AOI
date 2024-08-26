@@ -117,43 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="QualityGrade" xml:space="preserve">
-    <value>QualityGrade</value>
-  </data>
-  <data name="Priority" xml:space="preserve">
-    <value>Priority</value>
-  </data>
-  <data name="ShowColor" xml:space="preserve">
-    <value>ShowColor</value>
-  </data>
-  <data name="QualitySignal" xml:space="preserve">
-    <value>QualitySignal</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description</value>
+  <data name="Add" xml:space="preserve">
+    <value>Want to add a light controller?</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Are you sure to delete the current light controller?</value>
   </data>
-  <data name="Add" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="NameErrorInfo" xml:space="preserve">
-    <value>A level with the same name is already included, please change the name!</value>
-  </data>
-  <data name="NullRemind" xml:space="preserve">
-    <value>Please select an item and then proceed</value>
-  </data>
-  <data name="ShowColorStr" xml:space="preserve">
-    <value>The color cannot be empty</value>
-  </data>
-  <data name="DelecteAsk" xml:space="preserve">
-    <value>Confirm whether to delete?</value>
-  </data>
-  <data name="AddAsk" xml:space="preserve">
-    <value>Want to add a light controller?</value>
+  <data name="AddSueccess" xml:space="preserve">
+    <value>A light source controller is successfully added-</value>
   </data>
 </root>

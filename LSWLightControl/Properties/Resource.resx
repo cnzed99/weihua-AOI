@@ -97,43 +97,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="QualityGrade" xml:space="preserve">
-    <value>质量等级</value>
-  </data>
-  <data name="Priority" xml:space="preserve">
-    <value>优先级</value>
-  </data>
-  <data name="ShowColor" xml:space="preserve">
-    <value>显示颜色</value>
-  </data>
-  <data name="QualitySignal" xml:space="preserve">
-    <value>质量信号</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>说明</value>
-  </data>
   <data name="Add" xml:space="preserve">
-    <value>新增</value>
+    <value>确认新增一个光源控制器?</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>删除</value>
+    <value>确认删除当前的光源控制器?</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>修改</value>
-  </data>
-  <data name="NameErrorInfo" xml:space="preserve">
-    <value>已包含相同名称的等级，请更改名称！</value>
-  </data>
-  <data name="NullRemind" xml:space="preserve">
-    <value>请选择一个等级项再进行操作</value>
-  </data>
-  <data name="ShowColorStr" xml:space="preserve">
-    <value>颜色不能为空</value>
-  </data>
-  <data name="DelecteAsk" xml:space="preserve">
-    <value>确认是否删除？</value>
-  </data>
-  <data name="AddAsk" xml:space="preserve">
-    <value>确认增加一个光源控制器?</value>
+  <data name="AddSueccess" xml:space="preserve">
+    <value>成功新增一个光源控制器-</value>
   </data>
 </root>

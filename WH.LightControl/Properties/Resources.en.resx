@@ -162,4 +162,13 @@
   <data name="光源控制" xml:space="preserve">
     <value>Light Control</value>
   </data>
+  <data name="新增" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="删除" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteAsk" xml:space="preserve">
+    <value>Are you sure to delete the current light controller?</value>
+  </data>
 </root>

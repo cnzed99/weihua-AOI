@@ -12,6 +12,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WH.LightControl;
 using WH.Entity;
+using HandyControl.Controls;
+using System.Windows;
+using System.Reflection;
 
 namespace LSWLightControl
 {
@@ -19,7 +22,7 @@ namespace LSWLightControl
     /// 20240724 TCG
     /// 立实为光源控制视图模型
     /// </summary>
-    public partial class LSWLightControlVM : LightControlBase
+    public partial class LSWLightControlVM : CLightControlBase
     {
         /// <summary>
         /// 20240724 TCG
@@ -136,6 +139,8 @@ namespace LSWLightControl
             //_ = this.Open();
         }
 
+
+
         public override bool Close()
         {
             if (this.SerialPort.IsOpen)
@@ -232,11 +237,12 @@ namespace LSWLightControl
             GetTriggerMode();
         }
 
-        [RelayCommand]
-        protected override void Save()
-        {
-            ConfigAPI.Save(Config, LightParamsBase.s_LightConfigPath);
-        }
+        //[RelayCommand]
+        //protected override void Save()
+        //{
+        //    //ConfigAPI.Save(Config, CLightParamsBase.s_LightConfigPath);
+        //    CLinghtManagement.SaveConfigParams();
+        //}
 
         /// <summary>
         /// 20240724 TCG
@@ -301,5 +307,82 @@ namespace LSWLightControl
                 ErrorMessage = e.Message;
             }
         }
+        /// <summary>
+        ///  新增光源控制器
+        ///  2024.08.26 鲍赞宝
+        /// </summary>
+        [RelayCommand]
+        public override void Add(object winobj)
+        {
+            LSWLightControlVM LSWlight = new LSWLightControlVM();
+
+            int lightcount = CLinghtManagement.LightControlDict.Values.Count;
+            LSWlight.Config = new();
+            LSWlight.Config.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
+
+            int indexNum = 1;
+            string indexname= "光源" + indexNum.ToString();
+            string lightkey = LSWlight.Config.LightBrandName + "-" + indexname;
+            while (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
+            {
+                indexNum++;
+                indexname = "光源" + indexNum.ToString();
+                lightkey = LSWlight.Config.LightBrandName + "-" + indexname;
+
+            }
+
+            LSWlight.SetBaseParam(LSWlight.Config);
+            LSWlight.Config.LightStationName = indexname;
+
+            Growl.AskGlobal(Properties.Resource.Add, b =>
+            {
+                if (b)
+                {
+                    if (!CLinghtManagement.LightControlDict.ContainsKey(lightkey))
+                    {
+                        CLinghtManagement.LightControlDict.Add(lightkey, LSWlight);
+                       // CLinghtManagement.LightParamDict.Add(lightkey, LSWlight.Config);
+
+                        if (winobj is HandyControl.Controls.Window window)
+                        {
+                            CLinghtManagement.LightControlDict[lightkey].BaseConfig.DataContextChangedEvent += (d) =>
+                            {
+                                window.DataContext = d;
+                            };
+                        }
+                        CLinghtManagement.SaveConfigParams();
+                        Growl.Info(Properties.Resource.AddSueccess + indexname);
+                    }
+                }
+                return true;
+            });
+
+
+        }
+
+        ///// <summary>
+        /////  20240826 鲍赞宝
+        ///// 删除光源控制器
+        ///// </summary>
+        ///// <param name="paramobj"></param>
+        //[RelayCommand]
+        //public override void Delete(object paramobj)
+        //{
+        //    Growl.AskGlobal(Properties.Resource.Add, b =>
+        //    {
+        //        if (b)
+        //        {
+        //            if (paramobj is CLightParamsBase param)
+        //            {
+        //                string lightkey = param.LightBrandName + "-" + param.LightStationName;
+        //                CLinghtManagement.LightControlDict.Remove(lightkey);
+        //               // CLinghtManagement.LightParamDict.Remove(lightkey);
+
+        //                CLinghtManagement.SaveConfigParams();
+        //            }
+        //        }
+        //        return true;
+        //    });
+        //}
     }
 }

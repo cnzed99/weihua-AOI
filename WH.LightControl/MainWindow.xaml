@@ -11,8 +11,8 @@
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="光源控制"
     Width="800"
-    Height="450"
-    d:DataContext="{d:DesignInstance local:LSWLightControlVM}"
+    Height="550"
+    d:DataContext="{d:DesignInstance local:CLightControlBase}"
     Icon="/Resources/光源.png"
     ResizeMode="NoResize"
     SizeToContent="Height"
@@ -90,17 +90,36 @@
                     </UniformGrid>
 
                     <wh:CPropertyGridLang
-                        Height="320"
                         Background="{x:Null}"
-                        SelectedObject="{Binding Config}" />
+                        SelectedObject="{Binding BaseConfig}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                    
 
-                    <Button
-                        Width="100"
-                        Margin="10"
-                        Command="{Binding ReSetCommand}"
-                        Content="{Binding [恢复出厂], Source={x:Static local:CLang.LSWLightLang}}"
-                        Style="{StaticResource ButtonDanger.Small}" />
+                        <Button Grid.Column="0"                    
+                          Margin="10"
+                          Command="{Binding ReSetCommand}"
+                          Content="{Binding [恢复出厂], Source={x:Static local:CLang.LSWLightLang}}"
+                          Style="{StaticResource ButtonDanger.Small}" />
 
+                        <Button Grid.Column="1"                        
+                           Margin="10"
+                           Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                           Content="{Binding [新增], Source={x:Static local:CLang.LSWLightLang}}"
+                           Style="{StaticResource StatusDotButtonInfo.Small}" />
+                                          
+
+                           <Button Grid.Column="2"                    
+                           Margin="10"
+                           Command="{Binding DeleteCommand}" CommandParameter="{Binding BaseConfig}"
+                           Content="{Binding [删除], Source={x:Static local:CLang.LSWLightLang}}"
+                           Style="{StaticResource ButtonDanger.Small}" />
+
+                    </Grid>
                 </StackPanel>
             </hc:ScrollViewer>
 
