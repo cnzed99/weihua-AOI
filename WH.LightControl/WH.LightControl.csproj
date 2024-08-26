@@ -27,6 +27,7 @@
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
 	</ItemGroup>

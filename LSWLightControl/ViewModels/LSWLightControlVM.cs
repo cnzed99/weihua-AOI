@@ -350,7 +350,7 @@ namespace LSWLightControl
                                 window.DataContext = d;
                             };
                         }
-                        CLinghtManagement.SaveConfigParams();
+                        CLinghtManagement.SaveLightParams();
                         Growl.Info(Properties.Resource.AddSueccess + indexname);
                     }
                 }

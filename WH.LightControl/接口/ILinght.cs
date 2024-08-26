@@ -39,23 +39,9 @@ namespace WH.LightControl
         /// 2024.8.23 李焕彬
         /// 加载相机插件
         /// </summary>
-        public static void LoadLight()
+        public static List<string> LoadLight()
         {
-            //foreach (var item in Directory.GetDirectories("LightPlug"))
-            //{
-            //    if (File.Exists($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll"))
-            //    {
-            //        Assembly ass = Assembly.LoadFrom($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll");
-            //        Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
-            //        if (type != null&& !CLinghtManagement.LightHelpers.ContainsKey(Path.GetFileNameWithoutExtension(item)))
-            //        {
-            //            ILight light = Activator.CreateInstance(type) as ILight;
-            //            CLinghtManagement.LightHelpers.Add(Path.GetFileNameWithoutExtension(item), light);
-            //        }
-            //    }
-            //}
-
-
+            List<string> lightFileName = new List<string>();
             foreach (var item in Directory.GetDirectories("LightPlug"))
             {
                 string folderPath = item;
@@ -68,16 +54,19 @@ namespace WH.LightControl
                     {
                         Assembly ass = Assembly.LoadFrom(files[i]);
                         Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
+                        string fileName = Path.GetFileNameWithoutExtension(files[i]);
                         if (type != null)
                         {
                             ILight light = Activator.CreateInstance(type) as ILight;
-                            CLinghtManagement.LightHelpers.Add((Path.GetFileNameWithoutExtension(files[i]), light));
+                            CLinghtManagement.LightHelpers.Add((fileName, light));
                         }
 
-
+                        lightFileName.Add(fileName);
                     }
                 }
             }
+
+            return lightFileName;
         }
     }
 }

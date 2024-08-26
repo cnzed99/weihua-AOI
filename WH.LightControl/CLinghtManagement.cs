@@ -22,9 +22,9 @@ namespace WH.LightControl
 
         /// <summary>
         /// 20240825 鲍赞宝
-        /// 光源参数
+        /// 光源名称集合
         /// </summary>
-        public static List<CLightParamsBase> lightParams = new List<CLightParamsBase>();
+        public static List<string> lightName = new List<string>();
 
         /// <summary>
         /// 光源插件字典
@@ -40,22 +40,7 @@ namespace WH.LightControl
        /// </summary>
         public static void LoadLightParams()
         {
-            //if (File.Exists(s_LightConfigPath))
-            //{
-            //    lightParams = ConfigAPI.LoadDeserialize<List<CLightParamsBase>>(s_LightConfigPath);
-            //}
-            //else
-            //{
-            //    lightParams = new List<CLightParamsBase>();
-
-            //    CLightParamsBase Lsw = new CLightParamsBase(); //如果没有配置文件,默认生成一个
-            //    Lsw.LightBrandName = "LSWLightControl";
-            //    lightParams.Add(Lsw);
-            //}
-            //if (lightParams != null)
-            //{
-
-            LoadLightPlugs.LoadLight();
+            lightName= LoadLightPlugs.LoadLight();
             for (int i = 0; i < LightHelpers.Count; i++)
             {
                 var param = LightHelpers[i].Item2.Init(s_LightConfigPath, i, out CLightControlBase lightControl);
@@ -68,14 +53,14 @@ namespace WH.LightControl
                 }
             }
 
-            SaveConfigParams();
+            SaveLightParams();
 
         }
         /// <summary>
         /// 保存光源配置
         /// 2024.08.25 鲍赞宝
         /// </summary>
-        public static void SaveConfigParams()
+        public static void SaveLightParams()
         {
             List<CLightParamsBase> lightparams = new List<CLightParamsBase>();
 

@@ -125,7 +125,7 @@ namespace WH.LightControl
         [RelayCommand]   
         protected virtual void Save()
         {
-            CLinghtManagement.SaveConfigParams();
+            CLinghtManagement.SaveLightParams();
         }
         /// <summary>
         /// 20240826 鲍赞宝
@@ -152,7 +152,7 @@ namespace WH.LightControl
                         CLinghtManagement.LightControlDict.Remove(lightkey);
                         // CLinghtManagement.LightParamDict.Remove(lightkey);
 
-                        CLinghtManagement.SaveConfigParams();
+                        CLinghtManagement.SaveLightParams();
                     }
                 }
                 return true;

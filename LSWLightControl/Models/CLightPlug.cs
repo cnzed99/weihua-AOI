@@ -26,7 +26,7 @@ namespace LSWLightControl
 
             if (File.Exists(path))
             {
-                List<LSWLightConfig> templist = ConfigAPI.LoadDeserialize<List<LSWLightConfig>>(path);
+                List<LSWLightConfig> templist = ConfigAPI.Load<List<LSWLightConfig>>(path);
 
                 
                 if ((templist.Count>0&&(templist.Count-1)>= index))
