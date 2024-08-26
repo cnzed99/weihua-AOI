@@ -29,7 +29,7 @@ namespace WH.LightControl
         /// <summary>
         /// 光源插件字典
         /// </summary>
-        public static Dictionary<string, ILight> LightHelpers = new Dictionary<string, ILight>();
+        public static List<(string, ILight)> LightHelpers = new List<(string, ILight)>();
 
         public static Dictionary<string, CLightControlBase> LightControlDict = new Dictionary<string, CLightControlBase>();
 
@@ -40,33 +40,35 @@ namespace WH.LightControl
        /// </summary>
         public static void LoadLightParams()
         {
-            if (File.Exists(s_LightConfigPath))
-            {
-                lightParams = ConfigAPI.LoadDeserialize<List<CLightParamsBase>>(s_LightConfigPath);
-            }
-            else
-            {
-                lightParams = new List<CLightParamsBase>();
+            //if (File.Exists(s_LightConfigPath))
+            //{
+            //    lightParams = ConfigAPI.LoadDeserialize<List<CLightParamsBase>>(s_LightConfigPath);
+            //}
+            //else
+            //{
+            //    lightParams = new List<CLightParamsBase>();
 
-                CLightParamsBase Lsw = new CLightParamsBase(); //如果没有配置文件,默认生成一个
-                Lsw.LightBrandName = "LSWLightControl";
-                lightParams.Add(Lsw);
-            }
-            if (lightParams != null)
+            //    CLightParamsBase Lsw = new CLightParamsBase(); //如果没有配置文件,默认生成一个
+            //    Lsw.LightBrandName = "LSWLightControl";
+            //    lightParams.Add(Lsw);
+            //}
+            //if (lightParams != null)
+            //{
+
+            LoadLightPlugs.LoadLight();
+            for (int i = 0; i < LightHelpers.Count; i++)
             {
-                LoadLightPlugs.LoadLight();
-                for (int i = 0; i < lightParams.Count; i++)
+                var param = LightHelpers[i].Item2.Init(s_LightConfigPath, i, out CLightControlBase lightControl);
+                if (lightControl != null)
                 {
-                    var param = LightHelpers[lightParams[i].LightBrandName].Init(s_LightConfigPath, i, out CLightControlBase lightControl);
-                    if (lightControl != null)
-                    {
-                        string lightkey = lightParams[i].LightBrandName + "-" + lightParams[i].LightStationName;
-                        LightControlDict.Add(lightkey, lightControl);
-                        //LightParamDict.Add(lightkey, param);
-                    }
-                }      
+                    lightControl.BaseConfig.LightStationName = LightHelpers[i].Item1;
+                    string lightkey = $"{lightControl.BaseConfig.LightBrandName}-{lightControl.BaseConfig.LightStationName}";
+                    LightControlDict.Add(lightkey, lightControl);
+                    //LightParamDict.Add(lightkey, param);
+                }
             }
-          
+
+            SaveConfigParams();
 
         }
         /// <summary>

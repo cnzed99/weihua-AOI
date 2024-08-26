@@ -41,16 +41,40 @@ namespace WH.LightControl
         /// </summary>
         public static void LoadLight()
         {
+            //foreach (var item in Directory.GetDirectories("LightPlug"))
+            //{
+            //    if (File.Exists($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll"))
+            //    {
+            //        Assembly ass = Assembly.LoadFrom($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll");
+            //        Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
+            //        if (type != null&& !CLinghtManagement.LightHelpers.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+            //        {
+            //            ILight light = Activator.CreateInstance(type) as ILight;
+            //            CLinghtManagement.LightHelpers.Add(Path.GetFileNameWithoutExtension(item), light);
+            //        }
+            //    }
+            //}
+
+
             foreach (var item in Directory.GetDirectories("LightPlug"))
             {
-                if (File.Exists($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll"))
+                string folderPath = item;
+                string fileType = "*.dll";
+                string[] files = Directory.GetFiles(folderPath, fileType);
+
+                if (files.Length>0)
                 {
-                    Assembly ass = Assembly.LoadFrom($"{item}\\{Path.GetFileNameWithoutExtension(item)}.dll");
-                    Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
-                    if (type != null&& !CLinghtManagement.LightHelpers.ContainsKey(Path.GetFileNameWithoutExtension(item)))
+                    for (int i = 0; i < files.Length; i++)
                     {
-                        ILight light = Activator.CreateInstance(type) as ILight;
-                        CLinghtManagement.LightHelpers.Add(Path.GetFileNameWithoutExtension(item), light);
+                        Assembly ass = Assembly.LoadFrom(files[i]);
+                        Type type = ass.GetTypes().ToList().Find(c => c.GetInterface("ILight") != null);
+                        if (type != null)
+                        {
+                            ILight light = Activator.CreateInstance(type) as ILight;
+                            CLinghtManagement.LightHelpers.Add((Path.GetFileNameWithoutExtension(files[i]), light));
+                        }
+
+
                     }
                 }
             }

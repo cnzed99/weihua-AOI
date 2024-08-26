@@ -23,10 +23,23 @@ namespace LSWLightControl
         public CLightParamsBase Init(string path, int index, out CLightControlBase lightobj)
         {
             LSWLightControlVM LSWlight = new LSWLightControlVM();
-          
+
             if (File.Exists(path))
             {
-                LSWlight.Config = ConfigAPI.Load<List<LSWLightConfig>>(path)[index];
+                List<LSWLightConfig> templist = ConfigAPI.LoadDeserialize<List<LSWLightConfig>>(path);
+
+                
+                if ((templist.Count>0&&(templist.Count-1)>= index))
+                {
+                    LSWlight.Config = templist[index];
+                }
+                else
+                {
+                    LSWLightConfig lswlight = new LSWLightConfig();
+                    lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
+                    LSWlight.Config = lswlight;
+                }
+               
             }
             else
             {

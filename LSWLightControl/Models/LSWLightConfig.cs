@@ -15,13 +15,17 @@ namespace LSWLightControl
         public LSWLightConfig()
         {
             this.token = new WH.Entity.CommonLib.Token("", this.GetType().Namespace);
-            LightChannelList = new()
+            if (LightChannelList == null)
             {
-                new CLight("A"),
-                new CLight("B"),
-                new CLight("C"),
-                new CLight("D")
-            }; //通道亮度
+                LightChannelList = new()
+                {
+                    new CLight("A"),
+                    new CLight("B"),
+                    new CLight("C"),
+                    new CLight("D")
+                }; //通道亮度
+            }
+
         }
 
         /// <summary>
