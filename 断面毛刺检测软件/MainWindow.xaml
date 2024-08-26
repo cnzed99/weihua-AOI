@@ -362,7 +362,7 @@
                             Height="50"
                             Margin="5"
                             Padding="0"
-                            BorderBrush="#FFC6C6C6"
+                            BorderBrush="#FF0DD647"
                             Click="btn_UserLogin_Click">
                             <Button.Background>
                                 <ImageBrush

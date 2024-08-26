@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace WH.Entity.Attribute
 {
+
     /// <summary>
     /// 20240708 TCG
     /// 与另一属性比较大小，需大于
@@ -63,6 +64,74 @@ namespace WH.Entity.Attribute
             }
 
             return new("The current value is smaller than the other one");
+        }
+    }
+
+
+    /// <summary>
+    /// 20240824 鲍赞宝
+    /// 时间比较专用 只比较时间部分,忽略日期
+    /// </summary>
+    public sealed class DateTimeGreaterThanAttribute : ValidationAttribute
+    {
+        public DateTimeGreaterThanAttribute(string propertyName)
+        {
+            PropertyName = propertyName;
+        }
+
+        public string PropertyName { get; }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            object
+                instance = validationContext.ObjectInstance,//获取当前实例
+                                                            //获取实例属性 B
+                otherValue = instance.GetType().GetProperty(PropertyName).GetValue(instance);
+
+            if (value is DateTime thisDateTime && otherValue is DateTime otherDateTime)
+            {
+                TimeSpan thisvalue = thisDateTime.TimeOfDay;
+                TimeSpan otherTime = otherDateTime.TimeOfDay;
+
+                if (((IComparable)thisvalue).CompareTo(otherTime) > 0)
+                {
+                    return ValidationResult.Success;
+                }
+            }
+            return new("当前值应大于另一个值");
+        }
+    }
+    /// <summary>
+    /// 20240824 鲍赞宝
+    /// 时间比较专用 只比较时间部分,忽略日期
+    /// </summary>
+    public sealed class DateTimeLessThanAttribute : ValidationAttribute
+    {
+        public DateTimeLessThanAttribute(string propertyName)
+        {
+            PropertyName = propertyName;
+        }
+
+        public string PropertyName { get; }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            object
+                instance = validationContext.ObjectInstance,//获取当前实例
+                                                            //获取实例属性 B
+                otherValue = instance.GetType().GetProperty(PropertyName).GetValue(instance);
+
+            if (value is DateTime thisDateTime && otherValue is DateTime otherDateTime)
+            {
+                TimeSpan thisvalue = thisDateTime.TimeOfDay;
+                TimeSpan otherTime = otherDateTime.TimeOfDay;
+
+                if (((IComparable)thisvalue).CompareTo(otherTime) < 0)
+                {
+                    return ValidationResult.Success;
+                }
+            }
+            return new("当前值应小于另一个值");
         }
     }
 }

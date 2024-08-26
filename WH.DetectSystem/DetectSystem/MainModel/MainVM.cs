@@ -49,7 +49,7 @@ namespace WH.DetectSystem.ViewModels
         public CLogRec OperateLog { get; } =
             CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
 
-        private CSystemSettingsVM SystemSettings =
+        public CSystemSettingsVM SystemSettings =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
         /// <summary>
@@ -125,6 +125,16 @@ namespace WH.DetectSystem.ViewModels
             {
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = m_WaitImgChannel;
             }
+            // 数据清零事件
+            SystemSettings.ClearProduceEvent += () =>
+            {
+
+                if (SystemSettings.AutoClearEnable)
+                {
+                    this.DefectsDataVM.DefectsProduce.Clear();
+                }
+
+            };
         }
 
         [ObservableProperty]
