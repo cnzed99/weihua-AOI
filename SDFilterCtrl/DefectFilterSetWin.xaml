@@ -17,6 +17,7 @@
     d:DataContext="{d:DesignInstance local:CDefectFilterSetVM}"
     Icon="/SDFilter;component/Resources/检测设置.png"
     ResizeMode="NoResize"
+    Topmost="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
@@ -25,7 +26,7 @@
             <conv:BoolToBrushConverter
                 x:Key="BoolToBrushConverterEx"
                 FalseValue="Red"
-                TrueValue="#FF324B64" />
+                TrueValue="{DynamicResource ExpanderBrush}" />
             <conv:BoolToStringConverter
                 x:Key="BoolToStringConverter"
                 FalseValue="+"
@@ -74,10 +75,10 @@
             <DataTemplate x:Key="Filter">
                 <Border
                     Margin="0,2"
-                    BorderBrush="{StaticResource ThirdlyRegionBrush}"
+                    BorderBrush="{DynamicResource ExpanderBrush}"
                     BorderThickness="1"
                     CornerRadius="5">
-                    <Expander Background="{StaticResource ThirdlyRegionBrush}" IsExpanded="True">
+                    <Expander Background="{DynamicResource ExpanderBrush}" IsExpanded="True">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -325,15 +326,11 @@
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="77" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Foreground="White"
-                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
                                         <TextBlock
                                             Grid.Column="1"
                                             HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Foreground="White">
+                                            VerticalAlignment="Center">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0} : {1}">
                                                     <Binding Path="[DefectFilter]" Source="{x:Static local:CLang.s_Instance}" />
@@ -341,9 +338,10 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <CheckBox Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
-                                                  Grid.Column="2" 
-                                                  IsChecked="{Binding FilterSelectEnable}" Foreground="White"/>
+                                        <CheckBox
+                                            Grid.Column="2"
+                                            Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
+                                            IsChecked="{Binding FilterSelectEnable}" />
                                         <ComboBox
                                             Grid.Column="4"
                                             Width="180"
@@ -363,10 +361,7 @@
                                     </Grid>
                                 </Expander.Header>
                                 <StackPanel Margin="1">
-                                    <Border
-                                        BorderBrush="{StaticResource SecondaryBorderBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="5">
+                                    <Border BorderThickness="1" CornerRadius="5">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition />
@@ -403,9 +398,9 @@
                                             </ItemsControl>
                                         </Grid>
                                     </Border>
+                                    <hc:Divider Margin="0,3" LineStroke="{DynamicResource BorderBrush}" />
                                     <Border
                                         Margin="1"
-                                        BorderBrush="{StaticResource SecondaryBorderBrush}"
                                         BorderThickness="1"
                                         CornerRadius="5">
                                         <Grid>

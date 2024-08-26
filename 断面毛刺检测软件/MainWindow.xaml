@@ -245,10 +245,10 @@
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
 
                 <ToggleButton
-                    Checked="cbSkin_Checked"
-                    IsChecked="True"
+                   
+                    IsChecked="{Binding IsDark, Source={x:Static local:GlobalData.Config}}"
                     Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}"
-                    Unchecked="cbSkin_Checked" />
+                     />
             </hc:SimplePanel>
         </Grid>
     </hc:Window.NonClientAreaContent>
@@ -281,7 +281,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15"/>
+                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <UniformGrid Columns="1">
@@ -592,14 +592,14 @@
                 IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
                 PathLength="400"
                 Stretch="Uniform"
-                Stroke="Cyan"
+                Stroke="{DynamicResource LoadingPathBrush}"
                 StrokeThickness="1"
                 Duration="00:00:5" />
             <TextBlock
                 Name="LoadProgressBar"
                 Margin="0,10"
                 d:Text="loading"
-                Foreground="Cyan"
+                Foreground="{DynamicResource LoadingPathBrush}"
                 Style="{StaticResource TextBlockDefault}"
                 TextWrapping="Wrap" />
         </StackPanel>
