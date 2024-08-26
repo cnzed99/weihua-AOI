@@ -25,7 +25,7 @@
                 <cov:BoolToBrushConverter.FalseValue>
                     <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Offset="0" Color="Red" />
-                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}"/>
+                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}" />
                     </LinearGradientBrush>
                 </cov:BoolToBrushConverter.FalseValue>
             </cov:BoolToBrushConverter>
@@ -144,8 +144,8 @@
                 <DataTemplate>
                     <Expander
                         hc:BorderElement.CornerRadius="0"
-                        BorderBrush="Transparent"
                         Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
+                        BorderBrush="Transparent"
                         BorderThickness="1"
                         IsExpanded="True"
                         Visibility="{Binding ReadOnly, Converter={StaticResource Boolean2VisibilityReConverter}}">

@@ -27,7 +27,7 @@
                 <conv:BoolToBrushConverter.FalseValue>
                     <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Offset="0" Color="Red" />
-                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}"/>
+                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}" />
                     </LinearGradientBrush>
                 </conv:BoolToBrushConverter.FalseValue>
             </conv:BoolToBrushConverter>
@@ -125,7 +125,6 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                               
                                                                                 Text="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
                                                                             <TextBlock
                                                                                 Grid.Column="1"
@@ -139,7 +138,6 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                               
                                                                                 Text="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
                                                                         </Grid>
                                                                     </DataTemplate>

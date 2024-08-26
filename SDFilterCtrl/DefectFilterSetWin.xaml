@@ -10,7 +10,7 @@
     xmlns:local="clr-namespace:SDFilter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title=""
     Width="810"
     Height="610"
