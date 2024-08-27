@@ -23,9 +23,10 @@
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SaveImageManageWPF\SaveImageManage.csproj" />
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
+    <ProjectReference Include="..\WH.LightControl\WH.LightControl.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
-	<ItemGroup >
+	<ItemGroup>
 		<PackageReference Include="Autofac" />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="Mapster" />

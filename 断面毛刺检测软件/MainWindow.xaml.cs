@@ -28,6 +28,7 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
+using WH.LightControl;
 using WH.RecipeCellRootBase;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
@@ -658,9 +659,37 @@ namespace 断面毛刺检测软件
         /// <param name="e"></param>
         private void LightControl_Click(object sender, RoutedEventArgs e)
         {
-            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            // var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
             //lightProcess.Start();
-            lightProcess?.Start();
+            // lightProcess?.Start();
+            try
+            {
+                if (e.OriginalSource is MenuItem { Header: string header })
+                {
+                    if (CLinghtManagement.LightControlDict.Count > 0)
+                    {
+                        var ienumkeyNames = CLinghtManagement.LightControlDict.Keys.ToArray().ToList();
+
+                        foreach (var keyname in ienumkeyNames)
+                        {
+                            string keysub = keyname.Split('&')[1];
+                            if (keysub== header)
+                            {
+                                if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
+                                {
+                                    LightSetWindow lihtsetWin = App.Container.Resolve<Lazy<LightSetWindow>>().Value;
+                                    lihtsetWin.DataContext = CLinghtManagement.LightControlDict[keyname];
+                                    lihtsetWin.Show();
+                                    lihtsetWin.Activate();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
         }
         #endregion
 

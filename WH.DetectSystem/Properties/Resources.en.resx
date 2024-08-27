@@ -141,4 +141,7 @@
   <data name="UnfinishedError" xml:space="preserve">
     <value>The project is not fully configured. Please reconfigure it</value>
   </data>
+  <data name="初始化光源失败" xml:space="preserve">
+    <value>Failed to initialize the light source controller</value>
+  </data>
 </root>

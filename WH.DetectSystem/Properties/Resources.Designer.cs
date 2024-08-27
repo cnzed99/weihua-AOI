@@ -70,6 +70,15 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 初始化光源控制器失败 的本地化字符串。
+        /// </summary>
+        internal static string 初始化光源失败 {
+            get {
+                return ResourceManager.GetString("初始化光源失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist 的本地化字符串。
         /// </summary>
         internal static string 帮助文档打开失败 {

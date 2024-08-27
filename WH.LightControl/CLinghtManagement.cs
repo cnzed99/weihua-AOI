@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace WH.LightControl
         /// 20240825 鲍赞宝
         /// 光源名称集合
         /// </summary>
-        public static List<string> lightName = new List<string>();
+        public static ObservableCollection<string> lightName = new ObservableCollection<string>();
 
         /// <summary>
         /// 光源插件字典
@@ -47,7 +48,7 @@ namespace WH.LightControl
                 if (lightControl != null)
                 {
                     lightControl.BaseConfig.LightStationName = LightHelpers[i].Item1;
-                    string lightkey = $"{lightControl.BaseConfig.LightBrandName}-{lightControl.BaseConfig.LightStationName}";
+                    string lightkey = $"{lightControl.BaseConfig.LightBrandName}&{lightControl.BaseConfig.LightStationName}";
                     LightControlDict.Add(lightkey, lightControl);
                     //LightParamDict.Add(lightkey, param);
                 }

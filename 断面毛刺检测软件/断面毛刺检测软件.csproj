@@ -377,6 +377,7 @@
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
     <ProjectReference Include="..\WH.DetectSystem\WH.DetectSystem.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+    <ProjectReference Include="..\WH.LightControl\WH.LightControl.csproj" />
     <ProjectReference Include="..\WH.Load\WH.Load.csproj" />
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace WH.LightControl
 {
@@ -39,9 +40,9 @@ namespace WH.LightControl
         /// 2024.8.23 李焕彬
         /// 加载相机插件
         /// </summary>
-        public static List<string> LoadLight()
+        public static ObservableCollection<string> LoadLight()
         {
-            List<string> lightFileName = new List<string>();
+            ObservableCollection<string> lightFileName = new ObservableCollection<string>();
             foreach (var item in Directory.GetDirectories("LightPlug"))
             {
                 string folderPath = item;

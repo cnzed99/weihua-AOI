@@ -37,6 +37,8 @@ using WH.Entity.CommonLib;
 using WH.Entity.IIService;
 using WH.Entity.LogRecord;
 using WH.RunCell;
+using WH.LightControl;
+
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -103,6 +105,11 @@ namespace WH.DetectSystem.ViewModels
         /// 相机管理
         /// </summary>
         public CCameraManagement CamManagement { get; set; }
+        /// <summary>
+        /// 光源工位列表
+        /// </summary>
+        [ObservableProperty]
+        public ObservableCollection<string> lightStationNames;
 
         public CMainModelsModelVM()
         {
@@ -233,6 +240,19 @@ namespace WH.DetectSystem.ViewModels
                 catch (Exception ex)
                 {
                     Growl.Error(Properties.Resources.相机连接失败 + "\r\n" + ex.Message);
+                }
+                #endregion
+
+                #region 读取所有光源dll
+                try
+                {
+                    CLinghtManagement.LoadLightParams();
+                    LightStationNames = CLinghtManagement.lightName;
+                }
+                catch (Exception ex)
+                {
+
+                    Growl.Error(Properties.Resources.初始化光源失败 + "\r\n" + ex.Message);
                 }
                 #endregion
             });

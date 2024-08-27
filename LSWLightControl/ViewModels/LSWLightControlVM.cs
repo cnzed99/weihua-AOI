@@ -322,12 +322,12 @@ namespace LSWLightControl
 
             int indexNum = 1;
             string indexname= "光源" + indexNum.ToString();
-            string lightkey = LSWlight.Config.LightBrandName + "-" + indexname;
+            string lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
             while (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
             {
                 indexNum++;
                 indexname = "光源" + indexNum.ToString();
-                lightkey = LSWlight.Config.LightBrandName + "-" + indexname;
+                lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
 
             }
 
