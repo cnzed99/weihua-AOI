@@ -180,4 +180,7 @@
   <data name="光源字典为空" xml:space="preserve">
     <value>The light source dictionary is null, check the LightConfig.Json file in the configuration file SystemConfig</value>
   </data>
+  <data name="添加光源" xml:space="preserve">
+    <value>ADD</value>
+  </data>
 </root>

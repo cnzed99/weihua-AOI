@@ -196,6 +196,15 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 添加光源 的本地化字符串。
+        /// </summary>
+        public static string 添加光源 {
+            get {
+                return ResourceManager.GetString("添加光源", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 调试 的本地化字符串。
         /// </summary>
         public static string 调试 {

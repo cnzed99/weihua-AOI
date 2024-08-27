@@ -97,16 +97,16 @@ namespace 断面毛刺检测软件
         {
             base.OnExit(e);
             GlobalData.Save();
-            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
-            try
-            {
-                if (lightProcess != null && lightProcess.Threads != null)
-                    lightProcess?.Kill();
-            }
-            catch (Exception)
-            {
-                //退出程序
-            }
+            //var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            //try
+            //{
+            //    if (lightProcess != null && lightProcess.Threads != null)
+            //        lightProcess?.Kill();
+            //}
+            //catch (Exception)
+            //{
+            //    //退出程序
+            //}
         }
 
         internal void UpdateSkin(SkinType skin)
