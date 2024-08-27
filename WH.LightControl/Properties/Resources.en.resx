@@ -171,4 +171,10 @@
   <data name="DeleteAsk" xml:space="preserve">
     <value>Are you sure to delete the current light controller?</value>
   </data>
+  <data name="光源品牌" xml:space="preserve">
+    <value>Manufa:</value>
+  </data>
+  <data name="工位名称" xml:space="preserve">
+    <value>StationName:</value>
+  </data>
 </root>

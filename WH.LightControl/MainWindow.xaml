@@ -81,6 +81,7 @@
                                 Style="{StaticResource StatusDotButtonPrimary.Small}" />
                         </StackPanel>
 
+
                         <Button
                             Width="100"
                             Margin="10,0"
@@ -89,15 +90,24 @@
                             Style="{StaticResource ButtonPrimary.Small}" />
                     </UniformGrid>
 
-                    <wh:CPropertyGridLang
-                        Background="{x:Null}"
-                        SelectedObject="{Binding BaseConfig}" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding [光源品牌], Source={x:Static local:CLang.LSWLightLang}}" Margin="5"/>
+                        <TextBlock Grid.Column="1" Text="{Binding BaseConfig.LightBrandName}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="{Binding [工位名称], Source={x:Static local:CLang.LSWLightLang}}" Margin="5"/>
+                        <TextBlock Grid.Column="3" Text="{Binding BaseConfig.LightStationName}" Margin="5"/>
+                    </Grid>
+
+                    <wh:CPropertyGridLang
+                        Background="{x:Null}"
+                        SelectedObject="{Binding BaseConfig}" />
+          
                     
 
                         <Button Grid.Column="0"                    
@@ -106,20 +116,19 @@
                           Content="{Binding [恢复出厂], Source={x:Static local:CLang.LSWLightLang}}"
                           Style="{StaticResource ButtonDanger.Small}" />
 
-                        <Button Grid.Column="1"                        
+                        <!--<Button Grid.Column="1"                        
                            Margin="10"
                            Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                            Content="{Binding [新增], Source={x:Static local:CLang.LSWLightLang}}"
-                           Style="{StaticResource StatusDotButtonInfo.Small}" />
+                           Style="{StaticResource StatusDotButtonInfo.Small}" />-->
                                           
 
-                           <Button Grid.Column="2"                    
+                           <!--<Button Grid.Column="2"                    
                            Margin="10"
                            Command="{Binding DeleteCommand}" CommandParameter="{Binding BaseConfig}"
                            Content="{Binding [删除], Source={x:Static local:CLang.LSWLightLang}}"
-                           Style="{StaticResource ButtonDanger.Small}" />
+                           Style="{StaticResource ButtonDanger.Small}" />-->
 
-                    </Grid>
                 </StackPanel>
             </hc:ScrollViewer>
 

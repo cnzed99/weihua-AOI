@@ -151,4 +151,10 @@
   <data name="DeleteAsk" xml:space="preserve">
     <value>确认删除当前的光源控制器?</value>
   </data>
+  <data name="光源品牌" xml:space="preserve">
+    <value>光源品牌:</value>
+  </data>
+  <data name="工位名称" xml:space="preserve">
+    <value>工位名称:</value>
+  </data>
 </root>

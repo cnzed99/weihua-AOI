@@ -106,6 +106,15 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 光源品牌: 的本地化字符串。
+        /// </summary>
+        public static string 光源品牌 {
+            get {
+                return ResourceManager.GetString("光源品牌", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 光源控制 的本地化字符串。
         /// </summary>
         public static string 光源控制 {
@@ -138,6 +147,15 @@ namespace WH.LightControl.Properties {
         public static string 增亮 {
             get {
                 return ResourceManager.GetString("增亮", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 工位名称: 的本地化字符串。
+        /// </summary>
+        public static string 工位名称 {
+            get {
+                return ResourceManager.GetString("工位名称", resourceCulture);
             }
         }
         

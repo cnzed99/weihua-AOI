@@ -29,48 +29,61 @@ namespace WH.LightControl
         [property: Category("基础信息")]
         [property: Description("1.光源品牌")]
         [property: DisplayName("光源品牌")]
+        [property: Browsable(false)]
         [property: ReadOnly(true)]
         [ObservableProperty]
         private string lightBrandName;
 
-
-        private string lightStationName = "光源1";
         /// <summary>
         /// 光源工位名称
         /// </summary>
         [property: Category("基础信息")]
         [property: Description("1.光源工位名称")]
         [property: DisplayName("光源工位名称")]
-        [property: Editor(typeof(CComboxEditorLightPro), typeof(CComboxEditorLightPro))]
-        public string LightStationName
-        {
-            get { return lightStationName; }
-            set
-            {
-                string old = lightStationName;
-              
-                if (old != value)
-                {
-                    try
-                    {
-                        string lightkey = LightBrandName + "-" + value;
-                        if (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
-                        {
-                            CLinghtManagement.LightControlDict[lightkey].BaseConfig.DataContextChangedEvent?.Invoke(CLinghtManagement.LightControlDict[lightkey]);
-                        }
-                        else
-                        {
-                            SetProperty(ref lightStationName, value);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-                //lightStationName = value;
+        [property: Browsable(false)]
+        [property: ReadOnly(true)]
+        [ObservableProperty]
+        private string lightStationName = "光源1";
 
-            }
-        }
+
+
+        //private string lightStationName = "光源1";
+        ///// <summary>
+        ///// 光源工位名称
+        ///// </summary>
+        //[property: Category("基础信息")]
+        //[property: Description("1.光源工位名称")]
+        //[property: DisplayName("光源工位名称")]
+        //[property: Editor(typeof(CComboxEditorLightPro), typeof(CComboxEditorLightPro))]
+        //public string LightStationName
+        //{
+        //    get { return lightStationName; }
+        //    set
+        //    {
+        //        string old = lightStationName;
+
+        //        if (old != value)
+        //        {
+        //            try
+        //            {
+        //                string lightkey = LightBrandName + "-" + value;
+        //                if (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
+        //                {
+        //                    CLinghtManagement.LightControlDict[lightkey].BaseConfig.DataContextChangedEvent?.Invoke(CLinghtManagement.LightControlDict[lightkey]);
+        //                }
+        //                else
+        //                {
+        //                    SetProperty(ref lightStationName, value);
+        //                }
+        //            }
+        //            catch (Exception)
+        //            {
+        //            }
+        //        }
+        //        //lightStationName = value;
+
+        //    }
+        //}
 
         /// <summary>
         /// 20240724 TCG
@@ -230,61 +243,61 @@ namespace WH.LightControl
     /// 属性编辑器combox控件扩展 光源模块专用
     /// 2024.08.26 鲍赞宝
     /// </summary>
-    public class CComboxEditorLightPro : PropertyEditorBase
-    {
-        PropertyItem _propertyItem;
+    //public class CComboxEditorLightPro : PropertyEditorBase
+    //{
+    //    PropertyItem _propertyItem;
 
-        HandyControl.Controls.ComboBox comboBox;
-        public override FrameworkElement CreateElement(PropertyItem propertyItem)
-        {
-            _propertyItem = propertyItem;
-            var proptemp = propertyItem.Value as CLightParamsBase;
-            if (proptemp != null)
-            {
-                comboBox = new HandyControl.Controls.ComboBox();
-                comboBox.ItemsSource = new List<string>() { proptemp?.LightStationName };
-                comboBox.Width = 423;
-                comboBox.Margin = new Thickness(-154, 0, 0, 0);
-                comboBox.DropDownOpened += ComboBox_DropDownOpened;
-                comboBox.VerticalAlignment = VerticalAlignment.Bottom;
-                comboBox.HorizontalAlignment = HorizontalAlignment.Left;
-                comboBox.FontSize = 13;
-                comboBox.SetBinding(HandyControl.Controls.ComboBox.SelectedItemProperty,
-                    new Binding("LightStationName") { Mode = BindingMode.TwoWay, Source = propertyItem });
-            }
-            return comboBox;
-        }
+    //    HandyControl.Controls.ComboBox comboBox;
+    //    public override FrameworkElement CreateElement(PropertyItem propertyItem)
+    //    {
+    //        _propertyItem = propertyItem;
+    //        var proptemp = propertyItem.Value as CLightParamsBase;
+    //        if (proptemp != null)
+    //        {
+    //            comboBox = new HandyControl.Controls.ComboBox();
+    //            comboBox.ItemsSource = new List<string>() { proptemp?.LightStationName };
+    //            comboBox.Width = 423;
+    //            comboBox.Margin = new Thickness(-154, 0, 0, 0);
+    //            comboBox.DropDownOpened += ComboBox_DropDownOpened;
+    //            comboBox.VerticalAlignment = VerticalAlignment.Bottom;
+    //            comboBox.HorizontalAlignment = HorizontalAlignment.Left;
+    //            comboBox.FontSize = 13;
+    //            comboBox.SetBinding(HandyControl.Controls.ComboBox.SelectedItemProperty,
+    //                new Binding("LightStationName") { Mode = BindingMode.TwoWay, Source = propertyItem });
+    //        }
+    //        return comboBox;
+    //    }
 
-        public override DependencyProperty GetDependencyProperty() =>
-            HandyControl.Controls.ComboBox.SelectedItemProperty;
+    //    public override DependencyProperty GetDependencyProperty() =>
+    //        HandyControl.Controls.ComboBox.SelectedItemProperty;
 
-        private void ComboBox_DropDownOpened(object sender, EventArgs e)
-        {
-            List<string> camlist = new List<string>();
-            if (_propertyItem != null)
-            {
-                CLightParamsBase light = _propertyItem.Value as CLightParamsBase;
-                if (light != null)
-                {
-                    string suppli = light.LightBrandName;
-                    var camsupplis = CLinghtManagement.LightControlDict.Where(c => c.Key.Contains(suppli));
+    //    private void ComboBox_DropDownOpened(object sender, EventArgs e)
+    //    {
+    //        List<string> camlist = new List<string>();
+    //        if (_propertyItem != null)
+    //        {
+    //            CLightParamsBase light = _propertyItem.Value as CLightParamsBase;
+    //            if (light != null)
+    //            {
+    //                string suppli = light.LightBrandName;
+    //                var camsupplis = CLinghtManagement.LightControlDict.Where(c => c.Key.Contains(suppli));
 
-                    foreach (var camFunc in camsupplis)
-                    {
-                        try
-                        {
-                            camlist.Add(camFunc.Value.BaseConfig.LightStationName);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-                comboBox.ItemsSource = camlist;
-            }
+    //                foreach (var camFunc in camsupplis)
+    //                {
+    //                    try
+    //                    {
+    //                        camlist.Add(camFunc.Value.BaseConfig.LightStationName);
+    //                    }
+    //                    catch (Exception)
+    //                    {
+    //                    }
+    //                }
+    //            }
+    //            comboBox.ItemsSource = camlist;
+    //        }
 
-        }
-    }
+    //    }
+    //}
 
 
 }
