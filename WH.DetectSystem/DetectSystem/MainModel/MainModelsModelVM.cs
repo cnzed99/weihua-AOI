@@ -109,7 +109,7 @@ namespace WH.DetectSystem.ViewModels
         /// 光源工位列表
         /// </summary>
         [ObservableProperty]
-        public ObservableCollection<string> lightStationNames;
+        private ObservableCollection<string> lightStationNames;
 
         public CMainModelsModelVM()
         {

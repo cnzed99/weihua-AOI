@@ -224,6 +224,10 @@ namespace 断面毛刺检测软件
              .Register(c => SingleInstance.Create<Lazy<LightSetWindow>, LightSetWindow>())
              .InstancePerDependency();
 
+            builder
+           .Register(c => SingleInstance.Create<Lazy<AddLightWindow>, AddLightWindow>())
+           .InstancePerDependency();
+
             //手动调试
             builder
                 .Register(c =>

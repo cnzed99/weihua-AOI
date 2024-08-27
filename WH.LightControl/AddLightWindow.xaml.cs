@@ -19,9 +19,14 @@ namespace WH.LightControl
     /// </summary>
     public partial class AddLightWindow : HandyControl.Controls.Window
     {
+       public AddLightVM addVm { get; set; }
         public AddLightWindow()
         {
             InitializeComponent();
+            addVm = new AddLightVM();
+            this.DataContext = addVm;
+
+
         }
     }
 }

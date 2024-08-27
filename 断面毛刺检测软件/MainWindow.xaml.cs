@@ -666,9 +666,17 @@ namespace 断面毛刺检测软件
             {
                 if (e.OriginalSource is MenuItem { Header: string header })
                 {
-                    if (header=="新增")
+                    if (header=="添加光源")
                     {
-                      
+                        AddLightWindow addlight = App.Container.Resolve<Lazy<AddLightWindow>>().Value;
+                        addlight.Closed += (sender, e) =>
+                        {
+                            CMainList.LightStationNames = CLinghtManagement.lightName;
+                        };
+                        addlight.ShowDialog();
+                        addlight.Activate();
+                  
+                        
                     }
                     else
                     {
@@ -696,7 +704,6 @@ namespace 断面毛刺检测软件
                             Growl.Warning(Properties.Resources.光源字典为空);
                         }
                     }
-                    
                 }
             }
             catch (Exception ex)
@@ -704,6 +711,13 @@ namespace 断面毛刺检测软件
                 Growl.Error(ex.Message);
             }
         }
+
+        private void PreviewMouseLeftButtonDown_Cilck(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+           
+        }
+
+
         #endregion
 
         #region 关于
@@ -767,11 +781,13 @@ namespace 断面毛刺检测软件
                     {
                         if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
                             mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
-                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Insert(0,message.Path);
+                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Insert(0, message.Path);
                     }
                 })
             );
         }
         #endregion
+
+
     }
 }

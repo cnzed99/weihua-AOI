@@ -66,7 +66,7 @@ namespace WH.LightControl
                     }
                 }
             }
-            lightFileName.Add("新增");
+            lightFileName.Add("添加光源");
             return lightFileName;
         }
     }
