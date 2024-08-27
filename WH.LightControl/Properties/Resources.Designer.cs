@@ -115,6 +115,15 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件 的本地化字符串。
+        /// </summary>
+        public static string 光源字典为空 {
+            get {
+                return ResourceManager.GetString("光源字典为空", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 光源控制 的本地化字符串。
         /// </summary>
         public static string 光源控制 {

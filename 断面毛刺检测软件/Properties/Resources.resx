@@ -307,4 +307,10 @@
   <data name="CleraAsk" xml:space="preserve">
     <value>确认清空数据?</value>
   </data>
+  <data name="光源字典为空" xml:space="preserve">
+    <value>光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件</value>
+  </data>
+  <data name="AddLightAsk" xml:space="preserve">
+    <value>确认增加一个光源控制器?</value>
+  </data>
 </root>

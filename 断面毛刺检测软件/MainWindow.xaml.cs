@@ -666,29 +666,42 @@ namespace 断面毛刺检测软件
             {
                 if (e.OriginalSource is MenuItem { Header: string header })
                 {
-                    if (CLinghtManagement.LightControlDict.Count > 0)
+                    if (header=="新增")
                     {
-                        var ienumkeyNames = CLinghtManagement.LightControlDict.Keys.ToArray().ToList();
-
-                        foreach (var keyname in ienumkeyNames)
+                      
+                    }
+                    else
+                    {
+                        if (CLinghtManagement.LightControlDict.Count > 0)
                         {
-                            string keysub = keyname.Split('&')[1];
-                            if (keysub== header)
+                            var ienumkeyNames = CLinghtManagement.LightControlDict.Keys.ToArray().ToList();
+
+                            foreach (var keyname in ienumkeyNames)
                             {
-                                if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
+                                string keysub = keyname.Split('&')[1];
+                                if (keysub == header)
                                 {
-                                    LightSetWindow lihtsetWin = App.Container.Resolve<Lazy<LightSetWindow>>().Value;
-                                    lihtsetWin.DataContext = CLinghtManagement.LightControlDict[keyname];
-                                    lihtsetWin.Show();
-                                    lihtsetWin.Activate();
+                                    if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
+                                    {
+                                        LightSetWindow lihtsetWin = App.Container.Resolve<Lazy<LightSetWindow>>().Value;
+                                        lihtsetWin.DataContext = CLinghtManagement.LightControlDict[keyname];
+                                        lihtsetWin.Show();
+                                        lihtsetWin.Activate();
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            Growl.Warning(Properties.Resources.光源字典为空);
+                        }
                     }
+                    
                 }
             }
             catch (Exception ex)
             {
+                Growl.Error(ex.Message);
             }
         }
         #endregion

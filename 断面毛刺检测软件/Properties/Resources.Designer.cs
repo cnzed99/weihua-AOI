@@ -70,6 +70,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 确认增加一个光源控制器? 的本地化字符串。
+        /// </summary>
+        public static string AddLightAsk {
+            get {
+                return ResourceManager.GetString("AddLightAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 报警设置 的本地化字符串。
         /// </summary>
         public static string AlarmConfig {
@@ -580,6 +589,15 @@ namespace 断面毛刺检测软件.Properties {
         public static string WarningLog {
             get {
                 return ResourceManager.GetString("WarningLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件 的本地化字符串。
+        /// </summary>
+        public static string 光源字典为空 {
+            get {
+                return ResourceManager.GetString("光源字典为空", resourceCulture);
             }
         }
         

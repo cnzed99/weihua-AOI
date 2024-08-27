@@ -177,4 +177,7 @@
   <data name="工位名称" xml:space="preserve">
     <value>StationName:</value>
   </data>
+  <data name="光源字典为空" xml:space="preserve">
+    <value>The light source dictionary is null, check the LightConfig.Json file in the configuration file SystemConfig</value>
+  </data>
 </root>

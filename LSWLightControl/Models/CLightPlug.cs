@@ -11,27 +11,36 @@ using WH.LightControl;
 
 namespace LSWLightControl
 {
-    public class CLightPlug:ILight
+    public class CLightPlug : ILight
     {
-      
+
         /// <summary>
         /// 初始化光源
         /// </summary>
         /// <param name="path">配置文件路径</param>
         /// <param name="index">光源索引</param>
         /// <param name="light">光源对象</param>
-        public CLightParamsBase Init(string path, int index, out CLightControlBase lightobj)
+        public CLightParamsBase Init(string path, string indexstr, out CLightControlBase lightobj)
         {
             LSWLightControlVM LSWlight = new LSWLightControlVM();
 
             if (File.Exists(path))
             {
                 List<LSWLightConfig> templist = ConfigAPI.Load<List<LSWLightConfig>>(path);
-
-                
-                if ((templist.Count>0&&(templist.Count-1)>= index))
+                if (templist != null)
                 {
-                    LSWlight.Config = templist[index];
+                    IEnumerable<LSWLightConfig> selectName = templist.Where(t => t.LightStationName == indexstr);
+                    int num=selectName.Count();
+                    if (num>0)
+                    {
+                        LSWlight.Config = selectName.FirstOrDefault();
+                    }
+                    else
+                    {
+                        LSWLightConfig lswlight = new LSWLightConfig();
+                        lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
+                        LSWlight.Config = lswlight;
+                    }
                 }
                 else
                 {
@@ -39,7 +48,6 @@ namespace LSWLightControl
                     lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
                     LSWlight.Config = lswlight;
                 }
-               
             }
             else
             {

@@ -23,7 +23,7 @@ namespace WH.LightControl
         /// <param name="index">索引</param>
         /// <param name="LightObj">光源实例</param>
         /// <returns>参数</returns>
-        CLightParamsBase Init(string path, int index, out CLightControlBase LightObj);
+        CLightParamsBase Init(string path, string index, out CLightControlBase LightObj);
         /// <summary>
         /// 创建一个新的光源实例
         /// 2024.08.23 鲍赞宝
@@ -66,7 +66,7 @@ namespace WH.LightControl
                     }
                 }
             }
-
+            lightFileName.Add("新增");
             return lightFileName;
         }
     }
