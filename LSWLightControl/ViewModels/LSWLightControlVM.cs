@@ -4,17 +4,17 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using WH.LightControl;
-using WH.Entity;
 using HandyControl.Controls;
-using System.Windows;
-using System.Reflection;
+using WH.Entity;
+using WH.LightControl;
 
 namespace LSWLightControl
 {
@@ -139,8 +139,6 @@ namespace LSWLightControl
             //_ = this.Open();
         }
 
-
-
         public override bool Close()
         {
             if (this.SerialPort.IsOpen)
@@ -221,9 +219,11 @@ namespace LSWLightControl
         [RelayCommand]
         protected override void SetChannelValue(CLight light)
         {
+            light.Lightvalue = light.Value;
             if (!IsOpen())
                 return;
-            var str = $"$S{light.Channel}{light.Value:D3}#";
+
+            var str = $"$S{light.Channel}{light.Lightvalue:D3}#";
             Write(str);
         }
 
@@ -307,6 +307,5 @@ namespace LSWLightControl
                 ErrorMessage = e.Message;
             }
         }
-
     }
 }

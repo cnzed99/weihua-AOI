@@ -117,7 +117,7 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-
+                CLinghtManagement.LoadLightParams();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
@@ -637,52 +637,40 @@ namespace 断面毛刺检测软件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LightControl_Click(object sender, RoutedEventArgs e)
+        private void LightItem_Click(object sender, RoutedEventArgs e)
         {
-            // var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
-            //lightProcess.Start();
-            // lightProcess?.Start();
             try
             {
                 if (e.OriginalSource is MenuItem { Header: string header })
                 {
-                    if (header=="添加光源")
+                    if (CLinghtManagement.LightControlDict.Count > 0)
                     {
-                        AddLightWindow addlight = App.Container.Resolve<Lazy<AddLightWindow>>().Value;
-                        addlight.Closed += (sender, e) =>
-                        {
-                            CMainList.LightStationNames = CLinghtManagement.s_lightName;
-                        };
-                        addlight.ShowDialog();
-                        addlight.Activate();
-                  
-                        
-                    }
-                    else
-                    {
-                        if (CLinghtManagement.LightControlDict.Count > 0)
-                        {
-                            var ienumkeyNames = CLinghtManagement.LightControlDict.Keys.ToArray().ToList();
+                        var ienumkeyNames = CLinghtManagement
+                            .LightControlDict.Keys.ToArray()
+                            .ToList();
 
-                            foreach (var keyname in ienumkeyNames)
+                        foreach (var keyname in ienumkeyNames)
+                        {
+                            string keysub = keyname.Split('&')[1];
+                            if (keysub == header)
                             {
-                                string keysub = keyname.Split('&')[1];
-                                if (keysub == header)
+                                if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
                                 {
-                                    if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
-                                    {
-                                        LightSetWindow lihtsetWin = App.Container.Resolve<Lazy<LightSetWindow>>().Value;
-                                        lihtsetWin.DataContext = CLinghtManagement.LightControlDict[keyname];
-                                        lihtsetWin.Show();
-                                        lihtsetWin.Activate();
-                                    }
+                                    LightSetWindow lihtsetWin = App
+                                        .Container.Resolve<Lazy<LightSetWindow>>()
+                                        .Value;
+                                    lihtsetWin.DataContext = CLinghtManagement.LightControlDict[
+                                        keyname
+                                    ];
+                                    lihtsetWin.Show();
+                                    lihtsetWin.Activate();
                                 }
                             }
                         }
-                        else
-                        {
-                            Growl.Warning(Properties.Resources.光源字典为空);
-                        }
+                    }
+                    else
+                    {
+                        Growl.Warning(Properties.Resources.光源字典为空);
                     }
                 }
             }
@@ -692,11 +680,12 @@ namespace 断面毛刺检测软件
             }
         }
 
-        private void PreviewMouseLeftButtonDown_Cilck(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void lightControl_Cilck(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-           
+            AddLightWindow addlight = App.Container.Resolve<Lazy<AddLightWindow>>().Value;
+            addlight.ShowDialog();
+            addlight.Activate();
         }
-
 
         #endregion
 
@@ -767,7 +756,5 @@ namespace 断面毛刺检测软件
             );
         }
         #endregion
-
-
     }
 }

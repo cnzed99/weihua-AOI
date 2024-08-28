@@ -19,7 +19,7 @@ namespace CommunicationModule
     {
         public CCommunicationSettingBase()
         {
-            this.token = new Token("", "CommunicationModule");
+            this.token = new Token("", "CommunicationModule"); //固定token,使得插件参数更改可以通知到管理类的消息处理函数
             AlarmAgreements = new ObservableCollection<CAlarmAgreement>();
         }
 

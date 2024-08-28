@@ -33,6 +33,8 @@ namespace WH.Entity.CommonLib
 
     /// <summary>
     /// 记录参数修改的基类 在属性或集合发生变化时在默认通道发送OperateMessage
+    /// 属性需要添加<code>[property: DisplayName("")]</code>
+    /// 忽略时添加<code>[property: IgnoreModifyLog]</code>
     /// </summary>
     public abstract partial class ConfigModifyObservableBase : ObservableRecipient
     {

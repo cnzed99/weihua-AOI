@@ -9,7 +9,6 @@ using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 
-
 namespace CameraModule
 {
     /// <summary>
@@ -20,12 +19,12 @@ namespace CameraModule
     {
         public CCameraParameterBase()
         {
-            this.token = new Token("", "CameraModule");
+            this.token = new Token("", "CameraModule"); //固定token,使得插件参数更改可以通知到管理类的消息处理函数
         }
 
         public CCameraParameterBase(string serialnumber, string cameraSupplier)
         {
-            this.token = new Token("", "CameraModule");
+            this.token = new Token("", "CameraModule"); //固定token,使得插件参数更改可以通知到管理类的消息处理函数
             SerialNumber = serialnumber;
             CameraSupplier = cameraSupplier;
         }
@@ -74,6 +73,7 @@ namespace CameraModule
 
 
         private string serialNumber = "";
+
         [property: Category("通用参数")]
         [property: DisplayName("02.相机序列号")]
         [property: Description("02.相机序列号")]
@@ -92,11 +92,16 @@ namespace CameraModule
                     {
                         if (CCameraManagement.CameraDict.ContainsKey(old))
                         {
-                            if (!CCameraManagement.CameraDict.Keys.Contains(serialNumber) && !CCameraManagement.CamParamDict.Keys.Contains(serialNumber))
+                            if (
+                                !CCameraManagement.CameraDict.Keys.Contains(serialNumber)
+                                && !CCameraManagement.CamParamDict.Keys.Contains(serialNumber)
+                            )
                             {
                                 CCameraBase Camtemp = CCameraManagement.CameraDict[old];
                                 //Camtemp.SerialNumber = serialNumber;
-                                CCameraParameterBase paramtemp = CCameraManagement.CamParamDict[old];
+                                CCameraParameterBase paramtemp = CCameraManagement.CamParamDict[
+                                    old
+                                ];
 
                                 CCameraManagement.CameraDict.Add(serialNumber, Camtemp);
                                 CCameraManagement.CamParamDict.Add(serialNumber, paramtemp);
@@ -111,17 +116,12 @@ namespace CameraModule
                                     cam.InitializeCamera();
                                 }
                             }
-
                         }
                     }
-                    catch (Exception)
-                    {
-                    }
-
+                    catch (Exception) { }
                 }
             }
         }
-
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -548,13 +548,12 @@ namespace CameraModule
         EMTRIGGERHARDWARE,
     }
 
-
-   
     public class CComboxEditorPro : PropertyEditorBase
     {
         PropertyItem _propertyItem;
 
         HandyControl.Controls.ComboBox comboBox;
+
         public override FrameworkElement CreateElement(PropertyItem propertyItem)
         {
             _propertyItem = propertyItem;
@@ -569,8 +568,10 @@ namespace CameraModule
                 comboBox.VerticalAlignment = VerticalAlignment.Bottom;
                 comboBox.HorizontalAlignment = HorizontalAlignment.Left;
 
-                comboBox.SetBinding(HandyControl.Controls.ComboBox.SelectedItemProperty,
-                    new Binding("SerialNumber") { Mode = BindingMode.TwoWay, Source = propertyItem });
+                comboBox.SetBinding(
+                    HandyControl.Controls.ComboBox.SelectedItemProperty,
+                    new Binding("SerialNumber") { Mode = BindingMode.TwoWay, Source = propertyItem }
+                );
             }
             return comboBox;
         }
@@ -581,7 +582,7 @@ namespace CameraModule
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
             List<string> camlist = new List<string>();
-            if (_propertyItem!=null)
+            if (_propertyItem != null)
             {
                 CCameraParameterBase cam = _propertyItem.Value as CCameraParameterBase;
                 if (cam != null)
@@ -599,16 +600,11 @@ namespace CameraModule
                                 camlist.Add(whinfolist[i].SerialNumber);
                             }
                         }
-                        catch (Exception)
-                        {
-                        }
+                        catch (Exception) { }
                     }
                 }
                 comboBox.ItemsSource = camlist;
             }
-           
         }
     }
-
-
 }

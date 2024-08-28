@@ -70,7 +70,10 @@
                     SelectedItem="{Binding CamParamSelect}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Tag="{Binding ElementName=list_cam, Path=DataContext}" Width="{Binding ElementName=list_cam, Path=ActualWidth, Converter={StaticResource WidthSubtractConverter}, ConverterParameter=40}" Style="{StaticResource TextBlockDefault}">
+                            <TextBlock
+                                Width="{Binding ElementName=list_cam, Path=ActualWidth, Converter={StaticResource WidthSubtractConverter}, ConverterParameter=40}"
+                                Style="{StaticResource TextBlockDefault}"
+                                Tag="{Binding ElementName=list_cam, Path=DataContext}">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}-{1}">
                                         <Binding Path="SerialNumber" />
@@ -102,7 +105,7 @@
                     <UniformGrid.Resources>
                         <ResourceDictionary>
                             <Style BasedOn="{StaticResource ButtonDefault}" TargetType="Button">
-                                <Setter Property="MinWidth"  Value="80" />
+                                <Setter Property="MinWidth" Value="80" />
                                 <Setter Property="Height" Value="40" />
                                 <Setter Property="BorderThickness" Value="0" />
                                 <Setter Property="Padding" Value="2" />

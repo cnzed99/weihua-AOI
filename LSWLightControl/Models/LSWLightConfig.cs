@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WH.LightControl;
 
-
 namespace LSWLightControl
 {
     /// <summary>
@@ -17,8 +16,8 @@ namespace LSWLightControl
     public partial class LSWLightConfig : CLightParamsBase
     {
         public LSWLightConfig()
+            : base()
         {
-            this.token = new WH.Entity.CommonLib.Token("", this.GetType().Namespace);
             if (LightChannelList == null)
             {
                 LightChannelList = new()
@@ -29,7 +28,6 @@ namespace LSWLightControl
                     new CLight("D")
                 }; //通道亮度
             }
-
         }
 
         /// <summary>

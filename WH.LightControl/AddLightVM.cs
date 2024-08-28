@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using HandyControl.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -9,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
 
 namespace WH.LightControl
 {
@@ -16,19 +16,19 @@ namespace WH.LightControl
     /// 添加光源视图模型
     /// 2024.08.27 鲍赞宝
     /// </summary>
-    public partial class AddLightVM:ObservableObject
+    public partial class AddLightVM : ObservableObject
     {
         /// <summary>
         /// 光源名称
         /// </summary>
         [ObservableProperty]
-       private string lightName;
+        private string lightName;
 
         private ObservableCollection<string> brandNames;
 
         public ObservableCollection<string> BrandNames
         {
-            get 
+            get
             {
                 ObservableCollection<string> tempname = new ObservableCollection<string>();
                 try
@@ -38,14 +38,13 @@ namespace WH.LightControl
                         tempname.Add(Path.GetFileName(item));
                     }
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) { }
                 brandNames = tempname;
-               return brandNames; 
+                return brandNames;
             }
-            set {brandNames = value;}
+            set { brandNames = value; }
         }
+
         /// <summary>
         /// 用户选择的品牌
         /// </summary>
@@ -55,8 +54,8 @@ namespace WH.LightControl
         public string SelectBrand
         {
             get { return selectBrand; }
-            set 
-            { 
+            set
+            {
                 selectBrand = value;
                 try
                 {
@@ -87,15 +86,13 @@ namespace WH.LightControl
 
                                 LightName = lightNameTemp;
                             }
-
                         }
                     }
                 }
-                catch (Exception ex)         
+                catch (Exception ex)
                 {
-                    Growl.Error(Properties.Resources.自动获取+" \n\r" + ex.Message);
+                    Growl.Error(Properties.Resources.自动获取 + " \n\r" + ex.Message);
                 }
-             
             }
         }
 
@@ -126,17 +123,13 @@ namespace WH.LightControl
                             Growl.Info(Properties.Resources.成功添加光源 + copypath);
                             CLinghtManagement.OperateLog.Info($"光源模块-新增加{copypath}!");
                         }
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                Growl.Error(Properties.Resources.添加光源出错+"\n\r"+ex.Message);
+                Growl.Error(Properties.Resources.添加光源出错 + "\n\r" + ex.Message);
             }
-         
-           
         }
     }
-
 }

@@ -8,7 +8,7 @@
         x:Key="StatusDotButtonBaseStyle"
         BasedOn="{StaticResource ButtonBaseBaseStyle}"
         TargetType="Button">
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextIconBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Background" Value="{DynamicResource RegionBrush}" />
         <Setter Property="hc:BorderElement.CornerRadius" Value="{StaticResource DefaultCornerRadius}" />

@@ -36,9 +36,8 @@ using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.IIService;
 using WH.Entity.LogRecord;
-using WH.RunCell;
 using WH.LightControl;
-
+using WH.RunCell;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -105,11 +104,19 @@ namespace WH.DetectSystem.ViewModels
         /// 相机管理
         /// </summary>
         public CCameraManagement CamManagement { get; set; }
+
         /// <summary>
-        /// 光源工位列表
+        /// 20240828 TCG
+        /// 光源名
         /// </summary>
         [ObservableProperty]
-        private ObservableCollection<string> lightStationNames;
+        ObservableCollection<string> lightNames = new ObservableCollection<string>();
+
+        /// <summary>
+        /// 20240828 TCG
+        /// 光源管理
+        /// </summary>
+        public CLinghtManagement LightManagement { get; set; }
 
         public CMainModelsModelVM()
         {
@@ -164,6 +171,17 @@ namespace WH.DetectSystem.ViewModels
         public async Task LoadAsync(IProgress<string> progress)
         {
             IsLoading = true;
+            #region 读取所有光源dll
+            try
+            {
+                LightManagement = new CLinghtManagement(LightNames);
+                //CLinghtManagement.LoadLightParams();
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(Properties.Resources.初始化光源失败 + "\r\n" + ex.Message);
+            }
+            #endregion
             await Task.Run(async () =>
             {
                 #region 读取主配置文件
@@ -242,19 +260,6 @@ namespace WH.DetectSystem.ViewModels
                     Growl.Error(Properties.Resources.相机连接失败 + "\r\n" + ex.Message);
                 }
                 #endregion
-
-                #region 读取所有光源dll
-                try
-                {
-                    CLinghtManagement.LoadLightParams();
-                    LightStationNames = CLinghtManagement.s_lightName;
-                }
-                catch (Exception ex)
-                {
-
-                    Growl.Error(Properties.Resources.初始化光源失败 + "\r\n" + ex.Message);
-                }
-                #endregion
             });
         }
 
@@ -275,11 +280,14 @@ namespace WH.DetectSystem.ViewModels
             {
                 progress.Report(Properties.Resources.正在打开);
                 ProjPath = header;
-                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlgorParamConfig);
-                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociQualityConfig);
-                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociFilterConfig);
-                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociAlarmSetConfig);
-                WeakReferenceMessenger.Default.UnregisterAll(CMainVMs[0].MaociSaveImageConfig);
+                foreach (var item in CMainVMs)
+                {
+                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociAlgorParamConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociQualityConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociFilterConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociAlarmSetConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociSaveImageConfig);
+                }
 
                 CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
                 //foreach (var item in CMainVMs)

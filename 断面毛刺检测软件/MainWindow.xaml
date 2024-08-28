@@ -10,6 +10,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:history="clr-namespace:HistoryPlayback;assembly=HistoryPlayback"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:light="clr-namespace:WH.LightControl;assembly=WH.LightControl"
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -187,12 +188,14 @@
                     </MenuItem>
                     <MenuItem
                         Width="100"
-                        ItemsSource="{Binding LightStationNames}"
-                        MenuItem.Click="LightControl_Click"
-                        Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
+                        ItemsSource="{Binding LightNames}"
+                        MenuItem.Click="LightItem_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />
                         </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock PreviewMouseLeftButtonDown="lightControl_Cilck" Text="{Binding [LightControl], Source={x:Static local:CLang.Instance}}" />
+                        </MenuItem.Header>
                     </MenuItem>
                     <MenuItem
                         Width="100"
@@ -245,11 +248,7 @@
                 Text="{Binding CMainVMs[0].Name}" />
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
 
-                <ToggleButton
-                   
-                    IsChecked="{Binding IsDark, Source={x:Static local:GlobalData.Config}}"
-                    Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}"
-                     />
+                <ToggleButton IsChecked="{Binding IsDark, Source={x:Static local:GlobalData.Config}}" Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}" />
             </hc:SimplePanel>
         </Grid>
     </hc:Window.NonClientAreaContent>

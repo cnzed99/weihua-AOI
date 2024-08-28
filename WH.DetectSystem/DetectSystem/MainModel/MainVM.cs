@@ -94,11 +94,11 @@ namespace WH.DetectSystem.ViewModels
             HistoryVM.Reset();
             QualityVM.Reset();
             #region 注册参数修改通道令牌
-            WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
-            WeakReferenceMessenger.Default.UnregisterAll(MaociQualityConfig);
-            WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
-            WeakReferenceMessenger.Default.UnregisterAll(MaociAlarmSetConfig);
-            WeakReferenceMessenger.Default.UnregisterAll(MaociSaveImageConfig);
+            //WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
+            //WeakReferenceMessenger.Default.UnregisterAll(MaociQualityConfig);
+            //WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
+            //WeakReferenceMessenger.Default.UnregisterAll(MaociAlarmSetConfig);
+            //WeakReferenceMessenger.Default.UnregisterAll(MaociSaveImageConfig);
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociFilterConfig,
                 MaociFilterConfig.token
@@ -128,12 +128,10 @@ namespace WH.DetectSystem.ViewModels
             // 数据清零事件
             SystemSettings.ClearProduceEvent += () =>
             {
-
                 if (SystemSettings.AutoClearEnable)
                 {
                     this.DefectsDataVM.DefectsProduce.Clear();
                 }
-
             };
         }
 

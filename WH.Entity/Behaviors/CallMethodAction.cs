@@ -12,11 +12,13 @@ namespace WH.Entity.Behaviors
     /// <summary>
     /// 20240826 TCG
     /// 通过行为调用方法而不是命令Command
-    /// <hc:Interaction.Triggers>
-    ///     <hc:EventTrigger>
-    ///         <wh:CallMethodAction MethodTarget = "{Binding .}" MethodName="method" MethodParameter="{Binding param}"/>
-    ///     </hc:EventTrigger>
-    /// </hc:Interaction.Triggers>
+    /// <code>
+    ///  hc:Interaction.Triggers>
+    ///     hc:EventTrigger>
+    ///         wh:CallMethodAction MethodTarget = "{Binding .}" MethodName="method" MethodParameter="{Binding param}"/>
+    ///     /hc:EventTrigger>
+    ///  /hc:Interaction.Triggers>
+    /// </code>
     /// </summary>
     public class CallMethodAction : TriggerAction<DependencyObject>
     {

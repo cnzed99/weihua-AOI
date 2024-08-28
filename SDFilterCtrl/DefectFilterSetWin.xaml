@@ -338,9 +338,10 @@
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <CheckBox Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
-                                                  Grid.Column="2" 
-                                                  IsChecked="{Binding FilterSelectEnable}"/>
+                                        <CheckBox
+                                            Grid.Column="2"
+                                            Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
+                                            IsChecked="{Binding FilterSelectEnable}" />
                                         <ComboBox
                                             Grid.Column="4"
                                             Width="180"
