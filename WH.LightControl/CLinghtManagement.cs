@@ -26,7 +26,7 @@ namespace WH.LightControl
         /// 2024.7.23 李焕彬
         /// 模块日志
         /// </summary>
-        public static CLogRec CamLogger { get; set; } = CLogRec.Create("light", "D:/Data");
+        public static CLogRec LightLogger { get; set; } = CLogRec.Create("light", "D:/Data");
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -38,7 +38,7 @@ namespace WH.LightControl
         /// 20240825 鲍赞宝
         /// 光源名称集合
         /// </summary>
-        public static ObservableCollection<string> lightName = new ObservableCollection<string>();
+        public static ObservableCollection<string> s_lightName = new ObservableCollection<string>();
 
         /// <summary>
         /// 光源插件字典
@@ -47,7 +47,6 @@ namespace WH.LightControl
 
         public static Dictionary<string, CLightControlBase> LightControlDict = new Dictionary<string, CLightControlBase>();
 
-       // public static Dictionary<string, CLightParamsBase> LightParamDict =new Dictionary<string, CLightParamsBase>();
        /// <summary>
        /// 加载光源配置并初始化
        /// 2024.08.25 鲍赞宝
@@ -56,7 +55,7 @@ namespace WH.LightControl
         {
             try
             {
-                lightName = LoadLightPlugs.LoadLight();
+                s_lightName = LoadLightPlugs.LoadLight();
                 for (int i = 0; i < LightHelpers.Count; i++)
                 {
                     var param = LightHelpers[i].Item2.Init(s_LightConfigPath, LightHelpers[i].Item1, out CLightControlBase lightControl);
@@ -73,7 +72,7 @@ namespace WH.LightControl
             }
             catch (Exception ex)
             {
-                CamLogger.Error("加载光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
+                LightLogger.Error("加载光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
             }
 
 
@@ -99,7 +98,7 @@ namespace WH.LightControl
             }
             catch (Exception ex)
             {
-                CamLogger.Error("保存光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
+                LightLogger.Error("保存光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
             }
       
         }

@@ -4,6 +4,7 @@ using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,10 @@ using System.Threading.Tasks;
 
 namespace WH.LightControl
 {
+    /// <summary>
+    /// 添加光源视图模型
+    /// 2024.08.27 鲍赞宝
+    /// </summary>
     public partial class AddLightVM:ObservableObject
     {
         /// <summary>
@@ -119,6 +124,7 @@ namespace WH.LightControl
                             CLinghtManagement.LightControlDict.Clear();
                             CLinghtManagement.LoadLightParams();
                             Growl.Info(Properties.Resources.成功添加光源 + copypath);
+                            CLinghtManagement.OperateLog.Info($"光源模块-新增加{copypath}!");
                         }
 
                     }

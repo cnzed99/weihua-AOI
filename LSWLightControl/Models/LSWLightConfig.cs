@@ -10,6 +10,10 @@ using WH.LightControl;
 
 namespace LSWLightControl
 {
+    /// <summary>
+    /// 20240825 鲍赞宝
+    /// 立实为光源参数类
+    /// </summary>
     public partial class LSWLightConfig : CLightParamsBase
     {
         public LSWLightConfig()

@@ -19,24 +19,6 @@ namespace WH.LightControl
         public LightSetWindow()
         {
             InitializeComponent();
-
-            //var vm = new LSWLightControlVM();
-
-            //this.DataContext = vm;
-
-            //foreach (var item in CLinghtManagement.LightControlDict.Values)
-            //{
-            //    item.BaseConfig.DataContextChangedEvent += (d) =>
-            //    {
-            //        if (d != null)
-            //        {
-            //            this.DataContext = d;
-            //        }
-            //    };
-            //}
-
-
-
         }
     }
 }

@@ -247,7 +247,7 @@ namespace WH.DetectSystem.ViewModels
                 try
                 {
                     CLinghtManagement.LoadLightParams();
-                    LightStationNames = CLinghtManagement.lightName;
+                    LightStationNames = CLinghtManagement.s_lightName;
                 }
                 catch (Exception ex)
                 {

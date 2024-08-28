@@ -651,7 +651,7 @@ namespace 断面毛刺检测软件
                         AddLightWindow addlight = App.Container.Resolve<Lazy<AddLightWindow>>().Value;
                         addlight.Closed += (sender, e) =>
                         {
-                            CMainList.LightStationNames = CLinghtManagement.lightName;
+                            CMainList.LightStationNames = CLinghtManagement.s_lightName;
                         };
                         addlight.ShowDialog();
                         addlight.Activate();

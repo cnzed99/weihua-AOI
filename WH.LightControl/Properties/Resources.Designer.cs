@@ -61,15 +61,6 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
-        ///   查找类似 确认删除当前的光源控制器? 的本地化字符串。
-        /// </summary>
-        public static string DeleteAsk {
-            get {
-                return ResourceManager.GetString("DeleteAsk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 上升沿 的本地化字符串。
         /// </summary>
         public static string 上升沿 {
@@ -138,6 +129,15 @@ namespace WH.LightControl.Properties {
         public static string 删除 {
             get {
                 return ResourceManager.GetString("删除", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 确认删除当前的光源控制器? 的本地化字符串。
+        /// </summary>
+        public static string 删除光源询问 {
+            get {
+                return ResourceManager.GetString("删除光源询问", resourceCulture);
             }
         }
         

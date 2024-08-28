@@ -148,7 +148,7 @@
   <data name="删除" xml:space="preserve">
     <value>删除</value>
   </data>
-  <data name="DeleteAsk" xml:space="preserve">
+  <data name="删除光源询问" xml:space="preserve">
     <value>确认删除当前的光源控制器?</value>
   </data>
   <data name="光源品牌" xml:space="preserve">

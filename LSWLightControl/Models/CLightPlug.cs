@@ -11,6 +11,10 @@ using WH.LightControl;
 
 namespace LSWLightControl
 {
+    /// <summary>
+    /// 20240825 鲍赞宝
+    /// 立实为光源接口实现
+    /// </summary>
     public class CLightPlug : ILight
     {
 
@@ -62,22 +66,5 @@ namespace LSWLightControl
             return LSWlight.Config;
 
         }
-        /// <summary>
-        /// 创建一个新的光源实例
-        /// 2024.08.23 鲍赞宝
-        /// </summary>
-        /// <param name="LightObj">光源实例</param>
-        /// <returns></returns>
-        //public CLightParamsBase CreatNewLight(out CLightControlBase lightObj)
-        //{
-        //    //LSWLightControlVM LSWlight = new LSWLightControlVM();
-        //    //LSWLightConfig lswlight = new LSWLightConfig();
-        //    //lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
-        //    //LSWlight.Config = lswlight;
-        //    //LSWlight.SetBaseParam(LSWlight.Config);
-        //    //lightObj = LSWlight;
-        //    //return LSWlight.Config;
-        //}
-
     }
 }

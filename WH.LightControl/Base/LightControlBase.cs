@@ -15,6 +15,10 @@ using WH.Entity.CommonLib;
 
 namespace WH.LightControl
 {
+    /// <summary>
+    /// 光源操作基类
+    /// 2024.08.25 鲍赞宝
+    /// </summary>
     public abstract partial class CLightControlBase : ObservableObject
     {
 
@@ -41,10 +45,14 @@ namespace WH.LightControl
             serialPort.WriteTimeout = 2000;
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler); // 接收到数据时的事件
         }
-
+        /// <summary>
+        /// 更新设置基类的排至参数
+        /// 2024.08.25 鲍赞宝
+        /// </summary>
+        /// <param name="baseparam"></param>
         public void SetBaseParam(CLightParamsBase baseparam)
         {
-            baseConfig = baseparam;
+            BaseConfig = baseparam;
         }
 
         /// <summary>
@@ -121,34 +129,32 @@ namespace WH.LightControl
         //  protected abstract void Save();
 
 
-        
-        [RelayCommand]   
+        /// <summary>
+        ///  2024.08.26 鲍赞宝
+        /// 保存所有配置参数
+        /// </summary>
+        [RelayCommand]        
         protected virtual void Save()
         {
             CLinghtManagement.SaveLightParams();
         }
-        /// <summary>
-        /// 20240826 鲍赞宝
-        /// 新增光源控制器
-        /// </summary>
-        public abstract void Add(object winobj);
 
 
         /// <summary>
-        ///  20240826 鲍赞宝
+        ///  2024.08.26 鲍赞宝
         /// 删除光源控制器
         /// </summary>
         /// <param name="paramobj"></param>
         [RelayCommand]
         public virtual void Delete(object paramobj)
         {
-            Growl.AskGlobal(Properties.Resources.DeleteAsk, b =>
+            Growl.AskGlobal(Properties.Resources.删除光源询问, b =>
             {
                 if (b)
                 {
                     if (paramobj is CLightParamsBase param)
                     {
-                        string lightkey = param.LightBrandName + "-" + param.LightStationName;
+                        string lightkey = param.LightBrandName + "&" + param.LightStationName;
                         CLinghtManagement.LightControlDict.Remove(lightkey);
                         // CLinghtManagement.LightParamDict.Remove(lightkey);
 

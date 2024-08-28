@@ -70,15 +70,6 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
-        ///   查找类似 确认增加一个光源控制器? 的本地化字符串。
-        /// </summary>
-        public static string AddLightAsk {
-            get {
-                return ResourceManager.GetString("AddLightAsk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 报警设置 的本地化字符串。
         /// </summary>
         public static string AlarmConfig {

@@ -97,13 +97,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add" xml:space="preserve">
+  <data name="添加光源询问" xml:space="preserve">
     <value>确认新增一个光源控制器?</value>
   </data>
-  <data name="Delete" xml:space="preserve">
+  <data name="删除光源询问" xml:space="preserve">
     <value>确认删除当前的光源控制器?</value>
   </data>
-  <data name="AddSueccess" xml:space="preserve">
+  <data name="成功添加光源" xml:space="preserve">
     <value>成功新增一个光源控制器-</value>
   </data>
 </root>
