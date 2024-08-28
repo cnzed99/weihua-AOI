@@ -183,29 +183,6 @@ namespace 断面毛刺检测软件
 
         #endregion
 
-        #region 主题色系
-
-        private void cbSkin_Checked(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is ToggleButton toggle)
-            {
-                if (toggle.IsChecked ?? true)
-                {
-                    GlobalData.Config.Skin = SkinType.Dark;
-
-                    ((App)Application.Current).UpdateSkin(SkinType.Dark);
-                }
-                else
-                {
-                    GlobalData.Config.Skin = SkinType.Default;
-                    ((App)Application.Current).UpdateSkin(SkinType.Default);
-                }
-                GlobalData.Save();
-                Application.Current.MainWindow.ApplyTemplate();
-            }
-        }
-        #endregion
-
         #region 窗体关闭
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -606,19 +583,28 @@ namespace 断面毛刺检测软件
         #region 数据清空
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
-            Growl.AskGlobal(Properties.Resources.CleraAsk, b =>
+            try
             {
-                if (b)
-                {
-                    foreach (var item in CMainList.CMainVMs)
+                Growl.AskGlobal(
+                    Properties.Resources.CleraAsk,
+                    b =>
                     {
-                        item.MaociDefectsProduce.Clear();
+                        if (b)
+                        {
+                            foreach (var item in CMainList.CMainVMs)
+                            {
+                                item.MaociDefectsProduce?.Clear();
+                            }
+                            OperateLog.Info(Properties.Resources.DataClear);
+                        }
+                        return true;
                     }
-                    OperateLog.Info(Properties.Resources.DataClear);
-                }
-                return true;
-            });
-            
+                );
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(Properties.Resources.DataClear + "\r\n" + ex.Message);
+            }
         }
         #endregion
 
@@ -719,7 +705,7 @@ namespace 断面毛刺检测软件
                     {
                         if (mainVM.HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
                             mainVM.HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
-                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Insert(0,message.Path);
+                        mainVM.HistoryVM.HistoryModel.NgImagePaths.Insert(0, message.Path);
                     }
                 })
             );

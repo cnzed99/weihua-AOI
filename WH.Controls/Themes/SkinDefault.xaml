@@ -46,4 +46,8 @@
     <Color x:Key="DarkMaskColor">#20000000</Color>
     <Color x:Key="DarkOpacityColor">#40000000</Color>
     <system:UInt32 x:Key="BlurGradientValue">0x99FFFFFF</system:UInt32>
+
+    <Color x:Key="ExpanderColor">#2F808080</Color>
+    <SolidColorBrush x:Key="ExpanderBrush">#2F808080</SolidColorBrush>
+    <SolidColorBrush x:Key="LoadingPathBrush">#00A7FE</SolidColorBrush>
 </ResourceDictionary>

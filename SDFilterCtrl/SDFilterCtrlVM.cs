@@ -70,21 +70,24 @@ namespace SDFilter
         [RelayCommand]
         void RemoveFilter(object obj)
         {
-            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
-            {
-                if (b)
+            Growl.AskGlobal(
+                Properties.Resource1.DelecteAsk,
+                b =>
                 {
-                    var objArr = obj as object[];
-                    if (objArr != null && objArr.Length == 2)
+                    if (b)
                     {
-                        DefectFilter defectFilter = (DefectFilter)objArr[0];
-                        RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
-                        recipeDefect.DefectFilters.Remove(defectFilter);
-                        //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
+                        var objArr = obj as object[];
+                        if (objArr != null && objArr.Length == 2)
+                        {
+                            DefectFilter defectFilter = (DefectFilter)objArr[0];
+                            RecipeDefect recipeDefect = (RecipeDefect)objArr[1];
+                            recipeDefect.DefectFilters.Remove(defectFilter);
+                            //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
+                        }
                     }
+                    return true;
                 }
-                return true;
-            });         
+            );
         }
 
         /// <summary>

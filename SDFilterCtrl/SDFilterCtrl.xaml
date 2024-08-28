@@ -21,10 +21,14 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>-->
-            <cov:BoolToBrushConverter
-                x:Key="BoolToBrushConverterEx"
-                FalseValue="Red"
-                TrueValue="{DynamicResource ThirdlyRegionBrush}" />
+            <cov:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ExpanderBrush}">
+                <cov:BoolToBrushConverter.FalseValue>
+                    <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="Red" />
+                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}" />
+                    </LinearGradientBrush>
+                </cov:BoolToBrushConverter.FalseValue>
+            </cov:BoolToBrushConverter>
             <cov:BoolToBrushConverter
                 x:Key="BoolToBrushConverterBd"
                 FalseValue="Red"
@@ -40,7 +44,7 @@
                 BasedOn="{StaticResource ButtonPrimary}"
                 TargetType="Button">
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Foreground" Value="White" />
+
                 <Setter Property="Padding" Value="8,5,8,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
@@ -50,7 +54,7 @@
                 BasedOn="{StaticResource ButtonDanger}"
                 TargetType="Button">
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Foreground" Value="White" />
+
                 <Setter Property="Padding" Value="8,5,8,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
@@ -59,7 +63,6 @@
                 x:Key="TextBlock1"
                 BasedOn="{StaticResource TextBlockDefault}"
                 TargetType="TextBlock">
-                <Setter Property="Foreground" Value="White" />
                 <Setter Property="HorizontalAlignment" Value="Left" />
             </Style>
             <Style
