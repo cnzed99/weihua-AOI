@@ -70,15 +70,6 @@ namespace QualityGrade.Properties {
         }
         
         /// <summary>
-        ///   查找类似 确认增加一个光源控制器? 的本地化字符串。
-        /// </summary>
-        public static string AddAsk {
-            get {
-                return ResourceManager.GetString("AddAsk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 确认是否删除？ 的本地化字符串。
         /// </summary>
         public static string DelecteAsk {

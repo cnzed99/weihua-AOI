@@ -126,14 +126,14 @@ namespace WH.DetectSystem.ViewModels
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = m_WaitImgChannel;
             }
             // 数据清零事件
-            SystemSettings.ClearProduceEvent += (t) => {
-                if (DateTime.Now >= t)
+            SystemSettings.ClearProduceEvent += () =>
+            {
+
+                if (SystemSettings.AutoClearEnable)
                 {
-                    if (SystemSettings.AutoClearEnable)
-                    {
-                        this.DefectsDataVM.DefectsProduce.Clear();
-                    }
+                    this.DefectsDataVM.DefectsProduce.Clear();
                 }
+
             };
         }
 

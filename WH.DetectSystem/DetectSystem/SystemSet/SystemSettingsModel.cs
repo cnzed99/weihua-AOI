@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -15,6 +17,20 @@ namespace WH.DetectSystem.Models
     /// </summary>
     public partial class CSystemSettingsModel : ObservableValidator
     {
+
+        public CSystemSettingsModel()
+        {
+            //oldtime = NextClearTime;
+            //nextClearTime = oldtime;
+            clearTimer = new DispatcherTimer(DispatcherPriority.Normal);
+            clearTimer.Interval = TimeSpan.FromSeconds(1);
+            clearTimer.Tick += Timer_Tick;
+            clearTimer.Start();
+        }
+        /// <summary>
+        /// 清零计时器
+        /// </summary>
+        DispatcherTimer clearTimer;
         /// <summary>
         /// 20240801 TCG
         /// 最近打开的工程
@@ -66,6 +82,12 @@ namespace WH.DetectSystem.Models
 
         #region 数据清零参数
         /// <summary>
+        /// 显示错误信息
+        /// </summary>
+        [ObservableProperty]
+        private string errorMsg = "";
+
+        /// <summary>
         /// 自动清零使能
         /// </summary>
         [ObservableProperty]
@@ -84,15 +106,31 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 白班时间
         /// </summary>
-        [LessThan(nameof(NightShift))]
+        [DateTimeLessThan(nameof(NightShift))]
         public DateTime DayShift
         {
             get => _dayShift;
             set
             {
-                SetProperty(ref _dayShift, value, true);
-                OnPropertyChanged(nameof(NowShift));
-                OnPropertyChanged(nameof(NextClearTime));
+                var validationContext = new ValidationContext(this) { MemberName = nameof(DayShift) };
+                var validationResults = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateProperty(value, validationContext, validationResults);
+
+                if (isValid)
+                {
+                    ErrorMsg = "";
+                    SetProperty(ref _dayShift, value, true);
+                    OnPropertyChanged(nameof(NowShift));
+                    GetNextClearTime();
+                    OnPropertyChanged(nameof(NextClearTime));
+                }
+                else
+                {
+                    ErrorMsg = validationResults[0].ErrorMessage;
+                    //Validator.ValidateProperty(value, validationContext);
+                    // OnPropertyChanged(nameof(DayShift),true);
+                    ////SetProperty(ref _dayShift, value, false);
+                }
             }
         }
 
@@ -101,15 +139,30 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 晚班时间
         /// </summary>
-        [GreaterThan(nameof(DayShift))]
+        [DateTimeGreaterThan(nameof(DayShift))]
         public DateTime NightShift
         {
             get => _nightShift;
             set
             {
-                SetProperty(ref _nightShift, value, true);
-                OnPropertyChanged(nameof(NowShift));
-                OnPropertyChanged(nameof(NextClearTime));
+                var validationContext = new ValidationContext(this) { MemberName = nameof(NightShift) };
+                var validationResults = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateProperty(value, validationContext, validationResults);
+
+                if (isValid)
+                {
+                    ErrorMsg = "";
+                    SetProperty(ref _nightShift, value, true);
+                    OnPropertyChanged(nameof(NowShift));
+                    GetNextClearTime();
+                    OnPropertyChanged(nameof(NextClearTime));
+                }
+                else
+                {
+                    ErrorMsg = validationResults[0].ErrorMessage;
+                }
+
+
             }
         }
 
@@ -210,102 +263,123 @@ namespace WH.DetectSystem.Models
             );
         }
 
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now > NextClearTime)
+            {
+               //oldtime = NextClearTime;
+                ClearProduceEvent?.Invoke();
+                GetNextClearTime();
+            }
+        }
+
+
+        #endregion
+
+        #region 获取下一次的清零时间
+
+        /// <summary>
+        /// 数据清零事件
+        /// </summary>
+        public event Action ClearProduceEvent;
+
+
+       //static DateTime oldtime;
+
         /// <summary>
         /// 下次清零时间
         /// </summary>
         private DateTime nextClearTime;
 
-        #endregion
-
-        #region 获取下一次的清零时间
-        /// <summary>
-        /// 数据清零事件
-        /// </summary>
-        public event Action<DateTime> ClearProduceEvent;
-
-        DateTime oldtime;
         public DateTime NextClearTime
         {
             get
             {
-                DateTime now = DateTime.Now;
-                DateTime next = new DateTime();
-                switch (ClearEveryDay)
-                {
-                    case 1: //每班次清零
-                        if (NowShift.Contains("白班")) //判断当前是白班
-                        {
-                            next = new DateTime(
-                                now.Year,
-                                now.Month,
-                                now.Day,
-                                NightShift.Hour,
-                                NightShift.Minute,
-                                NightShift.Second
-                            ); //如果现在是白班,下一次清零时间就是当天的晚班开始时间
-                        }
-                        else //判断当前是晚班
-                        {
-                            next = new DateTime(
-                                now.Year,
-                                now.Month,
-                                now.Day,
-                                DayShift.Hour,
-                                DayShift.Minute,
-                                DayShift.Second
-                            ); //如果现在是晚班,下一次清零时间就是第二天的白班开始时间
-
-                            int nowTime = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
-
-                            int Nighttime = NightShift.Hour * 60 + NightShift.Minute;
-
-                            if (nowTime < Nighttime)
-                            {
-                                //10:20   10:31
-                            }
-                            else
-                            {
-                                next = next.AddDays(1);
-                            }
-                        }
-                        break;
-                    case 2:
-                        next = new DateTime(
-                            now.Year,
-                            now.Month,
-                            now.Day,
-                            DayShift.Hour,
-                            DayShift.Minute,
-                            DayShift.Second
-                        ); //下一次清零时间就是第二天的白班开始时间
-                        next = next.AddDays(1);
-                        break;
-
-                    case 3: //每周一清零
-                        next = new DateTime(
-                            now.Year,
-                            now.Month,
-                            now.Day,
-                            DayShift.Hour,
-                            DayShift.Minute,
-                            DayShift.Second
-                        );
-                        int weekDay = (int)next.DayOfWeek;
-                        DateTime minDay = next.AddDays(0 - weekDay); // 第0天 周日
-                        next = minDay.AddDays(8); //下个周一
-                        break;
-                }
-
-                if (oldtime != next)
-                {
-                    ClearProduceEvent?.Invoke(oldtime);
-                    oldtime = next;
-                }
-
-                return next;
+                return nextClearTime;
             }
-            set => SetProperty(ref nextClearTime, value);
+            set
+            {
+                SetProperty(ref nextClearTime, value);
+              
+            }
         }
+        /// <summary>
+        /// 获取下次清零事件
+        /// </summary>
+        private void GetNextClearTime()
+        {
+            DateTime now = DateTime.Now;
+            DateTime next = new DateTime();
+            switch (ClearEveryDay)
+            {
+                case 1: //每班次清零
+                    if (NowShift.Contains("白班")) //判断当前是白班
+                    {
+                        next = new DateTime(
+                            now.Year,
+                            now.Month,
+                            now.Day,
+                            NightShift.Hour,
+                            NightShift.Minute,
+                            NightShift.Second
+                        ); //如果现在是白班,下一次清零时间就是当天的晚班开始时间
+                    }
+                    else //判断当前是晚班
+                    {
+                        next = new DateTime(
+                            now.Year,
+                            now.Month,
+                            now.Day,
+                            DayShift.Hour,
+                            DayShift.Minute,
+                            DayShift.Second
+                        ); //如果现在是晚班,下一次清零时间就是第二天的白班开始时间
+
+                        int nowTime = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+
+                        int Nighttime = NightShift.Hour * 60 + NightShift.Minute;
+
+                        if (nowTime < Nighttime)
+                        {
+                            //10:20   10:31
+                        }
+                        else
+                        {
+                            next = next.AddDays(1);
+                        }
+                    }
+                    break;
+                case 2:
+                    next = new DateTime(
+                        now.Year,
+                        now.Month,
+                        now.Day,
+                        DayShift.Hour,
+                        DayShift.Minute,
+                        DayShift.Second
+                    ); //下一次清零时间就是第二天的白班开始时间
+                    next = next.AddDays(1);
+                    break;
+
+                case 3: //每周一清零
+                    next = new DateTime(
+                        now.Year,
+                        now.Month,
+                        now.Day,
+                        DayShift.Hour,
+                        DayShift.Minute,
+                        DayShift.Second
+                    );
+                    int weekDay = (int)next.DayOfWeek;
+                    DateTime minDay = next.AddDays(0 - weekDay); // 第0天 周日
+                    next = minDay.AddDays(8); //下个周一
+                    break;
+            }
+            NextClearTime = next;
+          
+        }
+
         #endregion
     }
 }

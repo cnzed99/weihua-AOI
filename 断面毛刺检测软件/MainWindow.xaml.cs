@@ -184,29 +184,6 @@ namespace 断面毛刺检测软件
 
         #endregion
 
-        #region 主题色系
-
-        private void cbSkin_Checked(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is ToggleButton toggle)
-            {
-                if (toggle.IsChecked ?? true)
-                {
-                    GlobalData.Config.Skin = SkinType.Dark;
-
-                    ((App)Application.Current).UpdateSkin(SkinType.Dark);
-                }
-                else
-                {
-                    GlobalData.Config.Skin = SkinType.Default;
-                    ((App)Application.Current).UpdateSkin(SkinType.Default);
-                }
-                GlobalData.Save();
-                Application.Current.MainWindow.ApplyTemplate();
-            }
-        }
-        #endregion
-
         #region 窗体关闭
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -609,18 +586,21 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                Growl.AskGlobal(Properties.Resources.CleraAsk, b =>
-                {
-                    if (b)
+                Growl.AskGlobal(
+                    Properties.Resources.CleraAsk,
+                    b =>
                     {
-                        foreach (var item in CMainList.CMainVMs)
+                        if (b)
                         {
-                            item.MaociDefectsProduce?.Clear();
+                            foreach (var item in CMainList.CMainVMs)
+                            {
+                                item.MaociDefectsProduce?.Clear();
+                            }
+                            OperateLog.Info(Properties.Resources.DataClear);
                         }
-                        OperateLog.Info(Properties.Resources.DataClear);
+                        return true;
                     }
-                    return true;
-                });
+                );
             }
             catch (Exception ex)
             {

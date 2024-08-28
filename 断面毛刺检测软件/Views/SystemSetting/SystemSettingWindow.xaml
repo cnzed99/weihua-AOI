@@ -115,6 +115,10 @@
                         Style="{StaticResource TextBoxExtend}"
                         Text="{Binding NextClearTime, StringFormat=yyyy/MM/dd HH:mm:ss}" />
                 </DockPanel>
+
+                <DockPanel >
+                    <TextBlock Text="{Binding ErrorMsg}" Foreground="Red"/>
+                </DockPanel>
             </StackPanel>
         </GroupBox>
 

@@ -12,6 +12,7 @@ using System.Windows;
 using Autofac;
 using CameraModule;
 using CommunicationModule;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DataQuery;
 using HandyControl.Data;
 using HandyControl.Properties.Langs;
@@ -76,16 +77,16 @@ namespace 断面毛刺检测软件
             }
             else
             {
+                GlobalData.Init();
                 base.OnStartup(e);
 
                 //UpdateRegistry();
 
                 ShutdownMode = ShutdownMode.OnMainWindowClose;
-                GlobalData.Init();
 
-                if (GlobalData.Config.Skin != SkinType.Dark) //默认暗色系
+                if (!GlobalData.Config.IsDark) //默认暗色系
                 {
-                    UpdateSkin(GlobalData.Config.Skin);
+                    UpdateSkin(GlobalData.Config.IsDark);
                 }
                 ConfigHelper.Instance.SetWindowDefaultStyle();
                 ConfigHelper.Instance.SetNavigationWindowDefaultStyle();
@@ -109,11 +110,13 @@ namespace 断面毛刺检测软件
             //}
         }
 
-        internal void UpdateSkin(SkinType skin)
+        internal void UpdateSkin(bool isDark)
         {
+            string skin = isDark ? "Dark" : "Default";
+
             var skins0 = Resources.MergedDictionaries[0];
             skins0.Source = new Uri(
-                $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
             );
             skins0.MergedDictionaries.Clear();
             skins0.MergedDictionaries.Add(
@@ -128,13 +131,13 @@ namespace 断面毛刺检测软件
                 new ResourceDictionary
                 {
                     Source = new Uri(
-                        $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                        $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
                     )
                 }
             );
             var skins1 = Resources.MergedDictionaries[1];
             skins1.Source = new Uri(
-                $"pack://application:,,,/HandyControl;component/Themes/Skin{skin}.xaml"
+                $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
             );
             skins1.MergedDictionaries.Clear();
             skins1.MergedDictionaries.Add(
@@ -290,12 +293,21 @@ namespace 断面毛刺检测软件
         public static bool NotifyIconIsShow { get; set; } = true;
     }
 
-    internal class AppConfig
+    internal class AppConfig : ObservableObject
     {
         public static readonly string SavePath =
             $"{AppDomain.CurrentDomain.BaseDirectory}AppConfig.json";
-
-        public SkinType Skin { get; set; }
+        bool isDark;
+        public bool IsDark
+        {
+            get => isDark;
+            set
+            {
+                SetProperty(ref isDark, value);
+                ((App)Application.Current).UpdateSkin(isDark);
+                GlobalData.Save();
+            }
+        }
     }
 
     internal class Win32Helper

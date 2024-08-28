@@ -133,7 +133,4 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>确认是否删除？</value>
   </data>
-  <data name="AddAsk" xml:space="preserve">
-    <value>确认增加一个光源控制器?</value>
-  </data>
 </root>

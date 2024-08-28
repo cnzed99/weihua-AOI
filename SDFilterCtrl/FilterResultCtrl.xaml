@@ -23,10 +23,14 @@
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
             <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
-            <conv:BoolToBrushConverter
-                x:Key="BoolToBrushConverterEx"
-                FalseValue="Red"
-                TrueValue="{DynamicResource ThirdlyRegionBrush}" />
+            <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ExpanderBrush}">
+                <conv:BoolToBrushConverter.FalseValue>
+                    <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="Red" />
+                        <GradientStop Offset="1" Color="{DynamicResource ExpanderColor}" />
+                    </LinearGradientBrush>
+                </conv:BoolToBrushConverter.FalseValue>
+            </conv:BoolToBrushConverter>
             <conv:BoolToBrushConverter
                 x:Key="BoolToBrushConverterText"
                 FalseValue="Red"
@@ -43,10 +47,10 @@
                             hc:BorderElement.CornerRadius="0"
                             Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"
                             BorderThickness="0"
-                            Foreground="White"
                             Header="{Binding Name}"
                             IsExpanded="True"
                             Visibility="{Binding ReadOnly, Converter={StaticResource Boolean2VisibilityReConverter}}">
+
                             <ItemsControl ItemsSource="{Binding RecipeDefects}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -101,7 +105,7 @@
                                                         <Border
                                                             Margin="4,2"
                                                             Background="Transparent"
-                                                            BorderBrush="#FF0C424E"
+                                                            BorderBrush="{DynamicResource SecondaryBorderBrush}"
                                                             BorderThickness="1">
                                                             <ItemsControl
                                                                 hc:BorderElement.CornerRadius="0"
@@ -121,7 +125,6 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                Foreground="White"
                                                                                 Text="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
                                                                             <TextBlock
                                                                                 Grid.Column="1"
@@ -135,7 +138,6 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                Foreground="White"
                                                                                 Text="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
                                                                         </Grid>
                                                                     </DataTemplate>
@@ -156,3 +158,4 @@
         </hc:ScrollViewer>
     </Grid>
 </UserControl>
+<!--  Background="{Binding Result, Converter={StaticResource BoolToBrushConverterEx}}"  -->
