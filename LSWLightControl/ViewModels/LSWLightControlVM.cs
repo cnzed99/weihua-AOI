@@ -314,48 +314,48 @@ namespace LSWLightControl
         [RelayCommand]
         public override void Add(object winobj)
         {
-            LSWLightControlVM LSWlight = new LSWLightControlVM();
+            //LSWLightControlVM LSWlight = new LSWLightControlVM();
 
-            int lightcount = CLinghtManagement.LightControlDict.Values.Count;
-            LSWlight.Config = new();
-            LSWlight.Config.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
+            //int lightcount = CLinghtManagement.LightControlDict.Values.Count;
+            //LSWlight.Config = new();
+            //LSWlight.Config.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
 
-            int indexNum = 1;
-            string indexname= "光源" + indexNum.ToString();
-            string lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
-            while (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
-            {
-                indexNum++;
-                indexname = "光源" + indexNum.ToString();
-                lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
+            //int indexNum = 1;
+            //string indexname= "光源" + indexNum.ToString();
+            //string lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
+            //while (CLinghtManagement.LightControlDict.ContainsKey(lightkey))
+            //{
+            //    indexNum++;
+            //    indexname = "光源" + indexNum.ToString();
+            //    lightkey = LSWlight.Config.LightBrandName + "&" + indexname;
 
-            }
+            //}
 
-            LSWlight.SetBaseParam(LSWlight.Config);
-            LSWlight.Config.LightStationName = indexname;
+            //LSWlight.SetBaseParam(LSWlight.Config);
+            //LSWlight.Config.LightStationName = indexname;
 
-            Growl.AskGlobal(Properties.Resource.Add, b =>
-            {
-                if (b)
-                {
-                    if (!CLinghtManagement.LightControlDict.ContainsKey(lightkey))
-                    {
-                        CLinghtManagement.LightControlDict.Add(lightkey, LSWlight);
-                       // CLinghtManagement.LightParamDict.Add(lightkey, LSWlight.Config);
+            //Growl.AskGlobal(Properties.Resource.Add, b =>
+            //{
+            //    if (b)
+            //    {
+            //        if (!CLinghtManagement.LightControlDict.ContainsKey(lightkey))
+            //        {
+            //            CLinghtManagement.LightControlDict.Add(lightkey, LSWlight);
+            //           // CLinghtManagement.LightParamDict.Add(lightkey, LSWlight.Config);
 
-                        if (winobj is HandyControl.Controls.Window window)
-                        {
-                            CLinghtManagement.LightControlDict[lightkey].BaseConfig.DataContextChangedEvent += (d) =>
-                            {
-                                window.DataContext = d;
-                            };
-                        }
-                        CLinghtManagement.SaveLightParams();
-                        Growl.Info(Properties.Resource.AddSueccess + indexname);
-                    }
-                }
-                return true;
-            });
+            //            if (winobj is HandyControl.Controls.Window window)
+            //            {
+            //                CLinghtManagement.LightControlDict[lightkey].BaseConfig.DataContextChangedEvent += (d) =>
+            //                {
+            //                    window.DataContext = d;
+            //                };
+            //            }
+            //            CLinghtManagement.SaveLightParams();
+            //            Growl.Info(Properties.Resource.AddSueccess + indexname);
+            //        }
+            //    }
+            //    return true;
+            //});
 
 
         }

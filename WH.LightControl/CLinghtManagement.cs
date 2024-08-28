@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WH.Entity;
+using WH.Entity.LogRecord;
 
 namespace WH.LightControl
 {
@@ -20,6 +21,18 @@ namespace WH.LightControl
         /// 光源参数保存路径
         /// </summary>
         public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 模块日志
+        /// </summary>
+        public static CLogRec CamLogger { get; set; } = CLogRec.Create("light", "D:/Data");
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 操作日志
+        /// </summary>
+        public static CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         /// <summary>
         /// 20240825 鲍赞宝
@@ -58,9 +71,9 @@ namespace WH.LightControl
 
                 SaveLightParams();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                CamLogger.Error("加载光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
             }
 
 
@@ -71,16 +84,24 @@ namespace WH.LightControl
         /// </summary>
         public static void SaveLightParams()
         {
-            List<CLightParamsBase> lightparams = new List<CLightParamsBase>();
+            try
+            {
+                List<CLightParamsBase> lightparams = new List<CLightParamsBase>();
 
-            foreach (var item in LightControlDict)
-            {
-                lightparams.Add(item.Value.BaseConfig);
+                foreach (var item in LightControlDict)
+                {
+                    lightparams.Add(item.Value.BaseConfig);
+                }
+                if (lightparams.Count > 0)
+                {
+                    ConfigAPI.Save(lightparams, s_LightConfigPath);
+                }
             }
-            if (lightparams.Count>0)
+            catch (Exception ex)
             {
-                ConfigAPI.Save(lightparams, s_LightConfigPath);
+                CamLogger.Error("保存光源配置出错:" + ex.Message + "\r\n" + ex.StackTrace);
             }
+      
         }
 
     }
