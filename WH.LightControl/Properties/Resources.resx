@@ -142,4 +142,34 @@
   <data name="光源控制" xml:space="preserve">
     <value>光源控制</value>
   </data>
+  <data name="新增" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="删除" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="删除光源询问" xml:space="preserve">
+    <value>确认删除当前的光源控制器?</value>
+  </data>
+  <data name="光源品牌" xml:space="preserve">
+    <value>光源品牌:</value>
+  </data>
+  <data name="工位名称" xml:space="preserve">
+    <value>工位名称:</value>
+  </data>
+  <data name="光源字典为空" xml:space="preserve">
+    <value>光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件</value>
+  </data>
+  <data name="添加光源" xml:space="preserve">
+    <value>添加光源</value>
+  </data>
+  <data name="成功添加光源" xml:space="preserve">
+    <value>成功添加光源：</value>
+  </data>
+  <data name="添加光源出错" xml:space="preserve">
+    <value>添加光源出错:</value>
+  </data>
+  <data name="自动获取" xml:space="preserve">
+    <value>自动获取光源名称出错:</value>
+  </data>
 </root>

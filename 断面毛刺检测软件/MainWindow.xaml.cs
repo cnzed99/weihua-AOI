@@ -28,6 +28,7 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
+using WH.LightControl;
 using WH.RecipeCellRootBase;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
@@ -638,10 +639,65 @@ namespace 断面毛刺检测软件
         /// <param name="e"></param>
         private void LightControl_Click(object sender, RoutedEventArgs e)
         {
-            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            // var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
             //lightProcess.Start();
-            lightProcess?.Start();
+            // lightProcess?.Start();
+            try
+            {
+                if (e.OriginalSource is MenuItem { Header: string header })
+                {
+                    if (header=="添加光源")
+                    {
+                        AddLightWindow addlight = App.Container.Resolve<Lazy<AddLightWindow>>().Value;
+                        addlight.Closed += (sender, e) =>
+                        {
+                            CMainList.LightStationNames = CLinghtManagement.s_lightName;
+                        };
+                        addlight.ShowDialog();
+                        addlight.Activate();
+                  
+                        
+                    }
+                    else
+                    {
+                        if (CLinghtManagement.LightControlDict.Count > 0)
+                        {
+                            var ienumkeyNames = CLinghtManagement.LightControlDict.Keys.ToArray().ToList();
+
+                            foreach (var keyname in ienumkeyNames)
+                            {
+                                string keysub = keyname.Split('&')[1];
+                                if (keysub == header)
+                                {
+                                    if (CLinghtManagement.LightControlDict.Keys.Contains(keyname))
+                                    {
+                                        LightSetWindow lihtsetWin = App.Container.Resolve<Lazy<LightSetWindow>>().Value;
+                                        lihtsetWin.DataContext = CLinghtManagement.LightControlDict[keyname];
+                                        lihtsetWin.Show();
+                                        lihtsetWin.Activate();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Growl.Warning(Properties.Resources.光源字典为空);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
+            }
         }
+
+        private void PreviewMouseLeftButtonDown_Cilck(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+           
+        }
+
+
         #endregion
 
         #region 关于
@@ -711,5 +767,7 @@ namespace 断面毛刺检测软件
             );
         }
         #endregion
+
+
     }
 }

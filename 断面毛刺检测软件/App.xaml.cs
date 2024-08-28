@@ -26,6 +26,8 @@ using WH.DetectSystem.ViewModels;
 using WH.Entity.LogRecord;
 using WH.Load;
 using 断面毛刺检测软件.Views;
+using WH.LightControl;
+
 #if !NET40
 using System.Runtime;
 #endif
@@ -96,16 +98,16 @@ namespace 断面毛刺检测软件
         {
             base.OnExit(e);
             GlobalData.Save();
-            var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
-            try
-            {
-                if (lightProcess != null && lightProcess.Threads != null)
-                    lightProcess?.Kill();
-            }
-            catch (Exception)
-            {
-                //退出程序
-            }
+            //var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
+            //try
+            //{
+            //    if (lightProcess != null && lightProcess.Threads != null)
+            //        lightProcess?.Kill();
+            //}
+            //catch (Exception)
+            //{
+            //    //退出程序
+            //}
         }
 
         internal void UpdateSkin(bool isDark)
@@ -219,8 +221,16 @@ namespace 断面毛刺检测软件
                 .Register(c => SingleInstance.Create<Lazy<CameraSetWindow>, CameraSetWindow>())
                 .InstancePerDependency();
             //光源控制
-            var lightProcess = Invoke("./WH.LightControl.exe");
-            builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
+            //var lightProcess = Invoke("./WH.LightControl.exe");
+            //builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
+            builder
+             .Register(c => SingleInstance.Create<Lazy<LightSetWindow>, LightSetWindow>())
+             .InstancePerDependency();
+
+            builder
+           .Register(c => SingleInstance.Create<Lazy<AddLightWindow>, AddLightWindow>())
+           .InstancePerDependency();
+
             //手动调试
             builder
                 .Register(c =>

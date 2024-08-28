@@ -97,11 +97,47 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 光源品牌: 的本地化字符串。
+        /// </summary>
+        public static string 光源品牌 {
+            get {
+                return ResourceManager.GetString("光源品牌", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件 的本地化字符串。
+        /// </summary>
+        public static string 光源字典为空 {
+            get {
+                return ResourceManager.GetString("光源字典为空", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 光源控制 的本地化字符串。
         /// </summary>
         public static string 光源控制 {
             get {
                 return ResourceManager.GetString("光源控制", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 删除 的本地化字符串。
+        /// </summary>
+        public static string 删除 {
+            get {
+                return ResourceManager.GetString("删除", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 确认删除当前的光源控制器? 的本地化字符串。
+        /// </summary>
+        public static string 删除光源询问 {
+            get {
+                return ResourceManager.GetString("删除光源询问", resourceCulture);
             }
         }
         
@@ -124,6 +160,15 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 工位名称: 的本地化字符串。
+        /// </summary>
+        public static string 工位名称 {
+            get {
+                return ResourceManager.GetString("工位名称", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 工作模式： 的本地化字符串。
         /// </summary>
         public static string 工作模式 {
@@ -138,6 +183,51 @@ namespace WH.LightControl.Properties {
         public static string 恢复出厂 {
             get {
                 return ResourceManager.GetString("恢复出厂", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 成功添加光源： 的本地化字符串。
+        /// </summary>
+        public static string 成功添加光源 {
+            get {
+                return ResourceManager.GetString("成功添加光源", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增 的本地化字符串。
+        /// </summary>
+        public static string 新增 {
+            get {
+                return ResourceManager.GetString("新增", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 添加光源 的本地化字符串。
+        /// </summary>
+        public static string 添加光源 {
+            get {
+                return ResourceManager.GetString("添加光源", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 添加光源出错: 的本地化字符串。
+        /// </summary>
+        public static string 添加光源出错 {
+            get {
+                return ResourceManager.GetString("添加光源出错", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自动获取光源名称出错: 的本地化字符串。
+        /// </summary>
+        public static string 自动获取 {
+            get {
+                return ResourceManager.GetString("自动获取", resourceCulture);
             }
         }
         

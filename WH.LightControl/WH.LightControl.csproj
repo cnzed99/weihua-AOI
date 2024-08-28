@@ -2,11 +2,18 @@
 
   <PropertyGroup>
 	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
-	  <OutputType>WinExe</OutputType>
+	  <OutputType>Library</OutputType>
 	  <UseWindowsForms>False</UseWindowsForms>
 	  <PlatformTarget>AnyCPU</PlatformTarget>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+    <Page Remove="Models\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\光源.png" />
@@ -20,6 +27,7 @@
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 	  <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 	  <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
 	</ItemGroup>

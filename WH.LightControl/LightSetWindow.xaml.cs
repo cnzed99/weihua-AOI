@@ -14,14 +14,11 @@ namespace WH.LightControl
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : HandyControl.Controls.Window
+    public partial class LightSetWindow : HandyControl.Controls.Window
     {
-        public MainWindow()
+        public LightSetWindow()
         {
             InitializeComponent();
-            var vm = new LSWLightControlVM();
-
-            this.DataContext = vm;
         }
     }
 }

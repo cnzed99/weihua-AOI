@@ -187,7 +187,8 @@
                     </MenuItem>
                     <MenuItem
                         Width="100"
-                        Click="LightControl_Click"
+                        ItemsSource="{Binding LightStationNames}"
+                        MenuItem.Click="LightControl_Click"
                         Header="{Binding [LightControl], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/工具/光源.svg" />

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HandyControl.Controls;
 using WH.Controls;
@@ -11,13 +14,43 @@ using WH.Entity.CommonLib;
 
 namespace WH.LightControl
 {
-    public partial class LightParamsBase : ConfigModifyObservableBase
+    /// <summary>
+    ///  20240825 鲍赞宝
+    /// 光源参数类基类
+    /// </summary>
+    public partial class CLightParamsBase : ConfigModifyObservableBase
     {
         /// <summary>
         /// 20240723 TCG
         /// 主通讯参数保存路径
         /// </summary>
         public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
+
+        public event Action<CLightControlBase> DataContextChangedEvent;
+        /// <summary>
+        /// 光源品牌名称
+        /// 2024.08.25 鲍赞宝
+        /// </summary>
+        [property: Category("基础信息")]
+        [property: Description("1.光源品牌")]
+        [property: DisplayName("光源品牌")]
+        [property: Browsable(false)]
+        [property: ReadOnly(true)]
+        [ObservableProperty]
+        private string lightBrandName;
+
+        /// <summary>
+        /// 光源工位名称
+        /// 2024.08.25 鲍赞宝
+        /// </summary>
+        [property: Category("基础信息")]
+        [property: Description("1.光源工位名称")]
+        [property: DisplayName("光源工位名称")]
+        [property: Browsable(false)]
+        [property: ReadOnly(true)]
+        [ObservableProperty]
+        private string lightStationName = "光源1";
+
 
         /// <summary>
         /// 20240724 TCG
@@ -172,4 +205,5 @@ namespace WH.LightControl
         [EnumString("16", "16")]
         DATABITS_16 = 16,
     }
+
 }

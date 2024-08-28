@@ -6,7 +6,6 @@
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\CamPlug\$(TargetName)\ /d /y" />
-		<Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\en\ /d /y" />
 	</Target>
 	
 	<ItemGroup>

@@ -5,21 +5,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WH.LightControl;
 
-namespace WH.LightControl
+
+namespace LSWLightControl
 {
-    public partial class LSWLightConfig : LightParamsBase
+    /// <summary>
+    /// 20240825 鲍赞宝
+    /// 立实为光源参数类
+    /// </summary>
+    public partial class LSWLightConfig : CLightParamsBase
     {
         public LSWLightConfig()
         {
-            this.token = new Entity.CommonLib.Token("", this.GetType().Namespace);
-            LightChannelList = new()
+            this.token = new WH.Entity.CommonLib.Token("", this.GetType().Namespace);
+            if (LightChannelList == null)
             {
-                new CLight("A"),
-                new CLight("B"),
-                new CLight("C"),
-                new CLight("D")
-            }; //通道亮度
+                LightChannelList = new()
+                {
+                    new CLight("A"),
+                    new CLight("B"),
+                    new CLight("C"),
+                    new CLight("D")
+                }; //通道亮度
+            }
+
         }
 
         /// <summary>

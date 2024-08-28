@@ -6,14 +6,30 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
 using Newtonsoft.Json;
 using WH.Entity.CommonLib;
 
 namespace WH.LightControl
 {
-    public abstract partial class LightControlBase : ObservableObject
+    /// <summary>
+    /// 光源操作基类
+    /// 2024.08.25 鲍赞宝
+    /// </summary>
+    public abstract partial class CLightControlBase : ObservableObject
     {
+
+
+        /// <summary>
+        /// 20240825 鲍赞宝
+        /// 光源主配置
+        /// </summary>
+        [ObservableProperty]
+        CLightParamsBase baseConfig;
+
         /// <summary>
         /// 20240724 TCG
         /// 串口号
@@ -22,12 +38,21 @@ namespace WH.LightControl
         [property: JsonIgnore]
         private SerialPort serialPort = new SerialPort();
 
-        protected LightControlBase()
+        protected CLightControlBase()
         {
             SerialPort.ReadBufferSize = 1024;
             SerialPort.WriteBufferSize = 1024;
             serialPort.WriteTimeout = 2000;
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler); // 接收到数据时的事件
+        }
+        /// <summary>
+        /// 更新设置基类的排至参数
+        /// 2024.08.25 鲍赞宝
+        /// </summary>
+        /// <param name="baseparam"></param>
+        public void SetBaseParam(CLightParamsBase baseparam)
+        {
+            BaseConfig = baseparam;
         }
 
         /// <summary>
@@ -43,7 +68,7 @@ namespace WH.LightControl
         /// <param name="setParam">是否设置亮度</param>
         /// <param name="port">串口号</param>
         /// <returns></returns>
-        public virtual bool Open(LightParamsBase lightParams)
+        public virtual bool Open(CLightParamsBase lightParams)
         {
             if (this.SerialPort.IsOpen)
             {
@@ -101,6 +126,43 @@ namespace WH.LightControl
         /// 20240724 TCG
         /// 保存配置
         /// </summary>
-        protected abstract void Save();
+        //  protected abstract void Save();
+
+
+        /// <summary>
+        ///  2024.08.26 鲍赞宝
+        /// 保存所有配置参数
+        /// </summary>
+        [RelayCommand]        
+        protected virtual void Save()
+        {
+            CLinghtManagement.SaveLightParams();
+        }
+
+
+        /// <summary>
+        ///  2024.08.26 鲍赞宝
+        /// 删除光源控制器
+        /// </summary>
+        /// <param name="paramobj"></param>
+        [RelayCommand]
+        public virtual void Delete(object paramobj)
+        {
+            Growl.AskGlobal(Properties.Resources.删除光源询问, b =>
+            {
+                if (b)
+                {
+                    if (paramobj is CLightParamsBase param)
+                    {
+                        string lightkey = param.LightBrandName + "&" + param.LightStationName;
+                        CLinghtManagement.LightControlDict.Remove(lightkey);
+                        // CLinghtManagement.LightParamDict.Remove(lightkey);
+
+                        CLinghtManagement.SaveLightParams();
+                    }
+                }
+                return true;
+            });
+        }
     }
 }

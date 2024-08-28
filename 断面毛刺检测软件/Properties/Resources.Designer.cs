@@ -584,6 +584,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件 的本地化字符串。
+        /// </summary>
+        public static string 光源字典为空 {
+            get {
+                return ResourceManager.GetString("光源字典为空", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 手动调试 的本地化字符串。
         /// </summary>
         public static string 手动调试 {

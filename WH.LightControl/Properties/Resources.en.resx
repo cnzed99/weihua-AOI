@@ -162,4 +162,34 @@
   <data name="光源控制" xml:space="preserve">
     <value>Light Control</value>
   </data>
+  <data name="新增" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="删除" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="删除光源询问" xml:space="preserve">
+    <value>Are you sure to delete the current light controller?</value>
+  </data>
+  <data name="光源品牌" xml:space="preserve">
+    <value>Manufa:</value>
+  </data>
+  <data name="工位名称" xml:space="preserve">
+    <value>StationName:</value>
+  </data>
+  <data name="光源字典为空" xml:space="preserve">
+    <value>The light source dictionary is null, check the LightConfig.Json file in the configuration file SystemConfig</value>
+  </data>
+  <data name="添加光源" xml:space="preserve">
+    <value>ADD</value>
+  </data>
+  <data name="成功添加光源" xml:space="preserve">
+    <value>Light source added successfully：</value>
+  </data>
+  <data name="添加光源出错" xml:space="preserve">
+    <value>Error adding light:</value>
+  </data>
+  <data name="自动获取" xml:space="preserve">
+    <value>Error automatically obtaining light  name:</value>
+  </data>
 </root>
