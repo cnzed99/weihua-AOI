@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using log4net;
@@ -241,7 +243,8 @@ namespace CommunicationModule
             try
             {
                 CCommunicationManagement.ComLogger.Info("保存所有通讯参数！");
-                List<CCommunicationSettingBase> listparam = new List<CCommunicationSettingBase>();
+                ObservableCollection<CCommunicationSettingBase> listparam =
+                    new ObservableCollection<CCommunicationSettingBase>();
                 Dictionary<string, CCommunicationSettingBase>.ValueCollection Values =
                     CCommunicationManagement.CommParamDic.Values;
                 foreach (var value in Values)

@@ -108,11 +108,14 @@
                     </MenuItem>
                     <MenuItem
                         Width="100"
-                        Click="CommSet_Click"
-                        Header="{Binding [Communication], Source={x:Static local:CLang.Instance}}">
+                        ItemsSource="{Binding ListCommSetParam}"
+                        MenuItem.Click="CommInstance_Click">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/相机通讯/通讯.svg" />
                         </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock PreviewMouseLeftButtonDown="CommSet_Click" Text="{Binding [Communication], Source={x:Static local:CLang.Instance}}" />
+                        </MenuItem.Header>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Name="SetMenu" Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">

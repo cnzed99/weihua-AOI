@@ -85,7 +85,8 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.7.17 李焕彬
         /// 通讯列表
         /// </summary>
-        public List<CCommunicationSettingBase> ListCommSetParam { get; set; }
+        [ObservableProperty]
+        ObservableCollection<CCommunicationSettingBase> listCommSetParam;
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -214,15 +215,16 @@ namespace WH.DetectSystem.ViewModels
                     if (File.Exists(CCommunicationManagement.s_CommPath))
                     {
                         ListCommSetParam = ConfigAPI.LoadDeserialize<
-                            List<CCommunicationSettingBase>
+                            ObservableCollection<CCommunicationSettingBase>
                         >(CCommunicationManagement.s_CommPath);
                     }
                     else
                     {
-                        ListCommSetParam = new List<CCommunicationSettingBase>();
+                        ListCommSetParam = new ObservableCollection<CCommunicationSettingBase>();
                     }
+
                     CommManagement = new CCommunicationManagement(
-                        ListCommSetParam,
+                        ListCommSetParam.ToList(),
                         CCommunicationManagement.s_CommPath
                     );
                     if (!CommManagement.OpenAllComm())

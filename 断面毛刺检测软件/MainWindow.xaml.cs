@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -623,13 +624,30 @@ namespace 断面毛刺检测软件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CommSet_Click(object sender, RoutedEventArgs e)
+        private void CommSet_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             OpenCommunicationList openCommunicationList = App
                 .Container.Resolve<Lazy<OpenCommunicationList>>()
                 .Value;
             openCommunicationList.Show();
             openCommunicationList.Activate();
+        }
+
+        /// <summary>
+        /// 通讯设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommInstance_Click(object sender, RoutedEventArgs e)
+        {
+            if (
+                e.OriginalSource is MenuItem menuitem
+                && menuitem.DataContext is CCommunicationSettingBase settingBase
+            )
+            {
+                OpenCommunication openCommunication = new OpenCommunication(settingBase);
+                openCommunication.Show();
+            }
         }
 
         /// <summary>
