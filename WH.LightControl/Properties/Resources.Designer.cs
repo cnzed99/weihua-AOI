@@ -187,6 +187,15 @@ namespace WH.LightControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 成功添加光源： 的本地化字符串。
+        /// </summary>
+        public static string 成功添加光源 {
+            get {
+                return ResourceManager.GetString("成功添加光源", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 新增 的本地化字符串。
         /// </summary>
         public static string 新增 {
@@ -201,6 +210,24 @@ namespace WH.LightControl.Properties {
         public static string 添加光源 {
             get {
                 return ResourceManager.GetString("添加光源", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 添加光源出错: 的本地化字符串。
+        /// </summary>
+        public static string 添加光源出错 {
+            get {
+                return ResourceManager.GetString("添加光源出错", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自动获取光源名称出错: 的本地化字符串。
+        /// </summary>
+        public static string 自动获取 {
+            get {
+                return ResourceManager.GetString("自动获取", resourceCulture);
             }
         }
         

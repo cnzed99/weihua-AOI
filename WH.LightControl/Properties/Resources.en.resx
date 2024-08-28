@@ -183,4 +183,13 @@
   <data name="添加光源" xml:space="preserve">
     <value>ADD</value>
   </data>
+  <data name="成功添加光源" xml:space="preserve">
+    <value>Light source added successfully：</value>
+  </data>
+  <data name="添加光源出错" xml:space="preserve">
+    <value>Error adding light:</value>
+  </data>
+  <data name="自动获取" xml:space="preserve">
+    <value>Error automatically obtaining light  name:</value>
+  </data>
 </root>

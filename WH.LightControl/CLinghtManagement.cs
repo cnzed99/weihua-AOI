@@ -41,20 +41,28 @@ namespace WH.LightControl
        /// </summary>
         public static void LoadLightParams()
         {
-            lightName= LoadLightPlugs.LoadLight();
-            for (int i = 0; i < LightHelpers.Count; i++)
+            try
             {
-                var param = LightHelpers[i].Item2.Init(s_LightConfigPath, LightHelpers[i].Item1, out CLightControlBase lightControl);
-                if (lightControl != null&& param!=null)
+                lightName = LoadLightPlugs.LoadLight();
+                for (int i = 0; i < LightHelpers.Count; i++)
                 {
-                    lightControl.BaseConfig.LightStationName = LightHelpers[i].Item1;
-                    string lightkey = $"{lightControl.BaseConfig.LightBrandName}&{lightControl.BaseConfig.LightStationName}";
-                    LightControlDict.Add(lightkey, lightControl);
-                    //LightParamDict.Add(lightkey, param);
+                    var param = LightHelpers[i].Item2.Init(s_LightConfigPath, LightHelpers[i].Item1, out CLightControlBase lightControl);
+                    if (lightControl != null && param != null)
+                    {
+                        lightControl.BaseConfig.LightStationName = LightHelpers[i].Item1;
+                        string lightkey = $"{lightControl.BaseConfig.LightBrandName}&{lightControl.BaseConfig.LightStationName}";
+                        LightControlDict.Add(lightkey, lightControl);
+                        //LightParamDict.Add(lightkey, param);
+                    }
                 }
+
+                SaveLightParams();
+            }
+            catch (Exception)
+            {
+
             }
 
-            SaveLightParams();
 
         }
         /// <summary>

@@ -163,4 +163,13 @@
   <data name="添加光源" xml:space="preserve">
     <value>添加光源</value>
   </data>
+  <data name="成功添加光源" xml:space="preserve">
+    <value>成功添加光源：</value>
+  </data>
+  <data name="添加光源出错" xml:space="preserve">
+    <value>添加光源出错:</value>
+  </data>
+  <data name="自动获取" xml:space="preserve">
+    <value>自动获取光源名称出错:</value>
+  </data>
 </root>

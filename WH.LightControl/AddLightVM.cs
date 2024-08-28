@@ -88,7 +88,7 @@ namespace WH.LightControl
                 }
                 catch (Exception ex)         
                 {
-                    Growl.Error("自动获取光源名称出错:\n\r" + ex.Message);
+                    Growl.Error(Properties.Resources.自动获取+" \n\r" + ex.Message);
                 }
              
             }
@@ -118,7 +118,7 @@ namespace WH.LightControl
                             CLinghtManagement.LightHelpers.Clear();
                             CLinghtManagement.LightControlDict.Clear();
                             CLinghtManagement.LoadLightParams();
-                            Growl.Info("成功添加光源:" + copypath);
+                            Growl.Info(Properties.Resources.成功添加光源 + copypath);
                         }
 
                     }
@@ -126,7 +126,7 @@ namespace WH.LightControl
             }
             catch (Exception ex)
             {
-                Growl.Error("添加光源出错:\n\r"+ex.Message);
+                Growl.Error(Properties.Resources.添加光源出错+"\n\r"+ex.Message);
             }
          
            
