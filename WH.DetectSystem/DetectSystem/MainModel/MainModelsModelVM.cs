@@ -224,7 +224,7 @@ namespace WH.DetectSystem.ViewModels
                     }
 
                     CommManagement = new CCommunicationManagement(
-                        ListCommSetParam.ToList(),
+                        ListCommSetParam,
                         CCommunicationManagement.s_CommPath
                     );
                     if (!CommManagement.OpenAllComm())

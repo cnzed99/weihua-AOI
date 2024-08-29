@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -64,10 +65,15 @@ namespace CommunicationModule
         /// </summary>
         public static Dictionary<string, CCommunicationSettingBase> CommParamDic =
             new Dictionary<string, CCommunicationSettingBase>();
+        private static ObservableCollection<CCommunicationSettingBase> comparams;
 
-        public CCommunicationManagement(List<CCommunicationSettingBase> param, string paramPath)
+        public CCommunicationManagement(
+            ObservableCollection<CCommunicationSettingBase> param,
+            string paramPath
+        )
         {
             CLoadComPlugs.LoadCom();
+            comparams = param;
             if (param != null)
             {
                 for (int i = 0; i < param.Count; i++)
@@ -100,7 +106,7 @@ namespace CommunicationModule
         {
             CCommunicationManagement.CommParamDic.Add(settingBase.Guid, settingBase);
             CCommunicationManagement.CommDic.Add(settingBase.Guid, com);
-
+            UpdateParamList();
             OperateLog.Info($"通讯模块-通讯增加{settingBase.ToString()}!");
         }
 
@@ -114,7 +120,18 @@ namespace CommunicationModule
             OperateLog.Info($"通讯模块-通讯删除{CommParamDic[guid].ToString()}!");
 
             CCommunicationManagement.CommDic.Remove(guid);
+
             CCommunicationManagement.CommParamDic.Remove(guid);
+            UpdateParamList();
+        }
+
+        private static void UpdateParamList()
+        {
+            comparams.Clear();
+            foreach (var item in CommParamDic.Values)
+            {
+                comparams.Add(item);
+            }
         }
 
         /// <summary>
