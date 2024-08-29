@@ -154,6 +154,7 @@
         </hc:SimplePanel>
         <ListView
             Grid.Row="2"
+            Background="{DynamicResource RegionBrush}"
             ItemsSource="{Binding QualityConfig.Qualities}"
             SelectedItem="{Binding QualitySelect}"
             SelectionMode="Single">
@@ -174,10 +175,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource ThirdlyRegionBrush}" />
+                                        <Setter Property="Background" Value="{DynamicResource ThirdlyTextBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Panel.Background" Value="{DynamicResource ThirdlyRegionBrush}" />
+                                        <Setter Property="Panel.Background" Value="{DynamicResource ThirdlyTextBrush}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
