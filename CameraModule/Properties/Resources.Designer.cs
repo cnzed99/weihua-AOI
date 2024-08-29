@@ -61,6 +61,15 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 01.料区阈值 的本地化字符串。
+        /// </summary>
+        public static string _01_料区阈值 {
+            get {
+                return ResourceManager.GetString("01.料区阈值", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 1.硬触发源 的本地化字符串。
         /// </summary>
         public static string _1_硬触发源 {
@@ -498,6 +507,24 @@ namespace CameraModule.Properties {
         public static string 专用参数 {
             get {
                 return ResourceManager.GetString("专用参数", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 计算≥料区阈值的区域的清晰度！ 的本地化字符串。
+        /// </summary>
+        public static string 料区阈值说明 {
+            get {
+                return ResourceManager.GetString("料区阈值说明", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 清晰度计算参数 的本地化字符串。
+        /// </summary>
+        public static string 清晰度计算参数 {
+            get {
+                return ResourceManager.GetString("清晰度计算参数", resourceCulture);
             }
         }
         

@@ -53,16 +53,25 @@ namespace MotionControl
     public partial class CMotionCtrlVM : ObservableObject
     {
         /// <summary>
-        /// 2024.7.25 李焕彬
+        /// 2024.8.28 李焕彬
         /// 计算对焦清晰度
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="nLine"></param>
-        /// <param name="data"></param>
+        /// <param name="width">图像宽度</param>
+        /// <param name="height">图像高度</param>
+        /// <param name="nLine">图像行宽</param>
+        /// <param name="data">图像数据</param>
+        /// <param name="algType">算法类型，0能量梯度，1Laplacian方差</param>
+        /// <param name="nThresh">目标料区阈值，算法1使用</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
-        public static extern float CalcDistinct(int width, int height, int nLine, IntPtr data);
+        public static extern float CalcDistinct(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            int algType,
+            int nThresh
+        );
 
         public CMotionCtrlVM()
         {
@@ -333,24 +342,24 @@ namespace MotionControl
         [RelayCommand]
         public void DelInput(object obj)
         {
-          
-
             if (obj is IList signalIns)
             {
                 if (signalIns.Count > 0)
                 {
-
-                    Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
-                    {
-                        if (b)
+                    Growl.AskGlobal(
+                        Properties.Resources.DelecteAsk,
+                        b =>
                         {
-                            for (int i = signalIns.Count - 1; i >= 0; i--)
+                            if (b)
                             {
-                                MotionConfig.SignalIns.Remove((CSignalIn)signalIns[i]);
+                                for (int i = signalIns.Count - 1; i >= 0; i--)
+                                {
+                                    MotionConfig.SignalIns.Remove((CSignalIn)signalIns[i]);
+                                }
                             }
+                            return true;
                         }
-                        return true;
-                    });
+                    );
                 }
             }
         }
@@ -377,18 +386,20 @@ namespace MotionControl
             {
                 if (signalOuts.Count > 0)
                 {
-                    Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
-                    {
-                        if (b)
+                    Growl.AskGlobal(
+                        Properties.Resources.DelecteAsk,
+                        b =>
                         {
-                            for (int i = signalOuts.Count - 1; i >= 0; i--)
+                            if (b)
                             {
-                                MotionConfig.SignalOuts.Remove((CSignalOut)signalOuts[i]);
+                                for (int i = signalOuts.Count - 1; i >= 0; i--)
+                                {
+                                    MotionConfig.SignalOuts.Remove((CSignalOut)signalOuts[i]);
+                                }
                             }
+                            return true;
                         }
-                        return true;
-                    });
-                  
+                    );
                 }
             }
         }
@@ -411,15 +422,17 @@ namespace MotionControl
         [RelayCommand]
         public void DelRegister(CElement registerSet)
         {
-            Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
-            {
-                if (b)
+            Growl.AskGlobal(
+                Properties.Resources.DelecteAsk,
+                b =>
                 {
-                    MotionConfig.RegisterSets.Remove(registerSet);
+                    if (b)
+                    {
+                        MotionConfig.RegisterSets.Remove(registerSet);
+                    }
+                    return true;
                 }
-                return true;
-            });
-            
+            );
         }
 
         /// <summary>
@@ -812,7 +825,9 @@ namespace MotionControl
                                     cell.Image.ImageWidth,
                                     cell.Image.ImageHeight,
                                     cell.Image.StrideWidth,
-                                    cell.Image.ImageData
+                                    cell.Image.ImageData,
+                                    0,
+                                    0
                                 );
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {
@@ -820,7 +835,8 @@ namespace MotionControl
                                 });
                             }
 
-                            float focusPos = FocusDatas.Max().pos;
+                            float maxDistinct = FocusDatas.Max(o => o.distinct);
+                            float focusPos = FocusDatas.First(o => o.distinct == maxDistinct).pos;
                             float focusPosN = Math.Max(
                                 MotionConfig.SoftLimitN,
                                 focusPos - MotionConfig.FineRange / 2
@@ -844,14 +860,19 @@ namespace MotionControl
                                     image.ImageWidth,
                                     image.ImageHeight,
                                     image.StrideWidth,
-                                    image.ImageData
+                                    image.ImageData,
+                                    0,
+                                    0
                                 );
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {
                                     FineFocusDatas.Add(new(i, distinct));
                                 });
                             }
-                            MotionConfig.FocusPos = FineFocusDatas.Max().pos;
+                            maxDistinct = FineFocusDatas.Max(o => o.distinct);
+                            MotionConfig.FocusPos = FineFocusDatas
+                                .First(o => o.distinct == maxDistinct)
+                                .pos;
                             SetSpeed(20);
                             WaitMoveTo(MotionConfig.FocusPos);
                             cam.ExecuteSoftwareTrigger();

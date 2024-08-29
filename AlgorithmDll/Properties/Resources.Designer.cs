@@ -241,6 +241,24 @@ namespace AlgorithmDll.Properties {
         }
         
         /// <summary>
+        ///   查找类似 最小清晰度 的本地化字符串。
+        /// </summary>
+        public static string 最小清晰度 {
+            get {
+                return ResourceManager.GetString("最小清晰度", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 低于最小清晰度时判定图像失焦。 的本地化字符串。
+        /// </summary>
+        public static string 最小清晰度说明 {
+            get {
+                return ResourceManager.GetString("最小清晰度说明", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 超时时间(ms) 的本地化字符串。
         /// </summary>
         public static string 超时时间_ms_ {

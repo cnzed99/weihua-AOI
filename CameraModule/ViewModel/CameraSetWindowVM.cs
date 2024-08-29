@@ -24,16 +24,25 @@ namespace CameraModule
     public partial class CCameraSetWindowVM : ObservableObject
     {
         /// <summary>
-        /// 2024.7.25 李焕彬
+        /// 2024.8.28 李焕彬
         /// 计算对焦清晰度
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="nLine"></param>
-        /// <param name="data"></param>
+        /// <param name="width">图像宽度</param>
+        /// <param name="height">图像高度</param>
+        /// <param name="nLine">图像行宽</param>
+        /// <param name="data">图像数据</param>
+        /// <param name="algType">算法类型，0能量梯度，1Laplacian方差</param>
+        /// <param name="nThresh">目标料区阈值，算法1使用</param>
         /// <returns></returns>
         [DllImport("MaociAlg.dll")]
-        public static extern float CalcDistinct(int width, int height, int nLine, IntPtr data);
+        public static extern float CalcDistinct(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            int algType,
+            int nThresh
+        );
 
         public CCameraSetWindowVM()
         {
@@ -285,7 +294,9 @@ namespace CameraModule
                         cell.Image.ImageWidth,
                         cell.Image.ImageHeight,
                         cell.Image.StrideWidth,
-                        cell.Image.ImageData
+                        cell.Image.ImageData,
+                        1,
+                        CamParamSelect.DistinctDstThresh
                     );
                     cellRecv?.Dispose();
                     cellRecv = cell;

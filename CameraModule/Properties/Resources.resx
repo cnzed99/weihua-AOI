@@ -250,4 +250,13 @@
   <data name="DeleteCam" xml:space="preserve">
     <value>删除相机</value>
   </data>
+  <data name="清晰度计算参数" xml:space="preserve">
+    <value>清晰度计算参数</value>
+  </data>
+  <data name="01.料区阈值" xml:space="preserve">
+    <value>01.料区阈值</value>
+  </data>
+  <data name="料区阈值说明" xml:space="preserve">
+    <value>计算≥料区阈值的区域的清晰度！</value>
+  </data>
 </root>

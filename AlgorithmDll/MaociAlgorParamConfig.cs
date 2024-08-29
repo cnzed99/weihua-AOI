@@ -256,6 +256,16 @@ namespace AlgorithmDll
         private uint timeOut = 3000;
 
         /// <summary>
+        /// 2024.8.19 李焕彬
+        /// 最小清晰度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("最小清晰度")]
+        [property: Description("最小清晰度说明")]
+        private float minDistinct = 25.0f;
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// </summary>
         /// <returns></returns>

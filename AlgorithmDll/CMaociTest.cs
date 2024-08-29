@@ -16,6 +16,7 @@ namespace AlgorithmDll
         EMDR_NG_DARKEDGE = 2, //料区NG
         EMDR_NG_EMPTY = 3, //空白NG
         EMDR_TIMEOUT = 4, //检测超时
+        EMDR_LOSEFOCUS = 5, //失焦异常
     };
 
     /// <summary>
@@ -238,6 +239,12 @@ namespace AlgorithmDll
         public uint LightThick = 6;
 
         /// <summary>
+        /// 2024.8.19 李焕彬
+        /// 最小清晰度
+        /// </summary>
+        public float MinDistinct = 25.0f;
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// 构造
         /// </summary>
@@ -252,6 +259,7 @@ namespace AlgorithmDll
             this.LightThresh = param.LightThresh;
             this.LightThick = param.LightThick;
             this.TimeOut = param.TimeOut;
+            this.MinDistinct = param.MinDistinct;
         }
     };
 

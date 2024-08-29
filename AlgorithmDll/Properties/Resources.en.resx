@@ -231,4 +231,10 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>Confirm whether to delete?</value>
   </data>
+  <data name="最小清晰度" xml:space="preserve">
+    <value>MinDistinct</value>
+  </data>
+  <data name="最小清晰度说明" xml:space="preserve">
+    <value>Determine that the image is out of focus when it is below the minimum definition。</value>
+  </data>
 </root>

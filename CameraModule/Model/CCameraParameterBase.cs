@@ -449,6 +449,16 @@ namespace CameraModule
         }
 
         /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 清晰度计算参数
+        /// </summary>
+        [property: Category("清晰度计算参数")]
+        [property: DisplayName("01.料区阈值")]
+        [property: Description("料区阈值说明")]
+        [ObservableProperty]
+        private int distinctDstThresh = 20;
+
+        /// <summary>
         /// 所属制程
         /// </summary>
         public string ProjGuid { get; set; }

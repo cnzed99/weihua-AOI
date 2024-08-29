@@ -963,6 +963,13 @@ namespace WH.DetectSystem.ViewModels
                             "超时"
                         );
                         break;
+                    case EMDETECTRESULT.EMDR_LOSEFOCUS:
+                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                            "异常类",
+                            "拍照异常",
+                            "失焦"
+                        );
+                        break;
                     default:
                         break;
                 }
