@@ -48,7 +48,7 @@ namespace WH.DetectSystem.ViewModels
 
         public CSystemSettingsVM SystemSettings { get; set; } =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
-        public Version version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version;
+        public Version version { get; set; } = Assembly.GetEntryAssembly().GetName().Version;
 
         /// <summary>
         /// 运行日志和报警日志

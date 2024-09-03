@@ -9,6 +9,7 @@
     <ApplicationIcon>Resources\maociLOGO.ico</ApplicationIcon>
     <AssemblyName>MetalBurrDetectionSys</AssemblyName>
     <Platforms>AnyCPU;x64</Platforms>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -139,10 +140,6 @@
     <None Remove="Resources\图片\系统设置\系统设置.png" />
     <None Remove="Resources\图片\风险盾牌安全.png" />
     <None Remove="Resources\组合-2.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Resources\maociLOGO .ico" />
   </ItemGroup>
 
   <ItemGroup>
