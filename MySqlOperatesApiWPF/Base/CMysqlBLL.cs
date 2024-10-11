@@ -14,7 +14,13 @@ namespace MySqlOperatesApi
 {
     public class CMysqlBLL : MySqlOperate
     {
-        bool DBExists = false;
+        //bool DBExists = false;
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 已创建数据库
+        /// </summary>
+        List<string> DataBaseNames = new List<string>();
 
         //bool totalExists = false; //避免重复读取表是否存在
         #region 表头名
@@ -29,6 +35,34 @@ namespace MySqlOperatesApi
         private static readonly object _readLock = new object();
 
         /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 更新数据库名
+        /// </summary>
+        /// <param name="DataBaseName">新的名称</param>
+        public void UpdateDatabaseName(string DataBaseName)
+        {
+            this.DataBaseName = DataBaseName;
+            connectStringCreateDB = string.Format(
+                "Data Source={0};Port={1};User Id={2};PassWord={3};Charset=utf8;"
+                    + "Persist Security Info=True;TreatTinyAsBoolean=true;allow zero datetime=true;",
+                RemoteIP,
+                RemotePort,
+                UserID,
+                PassWord
+            );
+
+            connectStringCreateTable = string.Format(
+                "Database={0};Data Source={1};Port={2};User Id={3};PassWord={4};Charset=utf8;"
+                    + "Persist Security Info=True;TreatTinyAsBoolean=true;allow zero datetime=true;",
+                DataBaseName,
+                RemoteIP,
+                RemotePort,
+                UserID,
+                PassWord
+            );
+        }
+
+        /// <summary>
         /// 2024.6.23 鲍赞宝
         /// 添加数据到数据库
         /// </summary>
@@ -39,14 +73,11 @@ namespace MySqlOperatesApi
             lock (_addLock)
             {
                 string daname = this.DataBaseName;
-                if (!DBExists)
+                if (!DataBaseNames.Contains(daname))
                 {
-                    bool bDBExists = IsDatabaseExists(daname);
-                    DBExists = bDBExists;
-                    if (!bDBExists)
-                    {
-                        CreateDatabase(daname);
-                    }
+                    DataBaseNames.Add(daname);
+                    CreateDatabase(daname);
+                    tableName_total = "";
                 }
                 if (tableName_total != date)
                 {
@@ -215,9 +246,17 @@ namespace MySqlOperatesApi
         /// 2024.7.7 鲍赞宝
         /// 查询数据 tableList入参为空时查询可能包含该时间段内数据的表 返回查询到的表名
         /// </summary>
-        /// <param name="dateNow">待查询表名称数组</param>
+        /// <param name="tableList">查询表格集合</param>
+        /// <param name="start">开始时间</param>
+        /// <param name="end">结束时间</param>
+        /// <param name="defectList">缺陷集合</param>
         /// <returns></returns>
-        public override DataSet QueryData(List<string> tableList, string start, string end)
+        public override DataSet QueryData(
+            List<string> tableList,
+            string start,
+            string end,
+            List<string> defectList
+        )
         {
             string sqlconn = string.Empty;
             string strconn = "";
@@ -311,7 +350,7 @@ namespace MySqlOperatesApi
                     queryStr.Append(
                         string.Format(
                             ",SUM(CASE WHEN 定级缺陷 = '{0}' THEN 1 ELSE 0 END) AS {0}数量 ",
-                            de.Name
+                            de
                         )
                     );
                 }

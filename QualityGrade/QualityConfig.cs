@@ -23,17 +23,28 @@ namespace QualityGrade
     /// </summary>
     public partial class CQualityConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 操作日志
+        /// </summary>
         [IgnoreModifyLog]
         [JsonIgnore]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 所属制程组名
+        /// </summary>
+        [property: IgnoreModifyLog]
+        public string PrcessName { get; set; }
 
         public CQualityConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
             Qualities = new ObservableCollection<Quality>()
             {
-                new Quality("G1") { Priority = 0},
-                new Quality("G2") { Priority = 1}
+                new Quality("G1") { Priority = 0 },
+                new Quality("G2") { Priority = 1 }
             };
             //参数修改
             //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
@@ -47,7 +58,7 @@ namespace QualityGrade
         {
             if (message.obj.GetType() == typeof(CQualityConfig))
             {
-                OperateLog.Info($"质量等级-{message.message}");
+                OperateLog.Info($"{PrcessName}-质量等级-{message.message}");
                 return;
             }
             foreach (var qua in Qualities)
@@ -56,7 +67,7 @@ namespace QualityGrade
                 {
                     if (qua == quality)
                     {
-                        OperateLog.Info($"质量等级-{qua.Name}-{message.message}");
+                        OperateLog.Info($"{PrcessName}-质量等级-{qua.Name}-{message.message}");
                         return;
                     }
                     continue;

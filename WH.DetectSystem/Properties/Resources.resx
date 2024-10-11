@@ -116,12 +116,30 @@
     <value>正在更新项目列表。。。</value>
   </data>
   <data name="帮助文档打开失败" xml:space="preserve">
-    <value>打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist</value>
+    <value>打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist.</value>
   </data>
   <data name="UnfinishedError" xml:space="preserve">
     <value>工程未配置完整,请重新配置</value>
   </data>
   <data name="初始化光源失败" xml:space="preserve">
     <value>初始化光源控制器失败</value>
+  </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>确认是否删除？</value>
+  </data>
+  <data name="制程名称不能相同" xml:space="preserve">
+    <value>制程名称不能相同！</value>
+  </data>
+  <data name="制程组名称不能相同" xml:space="preserve">
+    <value>制程组名称不能相同！</value>
+  </data>
+  <data name="算法读取失败" xml:space="preserve">
+    <value>算法读取失败！</value>
+  </data>
+  <data name="删除制程" xml:space="preserve">
+    <value>删除制程！</value>
+  </data>
+  <data name="对焦插件读取失败" xml:space="preserve">
+    <value>对焦插件读取失败！</value>
   </data>
 </root>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+</Project>

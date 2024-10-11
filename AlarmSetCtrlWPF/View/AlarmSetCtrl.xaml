@@ -177,21 +177,21 @@
                     Width="100"
                     Command="{Binding AddAlarmCommand}"
                     Content="{Binding [Add], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    IsEnabled="{Binding LoginPerson.IsTechnologist}"
                     Style="{StaticResource ButtonPrimary}" />
                 <Button
                     Width="100"
                     Command="{Binding RemoveAlarmCommand}"
                     CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
                     Content="{Binding [Delete], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    IsEnabled="{Binding LoginPerson.IsTechnologist}"
                     Style="{StaticResource ButtonDanger}" />
                 <Button
                     Width="100"
                     Command="{Binding AmendAlarmCommand}"
                     CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"
                     Content="{Binding [Change], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                    IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                    IsEnabled="{Binding LoginPerson.IsTechnologist}"
                     Style="{StaticResource ButtonPrimary}" />
             </UniformGrid>
             <hc:Divider

@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Forward" xml:space="preserve">
+    <value>正向移动</value>
+  </data>
+  <data name="Reverse" xml:space="preserve">
+    <value>负向移动</value>
+  </data>
+  <data name="CurPos" xml:space="preserve">
+    <value>当前位置</value>
+  </data>
+  <data name="AbsPos" xml:space="preserve">
+    <value>绝对位置</value>
+  </data>
+  <data name="RelaPos" xml:space="preserve">
+    <value>步进距离</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>移动</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="AutoFocus" xml:space="preserve">
+    <value>自动对焦</value>
+  </data>
+  <data name="OnePos" xml:space="preserve">
+    <value>微调距离</value>
+  </data>
+  <data name="Addr" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="OpenOrClose" xml:space="preserve">
+    <value>常开/常闭</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>增加</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="1.液态镜头连接" xml:space="preserve">
+    <value>1.液态镜头连接</value>
+  </data>
+  <data name="00.串口号" xml:space="preserve">
+    <value>00.串口号</value>
+  </data>
+  <data name="01.波特率" xml:space="preserve">
+    <value>01.波特率</value>
+  </data>
+  <data name="02.奇偶校验" xml:space="preserve">
+    <value>02.奇偶校验</value>
+  </data>
+  <data name="03.数据位" xml:space="preserve">
+    <value>03.数据位</value>
+  </data>
+  <data name="04.停止位" xml:space="preserve">
+    <value>04.停止位</value>
+  </data>
+  <data name="05.握手协议" xml:space="preserve">
+    <value>05.握手协议</value>
+  </data>
+  <data name="WriteAddrM" xml:space="preserve">
+    <value>写入地址M</value>
+  </data>
+  <data name="ElementRW" xml:space="preserve">
+    <value>读写元件</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>读取值</value>
+  </data>
+  <data name="Write" xml:space="preserve">
+    <value>写入</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="2.限位参数" xml:space="preserve">
+    <value>2.限位参数</value>
+  </data>
+  <data name="FocusVolDst" xml:space="preserve">
+    <value>纠偏期望电压</value>
+  </data>
+  <data name="ConnectError" xml:space="preserve">
+    <value>镜头和传感器断开连接！</value>
+  </data>
+  <data name="PosOverLimit" xml:space="preserve">
+    <value>超过正极限或负极限！</value>
+  </data>
+  <data name="AddrError" xml:space="preserve">
+    <value>输入地址有误！</value>
+  </data>
+  <data name="00.正限位(mm)" xml:space="preserve">
+    <value>00.正限位(mm)</value>
+  </data>
+  <data name="01.负限位(mm)" xml:space="preserve">
+    <value>01.负限位(mm)</value>
+  </data>
+  <data name="FocusPos" xml:space="preserve">
+    <value>对焦基准位</value>
+  </data>
+  <data name="FocusDst" xml:space="preserve">
+    <value>对焦期望位</value>
+  </data>
+  <data name="SensorPos" xml:space="preserve">
+    <value>纠偏感应值</value>
+  </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>写入地址不能为空！</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.对焦参数</value>
+  </data>
+  <data name="00.最佳对焦位置(mm)" xml:space="preserve">
+    <value>00.最佳对焦位置(mm)</value>
+  </data>
+  <data name="01.粗调步长(mm)" xml:space="preserve">
+    <value>01.粗调步长(mm)</value>
+  </data>
+  <data name="02.精调步长(mm)" xml:space="preserve">
+    <value>02.精调步长(mm)</value>
+  </data>
+  <data name="03.最小清晰度" xml:space="preserve">
+    <value>03.最小清晰度</value>
+  </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>粗定位数据</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>精定位数据</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>清晰度</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>对焦数据</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>正在对焦</value>
+  </data>
+  <data name="前进" xml:space="preserve">
+    <value>前进</value>
+  </data>
+  <data name="后退" xml:space="preserve">
+    <value>后退</value>
+  </data>
+  <data name="04.精调范围(mm)" xml:space="preserve">
+    <value>04.精调范围(mm)</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>没有相机！</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>未打开相机！</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>正在对焦中，是否停止对焦？</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>镜头未连接！</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>软件需要先暂停！</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>对焦完成！</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>对焦异常！</value>
+  </data>
+  <data name="启动纠偏" xml:space="preserve">
+    <value>启动纠偏</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>镜头连接成功！</value>
+  </data>
+  <data name="DataSend" xml:space="preserve">
+    <value>发送数据：</value>
+  </data>
+  <data name="DataRecv" xml:space="preserve">
+    <value>接收数据：</value>
+  </data>
+  <data name="Control" xml:space="preserve">
+    <value>控制</value>
+  </data>
+  <data name="LensConnect" xml:space="preserve">
+    <value>连接镜头</value>
+  </data>
+  <data name="LensConnected" xml:space="preserve">
+    <value>已连接镜头</value>
+  </data>
+  <data name="SensorConnect" xml:space="preserve">
+    <value>连接传感器</value>
+  </data>
+  <data name="SensorConnected" xml:space="preserve">
+    <value>已连接传感器</value>
+  </data>
+  <data name="CurVol" xml:space="preserve">
+    <value>当前电压</value>
+  </data>
+  <data name="物距控制" xml:space="preserve">
+    <value>物距控制</value>
+  </data>
+  <data name="AbsVol" xml:space="preserve">
+    <value>绝对电压</value>
+  </data>
+  <data name="RelaVol" xml:space="preserve">
+    <value>步进电压</value>
+  </data>
+  <data name="Config" xml:space="preserve">
+    <value>配置</value>
+  </data>
+  <data name="ConnectErrorLens" xml:space="preserve">
+    <value>镜头断开连接！</value>
+  </data>
+  <data name="ConnectErrorSensor" xml:space="preserve">
+    <value>传感器断开连接！</value>
+  </data>
+  <data name="ReadErrorLens" xml:space="preserve">
+    <value>镜头电压读取失败！</value>
+  </data>
+  <data name="ReadErrorSensor" xml:space="preserve">
+    <value>传感器位置读取失败!</value>
+  </data>
+  <data name="SuccessConnectSensor" xml:space="preserve">
+    <value>传感器连接成功！</value>
+  </data>
+  <data name="3.物距电压公式" xml:space="preserve">
+    <value>3.物距电压公式</value>
+  </data>
+  <data name="4.传感器连接" xml:space="preserve">
+    <value>4.传感器连接</value>
+  </data>
+  <data name="06.从站地址" xml:space="preserve">
+    <value>06.从站地址</value>
+  </data>
+  <data name="05.传感器位置(mm)" xml:space="preserve">
+    <value>05.传感器位置(mm)</value>
+  </data>
+</root>

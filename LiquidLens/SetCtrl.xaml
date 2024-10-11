@@ -1,0 +1,444 @@
+﻿<UserControl
+    x:Class="LiquidLens.SetCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:LiquidLens"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wh="http://whzn.com/rjkf/2024/xaml"
+    d:DesignHeight="650"
+    d:DesignWidth="550"
+    mc:Ignorable="d">
+    <d:UserControl.DataContext>
+        <local:CSetCtrlVM />
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+            <Style BasedOn="{StaticResource LabelDefault}" TargetType="Label">
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="Margin" Value="5" />
+            </Style>
+            <cov:BoolToBrushConverter
+                x:Key="SuccessToBrushConverter"
+                FalseValue="{x:Null}"
+                TrueValue="{DynamicResource SuccessBrush}" />
+            <cov:BoolToStringConverter
+                x:Key="ConnectStringConverter"
+                FalseValue="{Binding [Connect], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [Connected], Source={x:Static local:CLang.s_Instance}}" />
+            <cov:BoolToStringConverter
+                x:Key="LensConnectStringConverter"
+                FalseValue="{Binding [LensConnect], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [LensConnected], Source={x:Static local:CLang.s_Instance}}" />
+            <cov:BoolToStringConverter
+                x:Key="SensorConnectStringConverter"
+                FalseValue="{Binding [SensorConnect], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [SensorConnected], Source={x:Static local:CLang.s_Instance}}" />
+            <cov:BoolToStringConverter
+                x:Key="FocusToStringConverter"
+                FalseValue="{Binding [AutoFocus], Source={x:Static local:CLang.s_Instance}}"
+                TrueValue="{Binding [Focusing], Source={x:Static local:CLang.s_Instance}}" />
+            <cov:BoolToBrushConverter
+                x:Key="StatusConverter"
+                FalseValue="{StaticResource BorderBrush}"
+                TrueValue="Lime" />
+            <cov:BoolToBrushConverter
+                x:Key="StatusReConverter"
+                FalseValue="Lime"
+                TrueValue="{StaticResource BorderBrush}" />
+            <cov:BoolToBrushConverter
+                x:Key="GotMaxDisConverter"
+                FalseValue="Red"
+                TrueValue="{StaticResource BorderBrush}" />
+            <Style
+                x:Key="DataGrid1"
+                BasedOn="{StaticResource DataGrid.Small}"
+                TargetType="DataGrid">
+                <Setter Property="AutoGenerateColumns" Value="False" />
+            </Style>
+            <wh:CBindingProxy x:Key="isReadOnly" Data="{Binding LoginPerson}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <TabControl Style="{StaticResource TabControlInLine}">
+        <TabItem Header="{Binding [Control], Source={x:Static local:CLang.s_Instance}}">
+            <DockPanel IsEnabled="{Binding IsRuning, Converter={StaticResource Boolean2BooleanReConverter}}">
+                <UniformGrid
+                    Margin="2"
+                    Columns="2"
+                    DockPanel.Dock="Top">
+                    <Button
+                        Width="120"
+                        Margin="5"
+                        wh:StatusDotElement.DotBrush="{Binding ConnectedLens, Converter={StaticResource StatusConverter}}"
+                        Command="{Binding ConnectToLensCommand}"
+                        Content="{Binding ConnectedLens, Converter={StaticResource LensConnectStringConverter}}"
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource StatusDotButton}" />
+                    <Button
+                        Width="120"
+                        wh:StatusDotElement.DotBrush="{Binding ConnectedSensor, Converter={StaticResource StatusConverter}}"
+                        Command="{Binding ConnectToSensorCommand}"
+                        Content="{Binding ConnectedSensor, Converter={StaticResource SensorConnectStringConverter}}"
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource StatusDotButton}" />
+                    <Button
+                        Width="120"
+                        wh:StatusDotElement.DotBrush="{Binding IsFocused, Converter={StaticResource StatusConverter}}"
+                        Command="{Binding AutoFocusCommand}"
+                        Content="{Binding IsFocusing, Converter={StaticResource FocusToStringConverter}}"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource StatusDotButton}" />
+                    <Button
+                        Width="120"
+                        wh:StatusDotElement.DotBrush="{Binding IsCorrecting, Converter={StaticResource StatusConverter}}"
+                        Command="{Binding StartCorrectCommand}"
+                        Content="{Binding [启动纠偏], Source={x:Static local:CLang.s_Instance}}"
+                        Style="{DynamicResource StatusDotButton}" />
+                </UniformGrid>
+                <GroupBox
+                    Margin="5"
+                    DockPanel.Dock="Top"
+                    Header="{Binding [物距控制], Source={x:Static local:CLang.s_Instance}}"
+                    IsEnabled="{Binding IsFocusing, Converter={StaticResource Boolean2BooleanReConverter}}"
+                    Style="{StaticResource GroupBoxTab}">
+                    <GroupBox.Resources>
+                        <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </GroupBox.Resources>
+                    <StackPanel IsEnabled="{Binding LoginPerson.IsTechnologist}">
+                        <StackPanel>
+                            <DockPanel Margin="50,5">
+                                <Button
+                                    Width="100"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource PrimaryBrush}"
+                                    Command="{Binding AbsMoveCommand}"
+                                    CommandParameter="{Binding ElementName=num_abs, Path=Value}"
+                                    Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <TextBlock
+                                    Margin="5,0"
+                                    DockPanel.Dock="Right"
+                                    Text="mm" />
+                                <hc:NumericUpDown
+                                    Name="num_abs"
+                                    hc:TitleElement.Title="{Binding [AbsPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
+                                    Maximum="{Binding Config.SoftLimitP}"
+                                    Minimum="{Binding Config.SoftLimitN}"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+                            <DockPanel Margin="50,5">
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
+                                    Command="{Binding RelaMoveNCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="{Binding [后退], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
+                                    Command="{Binding RelaMovePCommand}"
+                                    CommandParameter="{Binding ElementName=num_rela, Path=Value}"
+                                    Content="{Binding [前进], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <TextBlock
+                                    Margin="2,0"
+                                    DockPanel.Dock="Right"
+                                    Text="mm" />
+                                <hc:NumericUpDown
+                                    Name="num_rela"
+                                    hc:TitleElement.Title="{Binding [RelaPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
+                                    Minimum="0"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+                            <DockPanel Margin="50,5">
+                                <Button
+                                    Width="100"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource PrimaryBrush}"
+                                    Command="{Binding VolAbsMoveCommand}"
+                                    CommandParameter="{Binding ElementName=num_absVol, Path=Value}"
+                                    Content="{Binding [Move], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <TextBlock
+                                    Margin="5,0"
+                                    DockPanel.Dock="Right"
+                                    Text="V" />
+                                <hc:NumericUpDown
+                                    Name="num_absVol"
+                                    hc:TitleElement.Title="{Binding [AbsVol], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+                            <DockPanel Margin="50,5">
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
+                                    Command="{Binding VolRelaMoveNCommand}"
+                                    CommandParameter="{Binding ElementName=num_relaVol, Path=Value}"
+                                    Content="{Binding [后退], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <Button
+                                    Width="50"
+                                    Margin="5,0"
+                                    BorderBrush="{StaticResource SuccessBrush}"
+                                    Command="{Binding VolRelaMovePCommand}"
+                                    CommandParameter="{Binding ElementName=num_relaVol, Path=Value}"
+                                    Content="{Binding [前进], Source={x:Static local:CLang.s_Instance}}"
+                                    DockPanel.Dock="Right"
+                                    Style="{DynamicResource ButtonDefault}" />
+                                <TextBlock
+                                    Margin="2,0"
+                                    DockPanel.Dock="Right"
+                                    Text="V" />
+                                <hc:NumericUpDown
+                                    Name="num_relaVol"
+                                    hc:TitleElement.Title="{Binding [RelaVol], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                                    hc:TitleElement.TitlePlacement="Left"
+                                    DockPanel.Dock="Left"
+                                    Minimum="0"
+                                    Style="{StaticResource NumericUpDownExtend}" />
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox
+                    Margin="5"
+                    DockPanel.Dock="Top"
+                    Header="{Binding [ObserveAxis], Source={x:Static local:CLang.s_Instance}}"
+                    Style="{StaticResource GroupBoxTab}">
+                    <GroupBox.Resources>
+                        <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </GroupBox.Resources>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="30" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBox
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [CurPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding CurPos, StringFormat={}{0:F3}, Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="mm" />
+                        <TextBox
+                            Grid.Row="1"
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [CurVol], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding CurVol, StringFormat={}{0:F3}}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="V" />
+                        <TextBox
+                            Grid.Row="2"
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [FocusVolDst], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding FocusVolDst, StringFormat={}{0:F3}}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="V" />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [FocusPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding Config.FocusPos, StringFormat={}{0:F3}}" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="4"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="mm" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [FocusDst], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding FocusPosDst, StringFormat={}{0:F3}}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="4"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="mm" />
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Margin="3"
+                            hc:TitleElement.Title="{Binding [SensorPos], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsEnabled="False"
+                            Text="{Binding SensorPos, StringFormat={}{0:F3}}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="4"
+                            Margin="4"
+                            HorizontalAlignment="Left"
+                            Text="mm" />
+                        <!--<TextBox
+                            Grid.Row="3"
+                            Grid.ColumnSpan="5"
+                            hc:TitleElement.Title="{Binding [DataSend], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsReadOnly="True"
+                            Text="{Binding SendData}" />
+                        <TextBox
+                            Grid.Row="4"
+                            Grid.ColumnSpan="5"
+                            hc:TitleElement.Title="{Binding [DataRecv], Source={x:Static local:CLang.s_Instance}, StringFormat={}{0}:}"
+                            hc:TitleElement.TitlePlacement="Left"
+                            hc:TitleElement.TitleWidth="100"
+                            IsReadOnly="True"
+                            Text="{Binding RecvData}" />-->
+                    </Grid>
+                </GroupBox>
+                <GroupBox
+                    Margin="5"
+                    Header="{Binding [FocusData], Source={x:Static local:CLang.s_Instance}}"
+                    Style="{StaticResource GroupBoxTab}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource TextBlockDefault}" Text="{Binding [CoarseData], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Style="{StaticResource TextBlockDefault}"
+                            Text="{Binding [FineData], Source={x:Static local:CLang.s_Instance}}" />
+                        <DataGrid
+                            Grid.Row="1"
+                            Margin="3,0"
+                            hc:DataGridAttach.ShowRowNumber="True"
+                            AutoGenerateColumns="False"
+                            HeadersVisibility="All"
+                            ItemsSource="{Binding FocusDatas}"
+                            RowHeaderWidth="30"
+                            Style="{StaticResource DataGrid.Small}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Width="80"
+                                    Binding="{Binding pos, StringFormat={}{0:F2}}"
+                                    Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Binding="{Binding distinct, StringFormat={}{0:F2}}"
+                                    Header="{Binding [Distinct], Source={x:Static local:CLang.s_Instance}}"
+                                    IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="3,0"
+                            hc:DataGridAttach.ShowRowNumber="True"
+                            AutoGenerateColumns="False"
+                            HeadersVisibility="All"
+                            ItemsSource="{Binding FineFocusDatas}"
+                            RowHeaderWidth="30"
+                            Style="{StaticResource DataGrid.Small}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Width="80"
+                                    Binding="{Binding pos, StringFormat={}{0:F3}}"
+                                    Header="{Binding [Pos], Source={x:Static local:CLang.s_Instance}}"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Binding="{Binding distinct, StringFormat={}{0:F3}}"
+                                    Header="{Binding [Distinct], Source={x:Static local:CLang.s_Instance}}"
+                                    IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </GroupBox>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="{Binding [Config], Source={x:Static local:CLang.s_Instance}}">
+            <GroupBox Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
+                        <TextBlock Text="{Binding [Config], Source={x:Static local:CLang.s_Instance}}" />
+                        <Button
+                            Width="80"
+                            Margin="20,2"
+                            Command="{Binding InitControlCommand}"
+                            Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
+                            DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <wh:CPropertyGridLang
+                    IsEditable="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}"
+                    SelectedObject="{Binding Config}"
+                    lang="{x:Static local:CLang.s_Instance}" />
+            </GroupBox>
+        </TabItem>
+    </TabControl>
+</UserControl>

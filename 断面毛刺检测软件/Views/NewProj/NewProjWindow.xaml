@@ -11,7 +11,7 @@
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [Title], Source={x:Static local:CLang.NewProj}}"
     Width="450"
-    Height="330"
+    Height="430"
     d:DataContext="{d:DesignInstance vm:CNewProjVM}"
     Background="{DynamicResource RegionBrush}"
     ResizeMode="NoResize"
@@ -22,7 +22,6 @@
             <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
             <Setter Property="Margin" Value="5" />
         </Style>
-
     </hc:Window.Resources>
     <Grid IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <Grid.RowDefinitions>
@@ -33,15 +32,8 @@
             <TextBox
                 hc:TitleElement.Title="{Binding [ProjName], Source={x:Static local:CLang.NewProj}}"
                 hc:TitleElement.TitleWidth="60"
-                Text="{Binding Name}" ToolTip="{Binding [Enterprojectname], Source={x:Static local:CLang.NewProj}}"/>
-            <ComboBox
-                Margin="5"
-                hc:TitleElement.Title="{Binding [Cam], Source={x:Static local:CLang.NewProj}}"
-                hc:TitleElement.TitlePlacement="Left"
-                hc:TitleElement.TitleWidth="60"
-                ItemsSource="{Binding Keys, Source={x:Static cam:CCameraManagement.CamParamDict}}"
-                SelectedItem="{Binding CameraSerial}"
-                Style="{StaticResource ComboBoxExtend}" ToolTip="{Binding [SelectCam], Source={x:Static local:CLang.NewProj}}"/>
+                Text="{Binding Name}"
+                ToolTip="{Binding [Enterprojectname], Source={x:Static local:CLang.NewProj}}" />
             <TextBox
                 x:Name="tb_path"
                 hc:InfoElement.Placeholder="{Binding [SelectPath], Source={x:Static local:CLang.NewProj}}"
@@ -49,8 +41,53 @@
                 hc:TitleElement.TitleWidth="60"
                 IsReadOnly="True"
                 PreviewMouseDoubleClick="SelectPath_DoubleClick"
-                Text="{Binding ProjPath}" ToolTip="{Binding [SelectPath], Source={x:Static local:CLang.NewProj}}"/>
-
+                Text="{Binding ProjPath}"
+                ToolTip="{Binding [SelectPath], Source={x:Static local:CLang.NewProj}}" />
+            <GroupBox Margin="0,10" Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type GroupBox}}, Path=ActualWidth}" LastChildFill="False">
+                        <TextBlock Text="{Binding [Group], Source={x:Static local:CLang.NewProj}}" VerticalAlignment="Center"/>
+                        <Button
+                            Width="80"
+                            Margin="20,2"
+                            Command="{Binding DelCommand}"
+                            CommandParameter="{Binding ElementName=dataGrid1, Path=SelectedItem}"
+                            Content="{Binding [Del], Source={x:Static local:CLang.NewProj}}"
+                            DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                            Style="{DynamicResource ButtonDanger}" />
+                        <Button
+                            Width="80"
+                            Margin="10,2"
+                            Command="{Binding AddCommand}"
+                            Content="{Binding [Add], Source={x:Static local:CLang.NewProj}}"
+                            DockPanel.Dock="Right"
+                            IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                            Style="{DynamicResource ButtonPrimary}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <DataGrid
+                    x:Name="dataGrid1"
+                    MinHeight="100"
+                    hc:DataGridAttach.ShowRowNumber="True"
+                    AutoGenerateColumns="False"
+                    HeadersVisibility="All"
+                    ItemsSource="{Binding CProcessGroups}"
+                    RowHeaderWidth="30"
+                    Style="{StaticResource DataGrid.Small}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="150"
+                            Binding="{Binding Name, UpdateSourceTrigger=LostFocus}"
+                            Header="{Binding [GroupName], Source={x:Static local:CLang.NewProj}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                        <DataGridTextColumn
+                            Binding="{Binding Description, UpdateSourceTrigger=LostFocus}"
+                            Header="{Binding [GroupDesc], Source={x:Static local:CLang.NewProj}}"
+                            IsReadOnly="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
         </StackPanel>
         <hc:ElementGroup Grid.Row="1" Margin="10">
             <Button

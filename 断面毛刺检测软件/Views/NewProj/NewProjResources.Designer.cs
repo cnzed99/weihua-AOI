@@ -61,6 +61,15 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
+        ///   查找类似 增加 的本地化字符串。
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 相机： 的本地化字符串。
         /// </summary>
         public static string Cam {
@@ -79,11 +88,47 @@ namespace 断面毛刺检测软件.Views.NewProj {
         }
         
         /// <summary>
+        ///   查找类似 删除 的本地化字符串。
+        /// </summary>
+        public static string Del {
+            get {
+                return ResourceManager.GetString("Del", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 输入工程名称 的本地化字符串。
         /// </summary>
         public static string Enterprojectname {
             get {
                 return ResourceManager.GetString("Enterprojectname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 制程组 的本地化字符串。
+        /// </summary>
+        public static string Group {
+            get {
+                return ResourceManager.GetString("Group", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 描述 的本地化字符串。
+        /// </summary>
+        public static string GroupDesc {
+            get {
+                return ResourceManager.GetString("GroupDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 组名称 的本地化字符串。
+        /// </summary>
+        public static string GroupName {
+            get {
+                return ResourceManager.GetString("GroupName", resourceCulture);
             }
         }
         

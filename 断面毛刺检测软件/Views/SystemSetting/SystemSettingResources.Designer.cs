@@ -176,5 +176,14 @@ namespace 断面毛刺检测软件.Views.SystemSetting {
                 return ResourceManager.GetString("SystemSettings", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 测试FPGA算法 的本地化字符串。
+        /// </summary>
+        internal static string TestFpgaAlgrithm {
+            get {
+                return ResourceManager.GetString("TestFpgaAlgrithm", resourceCulture);
+            }
+        }
     }
 }

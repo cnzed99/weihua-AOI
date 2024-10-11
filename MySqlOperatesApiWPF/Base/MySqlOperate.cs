@@ -76,7 +76,12 @@ namespace MySqlOperatesApi
             int linecount = _mySqlHelper.ExecuteNonQuery(createTableQuery);
         }
 
-        public override DataSet QueryData(List<string> date, string start, string end)
+        public override DataSet QueryData(
+            List<string> date,
+            string start,
+            string end,
+            List<string> defectList
+        )
         {
             //在子类中实现查询数据
             return null;

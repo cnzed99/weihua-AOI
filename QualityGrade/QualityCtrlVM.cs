@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using HandyControl.Controls;
 using HandyControl.Data;
 using Newtonsoft.Json;
+using WH.Controls;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 
@@ -26,6 +27,13 @@ namespace QualityGrade
         public CQualityCtrlVM() { }
 
         private CQualityConfig qualityConfig; //不要在这里赋值
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 权限信息，启动暂停、账户登录时切换
+        /// </summary>
+        [ObservableProperty]
+        CLoginPerson loginPerson;
 
         /// <summary>
         /// 20240716 TCG
@@ -85,16 +93,18 @@ namespace QualityGrade
         [RelayCommand]
         public void Add()
         {
-            if (QualitySet != null&& !string.IsNullOrWhiteSpace(QualitySet.Name))
+            if (QualitySet != null && !string.IsNullOrWhiteSpace(QualitySet.Name))
             {
-                if (QualitySet.ShowColor==null)
+                if (QualitySet.ShowColor == null)
                 {
-                    Growl.Info(Properties.Resource1.ShowColorStr);
+                    Growl.Info(QualityConfig.PrcessName + "-" + Properties.Resource1.ShowColorStr);
                     return;
                 }
                 if (QualityConfig.Qualities.ToList().Exists(o => o.Name == QualitySet.Name))
                 {
-                    Growl.Error(Properties.Resource1.NameErrorInfo);
+                    Growl.Error(
+                        QualityConfig.PrcessName + "-" + Properties.Resource1.NameErrorInfo
+                    );
                 }
                 else
                 {
@@ -110,7 +120,7 @@ namespace QualityGrade
             }
             else
             {
-                Growl.Info(Properties.Resource1.NullRemind);
+                Growl.Info(QualityConfig.PrcessName + "-" + Properties.Resource1.NullRemind);
             }
         }
 
@@ -123,15 +133,17 @@ namespace QualityGrade
         {
             if (QualitySelect != null)
             {
-                Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
-                {
-                    if (b)
+                Growl.AskGlobal(
+                    QualityConfig.PrcessName + "-" + Properties.Resource1.DelecteAsk,
+                    b =>
                     {
-                        QualityConfig.Qualities.Remove(QualitySelect);
-                        WeakReferenceMessenger.Default.Send<CQualityConfig>(QualityConfig);
+                        if (b)
+                        {
+                            QualityConfig.Qualities.Remove(QualitySelect);
+                        }
+                        return true;
                     }
-                    return true;
-                });
+                );
             }
         }
 
@@ -149,7 +161,9 @@ namespace QualityGrade
                     && QualityConfig.Qualities.ToList().Exists(o => o.Name == QualitySet.Name)
                 )
                 {
-                    Growl.Error(Properties.Resource1.NameErrorInfo);
+                    Growl.Error(
+                        QualityConfig.PrcessName + "-" + Properties.Resource1.NameErrorInfo
+                    );
                 }
                 else
                 {

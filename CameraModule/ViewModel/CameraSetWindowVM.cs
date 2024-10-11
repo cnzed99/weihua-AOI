@@ -23,27 +23,6 @@ namespace CameraModule
     /// </summary>
     public partial class CCameraSetWindowVM : ObservableObject
     {
-        /// <summary>
-        /// 2024.8.28 李焕彬
-        /// 计算对焦清晰度
-        /// </summary>
-        /// <param name="width">图像宽度</param>
-        /// <param name="height">图像高度</param>
-        /// <param name="nLine">图像行宽</param>
-        /// <param name="data">图像数据</param>
-        /// <param name="algType">算法类型，0能量梯度，1Laplacian方差</param>
-        /// <param name="nThresh">目标料区阈值，算法1使用</param>
-        /// <returns></returns>
-        [DllImport("MaociAlg.dll")]
-        public static extern float CalcDistinct(
-            int width,
-            int height,
-            int nLine,
-            IntPtr data,
-            int algType,
-            int nThresh
-        );
-
         public CCameraSetWindowVM()
         {
             timer.Elapsed += Timer_Elapsed;
@@ -141,9 +120,13 @@ namespace CameraModule
         [RelayCommand]
         public void Close()
         {
+            foreach (var item in CamParamList)
+            {
+                CCameraManagement.CameraDict[item.SerialNumber].IsSetWindowShowed = false;
+            }
             if (camSelect != null)
             {
-                camSelect.IsSetWindowShowed = false;
+                //camSelect.IsSetWindowShowed = false;
                 camSelect.GrabFinishEvent -= ShowImage;
                 camSelect = null;
             }
@@ -290,14 +273,14 @@ namespace CameraModule
                     {
                         ImageShow = image.ToBitmapSource();
                     });
-                    Distinct = CalcDistinct(
-                        cell.Image.ImageWidth,
-                        cell.Image.ImageHeight,
-                        cell.Image.StrideWidth,
-                        cell.Image.ImageData,
-                        1,
-                        CamParamSelect.DistinctDstThresh
-                    );
+                    if (camSelect.FuncDistinct != null)
+                    {
+                        Distinct = camSelect.FuncDistinct(image);
+                    }
+                    else
+                    {
+                        Distinct = 0;
+                    }
                     cellRecv?.Dispose();
                     cellRecv = cell;
                 }

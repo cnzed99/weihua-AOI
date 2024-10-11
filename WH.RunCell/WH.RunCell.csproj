@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
   </ItemGroup>
 

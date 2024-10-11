@@ -21,10 +21,10 @@ namespace MotionControl
     /// </summary>
     public partial class MotionCtrl : UserControl
     {
-        public MotionCtrl()
+        public MotionCtrl(CMotionCtrlVM motionCtrlVM)
         {
             InitializeComponent();
+            this.DataContext = motionCtrlVM;
         }
-
     }
 }

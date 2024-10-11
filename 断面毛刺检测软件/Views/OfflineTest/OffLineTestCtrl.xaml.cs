@@ -15,6 +15,7 @@ using Autofac;
 using CameraModule;
 using CommunicationModule;
 using Microsoft.Win32;
+using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -29,8 +30,13 @@ namespace 断面毛刺检测软件.Views
         : System.Windows.Controls.UserControl,
             INotifyPropertyChanged
     {
-        private CMainVM mainVM;
-        public CMainVM MMainVM
+        private CMainModel mainVM;
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 制程
+        /// </summary>
+        public CMainModel MMainVM
         {
             get => mainVM;
             set
@@ -39,6 +45,12 @@ namespace 断面毛刺检测软件.Views
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 工程视图模型
+        /// </summary>
+        CMainModelsModelVM mainModelsModelVM;
 
         CLogRec sysLog;
 
@@ -69,12 +81,13 @@ namespace 断面毛刺检测软件.Views
         IEnumerator<CKnownColor> brushes = new CBrushPro().KnownColors.GetEnumerator();
         Random random = new Random(50);
 
-        public OffLineTestCtrl(CMainVM vm)
+        public OffLineTestCtrl(CMainModel vm)
         {
             InitializeComponent();
+            mainModelsModelVM = App.Container.Resolve<CMainModelsModelVM>();
             MMainVM = vm;
             sysLog = vm.SysLog;
-            waitSignal = vm.WaitSignal;
+            waitSignal = MMainVM.WaitSignal;
             if (MMainVM.TestImgFiles.Count == 0)
             {
                 MMainVM.TestImgFiles = ImgFiles;
@@ -232,7 +245,7 @@ namespace 断面毛刺检测软件.Views
 
         private async void BtnStartCircle_Click(object sender, RoutedEventArgs e)
         {
-            MMainVM.DeviceSeting = false;
+            mainModelsModelVM.DeviceSeting = false;
             DisableButtons();
             Stop = false;
             waitSignal.Set();
@@ -287,12 +300,6 @@ namespace 断面毛刺检测软件.Views
         }
 
         /// <summary>
-        /// 2024.8.9 李焕彬
-        /// 写入m_WaitImgChannel队列数，当作ID
-        /// </summary>
-        int getImageCount = 0;
-
-        /// <summary>
         /// 自动根据 ImgIndex 及预处理库选择项进行读图处理
         /// 另开线程 调试线程
         /// </summary>
@@ -304,7 +311,7 @@ namespace 断面毛刺检测软件.Views
                 {
                     Cell cell = new Cell()
                     {
-                        ID = getImageCount.ToString(),
+                        ID = (mainVM.MaociDefectsProduce.Total + 1).ToString(),
                         isOnce = once,
                         Quality = mainVM.MaociQualityConfig.Qualities[0],
                         ImageFile = ImgFiles[ImgIndex],
@@ -313,6 +320,14 @@ namespace 断面毛刺检测软件.Views
                         CamSerial = MMainVM.CameraSerial,
                         ComGuid = "com"
                     };
+                    if (
+                        !string.IsNullOrEmpty(cell.CamSerial)
+                        && CCameraManagement.CamParamDict.ContainsKey(cell.CamSerial)
+                    )
+                    {
+                        cell.CamName = CCameraManagement.CamParamDict[cell.CamSerial].Name;
+                        cell.MmPerPixel = CCameraManagement.CamParamDict[cell.CamSerial].MmPerPixel;
+                    }
                     if (random.Next(10) > 5)
                         cell.IsOK = true;
                     //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
@@ -321,7 +336,6 @@ namespace 断面毛刺检测软件.Views
 
                     //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
                     await MMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
-                    getImageCount++;
                 }
                 catch (TaskCanceledException ex)
                 {

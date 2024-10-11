@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using CommunicationModule;
 using LanguageManager;
@@ -54,6 +55,12 @@ namespace UDPIP
         public CUdpIpCommPart(CUdpIpCommunicationSetting prama)
         {
             setting = prama;
+            Application.Current.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    base.TestControl = new TestControl(this);
+                })
+            );
         }
 
         /// <summary>
@@ -197,16 +204,6 @@ namespace UDPIP
             {
                 throw;
             }
-        }
-
-        /// <summary>
-        /// 2024.7.21 李焕彬
-        /// 获取测试控件
-        /// </summary>
-        /// <returns>测试控件对象</returns>
-        public override UserControl GetTestControl()
-        {
-            return new TestControl(this);
         }
 
         /// <summary>

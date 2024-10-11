@@ -6,6 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prop="clr-namespace:WH.Controls.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -20,7 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
             <RowDefinition />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="15" />
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="False">
             <Button
@@ -36,7 +37,8 @@
             <TextBlock
                 Margin="5,0"
                 VerticalAlignment="Center"
-                DockPanel.Dock="Right">
+                DockPanel.Dock="Right"
+                Style="{DynamicResource TextBlockDefault}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}{0} {1} {2}">
                         <Binding ElementName="Image" Path="R" />
@@ -46,8 +48,14 @@
                 </TextBlock.Text>
             </TextBlock>
         </DockPanel>
-        <DockPanel Grid.Row="2" LastChildFill="False">
-            <TextBlock Margin="5,0" DockPanel.Dock="Right">
+        <DockPanel
+            Grid.Row="2"
+            VerticalAlignment="Center"
+            LastChildFill="False">
+            <TextBlock
+                Margin="5,0"
+                DockPanel.Dock="Right"
+                Style="{DynamicResource TextBlockDefault}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}{0} | {1}">
                         <Binding ElementName="Image" Path="X" />
@@ -57,6 +65,11 @@
             </TextBlock>
         </DockPanel>
         <Grid Grid.Row="1">
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{Binding [Save], Source={x:Static prop:LangManager.instance}}" Click="btnSave_Click"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
             <ScrollViewer VerticalScrollBarVisibility="Disabled">
                 <local:CImagePro x:Name="Image" />
             </ScrollViewer>

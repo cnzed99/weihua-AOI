@@ -218,6 +218,12 @@ namespace CameraModule
         }
 
         /// <summary>
+        /// 2024.9.29 李焕彬
+        /// 清晰度算法
+        /// </summary>
+        public Func<CImage, float> FuncDistinct { get; set; }
+
+        /// <summary>
         /// 2024.7.23 李焕彬
         /// 取图
         /// </summary>
@@ -328,7 +334,8 @@ namespace CameraModule
                     FrameLoss = isLostFrame,
                     CamSerial = Setting.SerialNumber,
                     ProjGuid = Setting.ProjGuid,
-                    ID = grabCount.ToString(),
+                    CamName = Setting.Name,
+                    MmPerPixel = Setting.MmPerPixel,
                 };
                 //需要增加判断是否是运行模式
                 if (IsSetWindowShowed)

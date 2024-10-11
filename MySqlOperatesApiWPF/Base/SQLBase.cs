@@ -13,7 +13,6 @@ namespace MySqlOperatesApi
     public abstract class SQLBase : SQLParamBase
     {
         public static object LockObj = new object();
-        public ObservableCollection<DefectFilter> defectList { get; set; } = new();
 
         /// <summary>
         /// 创建数据库
@@ -43,7 +42,12 @@ namespace MySqlOperatesApi
         /// <param name="start">开始时间</param>
         /// <param name="end">结束时间</param>
         /// <returns></returns>
-        public abstract DataSet QueryData(List<string> date, string start, string end);
+        public abstract DataSet QueryData(
+            List<string> date,
+            string start,
+            string end,
+            List<string> defectList
+        );
 
         /// <summary>
         /// 插入一条数据
@@ -60,10 +64,5 @@ namespace MySqlOperatesApi
         /// <param name="sql">sql语句</param>
         /// <returns></returns>
         public abstract bool UpDate(string sql);
-
-        public virtual void SetSQL(CFilterConfig filterConfig)
-        {
-            defectList = filterConfig.DefectList;
-        }
     }
 }

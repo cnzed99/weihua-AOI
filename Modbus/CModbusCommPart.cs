@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using CommunicationModule;
 using HandyControl.Controls;
@@ -78,6 +79,12 @@ namespace Modbus
         public CModbusCommPart(CModbusSetting prama)
         {
             setting = prama;
+            Application.Current.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    base.TestControl = new TestControl(this);
+                })
+            );
         }
 
         /// <summary>
@@ -284,16 +291,6 @@ namespace Modbus
             Data[1] = (ushort)((fData[3] << 8) + fData[2]);
 
             master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
-        }
-
-        /// <summary>
-        /// 2024.7.21 李焕彬
-        /// 获取测试控件
-        /// </summary>
-        /// <returns>测试控件对象</returns>
-        public override UserControl GetTestControl()
-        {
-            return new TestControl(this);
         }
 
         /// <summary>

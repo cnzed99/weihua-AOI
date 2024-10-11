@@ -21,7 +21,7 @@ namespace WH.DetectSystem._4_报警处理
             {
                 if (alarm.AddCellAndJudge(cell))
                 {
-                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(alarm), alarm.token);
+                    WeakReferenceMessenger.Default.Send(new AlarmPopMessage(alarm));
                     CCommunicationManagement.SendAlarmSignal(alarm.AlarmAgreement);
                 }
             }

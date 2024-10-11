@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using Mapster;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity;
@@ -34,72 +36,52 @@ namespace WH.DetectSystem.ViewModels
         }
 
         string projPath;
-
         public string ProjPath
         {
             get => projPath;
             set => SetProperty(ref projPath, value, true);
         }
-        string cameraSerial;
 
-        public string CameraSerial
-        {
-            get => cameraSerial;
-            set => SetProperty(ref cameraSerial, value, true);
-        }
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 制程组
+        /// </summary>
+        [ObservableProperty]
+        ObservableCollection<CProcessGroupModel> cProcessGroups =
+            new ObservableCollection<CProcessGroupModel>();
         #endregion
+
         CMainModelsModelVM mainModelVM;
-        CMainVM mainVM;
 
         public CNewProjVM(CMainModelsModelVM mainVM)
         {
             mainModelVM = mainVM;
-            this.mainVM = mainVM.CMainVMs[0];
-
-            this.mainVM.Adapt(this);
             this.ProjPath = mainModelVM.ProjPath;
         }
-
-        #region 应用或丢弃当前工程变更
-        /// <summary>
-        /// 保存当前工程的修改
-        /// </summary>
-        public void ApplyChanges()
-        {
-            mainModelVM.ProjPath = this.ProjPath;
-            mainModelVM.CMainMModel.CMainModels[0] = new CMainModel();
-            mainVM.Model = mainModelVM.CMainMModel.CMainModels[0];
-            this.Adapt(mainVM);
-        }
-
-        /// <summary>
-        /// 丢弃当前工程的修改
-        /// </summary>
-        public void DiscardChanges() => mainVM.Adapt(this);
-        #endregion
 
         [RelayCommand]
         void Sure()
         {
-            if (HasErrors)
-                return;
-            if (string.IsNullOrEmpty(this.ProjPath))
+            if (HasErrors || string.IsNullOrEmpty(this.Name) || string.IsNullOrEmpty(this.ProjPath))
             {
                 Growl.Warning(Properties.Resources.UnfinishedError);
                 return;
             }
-            this.mainVM.GUID = Guid.NewGuid().ToString(); //GUID
-            this.ApplyChanges();
-            if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-            )
+            for (int i = 0; i < CProcessGroups.Count - 1; i++)
             {
-                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = this.mainVM.GUID;
-                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
-                    this.mainVM.m_WaitImgChannel;
+                for (int j = i + 1; j < CProcessGroups.Count; j++)
+                {
+                    if (CProcessGroups[i].Name == CProcessGroups[j].Name)
+                    {
+                        Growl.Warning(Properties.Resources.制程组名称不能相同);
+                        return;
+                    }
+                }
             }
 
+            mainModelVM.ProjPath = this.ProjPath;
+            mainModelVM.CMainMModel.Name = this.Name;
+            mainModelVM.AddProcessGroup(CProcessGroups.ToList());
             mainModelVM.SaveCurrentProj();
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
                 new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }
@@ -109,10 +91,42 @@ namespace WH.DetectSystem.ViewModels
         [RelayCommand]
         void Cancel()
         {
-            this.DiscardChanges();
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
                 new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = false }
             );
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 增加制程组
+        /// </summary>
+        [RelayCommand]
+        public void Add()
+        {
+            int index = 1;
+            while (true)
+            {
+                if (!CProcessGroups.ToList().Exists(o => o.Name == $"制程组{index}"))
+                {
+                    break;
+                }
+                index++;
+            }
+            CProcessGroups.Add(new($"制程组{index}"));
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 删除制程组
+        /// </summary>
+        /// <param name="groupVM">制程组</param>
+        [RelayCommand]
+        public void Del(CProcessGroupModel group)
+        {
+            if (group != null)
+            {
+                CProcessGroups.Remove(group);
+            }
         }
     }
 }

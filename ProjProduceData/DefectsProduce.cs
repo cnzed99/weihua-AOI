@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Effects;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using QualityGrade;
@@ -19,28 +22,30 @@ namespace ProjProduceData
     /// 缺陷统计数据
     /// 20240706 TCG 启用保存，除了NG TOTAL PERCENT 质量等级和缺陷统计不保存，在反序列化时从DefectFilter/Quality中获取引用
     /// </summary>
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public partial class CDefectsProduce : ObservableObject
     {
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 缺陷统计
         /// </summary>
-        [property: JsonIgnore]
+        [property: JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<DefectFilter> defectNumbersList = new();
+        private ObservableCollection<DefectNumber> defectNumbersList = new();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 质量统计
         /// </summary>
-        [property: JsonIgnore]
+        [property: JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<Quality> qualityNumbersList = new();
+        private ObservableCollection<QualityNumber> qualityNumbersList = new();
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 缺陷总数
         /// </summary>
+        [property: JsonProperty]
         [ObservableProperty]
         private double ng = 0;
 
@@ -48,6 +53,7 @@ namespace ProjProduceData
         /// 2024.7.4 李焕彬
         /// 产品总数
         /// </summary>
+        [property: JsonProperty]
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(OKPercent))]
         [NotifyPropertyChangedFor(nameof(NGPercent))]
@@ -87,6 +93,7 @@ namespace ProjProduceData
         /// 20200706 TCG
         /// 利用属性通知，只通知一次，多绑定会通知多次
         /// </summary>
+        [property: JsonProperty]
         [ObservableProperty]
         public double oK;
 
@@ -96,22 +103,191 @@ namespace ProjProduceData
         /// </summary>
         /// <param name="name">缺陷名</param>
         /// <returns>对应缺陷</returns>
-        public DefectFilter this[string name]
+        public DefectNumber this[string name]
         {
-            get { return DefectNumbersList.FirstOrDefault(o => o.Name == name); }
+            get
+            {
+                if (DefectNumbersList.FirstOrDefault(o => o.Name == name) == null)
+                {
+                    DefectNumbersList.Add(new(name));
+                }
+                return DefectNumbersList.FirstOrDefault(o => o.Name == name);
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.5 李焕彬
+        /// 缺陷配置
+        /// </summary>
+        List<CFilterConfig> filterConfigs;
+
+        /// <summary>
+        /// 2024.9.5 李焕彬
+        /// 质量等级
+        /// </summary>
+        CQualityConfig qualityConfig;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初始化缺陷统计
+        /// </summary>
+        /// <param name="filterConfigsNew"></param>
+        public void SetFilter(List<CFilterConfig> filterConfigsNew)
+        {
+            if (this.filterConfigs != null)
+            {
+                foreach (var item in this.filterConfigs)
+                {
+                    item.DefectList.CollectionChanged -= DefectList_CollectionChanged;
+                    foreach (var defect in item.DefectList)
+                    {
+                        defect.PropertyChanged -= Defect_PropertyChanged;
+                    }
+                }
+            }
+            this.filterConfigs = filterConfigsNew;
+            UpdateDefects(true);
+            foreach (var item in filterConfigs)
+            {
+                item.DefectList.CollectionChanged += DefectList_CollectionChanged;
+            }
         }
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 初始化缺陷统计VM
+        /// 初始化缺陷统计
         /// </summary>
-        /// <param name="defectsProduce"></param>
-        /// <param name="filterConfig"></param>
-        /// <param name="qualityConfig"></param>
-        public void SetDefectsProduce(CFilterConfig filterConfig, CQualityConfig qualityConfig)
+        /// <param name="qualityConfigNew"></param>
+        public void SetQuality(CQualityConfig qualityConfigNew)
         {
-            DefectNumbersList = filterConfig.DefectList;
-            this.QualityNumbersList = qualityConfig.Qualities;
+            if (this.qualityConfig != null)
+            {
+                this.qualityConfig.Qualities.CollectionChanged -= Qualities_CollectionChanged;
+            }
+            this.qualityConfig = qualityConfigNew;
+            UpdateQualitys(true);
+            qualityConfig.Qualities.CollectionChanged += Qualities_CollectionChanged;
+        }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 更新缺陷，如果是初始化，则需要PropertyChanged
+        /// </summary>
+        /// <param name="isInit">是否初始化</param>
+        public void UpdateDefects(bool isInit = false)
+        {
+            List<string> defectExists = new List<string>();
+            foreach (var config in filterConfigs)
+            {
+                foreach (var defect in config.DefectList)
+                {
+                    defectExists.Add(defect.Name);
+                    if (DefectNumbersList.FirstOrDefault(o => o.Name == defect.Name) == null)
+                    {
+                        DefectNumber number = new(defect.Name);
+                        DefectNumbersList.Add(number);
+                    }
+                    if (isInit)
+                        defect.PropertyChanged += Defect_PropertyChanged;
+                }
+            }
+            for (int i = DefectNumbersList.Count - 1; i >= 0; i--)
+            {
+                if (!defectExists.Contains(DefectNumbersList[i].Name))
+                {
+                    DefectNumbersList.RemoveAt(i);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 更新质量等级，如果是初始化，则需要PropertyChanged
+        /// </summary>
+        /// <param name="isInit">是否初始化</param>
+        public void UpdateQualitys(bool isInit = false)
+        {
+            List<int> qualityExists = new List<int>();
+            foreach (var qua in qualityConfig.Qualities)
+            {
+                qualityExists.Add(qua.Priority);
+                QualityNumber qualityNumber = QualityNumbersList.FirstOrDefault(o =>
+                    o.Priority == qua.Priority
+                );
+                if (qualityNumber == null)
+                {
+                    QualityNumber number = new(qua);
+                    QualityNumbersList.Add(number);
+                }
+                else
+                {
+                    qualityNumber.Name = qua.Name;
+                    qualityNumber.ShowColor = qua.ShowColor;
+                }
+                if (isInit)
+                    qua.PropertyChanged += Qua_PropertyChanged;
+            }
+            for (int i = QualityNumbersList.Count - 1; i >= 0; i--)
+            {
+                if (!qualityExists.Contains(QualityNumbersList[i].Priority))
+                {
+                    QualityNumbersList.RemoveAt(i);
+                }
+            }
+        }
+
+        private void Defect_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Name")
+            {
+                UpdateDefects();
+            }
+        }
+
+        private void Qua_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Name" || e.PropertyName == "ShowColor")
+            {
+                UpdateQualitys();
+            }
+        }
+
+        private void DefectList_CollectionChanged(
+            object sender,
+            System.Collections.Specialized.NotifyCollectionChangedEventArgs e
+        )
+        {
+            UpdateDefects();
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    DefectFilter defect = item as DefectFilter;
+                    if (defect != null)
+                    {
+                        defect.PropertyChanged += Defect_PropertyChanged;
+                    }
+                }
+            }
+        }
+
+        private void Qualities_CollectionChanged(
+            object sender,
+            System.Collections.Specialized.NotifyCollectionChangedEventArgs e
+        )
+        {
+            UpdateQualitys();
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    Quality qua = item as Quality;
+                    if (qua != null)
+                    {
+                        qua.PropertyChanged += Qua_PropertyChanged;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -140,7 +316,6 @@ namespace ProjProduceData
     /// <summary>
     /// 2024.7.4 李焕彬
     /// 缺陷数据
-    /// 20240706 TCG 弃用，改用DefectFilter 统计
     /// </summary>
     public partial class DefectNumber : ObservableObject
     {
@@ -182,7 +357,6 @@ namespace ProjProduceData
 
     /// <summary>
     /// 2024.7.4 李焕彬
-    /// 20240706 TCG 弃用，Quality 统计
     /// 质量数据
     /// </summary>
     public partial class QualityNumber : ObservableObject
@@ -193,7 +367,7 @@ namespace ProjProduceData
         {
             this.Name = qua.Name;
             this.ShowColor = qua.ShowColor;
-            this.QualityLevel = qua.Priority;
+            this.Priority = qua.Priority;
         }
 
         /// <summary>
@@ -208,7 +382,7 @@ namespace ProjProduceData
         /// 数值
         /// </summary>
         [ObservableProperty]
-        private int qualityLevel;
+        private int priority;
 
         /// <summary>
         /// 2024.7.4 李焕彬

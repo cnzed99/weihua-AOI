@@ -145,7 +145,7 @@
     <value>Config</value>
   </data>
   <data name="ScreenShot" xml:space="preserve">
-    <value>ScreenShot</value>
+    <value>ScreShot</value>
   </data>
   <data name="CamCom" xml:space="preserve">
     <value>Devices</value>
@@ -160,7 +160,7 @@
     <value>System</value>
   </data>
   <data name="DataStatistics" xml:space="preserve">
-    <value>Data Statistics</value>
+    <value>Data</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>SqlSet</value>
@@ -175,7 +175,7 @@
     <value>Offline</value>
   </data>
   <data name="LightControl" xml:space="preserve">
-    <value>LightControl</value>
+    <value>Light</value>
   </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
@@ -208,25 +208,25 @@
     <value>S</value>
   </data>
   <data name="DetectArea" xml:space="preserve">
-    <value>DetectResult</value>
+    <value>Result</value>
   </data>
   <data name="Quality" xml:space="preserve">
-    <value>QualityConfig</value>
+    <value>Quality</value>
   </data>
   <data name="DetectConfig" xml:space="preserve">
-    <value>DetectConfig</value>
+    <value>Config</value>
   </data>
   <data name="AlarmConfig" xml:space="preserve">
-    <value>AlarmConfig</value>
+    <value>Alarm</value>
   </data>
   <data name="MarkConfig" xml:space="preserve">
-    <value>MarkConfig</value>
+    <value>Mark</value>
   </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
   </data>
-  <data name="MotionControl" xml:space="preserve">
-    <value>MotionControl</value>
+  <data name="FocusControl" xml:space="preserve">
+    <value>Focus</value>
   </data>
   <data name="DefectList" xml:space="preserve">
     <value>DefectList</value>
@@ -235,10 +235,10 @@
     <value>Message</value>
   </data>
   <data name="RuningLog" xml:space="preserve">
-    <value>RuningLog</value>
+    <value>Log</value>
   </data>
   <data name="WarningLog" xml:space="preserve">
-    <value>WarningLog</value>
+    <value>Warning</value>
   </data>
   <data name="Algorithm" xml:space="preserve">
     <value>Algorithm:</value>
@@ -250,7 +250,7 @@
     <value>ProjectPath:</value>
   </data>
   <data name="OperateRecord" xml:space="preserve">
-    <value>OperatingRecord</value>
+    <value>Operation</value>
   </data>
   <data name="SystemSettingsReadSuccess" xml:space="preserve">
     <value>SystemSettings has Read!</value>
@@ -280,7 +280,7 @@
     <value>Save as Failed</value>
   </data>
   <data name="AlgorParam" xml:space="preserve">
-    <value>AlgorParam</value>
+    <value>Algorithm</value>
   </data>
   <data name="轴报警" xml:space="preserve">
     <value>Axis Error</value>
@@ -289,7 +289,7 @@
     <value>Driver Error</value>
   </data>
   <data name="手动调试" xml:space="preserve">
-    <value>Manual Debug</value>
+    <value>Manual</value>
   </data>
   <data name="清空报警" xml:space="preserve">
     <value>Clear Alarm</value>
@@ -302,5 +302,41 @@
   </data>
   <data name="光源字典为空" xml:space="preserve">
     <value>The light source dictionary is null, check the LightConfig.Json file in the configuration file SystemConfig</value>
+  </data>
+  <data name="AddProc" xml:space="preserve">
+    <value>Add Process</value>
+  </data>
+  <data name="CloseSum" xml:space="preserve">
+    <value>Close Sum</value>
+  </data>
+  <data name="OpenSum" xml:space="preserve">
+    <value>Open Sum</value>
+  </data>
+  <data name="缺陷统计汇总" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="AllStart" xml:space="preserve">
+    <value>AllStart</value>
+  </data>
+  <data name="AllStop" xml:space="preserve">
+    <value>AllStop</value>
+  </data>
+  <data name="ProcessEdit" xml:space="preserve">
+    <value>Open the Modify Process window!</value>
+  </data>
+  <data name="新增制程" xml:space="preserve">
+    <value>Open new process window!</value>
+  </data>
+  <data name="新增制程成功" xml:space="preserve">
+    <value>Process added successfully!</value>
+  </data>
+  <data name="新增制程失败" xml:space="preserve">
+    <value>Failed to add process!</value>
   </data>
 </root>

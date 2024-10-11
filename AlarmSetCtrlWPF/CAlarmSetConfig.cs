@@ -33,16 +33,16 @@ namespace AlarmSetCtrl
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         /// <summary>
-        /// 20240711 TCG
-        /// 操作日志
+        /// 2024.9.6 李焕彬
+        /// 所属制程名
         /// </summary>
-        [property: JsonIgnore]
         [property: IgnoreModifyLog]
-        public CLogRec SysLog { get; set; } = CLogRec.Default;
+        public string PrcessName { get; set; }
 
         public CAlarmSetConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
+            AlarmList = new ObservableCollection<Alarm>();
         }
 
         /// <summary>
@@ -101,7 +101,8 @@ namespace AlarmSetCtrl
             foreach (var alarm in AlarmList)
             {
                 if (
-                    CCommunicationManagement.CommParamDic.TryGetValue(
+                    alarm.AlarmAgreement?.GUID != null
+                    && CCommunicationManagement.CommParamDic.TryGetValue(
                         alarm.AlarmAgreement?.GUID,
                         out CCommunicationSettingBase comParams
                     )
@@ -137,7 +138,7 @@ namespace AlarmSetCtrl
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("报警规则")]
-        ObservableCollection<Alarm> alarmList = new ObservableCollection<Alarm>();
+        ObservableCollection<Alarm> alarmList;
 
         /// <summary>
         ///  2024.6.25 鲍赞宝
@@ -216,7 +217,7 @@ namespace AlarmSetCtrl
             //记录修改信息
             if (message.obj.GetType() == typeof(CAlarmSetConfig))
             {
-                OperateLog.Info($"报警设置-{message.message}");
+                OperateLog.Info($"{PrcessName}-报警设置-{message.message}");
                 return;
             }
             foreach (var alarm in AlarmList)
@@ -225,7 +226,7 @@ namespace AlarmSetCtrl
                 {
                     if (al == alarm)
                     {
-                        OperateLog.Info($"报警设置-{al.Name}-{message.message}");
+                        OperateLog.Info($"{PrcessName}-报警设置-{al.Name}-{message.message}");
                         return;
                     }
                     continue;

@@ -232,8 +232,8 @@
   <data name="History" xml:space="preserve">
     <value>回看</value>
   </data>
-  <data name="MotionControl" xml:space="preserve">
-    <value>运动控制</value>
+  <data name="FocusControl" xml:space="preserve">
+    <value>对焦控制</value>
   </data>
   <data name="DefectList" xml:space="preserve">
     <value>缺陷统计列表</value>
@@ -309,5 +309,41 @@
   </data>
   <data name="光源字典为空" xml:space="preserve">
     <value>光源字典为空值,请检查配置文件SystemConfig中的LightConfig.Json 文件</value>
+  </data>
+  <data name="AddProc" xml:space="preserve">
+    <value>增加制程</value>
+  </data>
+  <data name="CloseSum" xml:space="preserve">
+    <value>关闭汇总</value>
+  </data>
+  <data name="OpenSum" xml:space="preserve">
+    <value>打开汇总</value>
+  </data>
+  <data name="缺陷统计汇总" xml:space="preserve">
+    <value>缺陷统计汇总</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>修改</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="AllStart" xml:space="preserve">
+    <value>总启动</value>
+  </data>
+  <data name="AllStop" xml:space="preserve">
+    <value>总停止</value>
+  </data>
+  <data name="ProcessEdit" xml:space="preserve">
+    <value>打开修改制程窗口！</value>
+  </data>
+  <data name="新增制程" xml:space="preserve">
+    <value>打开新增制程窗口！</value>
+  </data>
+  <data name="新增制程成功" xml:space="preserve">
+    <value>新增制程成功！</value>
+  </data>
+  <data name="新增制程失败" xml:space="preserve">
+    <value>新增制程失败！</value>
   </data>
 </root>

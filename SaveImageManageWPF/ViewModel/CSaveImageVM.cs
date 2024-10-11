@@ -18,7 +18,7 @@ namespace SaveImageManage
         /// <summary>
         /// 存图参数
         /// </summary>
-        public CSaveImageConfig Param { get; set; }
+        public CSaveImageConfig Param { get; set; } = new CSaveImageConfig();
 
         public CSaveImageVM()
         {

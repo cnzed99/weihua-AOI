@@ -13,25 +13,25 @@ namespace WH.Entity.CommonLib
     public class CHexConvert
     {
         /// <summary>
-        /// 16进制字符串转成int32
+        /// 16进制字符串转成int32，0F 0A 0B
         /// </summary>
         /// <param name="hexstring">16位表示的字符串</param>
         /// <param name="reverse">是否反转</param>
         /// <returns>int32数字</returns>
         public static int HexToInt(string hexstring, bool reverse)
         {
-            byte[] array = CHexConvert.HexStringToByte(hexstring);
+            string[] split = hexstring.Trim().Split(' ');
+            string result = String.Join("", split);
             if (reverse)
             {
-                Array.Reverse(array);
+                result.Reverse();
             }
-            int num = (int)array[0];
-            for (int i = 1; i < array.Length - 1; i++)
+            int num = 0;
+            for (int i = 0; i < result.Length; i++)
             {
-                if (array[i] != 0)
-                {
-                    num += Convert.ToInt32(Math.Pow(16.0, (double)array[i]));
-                }
+                num +=
+                    (result[i] >= 'A' ? (result[i] - 'A' + 10) : result[i] - '0')
+                    * (int)(Math.Pow(16, result.Length - 1 - i));
             }
             return num;
         }

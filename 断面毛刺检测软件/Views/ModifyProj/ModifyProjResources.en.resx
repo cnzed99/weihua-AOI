@@ -138,4 +138,19 @@
   <data name="Cam" xml:space="preserve">
     <value>Cam:</value>
   </data>
+  <data name="Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>GroupName</value>
+  </data>
+  <data name="GroupDesc" xml:space="preserve">
+    <value>Group Description</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>Del</value>
+  </data>
 </root>

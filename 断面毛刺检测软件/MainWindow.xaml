@@ -6,7 +6,9 @@
     xmlns:alarm="clr-namespace:AlarmSetCtrl;assembly=AlarmSetCtrl"
     xmlns:cov="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entity="clr-namespace:WH.Entity.Converter;assembly=WH.Entity"
     xmlns:filter="clr-namespace:SDFilter;assembly=SDFilter"
+    xmlns:focus="clr-namespace:FocusControl;assembly=FocusControl"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:history="clr-namespace:HistoryPlayback;assembly=HistoryPlayback"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -14,7 +16,6 @@
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:motion="clr-namespace:MotionControl;assembly=MotionControl"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
@@ -34,6 +35,10 @@
             x:Key="AlarmToBrushConverter"
             FalseValue="{StaticResource BorderBrush}"
             TrueValue="Red" />
+        <cov:SubtractConverter x:Key="SubtractConverter" />
+        <local:ColumnCountConverter x:Key="ColumnCountConverter" />
+        <entity:String2VisiblityReConverter x:Key="Count2VisiblityReConverter" />
+        <wh:CBindingProxy x:Key="CurUser" Data="{Binding LoginViewModel.LoginPerson}" />
     </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
@@ -81,6 +86,11 @@
                     <MenuItem Click="ModifyProj_Click" Header="{Binding [ModifyProj], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/文件/修改工程.svg" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Click="AddProcess_Click" Header="{Binding [AddProc], Source={x:Static local:CLang.Instance}}">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/Resources/图标/文件/增加制程.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
@@ -248,9 +258,8 @@
                 VerticalAlignment="Center"
                 hc:WindowAttach.IsDragElement="True"
                 FontSize="20"
-                Text="{Binding CMainVMs[0].Name}" />
+                Text="{Binding CMainMModel.Name}" />
             <hc:SimplePanel Grid.Column="2" HorizontalAlignment="Right">
-
                 <ToggleButton IsChecked="{Binding IsDark, Source={x:Static local:GlobalData.Config}}" Style="{StaticResource ToggleButtonGorgeousThemeSwitchStyle}" />
             </hc:SimplePanel>
         </Grid>
@@ -264,7 +273,6 @@
         </Grid.RowDefinitions>
         <!--  次菜单栏  -->
         <DockPanel Grid.Row="0">
-
             <StackPanel Width="150" HorizontalAlignment="Left">
                 <Image
                     Margin="5"
@@ -275,7 +283,9 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
 
                 </Grid.ColumnDefinitions>
@@ -284,38 +294,58 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainVMs[0].DefectsDataVM}" FontSize="15" />
+                    <pro:ProduceData DataContext="{Binding SelectedProcess.DefectsDataVM}" FontSize="15" />
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <UniformGrid Columns="1">
+
+                    <!--<UniformGrid Columns="1">
                         <Label
                             Width="100"
-                            wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
+                            wh:StatusDotElement.DotBrush="{Binding SelectedProcess.MotionCtrlVM.IsAlarmAxis, Converter={StaticResource AlarmToBrushConverter}}"
                             wh:StatusDotElement.Radius="10"
                             Content="{Binding [轴报警], Source={x:Static local:CLang.Instance}}"
                             Style="{StaticResource StatusDotLabel.Small}" />
                         <Label
                             Width="100"
-                            wh:StatusDotElement.DotBrush="{Binding CMainVMs[0].MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
+                            wh:StatusDotElement.DotBrush="{Binding SelectedProcess.MotionCtrlVM.IsDriveAlarm, Converter={StaticResource AlarmToBrushConverter}}"
                             wh:StatusDotElement.Radius="10"
                             Content="{Binding [驱动器报警], Source={x:Static local:CLang.Instance}}"
                             Style="{StaticResource StatusDotLabel.Small}" />
-                    </UniformGrid>
+                    </UniformGrid>-->
                     <Button
                         Height="70"
                         Margin="10,0"
+                        BorderBrush="{DynamicResource DangerBrush}"
+                        BorderThickness="3"
                         Click="ClearGrowlMessage_Click"
+                        Command="{Binding ResetAlarmCommand}"
                         Content="{Binding [清空报警], Source={x:Static local:CLang.Instance}}"
-                        Style="{StaticResource ButtonDashedPrimary}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="PreviewMouseDown">
-                                <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseDownCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="PreviewMouseUp">
-                                <i:InvokeCommandAction Command="{Binding CMainVMs[0].MotionCtrlVM.MouseUpCommand}" CommandParameter="{Binding CMainVMs[0].MotionCtrlVM.MotionConfig.AddrReset}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Button>
+                        Style="{StaticResource ButtonDashedPrimary}" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <ToggleButton
+                        Width="70"
+                        Height="70"
+                        Margin="10,0"
+                        FontSize="6"
+                        IsChecked="{Binding ElementName=DrawerRightInContainer, Path=IsOpen}"
+                        Style="{DynamicResource ToggleButtonFlip}"
+                        Visibility="{Binding CMainVMs.Count, Converter={StaticResource Count2VisiblityReConverter}, ConverterParameter=1}">
+                        <hc:StatusSwitchElement.CheckedElement>
+                            <Border Margin="-2" Background="{DynamicResource WarningBrush}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding [CloseSum], Source={x:Static local:CLang.Instance}}" />
+                            </Border>
+                        </hc:StatusSwitchElement.CheckedElement>
+                        <Border Margin="-2" Background="{DynamicResource PrimaryBrush}">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding [OpenSum], Source={x:Static local:CLang.Instance}}" />
+                        </Border>
+                    </ToggleButton>
                     <!--  启停按钮  -->
                     <ToggleButton
                         x:Name="Btn_StartStop"
@@ -323,21 +353,22 @@
                         Width="70"
                         Height="70"
                         Margin="10,0"
-                        IsChecked="{Binding CMainVMs[0].StartStop}"
+                        FontSize="8"
+                        IsChecked="{Binding StartStop}"
                         Style="{DynamicResource ToggleButtonFlip}">
                         <hc:StatusSwitchElement.CheckedElement>
                             <Border Margin="-2" Background="{DynamicResource DangerBrush}">
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Text="{Binding [Stop], Source={x:Static local:CLang.Instance}}" />
+                                    Text="{Binding [AllStop], Source={x:Static local:CLang.Instance}}" />
                             </Border>
                         </hc:StatusSwitchElement.CheckedElement>
                         <Border Margin="-2" Background="{DynamicResource SuccessBrush}">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Text="{Binding [Start], Source={x:Static local:CLang.Instance}}" />
+                                Text="{Binding [AllStart], Source={x:Static local:CLang.Instance}}" />
                         </Border>
                     </ToggleButton>
                     <!--  系统时间  -->
@@ -396,121 +427,246 @@
 
         </DockPanel>
         <!--  中间内容  -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition Width="320" />
-            </Grid.ColumnDefinitions>
-            <UniformGrid Grid.Column="0" Columns="1">
-                <Border
-                    Background="{DynamicResource RegionBrush}"
-                    BorderBrush="{Binding CMainVMs[0].ModelBrush}"
-                    BorderThickness="3">
-                    <wh:ImageView Operator="{Binding CMainVMs[0].CurView, Mode=OneWayToSource}" Source="{Binding CMainVMs[0].ModelImage}" />
-                </Border>
-                <Border
-                    Background="{DynamicResource RegionBrush}"
-                    BorderBrush="{Binding CMainVMs[0].LastBrush}"
-                    BorderThickness="3"
-                    Visibility="Collapsed">
-                    <wh:ImageView
-                        d:Source="D://铝极.png"
-                        Operator="{Binding CMainVMs[0].LastView, Mode=OneWayToSource}"
-                        Source="{Binding CMainVMs[0].LastImage}" />
-                </Border>
-
-            </UniformGrid>
-            <!--  中间设置栏  -->
-            <hc:TabControl
-                Grid.Column="1"
-                IsAnimationEnabled="True"
-                IsTabFillEnabled="True"
-                SelectedIndex="0"
-                Style="{DynamicResource TabControlInLine}">
-                <hc:TabItem Header="{Binding [DetectArea], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <filter:FilterResultCtrl DataContext="{Binding CMainVMs[0].SDFilterVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [Quality], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <qua:QualityGradeCtrl DataContext="{Binding CMainVMs[0].QualityVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [AlgorParam], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <al:MaociAlgorParamCtrl DataContext="{Binding CMainVMs[0].MaociAlgorVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [DetectConfig], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <filter:SDFilterCtrl DataContext="{Binding CMainVMs[0].SDFilterVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <alarm:AlarmSetCtrl DataContext="{Binding CMainVMs[0].AlarmSetVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <mark:MarkCtrl DataContext="{Binding CMainVMs[0].MarkCtrlVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [MotionControl], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <motion:MotionCtrl DataContext="{Binding CMainVMs[0].MotionCtrlVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-                <hc:TabItem Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
-                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                        <history:HistoryCtrl x:Name="histable" DataContext="{Binding CMainVMs[0].HistoryVM}" />
-                    </hc:SimplePanel>
-                </hc:TabItem>
-            </hc:TabControl>
-            <!--  右侧统计栏 消息栏 离线  -->
-            <hc:SimplePanel Grid.Column="2">
+        <hc:DrawerContainer Grid.Row="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.6*" />
+                    <ColumnDefinition Width="0.45*" />
+                    <ColumnDefinition Width="320" />
+                </Grid.ColumnDefinitions>
+                <hc:Drawer
+                    Name="DrawerRightInContainer"
+                    Dock="Right"
+                    MaskCanClose="False"
+                    ShowMask="False"
+                    ShowMode="Cover">
+                    <Border
+                        Width="400"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource TextBlockTitle}"
+                                Text="{Binding [缺陷统计汇总], Source={x:Static local:CLang.Instance}}" />
+                            <Button
+                                Grid.Row="0"
+                                HorizontalAlignment="Right"
+                                hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                                Command="hc:ControlCommands.Close"
+                                Foreground="{DynamicResource PrimaryTextBrush}"
+                                Style="{StaticResource ButtonIcon}" />
+                            <ScrollViewer Grid.Row="1">
+                                <ItemsControl ItemsSource="{Binding CMainMModel.CProcessGroups}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <GroupBox
+                                                Margin="5"
+                                                Header="{Binding Name}"
+                                                Style="{StaticResource GroupBoxTab}">
+                                                <pro:SummaryCtrl DataContext="{Binding CDefectsDataVM}" />
+                                            </GroupBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </hc:Drawer>
+                <ListBox
+                    Padding="0"
+                    hc:BorderElement.CornerRadius="0"
+                    ItemsSource="{Binding CMainVMs}"
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    SelectedItem="{Binding SelectedProcess}">
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="2" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                            <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="DarkTurquoise" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext}">
+                                <Grid.ContextMenu>
+                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
+                                        <MenuItem
+                                            Click="ProcessEdit_Click"
+                                            Header="{Binding [Edit], Source={x:Static local:CLang.Instance}}"
+                                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                                            Tag="{Binding SelectedProcess}" />
+                                        <MenuItem
+                                            Command="{Binding RemoveProcessCommand}"
+                                            Header="{Binding [Del], Source={x:Static local:CLang.Instance}}"
+                                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+                                <Border
+                                    Background="{DynamicResource RegionBrush}"
+                                    BorderBrush="{Binding ModelBrush}"
+                                    BorderThickness="2">
+                                    <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}" />
+                                </Border>
+                                <TextBlock
+                                    Margin="10,5"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Foreground="Red"
+                                    Style="{StaticResource TextBlockDefault}"
+                                    Text="{Binding FocusCtrlVM.InfoAlarm}" />
+                                <TextBlock
+                                    Margin="10,10"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Style="{StaticResource TextBlockDefault}">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{1}-{0}">
+                                            <Binding Path="Name" />
+                                            <Binding Path="ProcessGroup.Name" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <ToggleButton
+                                    Margin="0,7,90,7"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    IsChecked="{Binding IsStart}"
+                                    IsEnabled="{Binding Source={StaticResource CurUser}, Path=Data.IsOperator}"
+                                    Style="{DynamicResource ToggleButtonCustom}">
+                                    <hc:StatusSwitchElement.CheckedElement>
+                                        <Border
+                                            Padding="20,3"
+                                            Background="{DynamicResource DangerBrush}"
+                                            CornerRadius="3">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding [Stop], Source={x:Static local:CLang.Instance}}" />
+                                        </Border>
+                                    </hc:StatusSwitchElement.CheckedElement>
+                                    <Border
+                                        Padding="20,3"
+                                        Background="{DynamicResource SuccessBrush}"
+                                        CornerRadius="3">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding [Start], Source={x:Static local:CLang.Instance}}" />
+                                    </Border>
+                                </ToggleButton>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <!--  中间设置栏  -->
                 <hc:TabControl
-                    Grid.Row="2"
+                    Grid.Column="1"
                     IsAnimationEnabled="True"
                     IsTabFillEnabled="True"
                     SelectedIndex="0"
                     Style="{DynamicResource TabControlInLine}">
-                    <hc:TabItem Header="{Binding [DefectList], Source={x:Static local:CLang.Instance}}">
+                    <hc:TabItem Padding="0" Header="{Binding [DetectArea], Source={x:Static local:CLang.Instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                            <pro:DefectsDataV DataContext="{Binding CMainVMs[0].DefectsDataVM}" />
+                            <filter:FilterResultCtrl DataContext="{Binding SelectedProcess.SDFilterVM}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
-                    <hc:TabItem Header="{Binding [Message], Source={x:Static local:CLang.Instance}}">
+                    <hc:TabItem Padding="0" Header="{Binding [Quality], Source={x:Static local:CLang.Instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                            <hc:TabControl
-                                Grid.Column="2"
-                                IsAnimationEnabled="True"
-                                IsTabFillEnabled="True"
-                                SelectedIndex="0"
-                                Style="{DynamicResource TabControlInLine}">
-                                <!--  运行日志  -->
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:CLang.Instance}}">
-                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding InfoMessage, Source={x:Static wh:CLogRec.Default}}" />
-                                </hc:TabItem>
-                                <!--  报警错误日志  -->
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:CLang.Instance}}">
-                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding ErrorMessage, Source={x:Static wh:CLogRec.Default}}" />
-                                </hc:TabItem>
-                                <!--  操作记录  -->
-                                <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:CLang.Instance}}">
-                                    <RichTextBox wh:ClogRecElement.LogMessage="{Binding OperateLog.AllMessage}" />
-                                </hc:TabItem>
-                            </hc:TabControl>
+                            <qua:QualityGradeCtrl DataContext="{Binding SelectedProcess.QualityVM}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
-
+                    <hc:TabItem Padding="0" Header="{Binding [AlgorParam], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <al:MaociAlgorParamCtrl DataContext="{Binding SelectedProcess.MaociAlgorVM}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
+                    <hc:TabItem Padding="0" Header="{Binding [DetectConfig], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <filter:SDFilterCtrl DataContext="{Binding SelectedProcess.SDFilterVM}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
+                    <hc:TabItem Padding="0" Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <alarm:AlarmSetCtrl DataContext="{Binding SelectedProcess.AlarmSetVM}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
+                    <hc:TabItem Padding="0" Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <mark:MarkCtrl DataContext="{Binding SelectedProcess.MarkCtrlVM}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
+                    <hc:TabItem Padding="0" Header="{Binding [FocusControl], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
+                    <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <history:HistoryCtrl x:Name="histable" DataContext="{Binding SelectedProcess.HistoryVM}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
                 </hc:TabControl>
+                <!--  右侧统计栏 消息栏 离线  -->
+                <hc:SimplePanel Grid.Column="2">
+                    <hc:TabControl
+                        Grid.Row="2"
+                        IsAnimationEnabled="True"
+                        IsTabFillEnabled="True"
+                        SelectedIndex="0"
+                        Style="{DynamicResource TabControlInLine}">
+                        <hc:TabItem Header="{Binding [DefectList], Source={x:Static local:CLang.Instance}}">
+                            <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                                <pro:DefectsDataV DataContext="{Binding SelectedProcess.DefectsDataVM}" />
+                            </hc:SimplePanel>
+                        </hc:TabItem>
+                        <hc:TabItem Header="{Binding [Message], Source={x:Static local:CLang.Instance}}">
+                            <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                                <hc:TabControl
+                                    Grid.Column="2"
+                                    IsAnimationEnabled="True"
+                                    IsTabFillEnabled="True"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource TabControlInLine}">
+                                    <!--  运行日志  -->
+                                    <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [RuningLog], Source={x:Static local:CLang.Instance}}">
+                                        <RichTextBox wh:ClogRecElement.LogMessage="{Binding InfoMessage, Source={x:Static wh:CLogRec.Default}}" />
+                                    </hc:TabItem>
+                                    <!--  报警错误日志  -->
+                                    <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [WarningLog], Source={x:Static local:CLang.Instance}}">
+                                        <RichTextBox wh:ClogRecElement.LogMessage="{Binding ErrorMessage, Source={x:Static wh:CLogRec.Default}}" />
+                                    </hc:TabItem>
+                                    <!--  操作记录  -->
+                                    <hc:TabItem Background="{DynamicResource RegionBrush}" Header="{Binding [OperateRecord], Source={x:Static local:CLang.Instance}}">
+                                        <RichTextBox wh:ClogRecElement.LogMessage="{Binding OperateLog.AllMessage}" />
+                                    </hc:TabItem>
+                                </hc:TabControl>
+                            </hc:SimplePanel>
+                        </hc:TabItem>
 
-            </hc:SimplePanel>
+                    </hc:TabControl>
 
-        </Grid>
+                </hc:SimplePanel>
+
+            </Grid>
+        </hc:DrawerContainer>
+
 
         <!--<hc:Drawer Dock="Right" ShowMode="Cover" IsOpen="{Binding ElementName=Btn_StartStop,Path=IsChecked}" ShowMask="False" MaskCanClose="False">
             <hc:SimplePanel  Width="300" Background="{DynamicResource RegionBrush}">
@@ -526,10 +682,10 @@
                 DockPanel.Dock="Left"
                 Orientation="Horizontal">
                 <TextBlock Text="{Binding [Algorithm], Source={x:Static local:CLang.Instance}}" />
-                <TextBlock Margin="2,0" Text="{Binding CMainVMs[0].AlgorithmTime}" />
+                <TextBlock Margin="2,0" Text="{Binding SelectedProcess.AlgorithmTime}" />
                 <TextBlock Text="ms" />
                 <TextBlock Margin="10,0,0,0" Text="{Binding [Filter], Source={x:Static local:CLang.Instance}}" />
-                <TextBlock Margin="2,0" Text="{Binding CMainVMs[0].FilterTime}" />
+                <TextBlock Margin="2,0" Text="{Binding SelectedProcess.FilterTime}" />
                 <TextBlock Text="ms" />
 
             </StackPanel>

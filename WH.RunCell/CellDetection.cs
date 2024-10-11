@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlgorithmDll;
-using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell

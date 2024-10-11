@@ -4,19 +4,31 @@
 	  <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="bin\Debug\net48\NModbus.dll" />
+    <None Include="bin\Debug\net8.0-windows\NModbus.dll" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
-		<PackageReference Include="NModbus" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+		<PackageReference Include="NModbus" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+		<ProjectReference Include="..\FocusControl\FocusControl.csproj" />
 		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy $(OutDir)\NModbus.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\FocusPlug\$(TargetName)\ /d /y" />
+		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\FocusPlug\$(TargetName)\ /d /y" />
+		<Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\en\ /d /y" />
+	</Target>
 
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

@@ -217,11 +217,12 @@
                     </ScrollViewer>
                 </Grid>
             </GroupBox>
-            <Grid
+            <ContentControl
                 Name="testGrid"
                 Grid.Row="1"
                 Margin="5"
-                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" 
+                Content="{Binding Com.TestControl}"/>
         </Grid>
     </Grid>
 </hc:Window>

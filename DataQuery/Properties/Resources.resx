@@ -136,4 +136,7 @@
   <data name="DataQuery" xml:space="preserve">
     <value>数据查询</value>
   </data>
+  <data name="制程组" xml:space="preserve">
+    <value>制程组</value>
+  </data>
 </root>

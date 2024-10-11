@@ -16,12 +16,30 @@ namespace DataQuery
 {
     public partial class CDataQueryVM : ObservableObject
     {
-        public CMySqlVM cMysqlBLL;
         CSystemSettingsVM SystemSettings = CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
-        public CDataQueryVM(CMySqlVM sqlViewModel)
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 制程组数据库
+        /// key=组名，value=对应数据库
+        /// </summary>
+        public Dictionary<string, (CMysqlBLL sql, List<string> defects)> DictSqls { get; set; } =
+            new();
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 选中制程组
+        /// </summary>
+        [ObservableProperty]
+        string selectGroup;
+
+        public CDataQueryVM(Dictionary<string, (CMysqlBLL sql, List<string> defects)> dictSqls)
         {
-            cMysqlBLL = sqlViewModel;
+            this.DictSqls = dictSqls;
+            if (DictSqls.Count > 0)
+            {
+                SelectGroup = DictSqls.Keys.First();
+            }
         }
 
         /// <summary>
@@ -81,6 +99,8 @@ namespace DataQuery
         {
             try
             {
+                if (!DictSqls.ContainsKey(SelectGroup))
+                    return;
                 string SearchStatus = await Task.Run(() =>
                 {
                     List<string> dates = new List<string>();
@@ -103,11 +123,13 @@ namespace DataQuery
                     //dates.Add("2024年6月27日");
                     //dates.Add("2024年6月29日");
                     //string[]  = new string[] { "2024年6月26日", "2024年6月27日", "2024年6月29日" };
-                    var dataTableCollection = cMysqlBLL.MysqlExecute.QueryData(
-                        dates,
-                        strStartTime,
-                        strEndTime
-                    );
+                    var dataTableCollection = DictSqls[SelectGroup]
+                        .sql.QueryData(
+                            dates,
+                            strStartTime,
+                            strEndTime,
+                            DictSqls[SelectGroup].defects
+                        );
                     if (dataTableCollection.Tables.Count > 0)
                     {
                         DataViews = dataTableCollection.Tables[0].DefaultView;

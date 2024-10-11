@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using CommunicationModule;
 using HandyControl.Controls;
@@ -56,6 +57,12 @@ namespace TCPIP
         public CTcpIpCommPart(CTcpIpCommunicationSetting prama)
         {
             setting = prama;
+            Application.Current.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    base.TestControl = new TestControl(this);
+                })
+            );
         }
 
         /// <summary>
@@ -224,16 +231,6 @@ namespace TCPIP
             BitConverter.GetBytes((uint)3000).CopyTo(inOptionValues, Marshal.SizeOf(dummy)); //keep-alive间隔
             BitConverter.GetBytes((uint)500).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2); // 尝试间隔
             return inOptionValues;
-        }
-
-        /// <summary>
-        /// 2024.7.21 李焕彬
-        /// 获取测试控件
-        /// </summary>
-        /// <returns>测试控件对象</returns>
-        public override UserControl GetTestControl()
-        {
-            return new TestControl(this);
         }
 
         /// <summary>

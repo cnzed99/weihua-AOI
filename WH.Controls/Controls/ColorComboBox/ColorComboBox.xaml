@@ -6,20 +6,20 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    Name="CmbColor"
     SelectionChanged="CmbColor_SelectionChanged"
-    Name="CmbColor">
+    mc:Ignorable="d">
     <ComboBox.ItemTemplate>
         <DataTemplate>
             <StackPanel Orientation="Horizontal">
                 <Rectangle
-                Width="20"
-                Fill="{Binding Brush}"
-                Stroke="Black" />
+                    Width="20"
+                    Fill="{Binding Brush}"
+                    Stroke="Black" />
                 <TextBlock
-                Margin="5,0,0,0"
-                HorizontalAlignment="Left"
-                Text="{Binding Name}" />
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Text="{Binding Name}" />
             </StackPanel>
         </DataTemplate>
     </ComboBox.ItemTemplate>

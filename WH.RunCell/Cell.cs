@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AlgorithmDll;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell
@@ -42,9 +41,15 @@ namespace WH.RunCell
 
         /// <summary>
         /// 2024.7.2 李焕彬
-        /// 算法输出管理，含输出区域
+        /// 料区、铝层边缘区域
         /// </summary>
-        public CMaociTest MaociTestOut { get; set; } = new CMaociTest();
+        public List<CEdgeDraw> DrawEdges { get; set; } = new List<CEdgeDraw>();
+
+        /// <summary>
+        /// 2024.7.2 李焕彬
+        /// 输出缺陷
+        /// </summary>
+        public List<CellDetection> AlgorithmOut { get; set; } = new List<CellDetection>();
 
         /// <summary>
         /// 是否是OK产品
@@ -343,7 +348,8 @@ namespace WH.RunCell
             cell.ProductIndex = this.ProductIndex;
             cell.AlgoriDetectResult = this.AlgoriDetectResult;
             cell.EncoderPos = this.EncoderPos;
-            cell.MaociTestOut = (CMaociTest)this.MaociTestOut.Clone();
+            cell.AlgorithmOut = this.AlgorithmOut;
+            cell.DrawEdges = this.DrawEdges;
             return cell;
         }
 
@@ -436,5 +442,32 @@ namespace WH.RunCell
         /// 接收到的信号数据
         /// </summary>
         public byte[] DataBytes { get; set; }
+
+        public double MmPerPixel { get; set; } = 0.00225;
+    }
+
+    /// <summary>
+    /// 2024.9.6 李焕彬
+    /// 绘制区域，含绘制颜色
+    /// </summary>
+    public class CEdgeDraw
+    {
+        public CEdgeDraw(List<Point> points, Brush brush)
+        {
+            this.Points = points;
+            this.BrushDraw = brush;
+        }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 绘制区域
+        /// </summary>
+        public List<Point> Points { get; set; }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 绘制颜色
+        /// </summary>
+        public Brush BrushDraw { get; set; }
     }
 }

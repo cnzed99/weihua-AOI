@@ -313,6 +313,15 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 保存图片 的本地化字符串。
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 成功 的本地化字符串。
         /// </summary>
         public static string Succeed {

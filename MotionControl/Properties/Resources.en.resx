@@ -477,4 +477,13 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>Confirm whether to delete?</value>
   </data>
+  <data name="MotionAlarm" xml:space="preserve">
+    <value>Motion Alarm!</value>
+  </data>
+  <data name="AxisAlarm" xml:space="preserve">
+    <value>Axis Alarm!</value>
+  </data>
+  <data name="AxisAndMotionAlarm" xml:space="preserve">
+    <value>Axis And Motion Alarm!</value>
+  </data>
 </root>

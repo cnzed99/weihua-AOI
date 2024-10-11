@@ -12,13 +12,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DetectSystem\MainModel\CProcessGroupVM.cs.ldtmp" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AlarmSetCtrlWPF\AlarmSetCtrl.csproj" />
+    <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
     <ProjectReference Include="..\CameraModule\CameraModule.csproj" />
     <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
+    <ProjectReference Include="..\FocusControl\FocusControl.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
     <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
     <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApi.csproj" />
-    <ProjectReference Include="..\MotionControl\MotionControl.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
     <ProjectReference Include="..\SaveImageManageWPF\SaveImageManage.csproj" />

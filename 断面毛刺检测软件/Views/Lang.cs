@@ -33,5 +33,10 @@ namespace 断面毛刺检测软件.Views
                 "断面毛刺检测软件.Views.TimeTriggerTest.TimeTriggerTestResources",
                 typeof(CLang).Assembly
             );
+        public static LanguageManager.CLanguageManager NewProcess =
+            new LanguageManager.CLanguageManager(
+                "断面毛刺检测软件.Views.NewProcess.NewProcessResources",
+                typeof(CLang).Assembly
+            );
     }
 }

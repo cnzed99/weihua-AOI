@@ -176,5 +176,14 @@ namespace DataQuery.Properties {
                 return ResourceManager.GetString("Total", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 制程组 的本地化字符串。
+        /// </summary>
+        public static string 制程组 {
+            get {
+                return ResourceManager.GetString("制程组", resourceCulture);
+            }
+        }
     }
 }

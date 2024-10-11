@@ -17,7 +17,6 @@ namespace WH.DetectSystem.Models
     /// </summary>
     public partial class CSystemSettingsModel : ObservableValidator
     {
-
         public CSystemSettingsModel()
         {
             //oldtime = NextClearTime;
@@ -27,10 +26,12 @@ namespace WH.DetectSystem.Models
             clearTimer.Tick += Timer_Tick;
             clearTimer.Start();
         }
+
         /// <summary>
         /// 清零计时器
         /// </summary>
         DispatcherTimer clearTimer;
+
         /// <summary>
         /// 20240801 TCG
         /// 最近打开的工程
@@ -112,9 +113,16 @@ namespace WH.DetectSystem.Models
             get => _dayShift;
             set
             {
-                var validationContext = new ValidationContext(this) { MemberName = nameof(DayShift) };
+                var validationContext = new ValidationContext(this)
+                {
+                    MemberName = nameof(DayShift)
+                };
                 var validationResults = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateProperty(value, validationContext, validationResults);
+                bool isValid = Validator.TryValidateProperty(
+                    value,
+                    validationContext,
+                    validationResults
+                );
 
                 if (isValid)
                 {
@@ -145,9 +153,16 @@ namespace WH.DetectSystem.Models
             get => _nightShift;
             set
             {
-                var validationContext = new ValidationContext(this) { MemberName = nameof(NightShift) };
+                var validationContext = new ValidationContext(this)
+                {
+                    MemberName = nameof(NightShift)
+                };
                 var validationResults = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateProperty(value, validationContext, validationResults);
+                bool isValid = Validator.TryValidateProperty(
+                    value,
+                    validationContext,
+                    validationResults
+                );
 
                 if (isValid)
                 {
@@ -161,8 +176,6 @@ namespace WH.DetectSystem.Models
                 {
                     ErrorMsg = validationResults[0].ErrorMessage;
                 }
-
-
             }
         }
 
@@ -263,17 +276,15 @@ namespace WH.DetectSystem.Models
             );
         }
 
-
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (DateTime.Now > NextClearTime)
             {
-               //oldtime = NextClearTime;
+                //oldtime = NextClearTime;
                 ClearProduceEvent?.Invoke();
                 GetNextClearTime();
             }
         }
-
 
         #endregion
 
@@ -284,8 +295,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         public event Action ClearProduceEvent;
 
-
-       //static DateTime oldtime;
+        //static DateTime oldtime;
 
         /// <summary>
         /// 下次清零时间
@@ -294,16 +304,10 @@ namespace WH.DetectSystem.Models
 
         public DateTime NextClearTime
         {
-            get
-            {
-                return nextClearTime;
-            }
-            set
-            {
-                SetProperty(ref nextClearTime, value);
-              
-            }
+            get { return nextClearTime; }
+            set { SetProperty(ref nextClearTime, value); }
         }
+
         /// <summary>
         /// 获取下次清零事件
         /// </summary>
@@ -377,9 +381,15 @@ namespace WH.DetectSystem.Models
                     break;
             }
             NextClearTime = next;
-          
         }
 
         #endregion
+
+        /// <summary>
+        /// 2024.8.29 李焕彬
+        /// 是否测试FPGA算法
+        /// </summary>
+        [ObservableProperty]
+        bool testFpgaAlgrithm = false;
     }
 }

@@ -156,4 +156,7 @@
   <data name="ShowAllDefect" xml:space="preserve">
     <value>ShowAllDefect</value>
   </data>
+  <data name="TestFpgaAlgrithm" xml:space="preserve">
+    <value>Test Fpga</value>
+  </data>
 </root>

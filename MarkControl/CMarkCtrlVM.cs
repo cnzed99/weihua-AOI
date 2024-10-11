@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
+using WH.Controls;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -23,13 +24,20 @@ namespace MarkControl
     {
         public CMarkCtrlVM()
         {
-            MarkConfig = LoadParameter();
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MarkConfig,
-                MarkConfig.token
-            );
-            Connect();
+            //MarkConfig = LoadParameter();
+            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+            //    MarkConfig,
+            //    MarkConfig.token
+            //);
+            //Connect();
         }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 权限信息，启动暂停、账户登录时切换
+        /// </summary>
+        [ObservableProperty]
+        CLoginPerson loginPerson;
 
         /// <summary>
         /// 20240801 李焕彬
@@ -222,20 +230,22 @@ namespace MarkControl
                     timer.Elapsed += Timer_Elapsed;
                     timer.Enabled = true;
 
-                    Growl.Success(Properties.Resources.SuccessConnect);
-                    SysLog.Info(Properties.Resources.SuccessConnect);
+                    Growl.Success(
+                        MarkConfig.PrcessName + "-" + Properties.Resources.SuccessConnect
+                    );
+                    SysLog.Info(MarkConfig.PrcessName + "-" + Properties.Resources.SuccessConnect);
                 }
                 else
                 {
                     Connected = false;
-                    Growl.Error(Properties.Resources.ConnectError);
-                    SysLog.Error(Properties.Resources.ConnectError);
+                    Growl.Error(MarkConfig.PrcessName + "-" + Properties.Resources.ConnectError);
+                    SysLog.Error(MarkConfig.PrcessName + "-" + Properties.Resources.ConnectError);
                 }
             }
             catch (Exception ex)
             {
-                Growl.Error(ex.Message);
-                SysLog.Error(ex.Message);
+                Growl.Error(MarkConfig.PrcessName + "-" + ex.Message);
+                SysLog.Error(MarkConfig.PrcessName + "-" + ex.Message);
             }
         }
 

@@ -70,6 +70,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 增加制程 的本地化字符串。
+        /// </summary>
+        public static string AddProc {
+            get {
+                return ResourceManager.GetString("AddProc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 报警设置 的本地化字符串。
         /// </summary>
         public static string AlarmConfig {
@@ -97,6 +106,24 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 总启动 的本地化字符串。
+        /// </summary>
+        public static string AllStart {
+            get {
+                return ResourceManager.GetString("AllStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 总停止 的本地化字符串。
+        /// </summary>
+        public static string AllStop {
+            get {
+                return ResourceManager.GetString("AllStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 相机与通讯 的本地化字符串。
         /// </summary>
         public static string CamCom {
@@ -120,6 +147,15 @@ namespace 断面毛刺检测软件.Properties {
         public static string CleraAsk {
             get {
                 return ResourceManager.GetString("CleraAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 关闭汇总 的本地化字符串。
+        /// </summary>
+        public static string CloseSum {
+            get {
+                return ResourceManager.GetString("CloseSum", resourceCulture);
             }
         }
         
@@ -160,6 +196,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 删除 的本地化字符串。
+        /// </summary>
+        public static string Del {
+            get {
+                return ResourceManager.GetString("Del", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 检测区 的本地化字符串。
         /// </summary>
         public static string DetectArea {
@@ -178,6 +223,15 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 修改 的本地化字符串。
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 关闭软件 的本地化字符串。
         /// </summary>
         public static string EnvironmentExit {
@@ -192,6 +246,15 @@ namespace 断面毛刺检测软件.Properties {
         public static string Filter {
             get {
                 return ResourceManager.GetString("Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦控制 的本地化字符串。
+        /// </summary>
+        public static string FocusControl {
+            get {
+                return ResourceManager.GetString("FocusControl", resourceCulture);
             }
         }
         
@@ -314,15 +377,6 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
-        ///   查找类似 运动控制 的本地化字符串。
-        /// </summary>
-        public static string MotionControl {
-            get {
-                return ResourceManager.GetString("MotionControl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 新建工程失败！ 的本地化字符串。
         /// </summary>
         public static string NewFailed {
@@ -386,11 +440,29 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 打开汇总 的本地化字符串。
+        /// </summary>
+        public static string OpenSum {
+            get {
+                return ResourceManager.GetString("OpenSum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 操作记录 的本地化字符串。
         /// </summary>
         public static string OperateRecord {
             get {
                 return ResourceManager.GetString("OperateRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开修改制程窗口！ 的本地化字符串。
+        /// </summary>
+        public static string ProcessEdit {
+            get {
+                return ResourceManager.GetString("ProcessEdit", resourceCulture);
             }
         }
         
@@ -602,6 +674,33 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
+        ///   查找类似 打开新增制程窗口！ 的本地化字符串。
+        /// </summary>
+        public static string 新增制程 {
+            get {
+                return ResourceManager.GetString("新增制程", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增制程失败！ 的本地化字符串。
+        /// </summary>
+        public static string 新增制程失败 {
+            get {
+                return ResourceManager.GetString("新增制程失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增制程成功！ 的本地化字符串。
+        /// </summary>
+        public static string 新增制程成功 {
+            get {
+                return ResourceManager.GetString("新增制程成功", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 清空报警 的本地化字符串。
         /// </summary>
         public static string 清空报警 {
@@ -617,6 +716,15 @@ namespace 断面毛刺检测软件.Properties {
             get {
                 object obj = ResourceManager.GetObject("组合-2", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 缺陷统计汇总 的本地化字符串。
+        /// </summary>
+        public static string 缺陷统计汇总 {
+            get {
+                return ResourceManager.GetString("缺陷统计汇总", resourceCulture);
             }
         }
         

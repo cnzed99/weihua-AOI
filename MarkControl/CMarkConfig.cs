@@ -31,6 +31,13 @@ namespace MarkControl
         [property: IgnoreModifyLog]
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 所属制程名
+        /// </summary>
+        [property: IgnoreModifyLog]
+        public string PrcessName { get; set; }
+
         public CMarkConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
@@ -45,7 +52,7 @@ namespace MarkControl
         {
             if (message.obj.GetType() == typeof(CMarkConfig))
             {
-                OperateLog.Info($"打标模块-{message.message}");
+                OperateLog.Info($"{PrcessName}-打标模块-{message.message}");
                 return;
             }
         }

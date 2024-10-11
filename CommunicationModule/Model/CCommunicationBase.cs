@@ -17,6 +17,13 @@ namespace CommunicationModule
     public abstract partial class CCommunicationBase : ObservableObject
     {
         /// <summary>
+        /// 2024.9.29 李焕彬
+        /// 测试控件
+        /// </summary>
+        [ObservableProperty]
+        UserControl testControl;
+
+        /// <summary>
         /// 2024.7.17 李焕彬
         /// 数据传出委托
         /// </summary>
@@ -65,13 +72,6 @@ namespace CommunicationModule
         {
             ReceivedEvent?.Invoke(buff);
         }
-
-        /// <summary>
-        /// 2024.7.21 李焕彬
-        /// 获取测试控件
-        /// </summary>
-        /// <returns>测试控件对象</returns>
-        public abstract UserControl GetTestControl();
 
         /// <summary>
         /// 2024.7.21 李焕彬

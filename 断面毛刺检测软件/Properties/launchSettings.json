@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "断面毛刺检测软件": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

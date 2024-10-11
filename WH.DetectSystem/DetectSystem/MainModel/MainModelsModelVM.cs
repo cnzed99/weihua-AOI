@@ -10,7 +10,9 @@ using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
@@ -19,12 +21,12 @@ using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FocusControl;
 using HandyControl.Controls;
 using HistoryPlayback;
 using HistoryPlayback.Model;
 using Mapster;
 using MarkControl;
-using MotionControl;
 using MySqlOperatesApi;
 using QualityGrade;
 using SaveImageManage;
@@ -32,17 +34,25 @@ using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.Models;
+using WH.DetectSystem._5_存图操作;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.IIService;
 using WH.Entity.LogRecord;
 using WH.LightControl;
+using WH.RecipeCellRootBase;
 using WH.RunCell;
 
 namespace WH.DetectSystem.ViewModels
 {
     public partial class CMainModelsModelVM : ObservableObject
     {
+        /// <summary>
+        /// 2024.9.4 李焕彬
+        /// UI线程调度器，MainWindow
+        /// </summary>
+        public static Dispatcher Dispatcher { get; set; }
+
         [ObservableProperty]
         CLoginViewModel loginViewModel = new CLoginViewModel();
 
@@ -76,10 +86,18 @@ namespace WH.DetectSystem.ViewModels
         CMainModelsModel cMainMModel = new CMainModelsModel();
 
         /// <summary>
+        /// 2024.9.2 李焕彬
         /// 多制程视图模型
         /// </summary>
         [ObservableProperty]
-        ObservableCollection<CMainVM> cMainVMs = new ObservableCollection<CMainVM>();
+        ObservableCollection<CMainModel> cMainVMs = new ObservableCollection<CMainModel>();
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 选中制程
+        /// </summary>
+        [ObservableProperty]
+        CMainModel selectedProcess;
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -119,6 +137,113 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public CLinghtManagement LightManagement { get; set; }
 
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 存图设置
+        /// </summary>
+        public CSaveImageVM SaveImageVM { get; set; } =
+            CPublicServices.Container.Resolve<CSaveImageVM>();
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 数据库
+        /// </summary>
+        public CMySqlVM MySqlVM { get; set; } = CPublicServices.Container.Resolve<CMySqlVM>();
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 算法插件管理
+        ///</summary>
+        public CAlgorithmManagement AlgorithmManagement { get; set; }
+
+        /// <summary>
+        /// 2024.9.29 李焕彬
+        /// 对焦插件管理
+        /// </summary>
+        public CFocusManagement FocusManagement { get; set; }
+
+        #region 启停 状态
+        bool isStart = false;
+
+        /// <summary>
+        /// 启动时用于保存当前账户信息 停止运行时用于恢复权限
+        /// </summary>
+        CLoginPerson loginPerson = new CLoginPerson();
+
+        /// <summary>
+        /// 是否启动 后台使用此变量判断用户是否启动软件
+        /// </summary>
+        public bool IsStart
+        {
+            get => isStart;
+            set
+            {
+                SetProperty(ref isStart, value);
+                if (value)
+                {
+                    CLoginViewModel.SloinPerson.Adapt(loginPerson);
+                    CLoginViewModel.SloinPerson.IsNoPermission = true;
+                }
+                else
+                {
+                    loginPerson.Adapt(CLoginViewModel.SloinPerson);
+                }
+                foreach (var mainVM in CMainVMs)
+                {
+                    mainVM.IsStart = isStart;
+                }
+            }
+        }
+
+        private bool isManualTest = false;
+
+        /// <summary>
+        /// 2024.8.1 李焕彬
+        /// 离线检测或手动调试
+        /// </summary>
+        public bool IsManualTest
+        {
+            get { return isManualTest; }
+            set
+            {
+                isManualTest = value;
+                foreach (var mainVM in CMainVMs)
+                {
+                    mainVM.IsManualTest = isManualTest;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 界面绑定变量，勿用此变量判断用户是否启动软件
+        /// </summary>
+        [ObservableProperty]
+        bool startStop = false;
+
+        [ObservableProperty]
+        bool deviceSeting = false;
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 是否对焦中
+        /// </summary>
+        public bool IsFocusing
+        {
+            get
+            {
+                foreach (var item in CMainVMs)
+                {
+                    if (item.FocusCtrlVM.IsFocusing)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        #endregion
+
+
         public CMainModelsModelVM()
         {
             DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Normal);
@@ -149,17 +274,17 @@ namespace WH.DetectSystem.ViewModels
             SystemTime = DateTime.Now.ToString("yyyy-MM-dd\r\nHH:mm:ss");
             var runTimeSpan = DateTime.Now - StartTime;
             RuningTime = runTimeSpan.ToString(@"hh\:mm\:ss");
-            if (CMainVMs.Count > 0)
-            {
-                DateTime t = CMainVMs[0].SystemSettings.NextClearTime;
-                //if (DateTime.Now >= e)
-                //{
-                //    if (CMainVMs[0].SystemSettings.AutoClearEnable)
-                //    {
-                //        CMainVMs[0].MaociDefectsProduce.Clear();
-                //    }
-                //}
-            }
+            //if (CMainVMs.Count > 0)
+            //{
+            //    DateTime t = CMainVMs[0].SystemSettings.NextClearTime;
+            //    //if (DateTime.Now >= e)
+            //    //{
+            //    //    if (CMainVMs[0].SystemSettings.AutoClearEnable)
+            //    //    {
+            //    //        CMainVMs[0].MaociDefectsProduce.Clear();
+            //    //    }
+            //    //}
+            //}
         }
         #endregion
 
@@ -262,6 +387,33 @@ namespace WH.DetectSystem.ViewModels
                     Growl.Error(Properties.Resources.相机连接失败 + "\r\n" + ex.Message);
                 }
                 #endregion
+
+                #region 读取所有算法
+                try
+                {
+                    AlgorithmManagement = new CAlgorithmManagement();
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error(Properties.Resources.算法读取失败 + "\r\n" + ex.Message);
+                }
+                #endregion
+
+                #region 读取所有对焦插件
+                try
+                {
+                    FocusManagement = new CFocusManagement();
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error(Properties.Resources.对焦插件读取失败 + "\r\n" + ex.Message);
+                }
+                #endregion
+
+                #region 读取数据库
+                CMysqlBLL cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
+                MySqlVM.MysqlExecute = cMysql;
+                #endregion
             });
         }
 
@@ -282,26 +434,17 @@ namespace WH.DetectSystem.ViewModels
             {
                 progress.Report(Properties.Resources.正在打开);
                 ProjPath = header;
-                foreach (var item in CMainVMs)
-                {
-                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociAlgorParamConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociQualityConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociFilterConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociAlarmSetConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(item.MaociSaveImageConfig);
-                }
-
+                RemoveAllProcessGroup();
                 CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
-                //foreach (var item in CMainVMs)
-                //{
-                //    item.StopTask();
-                //}
-                //CMainVMs.Clear();
-                foreach (var item in CMainMModel.CMainModels)
+                foreach (var group in CMainMModel.CProcessGroups)
                 {
-                    //CMainVMs.Add(new CMainVM() { Model = item });
-                    CMainVMs[0].Model = item;
+                    group.Init();
+                    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                        group.MaociQualityConfig,
+                        group.MaociQualityConfig.token
+                    );
                 }
+                UpdateMainVMs();
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -339,10 +482,6 @@ namespace WH.DetectSystem.ViewModels
         {
             if (string.IsNullOrEmpty(ProjPath))
                 return;
-            foreach (var proj in CMainVMs)
-            {
-                proj.ApplyChanges();
-            }
             SystemSettings.RecentProjs.Remove(ProjPath);
             SystemSettings.RecentProjs.Insert(0, ProjPath);
             ConfigAPI.Save(CMainMModel, ProjPath);
@@ -368,5 +507,117 @@ namespace WH.DetectSystem.ViewModels
             }
         }
         #endregion
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 移除制程
+        /// </summary>
+        [RelayCommand]
+        public void RemoveProcess()
+        {
+            if (SelectedProcess != null)
+            {
+                Growl.AskGlobal(
+                    Properties.Resources.DelecteAsk,
+                    b =>
+                    {
+                        if (b)
+                        {
+                            SelectedProcess.ProcessGroup?.RemoveProcess(SelectedProcess);
+                            UpdateMainVMs();
+                            OperateLog.Info(Properties.Resources.删除制程);
+                        }
+                        return true;
+                    }
+                );
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 复位报警
+        /// </summary>
+        [RelayCommand]
+        public void ResetAlarm()
+        {
+            foreach (var item in CMainVMs)
+            {
+                item.FocusCtrlVM.Reset();
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 更新多制程视图模型
+        /// </summary>
+        public void UpdateMainVMs()
+        {
+            ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
+            foreach (var group in CMainMModel.CProcessGroups)
+            {
+                foreach (var item in group.CMainModels)
+                {
+                    mainVMs.Add(item);
+                }
+            }
+            foreach (var mainVM in CMainVMs)
+            {
+                if (mainVMs.FirstOrDefault(o => o == mainVM) == null)
+                {
+                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlgorParamConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociFilterConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlarmSetConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.MarkConfig);
+                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.FocusConfig);
+                    mainVM.StopTask();
+                }
+            }
+            SelectedProcess = mainVMs.FirstOrDefault();
+            CMainVMs = mainVMs;
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 增加制程组，VM已存在
+        /// </summary>
+        /// <param name="groupVM">制程组视图模型</param>
+        public void AddProcessGroup(List<CProcessGroupModel> groupVMs)
+        {
+            for (int i = CMainMModel.CProcessGroups.Count - 1; i >= 0; i--)
+            {
+                if (!groupVMs.Contains(CMainMModel.CProcessGroups[i]))
+                {
+                    WeakReferenceMessenger.Default.UnregisterAll(
+                        CMainMModel.CProcessGroups[i].MaociQualityConfig
+                    );
+                    CMainMModel.CProcessGroups.RemoveAt(i);
+                }
+            }
+            foreach (var groupVM in groupVMs)
+            {
+                if (CMainMModel.CProcessGroups.FirstOrDefault(o => o == groupVM) == null)
+                {
+                    CMainMModel.CProcessGroups.Add(groupVM);
+                    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                        groupVM.MaociQualityConfig,
+                        groupVM.MaociQualityConfig.token
+                    );
+                }
+            }
+            UpdateMainVMs();
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 移除所有制程组
+        /// </summary>
+        public void RemoveAllProcessGroup()
+        {
+            foreach (var item in CMainMModel.CProcessGroups)
+            {
+                WeakReferenceMessenger.Default.UnregisterAll(item.MaociQualityConfig);
+            }
+            CMainMModel.CProcessGroups.Clear();
+            UpdateMainVMs();
+        }
     }
 }

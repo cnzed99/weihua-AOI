@@ -3,6 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctrl="clr-namespace:WH.Controls.Controls"
     xmlns:local="clr-namespace:WH.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/HandyControl;component/Themes/Theme.xaml" />
+    </ResourceDictionary.MergedDictionaries>
     <Style BasedOn="{StaticResource PropertyGridBaseStyle}" TargetType="{x:Type local:CPropertyGridLang}" />
     <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type local:EnumComboBox}" />
     <Style BasedOn="{StaticResource ButtonDefault}" TargetType="{x:Type local:CCollectionButton}" />

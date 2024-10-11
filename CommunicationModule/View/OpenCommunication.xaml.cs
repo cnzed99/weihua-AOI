@@ -25,8 +25,6 @@ namespace CommunicationModule
             InitializeComponent();
             communicationVM = new COpenCommunicationVM(settingBase);
             this.DataContext = communicationVM;
-            testControl = CCommunicationManagement.CommDic[settingBase.Guid].GetTestControl();
-            this.testGrid.Children.Add(testControl);
         }
 
         /// <summary>
@@ -37,19 +35,12 @@ namespace CommunicationModule
 
         /// <summary>
         /// 2024.7.22 李焕彬
-        /// 测试控件
-        /// </summary>
-        private UserControl testControl;
-
-        /// <summary>
-        /// 2024.7.22 李焕彬
         /// 关闭事件
         /// </summary>
         /// <param name="e"></param>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            ((IDisposable)testControl).Dispose();
         }
     }
 }

@@ -16,6 +16,13 @@ namespace MySqlOperatesApi
     public partial class CMySqlVM : ObservableObject
     {
         private CMysqlBLL mysqlBLL;
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 数据库参数更新事件
+        /// </summary>
+        public Action ActionUpdateParam { get; set; }
+
         public CMysqlBLL MysqlExecute
         {
             get => mysqlBLL;
@@ -68,6 +75,7 @@ namespace MySqlOperatesApi
                 MysqlExecute.UserID,
                 MysqlExecute.PassWord
             );
+            ActionUpdateParam?.Invoke();
         }
     }
 }

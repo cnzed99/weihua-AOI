@@ -20,9 +20,9 @@ namespace WH.DetectSystem
             if (cell.Detection != null)
             {
                 produce.Ng += 1;
-                //var currentDefect = this[cell.Detection.Name];
-                //currentDefect.Number += 1;
-                cell.Detection.DefectFilter.Number += 1;
+                var currentDefect = produce[cell.Detection.DefectFilter.Name];
+                currentDefect.Number += 1;
+                //cell.Detection.DefectFilter.Number += 1;
                 foreach (var defect in produce.DefectNumbersList)
                 {
                     defect.Percent = (double)defect.Number / produce.Ng;
@@ -32,7 +32,8 @@ namespace WH.DetectSystem
             {
                 produce.OK += 1;
             }
-            cell.Quality.Number += 1;
+            produce.QualityNumbersList.First(o => o.Name == cell.Quality.Name).Number += 1;
+            //cell.Quality.Number += 1;
             produce.Total += 1;
             foreach (var defect in produce.DefectNumbersList)
             {

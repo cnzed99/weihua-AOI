@@ -156,4 +156,7 @@
   <data name="DataQuery" xml:space="preserve">
     <value>Data Query</value>
   </data>
+  <data name="制程组" xml:space="preserve">
+    <value>Group</value>
+  </data>
 </root>

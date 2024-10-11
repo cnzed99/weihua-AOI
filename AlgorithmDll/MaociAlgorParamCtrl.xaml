@@ -35,10 +35,10 @@
                         Name="cmb_pcParam"
                         Width="150"
                         Margin="5,3"
-                        DataContext="{Binding Config}"
+                       
                         DockPanel.Dock="Left"
-                        ItemsSource="{Binding PcParams}"
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}">
+                        ItemsSource="{Binding Config.PcParams}"
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -49,8 +49,8 @@
                                 <MultiBinding.Converter>
                                     <local:string2ComboxSelectItemPc />
                                 </MultiBinding.Converter>
-                                <Binding Path="PcSelect" />
-                                <Binding Path="PcParams" />
+                                <Binding Path="Config.PcSelect" />
+                                <Binding Path="Config.PcParams" />
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
@@ -61,7 +61,7 @@
                         Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
                         Style="{DynamicResource ButtonPrimary}" 
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
                     <Button
                         Width="70"
                         Command="{Binding RemovePcParamCommand}"
@@ -69,11 +69,11 @@
                         Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
                         Style="{DynamicResource ButtonDanger}" 
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
                 </StackPanel>
             </GroupBox.Header>
             <wh:CPropertyGridLang SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}" lang="{x:Static local:CLang.s_Instance}" 
-                                  IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                                  IsEditable="{Binding LoginPerson.IsTechnologist}"/>
         </GroupBox>
         <GroupBox Grid.Row="2" Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
@@ -83,10 +83,10 @@
                         Name="cmb_fpgaParam"
                         Width="150"
                         Margin="5,3"
-                        DataContext="{Binding Config}"
+                       
                         DockPanel.Dock="Left"
-                        ItemsSource="{Binding FpgaParams}"
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}">
+                        ItemsSource="{Binding Config.FpgaParams}"
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -97,8 +97,8 @@
                                 <MultiBinding.Converter>
                                     <local:string2ComboxSelectItemFpga />
                                 </MultiBinding.Converter>
-                                <Binding Path="FpgaSelect" />
-                                <Binding Path="FpgaParams" />
+                                <Binding Path="Config.FpgaSelect" />
+                                <Binding Path="Config.FpgaParams" />
                             </MultiBinding>
                         </ComboBox.SelectedItem>
                     </ComboBox>
@@ -109,7 +109,7 @@
                         Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
                         Style="{DynamicResource ButtonPrimary}" 
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
                     <Button
                         Width="70"
                         Command="{Binding RemoveFpgaParamCommand}"
@@ -117,7 +117,7 @@
                         Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
                         Style="{DynamicResource ButtonDanger}" 
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
                     <Button
                         Width="100"
                         Margin="10,0"
@@ -126,11 +126,11 @@
                         Content="{Binding [WriteFpga], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
                         Style="{DynamicResource ButtonWarning}" 
-                        IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
                 </StackPanel>
             </GroupBox.Header>
             <wh:CPropertyGridLang SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}" lang="{x:Static local:CLang.s_Instance}" 
-                                  IsEditable="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsTechnologist}"/>
+                                  IsEditable="{Binding LoginPerson.IsTechnologist}"/>
         </GroupBox>
     </Grid>
 </UserControl>

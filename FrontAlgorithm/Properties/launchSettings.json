@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FrontAlgorithm": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

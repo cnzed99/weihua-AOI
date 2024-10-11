@@ -457,4 +457,13 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>确认是否删除？</value>
   </data>
+  <data name="AxisAndMotionAlarm" xml:space="preserve">
+    <value>轴和驱动器报警！</value>
+  </data>
+  <data name="AxisAlarm" xml:space="preserve">
+    <value>轴报警！</value>
+  </data>
+  <data name="MotionAlarm" xml:space="preserve">
+    <value>驱动器报警！</value>
+  </data>
 </root>

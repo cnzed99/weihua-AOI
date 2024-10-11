@@ -79,6 +79,7 @@ namespace CommunicationModule
         [RelayCommand]
         private void Close()
         {
+            ((IDisposable)Com.TestControl)?.Dispose();
             CCommunicationManagement.ComLogger.Info(Properties.Resources.CloseInfo);
         }
 

@@ -14,12 +14,20 @@ using CommunityToolkit.Mvvm.Input;
 using HistoryPlayback.Model;
 using QualityGrade;
 using SDFilter;
+using WH.Controls;
 
 namespace HistoryPlayback
 {
     public partial class CHistoryVM : ObservableObject
     {
         public CHistoryModel HistoryModel { get; set; }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 权限信息，启动暂停、账户登录时切换
+        /// </summary>
+        [ObservableProperty]
+        CLoginPerson loginPerson;
 
         /// <summary>
         /// 2024.7.6鲍赞宝

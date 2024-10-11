@@ -61,6 +61,15 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 确认是否删除？ 的本地化字符串。
+        /// </summary>
+        internal static string DelecteAsk {
+            get {
+                return ResourceManager.GetString("DelecteAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 工程未配置完整,请重新配置 的本地化字符串。
         /// </summary>
         internal static string UnfinishedError {
@@ -79,7 +88,43 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
-        ///   查找类似 打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist 的本地化字符串。
+        ///   查找类似 删除制程！ 的本地化字符串。
+        /// </summary>
+        internal static string 删除制程 {
+            get {
+                return ResourceManager.GetString("删除制程", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 制程名称不能相同！ 的本地化字符串。
+        /// </summary>
+        internal static string 制程名称不能相同 {
+            get {
+                return ResourceManager.GetString("制程名称不能相同", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 制程组名称不能相同！ 的本地化字符串。
+        /// </summary>
+        internal static string 制程组名称不能相同 {
+            get {
+                return ResourceManager.GetString("制程组名称不能相同", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 对焦插件读取失败！ 的本地化字符串。
+        /// </summary>
+        internal static string 对焦插件读取失败 {
+            get {
+                return ResourceManager.GetString("对焦插件读取失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 打开失败,请确认已开启IIS托管服务或使用管理员模式运行软件。或检查帮助文档是否存在 D:\HelpFile\毛刺检测软件\dist. 的本地化字符串。
         /// </summary>
         internal static string 帮助文档打开失败 {
             get {
@@ -129,6 +174,15 @@ namespace WH.DetectSystem.Properties {
         internal static string 相机连接失败 {
             get {
                 return ResourceManager.GetString("相机连接失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 算法读取失败！ 的本地化字符串。
+        /// </summary>
+        internal static string 算法读取失败 {
+            get {
+                return ResourceManager.GetString("算法读取失败", resourceCulture);
             }
         }
         

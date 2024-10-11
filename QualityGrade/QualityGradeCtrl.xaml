@@ -90,21 +90,21 @@
                 Margin="10,2"
                 Command="{Binding AddCommand}"
                 Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
-                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                IsEnabled="{Binding LoginPerson.IsTechnologist}"
                 Style="{StaticResource ButtonPrimary}" />
             <Button
                 Width="80"
                 Margin="10,2"
                 Command="{Binding RemoveCommand}"
                 Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
-                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                IsEnabled="{Binding LoginPerson.IsTechnologist}"
                 Style="{StaticResource ButtonDanger}" />
             <Button
                 Width="80"
                 Margin="10,2"
                 Command="{Binding EditCommand}"
                 Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
-                IsEnabled="{Binding IsTechnologist, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                IsEnabled="{Binding LoginPerson.IsTechnologist}"
                 Style="{StaticResource ButtonPrimary}" />
         </UniformGrid>
 

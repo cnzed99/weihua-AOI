@@ -201,12 +201,11 @@ namespace WH.DetectSystem._5_存图操作
                 cell.Image.ToBitmapSource(),
                 new Rect(0, 0, cell.Image.ImageWidth, cell.Image.ImageHeight)
             );
-            Pen penB = new Pen(Brushes.Blue, 1);
-            DrawPoints(cell.MaociTestOut.DarkTopRegion, penB);
-            DrawPoints(cell.MaociTestOut.DarkBotRegion, penB);
-            Pen penG = new Pen(Brushes.Green, 1);
-            DrawPoints(cell.MaociTestOut.LightBotRegion, penG);
-            DrawPoints(cell.MaociTestOut.LightTopRegion, penG);
+            foreach (var edge in cell.DrawEdges)
+            {
+                Pen pen = new Pen(edge.BrushDraw, 1);
+                DrawPoints(edge.Points, pen);
+            }
             if (!cell.IsOK)
             {
                 DefectFilter dstFilter = cell.Detection.DefectFilter;

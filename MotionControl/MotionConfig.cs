@@ -4,10 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FocusControl;
 using Newtonsoft.Json;
 using WH.Controls;
 using WH.Entity.Attribute;
@@ -20,17 +22,8 @@ namespace MotionControl
     /// 2024.7.8 李焕彬
     /// 运动配置
     /// </summary>
-    public partial class CMotionConfig : ConfigModifyObservableBase, IRecipient<OperateMessage>
+    public partial class CMotionConfig : CFocusConfigBase
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 操作日志
-        /// </summary>
-        [property: Browsable(false)]
-        [property: JsonIgnore]
-        [property: IgnoreModifyLog]
-        public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
-
         [Browsable(false)]
         [JsonIgnore]
         [IgnoreModifyLog]
@@ -66,8 +59,10 @@ namespace MotionControl
         };
 
         public CMotionConfig()
+            : base()
         {
-            this.token = new Token("", this.GetType().Namespace);
+            FocusType = "MotionControl";
+            this.token = new Token("", "FocusControl");
             var signalIn = new ObservableCollection<CSignalIn>();
             for (int i = 0; i < 10; i++)
             {
@@ -88,11 +83,12 @@ namespace MotionControl
         /// 日志消息处理
         /// </summary>
         /// <param name="message">消息</param>
-        public void Receive(OperateMessage message)
+        public override void Receive(OperateMessage message)
         {
+            base.Receive(message);
             if (message.obj.GetType() == typeof(CMotionConfig))
             {
-                OperateLog.Info($"运动控制-{message.message}");
+                OperateLog.Info($"{PrcessName}-运动控制-{message.message}");
                 return;
             }
             foreach (var signal in SignalIns)
@@ -101,7 +97,7 @@ namespace MotionControl
                 {
                     if (signal == message.obj)
                     {
-                        OperateLog.Info($"运动控制-{signal.Name}:{message.message}");
+                        OperateLog.Info($"{PrcessName}-运动控制-{signal.Name}:{message.message}");
                         return;
                     }
                     continue;
@@ -113,7 +109,7 @@ namespace MotionControl
                 {
                     if (signal == message.obj)
                     {
-                        OperateLog.Info($"运动控制-{signal.Name}:{message.message}");
+                        OperateLog.Info($"{PrcessName}-运动控制-{signal.Name}:{message.message}");
                         return;
                     }
                     continue;
@@ -125,12 +121,25 @@ namespace MotionControl
                 {
                     if (reg == message.obj)
                     {
-                        OperateLog.Info($"运动控制-{reg.Name}:{message.message}");
+                        OperateLog.Info($"{PrcessName}-运动控制-{reg.Name}:{message.message}");
                         return;
                     }
                     continue;
                 }
             }
+        }
+
+        /// <summary>
+        /// 2024.9.29 李焕彬
+        /// 创建VM
+        /// </summary>
+        /// <returns>VM</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public override CFocusCtrlVMBase CreateCtrlVM()
+        {
+            var vm = new CMotionCtrlVM();
+            vm.MotionConfig = this;
+            return vm;
         }
 
         /// <summary>
@@ -365,7 +374,7 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.9 李焕彬
-        /// 对焦基准位
+        /// 纠偏期望位
         /// </summary>
         [ObservableProperty]
         [property: Category("4.地址信息D")]
@@ -521,7 +530,7 @@ namespace MotionControl
     {
         public CSignalIn()
         {
-            this.token = new Token("", this.GetType().Namespace);
+            this.token = new Token("", "FocusControl");
         }
 
         public CSignalIn(Token token, string name, int addr)
@@ -608,7 +617,7 @@ namespace MotionControl
         public CElement()
             : base()
         {
-            this.token = new Token("", this.GetType().Namespace);
+            this.token = new Token("", "FocusControl");
         }
 
         public CElement(Token token)

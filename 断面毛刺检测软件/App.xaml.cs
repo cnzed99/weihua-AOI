@@ -21,13 +21,15 @@ using MySqlOperatesApi;
 using Newtonsoft.Json;
 using SaveImageManage;
 using WH.Controls.SingleInstance;
+using WH.Controls.Themes.Core;
 using WH.DetectSystem;
+using WH.DetectSystem.DetectSystem.MainModel;
+using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.LogRecord;
+using WH.LightControl;
 using WH.Load;
 using 断面毛刺检测软件.Views;
-using WH.LightControl;
-
 #if !NET40
 using System.Runtime;
 #endif
@@ -39,12 +41,15 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class App : Application
     {
+        private ThemesManager themesManager = new();
 #pragma warning disable IDE0052
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
         private static Mutex AppMutex;
 #pragma warning restore IDE0052
         public App()
         {
+            themesManager.AddTheme("Dark", "WH.Controls", "Themes/SkinDark.xaml");
+            themesManager.AddTheme("Default", "WH.Controls", "Themes/SkinDefault.xaml");
 #if !NET40
             var cachePath = $"{AppDomain.CurrentDomain.BaseDirectory}Cache";
             if (!Directory.Exists(cachePath))
@@ -88,6 +93,7 @@ namespace 断面毛刺检测软件
                 {
                     UpdateSkin(GlobalData.Config.IsDark);
                 }
+
                 ConfigHelper.Instance.SetWindowDefaultStyle();
                 ConfigHelper.Instance.SetNavigationWindowDefaultStyle();
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -113,55 +119,52 @@ namespace 断面毛刺检测软件
         internal void UpdateSkin(bool isDark)
         {
             string skin = isDark ? "Dark" : "Default";
+            themesManager.ApplyTheme(skin);
+            //var skins0 = Resources.MergedDictionaries[0];
+            //skins0.Source = new Uri(
+            //    $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
+            //);
+            //skins0.MergedDictionaries.Clear();
+            //skins0.MergedDictionaries.Add(
+            //    new ResourceDictionary
+            //    {
+            //        Source = new Uri(
+            //            "pack://application:,,,/HandyControl;component/Themes/Theme.xaml"
+            //        )
+            //    }
+            //);
+            //skins0.MergedDictionaries.Add(
+            //    new ResourceDictionary
+            //    {
+            //        Source = new Uri(
+            //            $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
+            //        )
+            //    }
+            //);
+            //var skins1 = Resources.MergedDictionaries[1];
+            //skins1.Source = new Uri(
+            //    $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
+            //);
+            //skins1.MergedDictionaries.Clear();
+            //skins1.MergedDictionaries.Add(
+            //    new ResourceDictionary
+            //    {
+            //        Source = new Uri(
+            //            "pack://application:,,,/HandyControl;component/Themes/Theme.xaml"
+            //        )
+            //    }
+            //);
 
-            var skins0 = Resources.MergedDictionaries[0];
-            skins0.Source = new Uri(
-                $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
-            );
-            skins0.MergedDictionaries.Clear();
-            skins0.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(
-                        "pack://application:,,,/HandyControl;component/Themes/Theme.xaml"
-                    )
-                }
-            );
-            skins0.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(
-                        $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
-                    )
-                }
-            );
-            var skins1 = Resources.MergedDictionaries[1];
-            skins1.Source = new Uri(
-                $"pack://application:,,,/WH.Controls;component/Themes/Skin{skin}.xaml"
-            );
-            skins1.MergedDictionaries.Clear();
-            skins1.MergedDictionaries.Add(
-                new ResourceDictionary
-                {
-                    Source = new Uri(
-                        "pack://application:,,,/HandyControl;component/Themes/Theme.xaml"
-                    )
-                }
-            );
-
-            Current.MainWindow?.OnApplyTemplate();
+            //Current.MainWindow?.OnApplyTemplate();
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             ConfigureServices();
-
             var viewModel = Container.Resolve<CMainModelsModelVM>();
-            var cmodel = new WH.DetectSystem.Models.CMainModel();
-            viewModel.CMainMModel.CMainModels.Add(cmodel);
-            CMainVM mainVM = new CMainVM();
-            //mainVM.Model = cmodel;
-            viewModel.CMainVMs.Add(mainVM);
+            //CProcessGroupVM cProcessGroupVM = viewModel.NewProcessGroup(new CProcessGroupModel());
+            //cProcessGroupVM.NewProcess(new CMainModel());
+            //viewModel.UpdateMainVMs();
             var mainWindow = Container.Resolve<MainWindow>();
             mainWindow.DataContext = viewModel;
             mainWindow?.Show();
@@ -173,6 +176,8 @@ namespace 断面毛刺检测软件
         {
             var builder = CPublicServices.ConfigureServices();
             builder.Register(c => CSysSet.LoadParameter()).SingleInstance();
+            builder.RegisterType<CSaveImageVM>().SingleInstance();
+            builder.RegisterType<CMySqlVM>().SingleInstance();
             builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
 
@@ -189,6 +194,10 @@ namespace 断面毛刺检测软件
             //修改
             builder
                 .Register(c => SingleInstance.Create<Lazy<ModifyProjWindow>, ModifyProjWindow>())
+                .InstancePerDependency();
+            //增加制程
+            builder
+                .Register(c => SingleInstance.Create<Lazy<NewProcessWindow>, NewProcessWindow>())
                 .InstancePerDependency();
             //离线测试
             builder
@@ -224,12 +233,12 @@ namespace 断面毛刺检测软件
             //var lightProcess = Invoke("./WH.LightControl.exe");
             //builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
             builder
-             .Register(c => SingleInstance.Create<Lazy<LightSetWindow>, LightSetWindow>())
-             .InstancePerDependency();
+                .Register(c => SingleInstance.Create<Lazy<LightSetWindow>, LightSetWindow>())
+                .InstancePerDependency();
 
             builder
-           .Register(c => SingleInstance.Create<Lazy<AddLightWindow>, AddLightWindow>())
-           .InstancePerDependency();
+                .Register(c => SingleInstance.Create<Lazy<AddLightWindow>, AddLightWindow>())
+                .InstancePerDependency();
 
             //手动调试
             builder
@@ -303,7 +312,8 @@ namespace 断面毛刺检测软件
             get => isDark;
             set
             {
-                SetProperty(ref isDark, value);
+                if (!SetProperty(ref isDark, value))
+                    return;
                 ((App)Application.Current).UpdateSkin(isDark);
                 GlobalData.Save();
             }

@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using HandyControl.Controls;
+using Microsoft.Win32;
 
 namespace WH.Controls
 {
@@ -377,6 +379,64 @@ namespace WH.Controls
         {
             this.Image.InvalidateVisual();
             this.Canvas.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 2024.9.13 李焕彬
+        /// 保存图片
+        /// </summary>
+        /// <param name="path">路径</param>
+        public void SaveImage(string path)
+        {
+            if (Source == null)
+                return;
+            try
+            {
+                BitmapEncoder encoder;
+                switch (Path.GetExtension(path))
+                {
+                    case ".bmp":
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                    case ".jpg":
+                        encoder = new JpegBitmapEncoder();
+                        break;
+                    case ".png":
+                        encoder = new PngBitmapEncoder();
+                        break;
+                    case ".tiff":
+                        encoder = new TiffBitmapEncoder();
+                        break;
+                    default:
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                }
+                using (FileStream stream = new FileStream(path, FileMode.Create))
+                {
+                    encoder.Frames.Add(BitmapFrame.Create(Source));
+                    encoder.Save(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.13 李焕彬
+        /// 保存图片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = ".bmp|*.bmp|.jpg|*.jpg|.png|*.png|.tiff|*.tiff";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveImage(saveFileDialog.FileName);
+            }
         }
 
         ///// <summary>

@@ -37,6 +37,13 @@ namespace AlarmSetCtrl
         public CAlarmSetConfig cAlarmSet = new CAlarmSetConfig();
 
         /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 权限信息，启动暂停、账户登录时切换
+        /// </summary>
+        [ObservableProperty]
+        CLoginPerson loginPerson;
+
+        /// <summary>
         /// 20270719 TCG
         /// 在打开项目时 重置选中项
         /// </summary>
@@ -149,15 +156,17 @@ namespace AlarmSetCtrl
         {
             if (alarm != null)
             {
-                Growl.AskGlobal(Properties.Resources.DelecteAsk, b =>
-                {
-                    if (b)
+                Growl.AskGlobal(
+                    CAlarmSet.PrcessName + "-" + Properties.Resources.DelecteAsk,
+                    b =>
                     {
-                        CAlarmSet.AlarmList.Remove(alarm);
+                        if (b)
+                        {
+                            CAlarmSet.AlarmList.Remove(alarm);
+                        }
+                        return true;
                     }
-                    return true;
-                });
-               
+                );
             }
         }
 

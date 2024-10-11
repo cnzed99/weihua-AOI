@@ -2,26 +2,31 @@
 using System.Threading.Channels;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FocusControl;
 using HandyControl.Controls;
 using HandyControl.Data;
 using HistoryPlayback;
 using HistoryPlayback.Model;
 using Mapster;
 using MarkControl;
-using MotionControl;
 using MySqlOperatesApi;
+using Mysqlx.Crud;
+using Newtonsoft.Json;
 using ProjProduceData;
 using QualityGrade;
 using SaveImageManage;
 using SDFilter;
 using WH.Controls;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.Models;
+using WH.DetectSystem.ViewModels;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity.CommonLib;
@@ -29,13 +34,13 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 
-namespace WH.DetectSystem.ViewModels
+namespace WH.DetectSystem.Models
 {
     /// <summary>
     /// 20240704 TCG
     /// 主界面视图模型
     /// </summary>
-    public partial class CMainVM : CMainModel
+    public partial class CMainModel
     {
         /// <summary>
         /// 运行日志和报警日志
@@ -49,63 +54,108 @@ namespace WH.DetectSystem.ViewModels
         public CLogRec OperateLog { get; } =
             CPublicServices.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
 
+        /// <summary>
+        /// 系统设置
+        /// </summary>
         public CSystemSettingsVM SystemSettings =
             CPublicServices.Container.Resolve<CSystemSettingsVM>();
 
         /// <summary>
-        /// 当前工程
+        /// 2024.9.6 李焕彬
+        /// 存图设置
         /// </summary>
-        private CMainModel model;
+        public CSaveImageVM SaveImageVM { get; set; } =
+            CPublicServices.Container.Resolve<CSaveImageVM>();
 
         /// <summary>
-        /// 当前工程 禁止直接修改其属性
+        /// 2024.9.6 李焕彬
+        /// 数据库
         /// </summary>
+        public CMySqlVM MySqlVM { get; set; } = CPublicServices.Container.Resolve<CMySqlVM>();
 
-        public CMainModel Model
+        private CProcessGroupModel processGroup;
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 制程组
+        /// </summary>
+        public CProcessGroupModel ProcessGroup
         {
-            get => model;
+            get { return processGroup; }
             set
             {
-                SetProperty(ref model, value);
-                model.Adapt(this);
-                InitNewModel();
-
-                TokeVM.ProGuid = value.GUID;
+                if (SetProperty(ref processGroup, value))
+                {
+                    MaociQualityConfig = processGroup.MaociQualityConfig;
+                }
             }
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 质量等级
+        /// </summary>
+        public CQualityConfig MaociQualityConfig
+        {
+            set
+            {
+                this.SDFilterVM.QualityConfig = MaociQualityConfig;
+                this.QualityVM.QualityConfig = MaociQualityConfig;
+                MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
+                MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+                MaociDefectsProduce.SetQuality(MaociQualityConfig);
+                MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
+            }
+            get => ProcessGroup?.MaociQualityConfig;
         }
 
         /// <summary>
         /// 20240707 TCG
         /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息
         /// </summary>
-        public void InitNewModel()
+        public void Init(CProcessGroupModel processGroup)
         {
-            this.UpdateToken(); //先更新token 再同步引用
-            MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-            MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
-            MaociDefectsProduce.SetDefectsProduce(MaociFilterConfig, MaociQualityConfig);
+            this.SDFilterVM.FilterConfig = MaociFilterConfig;
+            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
+
+            this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
+            this.AlarmSetVM.CAlarmSet = MaociAlarmSetConfig;
+            this.MarkCtrlVM.MarkConfig = MarkConfig;
+            this.HistoryVM.HistoryModel = MaociHistoryModel;
             MaociHistoryModel.SetHistory(MaociFilterConfig);
-
-            MaociMysqlConfig.SetSQL(MaociFilterConfig);
-
-            MotionCtrlVM.SetMotion(CameraSerial);
-
+            //MaociMysqlConfig.SetSQL(MaociFilterConfig);
+            FocusCtrlVM = FocusConfig.CreateCtrlVM();
+            FocusCtrlVM.SetCameraSerial(CameraSerial);
+            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+            MarkCtrlVM.Connect();
+            FocusCtrlVM.InitControl();
             AlarmSetVM.Reset();
             HistoryVM.Reset();
             QualityVM.Reset();
-            #region 注册参数修改通道令牌
-            //WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
-            //WeakReferenceMessenger.Default.UnregisterAll(MaociQualityConfig);
-            //WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
-            //WeakReferenceMessenger.Default.UnregisterAll(MaociAlarmSetConfig);
-            //WeakReferenceMessenger.Default.UnregisterAll(MaociSaveImageConfig);
+            // 数据清零事件
+            SystemSettings.ClearProduceEvent += () =>
+            {
+                if (SystemSettings.AutoClearEnable)
+                {
+                    this.DefectsDataVM.DefectsProduce.Clear();
+                }
+            };
+
+            this.ProcessGroup = processGroup;
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.m_WaitImgChannel;
+                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+                    MaociAlgorParamConfig.GetDistinctFunc();
+            }
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociFilterConfig,
                 MaociFilterConfig.token
-            );
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MaociQualityConfig,
-                MaociQualityConfig.token
             );
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociAlgorParamConfig,
@@ -116,23 +166,15 @@ namespace WH.DetectSystem.ViewModels
                 MaociAlarmSetConfig.token
             );
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MaociSaveImageConfig,
-                MaociSaveImageConfig.token
+                MarkConfig,
+                MarkConfig.token
             );
-
-            #endregion
-            if (CameraSerial != null && CCameraManagement.CameraDict.ContainsKey(CameraSerial))
-            {
-                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = m_WaitImgChannel;
-            }
-            // 数据清零事件
-            SystemSettings.ClearProduceEvent += () =>
-            {
-                if (SystemSettings.AutoClearEnable)
-                {
-                    this.DefectsDataVM.DefectsProduce.Clear();
-                }
-            };
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                FocusConfig,
+                FocusConfig.token
+            );
+            InitTask();
+            UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
         }
 
         [ObservableProperty]
@@ -161,24 +203,35 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         Brush lastBrush = Brushes.White;
 
-        public CMainVM()
+        /// <summary>
+        /// 新建制程
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="algorithm"></param>
+        /// <param name="cameraSerial"></param>
+        /// <param name="processGroup"></param>
+        public CMainModel(
+            string name,
+            string algorithm,
+            string focus,
+            string cameraSerial,
+            CProcessGroupModel processGroup
+        )
         {
-            this.SDFilterVM.FilterConfig = MaociFilterConfig;
-            this.SDFilterVM.QualityConfig = MaociQualityConfig;
-
-            this.QualityVM.QualityConfig = MaociQualityConfig;
-            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
-            this.SaveImageVM.Param = MaociSaveImageConfig;
-
-            this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
-            this.AlarmSetVM.CAlarmSet = MaociAlarmSetConfig;
-
-            this.HistoryVM.HistoryModel = MaociHistoryModel;
-            var cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
-            MaociMysqlConfig = cMysql;
-            this.MySqlVM.MysqlExecute = cMysql;
-            InitTask();
-            TokeVM = new Token("", this.GetType().Namespace);
+            GUID = Guid.NewGuid().ToString();
+            this.token = new Token(GUID, this.GetType().Namespace);
+            this.Name = name;
+            this.Algorithm = algorithm;
+            this.Focus = focus;
+            this.CameraSerial = cameraSerial;
+            this.MaociAlgorParamConfig = CAlgorithmManagement
+                .AlgorithmHeper[Algorithm]
+                .CreateNewAlgorithm();
+            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
+            this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
+            this.UpdateToken(); //更新Token要在Init前
+            this.UpdateName();
+            Init(processGroup);
         }
 
         #region 时间相关
@@ -188,78 +241,6 @@ namespace WH.DetectSystem.ViewModels
 
         [ObservableProperty]
         double filterTime = 0;
-        #endregion
-
-        #region 启停 状态
-        bool isStart = false;
-
-        /// <summary>
-        /// 启动时用于保存当前账户信息 停止运行时用于恢复权限
-        /// </summary>
-        CLoginPerson loginPerson = new CLoginPerson();
-
-        /// <summary>
-        /// 是否启动 后台使用此变量判断用户是否启动软件
-        /// </summary>
-        public bool IsStart
-        {
-            get => isStart;
-            set
-            {
-                SetProperty(ref isStart, value);
-                if (value)
-                {
-                    CLoginViewModel.SloinPerson.Adapt(loginPerson);
-                    CLoginViewModel.SloinPerson.IsNoPermission = true;
-                }
-                else
-                {
-                    loginPerson.Adapt(CLoginViewModel.SloinPerson);
-                }
-                MotionCtrlVM.SetRunning(IsStart);
-                MarkCtrlVM.SetRunning(IsStart);
-            }
-        }
-
-        private bool isManualTest = false;
-
-        /// <summary>
-        /// 2024.8.1 李焕彬
-        /// 离线检测或手动调试
-        /// </summary>
-        public bool IsManualTest
-        {
-            get { return isManualTest; }
-            set
-            {
-                isManualTest = value;
-                MotionCtrlVM.SetRunning(isManualTest);
-                MarkCtrlVM.SetRunning(isManualTest);
-            }
-        }
-
-        /// <summary>
-        /// 界面绑定变量，勿用此变量判断用户是否启动软件
-        /// </summary>
-        [ObservableProperty]
-        bool startStop = false;
-
-        [ObservableProperty]
-        bool deviceSeting = false;
-
-        #endregion
-
-        #region 应用或丢弃当前工程变更
-
-        /// <summary>
-        /// 保存当前工程的修改
-        /// </summary>
-        public void ApplyChanges() => this.Adapt(this.model);
-
-        /// <summary>
-        /// 丢弃当前工程的修改
-        /// </summary>
-        public void DiscardChanges() => model.Adapt(this);
         #endregion
 
         /// <summary>
@@ -311,13 +292,6 @@ namespace WH.DetectSystem.ViewModels
         private CHistoryVM historyVM = new CHistoryVM(); //历史回看
 
         /// <summary>
-        /// 存图设置
-        /// </summary>
-        [AdaptIgnore]
-        [ObservableProperty]
-        CSaveImageVM saveImageVM = new CSaveImageVM(); //存图
-
-        /// <summary>
         /// 2024.7.15 李焕彬
         /// 打标控制VM,初始化需要放在运动控制前面
         /// </summary>
@@ -329,14 +303,76 @@ namespace WH.DetectSystem.ViewModels
         /// 运动控制VM
         /// </summary>
         [ObservableProperty]
-        CMotionCtrlVM motionCtrlVM = new CMotionCtrlVM();
+        CFocusCtrlVMBase focusCtrlVM;
+
+        #region 启停 状态
 
         /// <summary>
-        /// 数据库
+        /// 2024.9.6 李焕彬
+        /// 启动时用于保存当前账户信息 停止运行时用于恢复权限
         /// </summary>
-        [AdaptIgnore]
+        CLoginPerson loginPerson = new CLoginPerson() { IsNoPermission = true };
+
+        bool isStart = false;
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 是否启动
+        /// </summary>
+        public bool IsStart
+        {
+            get => isStart;
+            set
+            {
+                if (this.IsManualTest)
+                {
+                    Growl.Warning("请退出设置或离线手动模式！");
+                    return;
+                }
+                SetProperty(ref isStart, value);
+                if (value)
+                {
+                    UpdateVMLoginPerson(loginPerson);
+                }
+                else
+                {
+                    UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
+                }
+                FocusCtrlVM.SetRunning(IsStart);
+                MarkCtrlVM.SetRunning(IsStart);
+            }
+        }
+
+        private bool isManualTest = false;
+
+        /// <summary>
+        /// 2024.8.1 李焕彬
+        /// 离线检测或手动调试
+        /// </summary>
+        public bool IsManualTest
+        {
+            get { return isManualTest; }
+            set
+            {
+                isManualTest = value;
+                FocusCtrlVM.SetRunning(isManualTest);
+                MarkCtrlVM.SetRunning(isManualTest);
+            }
+        }
+
         [ObservableProperty]
-        CMySqlVM mySqlVM = new CMySqlVM(); //数据库
+        bool deviceSeting = false;
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 是否对焦中
+        /// </summary>
+        public bool IsFocusing
+        {
+            get { return FocusCtrlVM.IsFocusing; }
+        }
+        #endregion
+
         #region 线程管理
         CancellationTokenSource m_cts = new CancellationTokenSource();
 
@@ -358,7 +394,7 @@ namespace WH.DetectSystem.ViewModels
         /// 取图队列
         /// </summary>
         public readonly Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
-            CMainVM.s_SaveImgchannelOptions
+            s_SaveImgchannelOptions
         );
 
         /// <summary>
@@ -413,25 +449,27 @@ namespace WH.DetectSystem.ViewModels
                 Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
                 while (true)
                 {
-                    try
+                    await foreach (PrintMsg msg in m_InfoChannel.Reader.ReadAllAsync())
                     {
-                        PrintMsg msg = await m_InfoChannel.Reader.ReadAsync();
-                        await Task.Delay(10);
-                        Action<string> act = msg.logType switch
+                        try
                         {
-                            LOG.LOG_INFO => SysLog.Info,
-                            LOG.LOG_ERROR => SysLog.Error,
-                            LOG.LOG_OK => SysLog.OK,
-                            LOG.LOG_NG => SysLog.NG,
-                            LOG.LOG_TIP => SysLog.Tip,
-                            LOG.LOG_WARN => SysLog.Warn,
-                            _ => SysLog.Info
-                        };
-                        act(msg.message);
-                    }
-                    catch (Exception e)
-                    {
-                        SysLog.Error("信息记录线程出错:" + e.Message + e.StackTrace);
+                            await Task.Delay(10);
+                            Action<string> act = msg.logType switch
+                            {
+                                LOG.LOG_INFO => SysLog.Info,
+                                LOG.LOG_ERROR => SysLog.Error,
+                                LOG.LOG_OK => SysLog.OK,
+                                LOG.LOG_NG => SysLog.NG,
+                                LOG.LOG_TIP => SysLog.Tip,
+                                LOG.LOG_WARN => SysLog.Warn,
+                                _ => SysLog.Info
+                            };
+                            act(Name + "-" + msg.message);
+                        }
+                        catch (Exception e)
+                        {
+                            SysLog.Error("信息记录线程出错:" + e.Message + e.StackTrace);
+                        }
                     }
                 }
             });
@@ -447,33 +485,25 @@ namespace WH.DetectSystem.ViewModels
                     try
                     {
                         cell.ProjName = Name;
+                        cell.ProjGuid = GUID;
                         cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
-                        //从本地读图 没有相机时无需赋值
-                        if (
-                            !string.IsNullOrEmpty(CameraSerial)
-                            && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-                        )
+                        cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                        BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+                        _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
+                            new Action(() =>
+                            {
+                                ModelImage = bitmapSource;
+                            })
+                        );
+                        if (FocusCtrlVM.IsFocusing)
                         {
-                            cell.CamName = CCameraManagement.CamParamDict[CameraSerial].Name;
-                        }
-                        WeakReferenceMessenger.Default.Send(cell.Image.ToBitmapSource(), TokeVM);
-                        if (MotionCtrlVM.IsFocusing)
-                        {
-                            if (!MotionCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
+                            if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
                                 cell.Dispose();
                         }
                         else if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
-                                //StringBuilder strbuilder = new StringBuilder("[");
-                                //strbuilder.Append("取图线程");
-                                //strbuilder.Append("]     ");
-                                //strbuilder.Append(cell.ID);
-                                //strbuilder.Append("   cell入算法队列失败。");
-                                //await m_InfoChannel.Writer.WriteAsync(
-                                //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                                //);
                                 cell.Dispose();
                             }
                         }
@@ -505,7 +535,10 @@ namespace WH.DetectSystem.ViewModels
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
-                        MaociAlgorParamConfig.MaociExcute(cell);
+                        if (SystemSettings.TestFpgaAlgrithm)
+                            MaociAlgorParamConfig.MaociFPGAExcute(cell);
+                        else
+                            MaociAlgorParamConfig.MaociExcute(cell);
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
                         //strbuilder = new StringBuilder("[");
@@ -519,17 +552,79 @@ namespace WH.DetectSystem.ViewModels
                         //    new PrintMsg(strbuilder.ToString(), LOG.LOG_INFO)
                         //);
 
-                        if (!m_FilterChannel.Writer.TryWrite(cell))
+                        //if (!m_FilterChannel.Writer.TryWrite(cell))
+                        //{
+                        //    cell.Dispose();
+
+                        //}
+                        try
                         {
-                            cell.Dispose();
-                            //StringBuilder strbuilder = new StringBuilder("[");
-                            //strbuilder.Append("算法线程");
-                            //strbuilder.Append("]     ");
-                            //strbuilder.Append(cell.ID);
-                            //strbuilder.Append("   cell入筛选队列失败。");
-                            //await m_InfoChannel.Writer.WriteAsync(
-                            //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                            //);
+                            cell.Quality = MaociQualityConfig.GetBest();
+                            if (!cell.Skipthis)
+                                MaociFilterConfig.FilterExute(cell);
+                            else
+                            {
+                                SetBadCell(cell);
+                            }
+                            cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
+                            cell.Stopwatch.Stop();
+                            cell.ProcessTime = DateTime.Now - cell.CreateTime;
+                            StringBuilder strbuilder = new StringBuilder("[结束]     ");
+                            strbuilder.Append(cell.ID);
+                            strbuilder.Append("   检测结束,耗时:");
+                            strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
+                            if (cell.IsOK)
+                            {
+                                await m_InfoChannel.Writer.WriteAsync(
+                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
+                                );
+                            }
+                            else
+                            {
+                                int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
+                                strbuilder.Append($",检测NG,增加打标位置{markPos}！");
+                                await m_InfoChannel.Writer.WriteAsync(
+                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                                );
+                            }
+                            FilterTime = cell.FilterTime.TotalMilliseconds;
+                            if (!m_ShowImageChannel.Writer.TryWrite(cell))
+                            {
+                                cell.Dispose();
+                                //strbuilder = new StringBuilder("[");
+                                //strbuilder.Append("筛选线程");
+                                //strbuilder.Append("]     ");
+                                //strbuilder.Append(cell.ID);
+                                //strbuilder.Append("   cell入显示队列失败。");
+                                //await m_InfoChannel.Writer.WriteAsync(
+                                //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                //);
+                            }
+                            ModelBrush = cell.Quality.ShowColor.Brush;
+                            if (!cell.IsOK)
+                            {
+                                LastBrush = ModelBrush;
+                                LastImage = ModelImage;
+                            }
+                            MaociDefectsProduce.Excute(cell);
+                            if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
+                            {
+                                ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
+                                if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
+                                {
+                                    //cell.Dispose();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await m_InfoChannel.Writer.WriteAsync(
+                                new PrintMsg(
+                                    "筛选线程执行出错:" + ex.Message + ex.StackTrace,
+                                    LOG.LOG_ERROR
+                                )
+                            );
+                            GC.Collect();
                         }
                     }
                     catch (Exception ex)
@@ -537,80 +632,84 @@ namespace WH.DetectSystem.ViewModels
                         await m_InfoChannel.Writer.WriteAsync(
                             new PrintMsg("配方执行线程出错：" + ex.Message, LOG.LOG_ERROR)
                         );
-                        //SysLog.Error("配方执行线程出错：" + ex.Message);
                         GC.Collect();
                     }
                 }
             });
             #endregion
 
-            #region 筛选线程
-            Task waitFilterTask = Task.Run(async () =>
-            {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                await foreach (Cell cell in m_FilterChannel.Reader.ReadAllAsync())
-                {
-                    try
-                    {
-                        cell.Quality = MaociQualityConfig.GetBest();
-                        if (!cell.Skipthis)
-                            MaociFilterConfig.FilterExute(cell);
-                        else
-                        {
-                            SetBadCell(cell);
-                        }
-                        cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
-                        cell.Stopwatch.Stop();
-                        cell.ProcessTime = DateTime.Now - cell.CreateTime;
-                        StringBuilder strbuilder = new StringBuilder("[结束]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   检测结束,耗时:");
-                        strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
-                        if (cell.IsOK)
-                        {
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
-                            );
-                        }
-                        else
-                        {
-                            int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
-                            strbuilder.Append($",检测NG,增加打标位置{markPos}！");
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
-                            );
-                        }
-                        FilterTime = cell.FilterTime.TotalMilliseconds;
-                        if (!m_ShowImageChannel.Writer.TryWrite(cell))
-                        {
-                            cell.Dispose();
-                            //strbuilder = new StringBuilder("[");
-                            //strbuilder.Append("筛选线程");
-                            //strbuilder.Append("]     ");
-                            //strbuilder.Append(cell.ID);
-                            //strbuilder.Append("   cell入显示队列失败。");
-                            //await m_InfoChannel.Writer.WriteAsync(
-                            //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                            //);
-                        }
-                        ModelBrush = cell.Quality.ShowColor.Brush;
-                        if (!cell.IsOK)
-                        {
-                            LastBrush = ModelBrush;
-                            LastImage = ModelImage;
-                        }
-                        MaociDefectsProduce.Excute(cell);
-                    }
-                    catch (Exception ex)
-                    {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("筛选线程执行出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                        //SysLog.Error("筛选线程执行出错:" + ex.Message + ex.StackTrace);
-                        GC.Collect();
-                    }
-                }
-            });
+            #region 筛选线程 放置在算法线程
+            //Task waitFilterTask = Task.Run(async () =>
+            //{
+            //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            //    await foreach (Cell cell in m_FilterChannel.Reader.ReadAllAsync())
+            //    {
+            //        try
+            //        {
+            //            cell.Quality = MaociQualityConfig.GetBest();
+            //            if (!cell.Skipthis)
+            //                MaociFilterConfig.FilterExute(cell);
+            //            else
+            //            {
+            //                SetBadCell(cell);
+            //            }
+            //            cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
+            //            cell.Stopwatch.Stop();
+            //            cell.ProcessTime = DateTime.Now - cell.CreateTime;
+            //            StringBuilder strbuilder = new StringBuilder("[结束]     ");
+            //            strbuilder.Append(cell.ID);
+            //            strbuilder.Append("   检测结束,耗时:");
+            //            strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
+            //            if (cell.IsOK)
+            //            {
+            //                await m_InfoChannel.Writer.WriteAsync(
+            //                    new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
+            //                );
+            //            }
+            //            else
+            //            {
+            //                int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
+            //                strbuilder.Append($",检测NG,增加打标位置{markPos}！");
+            //                await m_InfoChannel.Writer.WriteAsync(
+            //                    new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+            //                );
+            //            }
+            //            FilterTime = cell.FilterTime.TotalMilliseconds;
+            //            if (!m_ShowImageChannel.Writer.TryWrite(cell))
+            //            {
+            //                cell.Dispose();
+            //                //strbuilder = new StringBuilder("[");
+            //                //strbuilder.Append("筛选线程");
+            //                //strbuilder.Append("]     ");
+            //                //strbuilder.Append(cell.ID);
+            //                //strbuilder.Append("   cell入显示队列失败。");
+            //                //await m_InfoChannel.Writer.WriteAsync(
+            //                //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+            //                //);
+            //            }
+            //            ModelBrush = cell.Quality.ShowColor.Brush;
+            //            if (!cell.IsOK)
+            //            {
+            //                LastBrush = ModelBrush;
+            //                LastImage = ModelImage;
+            //            }
+            //            MaociDefectsProduce.Excute(cell);
+            //            if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
+            //            {
+            //                ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
+            //                if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
+            //                    cell.Dispose();
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            await m_InfoChannel.Writer.WriteAsync(
+            //                new PrintMsg("筛选线程执行出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+            //            );
+            //            GC.Collect();
+            //        }
+            //    }
+            //});
             #endregion
 
             #region 显示线程
@@ -626,7 +725,7 @@ namespace WH.DetectSystem.ViewModels
                         #region 窗口显示
                         try
                         {
-                            for (int i = 0; i < 2; i++)
+                            for (int i = 0; i < 1; i++)
                             {
                                 ImageView drawView;
                                 if (i == 0)
@@ -639,15 +738,14 @@ namespace WH.DetectSystem.ViewModels
                                         break;
                                     drawView = LastView;
                                 }
-                                await drawView.Dispatcher.BeginInvoke(() =>
+                                await drawView.Dispatcher?.BeginInvoke(() =>
                                 {
                                     drawView.Clear(false);
-                                    drawView.SetPen(Brushes.Blue);
-                                    drawView.ImgDrawPoints(cell.MaociTestOut.DarkTopRegion, false);
-                                    drawView.ImgDrawPoints(cell.MaociTestOut.DarkBotRegion, false);
-                                    drawView.SetPen(Brushes.Green);
-                                    drawView.ImgDrawPoints(cell.MaociTestOut.LightBotRegion, false);
-                                    drawView.ImgDrawPoints(cell.MaociTestOut.LightTopRegion, false);
+                                    foreach (var edge in cell.DrawEdges)
+                                    {
+                                        drawView.SetPen(edge.BrushDraw);
+                                        drawView.ImgDrawPoints(edge.Points, false);
+                                    }
                                     if (!cell.IsOK)
                                     {
                                         DefectFilter dstFilter = cell.Detection.DefectFilter;
@@ -746,14 +844,14 @@ namespace WH.DetectSystem.ViewModels
                             await m_InfoChannel.Writer.WriteAsync(
                                 new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
                             );
-                            Growl.Error("显示线程出错: " + ex.Message + ex.StackTrace);
+                            Growl.Error(Name + "-" + "显示线程出错: " + ex.Message + ex.StackTrace);
                         }
                         #endregion
                         if (
                             (SystemSettings.OfflineSave || isStart)
                             && (
-                                MaociSaveImageConfig.SaveImageEnable
-                                || MaociSaveImageConfig.PiantScreenEnable
+                                SaveImageVM.Param.SaveImageEnable
+                                || SaveImageVM.Param.PiantScreenEnable
                             )
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
@@ -764,18 +862,18 @@ namespace WH.DetectSystem.ViewModels
                             }
                         }
 
-                        if (!m_AlarmChannel.Writer.TryWrite(cell))
-                        {
-                            cell.Dispose();
-                            StringBuilder strbuilder = new StringBuilder("[");
-                            strbuilder.Append("显示线程");
-                            strbuilder.Append("]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   cell入报警队列失败。");
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                            );
-                        }
+                        //if (!m_AlarmChannel.Writer.TryWrite(cell))
+                        //{
+                        //    cell.Dispose();
+                        //    StringBuilder strbuilder = new StringBuilder("[");
+                        //    strbuilder.Append("显示线程");
+                        //    strbuilder.Append("]     ");
+                        //    strbuilder.Append(cell.ID);
+                        //    strbuilder.Append("   cell入报警队列失败。");
+                        //    await m_InfoChannel.Writer.WriteAsync(
+                        //        new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                        //    );
+                        //}
 
                         if (cell.isOnce) { }
                     }
@@ -787,39 +885,41 @@ namespace WH.DetectSystem.ViewModels
                     }
                     finally
                     {
+                        cell.Dispose(); //cell释放后对数据汇总、数据库不影响，故放在显示线程里释放，防止未显示先释放
                         WaitSignal.Set();
                     }
                 }
             });
             #endregion
 
-            #region 报警线程
-            Task alarmTask = Task.Run(async () =>
-            {
-                object objAlarmLock = new object(); //报警监控用
-                Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                await foreach (Cell cell in m_AlarmChannel.Reader.ReadAllAsync())
-                {
-                    try
-                    {
-                        lock (objAlarmLock)
-                        {
-                            MaociAlarmSetConfig.Excute(cell);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                    }
-                    finally
-                    {
-                        if (!m_dataBaseChannel.Writer.TryWrite(cell))
-                            cell.Dispose();
-                    }
-                }
-            });
+            #region 报警线程 放置于数据库线程
+            //Task alarmTask = Task.Run(async () =>
+            //{
+            //    object objAlarmLock = new object(); //报警监控用
+            //    Thread.CurrentThread.Priority = ThreadPriority.Normal;
+            //    await foreach (Cell cell in m_AlarmChannel.Reader.ReadAllAsync())
+            //    {
+            //        try
+            //        {
+            //            lock (objAlarmLock)
+            //            {
+            //                MaociAlarmSetConfig.Excute(cell);
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            await m_InfoChannel.Writer.WriteAsync(
+            //                new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+            //            );
+            //        }
+            //        finally
+            //        {
+            //            //取消单个制程数据库存储
+            //            //if (!m_dataBaseChannel.Writer.TryWrite(cell))
+            //            //    cell.Dispose();
+            //        }
+            //    }
+            //});
             #endregion
 
             #region 数据库线程
@@ -827,6 +927,7 @@ namespace WH.DetectSystem.ViewModels
             Task dataBaseTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
+                object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
@@ -848,12 +949,12 @@ namespace WH.DetectSystem.ViewModels
                     //}
                     #endregion
 
-                    if (MaociMysqlConfig.SqlEnable)
+                    if (MySqlVM.MysqlExecute.SqlEnable)
                     {
                         try
                         {
                             if (SystemSettings.OfflineSave || IsStart)
-                                MySqlVM.MysqlExecute.AddData(cell, SystemSettings.NowShift);
+                                ProcessGroup.MysqlBLL.AddData(cell, SystemSettings.NowShift);
                         }
                         catch (Exception ex)
                         {
@@ -861,16 +962,39 @@ namespace WH.DetectSystem.ViewModels
                                 new PrintMsg("Mysql数据库写入出错:" + ex.Message, LOG.LOG_ERROR)
                             );
                             Growl.Warning(
-                                new GrowlInfo()
+                                new HandyControl.Data.GrowlInfo()
                                 {
-                                    Message = "Mysql数据库写入出错!",
+                                    Message = Name + "-" + "Mysql数据库写入出错!",
                                     StaysOpen = false,
                                     WaitTime = 2,
                                 }
                             );
                         }
                     }
-                    cell.Dispose();
+
+                    #region 报警
+                    try
+                    {
+                        lock (objAlarmLock)
+                        {
+                            MaociAlarmSetConfig.Excute(cell);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                        );
+                    }
+                    finally
+                    {
+                        //取消单个制程数据库存储
+                        //if (!m_dataBaseChannel.Writer.TryWrite(cell))
+                        //    cell.Dispose();
+                    }
+                    #endregion
+
+                    //cell.Dispose();
                 }
             });
             #endregion
@@ -884,16 +1008,23 @@ namespace WH.DetectSystem.ViewModels
                 {
                     try
                     {
-                        string savePath = MaociSaveImageConfig.Excute(
+                        string savePath = SaveImageVM.Param.Excute(
                             SystemSettings,
                             cell,
                             ref saveCount
                         );
                         if (savePath != null)
                         {
-                            WeakReferenceMessenger.Default.Send(
-                                new AddOneNgImagePathMessage() { Path = savePath },
-                                TokeVM
+                            _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
+                                new Action(() =>
+                                {
+                                    if (!string.IsNullOrEmpty(savePath))
+                                    {
+                                        if (HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
+                                            HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
+                                        HistoryVM.HistoryModel.NgImagePaths.Insert(0, savePath);
+                                    }
+                                })
                             );
                         }
                         cell.Dispose(); //这个cell是复制的clone 存图后清理
@@ -911,6 +1042,7 @@ namespace WH.DetectSystem.ViewModels
 
         public void StopTask()
         {
+            m_WaitImgChannel.Writer.Complete();
             m_InfoChannel.Writer.Complete();
             m_AlgorithmChannel.Writer.Complete();
             m_FilterChannel.Writer.Complete();
@@ -946,6 +1078,11 @@ namespace WH.DetectSystem.ViewModels
                     case EMDETECTRESULT.EMDR_OK:
                         break;
                     case EMDETECTRESULT.EMDR_NG_LIGHTEDGE:
+                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+                            "异常类",
+                            "算法异常",
+                            "铝层边缘Ng"
+                        );
                         break;
                     case EMDETECTRESULT.EMDR_NG_DARKEDGE:
                         cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
@@ -974,6 +1111,147 @@ namespace WH.DetectSystem.ViewModels
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 更新相机序列号
+        /// </summary>
+        public void UpdateCam(string cameraSerial)
+        {
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
+            }
+            this.CameraSerial = cameraSerial;
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
+                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+                    this.m_WaitImgChannel;
+                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+                    MaociAlgorParamConfig.GetDistinctFunc();
+            }
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 更新算法
+        /// </summary>
+        public void UpdateAlgorithm(string algorithm)
+        {
+            //修改之前注销算法、过滤分选消息
+            WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
+            WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
+
+            this.Algorithm = algorithm;
+            this.MaociAlgorParamConfig = CAlgorithmManagement
+                .AlgorithmHeper[Algorithm]
+                .CreateNewAlgorithm();
+            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
+            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
+            this.SDFilterVM.FilterConfig = MaociFilterConfig;
+            this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
+            this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+            MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
+            this.MaociHistoryModel.SetHistory(MaociFilterConfig);
+            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+            if (
+                !string.IsNullOrEmpty(CameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            )
+            {
+                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+                    MaociAlgorParamConfig.GetDistinctFunc();
+            }
+
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                MaociFilterConfig,
+                MaociFilterConfig.token
+            );
+            //修改之后注册算法、过滤分选消息
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                MaociAlgorParamConfig,
+                MaociAlgorParamConfig.token
+            );
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 更新对焦
+        /// </summary>
+        public void UpdateFocus(string focus)
+        {
+            //修改之前注销自动对焦消息
+            WeakReferenceMessenger.Default.UnregisterAll(FocusConfig);
+
+            this.Focus = focus;
+            this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
+            this.FocusCtrlVM = this.FocusConfig.CreateCtrlVM();
+            this.FocusCtrlVM.SetCameraSerial(CameraSerial);
+            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+
+            //修改之后注册自动对焦消息
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                FocusConfig,
+                FocusConfig.token
+            );
+        }
+
+        /// <summary>
+        /// 2024.9.2 李焕彬
+        /// 新建制程时更新Token
+        /// </summary>
+        public void UpdateToken()
+        {
+            MaociAlgorParamConfig.token.ProGuid = GUID;
+            MaociFilterConfig.token.ProGuid = GUID;
+            MaociAlarmSetConfig.token.ProGuid = GUID;
+            MarkConfig.token.ProGuid = GUID;
+            FocusConfig.token.ProGuid = GUID;
+
+            ConfigModifyObservableBase.UpdateToken(MaociAlarmSetConfig, MaociAlarmSetConfig.token);
+            ConfigModifyObservableBase.UpdateToken(MaociFilterConfig, MaociFilterConfig.token);
+            ConfigModifyObservableBase.UpdateToken(
+                MaociAlgorParamConfig,
+                MaociAlgorParamConfig.token
+            );
+            ConfigModifyObservableBase.UpdateToken(MarkConfig, MarkConfig.token);
+            ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
+        }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 新建制程、修改名称时更新name
+        ///</summary>
+        public void UpdateName()
+        {
+            MaociAlgorParamConfig.PrcessName = Name;
+            MaociFilterConfig.PrcessName = Name;
+            MaociAlarmSetConfig.PrcessName = Name;
+            MarkConfig.PrcessName = Name;
+            FocusConfig.PrcessName = Name;
+        }
+
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 更新VM权限
+        ///</summary>
+        public void UpdateVMLoginPerson(CLoginPerson loginPerson)
+        {
+            this.QualityVM.LoginPerson = loginPerson;
+            this.MaociAlgorVM.LoginPerson = loginPerson;
+            this.SDFilterVM.LoginPerson = loginPerson;
+            this.AlarmSetVM.LoginPerson = loginPerson;
+            this.MarkCtrlVM.LoginPerson = loginPerson;
+            this.FocusCtrlVM.LoginPerson = loginPerson;
+            this.HistoryVM.LoginPerson = loginPerson;
         }
     }
 

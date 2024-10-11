@@ -601,6 +601,24 @@ namespace MotionControl.Properties {
         }
         
         /// <summary>
+        ///   查找类似 轴报警！ 的本地化字符串。
+        /// </summary>
+        public static string AxisAlarm {
+            get {
+                return ResourceManager.GetString("AxisAlarm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 轴和驱动器报警！ 的本地化字符串。
+        /// </summary>
+        public static string AxisAndMotionAlarm {
+            get {
+                return ResourceManager.GetString("AxisAndMotionAlarm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 运动配置 的本地化字符串。
         /// </summary>
         public static string AxisConfig {
@@ -885,6 +903,15 @@ namespace MotionControl.Properties {
         public static string IO {
             get {
                 return ResourceManager.GetString("IO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 驱动器报警！ 的本地化字符串。
+        /// </summary>
+        public static string MotionAlarm {
+            get {
+                return ResourceManager.GetString("MotionAlarm", resourceCulture);
             }
         }
         

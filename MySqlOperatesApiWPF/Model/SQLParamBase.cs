@@ -72,7 +72,7 @@ namespace MySqlOperatesApi
         [ObservableProperty]
         private string useSelect = "通用";
 
-        public void Clone(ref SQLBase newSQL)
+        public void Clone(SQLBase newSQL)
         {
             newSQL.DataBaseName = this.DataBaseName;
             newSQL.RemoteIP = this.RemoteIP;

@@ -219,4 +219,7 @@
   <data name="CollectionEditor" xml:space="preserve">
     <value>Collection Editor</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save Pciture</value>
+  </data>
 </root>

@@ -24,18 +24,20 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
-    <hc:SimplePanel>
+    <hc:SimpleStackPanel>
         <StackPanel Orientation="Horizontal">
-            <GroupBox
-                Width="350"
-                d:Header="调试"
-                Header="{Binding MMainVM.Name}">
-                <!--<GroupBox.Header>
-                    <MultiBinding Converter="{StaticResource Camserial2StationNameConverter}">
-                        <Binding Path="_projConfig.CamSerial" />
-                        <Binding Path="_projConfig.Recipe" />
-                    </MultiBinding>
-                </GroupBox.Header>-->
+            <GroupBox Width="350" d:Header="调试">
+                <GroupBox.Header>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{1}-{0}">
+                                <Binding Path="MMainVM.Name" />
+                                <Binding Path="MMainVM.ProcessGroup.Name" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                </GroupBox.Header>
                 <StackPanel Orientation="Vertical">
                     <hc:ButtonGroup Margin="0,2">
                         <Button x:Name="BtnPreImg" Click="BtnPreImg_Click">
@@ -77,9 +79,9 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="/Resources/图片/工具/离线测试/执行一次.png" />
                                     <TextBlock
-                                 Margin="5,0"
-                                 VerticalAlignment="Center"
-                                 Text="{Binding [RunAgain], Source={x:Static local:CLang.OffLineTest}}" />
+                                        Margin="5,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding [RunAgain], Source={x:Static local:CLang.OffLineTest}}" />
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -151,6 +153,12 @@
                     </DockPanel>
                 </StackPanel>
             </GroupBox>
+
         </StackPanel>
-    </hc:SimplePanel>
+        <hc:Divider
+            Margin="0"
+            VerticalAlignment="Bottom"
+            Content="------"
+            Orientation="Horizontal" />
+    </hc:SimpleStackPanel>
 </UserControl>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SideAlgorithm": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

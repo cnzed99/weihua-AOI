@@ -156,4 +156,7 @@
   <data name="ShowAllDefect" xml:space="preserve">
     <value>显示所有缺陷</value>
   </data>
+  <data name="TestFpgaAlgrithm" xml:space="preserve">
+    <value>测试FPGA算法</value>
+  </data>
 </root>

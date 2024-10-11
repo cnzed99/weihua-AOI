@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:DataQuery.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="{Binding [DataQuery],Source={x:Static local:CLang.instance}}"
+    Title="{Binding [DataQuery], Source={x:Static local:CLang.instance}}"
     Width="700"
     Height="700"
     d:DataContext="{d:DesignInstance Type=local:CDataQueryVM}"
@@ -38,19 +38,35 @@
                 <ColumnDefinition Width="5*" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <DockPanel HorizontalAlignment="Left">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
                 <RadioButton
-                    Grid.Column="0"
                     Margin="5"
                     d:IsChecked="True"
-                    Content="{Binding [QueryToday],Source={x:Static local:CLang.instance}}"
+                    Content="{Binding [QueryToday], Source={x:Static local:CLang.instance}}"
                     IsChecked="{Binding SelectQueryMode, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
                 <RadioButton
-                    Grid.Column="0"
+                    Grid.Column="1"
                     Margin="5"
-                    Content="{Binding [QueryHistory],Source={x:Static local:CLang.instance}}"
+                    Content="{Binding [QueryHistory], Source={x:Static local:CLang.instance}}"
                     IsChecked="{Binding SelectQueryMode, Converter={StaticResource CheckConverter}, ConverterParameter=1}" />
-            </DockPanel>
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    hc:TitleElement.Title="{Binding [制程组], Source={x:Static local:CLang.instance}}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="70"
+                    ItemsSource="{Binding DictSqls.Keys}"
+                    SelectedItem="{Binding SelectGroup}"
+                    Style="{StaticResource ComboBoxExtend}" />
+            </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -60,13 +76,13 @@
                     <hc:DatePicker
                         Margin="5"
                         hc:InfoElement.ShowClearButton="False"
-                        hc:InfoElement.Title="{Binding [StartDate],Source={x:Static local:CLang.instance}}"
+                        hc:InfoElement.Title="{Binding [StartDate], Source={x:Static local:CLang.instance}}"
                         hc:InfoElement.TitlePlacement="Left"
                         SelectedDate="{Binding StartDate}" />
                     <hc:DatePicker
                         Margin="5"
                         hc:InfoElement.ShowClearButton="False"
-                        hc:InfoElement.Title="{Binding [EndDate],Source={x:Static local:CLang.instance}}"
+                        hc:InfoElement.Title="{Binding [EndDate], Source={x:Static local:CLang.instance}}"
                         hc:InfoElement.TitlePlacement="Left"
                         SelectedDate="{Binding EndDate}" />
                 </hc:ElementGroup>
@@ -74,7 +90,7 @@
                     <hc:TimePicker
                         Margin="5"
                         hc:InfoElement.TitlePlacement="Left"
-                        hc:TitleElement.Title="{Binding [StartTime],Source={x:Static local:CLang.instance}}"
+                        hc:TitleElement.Title="{Binding [StartTime], Source={x:Static local:CLang.instance}}"
                         SelectedTime="{Binding StartTime}"
                         Style="{StaticResource TimePickerPlus}"
                         TimeFormat="HH:mm">
@@ -85,7 +101,7 @@
                     <hc:TimePicker
                         Margin="5"
                         hc:InfoElement.TitlePlacement="Left"
-                        hc:TitleElement.Title="{Binding [EndTime],Source={x:Static local:CLang.instance}}"
+                        hc:TitleElement.Title="{Binding [EndTime], Source={x:Static local:CLang.instance}}"
                         SelectedTime="{Binding EndTime}"
                         Style="{StaticResource TimePickerPlus}"
                         TimeFormat="HH:mm">
@@ -101,7 +117,7 @@
                 Width="100"
                 Height="40"
                 Command="{Binding SearchCommand}"
-                Content="{Binding [Query],Source={x:Static local:CLang.instance}}"
+                Content="{Binding [Query], Source={x:Static local:CLang.instance}}"
                 IsChecked="{Binding SearchCommand.IsRunning, Mode=OneWay}"
                 Style="{StaticResource ToggleButtonLoadingPrimary}" />
 

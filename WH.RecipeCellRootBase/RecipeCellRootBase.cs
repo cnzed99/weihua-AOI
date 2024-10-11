@@ -322,4 +322,183 @@ namespace WH.RecipeCellRootBase
             return image;
         }
     }
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 检测结果
+    /// </summary>
+    public enum EMDETECTRESULT
+    {
+        EMDR_OK = 0, //检测OK
+        EMDR_NG_LIGHTEDGE = 1, //毛刺NG
+        EMDR_NG_DARKEDGE = 2, //料区NG
+        EMDR_NG_EMPTY = 3, //空白NG
+        EMDR_TIMEOUT = 4, //检测超时
+        EMDR_LOSEFOCUS = 5, //失焦异常
+    };
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 区域类型
+    /// </summary>
+    public enum EMREGIONTYPE
+    {
+        EMRT_DARKTOP = 0,
+        EMRT_DARKBOT = 1,
+        EMRT_LIGHTTOP = 2,
+        EMRT_LIGHTBOT = 3,
+        EMRT_MAOCIREGION = 4,
+        EMRT_THICKREGION = 5,
+    };
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 区域信息
+    /// </summary>
+    public struct SRegionInfo
+    {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 像素矩形X
+        /// </summary>
+        public int X = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 像素矩形Y
+        /// </summary>
+        public int Y = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 像素矩形宽
+        /// </summary>
+        public int Width = 100;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 像素矩形高
+        /// </summary>
+        public int Height = 100;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直宽度
+        /// </summary>
+        public double WidthBound = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直高度
+        /// </summary>
+        public double HeightBound = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um直角高度
+        /// </summary>
+        public double PeakHeight = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um长边长度
+        /// </summary>
+        public double LongLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um短边长度
+        /// </summary>
+        public double ShorLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 角度
+        /// </summary>
+        public double Phi = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um周长
+        /// </summary>
+        public double ContLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um²面积
+        /// </summary>
+        public double Area = 0;
+
+        public SRegionInfo() { }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 复制
+        /// </summary>
+        /// <param name="regionInfo">复制源</param>
+        public void Copy(SRegionInfo regionInfo)
+        {
+            X = regionInfo.X;
+            Y = regionInfo.Y;
+            Width = regionInfo.Width;
+            Height = regionInfo.Height;
+            WidthBound = regionInfo.WidthBound;
+            HeightBound = regionInfo.HeightBound;
+            PeakHeight = regionInfo.PeakHeight;
+            LongLen = regionInfo.LongLen;
+            ShorLen = regionInfo.ShorLen;
+            Phi = regionInfo.Phi;
+            ContLen = regionInfo.ContLen;
+            Area = regionInfo.Area;
+        }
+    };
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 区域
+    /// </summary>
+    public struct SRegion
+    {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 区域信息
+        /// </summary>
+        public SRegionInfo RegionInfo;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 区域点集
+        /// </summary>
+        public List<Point> points1;
+
+        public SRegion()
+        {
+            RegionInfo = new SRegionInfo();
+            points1 = new List<Point>();
+        }
+
+        public SRegion(SRegionInfo regionInfo, List<Point> points)
+        {
+            RegionInfo = regionInfo;
+            points1 = points;
+        }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 获取矩形
+        /// </summary>
+        /// <returns></returns>
+        public Rect GetRect()
+        {
+            return new Rect(RegionInfo.X, RegionInfo.Y, RegionInfo.Width, RegionInfo.Height);
+        }
+
+        public Point GetCenter()
+        {
+            return new Point(
+                RegionInfo.X + RegionInfo.Width / 2,
+                RegionInfo.Y + RegionInfo.Height / 2
+            );
+        }
+    }
 }

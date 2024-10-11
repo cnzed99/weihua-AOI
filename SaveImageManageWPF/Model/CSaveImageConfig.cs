@@ -31,7 +31,7 @@ namespace SaveImageManage
 
         public CSaveImageConfig()
         {
-            this.token = new Token("", this.GetType().Namespace);
+            this.token = new Token("CSaveImageConfig", this.GetType().Namespace);
         }
 
         #region 存截图参数
@@ -78,10 +78,8 @@ namespace SaveImageManage
         [property: DisplayName("选择存图内容")]
         private string saveSelect = "1";
 
-
-
-
         private string saveImagePath = "E:\\WH-Image";
+
         /// <summary>
         /// 2024.6.28 鲍赞宝
         /// 存图主路径
@@ -91,7 +89,7 @@ namespace SaveImageManage
         public string SaveImagePath
         {
             get { return saveImagePath; }
-            set 
+            set
             {
                 DriveInfo info = new DriveInfo("E://");
                 if (!info.IsReady)
@@ -105,7 +103,6 @@ namespace SaveImageManage
                 }
             }
         }
-
 
         /// <summary>
         /// 2024.6.28 鲍赞宝

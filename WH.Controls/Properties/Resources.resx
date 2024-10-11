@@ -219,4 +219,7 @@
   <data name="CollectionEditor" xml:space="preserve">
     <value>集合编辑器</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存图片</value>
+  </data>
 </root>

@@ -1,150 +1,225 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
+using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Controls;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
-using WH.Entity.LogRecord;
+using WH.RecipeCellRootBase;
+using WH.RunCell;
 
-namespace AlgorithmDll
+namespace FrontAlgorithm
 {
     /// <summary>
-    /// 2024.7.4 李焕彬
-    /// 算法参数配置管理类
+    /// 2024.9.11 李焕彬
+    /// 算法参数派生类
     /// </summary>
-    public partial class CMaociAlgorParamConfig
-        : ConfigModifyObservableBase,
-            IRecipient<OperateMessage>
+    public class CAlgorithmParam : CAlgorithmParamBase
     {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 操作日志
-        /// </summary>
-        [property: JsonIgnore]
-        [property: IgnoreModifyLog]
-        public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
-
-        public CMaociAlgorParamConfig()
+        public CAlgorithmParam()
+            : base()
         {
-            this.token = new Token("", this.GetType().Namespace);
-            PcParams = new ObservableCollection<CMaociAlgorParam>()
+            AlgorithmType = "FrontAlgorithm";
+            DefectSpecies = new Dictionary<string, List<string>>()
             {
-                new CMaociAlgorParam(c_ParamName, token)
+                ["铝层缺陷类"] = new List<string>() { "毛刺" },
+                ["料区缺陷类"] = new List<string>() { "掉料" },
             };
-            FpgaParams = new ObservableCollection<CMaociAlgorParamFpga>()
-            {
-                new CMaociAlgorParamFpga(c_ParamName, token)
-            };
-            UpdataMaociAlgorParamUse();
+        }
+
+        ///// <summary>
+        ///// 2024.7.5 李焕彬
+        ///// 正在使用的PC参数结构体
+        ///// </summary>
+        //public SMaociAlgorParam MaociAlgorParamUse { get; set; }
+
+        ///// <summary>
+        ///// 2024.7.5 李焕彬
+        ///// 正在使用的FPGA参数结构体
+        ///// </summary>
+        //public SMaociAlgorParamFpga MaociAlgorParamFpgaUse { get; set; }
+
+        /// <summary>
+        /// 2024.9.11 李焕彬
+        /// 增加参数
+        /// </summary>
+        /// <param name="name">名称</param>
+        public override void AddFpgaParam(string name)
+        {
+            this.FpgaParams.Add(new CFpgaParam(name, token));
         }
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 日志消息处理
+        /// 2024.9.11 李焕彬
+        /// 增加参数
         /// </summary>
-        /// <param name="message">消息</param>
-        public void Receive(OperateMessage message)
+        /// <param name="name">名称</param>
+        public override void AddPcParam(string name)
         {
-            if (message.obj.GetType() == typeof(CMaociAlgorParamConfig))
-            {
-                OperateLog.Info($"算法参数-{message.message}");
-                UpdataMaociAlgorParamUse();
-                return;
-            }
-            foreach (var qua in PcParams)
-            {
-                if (message.obj.GetType() == typeof(CMaociAlgorParam))
-                {
-                    if (qua == message.obj)
-                    {
-                        OperateLog.Info($"PC参数-{qua.Name}-{message.message}");
-                        UpdataMaociAlgorParamUse();
-                        return;
-                    }
-                    continue;
-                }
-            }
-            foreach (var qua in FpgaParams)
-            {
-                if (message.obj.GetType() == typeof(CMaociAlgorParamFpga))
-                {
-                    if (qua == message.obj)
-                    {
-                        OperateLog.Info($"FPGA参数-{qua.Name}-{message.message}");
-                        UpdataMaociAlgorParamUse();
-                        return;
-                    }
-                    continue;
-                }
-            }
+            this.PcParams.Add(new CPcParam(name, token));
         }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 默认分组名
-        /// </summary>
-        private const string c_ParamName = "分组1";
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 参数列表
-        /// </summary>
-        [property: DisplayName("参数列表")]
-        [ObservableProperty]
-        private ObservableCollection<CMaociAlgorParam> pcParams;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 当前算法参数组
-        /// </summary>
-        [property: DisplayName("当前算法参数组")]
-        [ObservableProperty]
-        private string pcSelect = c_ParamName;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 预处理参数列表
-        /// </summary>
-        [property: DisplayName("预处理参数列表")]
-        [ObservableProperty]
-        private ObservableCollection<CMaociAlgorParamFpga> fpgaParams;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 当前预处理参数组
-        /// </summary>
-        [property: DisplayName("当前预处理参数组")]
-        [ObservableProperty]
-        private string fpgaSelect = c_ParamName;
-
-        /// <summary>
-        /// 2024.7.5 李焕彬
-        /// 正在使用的PC参数结构体
-        /// </summary>
-        public SMaociAlgorParam MaociAlgorParamUse { get; set; }
-
-        /// <summary>
-        /// 2024.7.5 李焕彬
-        /// 正在使用的FPGA参数结构体
-        /// </summary>
-        public SMaociAlgorParamFpga MaociAlgorParamFpgaUse { get; set; }
 
         /// <summary>
         /// 2024.7.17 李焕彬
         /// 更新毛刺参数结构体
         /// </summary>
-        private void UpdataMaociAlgorParamUse()
+        public override void UpdataMaociAlgorParamUse()
         {
-            if (PcParams.FirstOrDefault(o => o.Name == PcSelect) != null)
+            //if (PcParams.FirstOrDefault(o => o.Name == PcSelect) != null)
+            //{
+            //    MaociAlgorParamUse = new(
+            //        (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect)
+            //    );
+            //}
+            //if (FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect) != null)
+            //{
+            //    MaociAlgorParamFpgaUse = new(
+            //        (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect)
+            //    );
+            //}
+        }
+
+        /// <summary>
+        /// 2024.9.29 李焕彬
+        /// 获取清晰度计算函数
+        /// </summary>
+        /// <returns>清晰度计算函数</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public override Func<CImage, float> GetDistinctFunc()
+        {
+            return (CImage image) =>
             {
-                MaociAlgorParamUse = new(PcParams.FirstOrDefault(o => o.Name == PcSelect));
-            }
-            if (FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect) != null)
-            {
-                MaociAlgorParamFpgaUse = new(FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect));
-            }
+                CPcParam pcParam = (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect);
+                if (pcParam != null)
+                {
+                    return CAlgorithmDll.CalcDistinct(
+                        image.ImageWidth,
+                        image.ImageHeight,
+                        image.StrideWidth,
+                        image.ImageData,
+                        0,
+                        (int)pcParam.DarkThresh
+                    );
+                }
+                else
+                {
+                    return 0;
+                }
+            };
+        }
+
+        /// <summary>
+        /// 2024.9.12 李焕彬
+        /// 检测信息，存放算法检测返回结果
+        /// 内含非托管内存，可重复使用，PC算法和FPGA算法使用同一个
+        /// </summary>
+        SDetectInfo detectInfo = new SDetectInfo();
+
+        /// <summary>
+        /// 测试FPGA算法
+        /// </summary>
+        /// <param name="cell">cell</param>
+        /// <returns>检测结果</returns>
+        public override EMDETECTRESULT DetectFpga(Cell cell)
+        {
+            var param = new SMaociAlgorParamFpga(
+                (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect),
+                cell.MmPerPixel * 1000
+            );
+            EMDETECTRESULT result = CAlgorithmDll.TestFpga(
+                cell.Image.ImageWidth,
+                cell.Image.ImageHeight,
+                cell.Image.StrideWidth,
+                cell.Image.ImageData,
+                ref param,
+                ref detectInfo
+            );
+            detectInfo.DeComposeEdge(
+                cell.MmPerPixel * 1000,
+                out var edgeDarkTop,
+                out var edgeDarkBottom,
+                out var edgeLightTop,
+                out var edgeLightBot,
+                out var maociRegion,
+                out var thickRegion
+            );
+
+            CellDetection cellDetection1 = new CellDetection();
+            cellDetection1.Type = "铝层缺陷类";
+            cellDetection1.RecipeDefectName = "毛刺";
+            cellDetection1.Category = Category.区域;
+            cellDetection1.regionOut = maociRegion;
+            cell.AlgorithmOut.Add(cellDetection1);
+            CellDetection cellDetection2 = new CellDetection();
+            cellDetection2.Type = "料区缺陷类";
+            cellDetection2.RecipeDefectName = "掉料";
+            cellDetection2.Category = Category.区域;
+            cellDetection2.regionOut = thickRegion;
+            cell.AlgorithmOut.Add(cellDetection2);
+
+            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
+
+            return result;
+        }
+
+        /// <summary>
+        /// 测试PC算法
+        /// </summary>
+        /// <param name="cell">cell</param>
+        /// <returns>检测结果</returns>
+        public override EMDETECTRESULT DetectImage(Cell cell)
+        {
+            SMaociAlgorParam param =
+                new(
+                    (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect),
+                    cell.MmPerPixel * 1000
+                );
+            EMDETECTRESULT result = CAlgorithmDll.Test(
+                cell.Image.ImageWidth,
+                cell.Image.ImageHeight,
+                cell.Image.StrideWidth,
+                cell.Image.ImageData,
+                ref param,
+                ref detectInfo
+            );
+            detectInfo.DeComposeEdge(
+                cell.MmPerPixel * 1000,
+                out var edgeDarkTop,
+                out var edgeDarkBottom,
+                out var edgeLightTop,
+                out var edgeLightBot,
+                out var maociRegion,
+                out var thickRegion
+            );
+
+            CellDetection cellDetection1 = new CellDetection();
+            cellDetection1.Type = "铝层缺陷类";
+            cellDetection1.RecipeDefectName = "毛刺";
+            cellDetection1.Category = Category.区域;
+            cellDetection1.regionOut = maociRegion;
+            cell.AlgorithmOut.Add(cellDetection1);
+            CellDetection cellDetection2 = new CellDetection();
+            cellDetection2.Type = "料区缺陷类";
+            cellDetection2.RecipeDefectName = "掉料";
+            cellDetection2.Category = Category.区域;
+            cellDetection2.regionOut = thickRegion;
+            cell.AlgorithmOut.Add(cellDetection2);
+
+            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
+            cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
+
+            return result;
         }
     }
 
@@ -152,28 +227,13 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// PC算法参数
     /// </summary>
-    public partial class CMaociAlgorParam : ConfigModifyObservableBase
+    public partial class CPcParam : CPcParamBase
     {
-        public CMaociAlgorParam()
-        {
-            this.token = new Token("", this.GetType().Namespace);
-        }
+        public CPcParam()
+            : base() { }
 
-        public CMaociAlgorParam(string name, Token token)
-        {
-            this.token = token;
-            Name = name;
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 分组名
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("1.GroupName")]
-        [property: DisplayName("分组名")]
-        [property: Description("自定义名称")]
-        private string name = "";
+        public CPcParam(string name, Token token)
+            : base(name, token) { }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -243,7 +303,7 @@ namespace AlgorithmDll
         [property: Category("2.Algorithm")]
         [property: DisplayName("铝层厚度(um)")]
         [property: Description("铝层厚度(um)")]
-        private uint lightThick = 6;
+        private double lightThick = 13;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -264,49 +324,24 @@ namespace AlgorithmDll
         [property: DisplayName("最小清晰度")]
         [property: Description("最小清晰度说明")]
         private float minDistinct = 25.0f;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
     };
 
     /// <summary>
     /// FPGA算法参数
     /// </summary>
-    public partial class CMaociAlgorParamFpga : ConfigModifyObservableBase
+    public partial class CFpgaParam : CFpgaParamBase
     {
-        public CMaociAlgorParamFpga()
-        {
-            this.token = new Token("", this.GetType().Namespace);
-        }
+        public CFpgaParam()
+            : base() { }
 
-        public CMaociAlgorParamFpga(string name, Token token)
-        {
-            this.token = token;
-            Name = name;
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 分组名
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("1.GroupName")]
-        [property: DisplayName("分组名")]
-        [property: Description("自定义名称")]
-        private string name = "";
+        public CFpgaParam(string name, Token token)
+            : base(name, token) { }
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 自适应阈值邻域大小
         /// </summary>
         [ObservableProperty]
-        [property: EditorAttribute()]
         [property: Category("2.Algorithm")]
         [property: DisplayName("铝层自适应阈值邻域大小")]
         [property: Description("铝层自适应阈值说明")]
@@ -370,7 +405,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("料区厚度限制(um)")]
         [property: Description("料区厚度限制说明")]
-        private uint darkThickLimit = 30;
+        private double darkThickLimit = 67.5;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -380,7 +415,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("料区厚度NG连续长度限制(um)")]
         [property: Description("料区NG连续长度说明")]
-        private uint darkThickContinueLen = 5;
+        private double darkThickContinueLen = 11.25;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -390,7 +425,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("料区厚度(um)")]
         [property: Description("料区厚度限制说明")]
-        private uint darkThick = 84;
+        private double darkThick = 189;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -400,7 +435,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层厚度限制(um)")]
         [property: Description("铝层厚度限制说明")]
-        private uint lightThickLimit = 7;
+        private double lightThickLimit = 15.75;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -410,7 +445,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层厚度NG连续长度限制(um)")]
         [property: Description("铝层NG连续长度说明")]
-        private uint lightThickContinueLen = 0;
+        private double lightThickContinueLen = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -420,7 +455,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层厚度(um)")]
         [property: Description("铝层厚度限制说明")]
-        private uint lightThick = 6;
+        private double lightThick = 13.5;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -430,7 +465,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层在料区中心位置限制上(um)")]
         [property: Description("料区中心位置限制说明")]
-        private uint posLimitT = 20;
+        private double posLimitT = 45;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -440,7 +475,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层在料区中心位置限制下(um)")]
         [property: Description("料区中心位置限制说明")]
-        private uint posLimitB = 20;
+        private double posLimitB = 45;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -450,7 +485,7 @@ namespace AlgorithmDll
         [property: Category("3.Judge")]
         [property: DisplayName("铝层位置偏移值(um)")]
         [property: Description("料区中心位置限制说明")]
-        private int lightPosOffest = 0;
+        private double lightPosOffest = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -461,14 +496,5 @@ namespace AlgorithmDll
         [property: DisplayName("超时时间(ms)")]
         [property: Description("超时时间说明")]
         private uint timeOut = 3000;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
     }
 }

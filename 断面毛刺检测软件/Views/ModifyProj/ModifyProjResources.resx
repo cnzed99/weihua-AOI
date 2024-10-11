@@ -138,4 +138,19 @@
   <data name="Cam" xml:space="preserve">
     <value>相机：</value>
   </data>
+  <data name="Group" xml:space="preserve">
+    <value>制程组</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>组名称</value>
+  </data>
+  <data name="GroupDesc" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>增加</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>删除</value>
+  </data>
 </root>

@@ -1,0 +1,115 @@
+﻿<UserControl
+    x:Class="ProjProduceData.SummaryCtrl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:ProjProduceData"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <d:UserControl.DataContext>
+        <local:CDefectsDataVM />
+    </d:UserControl.DataContext>
+    <UserControl.Resources>
+        <Style
+            x:Key="tblock"
+            BasedOn="{StaticResource TextBlockDefaultBold}"
+            TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border
+            Margin="5"
+            Background="{DynamicResource ThirdlyRegionBrush}"
+            CornerRadius="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <UniformGrid
+                    Columns="2"
+                    DataContext="{Binding DefectsProduce}"
+                    Rows="2">
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding [总数], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock
+                            d:Text="1234567"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding Total}" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding [良品], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock
+                            d:Text="1234567"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding OK}" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding [良率], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock
+                            d:Text="99.99%"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding [不良], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock
+                            d:Text="1234567"
+                            Style="{StaticResource tblock}"
+                            Text="{Binding Ng}" />
+                    </DockPanel>
+                </UniformGrid>
+                <hc:Divider
+                    Grid.Column="1"
+                    LineStroke="DarkCyan"
+                    LineStrokeThickness="1"
+                    Orientation="Vertical" />
+                <ItemsControl Grid.Column="2" ItemsSource="{Binding DefectsProduce.QualityNumbersList}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <TextBlock
+                                    d:Text="G1"
+                                    DockPanel.Dock="Left"
+                                    Foreground="{Binding ShowColor.Brush}"
+                                    Style="{StaticResource tblock}"
+                                    Text="{Binding Name}" />
+                                <TextBlock
+                                    Margin="10,0"
+                                    d:Text="1234567"
+                                    Style="{StaticResource tblock}"
+                                    Text="{Binding Number}" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+            <local:DefectsDataV DataContext="{Binding}" />
+        </hc:SimplePanel>
+    </StackPanel>
+</UserControl>

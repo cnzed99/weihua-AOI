@@ -1,5 +1,4 @@
-﻿using Autofac;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Autofac;
 using WH.DetectSystem.ViewModels;
-
 
 namespace 断面毛刺检测软件.Views
 {
@@ -25,11 +24,17 @@ namespace 断面毛刺检测软件.Views
         public OffLineTestWindow()
         {
             InitializeComponent();
-            this.ContainerPanel.Children.Add(new OffLineTestCtrl(App.Container.Resolve<CMainModelsModelVM>().CMainVMs[0]));
+            foreach (var mainModel in App.Container.Resolve<CMainModelsModelVM>().CMainVMs)
+            {
+                this.ContainerPanel.Children.Add(new OffLineTestCtrl(mainModel));
+            }
             this.Closing += OffLineTestWindow_Closing;
         }
 
-        private void OffLineTestWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OffLineTestWindow_Closing(
+            object sender,
+            System.ComponentModel.CancelEventArgs e
+        )
         {
             foreach (OffLineTestCtrl item in this.ContainerPanel.Children)
             {

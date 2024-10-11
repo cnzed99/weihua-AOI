@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using QualityGrade;
+using WH.Controls;
 using WH.Controls.SingleInstance;
 
 namespace SDFilter
@@ -20,6 +21,13 @@ namespace SDFilter
     /// </summary>
     public partial class CSDFilterCtrlVM : ObservableObject
     {
+        /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 权限信息，启动暂停、账户登录时切换
+        /// </summary>
+        [ObservableProperty]
+        CLoginPerson loginPerson;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 过滤分选配置
@@ -71,7 +79,7 @@ namespace SDFilter
         void RemoveFilter(object obj)
         {
             Growl.AskGlobal(
-                Properties.Resource1.DelecteAsk,
+                FilterConfig.PrcessName + "-" + Properties.Resource1.DelecteAsk,
                 b =>
                 {
                     if (b)

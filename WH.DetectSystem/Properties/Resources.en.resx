@@ -144,4 +144,22 @@
   <data name="初始化光源失败" xml:space="preserve">
     <value>Failed to initialize the light source controller</value>
   </data>
+  <data name="DelecteAsk" xml:space="preserve">
+    <value>Confirm whether to delete?</value>
+  </data>
+  <data name="制程名称不能相同" xml:space="preserve">
+    <value>Process name cannot be the same!</value>
+  </data>
+  <data name="制程组名称不能相同" xml:space="preserve">
+    <value>Group name cannot be the same!</value>
+  </data>
+  <data name="算法读取失败" xml:space="preserve">
+    <value>Algorithm Read Failed!</value>
+  </data>
+  <data name="删除制程" xml:space="preserve">
+    <value>Delete process!</value>
+  </data>
+  <data name="对焦插件读取失败" xml:space="preserve">
+    <value>Focus Plug Read Failed!</value>
+  </data>
 </root>

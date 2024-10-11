@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Forward" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="Reverse" xml:space="preserve">
+    <value>Reverse</value>
+  </data>
+  <data name="CurPos" xml:space="preserve">
+    <value>CurPos</value>
+  </data>
+  <data name="AbsPos" xml:space="preserve">
+    <value>AbsPos</value>
+  </data>
+  <data name="RelaPos" xml:space="preserve">
+    <value>RelaPos</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="AutoFocus" xml:space="preserve">
+    <value>AutoFocus</value>
+  </data>
+  <data name="OnePos" xml:space="preserve">
+    <value>OnePos</value>
+  </data>
+  <data name="Addr" xml:space="preserve">
+    <value>Addr</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="OpenOrClose" xml:space="preserve">
+    <value>Open/Close</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Del" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="1.液态镜头连接" xml:space="preserve">
+    <value>1.Liquid Connect</value>
+  </data>
+  <data name="00.串口号" xml:space="preserve">
+    <value>00.Com</value>
+  </data>
+  <data name="01.波特率" xml:space="preserve">
+    <value>01.Baudrate</value>
+  </data>
+  <data name="02.奇偶校验" xml:space="preserve">
+    <value>02.Parity</value>
+  </data>
+  <data name="03.数据位" xml:space="preserve">
+    <value>03.DataBits</value>
+  </data>
+  <data name="04.停止位" xml:space="preserve">
+    <value>04.StopBits</value>
+  </data>
+  <data name="05.握手协议" xml:space="preserve">
+    <value>05.Handshake</value>
+  </data>
+  <data name="WriteAddrM" xml:space="preserve">
+    <value>WriteAddrM</value>
+  </data>
+  <data name="ElementRW" xml:space="preserve">
+    <value>Element RW</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="Write" xml:space="preserve">
+    <value>Write</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="2.限位参数" xml:space="preserve">
+    <value>2.Limit</value>
+  </data>
+  <data name="FocusVolDst" xml:space="preserve">
+    <value>FocusVolDst</value>
+  </data>
+  <data name="ConnectError" xml:space="preserve">
+    <value>Control disconnected!</value>
+  </data>
+  <data name="PosOverLimit" xml:space="preserve">
+    <value>Positive or negative limit exceeded!</value>
+  </data>
+  <data name="AddrError" xml:space="preserve">
+    <value>Incorrect address entered!</value>
+  </data>
+  <data name="00.正限位(mm)" xml:space="preserve">
+    <value>00.SoftLimitP(mm)</value>
+  </data>
+  <data name="01.负限位(mm)" xml:space="preserve">
+    <value>01.SoftLimitN(mm)</value>
+  </data>
+  <data name="FocusPos" xml:space="preserve">
+    <value>FocusPos</value>
+  </data>
+  <data name="FocusDst" xml:space="preserve">
+    <value>FocusDst</value>
+  </data>
+  <data name="SensorPos" xml:space="preserve">
+    <value>SensorPos</value>
+  </data>
+  <data name="SetOutputError" xml:space="preserve">
+    <value>Write address cannot be empty!</value>
+  </data>
+  <data name="5.对焦参数" xml:space="preserve">
+    <value>5.Focus Param</value>
+  </data>
+  <data name="00.最佳对焦位置(mm)" xml:space="preserve">
+    <value>00.Best Pos</value>
+  </data>
+  <data name="01.粗调步长(mm)" xml:space="preserve">
+    <value>01.Step Coarse</value>
+  </data>
+  <data name="02.精调步长(mm)" xml:space="preserve">
+    <value>02.Step Fine</value>
+  </data>
+  <data name="03.最小清晰度" xml:space="preserve">
+    <value>03.Min Distinct</value>
+  </data>
+  <data name="CoarseData" xml:space="preserve">
+    <value>Coarse Data</value>
+  </data>
+  <data name="FineData" xml:space="preserve">
+    <value>Fine Data</value>
+  </data>
+  <data name="Pos" xml:space="preserve">
+    <value>Pos</value>
+  </data>
+  <data name="Distinct" xml:space="preserve">
+    <value>Distinct</value>
+  </data>
+  <data name="FocusData" xml:space="preserve">
+    <value>Focus Data</value>
+  </data>
+  <data name="Focusing" xml:space="preserve">
+    <value>Focusing</value>
+  </data>
+  <data name="前进" xml:space="preserve">
+    <value>Step+</value>
+  </data>
+  <data name="后退" xml:space="preserve">
+    <value>Step-</value>
+  </data>
+  <data name="04.精调范围(mm)" xml:space="preserve">
+    <value>04.Fine Range(mm)</value>
+  </data>
+  <data name="ErrorNoCam" xml:space="preserve">
+    <value>No camera!</value>
+  </data>
+  <data name="ErrorNoOpenCam" xml:space="preserve">
+    <value>Camera is not on!</value>
+  </data>
+  <data name="AskStopFocus" xml:space="preserve">
+    <value>In Focus, Stop Focusing?</value>
+  </data>
+  <data name="ErrorNoConnect" xml:space="preserve">
+    <value>Lens not connected!</value>
+  </data>
+  <data name="ErrorNeedStop" xml:space="preserve">
+    <value>Software needs to be paused first!</value>
+  </data>
+  <data name="SuccessFocus" xml:space="preserve">
+    <value>Focusing done!</value>
+  </data>
+  <data name="ErrorFocus" xml:space="preserve">
+    <value>Abnormal focus!</value>
+  </data>
+  <data name="启动纠偏" xml:space="preserve">
+    <value>FocusStart</value>
+  </data>
+  <data name="SuccessConnect" xml:space="preserve">
+    <value>Lens connected successfully!</value>
+  </data>
+  <data name="DataSend" xml:space="preserve">
+    <value>DataSend:</value>
+  </data>
+  <data name="DataRecv" xml:space="preserve">
+    <value>DataRecv:</value>
+  </data>
+  <data name="Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="LensConnect" xml:space="preserve">
+    <value>Lens Connect</value>
+  </data>
+  <data name="LensConnected" xml:space="preserve">
+    <value>Lens Connected</value>
+  </data>
+  <data name="SensorConnect" xml:space="preserve">
+    <value>Sensor Connect</value>
+  </data>
+  <data name="SensorConnected" xml:space="preserve">
+    <value>Sensor Connected</value>
+  </data>
+  <data name="CurVol" xml:space="preserve">
+    <value>CurVol</value>
+  </data>
+  <data name="物距控制" xml:space="preserve">
+    <value>Dis Control</value>
+  </data>
+  <data name="AbsVol" xml:space="preserve">
+    <value>AbsVol</value>
+  </data>
+  <data name="RelaVol" xml:space="preserve">
+    <value>RelaVol</value>
+  </data>
+  <data name="Config" xml:space="preserve">
+    <value>Config</value>
+  </data>
+  <data name="ConnectErrorLens" xml:space="preserve">
+    <value>Lens disconnected!</value>
+  </data>
+  <data name="ConnectErrorSensor" xml:space="preserve">
+    <value>Sensor disconnected!</value>
+  </data>
+  <data name="ReadErrorLens" xml:space="preserve">
+    <value>Lens voltage reading failed!</value>
+  </data>
+  <data name="ReadErrorSensor" xml:space="preserve">
+    <value>Sensor position read failed!</value>
+  </data>
+  <data name="SuccessConnectSensor" xml:space="preserve">
+    <value>Sensor connected successfully!</value>
+  </data>
+  <data name="3.物距电压公式" xml:space="preserve">
+    <value>3.Vol Formula</value>
+  </data>
+  <data name="_Empty[1]" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="4.传感器连接" xml:space="preserve">
+    <value>4.Sensor Connect</value>
+  </data>
+  <data name="06.从站地址" xml:space="preserve">
+    <value>06.Slave Addr</value>
+  </data>
+  <data name="05.传感器位置(mm)" xml:space="preserve">
+    <value>05.Sensor Pos(mm)</value>
+  </data>
+</root>

@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
-using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
@@ -15,6 +14,7 @@ using QualityGrade;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
+using WH.RecipeCellRootBase;
 
 namespace SDFilter
 {
@@ -33,6 +33,13 @@ namespace SDFilter
         public CLogRec OperateLog { get; set; } = CLogRec.Create("Operate", "D:/Data");
 
         /// <summary>
+        /// 2024.9.6 李焕彬
+        /// 所属制程名
+        /// </summary>
+        [property: IgnoreModifyLog]
+        public string PrcessName { get; set; }
+
+        /// <summary>
         /// 20240719 TCG
         /// 缺陷列表，外部引用较多
         /// </summary>
@@ -44,13 +51,18 @@ namespace SDFilter
         public CFilterConfig()
         {
             this.token = new Token("", this.GetType().Namespace);
+        }
+
+        public CFilterConfig(Dictionary<string, List<string>> defectSpecies)
+        {
+            this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
-            foreach (var specie in CAlgorithmOut.s_Instance.Specises)
+            foreach (var specie in defectSpecies)
             {
-                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
-                foreach (var recipe in specie.Recipes)
+                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Key, token);
+                foreach (var recipe in specie.Value)
                 {
-                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe.Name, token));
+                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe, token));
                 }
                 SpFilters.Add(speciesFilter);
             }
@@ -218,7 +230,7 @@ namespace SDFilter
         {
             if (message.obj.GetType() == typeof(CFilterConfig))
             {
-                OperateLog.Info($"检测设置：{message.message}");
+                OperateLog.Info($"{PrcessName}-检测设置：{message.message}");
                 return;
             }
             foreach (var sp in SpeciesFilters)
@@ -227,7 +239,7 @@ namespace SDFilter
                 {
                     if (sp == message.obj)
                     {
-                        OperateLog.Info($"类别：{sp.Name}-{message.message}");
+                        OperateLog.Info($"{PrcessName}-类别：{sp.Name}-{message.message}");
                         return;
                     }
                     continue;
@@ -238,7 +250,9 @@ namespace SDFilter
                     {
                         if (re == message.obj)
                         {
-                            OperateLog.Info($"类别：{sp.Name}-{re.Name}-{message.message}");
+                            OperateLog.Info(
+                                $"{PrcessName}-类别：{sp.Name}-{re.Name}-{message.message}"
+                            );
                             return;
                         }
                         continue;
@@ -250,7 +264,7 @@ namespace SDFilter
                             if (de == message.obj)
                             {
                                 OperateLog.Info(
-                                    $"类别：{sp.Name}-{re.Name}-{de.Name}-{message.message}"
+                                    $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-{message.message}"
                                 );
                                 return;
                             }
@@ -263,7 +277,7 @@ namespace SDFilter
                                 if (fis == message.obj)
                                 {
                                     OperateLog.Info(
-                                        $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}"
+                                        $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-{message.message}"
                                     );
                                     return;
                                 }
@@ -276,7 +290,7 @@ namespace SDFilter
                                     if (se == message.obj)
                                     {
                                         OperateLog.Info(
-                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}"
+                                            $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-{message.message}"
                                         );
                                         return;
                                     }
@@ -287,7 +301,7 @@ namespace SDFilter
                                     if (pa == message.obj)
                                     {
                                         OperateLog.Info(
-                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}"
+                                            $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-分选{fis.SelectList.IndexOf(se)}-条件{se.SelectParams.IndexOf(pa)}-{message.message}"
                                         );
                                         return;
                                     }
@@ -300,7 +314,7 @@ namespace SDFilter
                                     if (fi == message.obj)
                                     {
                                         OperateLog.Info(
-                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}"
+                                            $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-{message.message}"
                                         );
                                         return;
                                     }
@@ -311,7 +325,7 @@ namespace SDFilter
                                     if (pa == message.obj)
                                     {
                                         OperateLog.Info(
-                                            $"类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}"
+                                            $"{PrcessName}-类别：{sp.Name}-{re.Name}-{de.Name}-过滤分选器{de.FilterList.IndexOf(fis)}-过滤{fis.Filter.IndexOf(fi)}-条件{fi.SelectParams.IndexOf(pa)}-{message.message}"
                                         );
                                         return;
                                     }
@@ -625,7 +639,6 @@ namespace SDFilter
         [property: DisplayName("是否启用过滤分选器")]
         [ObservableProperty]
         private bool filterSelectEnable = true;
-
 
         /// <summary>
         /// 2024.7.4 李焕彬

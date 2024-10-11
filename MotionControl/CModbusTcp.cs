@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -16,6 +17,30 @@ namespace MotionControl
     /// </summary>
     public class CModbusTcp
     {
+        /// <summary>
+        /// 静态CModbusTcp集合
+        /// </summary>
+        public static List<CModbusTcp> s_modbusTcps = new List<CModbusTcp>();
+
+        /// <summary>
+        /// 创建对象或返回IP和端口号一致的对象
+        /// </summary>
+        /// <param name="ip">ip</param>
+        /// <param name="port">端口号</param>
+        /// <returns></returns>
+        public static CModbusTcp Create(string ip, int port)
+        {
+            CModbusTcp modbusTcp = s_modbusTcps.FirstOrDefault(o => o.ip == ip && o.port == port);
+            if (modbusTcp != null)
+            {
+                modbusTcp.userCount++;
+                return modbusTcp;
+            }
+            CModbusTcp modbus = new CModbusTcp(ip, port);
+            s_modbusTcps.Add(modbus);
+            return modbus;
+        }
+
         /// <summary>
         /// 2024.7.12 李焕彬
         /// tcp
@@ -76,13 +101,36 @@ namespace MotionControl
         /// </summary>
         private byte slaveAddress = 0x01;
 
-        public CModbusTcp() { }
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// ip地址
+        /// </summary>
+        private string ip;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 端口号
+        /// </summary>
+        private int port;
+
+        /// <summary>
+        /// 2024.7.12 李焕彬
+        /// 引用数目
+        /// </summary>
+        private int userCount = 1;
+
+        public CModbusTcp(string ip, int port)
+        {
+            this.ip = ip;
+            this.port = port;
+            ConnectToPLC();
+        }
 
         /// <summary>
         /// 2024.7.12 李焕彬
         /// 连接到PLC
         /// </summary>
-        public void ConnectToPLC(string ip, int port)
+        public void ConnectToPLC()
         {
             taskTcp = Task.Factory.StartNew(() =>
             {
@@ -131,13 +179,13 @@ namespace MotionControl
                         //触发事件，读取元件
                         ReadElemData?.Invoke();
                         //plc连接事件
-                        actionConnect.Invoke(true);
+                        actionConnect?.Invoke(true);
                         Thread.Sleep(10);
                     }
                     else
                     {
                         //plc断开事件
-                        actionConnect.Invoke(false);
+                        actionConnect?.Invoke(false);
                     }
                 }
                 catch (Exception)
@@ -153,7 +201,11 @@ namespace MotionControl
         /// </summary>
         public void Close()
         {
-            isStart = false;
+            userCount--;
+            if (userCount == 0)
+            {
+                isStart = false;
+            }
         }
 
         /// <summary>
