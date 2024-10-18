@@ -72,7 +72,7 @@
                                                         hc:BorderElement.CornerRadius="0"
                                                         Background="Transparent"
                                                         BorderThickness="0"
-                                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=DataContext.Result, Converter={StaticResource BoolToBrushConverterText}}">
+                                                        Foreground="{Binding Result, Converter={StaticResource BoolToBrushConverterText}}">
                                                         <Expander.Header>
                                                             <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Expander}}">
                                                                 <Grid.ColumnDefinitions>

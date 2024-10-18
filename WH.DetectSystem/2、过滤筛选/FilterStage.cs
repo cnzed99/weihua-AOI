@@ -41,6 +41,7 @@ namespace WH.DetectSystem
                     ].DefectFilters
                 ) //缺陷
                 {
+                    de.Result = true;
                     CellDetection detection = algorithmOut.Clone();
                     detection.DefectFilter = de;
                     SRegion[] Originregs = new SRegion[detection.regionOut.Count];
@@ -52,7 +53,7 @@ namespace WH.DetectSystem
                     {
                         filter.Result = true;
                         //如果过滤分选器未使能或前面的过滤分选已经判定为NG，则跳过，不用break,是要把上一次的结果置为true，filter.Result = true;
-                        if (!filter.FilterSelectEnable || !filterConfig[detection.Type].Result)
+                        if (!filter.FilterSelectEnable || !de.Result)
                         {
                             continue;
                         }
@@ -71,6 +72,9 @@ namespace WH.DetectSystem
                                     .Sum();
                                 regionInfo.PeakHeight = detectRegion
                                     .Select(o => o.RegionInfo.PeakHeight)
+                                    .Sum();
+                                regionInfo.BotHeight = detectRegion
+                                    .Select(o => o.RegionInfo.BotHeight)
                                     .Sum();
                                 regionInfo.LongLen = detectRegion
                                     .Select(o => o.RegionInfo.LongLen)
@@ -147,6 +151,7 @@ namespace WH.DetectSystem
                         if (!detection.Result)
                         {
                             filter.Result = false;
+                            de.Result = false;
                             filterConfig[detection.Type].Result = false;
                             //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
                         }
@@ -168,6 +173,9 @@ namespace WH.DetectSystem
                         {
                             case EMFILTER.EMFILTER_PEAKHEI:
                                 item.Value = maxRegion.RegionInfo.PeakHeight;
+                                break;
+                            case EMFILTER.EMFILTER_BOTHEI:
+                                item.Value = maxRegion.RegionInfo.BotHeight;
                                 break;
                             case EMFILTER.EMFILTER_AREA:
                                 item.Value = maxRegion.RegionInfo.Area;

@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using Autofac;
 using CameraModule;
 using CommunicationModule;
+using HandyControl.Controls;
 using Microsoft.Win32;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
@@ -506,6 +507,11 @@ namespace 断面毛刺检测软件.Views
 
         private void BtnRunAgain_Click(object sender, RoutedEventArgs e)
         {
+            if (imgFiles.Count == 0)
+            {
+                Growl.Error("图像不存在！请选择图像！");
+                return;
+            }
             cb_CurImgFile_SelectedIndexChanged(null, null);
         }
     }

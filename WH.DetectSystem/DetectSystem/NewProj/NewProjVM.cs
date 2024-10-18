@@ -56,7 +56,7 @@ namespace WH.DetectSystem.ViewModels
         public CNewProjVM(CMainModelsModelVM mainVM)
         {
             mainModelVM = mainVM;
-            this.ProjPath = mainModelVM.ProjPath;
+            //this.ProjPath = mainModelVM.ProjPath;
         }
 
         [RelayCommand]

@@ -27,6 +27,7 @@ namespace SDFilter
             FilterCharacters = new List<EMFILTER>()
             {
                 EMFILTER.EMFILTER_PEAKHEI,
+                EMFILTER.EMFILTER_BOTHEI,
                 EMFILTER.EMFILTER_AREA,
                 EMFILTER.EMFILTER_LONGLEN,
                 EMFILTER.EMFILTER_SHORTLEN,
@@ -191,15 +192,17 @@ namespace SDFilter
         [RelayCommand]
         public void DeleteFilterConfig(FilterAndSelect filterConfig)
         {
-            Growl.AskGlobal(Properties.Resource1.DelecteAsk, b =>
-            {
-                if (b)
+            Growl.AskGlobal(
+                Properties.Resource1.DelecteAsk,
+                b =>
                 {
-                    DefectFilter?.FilterList.Remove(filterConfig);
+                    if (b)
+                    {
+                        DefectFilter?.FilterList.Remove(filterConfig);
+                    }
+                    return true;
                 }
-                return true;
-            });
-           
+            );
         }
 
         /// <summary>

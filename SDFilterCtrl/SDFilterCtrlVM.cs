@@ -64,9 +64,9 @@ namespace SDFilter
                     break;
                 }
             }
-            recipeDefect.DefectFilters.Add(
-                new DefectFilter(recipeDefect.Name + index, FilterConfig.token)
-            );
+            var de = new DefectFilter(recipeDefect.Name + index, FilterConfig.token);
+            recipeDefect.DefectFilters.Add(de);
+            de.QualityLevel = QualityConfig.GetWorst();
             //WeakReferenceMessenger.Default.Send<CFilterConfig>(FilterConfig);
         }
 

@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using QualityGrade;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -16,6 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.ComponentModel;
+using QualityGrade;
 using WH.Entity;
 using WH.Entity.Attribute;
 
@@ -33,7 +33,11 @@ namespace SDFilter
         /// </summary>
         /// <param name="defectFilter">过滤器</param>
         /// <param name="speciesFilter">所属类别</param>
-        public DefectFilterSetWin(DefectFilter defectFilter, SpeciesFilter speciesFilter,CQualityConfig qualityConfig)
+        public DefectFilterSetWin(
+            DefectFilter defectFilter,
+            SpeciesFilter speciesFilter,
+            CQualityConfig qualityConfig
+        )
         {
             InitializeComponent();
             VM = new(defectFilter, speciesFilter, qualityConfig);
@@ -87,6 +91,8 @@ namespace SDFilter
                         return "um";
                     case EMFILTER.EMFILTER_PEAKHEI:
                         return "um";
+                    case EMFILTER.EMFILTER_BOTHEI:
+                        return "um";
                     default:
                         return "";
                 }
@@ -94,7 +100,12 @@ namespace SDFilter
             return Binding.DoNothing;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -115,7 +126,12 @@ namespace SDFilter
         /// <param name="parameter"></param>
         /// <param name="culture"></param>
         /// <returns>特征类型集</returns>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             if (values[0] != null)
             {
@@ -134,11 +150,17 @@ namespace SDFilter
             return Binding.DoNothing;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
     }
+
     /// <summary>
     /// 2024.7.4 李焕彬
     /// 最小最大验证
@@ -168,7 +190,9 @@ namespace SDFilter
         {
             //CBindingProxy bindingProxy = ValidationParams.Data as CBindingProxy;
             OneSelectParams viewModel = ValidationParams.Data as OneSelectParams;
-            if (double.TryParse(value.ToString(), out double result)/* && int.TryParse(textbox.Text, out int result2)*/)
+            if (
+                double.TryParse(value.ToString(), out double result) /* && int.TryParse(textbox.Text, out int result2)*/
+            )
             {
                 if (IsGreater)
                 {
@@ -229,7 +253,6 @@ namespace SDFilter
                     }
                 }
             }
-
 
             return new ValidationResult(true, "");
         }

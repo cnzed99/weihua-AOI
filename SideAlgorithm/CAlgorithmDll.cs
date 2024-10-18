@@ -294,6 +294,7 @@ namespace SideAlgorithm
                 this.maociRegion[j].regionInfo.WidthBound *= umPerPixel;
                 this.maociRegion[j].regionInfo.HeightBound *= umPerPixel;
                 this.maociRegion[j].regionInfo.PeakHeight *= umPerPixel;
+                this.maociRegion[j].regionInfo.BotHeight *= umPerPixel;
                 this.maociRegion[j].regionInfo.LongLen *= umPerPixel;
                 this.maociRegion[j].regionInfo.ShorLen *= umPerPixel;
                 this.maociRegion[j].regionInfo.ContLen *= umPerPixel;
@@ -315,6 +316,7 @@ namespace SideAlgorithm
                 this.thickRegion[j].regionInfo.WidthBound *= umPerPixel;
                 this.thickRegion[j].regionInfo.HeightBound *= umPerPixel;
                 this.thickRegion[j].regionInfo.PeakHeight *= umPerPixel;
+                this.thickRegion[j].regionInfo.BotHeight *= umPerPixel;
                 this.thickRegion[j].regionInfo.LongLen *= umPerPixel;
                 this.thickRegion[j].regionInfo.ShorLen *= umPerPixel;
                 this.thickRegion[j].regionInfo.ContLen *= umPerPixel;

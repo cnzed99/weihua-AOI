@@ -540,6 +540,15 @@ namespace SDFilter
 
         /// <summary>
         /// 2024.7.4 李焕彬
+        /// 检测结果
+        /// </summary>
+        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
+        [ObservableProperty]
+        private bool result = true;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// 结果列表
         /// </summary>
         [property: IgnoreModifyLog]
@@ -819,6 +828,9 @@ namespace SDFilter
                     case EMFILTER.EMFILTER_PEAKHEI:
                         sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.PeakHeight));
                         break;
+                    case EMFILTER.EMFILTER_BOTHEI:
+                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.BotHeight));
+                        break;
                     case EMFILTER.EMFILTER_AREA:
                         sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Area));
                         break;
@@ -892,6 +904,13 @@ namespace SDFilter
         /// </summary>
         [EnumString("顶点高度", "PeakHeight")]
         EMFILTER_PEAKHEI,
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 低点高度
+        /// </summary>
+        [EnumString("低点高度", "BotHeight")]
+        EMFILTER_BOTHEI,
 
         /// <summary>
         /// 2024.7.4 李焕彬

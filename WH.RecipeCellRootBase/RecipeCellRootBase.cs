@@ -401,6 +401,12 @@ namespace WH.RecipeCellRootBase
 
         /// <summary>
         /// 2024.7.4 李焕彬
+        /// um低点高度
+        /// </summary>
+        public double BotHeight = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// um长边长度
         /// </summary>
         public double LongLen = 0;
@@ -445,6 +451,7 @@ namespace WH.RecipeCellRootBase
             WidthBound = regionInfo.WidthBound;
             HeightBound = regionInfo.HeightBound;
             PeakHeight = regionInfo.PeakHeight;
+            BotHeight = regionInfo.BotHeight;
             LongLen = regionInfo.LongLen;
             ShorLen = regionInfo.ShorLen;
             Phi = regionInfo.Phi;
