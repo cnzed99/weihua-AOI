@@ -338,19 +338,19 @@ namespace WH.RecipeCellRootBase
         EMDR_LOSEFOCUS = 5, //失焦异常
     };
 
-    /// <summary>
-    /// 2024.6.25 李焕彬
-    /// 区域类型
-    /// </summary>
-    public enum EMREGIONTYPE
-    {
-        EMRT_DARKTOP = 0,
-        EMRT_DARKBOT = 1,
-        EMRT_LIGHTTOP = 2,
-        EMRT_LIGHTBOT = 3,
-        EMRT_MAOCIREGION = 4,
-        EMRT_THICKREGION = 5,
-    };
+    ///// <summary>
+    ///// 2024.6.25 李焕彬
+    ///// 区域类型
+    ///// </summary>
+    //public enum EMREGIONTYPE
+    //{
+    //    EMRT_DARKTOP = 0,
+    //    EMRT_DARKBOT = 1,
+    //    EMRT_LIGHTTOP = 2,
+    //    EMRT_LIGHTBOT = 3,
+    //    EMRT_MAOCIREGION = 4,
+    //    EMRT_THICKREGION = 5,
+    //};
 
     /// <summary>
     /// 2024.10.21 李焕彬
