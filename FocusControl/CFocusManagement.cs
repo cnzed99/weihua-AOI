@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WH.Entity;
 
 namespace FocusControl
 {
@@ -14,7 +15,10 @@ namespace FocusControl
     {
         public CFocusManagement()
         {
-            FocusHeper = CLoadFocusPlugs.LoadFocus();
+            if (AppConfig.HasFocusConfig())
+            {
+                FocusHeper = CLoadFocusPlugs.LoadFocus();
+            }
         }
 
         /// <summary>

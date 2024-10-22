@@ -221,8 +221,8 @@
                 Name="testGrid"
                 Grid.Row="1"
                 Margin="5"
-                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" 
-                Content="{Binding Com.TestControl}"/>
+                Content="{Binding Com.TestControl}"
+                IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />
         </Grid>
     </Grid>
 </hc:Window>

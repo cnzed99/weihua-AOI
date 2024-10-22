@@ -18,6 +18,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using QualityGrade;
 using WH.Entity;
 using WH.Entity.Attribute;
+using WH.RecipeCellRootBase;
 
 namespace SDFilter
 {
@@ -36,11 +37,12 @@ namespace SDFilter
         public DefectFilterSetWin(
             DefectFilter defectFilter,
             SpeciesFilter speciesFilter,
-            CQualityConfig qualityConfig
+            CQualityConfig qualityConfig,
+            CFilterConfig filterConfig
         )
         {
             InitializeComponent();
-            VM = new(defectFilter, speciesFilter, qualityConfig);
+            VM = new(defectFilter, speciesFilter, qualityConfig, filterConfig);
             this.DataContext = VM;
         }
 
@@ -49,116 +51,6 @@ namespace SDFilter
         /// VM
         /// </summary>
         public CDefectFilterSetVM VM { get; set; }
-    }
-
-    /// <summary>
-    /// 2024.7.4 李焕彬
-    /// 特征单位转换器
-    /// </summary>
-    public class TextUnitsConverter : IValueConverter
-    {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 特征单位转换器
-        /// </summary>
-        /// <param name="value">特征</param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>单位</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value != null)
-            {
-                EMFILTER feature = (EMFILTER)value;
-                switch (feature)
-                {
-                    case EMFILTER.EMFILTER_AREA:
-                        return "um²";
-                    case EMFILTER.EMFILTER_NUM:
-                        return "PCS";
-                    case EMFILTER.EMFILTER_LONGLEN:
-                        return "um";
-                    case EMFILTER.EMFILTER_SHORTLEN:
-                        return "um";
-                    case EMFILTER.EMFILTER_PHI:
-                        return "°";
-                    case EMFILTER.EMFILTER_CONTLEN:
-                        return "um";
-                    case EMFILTER.EMFILTER_WIDTH:
-                        return "um";
-                    case EMFILTER.EMFILTER_HEIGHT:
-                        return "um";
-                    case EMFILTER.EMFILTER_PEAKHEI:
-                        return "um";
-                    case EMFILTER.EMFILTER_BOTHEI:
-                        return "um";
-                    default:
-                        return "";
-                }
-            }
-            return Binding.DoNothing;
-        }
-
-        public object ConvertBack(
-            object value,
-            Type targetType,
-            object parameter,
-            CultureInfo culture
-        )
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    /// <summary>
-    /// 2024.7.4 李焕彬
-    /// 特征类型转换器
-    /// </summary>
-    public class ItemSourceCharacterConverter : IMultiValueConverter
-    {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 特征类型转换
-        /// </summary>
-        /// <param name="values">过滤/分选</param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns>特征类型集</returns>
-        public object Convert(
-            object[] values,
-            Type targetType,
-            object parameter,
-            CultureInfo culture
-        )
-        {
-            if (values[0] != null)
-            {
-                List<string> enums = EnumStringAttribute.GetEnumNames(typeof(EMFILTER));
-                string name = (string)values[0];
-                if (name.Contains("过滤"))
-                {
-                    enums.Remove("数量");
-                    return enums;
-                }
-                else
-                {
-                    return enums;
-                }
-            }
-            return Binding.DoNothing;
-        }
-
-        public object[] ConvertBack(
-            object value,
-            Type[] targetTypes,
-            object parameter,
-            CultureInfo culture
-        )
-        {
-            throw new NotImplementedException();
-        }
     }
 
     /// <summary>

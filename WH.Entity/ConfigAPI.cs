@@ -13,7 +13,7 @@ namespace WH.Entity
     {
         private static JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings()
         {
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.All,
             ObjectCreationHandling = ObjectCreationHandling.Replace,
             NullValueHandling = NullValueHandling.Ignore,
         };

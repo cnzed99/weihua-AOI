@@ -60,41 +60,19 @@ namespace WH.DetectSystem
                         SRegion[] regs = new SRegion[OriginRegList.Count];
                         OriginRegList.CopyTo(regs); //复制而不是引用
                         List<SRegion> detectRegion = new List<SRegion>(regs);
-                        switch (filter.UnionMethod)
+                        if (detectRegion.Count > 0)
                         {
-                            case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
-                                SRegionInfo regionInfo = new SRegionInfo();
-                                regionInfo.WidthBound = detectRegion
-                                    .Select(o => o.RegionInfo.WidthBound)
-                                    .Sum();
-                                regionInfo.HeightBound = detectRegion
-                                    .Select(o => o.RegionInfo.HeightBound)
-                                    .Sum();
-                                regionInfo.PeakHeight = detectRegion
-                                    .Select(o => o.RegionInfo.PeakHeight)
-                                    .Sum();
-                                regionInfo.BotHeight = detectRegion
-                                    .Select(o => o.RegionInfo.BotHeight)
-                                    .Sum();
-                                regionInfo.LongLen = detectRegion
-                                    .Select(o => o.RegionInfo.LongLen)
-                                    .Sum();
-                                regionInfo.ShorLen = detectRegion
-                                    .Select(o => o.RegionInfo.ShorLen)
-                                    .Sum();
-                                regionInfo.Phi = detectRegion.Select(o => o.RegionInfo.Phi).Max();
-                                regionInfo.ContLen = detectRegion
-                                    .Select(o => o.RegionInfo.ContLen)
-                                    .Sum();
-                                regionInfo.Area = detectRegion.Select(o => o.RegionInfo.Area).Sum();
-                                for (int i = 0; i < detectRegion.Count; i++)
+                            switch (filter.UnionMethod)
+                            {
+                                case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
                                 {
-                                    detectRegion[i] = new SRegion(
-                                        regionInfo,
-                                        detectRegion[i].points1
-                                    );
+                                    SRegion regionUnion = detectRegion[0]
+                                        .regionInfo.Union(detectRegion);
+                                    detectRegion.Clear();
+                                    detectRegion.Add(regionUnion);
+                                    break;
                                 }
-                                break;
+                            }
                         }
 
                         List<SRegion> filterOuts = new List<SRegion>(); //过滤后的区域
@@ -120,7 +98,7 @@ namespace WH.DetectSystem
                             OneSelectParams oneSelectParams = null; //若有数量判断，则留到分选完后由数量决定最终结果
                             foreach (var selParam in select.SelectParams)
                             {
-                                if (selParam.Character == EMFILTER.EMFILTER_NUM)
+                                if (selParam.Character.Id == "Count")
                                     oneSelectParams = selParam;
                                 else
                                     bResult = selParam.Excute(selRegion, out selRegion); //分选器中的分选条件顺序执行，看最后结果
@@ -156,58 +134,43 @@ namespace WH.DetectSystem
                             //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
                         }
                     }
-                    SRegion maxRegion = new SRegion();
-                    if (detection.regionOut?.Count > 0)
+                    if (detection.regionOut?.Count > 0 && de.ResultList.Count > 0)
                     {
                         detection.regionOut.Sort(
                             delegate(SRegion l, SRegion r)
                             {
-                                return l.RegionInfo.PeakHeight.CompareTo(r.RegionInfo.PeakHeight);
+                                return l
+                                    .regionInfo.GetValue(de.ResultList[0].Feature)
+                                    .CompareTo(r.regionInfo.GetValue(de.ResultList[0].Feature));
                             }
                         );
-                        maxRegion = detection.regionOut.Last();
-                    }
-                    foreach (var item in de.ResultList)
-                    {
-                        switch (item.Feature)
+                        SRegion maxRegion = detection.regionOut.Last();
+                        foreach (var item in de.ResultList)
                         {
-                            case EMFILTER.EMFILTER_PEAKHEI:
-                                item.Value = maxRegion.RegionInfo.PeakHeight;
-                                break;
-                            case EMFILTER.EMFILTER_BOTHEI:
-                                item.Value = maxRegion.RegionInfo.BotHeight;
-                                break;
-                            case EMFILTER.EMFILTER_AREA:
-                                item.Value = maxRegion.RegionInfo.Area;
-                                break;
-                            case EMFILTER.EMFILTER_LONGLEN:
-                                item.Value = maxRegion.RegionInfo.LongLen;
-                                break;
-                            case EMFILTER.EMFILTER_SHORTLEN:
-                                item.Value = maxRegion.RegionInfo.ShorLen;
-                                break;
-                            case EMFILTER.EMFILTER_PHI:
-                                item.Value = maxRegion.RegionInfo.Phi;
-                                break;
-                            case EMFILTER.EMFILTER_CONTLEN:
-                                item.Value = maxRegion.RegionInfo.ContLen;
-                                break;
-                            case EMFILTER.EMFILTER_WIDTH:
-                                item.Value = maxRegion.RegionInfo.WidthBound;
-                                break;
-                            case EMFILTER.EMFILTER_HEIGHT:
-                                item.Value = maxRegion.RegionInfo.HeightBound;
-                                break;
-                            case EMFILTER.EMFILTER_NUM:
+                            if (item.Feature.Id == "Count")
+                            {
                                 item.Value = detection.regionOut.Count;
-                                break;
-                            default:
-                                break;
+                            }
+                            else
+                            {
+                                item.Value = maxRegion.regionInfo.GetValue(item.Feature);
+                            }
+                            detection.DetectLog.AppendLine(
+                                $"{item.Feature.GetName()}:{item.Value:F2}"
+                            );
                         }
-                        detection.DetectLog.AppendLine(
-                            $"{EnumStringAttribute.GetEnumName(item.Feature)}:{item.Value:F2}"
-                        );
                     }
+                    else
+                    {
+                        foreach (var item in de.ResultList)
+                        {
+                            item.Value = 0;
+                            detection.DetectLog.AppendLine(
+                                $"{item.Feature.GetName()}:{item.Value:F2}"
+                            );
+                        }
+                    }
+
                     if (!detection.Result) //NG
                     {
                         var qualityLevel = detection.DefectFilter.QualityLevel;

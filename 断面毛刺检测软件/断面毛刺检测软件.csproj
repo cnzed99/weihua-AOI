@@ -144,14 +144,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\net48\appConfig.json" />
+    <Content Include="bin\Debug\net8.0-windows\appConfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="bin\Debug\iis.bat" />
-    <None Include="bin\Debug\net48\MaociAlg.dll" />
     <None Include="bin\Debug\net48\MiniEcatLib.dll" />
-    <None Include="bin\Debug\net48\opencv_world490.dll" />
     <None Include="bin\Debug\net48\WH.LightControl.exe" />
-    <None Include="bin\Debug\net8.0-windows\MaociAlg.dll" />
     <None Include="bin\Debug\net8.0-windows\MiniEcatLib.dll" />
-    <None Include="bin\Debug\net8.0-windows\opencv_world490.dll" />
     <None Include="bin\Debug\net8.0-windows\WH.LightControl.exe" />
     <None Include="bin\Debug\removeWeb.bat" />
   </ItemGroup>
@@ -163,6 +164,7 @@
     <PackageReference Include="HandyControl" />
 	<PackageReference Include="HandyControl.Lang.en" />
     <PackageReference Include="Mapster" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Reactive" />
@@ -391,6 +393,12 @@
     <ProjectReference Include="..\WH.Load\WH.Load.csproj" />
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

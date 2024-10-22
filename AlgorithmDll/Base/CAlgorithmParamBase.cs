@@ -155,6 +155,26 @@ namespace AlgorithmDll
         public Dictionary<string, List<string>> DefectSpecies { get; set; }
 
         /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 缺陷特征集合
+        /// 可增加，不能new，与过滤分选缺陷特征对应
+        /// </summary>
+        private List<CFeacture> defectFeatures = new List<CFeacture>()
+        {
+            new("Count", "数量", "Count", "pcs"),
+        };
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 缺陷特征集合
+        /// 可增加，不能new，与过滤分选缺陷特征对应
+        /// </summary>
+        public List<CFeacture> DefectFeatures
+        {
+            get { return defectFeatures; }
+        }
+
+        /// <summary>
         /// 2024.7.17 李焕彬
         /// 更新毛刺参数结构体
         /// </summary>

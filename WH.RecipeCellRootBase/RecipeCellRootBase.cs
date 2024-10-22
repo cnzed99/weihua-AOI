@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -352,113 +353,112 @@ namespace WH.RecipeCellRootBase
     };
 
     /// <summary>
-    /// 2024.6.25 李焕彬
+    /// 2024.10.21 李焕彬
+    /// 缺陷特征
+    /// </summary>
+    public class CFeacture
+    {
+        public CFeacture()
+        {
+            this.Id = "null";
+        }
+
+        public CFeacture(string id, string zhName, string enName, string unit)
+        {
+            this.Id = id;
+            this.ZhName = zhName;
+            this.EnName = enName;
+            this.Unit = unit;
+        }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 唯一标识符，不能改
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 缺陷名中文
+        /// </summary>
+        public string ZhName { get; set; }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 缺陷名英文
+        /// </summary>
+        public string EnName { get; set; }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 缺陷单位
+        /// </summary>
+        public string Unit { get; set; }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 获取缺陷名
+        /// </summary>
+        /// <returns>缺陷名</returns>
+        public string GetName()
+        {
+            switch (CultureInfo.CurrentCulture.Name)
+            {
+                case "zh-CN":
+                    return ZhName;
+                default:
+                    return EnName;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CFeacture feacture && Id == feacture.Id;
+        }
+
+        public override string ToString()
+        {
+            return GetName();
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public static bool operator ==(CFeacture left, CFeacture right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(CFeacture left, CFeacture right)
+        {
+            return !(left == right);
+        }
+    }
+
+    /// <summary>
+    /// 2024.10.21 李焕彬
     /// 区域信息
     /// </summary>
-    public struct SRegionInfo
+    public interface IRegionInfo
     {
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 像素矩形X
+        /// 2024.10.21 李焕彬
+        /// 获取对应缺陷特征值
         /// </summary>
-        public int X = 0;
+        /// <param name="character">缺陷特征</param>
+        /// <returns>缺陷特征值</returns>
+        double GetValue(CFeacture character);
 
         /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 像素矩形Y
+        /// 2024.10.21 李焕彬
+        /// 合并区域
         /// </summary>
-        public int Y = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 像素矩形宽
-        /// </summary>
-        public int Width = 100;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 像素矩形高
-        /// </summary>
-        public int Height = 100;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um垂直宽度
-        /// </summary>
-        public double WidthBound = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um垂直高度
-        /// </summary>
-        public double HeightBound = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um直角高度
-        /// </summary>
-        public double PeakHeight = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um低点高度
-        /// </summary>
-        public double BotHeight = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um长边长度
-        /// </summary>
-        public double LongLen = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um短边长度
-        /// </summary>
-        public double ShorLen = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 角度
-        /// </summary>
-        public double Phi = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um周长
-        /// </summary>
-        public double ContLen = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// um²面积
-        /// </summary>
-        public double Area = 0;
-
-        public SRegionInfo() { }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 复制
-        /// </summary>
-        /// <param name="regionInfo">复制源</param>
-        public void Copy(SRegionInfo regionInfo)
-        {
-            X = regionInfo.X;
-            Y = regionInfo.Y;
-            Width = regionInfo.Width;
-            Height = regionInfo.Height;
-            WidthBound = regionInfo.WidthBound;
-            HeightBound = regionInfo.HeightBound;
-            PeakHeight = regionInfo.PeakHeight;
-            BotHeight = regionInfo.BotHeight;
-            LongLen = regionInfo.LongLen;
-            ShorLen = regionInfo.ShorLen;
-            Phi = regionInfo.Phi;
-            ContLen = regionInfo.ContLen;
-            Area = regionInfo.Area;
-        }
-    };
+        /// <param name="regions">区域集</param>
+        /// <returns>合并后区域</returns>
+        SRegion Union(List<SRegion> regions);
+    }
 
     /// <summary>
     /// 2024.6.25 李焕彬
@@ -466,46 +466,48 @@ namespace WH.RecipeCellRootBase
     /// </summary>
     public struct SRegion
     {
+        public Rect rect;
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 区域信息
         /// </summary>
-        public SRegionInfo RegionInfo;
+        public IRegionInfo regionInfo;
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 区域点集
         /// </summary>
-        public List<Point> points1;
+        public List<Point> points;
 
-        public SRegion()
+        public SRegion(IRegionInfo _regionInfo, List<Point> _points)
         {
-            RegionInfo = new SRegionInfo();
-            points1 = new List<Point>();
-        }
-
-        public SRegion(SRegionInfo regionInfo, List<Point> points)
-        {
-            RegionInfo = regionInfo;
-            points1 = points;
+            regionInfo = _regionInfo;
+            points = _points;
+            rect = new Rect(
+                new Point(points.Select(o => o.X).Min(), points.Select(o => o.Y).Min()),
+                new Point(points.Select(o => o.X).Max(), points.Select(o => o.Y).Max())
+            );
         }
 
         /// <summary>
         /// 2024.7.4 李焕彬
-        /// 获取矩形
+        /// 获取区域矩形
         /// </summary>
-        /// <returns></returns>
+        /// <returns>区域矩形</returns>
         public Rect GetRect()
         {
-            return new Rect(RegionInfo.X, RegionInfo.Y, RegionInfo.Width, RegionInfo.Height);
+            return rect;
         }
 
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 获取区域中心
+        /// </summary>
+        /// <returns>区域中心</returns>
         public Point GetCenter()
         {
-            return new Point(
-                RegionInfo.X + RegionInfo.Width / 2,
-                RegionInfo.Y + RegionInfo.Height / 2
-            );
+            return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
         }
     }
 }

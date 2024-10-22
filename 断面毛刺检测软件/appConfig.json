@@ -1,0 +1,9 @@
+{
+  "APP": {
+    "Config": {
+      "hasMarkConfig": true,
+      "hasFocusConfig": true,
+      "IsDark": true
+    }
+  }
+}

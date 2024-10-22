@@ -32,7 +32,6 @@
                 FalseValue="+"
                 TrueValue="-" />
             <entity:CommMultiParamConverter x:Key="CommMultiParamConverter" />
-            <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <entity:CommMultiParamConverter x:Key="MultiBindingConverter" />
             <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
             <entity:Enums2StringsConverter x:Key="Enums2StringsConverter" />
@@ -185,7 +184,7 @@
                                                 Grid.Column="1"
                                                 Margin="10,3,10,3"
                                                 ItemsSource="{Binding Tag[1], RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}"
-                                                SelectedItem="{Binding Character, Converter={StaticResource StringAttrEnumConverter}}">
+                                                SelectedItem="{Binding Character}">
                                                 <!--  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:DefectFilterSetWin},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">  -->
                                                 <!--<ComboBox.ItemsSource>
                             <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
@@ -197,7 +196,7 @@
                                                 Grid.Column="2"
                                                 Margin="10,0,10,0"
                                                 IsReadOnly="True"
-                                                Text="{Binding Character, Mode=OneWay, Converter={StaticResource TextUnitsConverter}}" />
+                                                Text="{Binding Character.Unit, Mode=OneWay}" />
                                             <CheckBox
                                                 Grid.Column="3"
                                                 HorizontalAlignment="Center"
@@ -389,10 +388,7 @@
                                                 <ItemsControl.Tag>
                                                     <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
                                                         <Binding Path="[Filter]" Source="{x:Static local:CLang.s_Instance}" />
-                                                        <Binding
-                                                            Converter="{StaticResource Enums2StringsConverter}"
-                                                            Path="DataContext.FilterCharacters"
-                                                            RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
+                                                        <Binding Path="DataContext.DefectFeactures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
                                                     </MultiBinding>
                                                 </ItemsControl.Tag>
                                             </ItemsControl>
@@ -430,7 +426,7 @@
                                                 <ItemsControl.Tag>
                                                     <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
                                                         <Binding Path="[Select]" Source="{x:Static local:CLang.s_Instance}" />
-                                                        <Binding Converter="{StaticResource EnumProviderConverter}" Path="Filter[0].SelectParams[0].Character" />
+                                                        <Binding Path="DataContext.FilterConfig.DefectFeatures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
                                                     </MultiBinding>
                                                 </ItemsControl.Tag>
                                             </ItemsControl>

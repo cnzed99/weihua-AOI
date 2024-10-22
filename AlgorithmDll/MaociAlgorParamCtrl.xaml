@@ -35,10 +35,9 @@
                         Name="cmb_pcParam"
                         Width="150"
                         Margin="5,3"
-                       
                         DockPanel.Dock="Left"
-                        ItemsSource="{Binding Config.PcParams}"
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}">
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        ItemsSource="{Binding Config.PcParams}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -60,20 +59,22 @@
                         Command="{Binding AddPcParamCommand}"
                         Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" 
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource ButtonPrimary}" />
                     <Button
                         Width="70"
                         Command="{Binding RemovePcParamCommand}"
                         CommandParameter="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"
                         Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonDanger}" 
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource ButtonDanger}" />
                 </StackPanel>
             </GroupBox.Header>
-            <wh:CPropertyGridLang SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}" lang="{x:Static local:CLang.s_Instance}" 
-                                  IsEditable="{Binding LoginPerson.IsTechnologist}"/>
+            <wh:CPropertyGridLang
+                IsEditable="{Binding LoginPerson.IsTechnologist}"
+                SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"
+                lang="{x:Static local:CLang.s_Instance}" />
         </GroupBox>
         <GroupBox Grid.Row="2" Style="{StaticResource GroupBoxTab}">
             <GroupBox.Header>
@@ -83,10 +84,9 @@
                         Name="cmb_fpgaParam"
                         Width="150"
                         Margin="5,3"
-                       
                         DockPanel.Dock="Left"
-                        ItemsSource="{Binding Config.FpgaParams}"
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}">
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        ItemsSource="{Binding Config.FpgaParams}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -108,16 +108,16 @@
                         Command="{Binding AddFpgaParamCommand}"
                         Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonPrimary}" 
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource ButtonPrimary}" />
                     <Button
                         Width="70"
                         Command="{Binding RemoveFpgaParamCommand}"
                         CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"
                         Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonDanger}" 
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource ButtonDanger}" />
                     <Button
                         Width="100"
                         Margin="10,0"
@@ -125,12 +125,14 @@
                         CommandParameter="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"
                         Content="{Binding [WriteFpga], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        Style="{DynamicResource ButtonWarning}" 
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"/>
+                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
+                        Style="{DynamicResource ButtonWarning}" />
                 </StackPanel>
             </GroupBox.Header>
-            <wh:CPropertyGridLang SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}" lang="{x:Static local:CLang.s_Instance}" 
-                                  IsEditable="{Binding LoginPerson.IsTechnologist}"/>
+            <wh:CPropertyGridLang
+                IsEditable="{Binding LoginPerson.IsTechnologist}"
+                SelectedObject="{Binding ElementName=cmb_fpgaParam, Path=SelectedItem}"
+                lang="{x:Static local:CLang.s_Instance}" />
         </GroupBox>
     </Grid>
 </UserControl>

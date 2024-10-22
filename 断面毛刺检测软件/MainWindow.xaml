@@ -39,6 +39,7 @@
         <local:ColumnCountConverter x:Key="ColumnCountConverter" />
         <entity:String2VisiblityReConverter x:Key="Count2VisiblityReConverter" />
         <wh:CBindingProxy x:Key="CurUser" Data="{Binding LoginViewModel.LoginPerson}" />
+        <wh:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter" />
     </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
@@ -581,7 +582,8 @@
                     IsAnimationEnabled="True"
                     IsTabFillEnabled="True"
                     SelectedIndex="0"
-                    Style="{DynamicResource TabControlInLine}">
+                    Style="{DynamicResource TabControlInLine}"
+                    Visibility="{Binding SelectedProcess, Converter={StaticResource EmptyToVisibilityConverter}}">
                     <hc:TabItem Padding="0" Header="{Binding [DetectArea], Source={x:Static local:CLang.Instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                             <filter:FilterResultCtrl DataContext="{Binding SelectedProcess.SDFilterVM}" />
@@ -607,12 +609,18 @@
                             <alarm:AlarmSetCtrl DataContext="{Binding SelectedProcess.AlarmSetVM}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
-                    <hc:TabItem Padding="0" Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}">
+                    <hc:TabItem
+                        Padding="0"
+                        Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}"
+                        Visibility="{Binding SelectedProcess.MarkCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                             <mark:MarkCtrl DataContext="{Binding SelectedProcess.MarkCtrlVM}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
-                    <hc:TabItem Padding="0" Header="{Binding [FocusControl], Source={x:Static local:CLang.Instance}}">
+                    <hc:TabItem
+                        Padding="0"
+                        Header="{Binding [FocusControl], Source={x:Static local:CLang.Instance}}"
+                        Visibility="{Binding SelectedProcess.FocusCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                             <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
                         </hc:SimplePanel>

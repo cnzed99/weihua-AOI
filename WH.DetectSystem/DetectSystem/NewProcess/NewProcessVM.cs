@@ -129,7 +129,7 @@ namespace WH.DetectSystem.ViewModels
                 || string.IsNullOrEmpty(this.Name)
                 || string.IsNullOrEmpty(this.CameraSerial)
                 || string.IsNullOrEmpty(this.Algorithm)
-                || string.IsNullOrEmpty(this.Focus)
+                || (string.IsNullOrEmpty(this.Focus) && AppConfig.HasFocusConfig())
                 || GroupVM == null
             )
             {

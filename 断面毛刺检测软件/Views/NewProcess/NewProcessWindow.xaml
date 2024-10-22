@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:alg="clr-namespace:AlgorithmDll;assembly=AlgorithmDll"
-    xmlns:focus="clr-namespace:FocusControl;assembly=FocusControl"
     xmlns:cam="clr-namespace:CameraModule;assembly=CameraModule"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:focus="clr-namespace:FocusControl;assembly=FocusControl"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,7 +25,7 @@
             <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
             <Setter Property="Margin" Value="5" />
         </Style>
-
+        <wh:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter" />
     </hc:Window.Resources>
     <Grid IsEnabled="{Binding IsOperator, Source={x:Static wh:CLoginViewModel.SloinPerson}}">
         <Grid.RowDefinitions>
@@ -60,7 +60,8 @@
                 hc:TitleElement.TitleWidth="80"
                 ItemsSource="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Path=Keys}"
                 SelectedItem="{Binding Focus}"
-                Style="{StaticResource ComboBoxExtend}" />
+                Style="{StaticResource ComboBoxExtend}"
+                Visibility="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
             <ComboBox
                 Margin="5"
                 hc:TitleElement.Title="{Binding [Group], Source={x:Static local:CLang.NewProcess}}"

@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using QualityGrade;
 using WH.Entity.Attribute;
@@ -40,6 +41,13 @@ namespace SDFilter
         public string PrcessName { get; set; }
 
         /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 过滤分选特征
+        /// </summary>
+        [property: IgnoreModifyLog]
+        public List<CFeacture> DefectFeatures { get; set; }
+
+        /// <summary>
         /// 20240719 TCG
         /// 缺陷列表，外部引用较多
         /// </summary>
@@ -53,7 +61,10 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public CFilterConfig(Dictionary<string, List<string>> defectSpecies)
+        public CFilterConfig(
+            Dictionary<string, List<string>> defectSpecies,
+            List<CFeacture> defectFeatures
+        )
         {
             this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
@@ -66,8 +77,8 @@ namespace SDFilter
                 }
                 SpFilters.Add(speciesFilter);
             }
-
             SpeciesFilters = SpFilters;
+            DefectFeatures = defectFeatures;
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)
@@ -492,7 +503,7 @@ namespace SDFilter
             this.token = token;
             this.Name = name;
             FilterList = new ObservableCollection<FilterAndSelect>() { new FilterAndSelect(token) };
-            ResultList.Add(new FilterResult(EMFILTER.EMFILTER_PEAKHEI));
+            ResultList.Add(new FilterResult());
             ShowColor = CBrushPro.s_Instance.KnownColors[
                 new Random().Next(CBrushPro.s_Instance.KnownColors.Count - 1)
             ];
@@ -719,7 +730,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("特征")]
         [ObservableProperty]
-        private EMFILTER character = EMFILTER.EMFILTER_PEAKHEI;
+        private CFeacture character = new("Count", "数量", "Count", "pcs");
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -759,7 +770,7 @@ namespace SDFilter
         /// <returns></returns>
         public override string ToString()
         {
-            string characterName = EnumStringAttribute.GetEnumName(Character);
+            string characterName = Character.GetName();
 
             if (MaxLimit && MinLimit)
             {
@@ -821,41 +832,18 @@ namespace SDFilter
         public bool Excute(List<SRegion> sRegionIn, out List<SRegion> sRegionOut)
         {
             sRegionOut = new List<SRegion>();
+            if (Character == null)
+                return false;
             if (sRegionIn is not null)
             {
-                switch (Character)
+                if (Character.Id == "Count")
                 {
-                    case EMFILTER.EMFILTER_PEAKHEI:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.PeakHeight));
-                        break;
-                    case EMFILTER.EMFILTER_BOTHEI:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.BotHeight));
-                        break;
-                    case EMFILTER.EMFILTER_AREA:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Area));
-                        break;
-                    case EMFILTER.EMFILTER_LONGLEN:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.LongLen));
-                        break;
-                    case EMFILTER.EMFILTER_SHORTLEN:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ShorLen));
-                        break;
-                    case EMFILTER.EMFILTER_PHI:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.Phi));
-                        break;
-                    case EMFILTER.EMFILTER_CONTLEN:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.ContLen));
-                        break;
-                    case EMFILTER.EMFILTER_WIDTH:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.WidthBound));
-                        break;
-                    case EMFILTER.EMFILTER_HEIGHT:
-                        sRegionOut = sRegionIn.FindAll(o => Excute(o.RegionInfo.HeightBound));
-                        break;
-                    case EMFILTER.EMFILTER_NUM:
-                        if (Excute(sRegionIn.Count))
-                            sRegionOut = sRegionIn;
-                        break;
+                    if (Excute(sRegionIn.Count))
+                        sRegionOut = sRegionIn;
+                }
+                else
+                {
+                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.GetValue(Character)));
                 }
             }
 
@@ -871,7 +859,7 @@ namespace SDFilter
     {
         public FilterResult() { }
 
-        public FilterResult(EMFILTER detectFeature)
+        public FilterResult(CFeacture detectFeature)
         {
             feature = detectFeature;
         }
@@ -881,7 +869,7 @@ namespace SDFilter
         /// 特征
         /// </summary>
         [ObservableProperty]
-        private EMFILTER feature;
+        private CFeacture feature = new("Count", "数量", "Count", "pcs");
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -890,83 +878,6 @@ namespace SDFilter
         [property: JsonIgnore]
         [ObservableProperty]
         private double value;
-    }
-
-    /// <summary>
-    /// 2024.7.4 李焕彬
-    /// 特征类型
-    /// </summary>
-    public enum EMFILTER
-    {
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 顶点高度
-        /// </summary>
-        [EnumString("顶点高度", "PeakHeight")]
-        EMFILTER_PEAKHEI,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 低点高度
-        /// </summary>
-        [EnumString("低点高度", "BotHeight")]
-        EMFILTER_BOTHEI,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 面积
-        /// </summary>
-        [EnumString("面积", "Area")]
-        EMFILTER_AREA,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 长边
-        /// </summary>
-        [EnumString("长边", "LongLength")]
-        EMFILTER_LONGLEN,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 短边
-        /// </summary>
-        [EnumString("短边", "ShortLength")]
-        EMFILTER_SHORTLEN,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 角度
-        /// </summary>
-        [EnumString("角度", "Angle")]
-        EMFILTER_PHI,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 周长
-        /// </summary>
-        [EnumString("周长", "ContLength")]
-        EMFILTER_CONTLEN,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 宽度
-        /// </summary>
-        [EnumString("宽度", "Width")]
-        EMFILTER_WIDTH,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 高度
-        /// </summary>
-        [EnumString("高度", "Height")]
-        EMFILTER_HEIGHT,
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 数量
-        /// </summary>
-        [EnumString("数量", "Num")]
-        EMFILTER_NUM
     }
 
     /// <summary>

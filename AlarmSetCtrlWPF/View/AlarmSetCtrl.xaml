@@ -98,8 +98,8 @@
                             <ComboBox
                                 HorizontalAlignment="Stretch"
                                 hc:TitleElement.Title="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}"
-                                ItemsSource="{Binding AlarmAgreements}"
                                 DisplayMemberPath="Abbr"
+                                ItemsSource="{Binding AlarmAgreements}"
                                 SelectedItem="{Binding MAlarm.AlarmAgreement}" />
                             <Button
                                 Grid.Column="1"
@@ -257,8 +257,7 @@
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding AlarmAgreement.Abbr}"
-                        Header="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" >
-                    </GridViewColumn>
+                        Header="{Binding [AlarmMode], Source={x:Static local:CLang.s_AlarmSetCtrlLang}}" />
                     <GridViewColumn
                         Width="70"
                         DisplayMemberBinding="{Binding IsPopWin}"

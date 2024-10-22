@@ -233,7 +233,7 @@ namespace WH.DetectSystem.ViewModels
             {
                 foreach (var item in CMainVMs)
                 {
-                    if (item.FocusCtrlVM.IsFocusing)
+                    if (item.FocusCtrlVM?.IsFocusing ?? false)
                     {
                         return true;
                     }
@@ -541,7 +541,7 @@ namespace WH.DetectSystem.ViewModels
         {
             foreach (var item in CMainVMs)
             {
-                item.FocusCtrlVM.Reset();
+                item.FocusCtrlVM?.Reset();
             }
         }
 
@@ -566,8 +566,14 @@ namespace WH.DetectSystem.ViewModels
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlgorParamConfig);
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociFilterConfig);
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlarmSetConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.MarkConfig);
-                    WeakReferenceMessenger.Default.UnregisterAll(mainVM.FocusConfig);
+                    if (mainVM.MarkConfig != null)
+                    {
+                        WeakReferenceMessenger.Default.UnregisterAll(mainVM.MarkConfig);
+                    }
+                    if (mainVM.FocusConfig != null)
+                    {
+                        WeakReferenceMessenger.Default.UnregisterAll(mainVM.FocusConfig);
+                    }
                     mainVM.StopTask();
                 }
             }

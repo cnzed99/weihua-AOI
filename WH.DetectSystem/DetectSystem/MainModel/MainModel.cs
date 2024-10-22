@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using AlarmSetCtrl;
+﻿using AlarmSetCtrl;
 using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using FocusControl;
-using HistoryPlayback;
 using HistoryPlayback.Model;
-using Mapster;
 using MarkControl;
-using MySqlOperatesApi;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ProjProduceData;
-using QualityGrade;
-using SaveImageManage;
 using SDFilter;
-using WH.DetectSystem.ViewModels;
+using WH.Entity;
 using WH.Entity.CommonLib;
 
 namespace WH.DetectSystem.Models
@@ -80,7 +67,7 @@ namespace WH.DetectSystem.Models
         /// 算法参数
         /// </summary>
         [JsonProperty(Order = 1)]
-        [JsonConverter(typeof(CAlgorithmParamConverter))]
+        //[JsonConverter(typeof(CAlgorithmParamConverter))]
         public CAlgorithmParamBase MaociAlgorParamConfig { get; set; }
 
         /// <summary>
@@ -124,14 +111,14 @@ namespace WH.DetectSystem.Models
         /// 打标
         /// </summary>
         [JsonProperty(Order = 8)]
-        public CMarkConfig MarkConfig { get; set; } = new CMarkConfig();
+        public CMarkConfig MarkConfig { get; set; }
 
         /// <summary>
         /// 2024.9.3 李焕彬
         /// 运动控制
         /// </summary>
         [JsonProperty(Order = 9)]
-        [JsonConverter(typeof(CFocusConfigConverter))]
+        //[JsonConverter(typeof(CFocusConfigConverter))]
         public CFocusConfigBase FocusConfig { get; set; }
 
         /// <summary>

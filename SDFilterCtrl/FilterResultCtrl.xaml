@@ -21,7 +21,6 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>-->
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
-            <local:TextUnitsConverter x:Key="TextUnitsConverter" />
             <local:ValueHalfConverter x:Key="ValueHalfConverter" />
             <conv:BoolToBrushConverter x:Key="BoolToBrushConverterEx" TrueValue="{DynamicResource ExpanderBrush}">
                 <conv:BoolToBrushConverter.FalseValue>
@@ -90,7 +89,7 @@
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="3"
-                                                                    Text="{Binding ResultList[0].Feature, Converter={StaticResource TextUnitsConverter}}"
+                                                                    Text="{Binding ResultList[0].Feature.Unit, Mode=OneWay}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="4"
@@ -98,7 +97,7 @@
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="5"
-                                                                    Text="{Binding ResultList[1].Feature, Converter={StaticResource TextUnitsConverter}}"
+                                                                    Text="{Binding ResultList[1].Feature.Unit, Mode=OneWay}"
                                                                     TextAlignment="Left" />
                                                             </Grid>
                                                         </Expander.Header>
@@ -125,7 +124,7 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                Text="{Binding Feature, Converter={StaticResource StringAttrEnumConverter}}" />
+                                                                                Text="{Binding Feature}" />
                                                                             <TextBlock
                                                                                 Grid.Column="1"
                                                                                 Margin="0,3"
@@ -138,7 +137,7 @@
                                                                                 Margin="0,3"
                                                                                 HorizontalAlignment="Center"
                                                                                 Background="Transparent"
-                                                                                Text="{Binding Feature, Converter={StaticResource TextUnitsConverter}}" />
+                                                                                Text="{Binding Feature.Unit, Mode=OneWay}" />
                                                                         </Grid>
                                                                     </DataTemplate>
                                                                 </ItemsControl.ItemTemplate>

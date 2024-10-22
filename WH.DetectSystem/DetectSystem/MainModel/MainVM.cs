@@ -29,6 +29,7 @@ using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
+using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
@@ -120,15 +121,24 @@ namespace WH.DetectSystem.Models
 
             this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
             this.AlarmSetVM.CAlarmSet = MaociAlarmSetConfig;
-            this.MarkCtrlVM.MarkConfig = MarkConfig;
+
             this.HistoryVM.HistoryModel = MaociHistoryModel;
             MaociHistoryModel.SetHistory(MaociFilterConfig);
             //MaociMysqlConfig.SetSQL(MaociFilterConfig);
-            FocusCtrlVM = FocusConfig.CreateCtrlVM();
-            FocusCtrlVM.SetCameraSerial(CameraSerial);
-            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
-            MarkCtrlVM.Connect();
-            FocusCtrlVM.InitControl();
+            if (AppConfig.HasFocusConfig())
+            {
+                FocusCtrlVM = FocusConfig.CreateCtrlVM();
+                FocusCtrlVM.SetCameraSerial(CameraSerial);
+                this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+                FocusCtrlVM.InitControl();
+            }
+            if (AppConfig.HasMarkConfig())
+            {
+                MarkCtrlVM = new CMarkCtrlVM();
+                MarkCtrlVM.MarkConfig = MarkConfig;
+                MarkCtrlVM.Connect();
+            }
+
             AlarmSetVM.Reset();
             HistoryVM.Reset();
             QualityVM.Reset();
@@ -165,14 +175,16 @@ namespace WH.DetectSystem.Models
                 MaociAlarmSetConfig,
                 MaociAlarmSetConfig.token
             );
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MarkConfig,
-                MarkConfig.token
-            );
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                FocusConfig,
-                FocusConfig.token
-            );
+            if (MarkConfig is not null)
+                WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                    MarkConfig,
+                    MarkConfig.token
+                );
+            if (FocusConfig is not null)
+                WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                    FocusConfig,
+                    FocusConfig.token
+                );
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
         }
@@ -227,8 +239,16 @@ namespace WH.DetectSystem.Models
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm();
-            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
-            this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
+            this.MaociFilterConfig = new CFilterConfig(
+                this.MaociAlgorParamConfig.DefectSpecies,
+                this.MaociAlgorParamConfig.DefectFeatures
+            );
+            if (AppConfig.HasFocusConfig())
+                this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
+            if (AppConfig.HasMarkConfig())
+            {
+                MarkConfig = new CMarkConfig();
+            }
             this.UpdateToken(); //更新Token要在Init前
             this.UpdateName();
             Init(processGroup);
@@ -296,7 +316,7 @@ namespace WH.DetectSystem.Models
         /// 打标控制VM,初始化需要放在运动控制前面
         /// </summary>
         [ObservableProperty]
-        CMarkCtrlVM markCtrlVM = new CMarkCtrlVM();
+        CMarkCtrlVM markCtrlVM;
 
         /// <summary>
         /// 2024.7.12 李焕彬
@@ -338,8 +358,8 @@ namespace WH.DetectSystem.Models
                 {
                     UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
                 }
-                FocusCtrlVM.SetRunning(IsStart);
-                MarkCtrlVM.SetRunning(IsStart);
+                FocusCtrlVM?.SetRunning(IsStart);
+                MarkCtrlVM?.SetRunning(IsStart);
             }
         }
 
@@ -355,8 +375,8 @@ namespace WH.DetectSystem.Models
             set
             {
                 isManualTest = value;
-                FocusCtrlVM.SetRunning(isManualTest);
-                MarkCtrlVM.SetRunning(isManualTest);
+                FocusCtrlVM?.SetRunning(isManualTest);
+                MarkCtrlVM?.SetRunning(isManualTest);
             }
         }
 
@@ -369,7 +389,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         public bool IsFocusing
         {
-            get { return FocusCtrlVM.IsFocusing; }
+            get { return FocusCtrlVM?.IsFocusing ?? false; }
         }
         #endregion
 
@@ -486,7 +506,7 @@ namespace WH.DetectSystem.Models
                     {
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-                        cell.EncoderPos = MarkCtrlVM.GetEncoderCount();
+                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         cell.ID = (MaociDefectsProduce.Total + 1).ToString();
                         BitmapSource bitmapSource = cell.Image.ToBitmapSource();
                         _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
@@ -495,7 +515,7 @@ namespace WH.DetectSystem.Models
                                 ModelImage = bitmapSource;
                             })
                         );
-                        if (FocusCtrlVM.IsFocusing)
+                        if (FocusCtrlVM?.IsFocusing ?? false)
                         {
                             if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
                                 cell.Dispose();
@@ -579,7 +599,7 @@ namespace WH.DetectSystem.Models
                                     new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
                                 );
                             }
-                            else
+                            else if (MarkCtrlVM is not null)
                             {
                                 int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
                                 strbuilder.Append($",检测NG,增加打标位置{markPos}！");
@@ -776,7 +796,7 @@ namespace WH.DetectSystem.Models
                                                 for (int i = 0; i < detection.regionOut.Count; i++)
                                                 {
                                                     drawView.ImgDrawPoints(
-                                                        detection.regionOut[i].points1,
+                                                        detection.regionOut[i].points,
                                                         false
                                                     );
                                                     if (i == detection.regionOut.Count - 1)
@@ -810,7 +830,7 @@ namespace WH.DetectSystem.Models
                                                 )
                                                 {
                                                     drawView.ImgDrawPoints(
-                                                        cell.Detection.regionOut[i].points1,
+                                                        cell.Detection.regionOut[i].points,
                                                         false
                                                     );
                                                     if (i == cell.Detection.regionOut.Count - 1)
@@ -1154,14 +1174,18 @@ namespace WH.DetectSystem.Models
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm();
-            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
+            this.MaociFilterConfig = new CFilterConfig(
+                this.MaociAlgorParamConfig.DefectSpecies,
+                this.MaociAlgorParamConfig.DefectFeatures
+            );
             this.MaociAlgorVM.Config = MaociAlgorParamConfig;
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
             this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
             this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
             MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             this.MaociHistoryModel.SetHistory(MaociFilterConfig);
-            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+            if (FocusCtrlVM is not null)
+                this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
@@ -1188,6 +1212,8 @@ namespace WH.DetectSystem.Models
         /// </summary>
         public void UpdateFocus(string focus)
         {
+            if (!AppConfig.HasFocusConfig())
+                return;
             //修改之前注销自动对焦消息
             WeakReferenceMessenger.Default.UnregisterAll(FocusConfig);
 
@@ -1213,8 +1239,6 @@ namespace WH.DetectSystem.Models
             MaociAlgorParamConfig.token.ProGuid = GUID;
             MaociFilterConfig.token.ProGuid = GUID;
             MaociAlarmSetConfig.token.ProGuid = GUID;
-            MarkConfig.token.ProGuid = GUID;
-            FocusConfig.token.ProGuid = GUID;
 
             ConfigModifyObservableBase.UpdateToken(MaociAlarmSetConfig, MaociAlarmSetConfig.token);
             ConfigModifyObservableBase.UpdateToken(MaociFilterConfig, MaociFilterConfig.token);
@@ -1222,8 +1246,16 @@ namespace WH.DetectSystem.Models
                 MaociAlgorParamConfig,
                 MaociAlgorParamConfig.token
             );
-            ConfigModifyObservableBase.UpdateToken(MarkConfig, MarkConfig.token);
-            ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
+            if (AppConfig.HasMarkConfig())
+            {
+                MarkConfig.token.ProGuid = GUID;
+                ConfigModifyObservableBase.UpdateToken(MarkConfig, MarkConfig.token);
+            }
+            if (AppConfig.HasFocusConfig())
+            {
+                FocusConfig.token.ProGuid = GUID;
+                ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
+            }
         }
 
         /// <summary>
@@ -1235,8 +1267,10 @@ namespace WH.DetectSystem.Models
             MaociAlgorParamConfig.PrcessName = Name;
             MaociFilterConfig.PrcessName = Name;
             MaociAlarmSetConfig.PrcessName = Name;
-            MarkConfig.PrcessName = Name;
-            FocusConfig.PrcessName = Name;
+            if (MarkConfig is not null)
+                MarkConfig.PrcessName = Name;
+            if (FocusConfig is not null)
+                FocusConfig.PrcessName = Name;
         }
 
         /// <summary>
@@ -1249,8 +1283,10 @@ namespace WH.DetectSystem.Models
             this.MaociAlgorVM.LoginPerson = loginPerson;
             this.SDFilterVM.LoginPerson = loginPerson;
             this.AlarmSetVM.LoginPerson = loginPerson;
-            this.MarkCtrlVM.LoginPerson = loginPerson;
-            this.FocusCtrlVM.LoginPerson = loginPerson;
+            if (MarkConfig is not null)
+                this.MarkCtrlVM.LoginPerson = loginPerson;
+            if (FocusCtrlVM is not null)
+                this.FocusCtrlVM.LoginPerson = loginPerson;
             this.HistoryVM.LoginPerson = loginPerson;
         }
     }

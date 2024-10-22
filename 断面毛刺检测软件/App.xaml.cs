@@ -82,7 +82,7 @@ namespace 断面毛刺检测软件
             }
             else
             {
-                GlobalData.Init();
+                //GlobalData.Init();
                 base.OnStartup(e);
 
                 //UpdateRegistry();
@@ -103,7 +103,7 @@ namespace 断面毛刺检测软件
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            GlobalData.Save();
+            //GlobalData.Save();
             //var lightProcess = App.Container.ResolveKeyed<Process>("LightControl");
             //try
             //{
@@ -266,56 +266,58 @@ namespace 断面毛刺检测软件
 
     internal class GlobalData
     {
-        public static void Init()
-        {
-            if (File.Exists(AppConfig.SavePath))
-            {
-                try
-                {
-                    var json = File.ReadAllText(AppConfig.SavePath);
-                    Config =
-                        (
-                            string.IsNullOrEmpty(json)
-                                ? new AppConfig()
-                                : JsonConvert.DeserializeObject<AppConfig>(json)
-                        ) ?? new AppConfig();
-                }
-                catch
-                {
-                    Config = new AppConfig();
-                }
-            }
-            else
-            {
-                Config = new AppConfig();
-            }
-        }
+        //public static void Init()
+        //{
+        //    if (File.Exists(AppConfig.SavePath))
+        //    {
+        //        try
+        //        {
+        //            var json = File.ReadAllText(AppConfig.SavePath);
+        //            Config =
+        //                (
+        //                    string.IsNullOrEmpty(json)
+        //                        ? new AppConfig()
+        //                        : JsonConvert.DeserializeObject<AppConfig>(json)
+        //                ) ?? new AppConfig();
+        //        }
+        //        catch
+        //        {
+        //            Config = new AppConfig();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Config = new AppConfig();
+        //    }
+        //}
 
-        public static void Save()
-        {
-            var json = JsonConvert.SerializeObject(Config);
-            File.WriteAllText(AppConfig.SavePath, json);
-        }
+        //public static void Save()
+        //{
+        //    var json = JsonConvert.SerializeObject(Config);
+        //    File.WriteAllText(AppConfig.SavePath, json);
+        //}
 
         public static AppConfig Config { get; set; } = new AppConfig();
 
-        public static bool NotifyIconIsShow { get; set; } = true;
+        //public static bool NotifyIconIsShow { get; set; } = true;
     }
 
     internal class AppConfig : ObservableObject
     {
-        public static readonly string SavePath =
-            $"{AppDomain.CurrentDomain.BaseDirectory}AppConfig.json";
         bool isDark;
         public bool IsDark
         {
-            get => isDark;
+            get
+            {
+                isDark = WH.Entity.AppConfig.IsThemeDark();
+                return isDark;
+            }
             set
             {
                 if (!SetProperty(ref isDark, value))
                     return;
                 ((App)Application.Current).UpdateSkin(isDark);
-                GlobalData.Save();
+                WH.Entity.AppConfig.SetThemeDark(isDark);
             }
         }
     }

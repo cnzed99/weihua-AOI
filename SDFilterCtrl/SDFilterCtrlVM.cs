@@ -12,6 +12,7 @@ using HandyControl.Controls;
 using QualityGrade;
 using WH.Controls;
 using WH.Controls.SingleInstance;
+using WH.RecipeCellRootBase;
 
 namespace SDFilter
 {
@@ -112,14 +113,19 @@ namespace SDFilter
                 DefectFilter defectFilter = (DefectFilter)objArr[0];
                 SpeciesFilter speciesFilter = (SpeciesFilter)objArr[1];
                 DefectFilterSetWin defectFilterSetWin = SingleInstance.Add(
-                    new DefectFilterSetWin(defectFilter, speciesFilter, QualityConfig),
+                    new DefectFilterSetWin(
+                        defectFilter,
+                        speciesFilter,
+                        QualityConfig,
+                        FilterConfig
+                    ),
                     defectFilter.Name
                 );
                 defectFilterSetWin.Title = defectFilter.Name;
                 defectFilterSetWin.Closed += (s, e) =>
                 {
                     //每次关闭打开刷新ResultList
-                    List<EMFILTER> lsParam = new List<EMFILTER>();
+                    List<CFeacture> lsParam = new List<CFeacture>();
                     foreach (var filter in defectFilter.FilterList)
                     {
                         foreach (var select in filter.Filter)

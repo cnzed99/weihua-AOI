@@ -7,7 +7,8 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
 		<PackageReference Include="log4net" />
-		
+		<PackageReference Include="Microsoft.CSharp" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 		<PackageReference Include="Microsoft.Web.Administration" />
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="System.IO.Ports" />

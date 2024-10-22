@@ -1,7 +1,10 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Media;
 using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,6 +34,15 @@ namespace FrontAlgorithm
                 ["铝层缺陷类"] = new List<string>() { "毛刺" },
                 ["料区缺陷类"] = new List<string>() { "掉料" },
             };
+            DefectFeatures.Add(new("PeakHeight", "顶点高度", "PeakHeight", "um"));
+            DefectFeatures.Add(new("BotHeight", "低点高度", "BotHeight", "um"));
+            DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
+            DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
+            DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
+            DefectFeatures.Add(new("ContLength", "周长", "ContLength", "um"));
+            DefectFeatures.Add(new("Height", "高度", "Height", "um"));
+            DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
+            DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
         }
 
         ///// <summary>
@@ -497,4 +509,132 @@ namespace FrontAlgorithm
         [property: Description("超时时间说明")]
         private uint timeOut = 3000;
     }
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 区域信息
+    /// </summary>
+    public struct SRegionInfo : IRegionInfo
+    {
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直宽度
+        /// </summary>
+        public double WidthBound = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直高度
+        /// </summary>
+        public double HeightBound = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um直角高度
+        /// </summary>
+        public double PeakHeight = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um低点高度
+        /// </summary>
+        public double BotHeight = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um长边长度
+        /// </summary>
+        public double LongLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um短边长度
+        /// </summary>
+        public double ShorLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 角度
+        /// </summary>
+        public double Phi = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um周长
+        /// </summary>
+        public double ContLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um²面积
+        /// </summary>
+        public double Area = 0;
+
+        public SRegionInfo() { }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 获取对应缺陷特征值
+        /// </summary>
+        /// <param name="character">缺陷特征</param>
+        /// <returns>缺陷特征值</returns>
+        public double GetValue(CFeacture feacture)
+        {
+            switch (feacture.Id)
+            {
+                case "PeakHeight":
+                    return PeakHeight;
+                case "BotHeight":
+                    return BotHeight;
+                case "Area":
+                    return Area;
+                case "LongLength":
+                    return LongLen;
+                case "ShortLength":
+                    return ShorLen;
+                case "Angle":
+                    return Phi;
+                case "ContLength":
+                    return ContLen;
+                case "Width":
+                    return WidthBound;
+                case "Height":
+                    return HeightBound;
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 合并区域
+        /// </summary>
+        /// <param name="regions">区域集</param>
+        /// <returns>合并后区域</returns>
+        public SRegion Union(List<SRegion> regions)
+        {
+            SRegionInfo regionInfo = new SRegionInfo();
+            regionInfo.WidthBound = regions
+                .Select(o => ((SRegionInfo)o.regionInfo).WidthBound)
+                .Sum();
+            regionInfo.HeightBound = regions
+                .Select(o => ((SRegionInfo)o.regionInfo).HeightBound)
+                .Sum();
+            regionInfo.PeakHeight = regions
+                .Select(o => ((SRegionInfo)o.regionInfo).PeakHeight)
+                .Max();
+            regionInfo.BotHeight = regions.Select(o => ((SRegionInfo)o.regionInfo).BotHeight).Min();
+            regionInfo.LongLen = regions.Select(o => ((SRegionInfo)o.regionInfo).LongLen).Sum();
+            regionInfo.ShorLen = regions.Select(o => ((SRegionInfo)o.regionInfo).ShorLen).Sum();
+            regionInfo.Phi = regions.Select(o => ((SRegionInfo)o.regionInfo).Phi).Max();
+            regionInfo.ContLen = regions.Select(o => ((SRegionInfo)o.regionInfo).ContLen).Sum();
+            regionInfo.Area = regions.Select(o => ((SRegionInfo)o.regionInfo).Area).Sum();
+            List<Point> pts = new List<Point>();
+            for (int i = 0; i < regions.Count; i++)
+            {
+                pts.AddRange(regions[i].points);
+            }
+            return new SRegion(regionInfo, pts);
+        }
+    };
 }

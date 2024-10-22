@@ -233,7 +233,7 @@ namespace WH.DetectSystem._5_存图操作
                         Pen penDraw = new Pen(defectFilter.ShowColor.Brush, 1);
                         for (int i = 0; i < detection.regionOut.Count; i++)
                         {
-                            DrawPoints(detection.regionOut[i].points1, penDraw);
+                            DrawPoints(detection.regionOut[i].points, penDraw);
                             if (i == detection.regionOut.Count - 1)
                             {
                                 DrawText(
@@ -259,7 +259,7 @@ namespace WH.DetectSystem._5_存图操作
                         Pen penDraw = new Pen(defectFilter.ShowColor.Brush, 1);
                         for (int i = 0; i < cell.Detection.regionOut.Count; i++)
                         {
-                            DrawPoints(cell.Detection.regionOut[i].points1, penDraw);
+                            DrawPoints(cell.Detection.regionOut[i].points, penDraw);
                             if (i == cell.Detection.regionOut.Count - 1)
                             {
                                 DrawText(

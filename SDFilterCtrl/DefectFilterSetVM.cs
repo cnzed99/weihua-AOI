@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HandyControl.Controls;
 using QualityGrade;
+using WH.RecipeCellRootBase;
 
 namespace SDFilter
 {
@@ -20,23 +21,11 @@ namespace SDFilter
     /// </summary>
     public partial class CDefectFilterSetVM : ObservableValidator
     {
-        public List<EMFILTER> FilterCharacters { get; set; }
-
-        public CDefectFilterSetVM()
-        {
-            FilterCharacters = new List<EMFILTER>()
-            {
-                EMFILTER.EMFILTER_PEAKHEI,
-                EMFILTER.EMFILTER_BOTHEI,
-                EMFILTER.EMFILTER_AREA,
-                EMFILTER.EMFILTER_LONGLEN,
-                EMFILTER.EMFILTER_SHORTLEN,
-                EMFILTER.EMFILTER_PHI,
-                EMFILTER.EMFILTER_CONTLEN,
-                EMFILTER.EMFILTER_WIDTH,
-                EMFILTER.EMFILTER_HEIGHT
-            };
-        }
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 特征项，过滤Combox用
+        /// </summary>
+        public List<CFeacture> DefectFeactures { get; set; }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -47,9 +36,9 @@ namespace SDFilter
         public CDefectFilterSetVM(
             DefectFilter defectFilter,
             SpeciesFilter speciesFilter,
-            CQualityConfig qualityConfig
+            CQualityConfig qualityConfig,
+            CFilterConfig filterConfig
         )
-            : this()
         {
             this.DefectFilter = defectFilter;
             RecipeDefects = speciesFilter.RecipeDefects.ToList();
@@ -58,6 +47,13 @@ namespace SDFilter
             //向质量等级请求数据
             //var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>(), "GetQuality");
             Qualities = qualityConfig.Qualities;
+            this.filterConfig = filterConfig;
+            DefectFeactures = new List<CFeacture>(filterConfig.DefectFeatures);
+            CFeacture feacture = DefectFeactures.FirstOrDefault(o => o.Id == "Count");
+            if (feacture != null)
+            {
+                DefectFeactures.Remove(feacture);
+            }
         }
 
         /// <summary>
@@ -73,6 +69,13 @@ namespace SDFilter
         /// </summary>
         [ObservableProperty]
         private DefectFilter defectFilter;
+
+        /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 过滤分选配置
+        /// </summary>
+        [ObservableProperty]
+        private CFilterConfig filterConfig;
 
         /// <summary>
         /// 2024.7.4 李焕彬
