@@ -26,7 +26,7 @@ namespace WH.DetectSystem
         /// <param name="cell">检测对象</param>
         public static void MaociFPGAExcute(this CAlgorithmParamBase paramMaoci, Cell cell)
         {
-            cell.AlgoriDetectResult = paramMaoci.DetectFpga(cell);
+            paramMaoci.DetectFpga(cell);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace WH.DetectSystem
         /// <param name="cell">检测对象</param>
         public static void MaociExcute(this CAlgorithmParamBase paramMaoci, Cell cell)
         {
-            cell.AlgoriDetectResult = paramMaoci.DetectImage(cell);
+            paramMaoci.DetectImage(cell);
         }
     }
 }

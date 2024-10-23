@@ -284,5 +284,14 @@ namespace SDFilter.Properties {
                 return ResourceManager.GetString("UseUp", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 缺陷输出类型不同，切换后过滤分选特征需要重新设置！ 的本地化字符串。
+        /// </summary>
+        public static string 算法修改询问 {
+            get {
+                return ResourceManager.GetString("算法修改询问", resourceCulture);
+            }
+        }
     }
 }

@@ -21,19 +21,18 @@ namespace AlgorithmDll
         /// 2024.09.04 李焕彬
         /// 创建新算法
         /// </summary>
-        /// <param name="com">通讯对象</param>
-        /// <returns>通讯参数</returns>
+        /// <returns>算法参数</returns>
         CAlgorithmParamBase CreateNewAlgorithm();
 
-        /// <summary>
-        /// 初始化算法
-        /// 2024.09.04 李焕彬
-        /// </summary>
-        /// <param name="path">参数文件路径</param>
-        /// <param name="index">索引</param>
-        /// <param name="LightObj">算法实例</param>
-        /// <returns>参数</returns>
-        CAlgorithmParamBase Init(CAlgorithmParamBase algorithmParamBase);
+        ///// <summary>
+        ///// 初始化算法
+        ///// 2024.09.04 李焕彬
+        ///// </summary>
+        ///// <param name="path">参数文件路径</param>
+        ///// <param name="index">索引</param>
+        ///// <param name="LightObj">算法实例</param>
+        ///// <returns>参数</returns>
+        //CAlgorithmParamBase Init(CAlgorithmParamBase algorithmParamBase);
     }
 
     /// <summary>
@@ -70,41 +69,41 @@ namespace AlgorithmDll
         }
     }
 
-    /// <summary>
-    /// 2024.09.04 李焕彬
-    /// 算法参数Json转换器
-    /// </summary>
-    public class CAlgorithmParamConverter : JsonConverter
-    {
-        public override bool CanWrite => false;
+    ///// <summary>
+    ///// 2024.09.04 李焕彬
+    ///// 算法参数Json转换器
+    ///// </summary>
+    //public class CAlgorithmParamConverter : JsonConverter
+    //{
+    //    public override bool CanWrite => false;
 
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(CAlgorithmParamBase);
-        }
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        return objectType == typeof(CAlgorithmParamBase);
+    //    }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer
-        )
-        {
-            var paramBase = serializer.Deserialize<CAlgorithmParamBase>(reader);
-            if (
-                paramBase != null
-                && !string.IsNullOrEmpty(paramBase.AlgorithmType)
-                && CAlgorithmManagement.AlgorithmHeper.ContainsKey(paramBase.AlgorithmType)
-            )
-            {
-                return CAlgorithmManagement.AlgorithmHeper[paramBase.AlgorithmType].Init(paramBase);
-            }
-            return null;
-        }
+    //    public override object ReadJson(
+    //        JsonReader reader,
+    //        Type objectType,
+    //        object existingValue,
+    //        JsonSerializer serializer
+    //    )
+    //    {
+    //        var paramBase = serializer.Deserialize<CAlgorithmParamBase>(reader);
+    //        if (
+    //            paramBase != null
+    //            && !string.IsNullOrEmpty(paramBase.AlgorithmType)
+    //            && CAlgorithmManagement.AlgorithmHeper.ContainsKey(paramBase.AlgorithmType)
+    //        )
+    //        {
+    //            return CAlgorithmManagement.AlgorithmHeper[paramBase.AlgorithmType].Init(paramBase);
+    //        }
+    //        return null;
+    //    }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

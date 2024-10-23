@@ -61,8 +61,7 @@ namespace MotionControl
         public CMotionConfig()
             : base()
         {
-            FocusType = "MotionControl";
-            this.token = new Token("", "FocusControl");
+            //FocusType = "MotionControl";
             var signalIn = new ObservableCollection<CSignalIn>();
             for (int i = 0; i < 10; i++)
             {

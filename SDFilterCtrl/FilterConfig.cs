@@ -41,13 +41,6 @@ namespace SDFilter
         public string PrcessName { get; set; }
 
         /// <summary>
-        /// 2024.10.21 李焕彬
-        /// 过滤分选特征
-        /// </summary>
-        [property: IgnoreModifyLog]
-        public List<CFeacture> DefectFeatures { get; set; }
-
-        /// <summary>
         /// 20240719 TCG
         /// 缺陷列表，外部引用较多
         /// </summary>
@@ -61,24 +54,22 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public CFilterConfig(
-            Dictionary<string, List<string>> defectSpecies,
-            List<CFeacture> defectFeatures
-        )
+        public CFilterConfig(List<CDefectSpecies> defectSpecies)
         {
             this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
             foreach (var specie in defectSpecies)
             {
-                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Key, token);
-                foreach (var recipe in specie.Value)
+                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
+                foreach (var recipe in specie.RecipeDefects)
                 {
-                    speciesFilter.RecipeDefects.Add(new RecipeDefect(recipe, token));
+                    speciesFilter.RecipeDefects.Add(
+                        new RecipeDefect(recipe.Name, recipe.Category, token)
+                    );
                 }
                 SpFilters.Add(speciesFilter);
             }
             SpeciesFilters = SpFilters;
-            DefectFeatures = defectFeatures;
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)
@@ -190,7 +181,7 @@ namespace SDFilter
             var recipeDefect = specie.RecipeDefects.FirstOrDefault(o => o.Name == rp);
             if (recipeDefect == null)
             {
-                recipeDefect = new(rp, token, false);
+                recipeDefect = new(rp, Category.值, token, false);
                 Application.Current.Dispatcher.Invoke(
                     new Action(() =>
                     {
@@ -433,15 +424,16 @@ namespace SDFilter
             this.token = new Token("", this.GetType().Namespace);
         }
 
-        public RecipeDefect(string name, Token token, bool addDefect = true)
+        public RecipeDefect(string name, Category category, Token token, bool addDefect = true)
         {
             this.token = token;
             this.Name = name;
+            this.Category = category;
             if (addDefect)
             {
                 DefectFilters = new ObservableCollection<DefectFilter>()
                 {
-                    new DefectFilter(Name + "0", token)
+                    new DefectFilter(Name, token)
                 };
             }
             else
@@ -457,6 +449,12 @@ namespace SDFilter
         //[property: DisplayName("名称")]
         //[ObservableProperty]
         //private string name;
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 区域/值
+        /// </summary>
+        public Category Category { get; set; }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -730,7 +728,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("特征")]
         [ObservableProperty]
-        private CFeacture character = new("Count", "数量", "Count", "pcs");
+        private CFeacture character = CFeacture.FeactureCount;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -770,7 +768,7 @@ namespace SDFilter
         /// <returns></returns>
         public override string ToString()
         {
-            string characterName = Character.GetName();
+            string characterName = Character?.GetName();
 
             if (MaxLimit && MinLimit)
             {
@@ -796,7 +794,7 @@ namespace SDFilter
         /// </summary>
         /// <param name="value">特征值</param>
         /// <returns>在范围内为true，否则为false</returns>
-        private bool Excute(double value)
+        public bool Excute(double value)
         {
             if (MinLimit && MaxLimit)
             {
@@ -836,14 +834,16 @@ namespace SDFilter
                 return false;
             if (sRegionIn is not null)
             {
-                if (Character.Id == "Count")
+                if (Character == CFeacture.FeactureCount)
                 {
                     if (Excute(sRegionIn.Count))
                         sRegionOut = sRegionIn;
                 }
                 else
                 {
-                    sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.GetValue(Character)));
+                    sRegionOut = sRegionIn.FindAll(o =>
+                        Excute(o.regionInfo.GetValue(Character, o))
+                    );
                 }
             }
 
@@ -869,7 +869,7 @@ namespace SDFilter
         /// 特征
         /// </summary>
         [ObservableProperty]
-        private CFeacture feature = new("Count", "数量", "Count", "pcs");
+        private CFeacture feature = CFeacture.FeactureCount;
 
         /// <summary>
         /// 2024.7.4 李焕彬

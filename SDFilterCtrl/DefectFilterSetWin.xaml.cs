@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.ComponentModel;
+using HandyControl.Properties.Langs;
 using QualityGrade;
 using WH.Entity;
 using WH.Entity.Attribute;
@@ -38,11 +39,11 @@ namespace SDFilter
             DefectFilter defectFilter,
             SpeciesFilter speciesFilter,
             CQualityConfig qualityConfig,
-            CFilterConfig filterConfig
+            List<CFeacture> defectFeactures
         )
         {
             InitializeComponent();
-            VM = new(defectFilter, speciesFilter, qualityConfig, filterConfig);
+            VM = new(defectFilter, speciesFilter, qualityConfig, defectFeactures);
             this.DataContext = VM;
         }
 
@@ -183,6 +184,67 @@ namespace SDFilter
         protected override Freezable CreateInstanceCore()
         {
             return new ValidationParams();
+        }
+    }
+
+    /// <summary>
+    /// 2024.10.22 李焕彬
+    /// 特征选项CombBox专用
+    /// </summary>
+    public class CmbCharacterConverter : IMultiValueConverter
+    {
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
+        {
+            if (
+                values[0] is RecipeDefect recipe
+                && values[1] is string name
+                && values[2] is List<CFeacture> defectFeactures
+            )
+            {
+                switch (recipe.Category)
+                {
+                    case Category.区域:
+                        if (name == Properties.Resource1.Select)
+                        {
+                            var feactures = defectFeactures.ToList();
+                            feactures.Add(CFeacture.FeactureCount);
+                            return feactures;
+                        }
+                        else
+                        {
+                            return defectFeactures;
+                        }
+                    case Category.值:
+                        if (name == Properties.Resource1.Select)
+                        {
+                            return new List<CFeacture>
+                            {
+                                CFeacture.FeactureValue,
+                                CFeacture.FeactureCount
+                            };
+                        }
+                        else
+                        {
+                            return new List<CFeacture> { CFeacture.FeactureValue };
+                        }
+                }
+            }
+            return Binding.DoNothing;
+        }
+
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
+        {
+            throw new NotImplementedException();
         }
     }
 }

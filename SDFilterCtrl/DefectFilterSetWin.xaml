@@ -36,6 +36,8 @@
             <entity:EnumProviderConverter x:Key="EnumProviderConverter" />
             <entity:Enums2StringsConverter x:Key="Enums2StringsConverter" />
             <entity:StringAttrEnumConverter x:Key="StringAttrEnumConverter" />
+            <entity:String2VisiblityReConverter x:Key="String2VisiblityReConverter" />
+            <local:CmbCharacterConverter x:Key="CmbCharacterConverter" />
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -55,7 +57,6 @@
                 x:Key="Button"
                 BasedOn="{StaticResource ButtonDanger}"
                 TargetType="Button">
-
                 <Setter Property="Padding" Value="8,5,8,5" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
@@ -183,14 +184,14 @@
                                                 Name="CmbCharacter"
                                                 Grid.Column="1"
                                                 Margin="10,3,10,3"
-                                                ItemsSource="{Binding Tag[1], RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}"
                                                 SelectedItem="{Binding Character}">
-                                                <!--  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:DefectFilterSetWin},Path=DataContext.FilterCharacters,Converter={StaticResource Enums2StringsConverter}}">  -->
-                                                <!--<ComboBox.ItemsSource>
-                            <MultiBinding Converter="{StaticResource ItemSourceCharacterConverter}">
-                                <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" />
-                            </MultiBinding>
-                        </ComboBox.ItemsSource>-->
+                                                <ComboBox.ItemsSource>
+                                                    <MultiBinding Converter="{StaticResource CmbCharacterConverter}">
+                                                        <Binding Path="DataContext.RecipeDefect" RelativeSource="{RelativeSource AncestorType={x:Type local:DefectFilterSetWin}}" />
+                                                        <Binding Path="Tag[0]" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}" />
+                                                        <Binding Path="DataContext.DefectFeactures" RelativeSource="{RelativeSource AncestorType={x:Type local:DefectFilterSetWin}}" />
+                                                    </MultiBinding>
+                                                </ComboBox.ItemsSource>
                                             </ComboBox>
                                             <TextBox
                                                 Grid.Column="2"
@@ -263,11 +264,10 @@
 
             <TextBox hc:TitleElement.Title="{Binding [DefectName], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectName, UpdateSourceTrigger=PropertyChanged}" />
             <TextBox hc:TitleElement.Title="{Binding [Priority], Source={x:Static local:CLang.s_Instance}}" Text="{Binding DefectFilter.Priority, UpdateSourceTrigger=PropertyChanged}" />
-
             <ComboBox
                 hc:TitleElement.Title="{Binding [Algorithm], Source={x:Static local:CLang.s_Instance}}"
                 ItemsSource="{Binding RecipeDefects}"
-                SelectedItem="{Binding RecipeDefect}">
+                SelectedItem="{Binding RecipeDefect, UpdateSourceTrigger=LostFocus}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
@@ -347,7 +347,8 @@
                                             Margin="2"
                                             ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}"
                                             SelectedItem="{Binding UnionMethod, Converter={StaticResource StringAttrEnumConverter}}"
-                                            Style="{StaticResource ComboBoxExtend}" />
+                                            Style="{StaticResource ComboBoxExtend}"
+                                            Visibility="{Binding Path=DataContext.RecipeDefect.Category, RelativeSource={RelativeSource AncestorType={x:Type local:DefectFilterSetWin}}, Converter={StaticResource String2VisiblityReConverter}, ConverterParameter=值}" />
                                         <Button
                                             Name="btn_DeleteFilter"
                                             Grid.Column="5"
@@ -388,7 +389,7 @@
                                                 <ItemsControl.Tag>
                                                     <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
                                                         <Binding Path="[Filter]" Source="{x:Static local:CLang.s_Instance}" />
-                                                        <Binding Path="DataContext.DefectFeactures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
+                                                        <!--<Binding Path="DataContext.DefectFeactures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />-->
                                                     </MultiBinding>
                                                 </ItemsControl.Tag>
                                             </ItemsControl>
@@ -426,7 +427,7 @@
                                                 <ItemsControl.Tag>
                                                     <MultiBinding Converter="{StaticResource CommMultiParamConverter}">
                                                         <Binding Path="[Select]" Source="{x:Static local:CLang.s_Instance}" />
-                                                        <Binding Path="DataContext.FilterConfig.DefectFeatures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />
+                                                        <!--<Binding Path="DataContext.FilterConfig.DefectFeatures" RelativeSource="{RelativeSource AncestorType=local:DefectFilterSetWin}" />-->
                                                     </MultiBinding>
                                                 </ItemsControl.Tag>
                                             </ItemsControl>

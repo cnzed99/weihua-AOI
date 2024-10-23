@@ -546,4 +546,18 @@ namespace FrontAlgorithm
             int nThresh
         );
     }
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 检测结果
+    /// </summary>
+    public enum EMDETECTRESULT
+    {
+        EMDR_OK = 0, //检测OK
+        EMDR_NG_LIGHTEDGE = 1, //铝层NG
+        EMDR_NG_DARKEDGE = 2, //料区NG
+        EMDR_NG_EMPTY = 3, //空白NG
+        EMDR_TIMEOUT = 4, //检测超时
+        EMDR_LOSEFOCUS = 5, //失焦异常
+    };
 }

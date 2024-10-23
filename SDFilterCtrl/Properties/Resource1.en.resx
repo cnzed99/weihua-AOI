@@ -192,4 +192,7 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>Confirm whether to delete?</value>
   </data>
+  <data name="算法修改询问" xml:space="preserve">
+    <value>The defect output type is different, the filtering and sorting characteristics need to be reset after switching!</value>
+  </data>
 </root>

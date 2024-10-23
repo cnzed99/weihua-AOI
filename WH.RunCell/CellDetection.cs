@@ -13,11 +13,6 @@ namespace WH.RunCell
             : base() { }
 
         /// <summary>
-        /// 输出区域
-        /// </summary>
-        public List<SRegion> regionOut { get; set; } = new List<SRegion>();
-
-        /// <summary>
         /// 缺陷顺序
         /// </summary>
         public int Index { get; set; }
@@ -66,7 +61,6 @@ namespace WH.RunCell
             detection.Type = this.Type;
             detection.Category = this.Category;
             detection.RecipeDefectName = this.RecipeDefectName;
-            detection.regionOut = this.regionOut?.ToList();
             detection.DefectFilter = this.DefectFilter;
             return detection;
         }

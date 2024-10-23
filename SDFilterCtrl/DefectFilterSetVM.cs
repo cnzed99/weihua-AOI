@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -23,7 +24,7 @@ namespace SDFilter
     {
         /// <summary>
         /// 2024.10.21 李焕彬
-        /// 特征项，过滤Combox用
+        /// 特征项，过滤分选Combox用
         /// </summary>
         public List<CFeacture> DefectFeactures { get; set; }
 
@@ -37,7 +38,7 @@ namespace SDFilter
             DefectFilter defectFilter,
             SpeciesFilter speciesFilter,
             CQualityConfig qualityConfig,
-            CFilterConfig filterConfig
+            List<CFeacture> defectFeactures
         )
         {
             this.DefectFilter = defectFilter;
@@ -47,13 +48,7 @@ namespace SDFilter
             //向质量等级请求数据
             //var res = WeakReferenceMessenger.Default.Send(new RequestMessage<ObservableCollection<Quality>>(), "GetQuality");
             Qualities = qualityConfig.Qualities;
-            this.filterConfig = filterConfig;
-            DefectFeactures = new List<CFeacture>(filterConfig.DefectFeatures);
-            CFeacture feacture = DefectFeactures.FirstOrDefault(o => o.Id == "Count");
-            if (feacture != null)
-            {
-                DefectFeactures.Remove(feacture);
-            }
+            this.DefectFeactures = defectFeactures;
         }
 
         /// <summary>
@@ -171,6 +166,17 @@ namespace SDFilter
             get { return recipeDefect; }
             set
             {
+                if (
+                    recipeDefect?.Category != value?.Category
+                    && HandyControl.Controls.MessageBox.Show(
+                        Properties.Resource1.算法修改询问,
+                        "Tips",
+                        MessageBoxButton.YesNo
+                    ) == MessageBoxResult.No
+                )
+                {
+                    return;
+                }
                 recipeDefect.DefectFilters.Remove(DefectFilter);
                 SetProperty(ref recipeDefect, value);
                 recipeDefect.DefectFilters.Add(DefectFilter);

@@ -42,6 +42,12 @@ namespace SDFilter
         public CQualityConfig QualityConfig { get; set; }
 
         /// <summary>
+        /// 2024.10.21 李焕彬
+        /// 特征项，过滤分选Combox用
+        /// </summary>
+        public List<CFeacture> DefectFeactures { get; set; }
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// 增加过滤器
         /// </summary>
@@ -52,12 +58,12 @@ namespace SDFilter
             if (speciesFilter.RecipeDefects.Count == 0)
                 return;
             RecipeDefect recipeDefect = speciesFilter.RecipeDefects.First();
-            int index = 0;
+            int index = 2;
             for (int i = recipeDefect.DefectFilters.Count - 1; i >= 0; i--)
             {
                 var match = Regex.Match(
                     recipeDefect.DefectFilters[i].Name,
-                    recipeDefect.Name + "[0-9]+"
+                    recipeDefect.Name + "[2-9]+"
                 );
                 if (match.Success)
                 {
@@ -117,7 +123,7 @@ namespace SDFilter
                         defectFilter,
                         speciesFilter,
                         QualityConfig,
-                        FilterConfig
+                        DefectFeactures
                     ),
                     defectFilter.Name
                 );

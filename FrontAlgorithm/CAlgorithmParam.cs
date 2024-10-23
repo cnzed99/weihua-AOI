@@ -28,12 +28,23 @@ namespace FrontAlgorithm
         public CAlgorithmParam()
             : base()
         {
-            AlgorithmType = "FrontAlgorithm";
-            DefectSpecies = new Dictionary<string, List<string>>()
+            //AlgorithmType = "FrontAlgorithm";
+            DefectSpecies = new()
             {
-                ["铝层缺陷类"] = new List<string>() { "毛刺" },
-                ["料区缺陷类"] = new List<string>() { "掉料" },
+                new("铝层缺陷类", new() { new("毛刺", Category.区域) }),
+                new("料区缺陷类", new() { new("掉料", Category.区域) }),
+                new(
+                    "异常类",
+                    new()
+                    {
+                        new("铝层异常", Category.值),
+                        new("料区异常", Category.值),
+                        new("超时", Category.值),
+                        new("失焦", Category.值)
+                    }
+                ),
             };
+            DefectFeatures = new();
             DefectFeatures.Add(new("PeakHeight", "顶点高度", "PeakHeight", "um"));
             DefectFeatures.Add(new("BotHeight", "低点高度", "BotHeight", "um"));
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
@@ -138,7 +149,7 @@ namespace FrontAlgorithm
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
-        public override EMDETECTRESULT DetectFpga(Cell cell)
+        public override void DetectFpga(Cell cell)
         {
             var param = new SMaociAlgorParamFpga(
                 (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect),
@@ -168,6 +179,7 @@ namespace FrontAlgorithm
             cellDetection1.Category = Category.区域;
             cellDetection1.regionOut = maociRegion;
             cell.AlgorithmOut.Add(cellDetection1);
+
             CellDetection cellDetection2 = new CellDetection();
             cellDetection2.Type = "料区缺陷类";
             cellDetection2.RecipeDefectName = "掉料";
@@ -175,12 +187,40 @@ namespace FrontAlgorithm
             cellDetection2.regionOut = thickRegion;
             cell.AlgorithmOut.Add(cellDetection2);
 
+            CellDetection cellDetection3 = new CellDetection();
+            cellDetection3.Type = "异常类";
+            cellDetection3.RecipeDefectName = "铝层异常";
+            cellDetection3.Category = Category.值;
+            cellDetection3.Value =
+                result == EMDETECTRESULT.EMDR_NG_LIGHTEDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection3);
+
+            CellDetection cellDetection4 = new CellDetection();
+            cellDetection4.Type = "异常类";
+            cellDetection4.RecipeDefectName = "料区异常";
+            cellDetection4.Category = Category.值;
+            cellDetection4.Value =
+                result == EMDETECTRESULT.EMDR_NG_DARKEDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection4);
+
+            CellDetection cellDetection5 = new CellDetection();
+            cellDetection5.Type = "异常类";
+            cellDetection5.RecipeDefectName = "超时";
+            cellDetection5.Category = Category.值;
+            cellDetection5.Value = result == EMDETECTRESULT.EMDR_TIMEOUT ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection5);
+
+            CellDetection cellDetection6 = new CellDetection();
+            cellDetection6.Type = "异常类";
+            cellDetection6.RecipeDefectName = "失焦";
+            cellDetection6.Category = Category.值;
+            cellDetection6.Value = result == EMDETECTRESULT.EMDR_LOSEFOCUS ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection6);
+
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
-
-            return result;
         }
 
         /// <summary>
@@ -188,7 +228,7 @@ namespace FrontAlgorithm
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
-        public override EMDETECTRESULT DetectImage(Cell cell)
+        public override void DetectImage(Cell cell)
         {
             SMaociAlgorParam param =
                 new(
@@ -226,12 +266,40 @@ namespace FrontAlgorithm
             cellDetection2.regionOut = thickRegion;
             cell.AlgorithmOut.Add(cellDetection2);
 
+            CellDetection cellDetection3 = new CellDetection();
+            cellDetection3.Type = "异常类";
+            cellDetection3.RecipeDefectName = "铝层异常";
+            cellDetection3.Category = Category.值;
+            cellDetection3.Value =
+                result == EMDETECTRESULT.EMDR_NG_LIGHTEDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection3);
+
+            CellDetection cellDetection4 = new CellDetection();
+            cellDetection4.Type = "异常类";
+            cellDetection4.RecipeDefectName = "料区异常";
+            cellDetection4.Category = Category.值;
+            cellDetection4.Value =
+                result == EMDETECTRESULT.EMDR_NG_DARKEDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection4);
+
+            CellDetection cellDetection5 = new CellDetection();
+            cellDetection5.Type = "异常类";
+            cellDetection5.RecipeDefectName = "超时";
+            cellDetection5.Category = Category.值;
+            cellDetection5.Value = result == EMDETECTRESULT.EMDR_TIMEOUT ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection5);
+
+            CellDetection cellDetection6 = new CellDetection();
+            cellDetection6.Type = "异常类";
+            cellDetection6.RecipeDefectName = "失焦";
+            cellDetection6.Category = Category.值;
+            cellDetection6.Value = result == EMDETECTRESULT.EMDR_LOSEFOCUS ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection6);
+
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
-
-            return result;
         }
     }
 
@@ -578,7 +646,7 @@ namespace FrontAlgorithm
         /// </summary>
         /// <param name="character">缺陷特征</param>
         /// <returns>缺陷特征值</returns>
-        public double GetValue(CFeacture feacture)
+        public double GetValue(CFeacture feacture, SRegion region)
         {
             switch (feacture.Id)
             {

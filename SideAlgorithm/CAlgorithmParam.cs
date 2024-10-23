@@ -27,11 +27,16 @@ namespace SideAlgorithm
         public CAlgorithmParam()
             : base()
         {
-            AlgorithmType = "SideAlgorithm";
-            DefectSpecies = new Dictionary<string, List<string>>()
+            //AlgorithmType = "SideAlgorithm";
+            DefectSpecies = new()
             {
-                ["侧面毛刺类"] = new List<string>() { "毛刺" },
+                new("侧面毛刺类", new() { new("毛刺", Category.区域) }),
+                new(
+                    "异常类",
+                    new() { new("边缘异常", Category.值), new("超时", Category.值), new("失焦", Category.值) }
+                ),
             };
+            DefectFeatures = new();
             DefectFeatures.Add(new("PeakHeight", "顶点高度", "PeakHeight", "um"));
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
@@ -106,7 +111,7 @@ namespace SideAlgorithm
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
-        public override EMDETECTRESULT DetectFpga(Cell cell)
+        public override void DetectFpga(Cell cell)
         {
             var param = new SMaociAlgorParamFpga(
                 (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect),
@@ -137,12 +142,31 @@ namespace SideAlgorithm
             cellDetection1.regionOut = maociRegion;
             cell.AlgorithmOut.Add(cellDetection1);
 
+            CellDetection cellDetection4 = new CellDetection();
+            cellDetection4.Type = "异常类";
+            cellDetection4.RecipeDefectName = "边缘异常";
+            cellDetection4.Category = Category.值;
+            cellDetection4.Value = result == EMDETECTRESULT.EMDR_NG_EDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection4);
+
+            CellDetection cellDetection5 = new CellDetection();
+            cellDetection5.Type = "异常类";
+            cellDetection5.RecipeDefectName = "超时";
+            cellDetection5.Category = Category.值;
+            cellDetection5.Value = result == EMDETECTRESULT.EMDR_TIMEOUT ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection5);
+
+            CellDetection cellDetection6 = new CellDetection();
+            cellDetection6.Type = "异常类";
+            cellDetection6.RecipeDefectName = "失焦";
+            cellDetection6.Category = Category.值;
+            cellDetection6.Value = result == EMDETECTRESULT.EMDR_LOSEFOCUS ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection6);
+
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
-
-            return result;
         }
 
         /// <summary>
@@ -150,7 +174,7 @@ namespace SideAlgorithm
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
-        public override EMDETECTRESULT DetectImage(Cell cell)
+        public override void DetectImage(Cell cell)
         {
             SMaociAlgorParam param =
                 new(
@@ -182,12 +206,31 @@ namespace SideAlgorithm
             cellDetection1.regionOut = maociRegion;
             cell.AlgorithmOut.Add(cellDetection1);
 
+            CellDetection cellDetection4 = new CellDetection();
+            cellDetection4.Type = "异常类";
+            cellDetection4.RecipeDefectName = "边缘异常";
+            cellDetection4.Category = Category.值;
+            cellDetection4.Value = result == EMDETECTRESULT.EMDR_NG_EDGE ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection4);
+
+            CellDetection cellDetection5 = new CellDetection();
+            cellDetection5.Type = "异常类";
+            cellDetection5.RecipeDefectName = "超时";
+            cellDetection5.Category = Category.值;
+            cellDetection5.Value = result == EMDETECTRESULT.EMDR_TIMEOUT ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection5);
+
+            CellDetection cellDetection6 = new CellDetection();
+            cellDetection6.Type = "异常类";
+            cellDetection6.RecipeDefectName = "失焦";
+            cellDetection6.Category = Category.值;
+            cellDetection6.Value = result == EMDETECTRESULT.EMDR_LOSEFOCUS ? new() { 1.0f } : null;
+            cell.AlgorithmOut.Add(cellDetection6);
+
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
             cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
-
-            return result;
         }
     }
 
@@ -348,7 +391,7 @@ namespace SideAlgorithm
 
         public SRegionInfo() { }
 
-        public double GetValue(CFeacture feacture)
+        public double GetValue(CFeacture feacture, SRegion region)
         {
             switch (feacture.Id)
             {

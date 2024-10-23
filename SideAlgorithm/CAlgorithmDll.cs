@@ -402,4 +402,17 @@ namespace SideAlgorithm
             int nThresh
         );
     }
+
+    /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 检测结果
+    /// </summary>
+    public enum EMDETECTRESULT
+    {
+        EMDR_OK = 0, //检测OK
+        EMDR_NG_EDGE = 1, //边缘NG
+        EMDR_NG_EMPTY = 3, //空白NG
+        EMDR_TIMEOUT = 4, //检测超时
+        EMDR_LOSEFOCUS = 5, //失焦异常
+    };
 }

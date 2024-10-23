@@ -117,6 +117,7 @@ namespace WH.DetectSystem.Models
         public void Init(CProcessGroupModel processGroup)
         {
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
+            this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
             this.MaociAlgorVM.Config = MaociAlgorParamConfig;
 
             this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
@@ -239,10 +240,7 @@ namespace WH.DetectSystem.Models
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm();
-            this.MaociFilterConfig = new CFilterConfig(
-                this.MaociAlgorParamConfig.DefectSpecies,
-                this.MaociAlgorParamConfig.DefectFeatures
-            );
+            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
             if (AppConfig.HasFocusConfig())
                 this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
             if (AppConfig.HasMarkConfig())
@@ -1091,46 +1089,7 @@ namespace WH.DetectSystem.Models
                     "丢帧"
                 );
             }
-            else
-            {
-                switch (cell.AlgoriDetectResult)
-                {
-                    case EMDETECTRESULT.EMDR_OK:
-                        break;
-                    case EMDETECTRESULT.EMDR_NG_LIGHTEDGE:
-                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                            "异常类",
-                            "算法异常",
-                            "铝层边缘Ng"
-                        );
-                        break;
-                    case EMDETECTRESULT.EMDR_NG_DARKEDGE:
-                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                            "异常类",
-                            "算法异常",
-                            "料区边缘Ng"
-                        );
-                        break;
-                    case EMDETECTRESULT.EMDR_NG_EMPTY:
-                        break;
-                    case EMDETECTRESULT.EMDR_TIMEOUT:
-                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                            "异常类",
-                            "算法异常",
-                            "超时"
-                        );
-                        break;
-                    case EMDETECTRESULT.EMDR_LOSEFOCUS:
-                        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                            "异常类",
-                            "拍照异常",
-                            "失焦"
-                        );
-                        break;
-                    default:
-                        break;
-                }
-            }
+            else { }
         }
 
         /// <summary>
@@ -1174,12 +1133,10 @@ namespace WH.DetectSystem.Models
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm();
-            this.MaociFilterConfig = new CFilterConfig(
-                this.MaociAlgorParamConfig.DefectSpecies,
-                this.MaociAlgorParamConfig.DefectFeatures
-            );
+            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
             this.MaociAlgorVM.Config = MaociAlgorParamConfig;
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
+            this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
             this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
             this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
             MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });

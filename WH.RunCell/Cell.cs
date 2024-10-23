@@ -41,7 +41,7 @@ namespace WH.RunCell
 
         /// <summary>
         /// 2024.7.2 李焕彬
-        /// 料区、铝层边缘区域
+        /// 额外绘制区域
         /// </summary>
         public List<CEdgeDraw> DrawEdges { get; set; } = new List<CEdgeDraw>();
 
@@ -112,25 +112,6 @@ namespace WH.RunCell
         /// 跳过
         /// </summary>
         public bool Skipthis { get; set; } = false;
-
-        private EMDETECTRESULT algoriDetectResult = EMDETECTRESULT.EMDR_OK;
-
-        /// <summary>
-        /// 2024.7.31 李焕彬
-        /// 算法检查结果.NG时跳过
-        /// </summary>
-        public EMDETECTRESULT AlgoriDetectResult
-        {
-            get { return algoriDetectResult; }
-            set
-            {
-                algoriDetectResult = value;
-                if (algoriDetectResult != EMDETECTRESULT.EMDR_OK)
-                {
-                    Skipthis = true;
-                }
-            }
-        }
 
         private bool _timeOut = false;
 
@@ -346,7 +327,6 @@ namespace WH.RunCell
             cell.DataBytes = this.DataBytes;
             cell.WaferID = this.WaferID;
             cell.ProductIndex = this.ProductIndex;
-            cell.AlgoriDetectResult = this.AlgoriDetectResult;
             cell.EncoderPos = this.EncoderPos;
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;

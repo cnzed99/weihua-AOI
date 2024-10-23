@@ -26,9 +26,9 @@ namespace LiquidLens
     public partial class CConfig : CFocusConfigBase
     {
         public CConfig()
+            : base()
         {
-            FocusType = "LiquidLens";
-            this.token = new Token("", this.GetType().Namespace);
+            //FocusType = "LiquidLens";
         }
 
         /// <summary>

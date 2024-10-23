@@ -192,4 +192,7 @@
   <data name="DelecteAsk" xml:space="preserve">
     <value>确认是否删除？</value>
   </data>
+  <data name="算法修改询问" xml:space="preserve">
+    <value>缺陷输出类型不同，切换后过滤分选特征需要重新设置！</value>
+  </data>
 </root>

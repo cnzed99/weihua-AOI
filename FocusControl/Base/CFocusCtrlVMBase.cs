@@ -62,7 +62,7 @@ namespace FocusControl
         /// 设置相机序列号
         /// </summary>
         /// <param name="cameraSerial">序列号</param>
-        public virtual void SetCameraSerial(string cameraSerial)
+        public void SetCameraSerial(string cameraSerial)
         {
             this.CameraSerial = cameraSerial;
         }

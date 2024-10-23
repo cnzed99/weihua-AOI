@@ -21,22 +21,22 @@ namespace LiquidLens
             return motionConfig;
         }
 
-        /// <summary>
-        /// 2024.9.28 李焕彬
-        /// 初始化对焦
-        /// </summary>
-        /// <param name="focusConfig">对焦配置基类对象</param>
-        /// <returns>对焦配置派生类对象</returns>
-        public CFocusConfigBase Init(CFocusConfigBase focusConfig)
-        {
-            CConfig config = new CConfig();
-            if (focusConfig != null)
-            {
-                config = JsonConvert.DeserializeObject<CConfig>(
-                    JsonConvert.SerializeObject(focusConfig)
-                );
-            }
-            return config;
-        }
+        ///// <summary>
+        ///// 2024.9.28 李焕彬
+        ///// 初始化对焦
+        ///// </summary>
+        ///// <param name="focusConfig">对焦配置基类对象</param>
+        ///// <returns>对焦配置派生类对象</returns>
+        //public CFocusConfigBase Init(CFocusConfigBase focusConfig)
+        //{
+        //    CConfig config = new CConfig();
+        //    if (focusConfig != null)
+        //    {
+        //        config = JsonConvert.DeserializeObject<CConfig>(
+        //            JsonConvert.SerializeObject(focusConfig)
+        //        );
+        //    }
+        //    return config;
+        //}
     }
 }

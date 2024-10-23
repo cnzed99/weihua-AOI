@@ -14,7 +14,10 @@ namespace FocusControl
 {
     public partial class CFocusConfigBase : ConfigModifyObservableBase, IRecipient<OperateMessage>
     {
-        public CFocusConfigBase() { }
+        public CFocusConfigBase()
+        {
+            this.token = new Token("", "FocusControl");
+        }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -31,11 +34,11 @@ namespace FocusControl
         [property: IgnoreModifyLog]
         public string PrcessName { get; set; }
 
-        /// <summary>
-        /// 2024.9.29 李焕彬
-        /// 类型，插件dll名
-        /// </summary>
-        public string FocusType { get; set; }
+        ///// <summary>
+        ///// 2024.9.29 李焕彬
+        ///// 类型，插件dll名
+        ///// </summary>
+        //public string FocusType { get; set; }
 
         /// <summary>
         /// 2024.7.4 李焕彬

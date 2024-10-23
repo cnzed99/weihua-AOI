@@ -24,13 +24,13 @@ namespace FocusControl
         /// </summary>
         CFocusConfigBase CreateNewfocus();
 
-        /// <summary>
-        /// 初始化对焦
-        /// 2024.09.04 李焕彬
-        /// </summary>
-        /// <param name="focusConfig">对焦配置基类对象</param>
-        /// <returns>对焦配置派生类对象</returns>
-        CFocusConfigBase Init(CFocusConfigBase focusConfig);
+        ///// <summary>
+        ///// 初始化对焦
+        ///// 2024.09.04 李焕彬
+        ///// </summary>
+        ///// <param name="focusConfig">对焦配置基类对象</param>
+        ///// <returns>对焦配置派生类对象</returns>
+        //CFocusConfigBase Init(CFocusConfigBase focusConfig);
     }
 
     /// <summary>
@@ -65,41 +65,41 @@ namespace FocusControl
         }
     }
 
-    /// <summary>
-    /// 2024.09.04 李焕彬
-    /// 对焦参数Json转换器
-    /// </summary>
-    public class CFocusConfigConverter : JsonConverter
-    {
-        public override bool CanWrite => false;
+    ///// <summary>
+    ///// 2024.09.04 李焕彬
+    ///// 对焦参数Json转换器
+    ///// </summary>
+    //public class CFocusConfigConverter : JsonConverter
+    //{
+    //    public override bool CanWrite => false;
 
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(CFocusConfigBase);
-        }
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        return objectType == typeof(CFocusConfigBase);
+    //    }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer
-        )
-        {
-            var paramBase = serializer.Deserialize<CFocusConfigBase>(reader);
-            if (
-                paramBase != null
-                && !string.IsNullOrEmpty(paramBase.FocusType)
-                && CFocusManagement.FocusHeper.ContainsKey(paramBase.FocusType)
-            )
-            {
-                return CFocusManagement.FocusHeper[paramBase.FocusType].Init(paramBase);
-            }
-            return null;
-        }
+    //    public override object ReadJson(
+    //        JsonReader reader,
+    //        Type objectType,
+    //        object existingValue,
+    //        JsonSerializer serializer
+    //    )
+    //    {
+    //        var paramBase = serializer.Deserialize<CFocusConfigBase>(reader);
+    //        if (
+    //            paramBase != null
+    //            && !string.IsNullOrEmpty(paramBase.FocusType)
+    //            && CFocusManagement.FocusHeper.ContainsKey(paramBase.FocusType)
+    //        )
+    //        {
+    //            return CFocusManagement.FocusHeper[paramBase.FocusType].Init(paramBase);
+    //        }
+    //        return null;
+    //    }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

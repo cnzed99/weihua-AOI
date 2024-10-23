@@ -78,7 +78,17 @@ namespace WH.RecipeCellRootBase
 
         // public HObject Region { get; set; } = new HObject();
 
-        public float[] Value { get; set; }
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 输出区域
+        /// </summary>
+        public List<SRegion> regionOut { get; set; } = new List<SRegion>();
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 输出数值
+        /// </summary>
+        public List<float> Value { get; set; }
 
         /// <summary>
         /// 检测日志
@@ -110,9 +120,10 @@ namespace WH.RecipeCellRootBase
             //{
             //    detection.UnionedRegion = this.UnionedRegion.Clone();
             //}
+            detection.regionOut = this.regionOut?.ToList();
             if (this.Value != null)
             {
-                detection.Value = (float[])this.Value.Clone();
+                detection.Value = this.Value.ToList();
             }
             return detection;
         }
@@ -122,9 +133,9 @@ namespace WH.RecipeCellRootBase
     {
         bool Result { get; set; }
 
-        // HObject Region { get; set; }
+        public List<SRegion> regionOut { get; set; }
 
-        float[] Value { get; set; }
+        List<float> Value { get; set; }
 
         /// <summary>
         /// 检测日志
@@ -148,8 +159,8 @@ namespace WH.RecipeCellRootBase
     [Serializable]
     public enum Category
     {
-        区域,
-        值
+        区域 = 0,
+        值 = 1,
     }
 
     /// <summary>
@@ -324,20 +335,6 @@ namespace WH.RecipeCellRootBase
         }
     }
 
-    /// <summary>
-    /// 2024.6.25 李焕彬
-    /// 检测结果
-    /// </summary>
-    public enum EMDETECTRESULT
-    {
-        EMDR_OK = 0, //检测OK
-        EMDR_NG_LIGHTEDGE = 1, //毛刺NG
-        EMDR_NG_DARKEDGE = 2, //料区NG
-        EMDR_NG_EMPTY = 3, //空白NG
-        EMDR_TIMEOUT = 4, //检测超时
-        EMDR_LOSEFOCUS = 5, //失焦异常
-    };
-
     ///// <summary>
     ///// 2024.6.25 李焕彬
     ///// 区域类型
@@ -351,6 +348,56 @@ namespace WH.RecipeCellRootBase
     //    EMRT_MAOCIREGION = 4,
     //    EMRT_THICKREGION = 5,
     //};
+
+    /// <summary>
+    /// 2024.10.22 李焕彬
+    /// 算法
+    /// </summary>
+    public class CDefectRecipe
+    {
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 算法名
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 区域/值
+        /// </summary>
+        public Category Category { get; set; }
+
+        public CDefectRecipe(string name, Category category)
+        {
+            Name = name;
+            Category = category;
+        }
+    }
+
+    /// <summary>
+    /// 2024.10.22 李焕彬
+    /// 检测类
+    /// </summary>
+    public class CDefectSpecies
+    {
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 检测类名
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 算法缺陷
+        /// </summary>
+        public List<CDefectRecipe> RecipeDefects { get; set; }
+
+        public CDefectSpecies(string speciesName, List<CDefectRecipe> recipeDefect)
+        {
+            Name = speciesName;
+            RecipeDefects = recipeDefect;
+        }
+    }
 
     /// <summary>
     /// 2024.10.21 李焕彬
@@ -435,6 +482,18 @@ namespace WH.RecipeCellRootBase
         {
             return !(left == right);
         }
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 数量特征
+        /// </summary>
+        public static CFeacture FeactureCount = new("Count", "数量", "Count", "pcs");
+
+        /// <summary>
+        /// 2024.10.22 李焕彬
+        /// 数值特征
+        /// </summary>
+        public static CFeacture FeactureValue = new("Value", "数值", "Value", "");
     }
 
     /// <summary>
@@ -449,7 +508,7 @@ namespace WH.RecipeCellRootBase
         /// </summary>
         /// <param name="character">缺陷特征</param>
         /// <returns>缺陷特征值</returns>
-        double GetValue(CFeacture character);
+        double GetValue(CFeacture character, SRegion region);
 
         /// <summary>
         /// 2024.10.21 李焕彬

@@ -142,37 +142,24 @@ namespace AlgorithmDll
             set { SetProperty(ref fpgaSelect, value); }
         }
 
-        /// <summary>
-        /// 2024.9.29 李焕彬
-        /// 类型，插件dll名
-        /// </summary>
-        public string AlgorithmType { get; set; }
+        ///// <summary>
+        ///// 2024.9.29 李焕彬
+        ///// 类型，插件dll名
+        ///// </summary>
+        //public string AlgorithmType { get; set; }
 
         /// <summary>
         /// 2024.7.17 李焕彬
         /// 缺陷检测类
         /// </summary>
-        public Dictionary<string, List<string>> DefectSpecies { get; set; }
+        public List<CDefectSpecies> DefectSpecies { get; set; }
 
         /// <summary>
         /// 2024.10.21 李焕彬
         /// 缺陷特征集合
-        /// 可增加，不能new，与过滤分选缺陷特征对应
+        /// 与过滤分选缺陷特征对应
         /// </summary>
-        private List<CFeacture> defectFeatures = new List<CFeacture>()
-        {
-            new("Count", "数量", "Count", "pcs"),
-        };
-
-        /// <summary>
-        /// 2024.10.21 李焕彬
-        /// 缺陷特征集合
-        /// 可增加，不能new，与过滤分选缺陷特征对应
-        /// </summary>
-        public List<CFeacture> DefectFeatures
-        {
-            get { return defectFeatures; }
-        }
+        public List<CFeacture> DefectFeatures { get; set; }
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -192,12 +179,12 @@ namespace AlgorithmDll
         /// </summary>
         public virtual void AddFpgaParam(string name) { }
 
-        public virtual EMDETECTRESULT DetectImage(Cell cell)
+        public virtual void DetectImage(Cell cell)
         {
             throw new NotImplementedException();
         }
 
-        public virtual EMDETECTRESULT DetectFpga(Cell cell)
+        public virtual void DetectFpga(Cell cell)
         {
             throw new NotImplementedException();
         }
