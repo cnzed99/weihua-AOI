@@ -75,7 +75,7 @@ namespace FrontAlgorithm
         /// 构造
         /// </summary>
         /// <param name="param">算法参数类</param>
-        public SMaociAlgorParam(CPcParam param)
+        public SMaociAlgorParam(CParam param)
         {
             this.AdaptiveSize = param.AdaptiveSize;
             this.AdaptiveAddGray = param.AdaptiveAddGray;
@@ -94,7 +94,7 @@ namespace FrontAlgorithm
         /// </summary>
         /// <param name="umPerPixel">像素当量</param>
         /// <returns></returns>
-        public SMaociAlgorParam(CPcParam param, double umPerPixel)
+        public SMaociAlgorParam(CParam param, double umPerPixel)
         {
             this.AdaptiveSize = param.AdaptiveSize;
             this.AdaptiveAddGray = param.AdaptiveAddGray;
@@ -105,160 +105,6 @@ namespace FrontAlgorithm
             this.LightThick = param.LightThick / umPerPixel;
             this.TimeOut = param.TimeOut;
             this.MinDistinct = param.MinDistinct;
-        }
-    };
-
-    /// <summary>
-    /// 2024.6.25 李焕彬
-    /// Fpga算法参数
-    /// </summary>
-    public struct SMaociAlgorParamFpga
-    {
-        /// <summary>
-        /// 2024.7.30 李焕彬
-        /// 计算超时时间，单位ms
-        /// </summary>
-        public uint TimeOut = 3000;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //自适应阈值邻域大小
-        /// </summary>
-        public uint AdaptiveSize = 14;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //自适应阈值增加值
-        /// </summary>
-        public int AdaptiveAddGray = 20;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //过滤矩阵邻域大小
-        /// </summary>
-        public uint NeighbSize = 5;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //过滤矩阵邻域点数量限制
-        /// </summary>
-        public uint NeighbLightPoint = 30;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //料区阈值
-        /// </summary>
-        public uint DarkThresh = 30;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层阈值
-        /// </summary>
-        public uint LightThresh = 80;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //料区厚度限制，掉料检测
-        /// </summary>
-        public double DarkThickLimit = 30;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //料区厚度NG连续长度限制
-        /// </summary>
-        public double DarkThickContinueLen = 5;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //料区厚度
-        /// </summary>
-        public double DarkThick = 84;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层厚度限制，毛刺检测
-        /// </summary>
-        public double LightThickLimit = 7;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层厚度NG连续长度限制
-        /// </summary>
-        public double LightThickContinueLen = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层厚度
-        /// </summary>
-        public double LightThick = 6;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层在料区中心位置限制上
-        /// </summary>
-        public double PosLimitT = 20;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层在料区中心位置限制下
-        /// </summary>
-        public double PosLimitB = 20;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// //铝层位置偏移值
-        /// </summary>
-        public double LightPosOffest = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 构造
-        /// </summary>
-        /// <param name="param">FPGA算法参数类</param>
-        public SMaociAlgorParamFpga(CFpgaParam param)
-        {
-            this.AdaptiveSize = param.AdaptiveSize;
-            this.AdaptiveAddGray = param.AdaptiveAddGray;
-            this.NeighbSize = param.NeighbSize;
-            this.NeighbLightPoint = param.NeighbLightPoint;
-            this.DarkThresh = param.DarkThresh;
-            this.LightThresh = param.LightThresh;
-            this.DarkThickLimit = param.DarkThickLimit;
-            this.DarkThickContinueLen = param.DarkThickContinueLen;
-            this.DarkThick = param.DarkThick;
-            this.LightThickLimit = param.LightThickLimit;
-            this.LightThickContinueLen = param.LightThickContinueLen;
-            this.LightThick = param.LightThick;
-            this.PosLimitT = param.PosLimitT;
-            this.PosLimitB = param.PosLimitB;
-            this.LightPosOffest = param.LightPosOffest;
-            this.TimeOut = param.TimeOut;
-        }
-
-        /// <summary>
-        /// 2024.8.29 李焕彬
-        /// 获取像素级的算法参数
-        /// </summary>
-        /// <param name="umPerPixel">像素当量</param>
-        /// <returns></returns>
-        public SMaociAlgorParamFpga(CFpgaParam param, double umPerPixel)
-        {
-            this.AdaptiveSize = param.AdaptiveSize;
-            this.AdaptiveAddGray = param.AdaptiveAddGray;
-            this.NeighbSize = param.NeighbSize;
-            this.NeighbLightPoint = param.NeighbLightPoint;
-            this.DarkThresh = param.DarkThresh;
-            this.LightThresh = param.LightThresh;
-            this.DarkThickLimit = param.DarkThickLimit / umPerPixel;
-            this.DarkThickContinueLen = param.DarkThickContinueLen / umPerPixel;
-            this.DarkThick = param.DarkThick / umPerPixel;
-            this.LightThickLimit = param.LightThickLimit / umPerPixel;
-            this.LightThickContinueLen = param.LightThickContinueLen / umPerPixel;
-            this.LightThick = param.LightThick / umPerPixel;
-            this.PosLimitT = param.PosLimitT / umPerPixel;
-            this.PosLimitB = param.PosLimitB / umPerPixel;
-            this.LightPosOffest = param.LightPosOffest / umPerPixel;
-            this.TimeOut = param.TimeOut;
         }
     };
 
@@ -497,29 +343,6 @@ namespace FrontAlgorithm
             int nLine,
             IntPtr data,
             ref SMaociAlgorParam detectParam,
-            ref SDetectInfo detectInfo
-        );
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// FPGA算法测试
-        /// </summary>
-        /// <param name="width">宽度</param>
-        /// <param name="height">高度</param>
-        /// <param name="nLine">行宽</param>
-        /// <param name="data">图像数据</param>
-        /// <param name="sDetectParamFpga">FPGA算法</param>
-        /// <param name="detectInfo">检测结果信息</param>
-        /// <param name="dataOutX">输出点X集合</param>
-        /// <param name="dataOutY">输出点Y集合</param>
-        /// <returns>检测结果</returns>
-        [DllImport("MaociAlg.dll")]
-        public static extern EMDETECTRESULT TestFpga(
-            int width,
-            int height,
-            int nLine,
-            IntPtr data,
-            ref SMaociAlgorParamFpga sDetectParamFpga,
             ref SDetectInfo detectInfo
         );
 

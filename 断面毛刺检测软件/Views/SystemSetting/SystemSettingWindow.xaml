@@ -59,7 +59,6 @@
                 <ToggleButton Content="{Binding [SavePicAtOfflineMode], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding OfflineSave}" />
                 <!--<ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />-->
                 <ToggleButton Content="{Binding [ShowAllDefect], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding ShowAllDefect}" />
-                <ToggleButton Content="{Binding [TestFpgaAlgrithm], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding TestFpgaAlgrithm}" />
             </StackPanel>
 
         </GroupBox>
@@ -74,7 +73,7 @@
                         Name="ucdpe_DayShift"
                         hc:TitleElement.Title="{Binding [Day], Source={x:Static local:CLang.SystemSettings}}"
                         DockPanel.Dock="Left"
-                        SelectedTime="{Binding DayShift}"                       
+                        SelectedTime="{Binding DayShift}"
                         TimeFormat="HH:mm">
                         <hc:TimePicker.Clock>
                             <hc:ListClock />
@@ -103,9 +102,9 @@
                         Name="ucdpe_NightShift"
                         hc:TitleElement.Title="{Binding [Night], Source={x:Static local:CLang.SystemSettings}}"
                         SelectedTime="{Binding NightShift}"
-                        TimeFormat="HH:mm" >
+                        TimeFormat="HH:mm">
                         <hc:TimePicker.Clock>
-                        <hc:ListClock />
+                            <hc:ListClock />
                         </hc:TimePicker.Clock>
                     </hc:TimePicker>
 
@@ -117,8 +116,8 @@
                         Text="{Binding NextClearTime, StringFormat=yyyy/MM/dd HH:mm:ss}" />
                 </DockPanel>
 
-                <DockPanel >
-                    <TextBlock Text="{Binding ErrorMsg}" Foreground="Red"/>
+                <DockPanel>
+                    <TextBlock Foreground="Red" Text="{Binding ErrorMsg}" />
                 </DockPanel>
             </StackPanel>
         </GroupBox>

@@ -69,56 +69,6 @@ namespace SideAlgorithm
     };
 
     /// <summary>
-    /// 2024.6.25 李焕彬
-    /// Fpga算法参数
-    /// </summary>
-    public struct SMaociAlgorParamFpga
-    {
-        /// <summary>
-        /// 2024.7.30 李焕彬
-        /// 计算超时时间，单位ms
-        /// </summary>
-        uint TimeOut = 3000;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 过滤矩阵邻域大小
-        /// </summary>
-        public uint NeighbSize = 7;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 料区阈值
-        /// </summary>
-        public uint DarkThresh = 200;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 构造
-        /// </summary>
-        /// <param name="param">FPGA算法参数类</param>
-        public SMaociAlgorParamFpga(CFpgaParam param)
-        {
-            this.NeighbSize = param.NeighbSize;
-            this.DarkThresh = param.DarkThresh;
-            this.TimeOut = param.TimeOut;
-        }
-
-        /// <summary>
-        /// 2024.8.29 李焕彬
-        /// 获取像素级的算法参数
-        /// </summary>
-        /// <param name="umPerPixel">像素当量</param>
-        /// <returns></returns>
-        public SMaociAlgorParamFpga(CFpgaParam param, double umPerPixel)
-        {
-            this.NeighbSize = param.NeighbSize;
-            this.DarkThresh = param.DarkThresh;
-            this.TimeOut = param.TimeOut;
-        }
-    };
-
-    /// <summary>
     /// 2024.9.11 李焕彬
     /// DLL传输区域用
     /// 结构体顺序要跟DLL结构体顺序一致，不能更改
@@ -353,29 +303,6 @@ namespace SideAlgorithm
             int nLine,
             IntPtr data,
             ref SMaociAlgorParam detectParam,
-            ref SDetectInfo detectInfo
-        );
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// FPGA算法测试
-        /// </summary>
-        /// <param name="width">宽度</param>
-        /// <param name="height">高度</param>
-        /// <param name="nLine">行宽</param>
-        /// <param name="data">图像数据</param>
-        /// <param name="sDetectParamFpga">FPGA算法</param>
-        /// <param name="detectInfo">检测结果信息</param>
-        /// <param name="dataOutX">输出点X集合</param>
-        /// <param name="dataOutY">输出点Y集合</param>
-        /// <returns>检测结果</returns>
-        [DllImport("MaociAlg.dll", EntryPoint = "TestFpgaSide")]
-        public static extern EMDETECTRESULT TestFpga(
-            int width,
-            int height,
-            int nLine,
-            IntPtr data,
-            ref SMaociAlgorParamFpga sDetectParamFpga,
             ref SDetectInfo detectInfo
         );
 

@@ -56,57 +56,21 @@ namespace FrontAlgorithm
             DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
         }
 
-        ///// <summary>
-        ///// 2024.7.5 李焕彬
-        ///// 正在使用的PC参数结构体
-        ///// </summary>
-        //public SMaociAlgorParam MaociAlgorParamUse { get; set; }
-
-        ///// <summary>
-        ///// 2024.7.5 李焕彬
-        ///// 正在使用的FPGA参数结构体
-        ///// </summary>
-        //public SMaociAlgorParamFpga MaociAlgorParamFpgaUse { get; set; }
-
         /// <summary>
         /// 2024.9.11 李焕彬
         /// 增加参数
         /// </summary>
         /// <param name="name">名称</param>
-        public override void AddFpgaParam(string name)
+        public override void AddParam(string name)
         {
-            this.FpgaParams.Add(new CFpgaParam(name, token));
-        }
-
-        /// <summary>
-        /// 2024.9.11 李焕彬
-        /// 增加参数
-        /// </summary>
-        /// <param name="name">名称</param>
-        public override void AddPcParam(string name)
-        {
-            this.PcParams.Add(new CPcParam(name, token));
+            this.AlgorParams.Add(new CParam(name, token));
         }
 
         /// <summary>
         /// 2024.7.17 李焕彬
         /// 更新毛刺参数结构体
         /// </summary>
-        public override void UpdataMaociAlgorParamUse()
-        {
-            //if (PcParams.FirstOrDefault(o => o.Name == PcSelect) != null)
-            //{
-            //    MaociAlgorParamUse = new(
-            //        (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect)
-            //    );
-            //}
-            //if (FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect) != null)
-            //{
-            //    MaociAlgorParamFpgaUse = new(
-            //        (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect)
-            //    );
-            //}
-        }
+        public override void UpdataAlgorParamUse() { }
 
         /// <summary>
         /// 2024.9.29 李焕彬
@@ -118,7 +82,7 @@ namespace FrontAlgorithm
         {
             return (CImage image) =>
             {
-                CPcParam pcParam = (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect);
+                CParam pcParam = (CParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect);
                 if (pcParam != null)
                 {
                     return CAlgorithmDll.CalcDistinct(
@@ -145,85 +109,6 @@ namespace FrontAlgorithm
         SDetectInfo detectInfo = new SDetectInfo();
 
         /// <summary>
-        /// 测试FPGA算法
-        /// </summary>
-        /// <param name="cell">cell</param>
-        /// <returns>检测结果</returns>
-        public override void DetectFpga(Cell cell)
-        {
-            var param = new SMaociAlgorParamFpga(
-                (CFpgaParam)FpgaParams.FirstOrDefault(o => o.Name == FpgaSelect),
-                cell.MmPerPixel * 1000
-            );
-            EMDETECTRESULT result = CAlgorithmDll.TestFpga(
-                cell.Image.ImageWidth,
-                cell.Image.ImageHeight,
-                cell.Image.StrideWidth,
-                cell.Image.ImageData,
-                ref param,
-                ref detectInfo
-            );
-            detectInfo.DeComposeEdge(
-                cell.MmPerPixel * 1000,
-                out var edgeDarkTop,
-                out var edgeDarkBottom,
-                out var edgeLightTop,
-                out var edgeLightBot,
-                out var maociRegion,
-                out var thickRegion
-            );
-
-            CellDetection cellDetection1 = new CellDetection();
-            cellDetection1.Type = "铝层缺陷类";
-            cellDetection1.RecipeDefectName = "毛刺";
-            cellDetection1.Category = Category.区域;
-            cellDetection1.regionOut = maociRegion;
-            cell.AlgorithmOut.Add(cellDetection1);
-
-            CellDetection cellDetection2 = new CellDetection();
-            cellDetection2.Type = "料区缺陷类";
-            cellDetection2.RecipeDefectName = "掉料";
-            cellDetection2.Category = Category.区域;
-            cellDetection2.regionOut = thickRegion;
-            cell.AlgorithmOut.Add(cellDetection2);
-
-            CellDetection cellDetection3 = new CellDetection();
-            cellDetection3.Type = "异常类";
-            cellDetection3.RecipeDefectName = "铝层异常";
-            cellDetection3.Category = Category.值;
-            cellDetection3.Value =
-                result == EMDETECTRESULT.EMDR_NG_LIGHTEDGE ? new() { 1.0f } : null;
-            cell.AlgorithmOut.Add(cellDetection3);
-
-            CellDetection cellDetection4 = new CellDetection();
-            cellDetection4.Type = "异常类";
-            cellDetection4.RecipeDefectName = "料区异常";
-            cellDetection4.Category = Category.值;
-            cellDetection4.Value =
-                result == EMDETECTRESULT.EMDR_NG_DARKEDGE ? new() { 1.0f } : null;
-            cell.AlgorithmOut.Add(cellDetection4);
-
-            CellDetection cellDetection5 = new CellDetection();
-            cellDetection5.Type = "异常类";
-            cellDetection5.RecipeDefectName = "超时";
-            cellDetection5.Category = Category.值;
-            cellDetection5.Value = result == EMDETECTRESULT.EMDR_TIMEOUT ? new() { 1.0f } : null;
-            cell.AlgorithmOut.Add(cellDetection5);
-
-            CellDetection cellDetection6 = new CellDetection();
-            cellDetection6.Type = "异常类";
-            cellDetection6.RecipeDefectName = "失焦";
-            cellDetection6.Category = Category.值;
-            cellDetection6.Value = result == EMDETECTRESULT.EMDR_LOSEFOCUS ? new() { 1.0f } : null;
-            cell.AlgorithmOut.Add(cellDetection6);
-
-            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkTop, Brushes.Blue));
-            cell.DrawEdges.Add(new CEdgeDraw(edgeDarkBottom, Brushes.Blue));
-            cell.DrawEdges.Add(new CEdgeDraw(edgeLightTop, Brushes.Green));
-            cell.DrawEdges.Add(new CEdgeDraw(edgeLightBot, Brushes.Green));
-        }
-
-        /// <summary>
         /// 测试PC算法
         /// </summary>
         /// <param name="cell">cell</param>
@@ -232,7 +117,7 @@ namespace FrontAlgorithm
         {
             SMaociAlgorParam param =
                 new(
-                    (CPcParam)PcParams.FirstOrDefault(o => o.Name == PcSelect),
+                    (CParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect),
                     cell.MmPerPixel * 1000
                 );
             EMDETECTRESULT result = CAlgorithmDll.Test(
@@ -259,6 +144,7 @@ namespace FrontAlgorithm
             cellDetection1.Category = Category.区域;
             cellDetection1.regionOut = maociRegion;
             cell.AlgorithmOut.Add(cellDetection1);
+
             CellDetection cellDetection2 = new CellDetection();
             cellDetection2.Type = "料区缺陷类";
             cellDetection2.RecipeDefectName = "掉料";
@@ -307,12 +193,12 @@ namespace FrontAlgorithm
     /// 2024.6.25 李焕彬
     /// PC算法参数
     /// </summary>
-    public partial class CPcParam : CPcParamBase
+    public partial class CParam : CParamBase
     {
-        public CPcParam()
+        public CParam()
             : base() { }
 
-        public CPcParam(string name, Token token)
+        public CParam(string name, Token token)
             : base(name, token) { }
 
         /// <summary>
@@ -405,178 +291,6 @@ namespace FrontAlgorithm
         [property: Description("最小清晰度说明")]
         private float minDistinct = 25.0f;
     };
-
-    /// <summary>
-    /// FPGA算法参数
-    /// </summary>
-    public partial class CFpgaParam : CFpgaParamBase
-    {
-        public CFpgaParam()
-            : base() { }
-
-        public CFpgaParam(string name, Token token)
-            : base(name, token) { }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 自适应阈值邻域大小
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层自适应阈值邻域大小")]
-        [property: Description("铝层自适应阈值说明")]
-        private uint adaptiveSize = 14;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 自适应阈值增加值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层自适应阈值增加值")]
-        [property: Description("铝层自适应阈值说明")]
-        private int adaptiveAddGray = 20;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 过滤矩阵邻域大小
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层过滤矩阵邻域大小")]
-        [property: Description("铝层过滤矩阵说明")]
-        private uint neighbSize = 5;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 过滤矩阵邻域点数量限制
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层过滤矩阵邻域点数量限制")]
-        [property: Description("铝层过滤矩阵说明")]
-        private uint neighbLightPoint = 30;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 料区阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("料区阈值")]
-        [property: Description("料区阈值说明")]
-        private uint darkThresh = 30;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("铝层阈值")]
-        [property: Description("铝层阈值说明")]
-        private uint lightThresh = 80;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 料区厚度限制，掉料检测
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度限制(um)")]
-        [property: Description("料区厚度限制说明")]
-        private double darkThickLimit = 67.5;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 料区厚度NG连续长度限制
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度NG连续长度限制(um)")]
-        [property: Description("料区NG连续长度说明")]
-        private double darkThickContinueLen = 11.25;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 料区厚度
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("料区厚度(um)")]
-        [property: Description("料区厚度限制说明")]
-        private double darkThick = 189;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层厚度限制，毛刺检测
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度限制(um)")]
-        [property: Description("铝层厚度限制说明")]
-        private double lightThickLimit = 15.75;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层厚度NG连续长度限制
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度NG连续长度限制(um)")]
-        [property: Description("铝层NG连续长度说明")]
-        private double lightThickContinueLen = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层厚度
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层厚度(um)")]
-        [property: Description("铝层厚度限制说明")]
-        private double lightThick = 13.5;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层在料区中心位置限制上
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层在料区中心位置限制上(um)")]
-        [property: Description("料区中心位置限制说明")]
-        private double posLimitT = 45;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层在料区中心位置限制下
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层在料区中心位置限制下(um)")]
-        [property: Description("料区中心位置限制说明")]
-        private double posLimitB = 45;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 铝层位置偏移值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("3.Judge")]
-        [property: DisplayName("铝层位置偏移值(um)")]
-        [property: Description("料区中心位置限制说明")]
-        private double lightPosOffest = 0;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 超时时间ms
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("2.Algorithm")]
-        [property: DisplayName("超时时间(ms)")]
-        [property: Description("超时时间说明")]
-        private uint timeOut = 3000;
-    }
 
     /// <summary>
     /// 2024.6.25 李焕彬

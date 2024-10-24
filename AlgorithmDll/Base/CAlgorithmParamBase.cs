@@ -36,11 +36,9 @@ namespace AlgorithmDll
         public CAlgorithmParamBase()
         {
             this.token = new Token("", "AlgorithmDll");
-            PcParams = new ObservableCollection<CPcParamBase>();
-            AddPcParam(c_ParamName);
-            FpgaParams = new ObservableCollection<CFpgaParamBase>();
-            AddFpgaParam(c_ParamName);
-            UpdataMaociAlgorParamUse();
+            AlgorParams = new ObservableCollection<CParamBase>();
+            AddParam(c_ParamName);
+            UpdataAlgorParamUse();
         }
 
         /// <summary>
@@ -53,30 +51,17 @@ namespace AlgorithmDll
             if (typeof(CAlgorithmParamBase).IsAssignableFrom(message.obj.GetType()))
             {
                 OperateLog.Info($"{PrcessName}-算法参数-{message.message}");
-                UpdataMaociAlgorParamUse();
+                UpdataAlgorParamUse();
                 return;
             }
-            foreach (var qua in PcParams)
+            foreach (var qua in AlgorParams)
             {
-                if (typeof(CPcParamBase).IsAssignableFrom(message.obj.GetType()))
+                if (typeof(CParamBase).IsAssignableFrom(message.obj.GetType()))
                 {
                     if (qua == message.obj)
                     {
                         OperateLog.Info($"{PrcessName}-PC参数-{qua.Name}-{message.message}");
-                        UpdataMaociAlgorParamUse();
-                        return;
-                    }
-                    continue;
-                }
-            }
-            foreach (var qua in FpgaParams)
-            {
-                if (typeof(CFpgaParamBase).IsAssignableFrom(message.obj.GetType()))
-                {
-                    if (qua == message.obj)
-                    {
-                        OperateLog.Info($"{PrcessName}-FPGA参数-{qua.Name}-{message.message}");
-                        UpdataMaociAlgorParamUse();
+                        UpdataAlgorParamUse();
                         return;
                     }
                     continue;
@@ -90,56 +75,30 @@ namespace AlgorithmDll
         /// </summary>
         private const string c_ParamName = "分组1";
 
-        private ObservableCollection<CPcParamBase> pcParams;
+        private ObservableCollection<CParamBase> algorParams;
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 参数列表
         /// </summary>
         [property: DisplayName("参数列表")]
-        public ObservableCollection<CPcParamBase> PcParams
+        public ObservableCollection<CParamBase> AlgorParams
         {
-            get { return pcParams; }
-            set { SetProperty(ref pcParams, value); }
+            get { return algorParams; }
+            set { SetProperty(ref algorParams, value); }
         }
 
-        private string pcSelect = c_ParamName;
+        private string paramSelect = c_ParamName;
 
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 当前算法参数组
         /// </summary>
         [property: DisplayName("当前算法参数组")]
-        public string PcSelect
+        public string ParamSelect
         {
-            get { return pcSelect; }
-            set { SetProperty(ref pcSelect, value); }
-        }
-
-        private ObservableCollection<CFpgaParamBase> fpgaParams;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 预处理参数列表
-        /// </summary>
-        [property: DisplayName("预处理参数列表")]
-        public ObservableCollection<CFpgaParamBase> FpgaParams
-        {
-            get { return fpgaParams; }
-            set { SetProperty(ref fpgaParams, value); }
-        }
-
-        private string fpgaSelect = c_ParamName;
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 当前预处理参数组
-        /// </summary>
-        [property: DisplayName("当前预处理参数组")]
-        public string FpgaSelect
-        {
-            get { return fpgaSelect; }
-            set { SetProperty(ref fpgaSelect, value); }
+            get { return paramSelect; }
+            set { SetProperty(ref paramSelect, value); }
         }
 
         ///// <summary>
@@ -165,26 +124,15 @@ namespace AlgorithmDll
         /// 2024.7.17 李焕彬
         /// 更新毛刺参数结构体
         /// </summary>
-        public virtual void UpdataMaociAlgorParamUse() { }
+        public virtual void UpdataAlgorParamUse() { }
 
         /// <summary>
         /// 2024.9.4 李焕彬
         /// 增加PC参数
         /// </summary>
-        public virtual void AddPcParam(string name) { }
-
-        /// <summary>
-        /// 2024.9.4 李焕彬
-        /// 增加FPGA参数
-        /// </summary>
-        public virtual void AddFpgaParam(string name) { }
+        public virtual void AddParam(string name) { }
 
         public virtual void DetectImage(Cell cell)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void DetectFpga(Cell cell)
         {
             throw new NotImplementedException();
         }
@@ -205,14 +153,14 @@ namespace AlgorithmDll
     /// 2024.6.25 李焕彬
     /// PC算法参数
     /// </summary>
-    public class CPcParamBase : ConfigModifyObservableBase
+    public class CParamBase : ConfigModifyObservableBase
     {
-        public CPcParamBase()
+        public CParamBase()
         {
             this.token = new Token("", "AlgorithmDll");
         }
 
-        public CPcParamBase(string name, Token token)
+        public CParamBase(string name, Token token)
         {
             this.token = token;
             Name = name;
@@ -242,45 +190,4 @@ namespace AlgorithmDll
             return Name;
         }
     };
-
-    /// <summary>
-    /// FPGA算法参数
-    /// </summary>
-    public class CFpgaParamBase : ConfigModifyObservableBase
-    {
-        public CFpgaParamBase()
-        {
-            this.token = new Token("", "AlgorithmDll");
-        }
-
-        public CFpgaParamBase(string name, Token token)
-        {
-            this.token = token;
-            Name = name;
-        }
-
-        private string name = "";
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// 分组名
-        /// </summary>
-        [property: Category("1.GroupName")]
-        [property: DisplayName("分组名")]
-        [property: Description("自定义名称")]
-        public new string Name
-        {
-            get { return name; }
-            set { SetProperty(ref name, value); }
-        }
-
-        /// <summary>
-        /// 2024.7.4 李焕彬
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
 }

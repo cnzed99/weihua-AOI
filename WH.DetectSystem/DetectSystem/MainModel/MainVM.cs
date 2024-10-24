@@ -553,10 +553,7 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
-                        if (SystemSettings.TestFpgaAlgrithm)
-                            MaociAlgorParamConfig.MaociFPGAExcute(cell);
-                        else
-                            MaociAlgorParamConfig.MaociExcute(cell);
+                        MaociAlgorParamConfig.MaociExcute(cell);
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
                         //strbuilder = new StringBuilder("[");

@@ -20,17 +20,6 @@ namespace WH.DetectSystem
     {
         /// <summary>
         /// 20240704 TCG
-        /// 毛刺FPGA算法执行，FPGA参数扩展方法
-        /// </summary>
-        /// <param name="paramFpga">FPGA参数</param>
-        /// <param name="cell">检测对象</param>
-        public static void MaociFPGAExcute(this CAlgorithmParamBase paramMaoci, Cell cell)
-        {
-            paramMaoci.DetectFpga(cell);
-        }
-
-        /// <summary>
-        /// 20240704 TCG
         /// 毛刺PC算法执行，毛刺检测算法扩展方法
         /// </summary>
         /// <param name="paramMaoci">毛刺算法参数</param>

@@ -384,12 +384,5 @@ namespace WH.DetectSystem.Models
         }
 
         #endregion
-
-        /// <summary>
-        /// 2024.8.29 李焕彬
-        /// 是否测试FPGA算法
-        /// </summary>
-        [ObservableProperty]
-        bool testFpgaAlgrithm = false;
     }
 }
