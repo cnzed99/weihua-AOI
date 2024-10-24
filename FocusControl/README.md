@@ -55,7 +55,7 @@ namespace MotionControl
 # 4、对焦控件VM基类（CFocusCtrlVMBase）实现
 
 * 创建CFocusCtrlVMBase（基类）的派生类，该类功能为控制对焦，包含如下要求：
-* 包含一个构造函数，需在构造时实例化TestControl对象。TestControl为对焦控制操作界面，为UserControl，每个对焦插件都不一样。
+* 包含一个构造函数，需在构造时实例化TestControl对象。**TestControl为对焦控制操作界面，为UserControl**，每个对焦插件都不一样。
 * 可重写SetRunning函数，在制程启动时通知对焦控件。
 * 重写InitControl函数，初始化控制函数，包含连接、写入初始参数等操作。
 * 可重写Reset函数，函数功能为复位（清除报警信息）功能。
