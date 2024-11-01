@@ -790,14 +790,14 @@ namespace WH.DetectSystem.Models
                                                 drawView.SetFontBrush(defectFilter.ShowColor.Brush);
                                                 for (int i = 0; i < detection.regionOut.Count; i++)
                                                 {
-                                                    drawView.ImgDrawPoints(
+                                                    drawView.ImgDrawRegion(
                                                         detection.regionOut[i].points,
                                                         false
                                                     );
                                                     if (i == detection.regionOut.Count - 1)
                                                     {
                                                         drawView.ImgDrawText(
-                                                            detection.DetectLog.ToString(),
+                                                            detection.DetectLog.ToString()+"分数:"+ detection.Value[i],
                                                             detection.regionOut[i].GetCenter(),
                                                             false
                                                         );
