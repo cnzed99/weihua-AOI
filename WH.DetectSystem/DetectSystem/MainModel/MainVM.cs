@@ -34,6 +34,7 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using static Mysqlx.Crud.Order.Types;
 
 namespace WH.DetectSystem.Models
 {
@@ -794,14 +795,19 @@ namespace WH.DetectSystem.Models
                                                         detection.regionOut[i].points,
                                                         false
                                                     );
-                                                    if (i == detection.regionOut.Count - 1)
-                                                    {
-                                                        drawView.ImgDrawText(
-                                                            detection.DetectLog.ToString(),
+                                                    drawView.ImgDrawText(
+                                                            detection.DetectLog[i].ToString(),
                                                             detection.regionOut[i].GetCenter(),
                                                             false
                                                         );
-                                                    }
+                                                    //if (i == detection.regionOut.Count - 1)
+                                                    //{
+                                                    //    drawView.ImgDrawText(
+                                                    //        detection.DetectLog.ToString(),
+                                                    //        detection.regionOut[i].GetCenter(),
+                                                    //        false
+                                                    //    );
+                                                    //}
                                                 }
                                             }
                                         }
@@ -828,14 +834,19 @@ namespace WH.DetectSystem.Models
                                                         cell.Detection.regionOut[i].points,
                                                         false
                                                     );
-                                                    if (i == cell.Detection.regionOut.Count - 1)
-                                                    {
-                                                        drawView.ImgDrawText(
-                                                            cell.Detection.DetectLog.ToString(),
+                                                    drawView.ImgDrawText(
+                                                            cell.Detection.DetectLog[i].ToString(),
                                                             cell.Detection.regionOut[i].GetCenter(),
                                                             false
                                                         );
-                                                    }
+                                                    //if (i == cell.Detection.regionOut.Count - 1)
+                                                    //{
+                                                    //    drawView.ImgDrawText(
+                                                    //        cell.Detection.DetectLog.ToString(),
+                                                    //        cell.Detection.regionOut[i].GetCenter(),
+                                                    //        false
+                                                    //    );
+                                                    //}
                                                 }
                                             }
                                         }

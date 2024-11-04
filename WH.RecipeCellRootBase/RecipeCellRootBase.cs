@@ -93,7 +93,7 @@ namespace WH.RecipeCellRootBase
         /// <summary>
         /// 检测日志
         /// </summary>
-        public StringBuilder DetectLog { get; set; } = new StringBuilder();
+        public List<StringBuilder> DetectLog { get; set; } = new List<StringBuilder>();
 
         //  public HObject UnionedRegion { get; set; } = new HObject();
 
@@ -115,7 +115,8 @@ namespace WH.RecipeCellRootBase
             //{
             //    detection.Region = this.Region.Clone();
             //}
-            detection.DetectLog = new StringBuilder(this.DetectLog.ToString());
+            this.DetectLog.ForEach(s => detection.DetectLog.Add(new StringBuilder(s.ToString())));
+            //detection.DetectLog = new StringBuilder(this.DetectLog.ToString());
             //if (this.UnionedRegion != null)
             //{
             //    detection.UnionedRegion = this.UnionedRegion.Clone();
@@ -140,7 +141,7 @@ namespace WH.RecipeCellRootBase
         /// <summary>
         /// 检测日志
         /// </summary>
-        StringBuilder DetectLog { get; set; }
+        List<StringBuilder> DetectLog { get; set; }
 
         //  HObject UnionedRegion { get; set; }
         T Clone();

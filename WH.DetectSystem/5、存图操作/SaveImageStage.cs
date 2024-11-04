@@ -234,14 +234,19 @@ namespace WH.DetectSystem._5_存图操作
                         for (int i = 0; i < detection.regionOut.Count; i++)
                         {
                             DrawPoints(detection.regionOut[i].points, penDraw);
-                            if (i == detection.regionOut.Count - 1)
-                            {
-                                DrawText(
+                            DrawText(
                                     detection.DetectLog.ToString(),
                                     detection.regionOut[i].GetCenter(),
                                     defectFilter.ShowColor.Brush
                                 );
-                            }
+                            //if (i == detection.regionOut.Count - 1)
+                            //{
+                            //    DrawText(
+                            //        detection.DetectLog.ToString(),
+                            //        detection.regionOut[i].GetCenter(),
+                            //        defectFilter.ShowColor.Brush
+                            //    );
+                            //}
                         }
                     }
                 }
@@ -260,14 +265,19 @@ namespace WH.DetectSystem._5_存图操作
                         for (int i = 0; i < cell.Detection.regionOut.Count; i++)
                         {
                             DrawPoints(cell.Detection.regionOut[i].points, penDraw);
-                            if (i == cell.Detection.regionOut.Count - 1)
-                            {
-                                DrawText(
-                                    cell.Detection.DetectLog.ToString(),
-                                    cell.Detection.regionOut[i].GetCenter(),
-                                    defectFilter.ShowColor.Brush
-                                );
-                            }
+                            DrawText(
+                                   cell.Detection.DetectLog.ToString(),
+                                   cell.Detection.regionOut[i].GetCenter(),
+                                   defectFilter.ShowColor.Brush
+                               );
+                            //if (i == cell.Detection.regionOut.Count - 1)
+                            //{
+                            //    DrawText(
+                            //        cell.Detection.DetectLog.ToString(),
+                            //        cell.Detection.regionOut[i].GetCenter(),
+                            //        defectFilter.ShowColor.Brush
+                            //    );
+                            //}
                         }
                     }
                 }

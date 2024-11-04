@@ -118,16 +118,27 @@ namespace WH.DetectSystem
                                         {
                                             // detection.regionOut = selRegion;
                                             selRegionALL.AddRange(selRegion);
+                                            
                                             if (!once)
                                             {
-                                                detection.DetectLog.AppendLine(
+                                                for (int i = 0; i<selRegionALL.Count; i++)
+                                                {
+                                                    detection.DetectLog.Add(new StringBuilder(
                                                     detection.DefectFilter.Name
-                                                );
+                                                    ));
+                                                }
+                                               
                                                 once = true;
                                             }
-                                            detection.DetectLog.AppendLine(
-                                                $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
-                                            );
+                                            for (int i = 0; i<selRegionALL.Count; i++)
+                                            {
+                                                detection.DetectLog.Add(new StringBuilder (
+                                                 $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                             ));
+                                            }
+                                            //detection.DetectLog.AppendLine(
+                                            //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                            //);
                                             detection.Result = false;
                                             // break; //有一个分选不合格就跳出，不执行剩下的分选（||）
                                         }
@@ -145,46 +156,68 @@ namespace WH.DetectSystem
                                 }
                                 if (detection.regionOut?.Count > 0 && de.ResultList.Count > 0)
                                 {
-                                    detection.regionOut.Sort(
-                                        delegate(SRegion l, SRegion r)
-                                        {
-                                            return l
-                                                .regionInfo.GetValue(de.ResultList[0].Feature, l)
-                                                .CompareTo(
-                                                    r.regionInfo.GetValue(
-                                                        de.ResultList[0].Feature,
-                                                        r
-                                                    )
-                                                );
-                                        }
-                                    );
-                                    SRegion maxRegion = detection.regionOut.Last();
-                                    foreach (var item in de.ResultList)
+                                    //detection.regionOut.Sort(
+                                    //    delegate(SRegion l, SRegion r)
+                                    //    {
+                                    //        return l
+                                    //            .regionInfo.GetValue(de.ResultList[0].Feature, l)
+                                    //            .CompareTo(
+                                    //                r.regionInfo.GetValue(
+                                    //                    de.ResultList[0].Feature,
+                                    //                    r
+                                    //                )
+                                    //            );
+                                    //    }
+                                    //);
+                                    for (int i = 0; i < detection.regionOut.Count; i++)
                                     {
-                                        if (item.Feature == CFeacture.FeactureCount)
+                                        var maxRegion = detection.regionOut[i];
+                                        foreach (var item in de.ResultList)
                                         {
-                                            item.Value = detection.regionOut.Count;
-                                        }
-                                        else
-                                        {
-                                            item.Value = maxRegion.regionInfo.GetValue(
-                                                item.Feature,
-                                                maxRegion
+                                            if (item.Feature == CFeacture.FeactureCount)
+                                            {
+                                                item.Value = detection.regionOut.Count;
+                                            }
+                                            else
+                                            {
+                                                item.Value = maxRegion.regionInfo.GetValue(
+                                                    item.Feature,
+                                                    maxRegion
+                                                );
+                                            }
+                                            detection.DetectLog[i].AppendLine(
+                                                $"{item.Feature.GetName()}:{item.Value:F2}"
                                             );
                                         }
-                                        detection.DetectLog.AppendLine(
-                                            $"{item.Feature.GetName()}:{item.Value:F2}"
-                                        );
                                     }
+                                    
+                                    //SRegion maxRegion = detection.regionOut.Last();
+                                    //foreach (var item in de.ResultList)
+                                    //{
+                                    //    if (item.Feature == CFeacture.FeactureCount)
+                                    //    {
+                                    //        item.Value = detection.regionOut.Count;
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        item.Value = maxRegion.regionInfo.GetValue(
+                                    //            item.Feature,
+                                    //            maxRegion
+                                    //        );
+                                    //    }
+                                    //    detection.DetectLog.AppendLine(
+                                    //        $"{item.Feature.GetName()}:{item.Value:F2}"
+                                    //    );
+                                    //}
                                 }
                                 else
                                 {
                                     foreach (var item in de.ResultList)
                                     {
                                         item.Value = 0;
-                                        detection.DetectLog.AppendLine(
+                                        detection.DetectLog.Add(new StringBuilder(
                                             $"{item.Feature.GetName()}:{item.Value:F2}"
-                                        );
+                                        ));
                                     }
                                 }
                             }
@@ -239,14 +272,23 @@ namespace WH.DetectSystem
                                             selValueALL.AddRange(filtValues);
                                             if (!once)
                                             {
-                                                detection.DetectLog.AppendLine(
+                                                for (int i = 0; i<selValueALL.Count; i++)
+                                                {
+                                                    detection.DetectLog.Add(new StringBuilder(
                                                     detection.DefectFilter.Name
-                                                );
+                                                    ));
+                                                }
                                                 once = true;
                                             }
-                                            detection.DetectLog.AppendLine(
-                                                $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
-                                            );
+                                            for (int i = 0; i<selValueALL.Count; i++)
+                                            {
+                                                detection.DetectLog.Add(new StringBuilder(
+                                                 $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                             ));
+                                            }
+                                            //detection.DetectLog.AppendLine(
+                                            //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                            //);
                                             detection.Result = false;
                                             // break; //有一个分选不合格就跳出，不执行剩下的分选（||）
                                         }
@@ -273,9 +315,12 @@ namespace WH.DetectSystem
                                         item.Value =
                                             detection.Value.Count > 0 ? detection.Value.Max() : 0;
                                     }
-                                    detection.DetectLog.AppendLine(
-                                        $"{item.Feature.GetName()}:{item.Value:F2}"
-                                    );
+                                    detection.DetectLog.Add(new StringBuilder(
+                                            $"{item.Feature.GetName()}:{item.Value:F2}"
+                                        ));
+                                    //detection.DetectLog.AppendLine(
+                                    //    $"{item.Feature.GetName()}:{item.Value:F2}"
+                                    //);
                                 }
                             }
                             break;
