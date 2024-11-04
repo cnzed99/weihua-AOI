@@ -60,9 +60,10 @@ namespace YoloobbAlgorithm
         float[] preprocess(Mat img)
         {
             m_image_size = new List<int> { (int)img.Size().Width, (int)img.Size().Height };
-            Mat mat = new Mat();
-            Cv2.CvtColor(img, mat, ColorConversionCodes.BGR2RGB);
-            mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
+            //  Mat mat = new Mat();
+            Mat mat = img;
+            // Cv2.CvtColor(img, mat, ColorConversionCodes.BGR2RGB);
+           // mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             mat = Resize.letterbox_img(mat, (int)m_input_size[2], out m_factor);
             mat = Normalize.run(mat, true);
             return Permute.run(mat);

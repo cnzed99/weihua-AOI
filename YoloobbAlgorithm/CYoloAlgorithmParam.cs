@@ -252,7 +252,7 @@ namespace YoloobbAlgorithm
         List<SResultInfo> ImageInfer(Cell cell)
         {
             List<SResultInfo> sResultInfos = new List<SResultInfo>();
-            Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,  MatType.CV_8UC(4), cell.Image.ImageData);
+            Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,  MatType.CV_8UC(3), cell.Image.ImageData);
             // img.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             //  Mat img = Cv2.ImRead("D:\\本地代码仓库\\yolo8 demo\\datasets\\Hamsausage0929\\images\\train\\0.jpg");
             //await Task.Run(() =>
