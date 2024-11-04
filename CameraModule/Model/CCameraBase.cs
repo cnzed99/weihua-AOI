@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
@@ -27,25 +27,27 @@ namespace CameraModule
         /// 旋转图像
         /// </summary>
         /// <param name="rotate">旋转角度，对应EMIMAGEROTATE</param>
-        /// <param name="width">宽度</param>
-        /// <param name="height">高度</param>
-        /// <param name="nLine">行宽</param>
-        /// <param name="data">图像数据</param>
-        /// <param name="widthOut">旋转后宽度</param>
-        /// <param name="heightOut">旋转后高度</param>
-        /// <param name="nLineOut">旋转后行宽</param>
-        /// <param name="dataOut">旋转后图像数据</param>
-        [DllImport("MaociAlg.dll")]
+        /// <param name="nChannel">通道数</param>
+        /// <param name="widthSrc">宽度</param>
+        /// <param name="heightSrc">高度</param>
+        /// <param name="nLineSrc">行宽</param>
+        /// <param name="dataSrc">图像数据</param>
+        /// <param name="widthDst">旋转后宽度</param>
+        /// <param name="heightDst">旋转后高度</param>
+        /// <param name="nLineDst">旋转后行宽</param>
+        /// <param name="dataDst">旋转后图像数据</param>
+        [DllImport("GeneralAlg.dll")]
         public static extern void RotateImage(
             int rotate,
-            int width,
-            int height,
-            int nLine,
-            IntPtr data,
-            int widthOut,
-            int heightOut,
-            int nLineOut,
-            IntPtr dataOut
+            int nChannel,
+            int widthSrc,
+            int heightSrc,
+            int nLineSrc,
+            IntPtr dataSrc,
+            int widthDst,
+            int heightDst,
+            int nLineDst,
+            IntPtr dataDst
         );
 
         /// <summary>
@@ -252,20 +254,18 @@ namespace CameraModule
             int strideNew = widthNew * ((bitsPerPixel + 7) / 8);
             // int strideNew = widthNew * bitsPerPixel;
             IntPtr ptrNew = Marshal.AllocHGlobal(strideNew * heightNew);
-            byte[] data = new byte[strideNew * heightNew];
-            Marshal.Copy(grabbedRawData, data, 0, strideNew * heightNew);
-            Marshal.Copy(data, 0, ptrNew, strideNew * heightNew);
-            //RotateImage(
-            //    (int)Setting.ImageRotate,
-            //    Setting.ImageWidth,
-            //    Setting.ImageHeight,
-            //    stride,
-            //    grabbedRawData,
-            //    widthNew,
-            //    heightNew,
-            //    strideNew,
-            //    ptrNew
-            //);
+            RotateImage(
+                (int)Setting.ImageRotate,
+                Setting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY ? 1 : 3,
+                Setting.ImageWidth,
+                Setting.ImageHeight,
+                stride,
+                grabbedRawData,
+                widthNew,
+                heightNew,
+                strideNew,
+                ptrNew
+            );
             CImage image = new CImage(
                 widthNew,
                 heightNew,
