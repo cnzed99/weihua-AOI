@@ -526,7 +526,7 @@ namespace WH.RecipeCellRootBase
     public struct SRegion
     {
         public Rect rect;
-
+        
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 区域信息

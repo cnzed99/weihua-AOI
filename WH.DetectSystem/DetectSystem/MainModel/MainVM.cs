@@ -790,7 +790,7 @@ namespace WH.DetectSystem.Models
                                                 drawView.SetFontBrush(defectFilter.ShowColor.Brush);
                                                 for (int i = 0; i < detection.regionOut.Count; i++)
                                                 {
-                                                    drawView.ImgDrawPoints(
+                                                    drawView.ImgDrawRegion(
                                                         detection.regionOut[i].points,
                                                         false
                                                     );
@@ -824,7 +824,7 @@ namespace WH.DetectSystem.Models
                                                     i++
                                                 )
                                                 {
-                                                    drawView.ImgDrawPoints(
+                                                    drawView.ImgDrawRegion(
                                                         cell.Detection.regionOut[i].points,
                                                         false
                                                     );

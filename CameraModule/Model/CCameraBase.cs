@@ -250,18 +250,22 @@ namespace CameraModule
                     break;
             }
             int strideNew = widthNew * ((bitsPerPixel + 7) / 8);
+            // int strideNew = widthNew * bitsPerPixel;
             IntPtr ptrNew = Marshal.AllocHGlobal(strideNew * heightNew);
-            RotateImage(
-                (int)Setting.ImageRotate,
-                Setting.ImageWidth,
-                Setting.ImageHeight,
-                stride,
-                grabbedRawData,
-                widthNew,
-                heightNew,
-                strideNew,
-                ptrNew
-            );
+            byte[] data = new byte[strideNew * heightNew];
+            Marshal.Copy(grabbedRawData, data, 0, strideNew * heightNew);
+            Marshal.Copy(data, 0, ptrNew, strideNew * heightNew);
+            //RotateImage(
+            //    (int)Setting.ImageRotate,
+            //    Setting.ImageWidth,
+            //    Setting.ImageHeight,
+            //    stride,
+            //    grabbedRawData,
+            //    widthNew,
+            //    heightNew,
+            //    strideNew,
+            //    ptrNew
+            //);
             CImage image = new CImage(
                 widthNew,
                 heightNew,

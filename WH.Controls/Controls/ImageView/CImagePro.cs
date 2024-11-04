@@ -816,11 +816,24 @@ namespace WH.Controls
 
                 if (!_Pens.Exists(e => e.Item1 == _Pen))
                     _Pens.Add((_Pen, _Pen.Thickness));
-
+                double dis1 = CalculateDistance(points[0], points[points.Count - 1]);
+                if (dis1 > 3)
+                {
+                    points.Add(points[0]);
+                }
+               
                 Regions.Add(new SDrawRegion(_Pen, points));
             }
             if (isRender)
                 this.InvalidateVisual();
+        }
+
+        private double CalculateDistance(Point point1, Point point2)
+        {
+            double deltaX = point1.X - point2.X;
+            double deltaY = point1.Y - point2.Y;
+
+            return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
         /// <summary>

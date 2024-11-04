@@ -14,6 +14,7 @@
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.19.2" />
     <PackageVersion Include="Microsoft.Web.Administration" Version="11.1.0" />
     <PackageVersion Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
     <PackageVersion Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
@@ -25,6 +26,12 @@
     <PackageVersion Include="NModbus" Version="3.0.81" />
     <PackageVersion Include="NModbus.Serial" Version="3.0.81" />
     <PackageVersion Include="NModbus4" Version="2.1.0" />
+    <PackageVersion Include="OpenCvSharp4" Version="4.9.0.20240103" />
+    <PackageVersion Include="OpenCvSharp4.Extensions" Version="4.9.0.20240103" />
+    <PackageVersion Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
+    <PackageVersion Include="OpenVINO.CSharp.API.Extensions" Version="1.0.2" />
+    <PackageVersion Include="OpenVINO.CSharp.API.Extensions.OpenCvSharp" Version="1.0.6.3" />
+    <PackageVersion Include="OpenVINO.CSharp.Windows" Version="2024.0.0.1" />
     <PackageVersion Include="System.IO.Ports" Version="8.0.0" />
     <PackageVersion Include="System.Management" Version="8.0.0" />
     <PackageVersion Include="System.Reactive" Version="6.0.1-preview.1" />

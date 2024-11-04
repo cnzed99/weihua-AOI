@@ -31,7 +31,7 @@ namespace WH.DetectSystem
             }
             foreach (var sp in filterConfig.SpeciesFilters)
             {
-                sp.Result = true;
+                sp.Result = true;//检测类重置为OK
             }
             foreach (var algorithmOut in cell.AlgorithmOut)
             {
