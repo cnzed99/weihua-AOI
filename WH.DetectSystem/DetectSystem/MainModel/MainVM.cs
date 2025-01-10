@@ -762,6 +762,7 @@ namespace WH.DetectSystem.Models
                                         drawView.SetPen(edge.BrushDraw);
                                         drawView.ImgDrawPoints(edge.Points, false);
                                     }
+
                                     if (!cell.IsOK)
                                     {
                                         DefectFilter dstFilter = cell.Detection.DefectFilter;
@@ -861,6 +862,17 @@ namespace WH.DetectSystem.Models
                                             false
                                         );
                                     }
+
+                                    //2025.01.09 易群生
+                                    //在识别到的字符附近区域显示识别到的字符
+                                    if (cell.OcrResultString != "")
+                                    { 
+                                        drawView.SetFontBrush(Brushes.Red);
+                                        drawView.ImgDrawText(cell.OcrResultString, 
+                                            cell.DrawEdges[0].Points[0].X, cell.DrawEdges[0].Points[0].Y-50,false);
+                                    
+                                    }
+
                                     drawView.Invalidate();
                                 });
                             }

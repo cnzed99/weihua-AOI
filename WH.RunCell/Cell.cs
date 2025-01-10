@@ -231,6 +231,11 @@ namespace WH.RunCell
         public dynamic Quality { get; set; }
 
         /// <summary>
+        /// 识别出来的字符串
+        /// </summary>
+        public string OcrResultString { get; set; } = "";
+
+        /// <summary>
         /// 计时
         /// </summary>
         public Stopwatch Stopwatch { get; set; }

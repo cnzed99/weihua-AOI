@@ -250,6 +250,21 @@ namespace WH.Controls
         }
 
         /// <summary>
+        /// 2025.01.10 易群生
+        /// 显示文字，图像坐标
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="isRender"></param>
+        public void ImgDrawText(string text, double x,double y, bool isRender = true)
+        {
+            Point origin=new Point(x,y);
+            this.Image.DrawText(text, origin, isRender);
+        }
+
+
+        /// <summary>
         /// 2024.7.8 李焕彬
         /// 显示文字，图像坐标
         /// </summary>

@@ -11,7 +11,6 @@
     <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
 	<Exec Command="xcopy $(OutDir)TensorRtExtern.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
 	<Exec Command="xcopy $(OutDir)TensorRtSharp.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
-	<Exec Command="xcopy $(OutDir)SharpCompress.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
   </Target>
   
   <ItemGroup>
