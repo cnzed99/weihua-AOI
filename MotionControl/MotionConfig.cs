@@ -313,6 +313,56 @@ namespace MotionControl
 
         /// <summary>
         /// 2024.7.9 李焕彬
+        /// 驱动报警信号
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.地址信息M")]
+        [property: DisplayName("21.原点信号")]
+        [property: Description("21.原点信号")]
+        private ushort addrHomeSignal = 92;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 驱动报警信号
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.地址信息M")]
+        [property: DisplayName("22.正向限位信号")]
+        [property: Description("22.正向限位信号")]
+        private ushort addrLimitPSignal = 92;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 驱动报警信号
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.地址信息M")]
+        [property: DisplayName("23.负向限位信号")]
+        [property: Description("23.负向限位信号")]
+        private ushort addrLimitNSignal = 92;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 启动纠偏
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.地址信息M")]
+        [property: DisplayName("24.启动纠偏")]
+        [property: Description("24.启动纠偏")]
+        private ushort addrStartFocus = 111;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
+        /// 纠偏归零
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.地址信息M")]
+        [property: DisplayName("25.纠偏归零")]
+        [property: Description("25.纠偏归零")]
+        private ushort addrSetZero = 113;
+
+        /// <summary>
+        /// 2024.7.9 李焕彬
         /// 当前位置
         /// </summary>
         [ObservableProperty]
@@ -417,9 +467,8 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("4.地址信息D")]
-        [property: DisplayName("23.启动纠偏")]
-        [property: Description("23.启动纠偏")]
-        private ushort addrStartFocus = 111;
+        [property: DisplayName("23.正限位位置")]
+        private ushort addrLimitPPos = 130;
 
         /// <summary>
         /// 2024.7.9 李焕彬
@@ -427,9 +476,8 @@ namespace MotionControl
         /// </summary>
         [ObservableProperty]
         [property: Category("4.地址信息D")]
-        [property: DisplayName("24.纠偏归零")]
-        [property: Description("24.纠偏归零")]
-        private ushort addrSetZero = 113;
+        [property: DisplayName("24.负限位位置")]
+        private ushort addrLimitNPos = 132;
 
         /// <summary>
         /// 2024.7.12 李焕彬

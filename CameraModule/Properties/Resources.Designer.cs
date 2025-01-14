@@ -286,7 +286,7 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
-        ///   查找类似 关闭相机出现错误: 的本地化字符串。
+        ///   查找类似 关闭相机出现错误，相机序列号- 的本地化字符串。
         /// </summary>
         public static string ErrorClose {
             get {
@@ -430,11 +430,29 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
+        ///   查找类似 丢帧 的本地化字符串。
+        /// </summary>
+        public static string LostFrame {
+            get {
+                return ResourceManager.GetString("LostFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 参数设置 的本地化字符串。
         /// </summary>
         public static string ParaSet {
             get {
                 return ResourceManager.GetString("ParaSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 品牌 的本地化字符串。
+        /// </summary>
+        public static string PlugName {
+            get {
+                return ResourceManager.GetString("PlugName", resourceCulture);
             }
         }
         
@@ -475,7 +493,7 @@ namespace CameraModule.Properties {
         }
         
         /// <summary>
-        ///   查找类似 迈德威视相机执行软触发一次 的本地化字符串。
+        ///   查找类似 相机执行软触发一次 的本地化字符串。
         /// </summary>
         public static string SoftWareOnce {
             get {
@@ -489,15 +507,6 @@ namespace CameraModule.Properties {
         public static string StopTrig {
             get {
                 return ResourceManager.GetString("StopTrig", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 品牌 的本地化字符串。
-        /// </summary>
-        public static string Vender {
-            get {
-                return ResourceManager.GetString("Vender", resourceCulture);
             }
         }
         

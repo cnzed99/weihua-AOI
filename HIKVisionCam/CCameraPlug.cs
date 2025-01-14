@@ -93,7 +93,6 @@ namespace HIKVisionCam
                     }
                     if (isHikcamera)
                     {
-                        info.Vender = Assembly.GetExecutingAssembly().GetName().Name;
                         CamListstr.Add(info);
                     }
                 }

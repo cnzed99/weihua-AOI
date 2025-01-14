@@ -84,10 +84,6 @@ namespace CameraModule
         public void Init(CCameraParameterBase parameters)
         {
             Setting = parameters;
-
-            grabThread = new Thread(new ThreadStart(GrabThread));
-            grabThread.IsBackground = true;
-            grabThread.Start();
         }
 
         /// <summary>
@@ -124,15 +120,30 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 图片队列
+        /// 通道数
         /// </summary>
-        protected Queue imageQueue = new Queue();
+        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(5)
+        {
+            FullMode = BoundedChannelFullMode.DropOldest
+        };
+
+        /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 图像队列，相机回调函数传入
+        /// </summary>
+        public Channel<IntPtr> ImageQueueChannel = Channel.CreateBounded<IntPtr>(channelOptions);
 
         /// <summary>
         /// 李焕彬 2024.7.24
         /// 取图线程
         /// </summary>
         protected Thread grabThread;
+
+        /// <summary>
+        /// 李焕彬 2024.7.24
+        /// 取图线程循环标志
+        /// </summary>
+        protected bool isStartGrabThread = false;
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -288,38 +299,44 @@ namespace CameraModule
         public virtual void GrabThread()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            while (true)
+            while (isStartGrabThread)
             {
-                if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+                try
                 {
-                    if (startGrabSoft)
+                    if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
                     {
-                        if (this.imageQueue.Count > 0)
+                        if (startGrabSoft)
                         {
-                            IntPtr zero = IntPtr.Zero;
-                            GetImageFunc(zero);
-                        }
-                        else if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
-                        {
-                            if (LostImage != null)
+                            if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
                             {
-                                ExportImage(LostImage, true);
+                                startGrabSoft = false;
+                                timeOut.Stop();
+                                GetImageFunc(ptr);
                             }
-                            StringBuilder textBuilder = new StringBuilder();
-                            textBuilder.Append(Properties.Resources.ErrorLostImage2);
-                            textBuilder.Append(timeOut.ElapsedMilliseconds);
-                            CCameraManagement.CamLogger.Error(textBuilder.ToString());
+                            else if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
+                            {
+                                startGrabSoft = false;
+                                timeOut.Stop();
+                                if (LostImage != null)
+                                {
+                                    ExportImage(LostImage, true);
+                                }
+                                StringBuilder textBuilder = new StringBuilder();
+                                textBuilder.Append(Properties.Resources.ErrorLostImage2);
+                                textBuilder.Append(timeOut.ElapsedMilliseconds);
+                                CCameraManagement.CamLogger.Error(textBuilder.ToString());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
+                        {
+                            GetImageFunc(ptr);
                         }
                     }
                 }
-                else
-                {
-                    if (this.imageQueue.Count > 0)
-                    {
-                        IntPtr zero = IntPtr.Zero;
-                        GetImageFunc(zero);
-                    }
-                }
+                catch (Exception) { }
             }
         }
 
@@ -351,12 +368,12 @@ namespace CameraModule
                 {
                     if (!OutputImageChannel.Writer.TryWrite(cell))
                     {
-                        StringBuilder strbuilder = new StringBuilder("[");
-                        strbuilder.Append("相机");
-                        strbuilder.Append("]     ");
-                        strbuilder.Append(cell.ID);
-                        strbuilder.Append("   cell入列失败，丢弃。");
-                        CCameraManagement.CamLogger.Error(strbuilder.ToString());
+                        //StringBuilder strbuilder = new StringBuilder("[");
+                        //strbuilder.Append("相机");
+                        //strbuilder.Append("]     ");
+                        //strbuilder.Append(cell.ID);
+                        //strbuilder.Append("   cell入列失败，丢弃。");
+                        //CCameraManagement.CamLogger.Error(strbuilder.ToString());
                         cell.Dispose();
                     }
                     else
@@ -368,11 +385,6 @@ namespace CameraModule
                         //strbuilder.Append("   cell入列完成。");
                         //SysLog.Info(strbuilder.ToString());
                     }
-                }
-                if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
-                {
-                    startGrabSoft = false;
-                    timeOut.Stop();
                 }
 
                 return true;
@@ -397,7 +409,8 @@ namespace CameraModule
         {
             CCameraManagement.CamLogger.Info(Properties.Resources.SoftWareOnce);
             timeOut.Restart();
-            imageQueue.Clear(); //拍照前清除
+            //imageQueue.Clear(); //拍照前清除
+            while (ImageQueueChannel.Reader.TryRead(out _)) { }
             startGrabSoft = true;
         }
 
@@ -418,6 +431,13 @@ namespace CameraModule
                         Properties.Resources.InfoInit + Setting.SerialNumber
                     );
                     SysLog.Info(Properties.Resources.InfoInit + Setting.SerialNumber);
+
+                    while (ImageQueueChannel.Reader.TryRead(out _)) { } //lhb2025.1.6 清理缓存，防止读取旧的已经被删除的内存导致报错
+                    isStartGrabThread = true;
+                    grabThread = new Thread(new ThreadStart(GrabThread));
+                    grabThread.IsBackground = true;
+                    grabThread.Start();
+
                     return true;
                 }
                 CCameraManagement.CamLogger.Error(
@@ -442,12 +462,23 @@ namespace CameraModule
         {
             try
             {
-                UserSaveParam();
-                CloseCamera();
+                if (Connected)
+                {
+                    StopGrab();
+                    isStartGrabThread = false;
+                    while (grabThread.IsAlive && grabThread.Join(500)) { }
+                    //imageQueue.Clear();
+                    UserSaveParam();
+                    CloseCamera();
+                    Connected = false;
+                    while (ImageQueueChannel.Reader.TryRead(out _)) { } //lhb2025.1.6 清理缓存
+                }
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.ErrorClose + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.ErrorClose + Setting.SerialNumber + ex.Message
+                );
             }
         }
 

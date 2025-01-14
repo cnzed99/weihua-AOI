@@ -159,4 +159,7 @@
   <data name="TestFpgaAlgrithm" xml:space="preserve">
     <value>测试FPGA算法</value>
   </data>
+  <data name="DisplayFrameRate" xml:space="preserve">
+    <value>显示帧率</value>
+  </data>
 </root>

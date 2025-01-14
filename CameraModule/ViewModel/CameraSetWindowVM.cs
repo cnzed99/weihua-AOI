@@ -66,12 +66,20 @@ namespace CameraModule
                 SetProperty(ref camParamSelect, value);
                 if (camParamSelect != null)
                 {
+                    foreach (var item in CCameraManagement.CameraDict)
+                    {
+                        item.Value.IsSetWindowShowed = false;
+                    }
                     camSelect = CCameraManagement.CameraDict[camParamSelect.SerialNumber];
                     camSelect.IsSetWindowShowed = true;
                     camSelect.GrabFinishEvent = ShowImage;
                 }
                 else
                 {
+                    foreach (var item in CCameraManagement.CameraDict)
+                    {
+                        item.Value.IsSetWindowShowed = false;
+                    }
                     camSelect.IsSetWindowShowed = false;
                     camSelect.GrabFinishEvent -= ShowImage;
                     camSelect = null;
@@ -186,22 +194,20 @@ namespace CameraModule
         {
             if (camSelect == null)
                 return;
-            if (camSelect?.Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+            if (IsContinuous)
             {
-                IsContinuous = !IsContinuous;
-                if (IsContinuous)
-                {
-                    timer.Enabled = true;
-                }
-                else
-                {
-                    timer.Enabled = false;
-                }
+                timer.Enabled = false;
             }
             else
             {
-                Growl.WarningGlobal(Properties.Resources.软触发失败);
+                if (camSelect?.Setting.TriggerMode != EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+                {
+                    Growl.WarningGlobal(Properties.Resources.软触发失败);
+                    return;
+                }
+                timer.Enabled = true;
             }
+            IsContinuous = !IsContinuous;
         }
 
         /// <summary>
@@ -257,6 +263,8 @@ namespace CameraModule
             camSelect?.ExecuteSoftwareTrigger();
         }
 
+        object lockObject = new object();
+
         /// <summary>
         /// 2024.7.22 李焕彬
         /// 显示图像
@@ -264,31 +272,34 @@ namespace CameraModule
         /// <param name="cell">cell</param>
         public void ShowImage(Cell cell)
         {
-            CImage image = cell.Image;
-            if (image != null)
+            lock (lockObject)
             {
-                try
+                CImage image = cell.Image;
+                if (image != null)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    try
                     {
-                        ImageShow = image.ToBitmapSource();
-                    });
-                    if (camSelect.FuncDistinct != null)
-                    {
-                        Distinct = camSelect.FuncDistinct(image);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            ImageShow = image.ToBitmapSource();
+                        });
+                        if (camSelect?.FuncDistinct != null)
+                        {
+                            Distinct = camSelect.FuncDistinct(image);
+                        }
+                        else
+                        {
+                            Distinct = 0;
+                        }
+                        cellRecv?.Dispose();
+                        cellRecv = cell;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Distinct = 0;
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.ErrorShowImage + ex.Message
+                        );
                     }
-                    cellRecv?.Dispose();
-                    cellRecv = cell;
-                }
-                catch (Exception ex)
-                {
-                    CCameraManagement.CamLogger.Error(
-                        Properties.Resources.ErrorShowImage + ex.Message
-                    );
                 }
             }
         }

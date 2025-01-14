@@ -106,7 +106,7 @@ namespace CameraModule
                                 CCameraManagement.CameraDict.Add(serialNumber, Camtemp);
                                 CCameraManagement.CamParamDict.Add(serialNumber, paramtemp);
 
-                                CCameraManagement.CameraDict[old].CloseCamera();
+                                CCameraManagement.CameraDict[old].EndCamera();//CloseCamera修改为EndCamera
 
                                 CCameraManagement.CameraDict.Remove(old);
                                 CCameraManagement.CamParamDict.Remove(old);

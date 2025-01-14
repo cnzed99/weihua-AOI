@@ -4,18 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:CameraModule"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     Title="{Binding [CameraList], Source={x:Static local:CLang.s_Instance}}"
     Width="600"
     Height="300"
     Icon="/CameraModule;component/Resources/cam.png"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" ResizeMode="NoResize">
+    mc:Ignorable="d">
     <Window.DataContext>
-        <local:CCameraListWindowVM/>
+        <local:CCameraListWindowVM />
     </Window.DataContext>
     <hc:Window.Resources>
         <ResourceDictionary>
@@ -35,17 +36,29 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <DataGrid
-            ItemsSource="{Binding CameraInfos}"
             Grid.Row="1"
             hc:DataGridAttach.ShowRowNumber="True"
             AutoGenerateColumns="False"
             HeadersVisibility="All"
+            ItemsSource="{Binding CameraInfos}"
             RowHeaderWidth="30">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding SerialNumber}" Header="{Binding [Serial], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding Vender}" Header="{Binding [Vender], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding CamType}" Header="{Binding [CamType], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding CamIp}" Header="{Binding [CamIp], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding SerialNumber}"
+                    Header="{Binding [Serial], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding PlugName}"
+                    Header="{Binding [PlugName], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding CamType}"
+                    Header="{Binding [CamType], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding CamIp}"
+                    Header="{Binding [CamIp], Source={x:Static local:CLang.s_Instance}}"
+                    IsReadOnly="True" />
                 <DataGridCheckBoxColumn Binding="{Binding IsUse}" Header="{Binding [IsUse], Source={x:Static local:CLang.s_Instance}}" />
             </DataGrid.Columns>
         </DataGrid>

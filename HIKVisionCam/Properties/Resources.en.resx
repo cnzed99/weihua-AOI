@@ -124,127 +124,127 @@
     <value>Callback received picture:</value>
   </data>
   <data name="ErrorSetTriggerSource2" xml:space="preserve">
-    <value>HikVision camera selection trigger source exception, serial number:</value>
+    <value>camera selection trigger source exception, serial number:</value>
   </data>
   <data name="ErrorSetTriggerSource" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Select Trigger Source', Error Code:</value>
+    <value>Camera: Failed to execute 'Select Trigger Source', Error Code:</value>
   </data>
   <data name="ErrorGetTriggerPulseWidth2" xml:space="preserve">
-    <value>HikVision camera failed to get output pulse width, serial number:</value>
+    <value>camera failed to get output pulse width, serial number:</value>
   </data>
   <data name="ErrorGetTriggerPulseWidth" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Output Pulse Width', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Output Pulse Width', Error Code:</value>
   </data>
   <data name="ErrorUserLoadParam2" xml:space="preserve">
-    <value>HikVision Camera failed to load Group A camera parameters, serial number:</value>
+    <value>Camera failed to load Group A camera parameters, serial number:</value>
   </data>
   <data name="ErrorUserLoadParam" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Load Group A Camera Parameters', Error Code:</value>
+    <value>Camera: Failed to execute 'Load Group A Camera Parameters', Error Code:</value>
   </data>
   <data name="ErrorUserSaveParam2" xml:space="preserve">
-    <value>HikVision Camera failed to save Group A camera parameters, serial number:</value>
+    <value>Camera failed to save Group A camera parameters, serial number:</value>
   </data>
   <data name="ErrorUserSaveParam" xml:space="preserve">
-    <value>HikVision Camera: Executing 'Save Group A Camera Parameters' failed with error code:</value>
+    <value>Camera: Executing 'Save Group A Camera Parameters' failed with error code:</value>
   </data>
   <data name="ErrorSetTriggerPulseWidth2" xml:space="preserve">
-    <value>HikVision Camera failed to set the output pulse width, serial number:</value>
+    <value>Camera failed to set the output pulse width, serial number:</value>
   </data>
   <data name="ErrorSetTriggerPulseWidth" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute setup 'Output Pulse Width', Error Code:</value>
+    <value>Camera: Failed to execute setup 'Output Pulse Width', Error Code:</value>
   </data>
   <data name="ErrorGetTriggerDelay2" xml:space="preserve">
-    <value>HikVision camera fetch trigger delay failed, serial number:</value>
+    <value>camera fetch trigger delay failed, serial number:</value>
   </data>
   <data name="ErrorGetTriggerDelay" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Trigger Delay', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Trigger Delay', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerDelay2" xml:space="preserve">
-    <value>HikVision camera set trigger delay failed, serial number:</value>
+    <value>camera set trigger delay failed, serial number:</value>
   </data>
   <data name="ErrorSetTriggerDelay" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Set Trigger Delay', Error Code:</value>
+    <value>Camera: Failed to execute 'Set Trigger Delay', Error Code:</value>
   </data>
   <data name="ErrorSetGamma2" xml:space="preserve">
-    <value>HikVision Camera failed to set up Gamma, Serial Number:</value>
+    <value>Camera failed to set up Gamma, Serial Number:</value>
   </data>
   <data name="ErrorSetGamma" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Set Gamma', Error Code:</value>
+    <value>Camera: Failed to execute 'Set Gamma', Error Code:</value>
   </data>
   <data name="ErrorGetGamma2" xml:space="preserve">
-    <value>HikVision Camera failed to get Gamma, Serial Number:</value>
+    <value>Camera failed to get Gamma, Serial Number:</value>
   </data>
   <data name="ErrorGetGamma" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Gamma', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Gamma', Error Code:</value>
   </data>
   <data name="ErrorSetGain2" xml:space="preserve">
-    <value>HikVision Camera Set Gain Failed, Serial Number:</value>
+    <value>Camera Set Gain Failed, Serial Number:</value>
   </data>
   <data name="ErrorSetGain" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Set Gain', Error Code:</value>
+    <value>Camera: Failed to execute 'Set Gain', Error Code:</value>
   </data>
   <data name="ErrorSetExposureTime2" xml:space="preserve">
-    <value>Exception in HikVision Camera Setting Exposure Value, Serial Number:</value>
+    <value>Exception in Camera Setting Exposure Value, Serial Number:</value>
   </data>
   <data name="ErrorGetGain" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Gain Value', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Gain Value', Error Code:</value>
   </data>
   <data name="ErrorGetGain2" xml:space="preserve">
-    <value>The HikVision camera gets the gain value, serial number:</value>
+    <value>The camera gets the gain value, serial number:</value>
   </data>
   <data name="ErrorSetExposureTime" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Set Exposure Value', Error Code:</value>
+    <value>Camera: Failed to execute 'Set Exposure Value', Error Code:</value>
   </data>
   <data name="ErrorGetExposureTime2" xml:space="preserve">
-    <value>Exception occurred in obtaining the current exposure value by the HikVision camera, serial number:</value>
+    <value>Exception occurred in obtaining the current exposure value by the camera, serial number:</value>
   </data>
   <data name="ErrorGetTriggerMode2" xml:space="preserve">
-    <value>Exception occurred in HikVision camera acquisition trigger mode, serial number:</value>
+    <value>Exception occurred in camera acquisition trigger mode, serial number:</value>
   </data>
   <data name="ErrorGetExposureTime" xml:space="preserve">
-    <value>HikVision Camera: Executing 'Exception getting current exposure value' failed with error code:</value>
+    <value>Camera: Executing 'Exception getting current exposure value' failed with error code:</value>
   </data>
   <data name="ErrorGetTriggerMode" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Trigger Mode', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Trigger Mode', Error Code:</value>
   </data>
   <data name="ErrorSetTriggerMode2" xml:space="preserve">
-    <value>HikVision camera setting trigger mode exception, serial number:</value>
+    <value>camera setting trigger mode exception, serial number:</value>
   </data>
   <data name="ErrorSetTriggerMode" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Set Trigger Mode', Error Code:</value>
+    <value>Camera: Failed to execute 'Set Trigger Mode', Error Code:</value>
   </data>
   <data name="ErrorSoftWare2" xml:space="preserve">
-    <value>An exception occurred once when the HikVision camera performed a soft trigger, serial number:</value>
+    <value>An exception occurred once when the camera performed a soft trigger, serial number:</value>
   </data>
   <data name="ErrorSoftWare" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Soft Trigger Once', Error Code:</value>
+    <value>Camera: Failed to execute 'Soft Trigger Once', Error Code:</value>
   </data>
   <data name="ErrorStop2" xml:space="preserve">
-    <value>Abnormality occurred when the HikVision camera stopped collecting, serial number:</value>
+    <value>Abnormality occurred when the camera stopped collecting, serial number:</value>
   </data>
   <data name="ErrorStop" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Stop Acquisition', Error Code:</value>
+    <value>Camera: Failed to execute 'Stop Acquisition', Error Code:</value>
   </data>
   <data name="ErrorStart2" xml:space="preserve">
-    <value>An abnormality occurred when the HikVision camera started collecting, serial number:</value>
+    <value>An abnormality occurred when the camera started collecting, serial number:</value>
   </data>
   <data name="ErrorStart" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Start Acquisition', Error Code:</value>
+    <value>Camera: Failed to execute 'Start Acquisition', Error Code:</value>
   </data>
   <data name="ErrorClose" xml:space="preserve">
-    <value>HikVision camera shutdown abnormal, serial number:</value>
+    <value>camera shutdown abnormal, serial number:</value>
   </data>
   <data name="ErrorImageFunc" xml:space="preserve">
     <value>Camera image format conversion function exception, serial number:</value>
   </data>
   <data name="ErrorCallBack" xml:space="preserve">
-    <value>HikVision camera callback function exception, serial number:</value>
+    <value>camera callback function exception, serial number:</value>
   </data>
   <data name="ErrorInitCam2" xml:space="preserve">
-    <value>Exception initializing HikVision camera:</value>
+    <value>Exception initializing camera:</value>
   </data>
   <data name="ErrorInitCam1" xml:space="preserve">
-    <value>Initializing the HikVision Camera failed to create the camera object, it may already be occupied:</value>
+    <value>Initializing the Camera failed to create the camera object, it may already be occupied:</value>
   </data>
   <data name="ErrorEnumCam2" xml:space="preserve">
     <value>Exception getting all connected Hik cameras:</value>
@@ -259,21 +259,21 @@
     <value>Special</value>
   </data>
   <data name="ErrorGetWidth" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Width Value', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Width Value', Error Code:</value>
   </data>
   <data name="ErrorGetHeight" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Height Value', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Height Value', Error Code:</value>
   </data>
   <data name="ErrorGetWidth2" xml:space="preserve">
-    <value>The HikVision camera gets the Width value, serial number:</value>
+    <value>The camera gets the Width value, serial number:</value>
   </data>
   <data name="ErrorGetHeight2" xml:space="preserve">
-    <value>The HikVision camera gets the Height value, serial number:</value>
+    <value>The camera gets the Height value, serial number:</value>
   </data>
   <data name="ErrorGetCamType" xml:space="preserve">
-    <value>HikVision Camera: Failed to execute 'Get Cam Type', Error Code:</value>
+    <value>Camera: Failed to execute 'Get Cam Type', Error Code:</value>
   </data>
   <data name="ErrorGetCamType2" xml:space="preserve">
-    <value>The HikVision camera gets the Cam Type, serial number:</value>
+    <value>The camera gets the Cam Type, serial number:</value>
   </data>
 </root>

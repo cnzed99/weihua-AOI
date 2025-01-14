@@ -33,7 +33,6 @@ namespace MindVisionCam
                     foreach (var cameraInfo in tCameraDevInfoList)
                     {
                         WHCameraInfo info = new WHCameraInfo();
-                        info.Vender = Assembly.GetExecutingAssembly().GetName().Name;
                         info.SerialNumber = Encoding
                             .Default.GetString(cameraInfo.acSn)
                             .Replace("\0", "");

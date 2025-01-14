@@ -97,6 +97,15 @@ namespace 断面毛刺检测软件.Views.SystemSetting {
         }
         
         /// <summary>
+        ///   查找类似 显示帧率 的本地化字符串。
+        /// </summary>
+        internal static string DisplayFrameRate {
+            get {
+                return ResourceManager.GetString("DisplayFrameRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 每天 的本地化字符串。
         /// </summary>
         internal static string EachDay {

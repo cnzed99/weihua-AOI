@@ -121,6 +121,27 @@ namespace MotionControl
         }
 
         /// <summary>
+        /// 2024.12.18 李焕彬
+        /// 原点信号
+        /// </summary>
+        [ObservableProperty]
+        private bool homeSignal = false;
+
+        /// <summary>
+        /// 2024.12.18 李焕彬
+        /// 正向限位信号
+        /// </summary>
+        [ObservableProperty]
+        private bool limitPSignal = false;
+
+        /// <summary>
+        /// 2024.12.18 李焕彬
+        /// 负向限位信号
+        /// </summary>
+        [ObservableProperty]
+        private bool limitNSignal = false;
+
+        /// <summary>
         /// 2024.7.11 李焕彬
         /// 当前位置
         /// </summary>
@@ -243,9 +264,9 @@ namespace MotionControl
             if (modbusTcp == null)
                 return;
             modbusTcp.WriteSingleCoil(MotionConfig.AddrEnable, true);
-            WriteRegister();
+            //WriteRegister();
             WriteRegisterFix();
-            WriteSignal();
+            //WriteSignal();
         }
 
         /// <summary>
@@ -444,6 +465,43 @@ namespace MotionControl
             }
         }
 
+        ///// <summary>
+        ///// 2024.7.12 李焕彬
+        ///// 鼠标按下命令
+        ///// </summary>
+        ///// <param name="obj">地址</param>
+        //[RelayCommand]
+        //public void MouseDown2(CElement registerSet)
+        //{
+        //    if (modbusTcp == null)
+        //        return;
+        //    WriteSingleRegister(registerSet);
+        //}
+
+        ///// <summary>
+        ///// 2024.7.12 李焕彬
+        ///// 鼠标抬起命令
+        ///// </summary>
+        ///// <param name="obj">地址</param>
+        //[RelayCommand]
+        //public void MouseUp2(CElement registerSet)
+        //{
+        //    if (modbusTcp == null)
+        //        return;
+        //    if (registerSet.Type == EMELEMTYPE.EMELEMM)
+        //    {
+        //        try
+        //        {
+        //            modbusTcp.WriteSingleCoil(registerSet.Addr, false);
+        //        }
+        //        catch (Exception err)
+        //        {
+        //            Growl.Error(MotionConfig.PrcessName + "-" + err.Message);
+        //            SysLog.Error(MotionConfig.PrcessName + "-" + err.Message);
+        //        }
+        //    }
+        //}
+
         /// <summary>
         /// 2024.7.12 李焕彬
         /// 写入固定参数寄存器值
@@ -456,6 +514,8 @@ namespace MotionControl
             modbusTcp.WriteSingleRegister(MotionConfig.AddrFocusPos, MotionConfig.FocusPos);
             modbusTcp.WriteSingleRegister(MotionConfig.AddrAcc, MotionConfig.Acc);
             modbusTcp.WriteSingleRegister(MotionConfig.AddrSpeed, MotionConfig.Speed);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrLimitPPos, MotionConfig.SoftLimitP);
+            modbusTcp.WriteSingleRegister(MotionConfig.AddrLimitNPos, MotionConfig.SoftLimitN);
         }
 
         /// <summary>
@@ -539,6 +599,9 @@ namespace MotionControl
                 IsEnable = modbusTcp.ReadCoil(MotionConfig.AddrEnable);
                 IsAlarmAxis = modbusTcp.ReadCoil(MotionConfig.AddrIsAlarm);
                 IsDriveAlarm = modbusTcp.ReadCoil(MotionConfig.AddrDriveAlarm);
+                HomeSignal = modbusTcp.ReadCoil(MotionConfig.AddrHomeSignal);
+                LimitPSignal = modbusTcp.ReadCoil(MotionConfig.AddrLimitPSignal);
+                LimitNSignal = modbusTcp.ReadCoil(MotionConfig.AddrLimitNSignal);
 
                 CurPos = modbusTcp.ReadHoldingRegister(MotionConfig.AddrPosCur);
                 CurSpeed = modbusTcp.ReadHoldingRegister(MotionConfig.AddrSpdCur);
@@ -795,6 +858,11 @@ namespace MotionControl
             }
             FocusDatas.Clear();
             FineFocusDatas.Clear();
+            while (FocusWaitGetImageChannel.Reader.TryRead(out Cell cell))
+            {
+                cell.Dispose();
+            }
+            ;
             Task.Factory.StartNew(
                 (Func<Task>)(
                     async () =>
@@ -805,23 +873,26 @@ namespace MotionControl
                             IsFocusing = true;
                             oldTriggerMode = cam.Setting.TriggerMode;
                             cam.Setting.TriggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
-                            SetSpeed(20);
-                            WaitMoveTo(MotionConfig.SoftLimitN);
                             SetSpeed(MotionConfig.SpeedFocus);
-                            Thread.Sleep(50);
+                            WaitMoveTo(MotionConfig.SoftLimitN);
+                            Thread.Sleep(300);
                             AbsMove(MotionConfig.SoftLimitP);
                             while (Math.Abs(MotionConfig.SoftLimitP - CurPos) > 0.01)
                             {
                                 cancellFocus.Token.ThrowIfCancellationRequested();
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
-                                CImage image = cell.Image;
-                                float distinct =
-                                    FuncDistinct != null ? FuncDistinct.Invoke(cell.Image) : 0;
-                                Application.Current.Dispatcher.Invoke(() =>
+                                if (!cell.FrameLoss)
                                 {
-                                    FocusDatas.Add(new((float)CurPos, distinct));
-                                });
+                                    CImage image = cell.Image;
+                                    float distinct =
+                                        FuncDistinct != null ? FuncDistinct.Invoke(cell.Image) : 0;
+                                    Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        FocusDatas.Add(new((float)CurPos, distinct));
+                                    });
+                                }
+                                cell.Dispose();
                             }
 
                             float maxDistinct = FocusDatas.Max(o => o.distinct);
@@ -834,29 +905,29 @@ namespace MotionControl
                                 MotionConfig.SoftLimitP,
                                 focusPos + MotionConfig.FineRange / 2
                             );
-                            SetSpeed(20);
                             WaitMoveTo(focusPosN);
-                            SetSpeed(MotionConfig.SpeedFocus);
                             for (float i = focusPosN; i < focusPosP; i += MotionConfig.StepFine)
                             {
                                 cancellFocus.Token.ThrowIfCancellationRequested();
                                 WaitMoveTo(i);
                                 cam.ExecuteSoftwareTrigger();
                                 Cell cell = await FocusWaitGetImageChannel.Reader.ReadAsync();
-                                CImage image = cell.Image;
-
-                                float distinct =
-                                    FuncDistinct != null ? FuncDistinct.Invoke(cell.Image) : 0;
-                                Application.Current.Dispatcher.Invoke(() =>
+                                if (!cell.FrameLoss)
                                 {
-                                    FineFocusDatas.Add(new(i, distinct));
-                                });
+                                    CImage image = cell.Image;
+                                    float distinct =
+                                        FuncDistinct != null ? FuncDistinct.Invoke(cell.Image) : 0;
+                                    Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        FineFocusDatas.Add(new(i, distinct));
+                                    });
+                                }
+                                cell.Dispose();
                             }
                             maxDistinct = FineFocusDatas.Max(o => o.distinct);
                             MotionConfig.FocusPos = FineFocusDatas
                                 .First(o => o.distinct == maxDistinct)
                                 .pos;
-                            SetSpeed(20);
                             WaitMoveTo(MotionConfig.FocusPos);
                             cam.ExecuteSoftwareTrigger();
                             await FocusWaitGetImageChannel.Reader.ReadAsync();

@@ -81,6 +81,13 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         bool showAllDefect = false;
 
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        /// 显示帧率
+        /// </summary>
+        [ObservableProperty]
+        int displayFrameRate = 10;
+
         #region 数据清零参数
         /// <summary>
         /// 显示错误信息

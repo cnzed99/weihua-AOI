@@ -109,25 +109,38 @@ namespace FrontAlgorithm
         SDetectInfo detectInfo = new SDetectInfo();
 
         /// <summary>
-        /// 测试PC算法
+        /// 测试算法
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            SMaociAlgorParam param =
-                new(
-                    (CParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect),
-                    cell.MmPerPixel * 1000
+            var paramClass = (CParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect);
+            EMDETECTRESULT result = EMDETECTRESULT.EMDR_OK;
+            if (paramClass.UsePreAlg)
+            {
+                SMaociAlgorPreParam param = new(paramClass, cell.MmPerPixel * 1000);
+                result = CAlgorithmDll.TestFpga(
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    cell.Image.StrideWidth,
+                    cell.Image.ImageData,
+                    ref param,
+                    ref detectInfo
                 );
-            EMDETECTRESULT result = CAlgorithmDll.Test(
-                cell.Image.ImageWidth,
-                cell.Image.ImageHeight,
-                cell.Image.StrideWidth,
-                cell.Image.ImageData,
-                ref param,
-                ref detectInfo
-            );
+            }
+            else
+            {
+                SMaociAlgorParam param = new(paramClass, cell.MmPerPixel * 1000);
+                result = CAlgorithmDll.Test(
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    cell.Image.StrideWidth,
+                    cell.Image.ImageData,
+                    ref param,
+                    ref detectInfo
+                );
+            }
             detectInfo.DeComposeEdge(
                 cell.MmPerPixel * 1000,
                 out var edgeDarkTop,
@@ -200,6 +213,16 @@ namespace FrontAlgorithm
 
         public CParam(string name, Token token)
             : base(name, token) { }
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        /// 使用初筛算法
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("使用初筛算法")]
+        [property: Description("使用初筛算法")]
+        private bool usePreAlg = false;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -290,6 +313,166 @@ namespace FrontAlgorithm
         [property: DisplayName("最小清晰度")]
         [property: Description("最小清晰度说明")]
         private float minDistinct = 25.0f;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值邻域大小
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("铝层自适应阈值邻域大小")]
+        [property: Description("铝层自适应阈值说明")]
+        private uint adaptiveSizePre = 14;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 自适应阈值增加值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("铝层自适应阈值增加值")]
+        [property: Description("铝层自适应阈值说明")]
+        private int adaptiveAddGrayPre = 20;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域大小
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("铝层过滤矩阵邻域大小")]
+        [property: Description("铝层过滤矩阵说明")]
+        private uint neighbSizePre = 5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域点数量限制
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("铝层过滤矩阵邻域点数量限制")]
+        [property: Description("铝层过滤矩阵说明")]
+        private uint neighbLightPointPre = 30;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("料区阈值")]
+        [property: Description("料区阈值说明")]
+        private uint darkThreshPre = 30;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("铝层阈值")]
+        [property: Description("铝层阈值说明")]
+        private uint lightThreshPre = 80;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度限制，掉料检测
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("料区厚度限制(um)")]
+        [property: Description("料区厚度限制说明")]
+        private double darkThickLimitPre = 67.5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度NG连续长度限制
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("料区厚度NG连续长度限制(um)")]
+        [property: Description("料区NG连续长度说明")]
+        private double darkThickContinueLenPre = 11.25;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区厚度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("料区厚度(um)")]
+        [property: Description("料区厚度限制说明")]
+        private double darkThickPre = 189;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度限制，毛刺检测
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层厚度限制(um)")]
+        [property: Description("铝层厚度限制说明")]
+        private double lightThickLimitPre = 15.75;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度NG连续长度限制
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层厚度NG连续长度限制(um)")]
+        [property: Description("铝层NG连续长度说明")]
+        private double lightThickContinueLenPre = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层厚度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层厚度(um)")]
+        [property: Description("铝层厚度限制说明")]
+        private double lightThickPre = 13.5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层在料区中心位置限制上
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层在料区中心位置限制上(um)")]
+        [property: Description("料区中心位置限制说明")]
+        private double posLimitTPre = 45;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层在料区中心位置限制下
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层在料区中心位置限制下(um)")]
+        [property: Description("料区中心位置限制说明")]
+        private double posLimitBPre = 45;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 铝层位置偏移值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("4.PreTest Judge")]
+        [property: DisplayName("铝层位置偏移值(um)")]
+        [property: Description("料区中心位置限制说明")]
+        private double lightPosOffestPre = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 超时时间ms
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("3.PreTest")]
+        [property: DisplayName("超时时间(ms)")]
+        [property: Description("超时时间说明")]
+        private uint timeOutPre = 3000;
     };
 
     /// <summary>

@@ -128,9 +128,9 @@ namespace FocusControl
         /// 李焕彬 2024.7.24
         /// 通道数
         /// </summary>
-        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(10)
+        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(1)
         {
-            FullMode = BoundedChannelFullMode.Wait
+            FullMode = BoundedChannelFullMode.DropOldest
         };
 
         /// <summary>
