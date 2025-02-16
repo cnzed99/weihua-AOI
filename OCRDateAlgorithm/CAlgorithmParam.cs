@@ -17,6 +17,8 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using HalconDotNet;
 using Microsoft.Web.Administration;
+using PaddleOCRSharp;
+using System.Drawing.Imaging;
 
 namespace OCRDateAlgorithm
 {
@@ -30,24 +32,40 @@ namespace OCRDateAlgorithm
         /// 2025.01.09 易群生
         /// halcon Ocr句柄
         /// </summary>
-        private HTuple OCRHandle;
+        private HTuple m_OCRHandle;
 
         /// <summary>
         /// 2025.01.09 易群生
         /// halcon文本识别句柄
         /// </summary>
-        private HTuple TextModel;
+        private HTuple m_TextModel;
 
         /// <summary>
         /// 2025.01.09 易群生
         /// 检测区域
         /// </summary>
-        private HObject InspectionRegion;
+        private HObject m_InspectionRegion;
 
         /// <summary>
-        /// 初始化算法
+        /// 2025.01.09初始化算法
         /// </summary>
-        private bool bFlagInitialAlgorithmParam;
+        private bool m_bFlagInitialAlgorithmParam;
+
+        /// <summary>
+        /// 2025.01.21 OCR识别引擎
+        /// </summary>
+        private PaddleOCREngine m_PaddleOCREngine;
+
+        /// <summary>
+        /// 2025.01.21  OCR库的选择：0-halcon OCR库，1-百度paddle OCR库
+        /// </summary>
+        private int m_LibIndex;
+
+        /// <summary>
+        /// 2025.01.21 易群生
+        /// 百度OCR检测区域
+        /// </summary>
+        private System.Drawing.Rectangle m_CropRect;
 
         public CAlgorithmParam()
             : base()
@@ -62,9 +80,9 @@ namespace OCRDateAlgorithm
                 ),
             };
             DefectFeatures = new();
-
+            m_LibIndex = 1;
             InitialOcrLib();
-            bFlagInitialAlgorithmParam = true;
+            m_bFlagInitialAlgorithmParam = true;
         }
 
         /// <summary>
@@ -76,13 +94,47 @@ namespace OCRDateAlgorithm
         {
             try
             {
-                HOperatorSet.ReadOcrClassMlp(AppDomain.CurrentDomain.BaseDirectory+ "AlgorithmPlug\\OCRDateAlgorithm\\Industrial_Rej.omc",out OCRHandle);
-                HOperatorSet.CreateTextModelReader("auto", OCRHandle,out TextModel);
-                HOperatorSet.SetTextModelParam(TextModel, "polarity", "light_on_dark");
-                HOperatorSet.SetTextModelParam(TextModel, "text_line_structure", "");
-                HOperatorSet.SetTextModelParam(TextModel, "text_line_separators", "/");
-                HOperatorSet.SetTextModelParam(TextModel, "return_separators", "false");  
-            
+                string tempOCRLibPath = AppDomain.CurrentDomain.BaseDirectory + "AlgorithmPlug\\OCRDateAlgorithm";
+
+                switch (m_LibIndex)
+                {
+                    case 0:
+                        //halcon OCR库
+                        HOperatorSet.ReadOcrClassMlp(tempOCRLibPath + "\\Industrial_Rej.omc", out m_OCRHandle);
+                        HOperatorSet.CreateTextModelReader("auto", m_OCRHandle, out m_TextModel);
+                        HOperatorSet.SetTextModelParam(m_TextModel, "polarity", "light_on_dark");
+                        HOperatorSet.SetTextModelParam(m_TextModel, "text_line_structure", "");
+                        HOperatorSet.SetTextModelParam(m_TextModel, "text_line_separators", "/");
+                        HOperatorSet.SetTextModelParam(m_TextModel, "return_separators", "false");
+                        break;
+                    case 1:
+                        //百度OCR库
+                        OCRModelConfig config = new OCRModelConfig();
+                        string modelPathroot = tempOCRLibPath + @"\inference";
+
+                        config.det_infer = modelPathroot + @"\en_PP-OCRv3_det_slim_infer";
+                        config.cls_infer = modelPathroot + @"\ch_ppocr_mobile_v2.0_cls_infer";
+                        config.rec_infer = modelPathroot + @"\ch_PP-OCRv4_rec_server_infer";
+                        config.keys = modelPathroot + @"\ppocr_keys.txt";
+
+                        //OCR参数
+                        OCRParameter oCRParameter = new OCRParameter();
+                        oCRParameter.cpu_math_library_num_threads = 10;//预测并发线程数
+                        oCRParameter.enable_mkldnn = true;//web部署该值建议设置为0,否则出错，内存如果使用很大，建议该值也设置为0.
+                        oCRParameter.cls = false; //是否执行文字方向分类；默认false
+                        oCRParameter.det = true;//是否开启方向检测，用于检测识别180旋转
+                        oCRParameter.use_angle_cls = false;//是否开启方向检测，用于检测识别180旋转
+                        oCRParameter.det_db_score_mode = true;//是否使用多段线，即文字区域是用多段线还是用矩形，
+
+                        oCRParameter.rec_img_h = 24;
+                        oCRParameter.rec_img_w = 40;
+
+                        //初始化OCR引擎
+                        m_PaddleOCREngine = new PaddleOCREngine(config, oCRParameter);
+                        break;
+                    default:
+                        break;
+                }
                 return true;
             }
             catch (Exception)
@@ -306,15 +358,17 @@ namespace OCRDateAlgorithm
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            HObject tempImage=null;
+            HObject tempImage = null;
             HObject ho_TextLinesAll = null;
             HTuple hv_OutRow1 = null;
             HTuple hv_OutColumn1 = null;
             HTuple hv_OutRow2 = null;
             HTuple hv_OutColumn2 = null;
-            HTuple hv_TextLineCharacters=null;
+            HTuple hv_TextLineCharacters = null;
 
-            string tempResult="";
+            OCRResult ocrResult = new OCRResult();
+
+            string tempResult = "";
             List<Point> tempPointList = new List<Point>();
             try
             {
@@ -323,66 +377,163 @@ namespace OCRDateAlgorithm
                         (CPcParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect),
                         cell.MmPerPixel * 1000
                     );
-                
-                HOperatorSet.GenImage1(out tempImage, "byte", cell.Image.ImageWidth, cell.Image.ImageHeight, cell.Image.ImageData);
 
-                if (bFlagInitialAlgorithmParam)
+                switch (m_LibIndex)
                 {
-                    HOperatorSet.GenRectangle1(out InspectionRegion, 501, 324, 654, 917);
-                    bFlagInitialAlgorithmParam = false;
+                    case 0:
+                        HOperatorSet.GenImage1(out tempImage, "byte", cell.Image.ImageWidth, cell.Image.ImageHeight, cell.Image.ImageData);
+
+                        if (m_bFlagInitialAlgorithmParam)
+                        {
+                            HOperatorSet.GenRectangle1(out m_InspectionRegion, 501, 324, 654, 917);
+                            m_bFlagInitialAlgorithmParam = false;
+                        }
+
+                        OcrImageInspection(tempImage, m_InspectionRegion, out ho_TextLinesAll, param.DarkThresh, m_TextModel,
+                            out hv_OutRow1, out hv_OutColumn1, out hv_OutRow2, out hv_OutColumn2, out hv_TextLineCharacters);
+
+                        tempResult = hv_TextLineCharacters.ToString();
+
+                        if (hv_OutRow1.Length > 0)
+                        {
+                            if (tempResult.Length > 2)
+                            {
+                                tempResult = tempResult.Substring(1, tempResult.Length - 2);
+                                cell.OcrResultString = tempResult;
+                            }
+                            else
+                            {
+                                cell.OcrResultString = "";
+                            }
+                        }
+                        else
+                        {
+                            cell.OcrResultString = "";
+                        }
+                        cell.DrawEdges.Clear();
+
+                        if (hv_OutRow1.Length > 0)
+                        {
+                            Point tempPoint = new Point();
+                            tempPoint.X = hv_OutColumn1.D;
+                            tempPoint.Y = hv_OutRow1.D;
+                            tempPointList.Add(tempPoint);
+
+                            tempPoint.X = hv_OutColumn2.D;
+                            tempPoint.Y = hv_OutRow2.D;
+                            tempPointList.Add(tempPoint);
+
+                            cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
+                        }
+                        else
+                        {
+                            Point tempPoint = new Point();
+                            tempPoint.X = 0;
+                            tempPoint.Y = 0;
+                            tempPointList.Add(tempPoint);
+
+                            tempPoint.X = 0;
+                            tempPoint.Y = 0;
+                            tempPointList.Add(tempPoint);
+
+                            cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
+                        }
+                        break;
+                    case 1:
+                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(cell.Image.ImageWidth, cell.Image.ImageHeight, cell.Image.ImageWidth, System.Drawing.Imaging.PixelFormat.Format8bppIndexed, cell.Image.ImageData);
+                        ColorPalette palette = bitmap.Palette;
+                        for (int i = 0; i < 256; i++)
+                            palette.Entries[i] = System.Drawing.Color.FromArgb(i, i, i);
+                        bitmap.Palette = palette;
+                        //bitmap.Save("D:\\output.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                        int CropX = 320; // 切图的起始X坐标
+                        int CropY = 490; // 切图的起始Y坐标
+                        int CropWidth = 600; // 切图的宽度
+                        int CropHeight = 160; // 切图的高度
+                        if (m_bFlagInitialAlgorithmParam)
+                        {
+                            m_CropRect = new System.Drawing.Rectangle(CropX, CropY, CropWidth, CropHeight);
+
+                            m_bFlagInitialAlgorithmParam = false;
+                        }
+
+                        System.Drawing.Bitmap croppedImage = bitmap.Clone(m_CropRect, bitmap.PixelFormat);
+                        ocrResult = m_PaddleOCREngine.DetectText(croppedImage);
+                        if (ocrResult.TextBlocks.Count > 0)
+                        {
+                            //去掉空格
+                            tempResult = ocrResult.Text.Replace(" ", "");
+                            cell.OcrResultString = tempResult;
+
+                            Point tempLTPoint = new Point();
+                            tempLTPoint.X = Math.Min(ocrResult.TextBlocks[0].BoxPoints[0].X, ocrResult.TextBlocks[0].BoxPoints[3].X);
+                            tempLTPoint.Y = Math.Min(ocrResult.TextBlocks[0].BoxPoints[0].Y, ocrResult.TextBlocks[0].BoxPoints[1].Y);
+
+                            Point tempRBPoint = new Point();
+                            tempRBPoint.X = Math.Max(ocrResult.TextBlocks[0].BoxPoints[1].X, ocrResult.TextBlocks[0].BoxPoints[2].X);
+                            tempRBPoint.Y = Math.Max(ocrResult.TextBlocks[0].BoxPoints[2].Y, ocrResult.TextBlocks[0].BoxPoints[3].Y);
+
+                            double tempMinX, tempMinY, tempMaxX, tempMaxY;
+                            for (int j = 1; j < ocrResult.TextBlocks.Count; j++)
+                            {
+                                tempMinX = Math.Min(ocrResult.TextBlocks[j].BoxPoints[0].X, ocrResult.TextBlocks[j].BoxPoints[3].X);
+                                tempMinY = Math.Min(ocrResult.TextBlocks[j].BoxPoints[0].Y, ocrResult.TextBlocks[j].BoxPoints[1].Y);
+
+                                if (tempLTPoint.X > tempMinX)
+                                {
+                                    tempLTPoint.X = tempMinX;
+                                }
+
+                                if (tempLTPoint.Y > tempMinY)
+                                {
+                                    tempLTPoint.Y = tempMinY;
+                                }
+
+                                tempMaxX = Math.Max(ocrResult.TextBlocks[j].BoxPoints[1].X, ocrResult.TextBlocks[j].BoxPoints[2].X);
+                                tempMaxY = Math.Max(ocrResult.TextBlocks[j].BoxPoints[2].Y, ocrResult.TextBlocks[j].BoxPoints[3].Y);
+
+                                if (tempRBPoint.X < tempMaxX)
+                                {
+                                    tempRBPoint.X = tempMaxX;
+                                }
+
+                                if (tempRBPoint.Y < tempMaxY)
+                                {
+                                    tempRBPoint.Y = tempMaxY;
+                                }
+                            }
+
+                            tempLTPoint.X = tempLTPoint.X +CropX;
+                            tempLTPoint.Y = tempLTPoint.Y + CropY;
+                            tempRBPoint.X = tempRBPoint.X + CropX;
+                            tempRBPoint.Y = tempRBPoint.Y + CropY;
+
+                            tempPointList.Add(tempLTPoint);
+                            tempPointList.Add(tempRBPoint);
+                            cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
+                        }
+                        else
+                        {
+                            cell.OcrResultString = "";
+
+                            Point tempPoint = new Point();
+                            tempPoint.X = 0;
+                            tempPoint.Y = 0;
+                            tempPointList.Add(tempPoint);
+
+                            tempPoint.X = 0;
+                            tempPoint.Y = 0;
+                            tempPointList.Add(tempPoint);
+
+                            cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
+                        }
+
+                        break;
+                    default:
+                        break;
                 }
-                
-                OcrImageInspection(tempImage, InspectionRegion,out ho_TextLinesAll, param.DarkThresh, TextModel,
-                    out hv_OutRow1,out hv_OutColumn1,out hv_OutRow2,out hv_OutColumn2,out hv_TextLineCharacters);
 
-                tempResult = hv_TextLineCharacters.ToString();
-
-                if (hv_OutRow1.Length > 0)
-                {
-                    if (tempResult.Length > 2)
-                    {
-                        tempResult = tempResult.Substring(1, tempResult.Length - 2);
-                        cell.OcrResultString = tempResult;
-                    }
-                    else
-                    {
-                        cell.OcrResultString = "";
-                    }
-                }
-                else 
-                {
-                    cell.OcrResultString = "";
-                }
-                cell.DrawEdges.Clear();
-                
-                if (hv_OutRow1.Length > 0)
-                {
-                    Point tempPoint = new Point();
-                    tempPoint.X = hv_OutColumn1.D;
-                    tempPoint.Y = hv_OutRow1.D;
-                    tempPointList.Add(tempPoint);
-
-                    tempPoint.X = hv_OutColumn2.D;
-                    tempPoint.Y = hv_OutRow2.D;
-                    tempPointList.Add(tempPoint);
-
-                    cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
-                }
-                else
-                {
-                    Point tempPoint = new Point();
-                    tempPoint.X = 0;
-                    tempPoint.Y = 0;
-                    tempPointList.Add(tempPoint);
-
-                    tempPoint.X = 0;
-                    tempPoint.Y = 0;
-                    tempPointList.Add(tempPoint);
-
-                    cell.DrawEdges.Add(new CEdgeDraw(tempPointList, Brushes.Blue));
-                }
-
-                
                 if (tempResult == param.StandardDate)
                 {
                     CellDetection cellDetection1 = new CellDetection();
@@ -410,11 +561,11 @@ namespace OCRDateAlgorithm
                 {
                     SRegionInfo sRegioninfo = new SRegionInfo();
                     List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
-                    rec1Points.Add(new System.Windows.Point(0,0));
+                    rec1Points.Add(new System.Windows.Point(0, 0));
                     rec1Points.Add(new System.Windows.Point(100, 100));
                     SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
 
-                    if (hv_OutRow1.Length < 1)
+                    if (ocrResult.TextBlocks.Count < 1)
                     {
                         CellDetection cellDetection1 = new CellDetection();
                         cellDetection1.Type = "印刷异常类";
@@ -467,14 +618,40 @@ namespace OCRDateAlgorithm
             }
             finally
             {
-                tempImage.Dispose();
-                ho_TextLinesAll.Dispose();
-                hv_OutRow1.Dispose();
-                hv_OutColumn1.Dispose();
-                hv_OutRow2.Dispose();
-                hv_OutColumn2.Dispose();
-                hv_TextLineCharacters.Dispose();
+                if (tempImage != null)
+                {
+                    tempImage.Dispose();
+                }
 
+                if (ho_TextLinesAll != null)
+                {
+                    ho_TextLinesAll.Dispose();
+                }
+
+                if (hv_OutRow1 != null)
+                {
+                    hv_OutRow1.Dispose();
+                }
+
+                if (hv_OutColumn1 != null)
+                {
+                    hv_OutColumn1.Dispose();
+                }
+
+                if (hv_OutRow2 != null)
+                {
+                    hv_OutRow2.Dispose();
+                }
+
+                if (hv_OutColumn2 != null)
+                {
+                    hv_OutColumn2.Dispose();
+                }
+
+                if (hv_TextLineCharacters != null)
+                {
+                    hv_TextLineCharacters.Dispose();
+                }
             }
         }
     }

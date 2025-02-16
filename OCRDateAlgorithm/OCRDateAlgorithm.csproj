@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="PaddleOCRSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
   </ItemGroup>
 
