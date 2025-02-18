@@ -79,17 +79,24 @@ namespace Modbus
         [RelayCommand]
         public void Write()
         {
-            foreach (var elem in Config.TestElems)
+            try
             {
-                switch (elem.Type)
+                foreach (var elem in Config.TestElems)
                 {
-                    case EMELEMTYPE.EMELEMM:
-                        Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
-                        break;
-                    case EMELEMTYPE.EMELEMD:
-                        Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
-                        break;
+                    switch (elem.Type)
+                    {
+                        case EMELEMTYPE.EMELEMM:
+                            Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
+                            break;
+                        case EMELEMTYPE.EMELEMD:
+                            Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
             }
         }
 
@@ -101,14 +108,21 @@ namespace Modbus
         [RelayCommand]
         public void WriteSingle(CElement elem)
         {
-            switch (elem.Type)
+            try
             {
-                case EMELEMTYPE.EMELEMM:
-                    Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
-                    break;
-                case EMELEMTYPE.EMELEMD:
-                    Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
-                    break;
+                switch (elem.Type)
+                {
+                    case EMELEMTYPE.EMELEMM:
+                        Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
+                        break;
+                    case EMELEMTYPE.EMELEMD:
+                        Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
             }
         }
 

@@ -109,6 +109,160 @@ namespace FrontAlgorithm
     };
 
     /// <summary>
+    /// 2025.1.14 李焕彬
+    /// 初筛算法参数
+    /// </summary>
+    public struct SMaociAlgorPreParam
+    {
+        /// <summary>
+        /// 2024.7.30 李焕彬
+        /// 计算超时时间，单位ms
+        /// </summary>
+        public uint TimeOut = 3000;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //自适应阈值邻域大小
+        /// </summary>
+        public uint AdaptiveSize = 14;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //自适应阈值增加值
+        /// </summary>
+        public int AdaptiveAddGray = 20;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //过滤矩阵邻域大小
+        /// </summary>
+        public uint NeighbSize = 5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //过滤矩阵邻域点数量限制
+        /// </summary>
+        public uint NeighbLightPoint = 30;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //料区阈值
+        /// </summary>
+        public uint DarkThresh = 30;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层阈值
+        /// </summary>
+        public uint LightThresh = 80;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //料区厚度限制，掉料检测
+        /// </summary>
+        public double DarkThickLimit = 30;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //料区厚度NG连续长度限制
+        /// </summary>
+        public double DarkThickContinueLen = 5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //料区厚度
+        /// </summary>
+        public double DarkThick = 84;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层厚度限制，毛刺检测
+        /// </summary>
+        public double LightThickLimit = 7;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层厚度NG连续长度限制
+        /// </summary>
+        public double LightThickContinueLen = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层厚度
+        /// </summary>
+        public double LightThick = 6;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层在料区中心位置限制上
+        /// </summary>
+        public double PosLimitT = 20;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层在料区中心位置限制下
+        /// </summary>
+        public double PosLimitB = 20;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //铝层位置偏移值
+        /// </summary>
+        public double LightPosOffest = 0;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 构造
+        /// </summary>
+        /// <param name="param">FPGA算法参数类</param>
+        public SMaociAlgorPreParam(CParam param)
+        {
+            this.AdaptiveSize = param.AdaptiveSizePre;
+            this.AdaptiveAddGray = param.AdaptiveAddGrayPre;
+            this.NeighbSize = param.NeighbSizePre;
+            this.NeighbLightPoint = param.NeighbLightPointPre;
+            this.DarkThresh = param.DarkThreshPre;
+            this.LightThresh = param.LightThreshPre;
+            this.DarkThickLimit = param.DarkThickLimitPre;
+            this.DarkThickContinueLen = param.DarkThickContinueLenPre;
+            this.DarkThick = param.DarkThickPre;
+            this.LightThickLimit = param.LightThickLimitPre;
+            this.LightThickContinueLen = param.LightThickContinueLenPre;
+            this.LightThick = param.LightThickPre;
+            this.PosLimitT = param.PosLimitTPre;
+            this.PosLimitB = param.PosLimitBPre;
+            this.LightPosOffest = param.LightPosOffestPre;
+            this.TimeOut = param.TimeOutPre;
+        }
+
+        /// <summary>
+        /// 2024.8.29 李焕彬
+        /// 获取像素级的算法参数
+        /// </summary>
+        /// <param name="umPerPixel">像素当量</param>
+        /// <returns></returns>
+        public SMaociAlgorPreParam(CParam param, double umPerPixel)
+        {
+            this.AdaptiveSize = param.AdaptiveSizePre;
+            this.AdaptiveAddGray = param.AdaptiveAddGrayPre;
+            this.NeighbSize = param.NeighbSizePre;
+            this.NeighbLightPoint = param.NeighbLightPointPre;
+            this.DarkThresh = param.DarkThreshPre;
+            this.LightThresh = param.LightThreshPre;
+            this.DarkThickLimit = param.DarkThickLimitPre / umPerPixel;
+            this.DarkThickContinueLen = param.DarkThickContinueLenPre / umPerPixel;
+            this.DarkThick = param.DarkThickPre / umPerPixel;
+            this.LightThickLimit = param.LightThickLimitPre / umPerPixel;
+            this.LightThickContinueLen = param.LightThickContinueLenPre / umPerPixel;
+            this.LightThick = param.LightThickPre / umPerPixel;
+            this.PosLimitT = param.PosLimitTPre / umPerPixel;
+            this.PosLimitB = param.PosLimitBPre / umPerPixel;
+            this.LightPosOffest = param.LightPosOffestPre / umPerPixel;
+            this.TimeOut = param.TimeOutPre;
+        }
+    };
+
+    /// <summary>
     /// 2024.9.11 李焕彬
     /// DLL传输区域用
     /// 结构体顺序要跟DLL结构体顺序一致，不能更改
@@ -219,8 +373,8 @@ namespace FrontAlgorithm
 
         public SDetectInfo()
         {
-            ptrDataX = Marshal.AllocHGlobal(sizeof(short) * 20000);
-            ptrDataY = Marshal.AllocHGlobal(sizeof(short) * 20000);
+            ptrDataX = Marshal.AllocHGlobal(sizeof(short) * 50000);
+            ptrDataY = Marshal.AllocHGlobal(sizeof(short) * 50000);
         }
 
         /// <summary>
@@ -243,10 +397,10 @@ namespace FrontAlgorithm
             out List<SRegion> thickRegion
         )
         {
-            short[] Xs = new short[20000];
-            short[] Ys = new short[20000];
-            Marshal.Copy(ptrDataX, Xs, 0, 20000);
-            Marshal.Copy(ptrDataY, Ys, 0, 20000);
+            short[] Xs = new short[50000];
+            short[] Ys = new short[50000];
+            Marshal.Copy(ptrDataX, Xs, 0, 50000);
+            Marshal.Copy(ptrDataY, Ys, 0, 50000);
             //Marshal.FreeHGlobal(ptrDataX);
             //Marshal.FreeHGlobal(ptrDataY);
             edgeDarkTop = new List<Point>();
@@ -322,6 +476,7 @@ namespace FrontAlgorithm
     /// </summary>
     public class CAlgorithmDll
     {
+        #region 毛刺算法
         /// <summary>
         /// 2024.7.4 李焕彬
         /// PC算法测试
@@ -335,7 +490,6 @@ namespace FrontAlgorithm
         /// <param name="dataOutX">输出点X集合</param>
         /// <param name="dataOutY">输出点Y集合</param>
         /// <returns>检测结果</returns>
-        #region 毛刺算法
         [DllImport("MaociAlg.dll")]
         public static extern EMDETECTRESULT Test(
             int width,
@@ -343,6 +497,29 @@ namespace FrontAlgorithm
             int nLine,
             IntPtr data,
             ref SMaociAlgorParam detectParam,
+            ref SDetectInfo detectInfo
+        );
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初筛算法测试
+        /// </summary>
+        /// <param name="width">宽度</param>
+        /// <param name="height">高度</param>
+        /// <param name="nLine">行宽</param>
+        /// <param name="data">图像数据</param>
+        /// <param name="detectParam">PC算法</param>
+        /// <param name="detectInfo">检测结果信息</param>
+        /// <param name="dataOutX">输出点X集合</param>
+        /// <param name="dataOutY">输出点Y集合</param>
+        /// <returns>检测结果</returns>
+        [DllImport("MaociAlg.dll", EntryPoint = "TestFpga")]
+        public static extern EMDETECTRESULT TestFpga(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            ref SMaociAlgorPreParam detectParam,
             ref SDetectInfo detectInfo
         );
 

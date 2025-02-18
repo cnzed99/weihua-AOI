@@ -234,8 +234,8 @@
   <data name="Serial" xml:space="preserve">
     <value>Serial</value>
   </data>
-  <data name="Vender" xml:space="preserve">
-    <value>Vender</value>
+  <data name="PlugName" xml:space="preserve">
+    <value>PlugName</value>
   </data>
   <data name="CamType" xml:space="preserve">
     <value>CamType</value>
@@ -259,7 +259,7 @@
     <value>CameraSet</value>
   </data>
   <data name="SoftWareOnce" xml:space="preserve">
-    <value>Medway sees the camera perform a soft trigger once</value>
+    <value>camera perform a soft trigger once</value>
   </data>
   <data name="InfoDelCam" xml:space="preserve">
     <value>Search Camera Interface = &gt; Del Camera</value>
@@ -278,5 +278,8 @@
   </data>
   <data name="料区阈值说明" xml:space="preserve">
     <value>Calculate the clarity of areas ≥ material area thresholds!</value>
+  </data>
+  <data name="LostFrame" xml:space="preserve">
+    <value>LostFrame</value>
   </data>
 </root>

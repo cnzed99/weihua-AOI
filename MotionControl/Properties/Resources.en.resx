@@ -468,11 +468,11 @@
   <data name="WriteVal" xml:space="preserve">
     <value>Write Value</value>
   </data>
-  <data name="23.启动纠偏" xml:space="preserve">
-    <value>23.AddrFocusStart</value>
+  <data name="24.启动纠偏" xml:space="preserve">
+    <value>24.AddrFocusStart</value>
   </data>
-  <data name="24.纠偏归零" xml:space="preserve">
-    <value>23.AddrFocusZero</value>
+  <data name="25.纠偏归零" xml:space="preserve">
+    <value>25.AddrFocusZero</value>
   </data>
   <data name="DelecteAsk" xml:space="preserve">
     <value>Confirm whether to delete?</value>

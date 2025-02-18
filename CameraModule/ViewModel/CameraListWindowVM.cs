@@ -25,9 +25,10 @@ namespace CameraModule
                 {
                     foreach (var item in camFunc.Value.EnumCamrea())
                     {
+                        item.PlugName = camFunc.Key;
                         item.IsUse =
                             CCameraManagement.CamParamDict.ContainsKey(item.SerialNumber)
-                            && item.Vender
+                            && item.PlugName
                                 == CCameraManagement.CamParamDict[item.SerialNumber].CameraSupplier;
                         CameraInfos.Add(item);
                     }
@@ -56,10 +57,10 @@ namespace CameraModule
                     if (!CCameraManagement.CameraDict.ContainsKey(info.SerialNumber))
                     {
                         CCameraManagement.OperateLog.Info(
-                            $"{Properties.Resources.InfoAddCam}{info.Vender}" + info.SerialNumber
+                            $"{Properties.Resources.InfoAddCam}{info.PlugName}" + info.SerialNumber
                         );
                         var _par = CCameraManagement
-                            .CameraHelpers[info.Vender]
+                            .CameraHelpers[info.PlugName]
                             .CreatNewCam(info.SerialNumber, out CCameraBase camera);
                         CCameraManagement.CameraDict.Add(info.SerialNumber, camera);
                         try
@@ -72,7 +73,7 @@ namespace CameraModule
                         catch (Exception ex)
                         {
                             CCameraManagement.CamLogger.Error(
-                                $"{Properties.Resources.ErrorInit}{info.Vender}-{info.SerialNumber}"
+                                $"{Properties.Resources.ErrorInit}{info.PlugName}-{info.SerialNumber}"
                                     + ex.Message
                             );
                         }
@@ -84,7 +85,7 @@ namespace CameraModule
                     if (CCameraManagement.CameraDict.ContainsKey(info.SerialNumber))
                     {
                         CCameraManagement.OperateLog.Info(
-                            $"{Properties.Resources.InfoDelCam}{info.Vender}" + info.SerialNumber
+                            $"{Properties.Resources.InfoDelCam}{info.PlugName}" + info.SerialNumber
                         );
                         try
                         {
@@ -95,7 +96,7 @@ namespace CameraModule
                         catch (Exception ex)
                         {
                             CCameraManagement.CamLogger.Error(
-                                $"{Properties.Resources.ErrorCloseCam}{info.Vender}-{info.SerialNumber}"
+                                $"{Properties.Resources.ErrorCloseCam}{info.PlugName}-{info.SerialNumber}"
                                     + ex.Message
                             );
                         }

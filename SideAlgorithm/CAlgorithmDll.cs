@@ -69,6 +69,64 @@ namespace SideAlgorithm
     };
 
     /// <summary>
+    /// 2024.6.25 李焕彬
+    /// 初筛算法参数
+    /// </summary>
+    public struct SMaociAlgorPreParam
+    {
+        /// <summary>
+        /// 2024.7.30 李焕彬
+        /// 计算超时时间，单位ms
+        /// </summary>
+        public uint TimeOut = 3000;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 过滤矩阵邻域大小
+        /// </summary>
+        public uint NeighbSize = 7;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 料区阈值
+        /// </summary>
+        public uint DarkThresh = 200;
+
+        /// <summary>
+        /// 2024.8.19 李焕彬
+        /// 毛刺斜率限制
+        /// </summary>
+        public double maociLimit = 2.5;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 构造
+        /// </summary>
+        /// <param name="param">算法参数类</param>
+        public SMaociAlgorPreParam(CPcParam param)
+        {
+            this.NeighbSize = param.NeighbSize;
+            this.DarkThresh = param.DarkThresh;
+            this.TimeOut = param.TimeOut;
+            this.maociLimit = param.MinDistinct;
+        }
+
+        /// <summary>
+        /// 2024.8.29 李焕彬
+        /// 获取像素级的算法参数
+        /// </summary>
+        /// <param name="umPerPixel">像素当量</param>
+        /// <returns></returns>
+        public SMaociAlgorPreParam(CPcParam param, double umPerPixel)
+        {
+            this.NeighbSize = param.NeighbSize;
+            this.DarkThresh = param.DarkThresh;
+            this.TimeOut = param.TimeOut;
+            this.maociLimit = param.MaociLimit / umPerPixel;
+        }
+    };
+
+    /// <summary>
     /// 2024.9.11 李焕彬
     /// DLL传输区域用
     /// 结构体顺序要跟DLL结构体顺序一致，不能更改
@@ -179,8 +237,8 @@ namespace SideAlgorithm
 
         public SDetectInfo()
         {
-            ptrDataX = Marshal.AllocHGlobal(sizeof(short) * 20000);
-            ptrDataY = Marshal.AllocHGlobal(sizeof(short) * 20000);
+            ptrDataX = Marshal.AllocHGlobal(sizeof(short) * 50000);
+            ptrDataY = Marshal.AllocHGlobal(sizeof(short) * 50000);
         }
 
         /// <summary>
@@ -203,10 +261,10 @@ namespace SideAlgorithm
             out List<SRegion> thickRegion
         )
         {
-            short[] Xs = new short[20000];
-            short[] Ys = new short[20000];
-            Marshal.Copy(ptrDataX, Xs, 0, 20000);
-            Marshal.Copy(ptrDataY, Ys, 0, 20000);
+            short[] Xs = new short[50000];
+            short[] Ys = new short[50000];
+            Marshal.Copy(ptrDataX, Xs, 0, 50000);
+            Marshal.Copy(ptrDataY, Ys, 0, 50000);
             //Marshal.FreeHGlobal(ptrDataX);
             //Marshal.FreeHGlobal(ptrDataY);
             edgeDarkTop = new List<Point>();
@@ -282,6 +340,7 @@ namespace SideAlgorithm
     /// </summary>
     public class CAlgorithmDll
     {
+        #region 毛刺算法
         /// <summary>
         /// 2024.7.4 李焕彬
         /// PC算法测试
@@ -295,7 +354,6 @@ namespace SideAlgorithm
         /// <param name="dataOutX">输出点X集合</param>
         /// <param name="dataOutY">输出点Y集合</param>
         /// <returns>检测结果</returns>
-        #region 毛刺算法
         [DllImport("MaociAlg.dll", EntryPoint = "TestSide")]
         public static extern EMDETECTRESULT Test(
             int width,
@@ -303,6 +361,29 @@ namespace SideAlgorithm
             int nLine,
             IntPtr data,
             ref SMaociAlgorParam detectParam,
+            ref SDetectInfo detectInfo
+        );
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// PC算法测试
+        /// </summary>
+        /// <param name="width">宽度</param>
+        /// <param name="height">高度</param>
+        /// <param name="nLine">行宽</param>
+        /// <param name="data">图像数据</param>
+        /// <param name="detectParam">PC算法</param>
+        /// <param name="detectInfo">检测结果信息</param>
+        /// <param name="dataOutX">输出点X集合</param>
+        /// <param name="dataOutY">输出点Y集合</param>
+        /// <returns>检测结果</returns>
+        [DllImport("MaociAlg.dll", EntryPoint = "TestFpgaSide")]
+        public static extern EMDETECTRESULT TestFpga(
+            int width,
+            int height,
+            int nLine,
+            IntPtr data,
+            ref SMaociAlgorPreParam detectParam,
             ref SDetectInfo detectInfo
         );
 

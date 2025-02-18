@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Threading.Channels;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -260,7 +261,8 @@ namespace WH.DetectSystem.Models
 
         [ObservableProperty]
         double filterTime = 0;
-        #endregion
+
+        #endregion 时间相关
 
         /// <summary>
         /// 20240716 TCG
@@ -390,15 +392,17 @@ namespace WH.DetectSystem.Models
         {
             get { return FocusCtrlVM?.IsFocusing ?? false; }
         }
-        #endregion
+
+        #endregion 启停 状态
 
         #region 线程管理
+
         CancellationTokenSource m_cts = new CancellationTokenSource();
 
         public static readonly BoundedChannelOptions s_NormalChannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
-            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
+            new BoundedChannelOptions(5) { FullMode = BoundedChannelFullMode.Wait };
         public static readonly BoundedChannelOptions s_SinglechannelOptions =
             new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait };
 
@@ -463,6 +467,7 @@ namespace WH.DetectSystem.Models
         private void InitTask()
         {
             #region 信息记录线程
+
             Task infoTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
@@ -492,12 +497,14 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 信息记录线程
 
             #region 取图线程
+
             Task waitGetImageTask = Task.Run(async () =>
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
                 await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
@@ -507,19 +514,7 @@ namespace WH.DetectSystem.Models
                         cell.ProjGuid = GUID;
                         cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         cell.ID = (MaociDefectsProduce.Total + 1).ToString();
-                        BitmapSource bitmapSource = cell.Image.ToBitmapSource();
-                        _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
-                            new Action(() =>
-                            {
-                                ModelImage = bitmapSource;
-                            })
-                        );
-                        if (FocusCtrlVM?.IsFocusing ?? false)
-                        {
-                            if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
-                                cell.Dispose();
-                        }
-                        else if (IsStart || IsManualTest)
+                        if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
@@ -528,7 +523,22 @@ namespace WH.DetectSystem.Models
                         }
                         else
                         {
-                            cell.Dispose();
+                            BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+                            _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
+                                new Action(() =>
+                                {
+                                    ModelImage = bitmapSource;
+                                })
+                            );
+                            if (FocusCtrlVM?.IsFocusing ?? false)
+                            {
+                                if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
+                                    cell.Dispose();
+                            }
+                            else
+                            {
+                                cell.Dispose();
+                            }
                         }
                     }
                     catch (Exception)
@@ -537,12 +547,14 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 取图线程
 
             #region PC算法执行线程
+
             Task waitRecipeTask = Task.Run(async () =>
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
                 await foreach (Cell cell in m_AlgorithmChannel.Reader.ReadAllAsync())
                 {
                     try
@@ -652,9 +664,11 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion PC算法执行线程
 
             #region 筛选线程 放置在算法线程
+
             //Task waitFilterTask = Task.Run(async () =>
             //{
             //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -726,165 +740,167 @@ namespace WH.DetectSystem.Models
             //        }
             //    }
             //});
-            #endregion
+
+            #endregion 筛选线程 放置在算法线程
 
             #region 显示线程
+
             Task waitShowTask = Task.Run(async () =>
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                await foreach (Cell cell in m_ShowImageChannel.Reader.ReadAllAsync())
+            Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            await foreach (Cell cell in m_ShowImageChannel.Reader.ReadAllAsync())
+            {
+                try
                 {
+                    //Console.WriteLine(DateTime.Now.Millisecond);
+
+                    #region 窗口显示
+
                     try
                     {
-                        //Console.WriteLine(DateTime.Now.Millisecond);
-
-                        #region 窗口显示
-                        try
+                        for (int i = 0; i < 1; i++)
                         {
-                            for (int i = 0; i < 1; i++)
+                            ImageView drawView;
+                            if (i == 0)
                             {
-                                ImageView drawView;
-                                if (i == 0)
+                                drawView = CurView;
+                            }
+                            else
+                            {
+                                if (cell.IsOK)
+                                    break;
+                                drawView = LastView;
+                            }
+                            await drawView.Dispatcher?.BeginInvoke(() =>
+                            {
+                                drawView.Clear(false);
+                                foreach (var edge in cell.DrawEdges)
                                 {
-                                    drawView = CurView;
+                                    drawView.SetPen(edge.BrushDraw);
+                                    drawView.ImgDrawPoints(edge.Points, false);
                                 }
-                                else
-                                {
-                                    if (cell.IsOK)
-                                        break;
-                                    drawView = LastView;
-                                }
-                                await drawView.Dispatcher?.BeginInvoke(() =>
-                                {
-                                    drawView.Clear(false);
-                                    foreach (var edge in cell.DrawEdges)
-                                    {
-                                        drawView.SetPen(edge.BrushDraw);
-                                        drawView.ImgDrawPoints(edge.Points, false);
-                                    }
 
-                                    if (!cell.IsOK)
+                                if (!cell.IsOK)
+                                {
+                                    DefectFilter dstFilter = cell.Detection.DefectFilter;
+                                    StringBuilder textBuilder = new StringBuilder();
+                                    textBuilder.AppendLine(dstFilter.Name);
+                                    textBuilder.Append(cell.Quality.Name);
+                                    drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                    drawView.WinDrawText(
+                                        textBuilder.ToString(),
+                                        AlignmentX.Right,
+                                        AlignmentY.Top,
+                                        false
+                                    );
+                                    //显示所有Region缺陷
+                                    if (SystemSettings.ShowAllDefect)
                                     {
-                                        DefectFilter dstFilter = cell.Detection.DefectFilter;
-                                        StringBuilder textBuilder = new StringBuilder();
-                                        textBuilder.AppendLine(dstFilter.Name);
-                                        textBuilder.Append(cell.Quality.Name);
-                                        drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
-                                        drawView.WinDrawText(
-                                            textBuilder.ToString(),
-                                            AlignmentX.Right,
-                                            AlignmentY.Top,
-                                            false
-                                        );
-                                        //显示所有Region缺陷
-                                        if (SystemSettings.ShowAllDefect)
+                                        foreach (var detection in cell.Detections)
                                         {
-                                            foreach (var detection in cell.Detections)
+                                            if (
+                                                detection.Result
+                                                || detection.Category != Category.区域
+                                                || detection.regionOut.Count == 0
+                                            )
+                                                continue;
+                                            DefectFilter defectFilter = detection.DefectFilter;
+                                            drawView.SetPen(defectFilter.ShowColor.Brush);
+                                            drawView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                            for (int i = 0; i < detection.regionOut.Count; i++)
                                             {
-                                                if (
-                                                    detection.Result
-                                                    || detection.Category != Category.区域
-                                                    || detection.regionOut.Count == 0
-                                                )
-                                                    continue;
-                                                DefectFilter defectFilter = detection.DefectFilter;
-                                                drawView.SetPen(defectFilter.ShowColor.Brush);
-                                                drawView.SetFontBrush(defectFilter.ShowColor.Brush);
-                                                for (int i = 0; i < detection.regionOut.Count; i++)
-                                                {
-                                                    drawView.ImgDrawRegion(
-                                                        detection.regionOut[i].points,
+                                                drawView.ImgDrawRegion(
+                                                    detection.regionOut[i].points,
+                                                    false
+                                                );
+                                                drawView.ImgDrawText(
+                                                        detection.DetectLog[i].ToString(),
+                                                        detection.regionOut[i].GetCenter(),
                                                         false
                                                     );
-                                                    drawView.ImgDrawText(
-                                                            detection.DetectLog[i].ToString(),
-                                                            detection.regionOut[i].GetCenter(),
-                                                            false
-                                                        );
-                                                    //if (i == detection.regionOut.Count - 1)
-                                                    //{
-                                                    //    drawView.ImgDrawText(
-                                                    //        detection.DetectLog.ToString(),
-                                                    //        detection.regionOut[i].GetCenter(),
-                                                    //        false
-                                                    //    );
-                                                    //}
-                                                }
+                                                //if (i == detection.regionOut.Count - 1)
+                                                //{
+                                                //    drawView.ImgDrawText(
+                                                //        detection.DetectLog.ToString(),
+                                                //        detection.regionOut[i].GetCenter(),
+                                                //        false
+                                                //    );
+                                                //}
                                             }
                                         }
-                                        else
-                                        {
-                                            DefectFilter defectFilter = cell.Detection.DefectFilter;
-                                            if (
+                                    }
+                                    else
+                                    {
+                                        DefectFilter defectFilter =
+                                                cell.Detection.DefectFilter;
+                                        if (
                                                 !(
                                                     cell.Detection.Result
                                                     || cell.Detection.Category != Category.区域
                                                     || cell.Detection.regionOut.Count == 0
                                                 )
                                             )
-                                            {
-                                                drawView.SetPen(defectFilter.ShowColor.Brush);
-                                                drawView.SetFontBrush(defectFilter.ShowColor.Brush);
-                                                for (
+                                        {
+                                            drawView.SetPen(defectFilter.ShowColor.Brush);
+                                            drawView.SetFontBrush(
+                                                    defectFilter.ShowColor.Brush
+                                                );
+                                            for (
                                                     int i = 0;
                                                     i < cell.Detection.regionOut.Count;
                                                     i++
                                                 )
-                                                {
-                                                    drawView.ImgDrawRegion(
+                                            {
+                                                drawView.ImgDrawRegion(
                                                         cell.Detection.regionOut[i].points,
                                                         false
                                                     );
-                                                    drawView.ImgDrawText(
-                                                            cell.Detection.DetectLog[i].ToString(),
-                                                            cell.Detection.regionOut[i].GetCenter(),
-                                                            false
-                                                        );
-                                                    //if (i == cell.Detection.regionOut.Count - 1)
-                                                    //{
-                                                    //    drawView.ImgDrawText(
-                                                    //        cell.Detection.DetectLog.ToString(),
-                                                    //        cell.Detection.regionOut[i].GetCenter(),
-                                                    //        false
-                                                    //    );
-                                                    //}
-                                                }
+                                                drawView.ImgDrawText(
+                                                        cell.Detection.DetectLog[i].ToString(),
+                                                        cell.Detection.regionOut[i].GetCenter(),
+                                                        false
+                                                    );
+                                                //if (i == cell.Detection.regionOut.Count - 1)
+                                                //{
+                                                //    drawView.ImgDrawText(
+                                                //        cell.Detection.DetectLog.ToString(),
+                                                //        cell.Detection.regionOut[i].GetCenter(),
+                                                //        false
+                                                //    );
+                                                //}
                                             }
                                         }
                                     }
-                                    else
-                                    {
-                                        drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
-                                        drawView.WinDrawText(
+                                }
+                                else
+                                {
+                                    drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                    drawView.WinDrawText(
                                             "OK",
                                             AlignmentX.Right,
                                             AlignmentY.Top,
                                             false
                                         );
-                                    }
-
-                                    //2025.01.09 易群生
-                                    //在识别到的字符附近区域显示识别到的字符
-                                    if (cell.OcrResultString != "")
-                                    { 
-                                        drawView.SetFontBrush(Brushes.Red);
-                                        drawView.ImgDrawText(cell.OcrResultString, 
-                                            cell.DrawEdges[0].Points[0].X, cell.DrawEdges[0].Points[0].Y-50,false);
-                                    
-                                    }
-
-                                    drawView.Invalidate();
-                                });
-                            }
+                                }
+                                drawView.Invalidate();
+                            });
                         }
-                        catch (Exception ex)
-                        {
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                            );
-                            Growl.Error(Name + "-" + "显示线程出错: " + ex.Message + ex.StackTrace);
-                        }
-                        #endregion
+                    }
+                    catch (Exception ex)
+                    {
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg(
+                                "显示线程出错: " + ex.Message + ex.StackTrace,
+                                LOG.LOG_ERROR
+                            )
+                        );
+                        Growl.Error(Name + "-" + "显示线程出错: " + ex.Message + ex.StackTrace);
+                    }
+                    stopwatch.Restart();
+
+                    #endregion 窗口显示
+                }
                         if (
                             (SystemSettings.OfflineSave || isStart)
                             && (
@@ -892,45 +908,47 @@ namespace WH.DetectSystem.Models
                                 || SaveImageVM.Param.PiantScreenEnable
                             )
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
-                        {
-                            Cell copy = cell.Clone();
-                            if (!m_SaveImageChannel.Writer.TryWrite(copy))
-                            {
-                                copy.Dispose();
-                            }
-                        }
-
-                        //if (!m_AlarmChannel.Writer.TryWrite(cell))
-                        //{
-                        //    cell.Dispose();
-                        //    StringBuilder strbuilder = new StringBuilder("[");
-                        //    strbuilder.Append("显示线程");
-                        //    strbuilder.Append("]     ");
-                        //    strbuilder.Append(cell.ID);
-                        //    strbuilder.Append("   cell入报警队列失败。");
-                        //    await m_InfoChannel.Writer.WriteAsync(
-                        //        new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                        //    );
-                        //}
-
-                        if (cell.isOnce) { }
-                    }
-                    catch (Exception ex)
+                {
+                    Cell copy = cell.Clone();
+                    if (!m_SaveImageChannel.Writer.TryWrite(copy))
                     {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                    }
-                    finally
-                    {
-                        cell.Dispose(); //cell释放后对数据汇总、数据库不影响，故放在显示线程里释放，防止未显示先释放
-                        WaitSignal.Set();
+                        copy.Dispose();
                     }
                 }
-            });
-            #endregion
+
+                //if (!m_AlarmChannel.Writer.TryWrite(cell))
+                //{
+                //    cell.Dispose();
+                //    StringBuilder strbuilder = new StringBuilder("[");
+                //    strbuilder.Append("显示线程");
+                //    strbuilder.Append("]     ");
+                //    strbuilder.Append(cell.ID);
+                //    strbuilder.Append("   cell入报警队列失败。");
+                //    await m_InfoChannel.Writer.WriteAsync(
+                //        new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                //    );
+                //}
+
+                if (cell.isOnce) { }
+            }
+                    catch (Exception ex)
+                    {
+                await m_InfoChannel.Writer.WriteAsync(
+                    new PrintMsg("显示线程出错: " + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                );
+            }
+                    finally
+                    {
+                cell.Dispose(); //cell释放后对数据汇总、数据库不影响，故放在显示线程里释放，防止未显示先释放
+                WaitSignal.Set();
+            }
+        }
+    });
+
+            #endregion 显示线程
 
             #region 报警线程 放置于数据库线程
+
             //Task alarmTask = Task.Run(async () =>
             //{
             //    object objAlarmLock = new object(); //报警监控用
@@ -958,9 +976,11 @@ namespace WH.DetectSystem.Models
             //        }
             //    }
             //});
-            #endregion
+
+            #endregion 报警线程 放置于数据库线程
 
             #region 数据库线程
+
             //数据库写入容易出错，卡顿时间较长，容量最大10个
             Task dataBaseTask = Task.Run(async () =>
             {
@@ -969,6 +989,7 @@ namespace WH.DetectSystem.Models
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
+
                     //try
                     //{
                     //    var space = DiskSpace.GetHardDiskFreeSpace("D");
@@ -985,7 +1006,8 @@ namespace WH.DetectSystem.Models
                     //{
                     //    s_SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
                     //}
-                    #endregion
+
+                    #endregion 写入Access数据库
 
                     if (MySqlVM.MysqlExecute.SqlEnable)
                     {
@@ -1011,6 +1033,7 @@ namespace WH.DetectSystem.Models
                     }
 
                     #region 报警
+
                     try
                     {
                         lock (objAlarmLock)
@@ -1030,253 +1053,259 @@ namespace WH.DetectSystem.Models
                         //if (!m_dataBaseChannel.Writer.TryWrite(cell))
                         //    cell.Dispose();
                     }
-                    #endregion
+
+                    #endregion 报警
 
                     //cell.Dispose();
                 }
             });
-            #endregion
 
-            #region 存图线程
-            Task waitSaveImgTask = Task.Run(async () =>
+    #endregion 数据库线程
+
+    #region 存图线程
+
+    Task waitSaveImgTask = Task.Run(async () =>
+    {
+        Thread.CurrentThread.Priority = ThreadPriority.Normal;
+        int saveCount = 0; //存图间隔计数用
+        await foreach (Cell cell in m_SaveImageChannel.Reader.ReadAllAsync())
+        {
+            try
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                int saveCount = 0; //存图间隔计数用
-                await foreach (Cell cell in m_SaveImageChannel.Reader.ReadAllAsync())
+                string savePath = SaveImageVM.Param.Excute(
+                    SystemSettings,
+                    cell,
+                    ref saveCount
+                );
+                if (savePath != null)
                 {
-                    try
-                    {
-                        string savePath = SaveImageVM.Param.Excute(
-                            SystemSettings,
-                            cell,
-                            ref saveCount
-                        );
-                        if (savePath != null)
+                    _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
+                        new Action(() =>
                         {
-                            _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
-                                new Action(() =>
-                                {
-                                    if (!string.IsNullOrEmpty(savePath))
-                                    {
-                                        if (HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
-                                            HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
-                                        HistoryVM.HistoryModel.NgImagePaths.Insert(0, savePath);
-                                    }
-                                })
-                            );
-                        }
-                        cell.Dispose(); //这个cell是复制的clone 存图后清理
-                    }
-                    catch (Exception ex)
-                    {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("存图线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                    }
+                            if (!string.IsNullOrEmpty(savePath))
+                            {
+                                if (HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
+                                    HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
+                                HistoryVM.HistoryModel.NgImagePaths.Insert(0, savePath);
+                            }
+                        })
+                    );
                 }
-            });
-            #endregion
-        }
-
-        public void StopTask()
-        {
-            m_WaitImgChannel.Writer.Complete();
-            m_InfoChannel.Writer.Complete();
-            m_AlgorithmChannel.Writer.Complete();
-            m_FilterChannel.Writer.Complete();
-            m_ShowImageChannel.Writer.Complete();
-            m_AlarmChannel.Writer.Complete();
-            m_dataBaseChannel.Writer.Complete();
-            m_SaveImageChannel.Writer.Complete();
-        }
-        #endregion
-
-        /// <summary>
-        /// 2024.7.30 李焕彬
-        /// 一开始设置为最差的产品
-        /// </summary>
-        /// <param name="cell"></param>
-        private void SetBadCell(Cell cell)
-        {
-            cell.Quality = MaociQualityConfig.GetWorst();
-            cell.IsOK = false;
-            cell.Detection = new CellDetection() { Category = Category.值, };
-            if (cell.FrameLoss)
+                cell.Dispose(); //这个cell是复制的clone 存图后清理
+            }
+            catch (Exception ex)
             {
-                cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
-                    "异常类",
-                    "拍照异常",
-                    "丢帧"
+                await m_InfoChannel.Writer.WriteAsync(
+                    new PrintMsg("存图线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
                 );
             }
-            else { }
         }
+    });
 
-        /// <summary>
-        /// 2024.9.2 李焕彬
-        /// 更新相机序列号
-        /// </summary>
-        public void UpdateCam(string cameraSerial)
-        {
-            if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-            )
-            {
-                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
-            }
-            this.CameraSerial = cameraSerial;
-            if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-            )
-            {
-                CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
-                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
-                    this.m_WaitImgChannel;
-                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
-                    MaociAlgorParamConfig.GetDistinctFunc();
-            }
-        }
+    #endregion 存图线程
+}
 
-        /// <summary>
-        /// 2024.9.2 李焕彬
-        /// 更新算法
-        /// </summary>
-        public void UpdateAlgorithm(string algorithm)
-        {
-            //修改之前注销算法、过滤分选消息
-            WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
-            WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
+public void StopTask()
+{
+    m_WaitImgChannel.Writer.Complete();
+    m_InfoChannel.Writer.Complete();
+    m_AlgorithmChannel.Writer.Complete();
+    m_FilterChannel.Writer.Complete();
+    m_ShowImageChannel.Writer.Complete();
+    m_AlarmChannel.Writer.Complete();
+    m_dataBaseChannel.Writer.Complete();
+    m_SaveImageChannel.Writer.Complete();
+}
 
-            this.Algorithm = algorithm;
-            this.MaociAlgorParamConfig = CAlgorithmManagement
-                .AlgorithmHeper[Algorithm]
-                .CreateNewAlgorithm();
-            this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
-            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
-            this.SDFilterVM.FilterConfig = MaociFilterConfig;
-            this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
-            this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-            this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
-            MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
-            this.MaociHistoryModel.SetHistory(MaociFilterConfig);
-            if (FocusCtrlVM is not null)
-                this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
-            if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-            )
-            {
-                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
-                    MaociAlgorParamConfig.GetDistinctFunc();
-            }
+#endregion 线程管理
 
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MaociFilterConfig,
-                MaociFilterConfig.token
-            );
-            //修改之后注册算法、过滤分选消息
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                MaociAlgorParamConfig,
-                MaociAlgorParamConfig.token
-            );
-        }
+/// <summary>
+/// 2024.7.30 李焕彬
+/// 一开始设置为最差的产品
+/// </summary>
+/// <param name="cell"></param>
+private void SetBadCell(Cell cell)
+{
+    cell.Quality = MaociQualityConfig.GetWorst();
+    cell.IsOK = false;
+    cell.Detection = new CellDetection() { Category = Category.值, };
+    if (cell.FrameLoss)
+    {
+        cell.Detection.DefectFilter = MaociFilterConfig.GetDefectFilter(
+            "异常类",
+            "拍照异常",
+            "丢帧"
+        );
+    }
+    else { }
+}
 
-        /// <summary>
-        /// 2024.9.2 李焕彬
-        /// 更新对焦
-        /// </summary>
-        public void UpdateFocus(string focus)
-        {
-            if (!AppConfig.HasFocusConfig())
-                return;
-            //修改之前注销自动对焦消息
-            WeakReferenceMessenger.Default.UnregisterAll(FocusConfig);
+/// <summary>
+/// 2024.9.2 李焕彬
+/// 更新相机序列号
+/// </summary>
+public void UpdateCam(string cameraSerial)
+{
+    if (
+        !string.IsNullOrEmpty(CameraSerial)
+        && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+    )
+    {
+        CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
+    }
+    this.CameraSerial = cameraSerial;
+    FocusCtrlVM.SetCameraSerial(CameraSerial);
+    if (
+        !string.IsNullOrEmpty(CameraSerial)
+        && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+    )
+    {
+        CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
+        CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
+            this.m_WaitImgChannel;
+        CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+            MaociAlgorParamConfig.GetDistinctFunc();
+    }
+}
 
-            this.Focus = focus;
-            this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
-            this.FocusCtrlVM = this.FocusConfig.CreateCtrlVM();
-            this.FocusCtrlVM.SetCameraSerial(CameraSerial);
-            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+/// <summary>
+/// 2024.9.2 李焕彬
+/// 更新算法
+/// </summary>
+public void UpdateAlgorithm(string algorithm)
+{
+    //修改之前注销算法、过滤分选消息
+    WeakReferenceMessenger.Default.UnregisterAll(MaociFilterConfig);
+    WeakReferenceMessenger.Default.UnregisterAll(MaociAlgorParamConfig);
 
-            //修改之后注册自动对焦消息
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                FocusConfig,
-                FocusConfig.token
-            );
-        }
+    this.Algorithm = algorithm;
+    this.MaociAlgorParamConfig = CAlgorithmManagement
+        .AlgorithmHeper[Algorithm]
+        .CreateNewAlgorithm();
+    this.MaociFilterConfig = new CFilterConfig(this.MaociAlgorParamConfig.DefectSpecies);
+    this.MaociAlgorVM.Config = MaociAlgorParamConfig;
+    this.SDFilterVM.FilterConfig = MaociFilterConfig;
+    this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
+    this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
+    this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+    MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
+    this.MaociHistoryModel.SetHistory(MaociFilterConfig);
+    if (FocusCtrlVM is not null)
+        this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+    if (
+        !string.IsNullOrEmpty(CameraSerial)
+        && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+    )
+    {
+        CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+            MaociAlgorParamConfig.GetDistinctFunc();
+    }
 
-        /// <summary>
-        /// 2024.9.2 李焕彬
-        /// 新建制程时更新Token
-        /// </summary>
-        public void UpdateToken()
-        {
-            MaociAlgorParamConfig.token.ProGuid = GUID;
-            MaociFilterConfig.token.ProGuid = GUID;
-            MaociAlarmSetConfig.token.ProGuid = GUID;
+    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+        MaociFilterConfig,
+        MaociFilterConfig.token
+    );
+    //修改之后注册算法、过滤分选消息
+    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+        MaociAlgorParamConfig,
+        MaociAlgorParamConfig.token
+    );
+}
 
-            ConfigModifyObservableBase.UpdateToken(MaociAlarmSetConfig, MaociAlarmSetConfig.token);
-            ConfigModifyObservableBase.UpdateToken(MaociFilterConfig, MaociFilterConfig.token);
-            ConfigModifyObservableBase.UpdateToken(
-                MaociAlgorParamConfig,
-                MaociAlgorParamConfig.token
-            );
-            if (AppConfig.HasMarkConfig())
-            {
-                MarkConfig.token.ProGuid = GUID;
-                ConfigModifyObservableBase.UpdateToken(MarkConfig, MarkConfig.token);
-            }
-            if (AppConfig.HasFocusConfig())
-            {
-                FocusConfig.token.ProGuid = GUID;
-                ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
-            }
-        }
+/// <summary>
+/// 2024.9.2 李焕彬
+/// 更新对焦
+/// </summary>
+public void UpdateFocus(string focus)
+{
+    if (!AppConfig.HasFocusConfig())
+        return;
+    //修改之前注销自动对焦消息
+    WeakReferenceMessenger.Default.UnregisterAll(FocusConfig);
 
-        /// <summary>
-        /// 2024.9.6 李焕彬
-        /// 新建制程、修改名称时更新name
-        ///</summary>
-        public void UpdateName()
-        {
-            MaociAlgorParamConfig.PrcessName = Name;
-            MaociFilterConfig.PrcessName = Name;
-            MaociAlarmSetConfig.PrcessName = Name;
-            if (MarkConfig is not null)
-                MarkConfig.PrcessName = Name;
-            if (FocusConfig is not null)
-                FocusConfig.PrcessName = Name;
-        }
+    this.Focus = focus;
+    this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
+    this.FocusCtrlVM = this.FocusConfig.CreateCtrlVM();
+    this.FocusCtrlVM.SetCameraSerial(CameraSerial);
+    this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
 
-        /// <summary>
-        /// 2024.9.6 李焕彬
-        /// 更新VM权限
-        ///</summary>
-        public void UpdateVMLoginPerson(CLoginPerson loginPerson)
-        {
-            this.QualityVM.LoginPerson = loginPerson;
-            this.MaociAlgorVM.LoginPerson = loginPerson;
-            this.SDFilterVM.LoginPerson = loginPerson;
-            this.AlarmSetVM.LoginPerson = loginPerson;
-            if (MarkConfig is not null)
-                this.MarkCtrlVM.LoginPerson = loginPerson;
-            if (FocusCtrlVM is not null)
-                this.FocusCtrlVM.LoginPerson = loginPerson;
-            this.HistoryVM.LoginPerson = loginPerson;
-        }
+    //修改之后注册自动对焦消息
+    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+        FocusConfig,
+        FocusConfig.token
+    );
+}
+
+/// <summary>
+/// 2024.9.2 李焕彬
+/// 新建制程时更新Token
+/// </summary>
+public void UpdateToken()
+{
+    MaociAlgorParamConfig.token.ProGuid = GUID;
+    MaociFilterConfig.token.ProGuid = GUID;
+    MaociAlarmSetConfig.token.ProGuid = GUID;
+
+    ConfigModifyObservableBase.UpdateToken(MaociAlarmSetConfig, MaociAlarmSetConfig.token);
+    ConfigModifyObservableBase.UpdateToken(MaociFilterConfig, MaociFilterConfig.token);
+    ConfigModifyObservableBase.UpdateToken(
+        MaociAlgorParamConfig,
+        MaociAlgorParamConfig.token
+    );
+    if (AppConfig.HasMarkConfig())
+    {
+        MarkConfig.token.ProGuid = GUID;
+        ConfigModifyObservableBase.UpdateToken(MarkConfig, MarkConfig.token);
+    }
+    if (AppConfig.HasFocusConfig())
+    {
+        FocusConfig.token.ProGuid = GUID;
+        ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
+    }
+}
+
+/// <summary>
+/// 2024.9.6 李焕彬
+/// 新建制程、修改名称时更新name
+///</summary>
+public void UpdateName()
+{
+    MaociAlgorParamConfig.PrcessName = Name;
+    MaociFilterConfig.PrcessName = Name;
+    MaociAlarmSetConfig.PrcessName = Name;
+    if (MarkConfig is not null)
+        MarkConfig.PrcessName = Name;
+    if (FocusConfig is not null)
+        FocusConfig.PrcessName = Name;
+}
+
+/// <summary>
+/// 2024.9.6 李焕彬
+/// 更新VM权限
+///</summary>
+public void UpdateVMLoginPerson(CLoginPerson loginPerson)
+{
+    this.QualityVM.LoginPerson = loginPerson;
+    this.MaociAlgorVM.LoginPerson = loginPerson;
+    this.SDFilterVM.LoginPerson = loginPerson;
+    this.AlarmSetVM.LoginPerson = loginPerson;
+    if (MarkConfig is not null)
+        this.MarkCtrlVM.LoginPerson = loginPerson;
+    if (FocusCtrlVM is not null)
+        this.FocusCtrlVM.LoginPerson = loginPerson;
+    this.HistoryVM.LoginPerson = loginPerson;
+}
     }
 
     public struct PrintMsg
-    {
-        public string message;
-        public LOG logType;
+{
+    public string message;
+    public LOG logType;
 
-        public PrintMsg(string msg, LOG type)
-        {
-            message = msg;
-            logType = type;
-        }
+    public PrintMsg(string msg, LOG type)
+    {
+        message = msg;
+        logType = type;
     }
+}
 }

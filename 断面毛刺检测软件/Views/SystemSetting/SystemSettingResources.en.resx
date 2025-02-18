@@ -159,4 +159,7 @@
   <data name="TestFpgaAlgrithm" xml:space="preserve">
     <value>Test Fpga</value>
   </data>
+  <data name="DisplayFrameRate" xml:space="preserve">
+    <value>Display FrameRate</value>
+  </data>
 </root>

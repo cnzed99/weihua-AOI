@@ -104,7 +104,7 @@
                                 Style="{DynamicResource StatusDotButton}" />
                             <Button
                                 Width="80"
-                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[2].HasSignal, Converter={StaticResource StatusReConverter}}"
+                                wh:StatusDotElement.DotBrush="{Binding HomeSignal, Converter={StaticResource StatusReConverter}}"
                                 Content="{Binding [GoHome], Source={x:Static local:CLang.s_Instance}}"
                                 Style="{DynamicResource StatusDotButton}">
                                 <i:Interaction.Triggers>
@@ -118,7 +118,7 @@
                             </Button>
                             <Button
                                 Width="80"
-                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[1].HasSignal, Converter={StaticResource GotMaxDisConverter}}"
+                                wh:StatusDotElement.DotBrush="{Binding LimitPSignal, Converter={StaticResource GotMaxDisConverter}}"
                                 Content="{Binding [Forward], Source={x:Static local:CLang.s_Instance}}"
                                 Style="{DynamicResource StatusDotButton}">
                                 <i:Interaction.Triggers>
@@ -132,7 +132,7 @@
                             </Button>
                             <Button
                                 Width="80"
-                                wh:StatusDotElement.DotBrush="{Binding MotionConfig.SignalIns[0].HasSignal, Converter={StaticResource GotMaxDisConverter}}"
+                                wh:StatusDotElement.DotBrush="{Binding LimitNSignal, Converter={StaticResource GotMaxDisConverter}}"
                                 Content="{Binding [Reverse], Source={x:Static local:CLang.s_Instance}}"
                                 Style="{DynamicResource StatusDotButton}">
                                 <i:Interaction.Triggers>
@@ -410,7 +410,7 @@
                 </GroupBox>
             </DockPanel>
         </TabItem>
-        <TabItem Header="{Binding [IO], Source={x:Static local:CLang.s_Instance}}">
+        <!--<TabItem Header="{Binding [IO], Source={x:Static local:CLang.s_Instance}}">
             <UniformGrid Columns="1">
                 <GroupBox Style="{StaticResource GroupBoxTab}">
                     <GroupBox.Header>
@@ -542,7 +542,7 @@
                     </DataGrid>
                 </GroupBox>
             </UniformGrid>
-        </TabItem>
+        </TabItem>-->
         <TabItem Header="{Binding [ElementRW], Source={x:Static local:CLang.s_Instance}}">
             <GroupBox Style="{StaticResource GroupBoxTab}">
                 <GroupBox.Header>
@@ -586,7 +586,7 @@
                         <DataGridTemplateColumn Header="{Binding [Type], Source={x:Static local:CLang.s_Instance}}" IsReadOnly="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer, Converter={StaticResource Boolean2BooleanReConverter}}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <wh:EnumComboBox SelectEnumValue="{Binding Type, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}"/>
+                                    <wh:EnumComboBox IsEnabled="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}" SelectEnumValue="{Binding Type, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -606,7 +606,16 @@
                                         CommandParameter="{Binding}"
                                         Content="{Binding [Write], Source={x:Static local:CLang.s_Instance}}"
                                         IsEnabled="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}"
-                                        Style="{DynamicResource ButtonSuccess}" />
+                                        Style="{DynamicResource ButtonSuccess}" >
+                                        <!--<i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding ElementName=dataGrid3, Path=DataContext.MouseDown2Command}" CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding ElementName=dataGrid3, Path=DataContext.MouseUp2Command}" CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>-->
+                                    </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

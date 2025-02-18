@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IKapVisionCam": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

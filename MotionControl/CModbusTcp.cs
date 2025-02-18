@@ -33,6 +33,18 @@ namespace MotionControl
             CModbusTcp modbusTcp = s_modbusTcps.FirstOrDefault(o => o.ip == ip && o.port == port);
             if (modbusTcp != null)
             {
+                if (!modbusTcp.tcpClient.Connected)
+                {
+                    try
+                    {
+                        modbusTcp.ReConnectToPLC();
+                    }
+                    catch (Exception err)
+                    {
+                        Growl.Error(err.Message);
+                        CMotionCtrlVM.SysLog.Error(err.Message);
+                    }
+                }
                 modbusTcp.userCount++;
                 return modbusTcp;
             }
@@ -155,10 +167,37 @@ namespace MotionControl
         }
 
         /// <summary>
+        /// 2025.1.14 李焕彬
+        /// 重新连接到PLC，读取线程还在
+        /// </summary>
+        public Task ReConnectToPLC()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    //建立连接
+                    tcpClient = new TcpClient();
+                    tcpClient.Connect(ip, port);
+                    factory = new ModbusFactory();
+                    master = factory.CreateMaster(tcpClient);
+                    master.Transport.ReadTimeout = 1000;
+                    master.Transport.WriteTimeout = 1000;
+                    master.Transport.Retries = 10;
+                }
+                catch (Exception err)
+                {
+                    Growl.Error(err.Message);
+                    CMotionCtrlVM.SysLog.Error(err.Message);
+                }
+            });
+        }
+
+        /// <summary>
         /// 2024.7.12 李焕彬
         /// 实时刷新数据
         /// </summary>
-        private void OnRefresh()
+        private async void OnRefresh()
         {
             while (isStart)
             {
@@ -166,31 +205,35 @@ namespace MotionControl
                 {
                     if (tcpClient.Connected)
                     {
-                        //读取X0-X17状态   //0xF800‑0xFBFF
-                        bool[] xState = master.ReadInputs(0x01, 0xF800, 0x10);
-                        //读取Y0-Y17状态   //0xFC00‑0xFFFF
-                        bool[] yState = master.ReadCoils(0x01, 0xFC00, 0x10);
-                        List<bool> xyState = new List<bool>();
-                        //数组合并
-                        xyState.AddRange(xState);
-                        xyState.AddRange(yState);
-                        //触发事件，传递XY的状态
-                        SendXYData?.Invoke(xState, yState);
-                        //触发事件，读取元件
-                        ReadElemData?.Invoke();
                         //plc连接事件
                         actionConnect?.Invoke(true);
+                        ////读取X0-X17状态   //0xF800‑0xFBFF
+                        //bool[] xState = master.ReadInputs(0x01, 0xF800, 0x10);
+                        ////读取Y0-Y17状态   //0xFC00‑0xFFFF
+                        //bool[] yState = master.ReadCoils(0x01, 0xFC00, 0x10);
+                        //List<bool> xyState = new List<bool>();
+                        ////数组合并
+                        //xyState.AddRange(xState);
+                        //xyState.AddRange(yState);
+                        ////触发事件，传递XY的状态
+                        //SendXYData?.Invoke(xState, yState);
+                        //触发事件，读取元件
+                        ReadElemData?.Invoke();
                         Thread.Sleep(10);
                     }
                     else
                     {
-                        //plc断开事件
-                        actionConnect?.Invoke(false);
+                        Thread.Sleep(3000);
+                        await ReConnectToPLC();
+                        if (!tcpClient.Connected)
+                        {
+                            actionConnect?.Invoke(false); //plc断开事件
+                        }
                     }
                 }
                 catch (Exception)
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                 }
             }
         }
@@ -205,6 +248,9 @@ namespace MotionControl
             if (userCount == 0)
             {
                 isStart = false;
+                taskTcp?.Wait();
+                this.Close();
+                s_modbusTcps.Remove(this);
             }
         }
 
@@ -218,11 +264,20 @@ namespace MotionControl
         /// <returns></returns>
         private bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
         {
-            if (master == null)
+            try
             {
+                if (master == null)
+                {
+                    return null;
+                }
+                return master.ReadInputs(slaveAddress, startAddress, numberOfPoints);
+            }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
                 return null;
             }
-            return master.ReadInputs(slaveAddress, startAddress, numberOfPoints);
         }
 
         /// <summary>
@@ -235,11 +290,20 @@ namespace MotionControl
         /// <returns></returns>
         private bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
         {
-            if (master == null)
+            try
             {
+                if (master == null)
+                {
+                    return null;
+                }
+                return master.ReadCoils(slaveAddress, startAddress, numberOfPoints);
+            }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
                 return null;
             }
-            return master.ReadCoils(slaveAddress, startAddress, numberOfPoints);
         }
 
         /// <summary>
@@ -252,11 +316,19 @@ namespace MotionControl
         /// <returns></returns>
         public async Task WriteSingleCoilAsync(byte slaveAddress, ushort startAddress, bool value)
         {
-            if (master == null)
+            try
             {
-                return;
+                if (master == null)
+                {
+                    return;
+                }
+                await master.WriteSingleCoilAsync(slaveAddress, startAddress, value);
             }
-            await master.WriteSingleCoilAsync(slaveAddress, startAddress, value);
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -273,11 +345,20 @@ namespace MotionControl
             ushort numberOfPoints
         )
         {
-            if (master == null)
+            try
             {
+                if (master == null)
+                {
+                    return null;
+                }
+                return master.ReadHoldingRegisters(slaveAddress, startAddress, numberOfPoints);
+            }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
                 return null;
             }
-            return master.ReadHoldingRegisters(slaveAddress, startAddress, numberOfPoints);
         }
 
         /// <summary>
@@ -294,11 +375,19 @@ namespace MotionControl
             ushort value
         )
         {
-            if (master == null)
+            try
             {
-                return;
+                if (master == null)
+                {
+                    return;
+                }
+                await master.WriteSingleRegisterAsync(slaveAddress, registerAddress, value);
             }
-            await master.WriteSingleRegisterAsync(slaveAddress, registerAddress, value);
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -315,11 +404,19 @@ namespace MotionControl
             ushort[] data
         )
         {
-            if (master == null)
+            try
             {
-                return;
+                if (master == null)
+                {
+                    return;
+                }
+                await master.WriteMultipleRegistersAsync(slaveAddress, startAddress, data);
             }
-            await master.WriteMultipleRegistersAsync(slaveAddress, startAddress, data);
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -330,15 +427,22 @@ namespace MotionControl
         /// <returns>状态</returns>
         public bool ReadCoil(ushort startAddress)
         {
-            if (tcpClient.Connected)
+            try
             {
-                bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
-                if (bools.Length == 1)
+                if (tcpClient.Connected)
                 {
-                    return bools[0];
+                    bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
+                    if (bools.Length == 1)
+                    {
+                        return bools[0];
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
+            }
             return false;
         }
 
@@ -350,15 +454,24 @@ namespace MotionControl
         /// <returns>数据</returns>
         public float ReadHoldingRegister(ushort startAddress)
         {
-            if (tcpClient.Connected)
+            try
             {
-                var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
-                if (value.Length == 2)
+                if (tcpClient.Connected)
                 {
-                    byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
-                    return BitConverter.ToSingle(data, 0);
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
+                    if (value.Length == 2)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
+                        return BitConverter.ToSingle(data, 0);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
+            }
+
             return 0;
         }
 
@@ -371,9 +484,17 @@ namespace MotionControl
         /// <returns></returns>
         public void WriteSingleCoil(ushort startAddress, bool value)
         {
-            if (tcpClient.Connected)
+            try
             {
-                master.WriteSingleCoil(slaveAddress, startAddress, value);
+                if (tcpClient.Connected)
+                {
+                    master.WriteSingleCoil(slaveAddress, startAddress, value);
+                }
+            }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
             }
         }
 
@@ -386,14 +507,22 @@ namespace MotionControl
         /// <returns></returns>
         public void WriteSingleRegister(ushort registerAddress, float value)
         {
-            if (tcpClient.Connected)
+            try
             {
-                byte[] fData = BitConverter.GetBytes(value);
-                ushort[] Data = new ushort[2];
-                Data[0] = (ushort)((fData[1] << 8) + fData[0]);
-                Data[1] = (ushort)((fData[3] << 8) + fData[2]);
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[2];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+                    Data[1] = (ushort)((fData[3] << 8) + fData[2]);
 
-                master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                CMotionCtrlVM.SysLog.Error(ex.Message);
+                Thread.Sleep(100);
             }
         }
     }

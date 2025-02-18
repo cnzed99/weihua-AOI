@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+    <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">

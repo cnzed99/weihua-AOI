@@ -16,12 +16,6 @@ namespace CameraModule
         private string serialNumber;
         /// <summary>
         /// 2024.7.23 李焕彬
-        /// 相机品牌
-        /// </summary>
-        [ObservableProperty]
-        private string vender;
-        /// <summary>
-        /// 2024.7.23 李焕彬
         /// 相机类型
         /// </summary>
         [ObservableProperty]
@@ -39,5 +33,12 @@ namespace CameraModule
         /// </summary
         [ObservableProperty]
         private bool isUse;
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 对应插件名
+        /// </summary>
+        [ObservableProperty]
+        private string plugName;
     }
 }

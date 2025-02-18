@@ -155,9 +155,10 @@ namespace HIKVisionCam
                 textBuilder.Append(grabCount);
                 getImageLogger.Info(textBuilder.ToString());
 
-                mutex.WaitOne();
-                imageQueue.Enqueue(pData);
-                mutex.ReleaseMutex();
+                //mutex.WaitOne();
+                //imageQueue.Enqueue(pData);
+                //mutex.ReleaseMutex();
+                ImageQueueChannel.Writer.TryWrite(pData);
                 paramSetting.ImageWidth = pFrameInfo.nWidth;
                 paramSetting.ImageHeight = pFrameInfo.nHeight;
                 paramSetting.CameraType =
@@ -183,8 +184,7 @@ namespace HIKVisionCam
         {
             try
             {
-                IntPtr grabbedRawData = (IntPtr)this.imageQueue.Dequeue();
-                return base.GetImageFunc(grabbedRawData);
+                return base.GetImageFunc(zoo);
             }
             catch (Exception ex)
             {
@@ -201,24 +201,10 @@ namespace HIKVisionCam
         /// </summary>
         public override void CloseCamera()
         {
-            try
-            {
-                if (this.Connected)
-                {
-                    m_MyCamera.MV_CC_StopGrabbing_NET();
-                    m_MyCamera.MV_CC_ClearImageBuffer_NET();
-                    m_MyCamera.MV_CC_CloseDevice_NET();
-                    m_MyCamera.MV_CC_DestroyDevice_NET();
-                    Connected = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(
-                    Properties.Resources.ErrorClose + paramSetting.SerialNumber + ex.Message
-                );
-                throw;
-            }
+            m_MyCamera.MV_CC_StopGrabbing_NET();
+            m_MyCamera.MV_CC_ClearImageBuffer_NET();
+            m_MyCamera.MV_CC_CloseDevice_NET();
+            m_MyCamera.MV_CC_DestroyDevice_NET();
         }
 
         /// <summary>

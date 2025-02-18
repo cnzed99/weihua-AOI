@@ -6,8 +6,8 @@
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
-		<Exec Command="xcopy $(OutDir)\MaociAlg.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
-		<Exec Command="xcopy $(OutDir)\opencv_world490.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+		<!--<Exec Command="xcopy $(OutDir)MaociAlg.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />-->
+		<Exec Command="xcopy $(OutDir)opencv_world490.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
 	</Target>
 
 	<ItemGroup>
@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+	  <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
 	</ItemGroup>
 
 </Project>

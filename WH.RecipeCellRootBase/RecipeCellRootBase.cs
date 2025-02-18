@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -334,6 +335,46 @@ namespace WH.RecipeCellRootBase
 
             return image;
         }
+
+        /// <summary>
+        /// 2024.9.13 李焕彬
+        /// 保存图片
+        /// </summary>
+        /// <param name="path">路径</param>
+        public void SaveImage(string path)
+        {
+            try
+            {
+                BitmapEncoder encoder;
+                switch (Path.GetExtension(path))
+                {
+                    case ".bmp":
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                    case ".jpg":
+                        encoder = new JpegBitmapEncoder();
+                        break;
+                    case ".png":
+                        encoder = new PngBitmapEncoder();
+                        break;
+                    case ".tiff":
+                        encoder = new TiffBitmapEncoder();
+                        break;
+                    default:
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                }
+                using (FileStream stream = new FileStream(path, FileMode.Create))
+                {
+                    encoder.Frames.Add(BitmapFrame.Create(ToBitmapSource()));
+                    encoder.Save(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 
     ///// <summary>
@@ -544,10 +585,17 @@ namespace WH.RecipeCellRootBase
         {
             regionInfo = _regionInfo;
             points = _points;
-            rect = new Rect(
-                new Point(points.Select(o => o.X).Min(), points.Select(o => o.Y).Min()),
-                new Point(points.Select(o => o.X).Max(), points.Select(o => o.Y).Max())
-            );
+            if (_points.Count > 0)
+            {
+                rect = new Rect(
+                                new Point(points.Select(o => o.X).Min(), points.Select(o => o.Y).Min()),
+                                new Point(points.Select(o => o.X).Max(), points.Select(o => o.Y).Max())
+                            );
+            }
+            else
+            {
+                rect = new Rect(0, 0, 100, 100);
+            }
         }
 
         /// <summary>

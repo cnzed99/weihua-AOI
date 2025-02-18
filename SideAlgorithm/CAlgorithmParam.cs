@@ -97,25 +97,38 @@ namespace SideAlgorithm
         SDetectInfo detectInfo = new SDetectInfo();
 
         /// <summary>
-        /// 测试PC算法
+        /// 测试算法
         /// </summary>
         /// <param name="cell">cell</param>
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            SMaociAlgorParam param =
-                new(
-                    (CPcParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect),
-                    cell.MmPerPixel * 1000
+            var paramClass = (CPcParam)AlgorParams.FirstOrDefault(o => o.Name == ParamSelect);
+            EMDETECTRESULT result = EMDETECTRESULT.EMDR_OK;
+            if (paramClass.UsePreAlg)
+            {
+                SMaociAlgorPreParam param = new(paramClass, cell.MmPerPixel * 1000);
+                result = CAlgorithmDll.TestFpga(
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    cell.Image.StrideWidth,
+                    cell.Image.ImageData,
+                    ref param,
+                    ref detectInfo
                 );
-            EMDETECTRESULT result = CAlgorithmDll.Test(
-                cell.Image.ImageWidth,
-                cell.Image.ImageHeight,
-                cell.Image.StrideWidth,
-                cell.Image.ImageData,
-                ref param,
-                ref detectInfo
-            );
+            }
+            else
+            {
+                SMaociAlgorParam param = new(paramClass, cell.MmPerPixel * 1000);
+                result = CAlgorithmDll.Test(
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    cell.Image.StrideWidth,
+                    cell.Image.ImageData,
+                    ref param,
+                    ref detectInfo
+                );
+            }
             detectInfo.DeComposeEdge(
                 cell.MmPerPixel * 1000,
                 out var edgeDarkTop,
@@ -175,6 +188,16 @@ namespace SideAlgorithm
 
         /// <summary>
         /// 2024.7.4 李焕彬
+        /// 使用初筛算法
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("使用初筛算法")]
+        [property: Description("使用初筛算法")]
+        private bool usePreAlg = false;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
         /// 过滤矩阵邻域大小
         /// </summary>
         [ObservableProperty]
@@ -212,6 +235,16 @@ namespace SideAlgorithm
         [property: DisplayName("最小清晰度")]
         [property: Description("最小清晰度说明")]
         private float minDistinct = 4.0f;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// //毛刺斜率限制
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.Algorithm")]
+        [property: DisplayName("毛刺斜率限制(um)")]
+        [property: Description("毛刺斜率限制(um)")]
+        double maociLimit = 7;
     };
 
     /// <summary>

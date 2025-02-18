@@ -134,9 +134,7 @@ namespace MindVisionCam
                 textBuilder.Append(grabCount);
                 getImageLogger.Info(textBuilder.ToString());
 
-                mutex.WaitOne();
-                imageQueue.Enqueue(pFrameBuffer);
-                mutex.ReleaseMutex();
+                ImageQueueChannel.Writer.TryWrite(pFrameBuffer);
 
                 paramSetting.ImageWidth = pFrameHead.iWidth;
                 paramSetting.ImageHeight = pFrameHead.iHeight;
@@ -163,8 +161,7 @@ namespace MindVisionCam
         {
             try
             {
-                IntPtr grabbedRawData = (IntPtr)this.imageQueue.Dequeue();
-                return base.GetImageFunc(grabbedRawData);
+                return base.GetImageFunc(zoo);
             }
             catch (Exception ex)
             {
@@ -181,21 +178,7 @@ namespace MindVisionCam
         /// </summary>
         public override void CloseCamera()
         {
-            try
-            {
-                if (this.Connected)
-                {
-                    MvApi.CameraUnInit(m_hCamera);
-                    Connected = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(
-                    Properties.Resources.ErrorClose + paramSetting.SerialNumber + ex.Message
-                );
-                throw;
-            }
+            MvApi.CameraUnInit(m_hCamera);
         }
 
         /// <summary>
