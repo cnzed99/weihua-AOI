@@ -19,7 +19,7 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size
+            InputImgSize input_size
         )
             : base(
                 model_path,
@@ -28,9 +28,8 @@ namespace YoloobbAlgorithm
                 categ_nums,
                 det_thresh,
                 det_nms_thresh,
-                new int[] { 1, 3, input_size, input_size },
-                new List<string> { "images" },
-                new List<int[]> { new int[] { 1, 5 + categ_nums, (int)ImgSize.S1024 } },
+                input_size,
+                new List<string> { "images" },             
                 new List<string> { "output0" }
             ) { }
 

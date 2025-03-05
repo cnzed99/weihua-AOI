@@ -54,4 +54,13 @@ namespace YoloobbAlgorithm
         S1024 = 21504,
         S2048 = 86016,
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum InputImgSize 
+    { 
+        IN640=640,
+        IN1024=1024,
+        IN2048=2048,
+    }
 }

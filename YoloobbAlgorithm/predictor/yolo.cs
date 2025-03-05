@@ -42,9 +42,8 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int[] input_size,
-            List<string> input_names,
-            List<int[]> output_sizes,
+            InputImgSize input_size,
+            List<string> input_names,            
             List<string> output_names
         )
         {
@@ -52,8 +51,24 @@ namespace YoloobbAlgorithm
             m_categ_nums = categ_nums;
             m_det_thresh = det_thresh;
             m_det_nms_thresh = det_nms_thresh;
-            m_input_size = input_size;
-            m_output_sizes = output_sizes;
+            m_input_size = new int[] { 1, 3, (int)input_size, (int)input_size };
+            int outputsize;
+            switch (input_size)
+            {
+                case InputImgSize.IN640:
+                    outputsize = (int)ImgSize.S640;
+                    break;
+                case InputImgSize.IN1024:
+                    outputsize = (int)ImgSize.S1024;
+                    break;
+                case InputImgSize.IN2048:
+                    outputsize = (int)ImgSize.S2048;
+                    break;
+                default:
+                    outputsize = (int)ImgSize.S640;
+                    break;
+            }
+            m_output_sizes = new List<int[]> { new int[] { 1, 5 + categ_nums, outputsize } };
             m_input_names = input_names;
             m_output_names = output_names;
         }
@@ -160,7 +175,7 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size
+            InputImgSize input_size
         )
         {
             //else if (model_type == ModelType.YOLOv8Det)
