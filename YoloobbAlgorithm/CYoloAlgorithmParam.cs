@@ -432,7 +432,7 @@ namespace YoloobbAlgorithm
         [property: Category("基础参数")]
         [property: DisplayName("NMScore")]
         [property: Description("NMScore")]
-        private float nms = 0.5f;
+        private float nms = 0.4f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
