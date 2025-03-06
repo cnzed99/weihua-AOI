@@ -346,4 +346,7 @@
   <data name="新增制程失败" xml:space="preserve">
     <value>新增制程失败！</value>
   </data>
+  <data name="Motion" xml:space="preserve">
+    <value>控制</value>
+  </data>
 </root>

@@ -339,4 +339,7 @@
   <data name="新增制程失败" xml:space="preserve">
     <value>Failed to add process!</value>
   </data>
+  <data name="Motion" xml:space="preserve">
+    <value>Motion</value>
+  </data>
 </root>

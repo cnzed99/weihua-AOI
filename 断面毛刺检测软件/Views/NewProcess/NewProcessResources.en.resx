@@ -144,4 +144,7 @@
   <data name="Focus" xml:space="preserve">
     <value>Focus:</value>
   </data>
+  <data name="Motion" xml:space="preserve">
+    <value>Motion:</value>
+  </data>
 </root>

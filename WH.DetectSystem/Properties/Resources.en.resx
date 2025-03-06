@@ -162,4 +162,7 @@
   <data name="对焦插件读取失败" xml:space="preserve">
     <value>Focus Plug Read Failed!</value>
   </data>
+  <data name="控制插件读取失败" xml:space="preserve">
+    <value>Motion Plug Read Failed!</value>
+  </data>
 </root>

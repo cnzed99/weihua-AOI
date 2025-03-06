@@ -133,6 +133,15 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 控制插件读取失败！ 的本地化字符串。
+        /// </summary>
+        internal static string 控制插件读取失败 {
+            get {
+                return ResourceManager.GetString("控制插件读取失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 正在加载相机配置... 的本地化字符串。
         /// </summary>
         internal static string 正在加载相机配置 {

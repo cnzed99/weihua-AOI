@@ -70,6 +70,13 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         string focus;
 
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 控制方法
+        /// </summary>
+        [ObservableProperty]
+        string motion;
+
         CProcessGroupModel groupVM;
 
         /// <summary>
@@ -111,6 +118,7 @@ namespace WH.DetectSystem.ViewModels
             this.Name = mainVM.Name;
             this.algorithm = mainVM.Algorithm;
             this.Focus = mainVM.Focus;
+            this.Motion = mainVM.Motion;
             this.GroupVM = mainVM.ProcessGroup;
             foreach (var cam in CCameraManagement.CamParamDict)
             {
@@ -174,6 +182,10 @@ namespace WH.DetectSystem.ViewModels
                 mainVM.UpdateAlgorithm(this.Algorithm);
             }
             if (mainVM.Focus != this.Focus)
+            {
+                mainVM.UpdateFocus(this.Focus);
+            }
+            if (mainVM.Motion != this.Motion)
             {
                 mainVM.UpdateFocus(this.Focus);
             }

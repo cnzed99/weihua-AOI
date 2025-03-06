@@ -27,6 +27,7 @@ using HistoryPlayback;
 using HistoryPlayback.Model;
 using Mapster;
 using MarkControl;
+using Motion;
 using MySqlOperatesApi;
 using QualityGrade;
 using SaveImageManage;
@@ -161,6 +162,12 @@ namespace WH.DetectSystem.ViewModels
         /// 对焦插件管理
         /// </summary>
         public CFocusManagement FocusManagement { get; set; }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 对焦插件管理
+        /// </summary>
+        public CMotionManagement MotionManagement { get; set; }
 
         #region 启停 状态
         bool isStart = false;
@@ -410,6 +417,17 @@ namespace WH.DetectSystem.ViewModels
                 }
                 #endregion
 
+                #region 读取所有控制插件
+                try
+                {
+                    MotionManagement = new CMotionManagement();
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error(Properties.Resources.控制插件读取失败 + "\r\n" + ex.Message);
+                }
+                #endregion
+
                 #region 读取数据库
                 CMysqlBLL cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
                 MySqlVM.MysqlExecute = cMysql;
@@ -573,6 +591,10 @@ namespace WH.DetectSystem.ViewModels
                     if (mainVM.FocusConfig != null)
                     {
                         WeakReferenceMessenger.Default.UnregisterAll(mainVM.FocusConfig);
+                    }
+                    if (mainVM.MotionConfig != null)
+                    {
+                        WeakReferenceMessenger.Default.UnregisterAll(mainVM.MotionConfig);
                     }
                     mainVM.StopTask();
                 }

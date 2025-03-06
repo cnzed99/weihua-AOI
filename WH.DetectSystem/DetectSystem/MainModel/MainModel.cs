@@ -5,6 +5,7 @@ using FocusControl;
 using HistoryPlayback.Model;
 using MarkControl;
 using Microsoft.Extensions.Configuration;
+using Motion;
 using Newtonsoft.Json;
 using ProjProduceData;
 using SDFilter;
@@ -49,6 +50,14 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         [JsonProperty]
         string focus = "对焦方法";
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 控制方法
+        /// </summary>
+        [ObservableProperty]
+        [JsonProperty]
+        string motion = "控制方法";
 
         /// <summary>
         /// 2024.9.2 李焕彬
@@ -115,11 +124,17 @@ namespace WH.DetectSystem.Models
 
         /// <summary>
         /// 2024.9.3 李焕彬
-        /// 运动控制
+        /// 对焦
         /// </summary>
         [JsonProperty(Order = 9)]
-        //[JsonConverter(typeof(CFocusConfigConverter))]
         public CFocusConfigBase FocusConfig { get; set; }
+
+        /// <summary>
+        /// 2024.9.3 李焕彬
+        /// 控制
+        /// </summary>
+        [JsonProperty(Order = 10)]
+        public CMotionConfigBase MotionConfig { get; set; }
 
         /// <summary>
         /// 20240706 TCG
