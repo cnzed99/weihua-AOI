@@ -135,14 +135,14 @@ namespace YoloobbAlgorithm
             return re;
         }
 
-        public BaseResult predict(Mat img)
+        public BaseResult predict(Mat img,float det_thresh_in, float det_nms_thresh_in)
         {
             List<float[]> result_data = infer(img);
             BaseResult re;
             //if (m_log.Flag_time)
             //{
             sw.Restart();
-            re = postprocess(result_data);
+            re = postprocess(result_data, det_thresh_in, det_nms_thresh_in);
             sw.Stop();
             //m_log.print(
             //    "Result data process successfull, spend time: "
@@ -157,7 +157,7 @@ namespace YoloobbAlgorithm
             return re;
         }
 
-        protected virtual BaseResult postprocess(List<float[]> results)
+        protected virtual BaseResult postprocess(List<float[]> results,float det_thresh,float det_nms_thresh)
         {
             return new BaseResult();
         }
