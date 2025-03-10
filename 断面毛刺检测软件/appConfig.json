@@ -3,7 +3,8 @@
     "Config": {
       "hasMarkConfig": false,
       "hasFocusConfig": false,
-      "IsDark": true
+      "IsDark": true,
+      "defectTotalOnly": true
     }
   }
 }

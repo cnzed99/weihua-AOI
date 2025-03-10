@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mysqlx;
 using ProjProduceData;
+using WH.Entity;
 using WH.RunCell;
 
 namespace WH.DetectSystem
@@ -17,28 +18,67 @@ namespace WH.DetectSystem
     {
         public static void Excute(this CDefectsProduce produce, Cell cell)
         {
-            if (cell.Detection != null)
+            
+            if (AppConfig.DefectTotalOnlyConfig())
             {
-                produce.Ng += 1;
-                var currentDefect = produce[cell.Detection.DefectFilter.Name];
-                currentDefect.Number += 1;
-                //cell.Detection.DefectFilter.Number += 1;
+                int defectCounttotal = 0;
+                if (cell.Detection != null)
+                {
+                    foreach (var algorithmOut in cell.AlgorithmOut)
+                    {
+                        defectCounttotal += algorithmOut.regionOut.Count;
+                    }
+                    produce.Ng += defectCounttotal;
+                    // produce.Ng += 1;
+                    var currentDefect = produce[cell.Detection.DefectFilter.Name];
+                    // currentDefect.Number += 1;
+                    currentDefect.Number += defectCounttotal;
+                    //cell.Detection.DefectFilter.Number += 1;
+                    foreach (var defect in produce.DefectNumbersList)
+                    {
+                        defect.Percent = (double)defect.Number / produce.Ng;
+                    }
+                }
+                else
+                {
+                    produce.OK += 1;
+                }
+                produce.QualityNumbersList.First(o => o.Name == cell.Quality.Name).Number += defectCounttotal;
+                //cell.Quality.Number += 1;
+                // produce.Total += 1;
+                produce.Total += defectCounttotal;
                 foreach (var defect in produce.DefectNumbersList)
                 {
-                    defect.Percent = (double)defect.Number / produce.Ng;
+                    defect.PercentofAll = (double)defect.Number / produce.Total;
                 }
             }
             else
             {
-                produce.OK += 1;
+                if (cell.Detection != null)
+                {
+                    produce.Ng += 1;
+                    var currentDefect = produce[cell.Detection.DefectFilter.Name];
+                    currentDefect.Number += 1;
+                    //cell.Detection.DefectFilter.Number += 1;
+                    foreach (var defect in produce.DefectNumbersList)
+                    {
+                        defect.Percent = (double)defect.Number / produce.Ng;
+                    }
+                }
+                else
+                {
+                    produce.OK += 1;
+                }
+                produce.QualityNumbersList.First(o => o.Name == cell.Quality.Name).Number += 1;
+                //cell.Quality.Number += 1;
+                produce.Total += 1;
+                foreach (var defect in produce.DefectNumbersList)
+                {
+                    defect.PercentofAll = (double)defect.Number / produce.Total;
+                }
             }
-            produce.QualityNumbersList.First(o => o.Name == cell.Quality.Name).Number += 1;
-            //cell.Quality.Number += 1;
-            produce.Total += 1;
-            foreach (var defect in produce.DefectNumbersList)
-            {
-                defect.PercentofAll = (double)defect.Number / produce.Total;
-            }
+
+          
         }
     }
 }

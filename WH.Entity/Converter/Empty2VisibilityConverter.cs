@@ -16,6 +16,17 @@ namespace WH.Entity.Converter
             if (value == null)
                 return Visibility.Collapsed;
 
+            if (value is bool result)
+            {
+                if (result)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
             string text = value.ToString();
             if (string.IsNullOrEmpty(text))
                 return Visibility.Collapsed; // 当text为空时，返回Visibility.Collapsed

@@ -119,5 +119,29 @@ namespace WH.Entity
                 Growl.Error(ex.Message);
             }
         }
+
+        /// <summary>
+        /// 2025.3.6 鲍赞宝
+        /// 是否只统计缺陷总数，true(只统计缺陷的总数，并且界面上隐藏OK,NG，百分比显示等），fasle(正常情况，统计产品的总数，界面显示OK，NG，百分比等）
+        /// </summary>
+        /// <returns>true则有</returns>
+        public static bool DefectTotalOnlyConfig()
+        {
+            try
+            {
+                if (
+                    bool.TryParse(
+                        AppConfig.Config["App:Config:defectTotalOnly"],
+                        out bool defectTotalOnly
+                    ) && defectTotalOnly
+                )
+                {
+                    return true;
+                }
+            }
+            catch (Exception) { }
+            return false;
+        }
+
     }
 }

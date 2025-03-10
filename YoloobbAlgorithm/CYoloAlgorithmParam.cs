@@ -431,7 +431,7 @@ namespace YoloobbAlgorithm
         [property: Category("基础参数")]
         [property: DisplayName("最小分数阈值")]
         [property: Description("最小分数阈值")]
-        private float score = 0.3f;
+        private float score = 0.6f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -441,7 +441,7 @@ namespace YoloobbAlgorithm
         [property: Category("基础参数")]
         [property: DisplayName("NMScore")]
         [property: Description("NMScore")]
-        private float nms = 0.3f;
+        private float nms = 0.5f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
