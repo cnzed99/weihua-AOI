@@ -279,7 +279,7 @@ namespace PlcControl
         [property: DisplayName("4.写入值")]
         [property: Description("4.写入值")]
         [ObservableProperty]
-        private float writeValue;
+        private float writeValue = 0;
 
         /// <summary>
         /// 2025.3.6 李焕彬
@@ -326,9 +326,23 @@ namespace PlcControl
 
         /// <summary>
         /// 2025.3.6 李焕彬
-        /// 寄存器
+        /// 寄存器(REAL)
         /// </summary>
-        [EnumString("寄存器", "D")]
-        EMELEMD,
+        [EnumString("寄存器(REAL)", "D(REAL)")]
+        EMELEMD_REAL,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(INT)
+        /// </summary>
+        [EnumString("寄存器(INT)", "D(INT)")]
+        EMELEMD_INT,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(DINT)
+        /// </summary>
+        [EnumString("寄存器(DINT)", "D(DINT)")]
+        EMELEMD_DINT,
     }
 }

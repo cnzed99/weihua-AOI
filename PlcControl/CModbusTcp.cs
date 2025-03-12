@@ -359,7 +359,7 @@ namespace PlcControl
         /// </summary>
         /// <param name="startAddress">开始地址</param>
         /// <returns>数据</returns>
-        public float ReadHoldingRegister(ushort startAddress)
+        public float ReadHoldingRegisterReal(ushort startAddress)
         {
             try
             {
@@ -370,6 +370,64 @@ namespace PlcControl
                     {
                         byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
                         return BitConverter.ToSingle(data, 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                CMotionCtrlVM.SysLog.Error(ex.Message + ex.StackTrace);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public Int16 ReadHoldingRegisterInt16(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 1);
+                    if (value.Length == 1)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0]);
+                        return BitConverter.ToInt16(data, 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                CMotionCtrlVM.SysLog.Error(ex.Message + ex.StackTrace);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public Int32 ReadHoldingRegisterInt32(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
+                    if (value.Length == 2)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
+                        return BitConverter.ToInt32(data, 0);
                     }
                 }
             }
@@ -407,12 +465,67 @@ namespace PlcControl
 
         /// <summary>
         /// 2025.3.6 李焕彬
-        /// 写入单个寄存器
+        /// 写入单个寄存器REAL
         /// </summary>
         /// <param name="registerAddress">开始地址</param>
         /// <param name="value">写入数据</param>
         /// <returns></returns>
-        public void WriteSingleRegister(ushort registerAddress, float value)
+        public void WriteSingleRegisterReal(ushort registerAddress, float value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[2];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+                    Data[1] = (ushort)((fData[3] << 8) + fData[2]);
+
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                CMotionCtrlVM.SysLog.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个寄存器INT
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegisterInt16(ushort registerAddress, Int16 value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[1];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                CMotionCtrlVM.SysLog.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个寄存器DINT
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegisterInt32(ushort registerAddress, Int32 value)
         {
             try
             {

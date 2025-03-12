@@ -331,8 +331,14 @@ namespace PlcControl
                     case EMELEMTYPE.EMELEMM:
                         modbusTcp.WriteSingleCoil(reg.Addr, reg.WriteValue == 1);
                         break;
-                    case EMELEMTYPE.EMELEMD:
-                        modbusTcp.WriteSingleRegister(reg.Addr, reg.WriteValue);
+                    case EMELEMTYPE.EMELEMD_REAL:
+                        modbusTcp.WriteSingleRegisterReal(reg.Addr, reg.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_INT:
+                        modbusTcp.WriteSingleRegisterInt16(reg.Addr, (Int16)reg.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_DINT:
+                        modbusTcp.WriteSingleRegisterInt32(reg.Addr, (Int32)reg.WriteValue);
                         break;
                 }
             }
@@ -353,8 +359,20 @@ namespace PlcControl
                 case EMELEMTYPE.EMELEMM:
                     modbusTcp.WriteSingleCoil(registerSet.Addr, registerSet.WriteValue == 1);
                     break;
-                case EMELEMTYPE.EMELEMD:
-                    modbusTcp.WriteSingleRegister(registerSet.Addr, registerSet.WriteValue);
+                case EMELEMTYPE.EMELEMD_REAL:
+                    modbusTcp.WriteSingleRegisterReal(registerSet.Addr, registerSet.WriteValue);
+                    break;
+                case EMELEMTYPE.EMELEMD_INT:
+                    modbusTcp.WriteSingleRegisterInt16(
+                        registerSet.Addr,
+                        (Int16)registerSet.WriteValue
+                    );
+                    break;
+                case EMELEMTYPE.EMELEMD_DINT:
+                    modbusTcp.WriteSingleRegisterInt32(
+                        registerSet.Addr,
+                        (Int32)registerSet.WriteValue
+                    );
                     break;
             }
         }
@@ -392,8 +410,14 @@ namespace PlcControl
                         case EMELEMTYPE.EMELEMM:
                             e.ReadValue = modbusTcp.ReadCoil(e.Addr) ? 1 : 0;
                             break;
-                        case EMELEMTYPE.EMELEMD:
-                            e.ReadValue = modbusTcp.ReadHoldingRegister(e.Addr);
+                        case EMELEMTYPE.EMELEMD_REAL:
+                            e.ReadValue = modbusTcp.ReadHoldingRegisterReal(e.Addr);
+                            break;
+                        case EMELEMTYPE.EMELEMD_INT:
+                            e.ReadValue = modbusTcp.ReadHoldingRegisterInt16(e.Addr);
+                            break;
+                        case EMELEMTYPE.EMELEMD_DINT:
+                            e.ReadValue = modbusTcp.ReadHoldingRegisterInt32(e.Addr);
                             break;
                     }
                 }
