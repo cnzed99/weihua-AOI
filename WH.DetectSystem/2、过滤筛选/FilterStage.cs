@@ -270,20 +270,20 @@ namespace WH.DetectSystem
                                         if (!bResult)
                                         {
                                             selValueALL.AddRange(filtValues);
-                                            if (!once)
-                                            {
-                                                for (int i = 0; i<selValueALL.Count; i++)
-                                                {
-                                                    detection.DetectLog.Add(new StringBuilder(
-                                                    detection.DefectFilter.Name
-                                                    ));
-                                                }
-                                                once = true;
-                                            }
+                                            //if (!once)
+                                            //{
+                                            //    for (int i = 0; i<selValueALL.Count; i++)
+                                            //    {
+                                            //        detection.DetectLog.Add(new StringBuilder(
+                                            //        detection.DefectFilter.Name
+                                            //        ));
+                                            //    }
+                                            //    once = true;
+                                            //}
                                             for (int i = 0; i<selValueALL.Count; i++)
                                             {
                                                 detection.DetectLog.Add(new StringBuilder(
-                                                 $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                                 $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
                                              ));
                                             }
                                             //detection.DetectLog.AppendLine(
