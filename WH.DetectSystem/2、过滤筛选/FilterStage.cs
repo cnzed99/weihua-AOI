@@ -119,23 +119,23 @@ namespace WH.DetectSystem
                                             // detection.regionOut = selRegion;
                                             selRegionALL.AddRange(selRegion);
 
-                                            if (!once)
-                                            {
-                                                for (int i = 0; i < selRegionALL.Count; i++)
-                                                {
-                                                    detection.DetectLog.Add(new StringBuilder(
-                                                    $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
-                                                    ));
-                                                }
-
-                                                once = true;
-                                            }
-                                            //for (int i = 0; i<selRegionALL.Count; i++)
+                                            //if (!once)
                                             //{
-                                            //    detection.DetectLog.Add(new StringBuilder (
-                                            //     $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
-                                            // ));
+                                            //    for (int i = 0; i < selRegionALL.Count; i++)
+                                            //    {
+                                            //        detection.DetectLog.Add(new StringBuilder(
+                                            //        $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
+                                            //        ));
+                                            //    }
+
+                                            //    once = true;
                                             //}
+                                            for (int i = 0; i < selRegionALL.Count; i++)
+                                            {
+                                                detection.DetectLog.Add(new StringBuilder(
+                                                 $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
+                                             ));
+                                            }
                                             //detection.DetectLog.AppendLine(
                                             //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
                                             //);
@@ -270,20 +270,20 @@ namespace WH.DetectSystem
                                         if (!bResult)
                                         {
                                             selValueALL.AddRange(filtValues);
-                                            if (!once)
-                                            {
-                                                for (int i = 0; i<selValueALL.Count; i++)
-                                                {
-                                                    detection.DetectLog.Add(new StringBuilder(
-                                                    detection.DefectFilter.Name
-                                                    ));
-                                                }
-                                                once = true;
-                                            }
+                                            //if (!once)
+                                            //{
+                                            //    for (int i = 0; i<selValueALL.Count; i++)
+                                            //    {
+                                            //        detection.DetectLog.Add(new StringBuilder(
+                                            //        detection.DefectFilter.Name
+                                            //        ));
+                                            //    }
+                                            //    once = true;
+                                            //}
                                             for (int i = 0; i<selValueALL.Count; i++)
                                             {
                                                 detection.DetectLog.Add(new StringBuilder(
-                                                 $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                                 $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
                                              ));
                                             }
                                             //detection.DetectLog.AppendLine(
