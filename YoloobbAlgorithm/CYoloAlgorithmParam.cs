@@ -91,10 +91,10 @@ namespace YoloobbAlgorithm
                         CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
                         cDefectRecipes.Add(defectRecipe);
                     }
-                    CDefectRecipe defectRecipe1 = new CDefectRecipe("分数", Category.值);
-                    cDefectRecipes.Add(defectRecipe1);
+                    //CDefectRecipe defectRecipe1 = new CDefectRecipe("分数", Category.值);
+                    //cDefectRecipes.Add(defectRecipe1);
 
-                    CDefectSpecies defectSpecies = new CDefectSpecies("缺陷类", cDefectRecipes);
+                    CDefectSpecies defectSpecies = new CDefectSpecies("盐水袋", cDefectRecipes);
                     DefectSpecies.Add(defectSpecies);
                 }
 

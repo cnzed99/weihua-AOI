@@ -190,6 +190,8 @@ namespace WH.DetectSystem.Models
                 );
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
+
+
         }
 
         [ObservableProperty]

@@ -135,6 +135,26 @@ namespace 断面毛刺检测软件
                     CMainList.SystemSettings.RecentProjs.ToList(),
                     "断面毛刺检测软件"
                 );
+
+                try
+                {
+                    string pressPath = "./CamTriggerFilter/CamTriggerFilter.exe";
+                    if (File.Exists(pressPath))
+                    {
+                        //Process process = new Process();
+                        //string hh = Path.GetFullPath(pressPath);
+                        //process.StartInfo.FileName = hh;
+                        //process.StartInfo.UseShellExecute = true;
+                        //process.Start();
+                        var Template = Process.Start(Path.GetFullPath(pressPath));
+                    }
+
+                }
+                catch (Exception)
+                {
+                }
+
+
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();
             }
