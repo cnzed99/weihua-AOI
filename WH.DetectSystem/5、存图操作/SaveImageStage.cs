@@ -235,7 +235,7 @@ namespace WH.DetectSystem._5_存图操作
                         {
                             DrawPoints(detection.regionOut[i].points, penDraw);
                             DrawText(
-                                    detection.DetectLog.ToString(),
+                                    detection.DetectLog[i].ToString(),
                                     detection.regionOut[i].GetCenter(),
                                     defectFilter.ShowColor.Brush
                                 );
@@ -266,7 +266,7 @@ namespace WH.DetectSystem._5_存图操作
                         {
                             DrawPoints(cell.Detection.regionOut[i].points, penDraw);
                             DrawText(
-                                   cell.Detection.DetectLog.ToString(),
+                                   cell.Detection.DetectLog[i].ToString(),
                                    cell.Detection.regionOut[i].GetCenter(),
                                    defectFilter.ShowColor.Brush
                                );
@@ -305,7 +305,7 @@ namespace WH.DetectSystem._5_存图操作
             {
                 Directory.CreateDirectory(dirPath);
             }
-            WriteImage(renderTargetBitmap, path, format);
+            WriteImage(renderTargetBitmap, path, ".jpg");
 
             #region 绘制区域、文字方法
             void DrawGeometry(List<Point> points, Pen pen)
@@ -333,7 +333,7 @@ namespace WH.DetectSystem._5_存图操作
                     )
                     {
                         DrawGeometry(region, pen);
-                        region = new List<Point>();
+                       // region = new List<Point>();
                     }
                     region.Add(item);
                 }

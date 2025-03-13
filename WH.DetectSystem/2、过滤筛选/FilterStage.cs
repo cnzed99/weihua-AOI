@@ -124,18 +124,18 @@ namespace WH.DetectSystem
                                                 for (int i = 0; i<selRegionALL.Count; i++)
                                                 {
                                                     detection.DetectLog.Add(new StringBuilder(
-                                                    detection.DefectFilter.Name
-                                                    ));
+                                                    $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n" 
+                                                    ));   
                                                 }
                                                
                                                 once = true;
                                             }
-                                            for (int i = 0; i<selRegionALL.Count; i++)
-                                            {
-                                                detection.DetectLog.Add(new StringBuilder (
-                                                 $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
-                                             ));
-                                            }
+                                            //for (int i = 0; i<selRegionALL.Count; i++)
+                                            //{
+                                            //    detection.DetectLog.Add(new StringBuilder (
+                                            //     $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
+                                            // ));
+                                            //}
                                             //detection.DetectLog.AppendLine(
                                             //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
                                             //);
