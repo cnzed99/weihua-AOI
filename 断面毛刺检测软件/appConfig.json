@@ -1,8 +1,9 @@
 {
   "APP": {
     "Config": {
-      "hasMarkConfig": true,
+      "hasMarkConfig": false,
       "hasFocusConfig": true,
+      "hasMotionConfig": true,
       "IsDark": true
     }
   }

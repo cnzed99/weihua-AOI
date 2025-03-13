@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using DVPCameraType;
-using System.Collections.Concurrent;
-using System.Text;
-using CameraModule;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using CameraModule;
+using DVPCameraType;
 
 namespace DoThinkCam
 {
@@ -22,33 +22,30 @@ namespace DoThinkCam
         /// </summary>
         internal CDoThinkParameterSetting paramSetting { get; set; }
 
-        public CDoThinkCamera() : base()
-        {
-
-        }
+        public CDoThinkCamera()
+            : base() { }
 
         /// <summary>
         /// 相机对象
         /// </summary>
         protected uint CamHandle = 0; //相机句柄
+
         /// <summary>
         /// 相机设备列表
         /// </summary>
-        dvpCameraInfo CameraInfo = new dvpCameraInfo();//相机信息
-
+        dvpCameraInfo CameraInfo = new dvpCameraInfo(); //相机信息
 
         /// <summary>
         /// 回调
         /// </summary>
-        private DVPCamera.dvpStreamCallback ImgCallback;//相机取图回调函数
+        private DVPCamera.dvpStreamCallback ImgCallback; //相机取图回调函数
 
         public IntPtr m_Ptr = new IntPtr();
-
 
         /// <summary>
         /// 初始化相机
         /// </summary>
-        /// <returns></returns>    
+        /// <returns></returns>
         public override bool OpenCamera()
         {
             try
@@ -62,7 +59,6 @@ namespace DoThinkCam
                 {
                     CCameraManagement.CamLogger.Error(Properties.Resources.CameraNotFound);
                     return result;
-
                 }
                 //遍历所有相机
                 for (uint i = 0; i < num; i++)
@@ -81,39 +77,66 @@ namespace DoThinkCam
                         {
                             if (paramSetting.Enable)
                             {
-                                CCameraManagement.CamLogger.Info(Properties.Resources.InitialCamera + paramSetting.SerialNumber);
+                                CCameraManagement.CamLogger.Info(
+                                    Properties.Resources.InitialCamera + paramSetting.SerialNumber
+                                );
 
                                 if (IsValidHandle(CamHandle))
                                 {
                                     CCameraManagement.CamLogger.Error(
-                                        Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.AppearError);
+                                        Properties.Resources.InitialCamera
+                                            + paramSetting.SerialNumber
+                                            + Properties.Resources.AppearError
+                                    );
                                     return result;
-
                                 }
                                 else
                                 {
                                     //status = DVPCamera.dvpOpenByName(FriendlyName, dvpOpenMode.OPEN_NORMAL, ref CamHandle);
-                                    status = DVPCamera.dvpOpen(i, dvpOpenMode.OPEN_NORMAL, ref CamHandle);
+                                    status = DVPCamera.dvpOpen(
+                                        i,
+                                        dvpOpenMode.OPEN_NORMAL,
+                                        ref CamHandle
+                                    );
                                     if (status != dvpStatus.DVP_STATUS_OK)
                                     {
                                         CCameraManagement.CamLogger.Error(
-                                            Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.OpenCameraFailReseason);
+                                            Properties.Resources.InitialCamera
+                                                + paramSetting.SerialNumber
+                                                + Properties.Resources.OpenCameraFailReseason
+                                        );
                                     }
 
                                     ImgCallback += ImageCallbackFunc;
                                     using (Process curProcess = Process.GetCurrentProcess())
                                     using (ProcessModule curModule = curProcess.MainModule)
                                     {
-                                        status = DVPCamera.dvpRegisterStreamCallback(CamHandle, ImgCallback, dvpStreamEvent.STREAM_EVENT_PROCESSED, m_Ptr);
+                                        status = DVPCamera.dvpRegisterStreamCallback(
+                                            CamHandle,
+                                            ImgCallback,
+                                            dvpStreamEvent.STREAM_EVENT_PROCESSED,
+                                            m_Ptr
+                                        );
                                         if (status == dvpStatus.DVP_STATUS_OK)
                                         {
-                                            CCameraManagement.CamLogger.Info(Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.RegisterCallbackFunctionSucess);
+                                            CCameraManagement.CamLogger.Info(
+                                                Properties.Resources.InitialCamera
+                                                    + paramSetting.SerialNumber
+                                                    + Properties
+                                                        .Resources
+                                                        .RegisterCallbackFunctionSucess
+                                            );
                                         }
                                         else
                                         {
-                                            CCameraManagement.CamLogger.Error(Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.RegisterCallbackFunctionFail);
+                                            CCameraManagement.CamLogger.Error(
+                                                Properties.Resources.InitialCamera
+                                                    + paramSetting.SerialNumber
+                                                    + Properties
+                                                        .Resources
+                                                        .RegisterCallbackFunctionFail
+                                            );
                                         }
-
                                     }
                                 }
 
@@ -125,10 +148,14 @@ namespace DoThinkCam
                                 //}
                                 this.Connected = true;
                                 SetPixelFormat();
-                                SetParameters();//设置参数要在采集前
+                                SetParameters(); //设置参数要在采集前
                                 if (!StartGrab())
                                 {
-                                    CCameraManagement.CamLogger.Error(Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.ExecuteStartGrabFail);
+                                    CCameraManagement.CamLogger.Error(
+                                        Properties.Resources.InitialCamera
+                                            + paramSetting.SerialNumber
+                                            + Properties.Resources.ExecuteStartGrabFail
+                                    );
                                     return result;
                                 }
                                 else
@@ -138,13 +165,17 @@ namespace DoThinkCam
                             }
                         }
                     }
-
                 }
                 return result;
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.InitialCamera + paramSetting.SerialNumber + Properties.Resources.AppearError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.InitialCamera
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.AppearError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -154,8 +185,13 @@ namespace DoThinkCam
 
         int inqueue = 0; //回调里入队列计数
 
-
-        private int ImageCallbackFunc(/*dvpHandle*/uint handle, dvpStreamEvent _event, IntPtr pContext, ref dvpFrame refFrame, IntPtr pBuffer)
+        private int ImageCallbackFunc( /*dvpHandle*/
+            uint handle,
+            dvpStreamEvent _event,
+            IntPtr pContext,
+            ref dvpFrame refFrame,
+            IntPtr pBuffer
+        )
         {
             try
             {
@@ -171,17 +207,20 @@ namespace DoThinkCam
                 ImageQueueChannel.Writer.TryWrite(pBuffer);
                 paramSetting.ImageWidth = refFrame.iWidth;
                 paramSetting.ImageHeight = refFrame.iHeight;
-                //paramSetting.CameraType =
-                //    refFrame.enPixelType == MvGvspPixelType.PixelType_Gvsp_Mono8
-                //        ? EMCAMERATYPE.EMCAMTYPEGRAY
-                //        : EMCAMERATYPE.EMCAMTYPECOLOR;
+
+                paramSetting.CameraType =
+                    refFrame.format == dvpImageFormat.FORMAT_MONO
+                        ? EMCAMERATYPE.EMCAMTYPEGRAY
+                        : EMCAMERATYPE.EMCAMTYPECOLOR;
 
                 return 0;
             }
             catch (Exception ex)
             {
                 CCameraManagement.CamLogger.Error(
-                    Properties.Resources.ImageCallbackFuncError + paramSetting.SerialNumber + ex.Message
+                    Properties.Resources.ImageCallbackFuncError
+                        + paramSetting.SerialNumber
+                        + ex.Message
                 );
 
                 return 1;
@@ -211,7 +250,6 @@ namespace DoThinkCam
             }
         }
 
-
         //dvpImageFormat pixelFmt = dvpImageFormat.FORMAT_MONO;
         //public override void ColorimgTransfer(out HObject image, IntPtr grabbedRawData)
         //{
@@ -236,7 +274,7 @@ namespace DoThinkCam
         //            HOperatorSet.GenImageInterleaved(out image, grabbedRawData, "rgb", Width, Height, -1, "byte", 0, 0, 0, 0, -1, 0);
         //            break;
         //    }
-         
+
         //}
 
         /// <summary>
@@ -250,7 +288,11 @@ namespace DoThinkCam
                 {
                     if (IsValidHandle(CamHandle))
                     {
-                        CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber+ Properties.Resources.ExecuteCloseCamera);
+                        CCameraManagement.CamLogger.Info(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteCloseCamera
+                        );
                         if (ImgCallback != null)
                         {
                             ImgCallback -= ImageCallbackFunc;
@@ -260,15 +302,19 @@ namespace DoThinkCam
                         Connected = false;
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteCloseCameraError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteCloseCameraError
+                        + ex.Message
+                );
                 throw;
             }
         }
+
         /// <summary>
         /// 开始采集
         /// </summary>
@@ -282,17 +328,26 @@ namespace DoThinkCam
                 {
                     DVPCamera.dvpStart(CamHandle);
                     result = true;
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteStartGrab);
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteStartGrab
+                    );
                 }
                 return result;
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteStartGrabError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteStartGrabError
+                        + ex.Message
+                );
                 throw;
             }
         }
+
         /// <summary>
         /// 停止采集
         /// </summary>
@@ -306,25 +361,34 @@ namespace DoThinkCam
                     dvpStatus state = DVPCamera.dvpStop(CamHandle);
                     if (state != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteStopGrab);
-
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteStopGrab
+                        );
                     }
                     else
                     {
-                        CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteStopGrabFail);
+                        CCameraManagement.CamLogger.Info(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteStopGrabFail
+                        );
                         result = true;
                     }
-
-
                 }
                 return result;
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteStopGrabError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteStopGrabError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         protected override void SetTriggerMode(EMTRIGGERMODE mode)
@@ -354,11 +418,21 @@ namespace DoThinkCam
                 {
                     if (IsValidHandle(CamHandle))
                     {
-                        CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerModeIs + modle.ToString());
+                        CCameraManagement.CamLogger.Info(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetTriggerModeIs
+                                + modle.ToString()
+                        );
                         dvpStatus status = DVPCamera.dvpSetTriggerState(CamHandle, modle);
                         if (status != dvpStatus.DVP_STATUS_OK)
                         {
-                            CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerModeFail + modle.ToString());
+                            CCameraManagement.CamLogger.Info(
+                                Properties.Resources.CameraSerialNumber
+                                    + paramSetting.SerialNumber
+                                    + Properties.Resources.ExecuteSetTriggerModeFail
+                                    + modle.ToString()
+                            );
                         }
                         bool isOn = false;
                         status = DVPCamera.dvpGetTriggerState(CamHandle, ref isOn);
@@ -379,22 +453,20 @@ namespace DoThinkCam
                         {
                             //paramSetting.TriggerMode = EMTRIGGERMODE.EMTRIGGERNONE;
                         }
-
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerModeError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetTriggerModeError
+                        + ex.Message
+                );
                 throw;
             }
-
-
         }
-
-
 
         /// <summary>
         /// 修改相机外触发源
@@ -405,11 +477,24 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerSourceIs + Convert.ToString(triggerSource));
-                    dvpStatus status = DVPCamera.dvpSetTriggerSource(CamHandle, (dvpTriggerSource)Enum.Parse(typeof(dvpTriggerSource), Convert.ToString(triggerSource)));
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetTriggerSourceIs
+                            + Convert.ToString(triggerSource)
+                    );
+                    dvpStatus status = DVPCamera.dvpSetTriggerSource(
+                        CamHandle,
+                        (dvpTriggerSource)
+                            Enum.Parse(typeof(dvpTriggerSource), Convert.ToString(triggerSource))
+                    );
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerSourceFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetTriggerSourceFail
+                        );
                     }
                     dvpTriggerSource sorue = dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE;
                     status = DVPCamera.dvpGetTriggerSource(CamHandle, ref sorue);
@@ -421,16 +506,18 @@ namespace DoThinkCam
                     {
                         //paramSetting.TriggerMode = EMTRIGGERMODE.EMTRIGGERHARDWARE;
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerSourceError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetTriggerSourceError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         /// <summary>
@@ -460,19 +547,24 @@ namespace DoThinkCam
                             dvpStatus status = DVPCamera.dvpTriggerFire(CamHandle);
                             if (status != dvpStatus.DVP_STATUS_OK)
                             {
-                                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSoftwareTriggerFail);
+                                CCameraManagement.CamLogger.Error(
+                                    Properties.Resources.CameraSerialNumber
+                                        + paramSetting.SerialNumber
+                                        + Properties.Resources.ExecuteSoftwareTriggerFail
+                                );
                             }
                         }
-
                     }
-
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSoftwareTriggerError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSoftwareTriggerError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -490,18 +582,20 @@ namespace DoThinkCam
                     dvpDoubleDescr ExposureInfo = new dvpDoubleDescr();
                     DVPCamera.dvpGetExposureDescr(CamHandle, ref ExposureInfo);
                     min = (int)ExposureInfo.fMin;
-
                 }
                 return min;
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteGetExposureTimeMinError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteGetExposureTimeMinError
+                        + ex.Message
+                );
                 throw;
             }
         }
-
 
         /// <summary>
         /// 获取最大曝光时间
@@ -518,15 +612,18 @@ namespace DoThinkCam
                     max = (int)ExposureInfo.fMax;
                 }
                 return max;
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteGetExposureTimeMaxError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteGetExposureTimeMaxError
+                        + ex.Message
+                );
                 throw;
             }
         }
-
 
         /// <summary>
         /// 2024.8.2 李焕彬
@@ -553,10 +650,14 @@ namespace DoThinkCam
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteGetExposureTimeError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteGetExposureTimeError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         /// <summary>
@@ -566,7 +667,7 @@ namespace DoThinkCam
         /// <param name="value">曝光值</param>
         public override void SetExposureTime(uint value)
         {
-            SetExposureTime(value,4);
+            SetExposureTime(value, 4);
         }
 
         /// <summary>
@@ -580,7 +681,12 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetExposureTime + value);
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetExposureTime
+                            + value
+                    );
                     // dvpStatus status = DVPCamera.dvpSetExposure(CamHandle, (double)value);
                     dvpStatus status;
                     switch (paramSetting.CameraType)
@@ -589,31 +695,71 @@ namespace DoThinkCam
                             switch (Channel)
                             {
                                 case 1:
-                                    status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201000, value);
+                                    status = DVPCamera.dvpWriteGenICamReg(
+                                        CamHandle,
+                                        0x1201000,
+                                        value
+                                    );
                                     if (status != dvpStatus.DVP_STATUS_OK)
                                     {
-                                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetChannel1ExposureTimeFail);
+                                        CCameraManagement.CamLogger.Error(
+                                            Properties.Resources.CameraSerialNumber
+                                                + paramSetting.SerialNumber
+                                                + Properties
+                                                    .Resources
+                                                    .ExecuteSetChannel1ExposureTimeFail
+                                        );
                                     }
                                     break;
                                 case 2:
-                                    status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201004, value);
+                                    status = DVPCamera.dvpWriteGenICamReg(
+                                        CamHandle,
+                                        0x1201004,
+                                        value
+                                    );
                                     if (status != dvpStatus.DVP_STATUS_OK)
                                     {
-                                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetChannel2ExposureTimeFail);
+                                        CCameraManagement.CamLogger.Error(
+                                            Properties.Resources.CameraSerialNumber
+                                                + paramSetting.SerialNumber
+                                                + Properties
+                                                    .Resources
+                                                    .ExecuteSetChannel2ExposureTimeFail
+                                        );
                                     }
                                     break;
                                 case 3:
-                                    status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201008, value);
+                                    status = DVPCamera.dvpWriteGenICamReg(
+                                        CamHandle,
+                                        0x1201008,
+                                        value
+                                    );
                                     if (status != dvpStatus.DVP_STATUS_OK)
                                     {
-                                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetChannel3ExposureTimeFail);
+                                        CCameraManagement.CamLogger.Error(
+                                            Properties.Resources.CameraSerialNumber
+                                                + paramSetting.SerialNumber
+                                                + Properties
+                                                    .Resources
+                                                    .ExecuteSetChannel3ExposureTimeFail
+                                        );
                                     }
                                     break;
                                 case 4:
-                                    status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x120100c, value);
+                                    status = DVPCamera.dvpWriteGenICamReg(
+                                        CamHandle,
+                                        0x120100c,
+                                        value
+                                    );
                                     if (status != dvpStatus.DVP_STATUS_OK)
                                     {
-                                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetChannel4ExposureTimeFail);
+                                        CCameraManagement.CamLogger.Error(
+                                            Properties.Resources.CameraSerialNumber
+                                                + paramSetting.SerialNumber
+                                                + Properties
+                                                    .Resources
+                                                    .ExecuteSetChannel4ExposureTimeFail
+                                        );
                                     }
                                     break;
                             }
@@ -624,22 +770,29 @@ namespace DoThinkCam
                                 status = DVPCamera.dvpSetExposure(CamHandle, (double)value);
                                 if (status != dvpStatus.DVP_STATUS_OK)
                                 {
-                                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetExposureTimeFail);
+                                    CCameraManagement.CamLogger.Error(
+                                        Properties.Resources.CameraSerialNumber
+                                            + paramSetting.SerialNumber
+                                            + Properties.Resources.ExecuteSetExposureTimeFail
+                                    );
                                 }
                             }
                             break;
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetExposureTimeError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetExposureTimeError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
+
         /// <summary>
         /// 2024.8.2 李焕彬
         /// 获取增益值
@@ -663,11 +816,16 @@ namespace DoThinkCam
 
 
                     return false;
-                }             
+                }
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteGetGainError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteGetGainError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -682,20 +840,32 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetGainIs + Value);
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetGainIs
+                            + Value
+                    );
 
                     dvpStatus status = DVPCamera.dvpSetAnalogGain(CamHandle, (float)Value);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetGainFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetGainFail
+                        );
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetGainError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetGainError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -710,23 +880,34 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerDelayIs + value);
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetTriggerDelayIs
+                            + value
+                    );
                     dvpStatus status = DVPCamera.dvpSetTriggerDelay(CamHandle, (double)value);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerDelayFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetTriggerDelayFail
+                        );
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerDelayError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetTriggerDelayError
+                        + ex.Message
+                );
                 throw;
             }
         }
-
 
         /// <summary>
         /// 启用IO输出
@@ -740,7 +921,6 @@ namespace DoThinkCam
                 {
                     //无
                 }
-
             }
             catch (Exception)
             {
@@ -760,15 +940,17 @@ namespace DoThinkCam
                 {
                     //无
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteLineSelectorError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteLineSelectorError
+                        + ex.Message
+                );
                 throw;
             }
-
-
         }
 
         /// <summary>
@@ -781,19 +963,32 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetStrobeDurationValueIs + value + "us");
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetStrobeDurationValueIs
+                            + value
+                            + "us"
+                    );
                     dvpStatus status = DVPCamera.dvpSetStrobeDuration(CamHandle, (double)value);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetStrobeDurationValueFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetStrobeDurationValueFail
+                        );
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetStrobeDurationValueError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetStrobeDurationValueError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -818,18 +1013,35 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSelectOutputTriggerTypeIs + Convert.ToString(source));
-                    dvpStatus status = DVPCamera.dvpSetLineSource(CamHandle, (dvpLine)paramSetting.LineSelect, (dvpLineSource)Enum.Parse(typeof(dvpLineSource), Convert.ToString(source)));
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSelectOutputTriggerTypeIs
+                            + Convert.ToString(source)
+                    );
+                    dvpStatus status = DVPCamera.dvpSetLineSource(
+                        CamHandle,
+                        (dvpLine)paramSetting.LineSelect,
+                        (dvpLineSource)Enum.Parse(typeof(dvpLineSource), Convert.ToString(source))
+                    );
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSelectOutputTriggerTypeFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSelectOutputTriggerTypeFail
+                        );
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSelectOutputTriggerTypeError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSelectOutputTriggerTypeError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -843,18 +1055,34 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteLineInverter);
-                    dvpStatus status = DVPCamera.dvpSetLineInverter(CamHandle, (dvpLine)paramSetting.LineSelect, Enable);
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteLineInverter
+                    );
+                    dvpStatus status = DVPCamera.dvpSetLineInverter(
+                        CamHandle,
+                        (dvpLine)paramSetting.LineSelect,
+                        Enable
+                    );
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteLineInverterFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteLineInverterFail
+                        );
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteLineInverterError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteLineInverterError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -868,18 +1096,37 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetInputOutputMode + paramSetting.LineSelect.ToString() + Properties.Resources.StatueIs + LineMode.ToString());
-                    dvpStatus status = DVPCamera.dvpSetLineMode(CamHandle, (dvpLine)paramSetting.LineSelect, (dvpLineMode)Enum.Parse(typeof(dvpLineMode), Convert.ToString(LineMode)));
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetInputOutputMode
+                            + paramSetting.LineSelect.ToString()
+                            + Properties.Resources.StatueIs
+                            + LineMode.ToString()
+                    );
+                    dvpStatus status = DVPCamera.dvpSetLineMode(
+                        CamHandle,
+                        (dvpLine)paramSetting.LineSelect,
+                        (dvpLineMode)Enum.Parse(typeof(dvpLineMode), Convert.ToString(LineMode))
+                    );
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetInputOutputModeFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExecuteSetInputOutputModeFail
+                        );
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetInputOutputModeError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetInputOutputModeError
+                        + ex.Message
+                );
                 throw;
             }
         }
@@ -921,23 +1168,36 @@ namespace DoThinkCam
                     {
                         return;
                     }
-                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaValueIs + value);
+                    CCameraManagement.CamLogger.Info(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExcuteSetGammaValueIs
+                            + value
+                    );
                     dvpStatus status = DVPCamera.dvpSetGamma(CamHandle, gammavalue);
 
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaValueFail);
-                    }                  
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExcuteSetGammaValueFail
+                        );
+                    }
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaValueError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExcuteSetGammaValueError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
+
         /// <summary>
         /// 设置Gamma使能
         /// </summary>
@@ -948,21 +1208,33 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaEnableIs + Enable.ToString());
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExcuteSetGammaEnableIs
+                            + Enable.ToString()
+                    );
                     dvpStatus status = DVPCamera.dvpSetGammaState(CamHandle, Enable);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
-                        CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaEnableFail);
+                        CCameraManagement.CamLogger.Error(
+                            Properties.Resources.CameraSerialNumber
+                                + paramSetting.SerialNumber
+                                + Properties.Resources.ExcuteSetGammaEnableFail
+                        );
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSetGammaEnableError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExcuteSetGammaEnableError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         /// <summary>
@@ -974,19 +1246,13 @@ namespace DoThinkCam
             try
             {
                 float fps = 0;
-                if (this.Connected)
-                {
-
-                }
+                if (this.Connected) { }
                 return fps;
-
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
 
         /// <summary>
@@ -1005,18 +1271,33 @@ namespace DoThinkCam
                 dvpStatus status = DVPCamera.dvpSetUserSet(CamHandle, dvpUserSet.USER_SET_1);
                 if (status != dvpStatus.DVP_STATUS_OK)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSelectUserSetingPowerOnFail);
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExcuteSelectUserSetingPowerOnFail
+                    );
                 }
                 status = DVPCamera.dvpSaveUserSet(CamHandle, dvpUserSet.USER_SET_1);
                 if (status != dvpStatus.DVP_STATUS_OK)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSaveUserSetingFail);
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExcuteSaveUserSetingFail
+                    );
                 }
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSelectUserSetingUserSet1PowerOnSucess);
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExcuteSaveUserSetingSucess);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExcuteSelectUserSetingUserSet1PowerOnSucess
+                );
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExcuteSaveUserSetingSucess
+                );
             }
         }
-
 
         /// <summary>
         /// 2024.8.2 李焕彬
@@ -1111,23 +1392,30 @@ namespace DoThinkCam
                         case dvpStreamFormat.S_BGR24:
                             paramSetting.CameraType = EMCAMERATYPE.EMCAMTYPECOLOR;
                             break;
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.GetPixelFormatError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.GetPixelFormatError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         public bool SetPixelFormat()
         {
             try
             {
-                dvpStatus status1 = DVPCamera.dvpSetEnumValueByString(CamHandle, "TargetFormat", "RGB24");
+                dvpStatus status1 = DVPCamera.dvpSetEnumValueByString(
+                    CamHandle,
+                    "TargetFormat",
+                    "RGB24"
+                );
                 //dvpStreamFormat refSourceFormat = dvpStreamFormat.S_RAW8;
                 //dvpStatus status1 = DVPCamera.dvpSetSourceFormat(CamHandle, refSourceFormat);
 
@@ -1139,17 +1427,21 @@ namespace DoThinkCam
                 {
                     return true;
                 }
-                else 
+                else
                 {
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.GetPixelFormatError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.GetPixelFormatError
+                        + ex.Message
+                );
                 throw;
             }
-
         }
 
         /// <summary>
@@ -1159,20 +1451,33 @@ namespace DoThinkCam
         {
             try
             {
-                CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetFrameCount + count.ToString());
+                CCameraManagement.CamLogger.Info(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetFrameCount
+                        + count.ToString()
+                );
                 dvpStatus status = DVPCamera.dvpSetFramesPerTrigger(CamHandle, count);
                 if (status != dvpStatus.DVP_STATUS_OK)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetFrameCountFail);
+                    CCameraManagement.CamLogger.Error(
+                        Properties.Resources.CameraSerialNumber
+                            + paramSetting.SerialNumber
+                            + Properties.Resources.ExecuteSetFrameCountFail
+                    );
                 }
             }
             catch (Exception ex)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetFrameCountError + ex.Message);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteSetFrameCountError
+                        + ex.Message
+                );
                 throw;
             }
         }
-
 
         /// <summary>
         /// 启动时设置参数
@@ -1183,12 +1488,10 @@ namespace DoThinkCam
             //SetTriggerMode(this.paramSetting.TriggerMode);
             SetExposureTime(this.paramSetting.ExposureTime, 4);
             SetGain(paramSetting.Gain);
-            //TriggerDelay(this.paramSetting.TriggerDelay);  
+            //TriggerDelay(this.paramSetting.TriggerDelay);
             SetGamma(paramSetting.Gamma);
             GetPixelFormat();
-            
         }
-
 
         /// <summary>
         /// 判读句柄是否有效
@@ -1210,9 +1513,10 @@ namespace DoThinkCam
         /// <summary>
         /// 开灯
         /// </summary>
-        protected  void OpenLight()
+        protected void OpenLight()
         {
-            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY) return;
+            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY)
+                return;
             int[] buffer = new int[2];
             buffer[0] = 0x1100A00;
             buffer[1] = 0xF1;
@@ -1222,15 +1526,21 @@ namespace DoThinkCam
             var status = DVPCamera.dvpSet(CamHandle, 0x1000, pParam, ref size);
             if (status != dvpStatus.DVP_STATUS_OK)
             {
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteOpenLightFail);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteOpenLightFail
+                );
             }
         }
+
         /// <summary>
         /// 关灯
         /// </summary>
         private void CloseLight()
         {
-            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY) return;
+            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY)
+                return;
             int[] buffer = new int[2];
             buffer[0] = 0x1100A00;
             buffer[1] = 0xF0;
@@ -1240,8 +1550,11 @@ namespace DoThinkCam
             var status = DVPCamera.dvpSet(CamHandle, 0x1000, pParam, ref size);
             if (status != dvpStatus.DVP_STATUS_OK)
             {
-                
-                CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteCloseLightFail);
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.CameraSerialNumber
+                        + paramSetting.SerialNumber
+                        + Properties.Resources.ExecuteCloseLightFail
+                );
             }
         }
 
@@ -1253,8 +1566,8 @@ namespace DoThinkCam
 
         public override bool GetTriggerMode(out EMTRIGGERMODE mode)
         {
-            bool refTriggerState=false;
-            var status = DVPCamera.dvpGetTriggerState(CamHandle,ref refTriggerState);
+            bool refTriggerState = false;
+            var status = DVPCamera.dvpGetTriggerState(CamHandle, ref refTriggerState);
             if (status == dvpStatus.DVP_STATUS_OK)
             {
                 if (!refTriggerState)
@@ -1263,7 +1576,7 @@ namespace DoThinkCam
                     return true;
                 }
                 else
-                { 
+                {
                     dvpTriggerSource pTriggerSource = dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE;
                     status = DVPCamera.dvpGetTriggerSource(CamHandle, ref pTriggerSource);
 
@@ -1280,7 +1593,7 @@ namespace DoThinkCam
                             return true;
                         }
                     }
-                    else 
+                    else
                     {
                         mode = EMTRIGGERMODE.EMTRIGGERNONE;
                         return false;
@@ -1291,7 +1604,7 @@ namespace DoThinkCam
             {
                 mode = EMTRIGGERMODE.EMTRIGGERNONE;
                 return false;
-            }                               
+            }
         }
 
         public override bool GetGamma(out float value)
@@ -1307,7 +1620,7 @@ namespace DoThinkCam
             else
             {
                 return false;
-            }          
+            }
         }
 
         public override bool GetTriggerDelay(out uint value)
@@ -1326,10 +1639,7 @@ namespace DoThinkCam
             }
         }
 
-        public override void SetTriggerPulseWidth(uint value)
-        {
-            
-        }
+        public override void SetTriggerPulseWidth(uint value) { }
 
         public override bool GetTriggerPulseWidth(out uint value)
         {
@@ -1337,9 +1647,6 @@ namespace DoThinkCam
             return true;
         }
 
-        public override void SetCustomParam(uint value)
-        {
-
-        }
+        public override void SetCustomParam(uint value) { }
     }
 }

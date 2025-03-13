@@ -142,4 +142,7 @@
   <data name="对焦插件读取失败" xml:space="preserve">
     <value>对焦插件读取失败！</value>
   </data>
+  <data name="控制插件读取失败" xml:space="preserve">
+    <value>控制插件读取失败！</value>
+  </data>
 </root>

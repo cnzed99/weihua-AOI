@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+	</ItemGroup>
+
+</Project>

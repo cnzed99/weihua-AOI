@@ -381,6 +381,7 @@
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
+    <ProjectReference Include="..\Motion\Motion.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
     <ProjectReference Include="..\MySqlOperatesApiWPF\MySqlOperatesApi.csproj" />
     <ProjectReference Include="..\QualityGrade\QualityGrade.csproj" />
@@ -397,7 +398,7 @@
 
   <ItemGroup>
     <None Update="appConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 	

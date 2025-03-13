@@ -124,4 +124,7 @@
   <data name="Focus" xml:space="preserve">
     <value>对焦：</value>
   </data>
+  <data name="Motion" xml:space="preserve">
+    <value>控制：</value>
+  </data>
 </root>

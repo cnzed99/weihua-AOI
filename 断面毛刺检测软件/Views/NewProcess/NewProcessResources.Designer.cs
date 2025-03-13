@@ -124,6 +124,15 @@ namespace 断面毛刺检测软件.Views.NewProcess {
         }
         
         /// <summary>
+        ///   查找类似 控制： 的本地化字符串。
+        /// </summary>
+        public static string Motion {
+            get {
+                return ResourceManager.GetString("Motion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 制程名： 的本地化字符串。
         /// </summary>
         public static string Name {

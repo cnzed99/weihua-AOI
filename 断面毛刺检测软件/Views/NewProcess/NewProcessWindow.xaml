@@ -9,6 +9,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:断面毛刺检测软件.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:motion="clr-namespace:Motion;assembly=Motion"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
@@ -62,6 +63,15 @@
                 SelectedItem="{Binding Focus}"
                 Style="{StaticResource ComboBoxExtend}"
                 Visibility="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
+            <ComboBox
+                Margin="5"
+                hc:TitleElement.Title="{Binding [Motion], Source={x:Static local:CLang.NewProcess}}"
+                hc:TitleElement.TitlePlacement="Left"
+                hc:TitleElement.TitleWidth="80"
+                ItemsSource="{Binding Source={x:Static motion:CMotionManagement.MotionHeper}, Path=Keys}"
+                SelectedItem="{Binding Motion}"
+                Style="{StaticResource ComboBoxExtend}"
+                Visibility="{Binding Source={x:Static motion:CMotionManagement.MotionHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
             <ComboBox
                 Margin="5"
                 hc:TitleElement.Title="{Binding [Group], Source={x:Static local:CLang.NewProcess}}"

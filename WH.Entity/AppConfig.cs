@@ -68,6 +68,29 @@ namespace WH.Entity
         }
 
         /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 是否有plc控制
+        /// </summary>
+        /// <returns></returns>
+        public static bool HasMotionConfig()
+        {
+            try
+            {
+                if (
+                    bool.TryParse(
+                        AppConfig.Config["App:Config:hasMotionConfig"],
+                        out bool hasMotionConfig
+                    ) && hasMotionConfig
+                )
+                {
+                    return true;
+                }
+            }
+            catch (Exception) { }
+            return false;
+        }
+
+        /// <summary>
         /// 2024.10.22 李焕彬
         /// 获取主题是否暗色
         /// </summary>

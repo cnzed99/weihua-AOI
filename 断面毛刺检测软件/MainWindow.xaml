@@ -625,6 +625,14 @@
                             <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
+                    <hc:TabItem
+                        Padding="0"
+                        Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
+                        Visibility="{Binding SelectedProcess.MotionCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
+                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                            <ContentControl Content="{Binding SelectedProcess.MotionCtrlVM.TestControl}" />
+                        </hc:SimplePanel>
+                    </hc:TabItem>
                     <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                             <history:HistoryCtrl x:Name="histable" DataContext="{Binding SelectedProcess.HistoryVM}" />
