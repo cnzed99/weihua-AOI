@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using CommunicationModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using WH.Controls;
-using System.Reflection;
 
 namespace Modbus
 {
@@ -18,9 +18,10 @@ namespace Modbus
     /// 2024.7.21 李焕彬
     /// Modbus通讯参数
     /// </summary>
-    public partial class CModbusSetting: CCommunicationSettingBase
+    public partial class CModbusSetting : CCommunicationSettingBase
     {
-        public CModbusSetting() : base()
+        public CModbusSetting()
+            : base()
         {
             TestElems = new ObservableCollection<CElement>();
         }
@@ -39,7 +40,8 @@ namespace Modbus
     /// </summary>
     public partial class CElement : ConfigModifyObservableBase
     {
-        public CElement() : base()
+        public CElement()
+            : base()
         {
             this.token = new Token("", "CommunicationModule");
         }
@@ -123,23 +125,37 @@ namespace Modbus
     }
 
     /// <summary>
-    /// 2024.7.17 李焕彬
+    /// 2025.3.6 李焕彬
     /// 元件类型
     /// </summary>
     public enum EMELEMTYPE
     {
         /// <summary>
-        /// 2024.7.17 李焕彬
+        /// 2025.3.6 李焕彬
         /// 线圈
         /// </summary>
         [EnumString("线圈", "M")]
         EMELEMM,
 
         /// <summary>
-        /// 2024.7.17 李焕彬
-        /// 寄存器
+        /// 2025.3.6 李焕彬
+        /// 寄存器(REAL)
         /// </summary>
-        [EnumString("寄存器", "D")]
-        EMELEMD,
+        [EnumString("寄存器(REAL)", "D(REAL)")]
+        EMELEMD_REAL,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(INT)
+        /// </summary>
+        [EnumString("寄存器(INT)", "D(INT)")]
+        EMELEMD_INT,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(DINT)
+        /// </summary>
+        [EnumString("寄存器(DINT)", "D(DINT)")]
+        EMELEMD_DINT,
     }
 }

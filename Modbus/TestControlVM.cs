@@ -69,7 +69,7 @@ namespace Modbus
         [RelayCommand]
         public void Add()
         {
-            Config.TestElems.Add(new CElement(Config.token, "Y1", 1));
+            Config.TestElems.Add(new CElement(Config.token, "自定义", 0));
         }
 
         /// <summary>
@@ -88,8 +88,14 @@ namespace Modbus
                         case EMELEMTYPE.EMELEMM:
                             Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
                             break;
-                        case EMELEMTYPE.EMELEMD:
-                            Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
+                        case EMELEMTYPE.EMELEMD_REAL:
+                            Com.WriteSingleRegisterReal(elem.Addr, elem.WriteValue);
+                            break;
+                        case EMELEMTYPE.EMELEMD_INT:
+                            Com.WriteSingleRegisterInt16(elem.Addr, (Int16)elem.WriteValue);
+                            break;
+                        case EMELEMTYPE.EMELEMD_DINT:
+                            Com.WriteSingleRegisterInt32(elem.Addr, (Int32)elem.WriteValue);
                             break;
                     }
                 }
@@ -115,8 +121,14 @@ namespace Modbus
                     case EMELEMTYPE.EMELEMM:
                         Com.WriteSingleCoil(elem.Addr, elem.WriteValue == 1);
                         break;
-                    case EMELEMTYPE.EMELEMD:
-                        Com.WriteSingleRegister(elem.Addr, elem.WriteValue);
+                    case EMELEMTYPE.EMELEMD_REAL:
+                        Com.WriteSingleRegisterReal(elem.Addr, elem.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_INT:
+                        Com.WriteSingleRegisterInt16(elem.Addr, (Int16)elem.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_DINT:
+                        Com.WriteSingleRegisterInt32(elem.Addr, (Int32)elem.WriteValue);
                         break;
                 }
             }

@@ -195,8 +195,14 @@ namespace Modbus
                                     case EMELEMTYPE.EMELEMM:
                                         e.ReadValue = ReadCoil(e.Addr) ? 1 : 0;
                                         break;
-                                    case EMELEMTYPE.EMELEMD:
-                                        e.ReadValue = ReadHoldingRegister(e.Addr);
+                                    case EMELEMTYPE.EMELEMD_REAL:
+                                        e.ReadValue = ReadHoldingRegisterReal(e.Addr);
+                                        break;
+                                    case EMELEMTYPE.EMELEMD_INT:
+                                        e.ReadValue = ReadHoldingRegisterInt16(e.Addr);
+                                        break;
+                                    case EMELEMTYPE.EMELEMD_DINT:
+                                        e.ReadValue = ReadHoldingRegisterInt32(e.Addr);
                                         break;
                                 }
                             }
@@ -215,82 +221,6 @@ namespace Modbus
                     Thread.Sleep(500);
                 }
             }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 读取线圈状态
-        /// </summary>
-        /// <param name="startAddress">开始地址</param>
-        /// <returns>状态</returns>
-        private bool ReadCoil(ushort startAddress)
-        {
-            if (IsConnected)
-            {
-                bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
-                if (bools.Length == 1)
-                {
-                    return bools[0];
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 读取寄存器数据
-        /// </summary>
-        /// <param name="startAddress">开始地址</param>
-        /// <returns>数据</returns>
-        private float ReadHoldingRegister(ushort startAddress)
-        {
-            if (IsConnected)
-            {
-                var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
-                if (value.Length == 2)
-                {
-                    byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
-                    return BitConverter.ToSingle(data, 0);
-                }
-            }
-            return 0;
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 写入单个线圈的数据
-        /// </summary>
-        /// <param name="startAddress">开始地址</param>
-        /// <param name="value">写入数据</param>
-        /// <returns></returns>
-        public void WriteSingleCoil(ushort startAddress, bool value)
-        {
-            if (IsConnected)
-            {
-                master.WriteSingleCoil(slaveAddress, startAddress, value);
-            }
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
-        /// 写入单个寄存器
-        /// </summary>
-        /// <param name="registerAddress">开始地址</param>
-        /// <param name="value">写入数据</param>
-        /// <returns></returns>
-        public void WriteSingleRegister(ushort registerAddress, float value)
-        {
-            if (!IsConnected)
-            {
-                return;
-            }
-            byte[] fData = BitConverter.GetBytes(value);
-            ushort[] Data = new ushort[2];
-            Data[0] = (ushort)((fData[1] << 8) + fData[0]);
-            Data[1] = (ushort)((fData[3] << 8) + fData[2]);
-
-            master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
         }
 
         /// <summary>
@@ -328,10 +258,230 @@ namespace Modbus
                     case EMELEMTYPE.EMELEMM:
                         WriteSingleCoil(element.Addr, element.WriteValue >= 1);
                         break;
-                    case EMELEMTYPE.EMELEMD:
-                        WriteSingleRegister(element.Addr, element.WriteValue);
+                    case EMELEMTYPE.EMELEMD_REAL:
+                        WriteSingleRegisterReal(element.Addr, element.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_INT:
+                        WriteSingleRegisterInt16(element.Addr, (Int16)element.WriteValue);
+                        break;
+                    case EMELEMTYPE.EMELEMD_DINT:
+                        WriteSingleRegisterInt32(element.Addr, (Int32)element.WriteValue);
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取线圈状态
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>状态</returns>
+        public bool ReadCoil(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
+                    if (bools.Length == 1)
+                    {
+                        return bools[0];
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public float ReadHoldingRegisterReal(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
+                    if (value.Length == 2)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
+                        return BitConverter.ToSingle(data, 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public Int16 ReadHoldingRegisterInt16(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 1);
+                    if (value.Length == 1)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0]);
+                        return BitConverter.ToInt16(data, 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 读取寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <returns>数据</returns>
+        public Int32 ReadHoldingRegisterInt32(ushort startAddress)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
+                    if (value.Length == 2)
+                    {
+                        byte[] data = BitConverter.GetBytes(value[0] + (value[1] << 16));
+                        return BitConverter.ToInt32(data, 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个线圈的数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleCoil(ushort startAddress, bool value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    master.WriteSingleCoil(slaveAddress, startAddress, value);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个寄存器REAL
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegisterReal(ushort registerAddress, float value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[2];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+                    Data[1] = (ushort)((fData[3] << 8) + fData[2]);
+
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个寄存器INT
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegisterInt16(ushort registerAddress, Int16 value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[1];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 写入单个寄存器DINT
+        /// </summary>
+        /// <param name="registerAddress">开始地址</param>
+        /// <param name="value">写入数据</param>
+        /// <returns></returns>
+        public void WriteSingleRegisterInt32(ushort registerAddress, Int32 value)
+        {
+            try
+            {
+                if (tcpClient.Connected)
+                {
+                    byte[] fData = BitConverter.GetBytes(value);
+                    ushort[] Data = new ushort[2];
+                    Data[0] = (ushort)((fData[1] << 8) + fData[0]);
+                    Data[1] = (ushort)((fData[3] << 8) + fData[2]);
+
+                    master.WriteMultipleRegisters(slaveAddress, registerAddress, Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
             }
         }
     }
