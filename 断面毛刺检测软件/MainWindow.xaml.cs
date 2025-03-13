@@ -43,15 +43,17 @@ namespace 断面毛刺检测软件
     /// </summary>
     public partial class MainWindow : HandyControl.Controls.Window, IRecipient<AlarmPopMessage>
     {
-        IObservable<Unit> StartStopSource;
-        CMainModelsModelVM CMainList;
-        CProgress<string> progress;
-        CLogRec SysLog;
-        CLogRec OperateLog;
+        private IObservable<Unit> StartStopSource;
+        private CMainModelsModelVM CMainList;
+        private CProgress<string> progress;
+        private CLogRec SysLog;
+        private CLogRec OperateLog;
 
         #region 初始化 加载
+
         public MainWindow()
         {
+            WH.Load.Loadkey.GetNumber(); //加密用
             InitializeComponent();
             CMainList = App.Container.Resolve<CMainModelsModelVM>();
             CMainModelsModelVM.Dispatcher = this.Dispatcher;
@@ -148,12 +150,8 @@ namespace 断面毛刺检测软件
                         //process.Start();
                         var Template = Process.Start(Path.GetFullPath(pressPath));
                     }
-
                 }
-                catch (Exception)
-                {
-                }
-
+                catch (Exception) { }
 
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();
@@ -182,10 +180,12 @@ namespace 断面毛刺检测软件
                     //this.Visible = true;
                     //新建项目ToolStripMenuItem_Click(null, null);
                     break;
+
                 case "openfile": //打开项目
                     //this.Visible = true;
                     OpenProj_Click(null, null);
                     break;
+
                 default: //默认 打开最近项目
 
                     await OpenProjAsync(act);
@@ -193,9 +193,11 @@ namespace 断面毛刺检测软件
             }
             //this.WindowState = WindowState.Normal;
         }
-        #endregion
+
+        #endregion 初始化 加载
 
         #region 用户登录
+
         private void btn_UserLogin_Click(object sender, RoutedEventArgs e)
         {
             LoginPage UserInfoFrm = new LoginPage(CMainList.LoginViewModel);
@@ -204,7 +206,7 @@ namespace 断面毛刺检测软件
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
         }
 
-        #endregion
+        #endregion 用户登录
 
         #region 窗体关闭
 
@@ -248,7 +250,7 @@ namespace 断面毛刺检测软件
             }
         }
 
-        #endregion
+        #endregion 窗体关闭
 
         #region 新建 打开 最近打开 另存 保存
 
@@ -276,9 +278,11 @@ namespace 断面毛刺检测软件
                 }
             }
         }
-        #endregion
+
+        #endregion 新建工程
 
         #region 打开
+
         private async void OpenProj_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -302,16 +306,19 @@ namespace 断面毛刺检测软件
             }
         }
 
-        #endregion
+        #endregion 打开
 
         #region 保存
+
         private void SaveCurrentProj_Click(object sender, RoutedEventArgs e)
         {
             SaveProj();
         }
-        #endregion
+
+        #endregion 保存
 
         #region 另存为
+
         private async void SaveAs_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -338,9 +345,11 @@ namespace 断面毛刺检测软件
                 progress.Report("Loaded!");
             }
         }
-        #endregion
+
+        #endregion 另存为
 
         #region 修改工程
+
         private void ModifyProj_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(CMainList.ProjPath))
@@ -349,9 +358,11 @@ namespace 断面毛刺检测软件
             OperateLog.Info(Properties.Resources.ModifyProj);
             modifyProj.ShowDialog();
         }
-        #endregion
+
+        #endregion 修改工程
 
         #region 最近打开
+
         private async void Recent_Click(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is MenuItem { Header: string header })
@@ -391,9 +402,11 @@ namespace 断面毛刺检测软件
                 }
             }
         }
-        #endregion
+
+        #endregion 最近打开
 
         #region 新增制程
+
         private void AddProcess_Click(object sender, RoutedEventArgs e)
         {
             NewProcessWindow newProcess = App.Container.Resolve<Lazy<NewProcessWindow>>().Value;
@@ -412,7 +425,8 @@ namespace 断面毛刺检测软件
                 finally { }
             }
         }
-        #endregion
+
+        #endregion 新增制程
 
         private async Task OpenProjAsync(string header)
         {
@@ -452,9 +466,11 @@ namespace 断面毛刺检测软件
                 Growl.Warning(Properties.Resources.SaveFailed + "\r\n" + exception.Message);
             }
         }
-        #endregion
+
+        #endregion 新建 打开 最近打开 另存 保存
 
         #region 语言切换
+
         private void Lang_Checked(object sender, RoutedEventArgs e)
         {
             //var languageCode = "zh-CN";
@@ -468,7 +484,7 @@ namespace 断面毛刺检测软件
             //LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
         }
 
-        #endregion
+        #endregion 语言切换
 
         #region 截屏保存
 
@@ -515,7 +531,8 @@ namespace 断面毛刺检测软件
                 );
             }
         }
-        #endregion
+
+        #endregion 截屏保存
 
         #region 系统设置
 
@@ -529,9 +546,11 @@ namespace 断面毛刺检测软件
             SysSetWindow.Activate();
             OperateLog.Info(Properties.Resources.SystemSettings);
         }
-        #endregion
+
+        #endregion 系统设置
 
         #region 存图设置
+
         private void SaveImageSetting_Click(object sender, RoutedEventArgs e)
         {
             CSaveImageSetFrm saveImageWindow = App
@@ -543,10 +562,12 @@ namespace 断面毛刺检测软件
             saveImageWindow.Activate();
             OperateLog.Info(Properties.Resources.ImageSave);
         }
-        #endregion
+
+        #endregion 存图设置
 
         #region 离线测试 手动调试
-        List<bool> switches = new List<bool>();
+
+        private List<bool> switches = new List<bool>();
 
         private void OffLineTest_Click(object sender, RoutedEventArgs e)
         {
@@ -587,9 +608,10 @@ namespace 断面毛刺检测软件
             }
         }
 
-        #endregion
+        #endregion 离线测试 手动调试
 
         #region 数据库设置
+
         private void Mysql_Click(object sender, RoutedEventArgs e)
         {
             SQLSetWindow sqlSetwindow = App.Container.Resolve<Lazy<SQLSetWindow>>().Value;
@@ -599,9 +621,11 @@ namespace 断面毛刺检测软件
             sqlSetwindow.Activate();
             OperateLog.Info(Properties.Resources.DataStatistics);
         }
-        #endregion
+
+        #endregion 数据库设置
 
         #region 数据查看
+
         private void DataQuery_Click(object sender, RoutedEventArgs e)
         {
             DataQueryWindow sqlSetwindow = App.Container.Resolve<Lazy<DataQueryWindow>>().Value;
@@ -624,9 +648,11 @@ namespace 断面毛刺检测软件
             sqlSetwindow.Activate();
             OperateLog.Info(Properties.Resources.DataStatistics);
         }
-        #endregion
+
+        #endregion 数据查看
 
         #region 数据清空
+
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -657,9 +683,11 @@ namespace 断面毛刺检测软件
                 Growl.Error(Properties.Resources.DataClear + "\r\n" + ex.Message);
             }
         }
-        #endregion
+
+        #endregion 数据清空
 
         #region 相机通讯光控
+
         //相机设置
         private void CamSet_Click(object sender, RoutedEventArgs e)
         {
@@ -754,23 +782,27 @@ namespace 断面毛刺检测软件
             addlight.Activate();
         }
 
-        #endregion
+        #endregion 相机通讯光控
 
         #region 关于
+
         //关于
         private void About_Click(object sender, RoutedEventArgs e)
         {
             About about = new About();
             about.ShowDialog();
         }
-        #endregion
+
+        #endregion 关于
 
         #region 清空Growl消息
+
         private void ClearGrowlMessage_Click(object sender, RoutedEventArgs e)
         {
             Growl.Clear();
         }
-        #endregion
+
+        #endregion 清空Growl消息
 
         #region 消息通道处理
 
@@ -797,7 +829,7 @@ namespace 断面毛刺检测软件
             );
         }
 
-        #endregion
+        #endregion 消息通道处理
 
         /// <summary>
         /// 2024.9.5 李焕彬
