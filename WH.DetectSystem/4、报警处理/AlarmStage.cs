@@ -80,11 +80,11 @@ namespace WH.DetectSystem._4_报警处理
                 switch (alarm.Type)
                 {
                     case ALARMTYPE.ALARMTYPE_GRADE:
-                        if (cell.Quality == alarm.Source)
+                        if ((Quality)alarm.Source==(Quality)cell.Quality )
                             alarm.TotalNG++;
                         break;
                     case ALARMTYPE.ALARMTYPE_DEFECT:
-                        if (cell.Detection.DefectFilter == alarm.Source)
+                        if (alarm.Source == cell.Detection.DefectFilter )
                             alarm.TotalNG++;
                         break;
                 }

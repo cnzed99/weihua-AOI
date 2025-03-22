@@ -655,10 +655,15 @@ namespace WH.DetectSystem.Models
                             MaociDefectsProduce.Excute(cell);
                             if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
                             {
+                                object objAlarmLock = new object(); //报警监控用
                                 ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
                                 if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
                                 {
                                     //cell.Dispose();
+                                }
+                                lock (objAlarmLock)
+                                {
+                                    MaociAlarmSetConfig.Excute(cell);
                                 }
                             }
                         }
@@ -1018,7 +1023,7 @@ namespace WH.DetectSystem.Models
             Task dataBaseTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                object objAlarmLock = new object(); //报警监控用
+                //object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
@@ -1066,10 +1071,10 @@ namespace WH.DetectSystem.Models
                     #region 报警
                     try
                     {
-                        lock (objAlarmLock)
-                        {
-                            MaociAlarmSetConfig.Excute(cell);
-                        }
+                        //lock (objAlarmLock)
+                        //{
+                        //    MaociAlarmSetConfig.Excute(cell);
+                        //}
                     }
                     catch (Exception ex)
                     {
