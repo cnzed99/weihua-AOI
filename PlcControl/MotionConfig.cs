@@ -114,8 +114,13 @@ namespace PlcControl
         [property: Category("1.连接信息")]
         [property: DisplayName("12.Port")]
         [property: Description("12.Port")]
-        private int port = 502;
+        private int port = 502; 
 
+        [ObservableProperty]
+        [property: Category("2.启动交互")]
+        [property: DisplayName("21.AddrStart")]
+        [property: Description("22.AddrStart")]
+        private ushort addrStartMotion = 484;
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 输入信号

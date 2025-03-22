@@ -39,6 +39,7 @@ namespace PlcControl
             }
             CModbusTcp modbus = new CModbusTcp(ip, port);
             s_modbusTcps.Add(modbus);
+            
             return modbus;
         }
 
@@ -125,6 +126,7 @@ namespace PlcControl
             this.ip = ip;
             this.port = port;
             ConnectToPLC();
+            
         }
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace PlcControl
                 }
             });
         }
-
+        
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 实时刷新数据
@@ -453,7 +455,8 @@ namespace PlcControl
             {
                 if (tcpClient.Connected)
                 {
-                    master.WriteSingleCoil(slaveAddress, startAddress, value);
+                    bool[] data = new bool[1] { value };
+                    master.WriteMultipleCoils(slaveAddress, startAddress, data);
                 }
             }
             catch (Exception ex)

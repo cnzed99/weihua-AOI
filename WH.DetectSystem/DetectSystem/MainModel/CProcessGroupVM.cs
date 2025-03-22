@@ -156,10 +156,8 @@ namespace WH.DetectSystem.Models
                 }
                 foreach (var item in CMainModels)
                 {
-                    if (
-                        Cells.FindIndex(c => c.Cell.ProjGuid == item.GUID && c.Cell.ID == CellIn.ID)
-                        < 0
-                    )
+                    int tempIndex = Cells.FindIndex(c => c.Cell.ProjGuid == item.GUID && c.Cell.ID == CellIn.ID);
+                    if (tempIndex < 0)
                         return false;
                 }
                 foreach (var item in CMainModels)

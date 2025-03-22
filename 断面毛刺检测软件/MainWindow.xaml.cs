@@ -52,6 +52,8 @@ namespace 断面毛刺检测软件
         #region 初始化 加载
         public MainWindow()
         {
+            WH.Load.Loadkey.GetNumber();
+            AddAssemblyPath();
             InitializeComponent();
             CMainList = App.Container.Resolve<CMainModelsModelVM>();
             CMainModelsModelVM.Dispatcher = this.Dispatcher;
@@ -59,7 +61,38 @@ namespace 断面毛刺检测软件
             OperateLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
             SysLog.Info(Properties.Resources.OpenSoftware);
         }
+        public void AddAssemblyPath()
+        {
+            string[] pathes = new string[]
+            {
+        "AlgorithmPlug",
+        "CamPlug",
+        "ComPlug",
+        "FocusPlug",
+        "LightPlug",
+        "MotionPlug"
+            };
+            List<string> allDirectories = new List<string>();
+            foreach (string s in pathes)
+            {
+                string pluginFolder = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    s
+                );
 
+                // 递归获取所有子目录
+                allDirectories.AddRange(
+                    Directory.GetDirectories(pluginFolder, "*", SearchOption.AllDirectories)
+                );
+            }
+            // 将子目录添加到 PATH 环境变量
+            string path = Environment.GetEnvironmentVariable("PATH");
+            foreach (var directory in allDirectories)
+            {
+                path += ";" + directory;
+            }
+            Environment.SetEnvironmentVariable("PATH", path);
+        }
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             progress = new CProgress<string>(
@@ -133,7 +166,7 @@ namespace 断面毛刺检测软件
                 ((IProgress<string>)progress).Report("Loaded!");
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
-                    "断面毛刺检测软件"
+                    "智能视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();

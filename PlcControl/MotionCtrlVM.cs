@@ -49,7 +49,7 @@ namespace PlcControl
         public override void SetRunning(bool isRuning)
         {
             base.SetRunning(isRuning);
-            //modbusTcp?.WriteSingleCoil(MotionConfig.AddrStartMotion, isRuning);
+            modbusTcp?.WriteSingleCoil(MotionConfig.AddrStartMotion, isRuning);
         }
 
         /// <summary>

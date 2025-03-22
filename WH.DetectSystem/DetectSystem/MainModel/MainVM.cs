@@ -909,6 +909,18 @@ namespace WH.DetectSystem.Models
                                                 false
                                             );
                                         }
+
+                                        //2025.01.09 易群生
+                                        //在识别到的字符附近区域显示识别到的字符
+                                        if (cell.OcrResultString != "")
+                                        {
+                                            drawView.SetFontSize(20);
+                                            drawView.SetFontBrush(Brushes.Red);
+                                            drawView.ImgDrawText(cell.OcrResultString,
+                                                10, Math.Max(cell.DrawEdges[0].Points[0].Y - 100,10), false);
+
+                                        }
+
                                         drawView.Invalidate();
                                     });
                                 }

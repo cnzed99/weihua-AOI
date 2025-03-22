@@ -129,17 +129,31 @@ namespace Modbus
     public enum EMELEMTYPE
     {
         /// <summary>
-        /// 2024.7.17 李焕彬
+        /// 2025.3.6 李焕彬
         /// 线圈
         /// </summary>
         [EnumString("线圈", "M")]
         EMELEMM,
 
         /// <summary>
-        /// 2024.7.17 李焕彬
-        /// 寄存器
+        /// 2025.3.6 李焕彬
+        /// 寄存器(REAL)
         /// </summary>
-        [EnumString("寄存器", "D")]
-        EMELEMD,
+        [EnumString("寄存器(REAL)", "D(REAL)")]
+        EMELEMD_REAL,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(INT)
+        /// </summary>
+        [EnumString("寄存器(INT)", "D(INT)")]
+        EMELEMD_INT,
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 寄存器(DINT)
+        /// </summary>
+        [EnumString("寄存器(DINT)", "D(DINT)")]
+        EMELEMD_DINT,
     }
 }

@@ -763,7 +763,7 @@
             Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
             <hc:AnimationPath
                 Width="300"
-                Data="{DynamicResource logo}"
+                Data="{StaticResource starGeometry}"
                 IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
                 PathLength="400"
                 Stretch="Uniform"

@@ -194,6 +194,11 @@ namespace CameraModule
         public bool Connected { get; set; } = false;
 
         /// <summary>
+        /// 拍照通知图像转换
+        /// </summary>
+        public ManualResetEvent PhotoManualResetEvent = new ManualResetEvent(false);
+
+        /// <summary>
         /// 李焕彬 2024.7.24
         /// 丢帧图像
         /// </summary>
@@ -286,6 +291,7 @@ namespace CameraModule
                     ? PixelFormats.Gray8
                     : PixelFormats.Rgb24
             );
+
             ExportImage(image);
 
             return true;
@@ -303,6 +309,7 @@ namespace CameraModule
             {
                 try
                 {
+                    PhotoManualResetEvent.WaitOne();
                     if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
                     {
                         if (startGrabSoft)
@@ -335,8 +342,11 @@ namespace CameraModule
                             GetImageFunc(ptr);
                         }
                     }
+                    //Thread.Sleep(3);
                 }
                 catch (Exception) { }
+
+                PhotoManualResetEvent.Reset();
             }
         }
 
@@ -358,6 +368,8 @@ namespace CameraModule
                     CamName = Setting.Name,
                     MmPerPixel = Setting.MmPerPixel,
                 };
+
+
                 //需要增加判断是否是运行模式
                 if (IsSetWindowShowed)
                 {
