@@ -129,7 +129,7 @@
             Content=""
             Foreground="{x:Null}">
             <Label.Background>
-                <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" Stretch="Uniform" />
+                <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/华盛控logo.png" Stretch="Uniform" />
             </Label.Background>
         </Label>
         <Grid

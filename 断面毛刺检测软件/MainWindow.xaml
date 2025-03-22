@@ -275,10 +275,10 @@
         <!--  次菜单栏  -->
         <DockPanel Grid.Row="0">
             <StackPanel Width="150" HorizontalAlignment="Left">
-                <Image
+                <Image 
                     Margin="5"
                     HorizontalAlignment="Left"
-                    Source="/Resources/组合-2.png" />
+                    Source="/Resources/华盛控logo.png" />
                 <TextBlock HorizontalAlignment="Center" Text="{Binding version, StringFormat='{}Version:{0}'}" />
             </StackPanel>
             <Grid>
@@ -753,7 +753,7 @@
             VerticalAlignment="Center"
             d:Visibility="visible"
             Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
-            <hc:AnimationPath
+            <!--<hc:AnimationPath
                 Width="300"
                 Data="{DynamicResource logo}"
                 IsPlaying="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}"
@@ -761,7 +761,7 @@
                 Stretch="Uniform"
                 Stroke="{DynamicResource LoadingPathBrush}"
                 StrokeThickness="1"
-                Duration="00:00:5" />
+                Duration="00:00:5" />-->
             <TextBlock
                 Name="LoadProgressBar"
                 Margin="0,10"

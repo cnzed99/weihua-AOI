@@ -8,6 +8,7 @@
     <None Remove="Controls\UserLogin\Imgs\logogreen.png" />
     <None Remove="Controls\UserLogin\Imgs\任务栏1.ico" />
     <None Remove="Controls\UserLogin\Imgs\任务栏2.ico" />
+    <None Remove="Controls\UserLogin\Imgs\华盛控logo.png" />
     <None Remove="Controls\UserLogin\Imgs\售后.png" />
     <None Remove="Controls\UserLogin\Imgs\工程师.png" />
     <None Remove="Controls\UserLogin\Imgs\工艺.png" />
@@ -43,6 +44,7 @@
     <Resource Include="Controls\UserLogin\Imgs\logogreen.png" />
     <Resource Include="Controls\UserLogin\Imgs\任务栏1.ico" />
     <Resource Include="Controls\UserLogin\Imgs\任务栏2.ico" />
+    <Resource Include="Controls\UserLogin\Imgs\华盛控logo.png" />
     <Resource Include="Controls\UserLogin\Imgs\售后.png" />
     <Resource Include="Controls\UserLogin\Imgs\工程师.png" />
     <Resource Include="Controls\UserLogin\Imgs\工艺.png" />

@@ -160,7 +160,7 @@
             Margin="20,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Source="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" />
+            Source="/WH.Controls;component/Controls/UserLogin/Imgs/华盛控logo.png" />
 
         <TextBlock
             Width="200"
