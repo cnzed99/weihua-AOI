@@ -114,7 +114,6 @@
                         <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
                     </hc:PasswordBox.InputBindings>
                 </hc:PasswordBox>
-
             </DockPanel>
             <DockPanel>
                 <TextBlock
@@ -153,14 +152,12 @@
             </UniformGrid>
         </hc:UniformSpacingPanel>
 
-
-
         <Image
             Height="42"
             Margin="20,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Source="/WH.Controls;component/Controls/UserLogin/Imgs/华盛控logo.png" />
+            Source="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" />
 
         <TextBlock
             Width="200"
@@ -172,7 +169,5 @@
             Text="{Binding ErrorMsg}"
             TextAlignment="Right"
             TextWrapping="Wrap" />
-
-
     </Grid>
 </Window>

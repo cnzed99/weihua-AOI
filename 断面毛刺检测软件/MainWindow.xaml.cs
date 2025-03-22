@@ -11,6 +11,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using AlarmSetCtrl;
 using Autofac;
 using CameraModule;
@@ -54,12 +55,46 @@ namespace 断面毛刺检测软件
         public MainWindow()
         {
             WH.Load.Loadkey.GetNumber(); //加密用
+            AddAssemblyPath();
             InitializeComponent();
             CMainList = App.Container.Resolve<CMainModelsModelVM>();
             CMainModelsModelVM.Dispatcher = this.Dispatcher;
             SysLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_SYS);
             OperateLog = App.Container.ResolveKeyed<CLogRec>(LOGTYPE.LOGTYPE_OPERATE);
             SysLog.Info(Properties.Resources.OpenSoftware);
+        }
+
+        public void AddAssemblyPath()
+        {
+            string[] pathes = new string[]
+            {
+                "AlgorithmPlug",
+                "CamPlug",
+                "ComPlug",
+                "FocusPlug",
+                "LightPlug",
+                "MotionPlug"
+            };
+            List<string> allDirectories = new List<string>();
+            foreach (string s in pathes)
+            {
+                string pluginFolder = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    s
+                );
+
+                // 递归获取所有子目录
+                allDirectories.AddRange(
+                    Directory.GetDirectories(pluginFolder, "*", SearchOption.AllDirectories)
+                );
+            }
+            // 将子目录添加到 PATH 环境变量
+            string path = Environment.GetEnvironmentVariable("PATH");
+            foreach (var directory in allDirectories)
+            {
+                path += ";" + directory;
+            }
+            Environment.SetEnvironmentVariable("PATH", path);
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -148,7 +183,7 @@ namespace 断面毛刺检测软件
                         //process.StartInfo.FileName = hh;
                         //process.StartInfo.UseShellExecute = true;
                         //process.Start();
-                        var Template = Process.Start(Path.GetFullPath(pressPath));
+                        var Template = Process.Start(System.IO.Path.GetFullPath(pressPath));
                     }
                 }
                 catch (Exception) { }
