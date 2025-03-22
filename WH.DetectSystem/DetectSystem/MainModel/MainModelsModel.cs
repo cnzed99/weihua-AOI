@@ -20,14 +20,14 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         /// 工程名
         /// </summary>
         [ObservableProperty]
-        string name = "毛刺检测";
+        private string name = "视觉检测";
 
         /// <summary>
         /// 2024.9.2 李焕彬
         /// 制程组
         /// </summary>
         [ObservableProperty]
-        ObservableCollection<CProcessGroupModel> cProcessGroups =
+        private ObservableCollection<CProcessGroupModel> cProcessGroups =
             new ObservableCollection<CProcessGroupModel>();
     }
 }

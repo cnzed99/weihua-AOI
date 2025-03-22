@@ -41,7 +41,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         [JsonProperty]
-        string algorithm = "算法";
+        private string algorithm = "算法";
 
         /// <summary>
         /// 2024.9.29 李焕彬
@@ -49,7 +49,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         [JsonProperty]
-        string focus = "对焦方法";
+        private string focus = "对焦方法";
 
         /// <summary>
         /// 2025.3.6 李焕彬
@@ -57,7 +57,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         [JsonProperty]
-        string motion = "控制方法";
+        private string motion = "控制方法";
 
         /// <summary>
         /// 2024.9.2 李焕彬
@@ -65,18 +65,17 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         [JsonProperty]
-        string name = "毛刺检测";
+        private string name = "检测制程";
 
         [ObservableProperty]
         [JsonProperty]
-        List<string> testImgFiles = new List<string>();
+        private List<string> testImgFiles = new List<string>();
 
         /// <summary>
         /// 20240706 TCG
         /// 算法参数
         /// </summary>
         [JsonProperty(Order = 1)]
-        //[JsonConverter(typeof(CAlgorithmParamConverter))]
         public CAlgorithmParamBase MaociAlgorParamConfig { get; set; }
 
         /// <summary>
@@ -141,8 +140,9 @@ namespace WH.DetectSystem.Models
         /// 修改消息通道令牌
         /// </summary>
         [JsonProperty]
-        Token token;
+        private Token token;
 
-        public CMainModel() { }
+        public CMainModel()
+        { }
     }
 }
