@@ -370,10 +370,7 @@ namespace WH.RecipeCellRootBase
                     encoder.Save(stream);
                 }
             }
-            catch (Exception ex)
-            {
-
-            }
+            catch (Exception ex) { }
         }
     }
 
@@ -568,7 +565,7 @@ namespace WH.RecipeCellRootBase
     public struct SRegion
     {
         public Rect rect;
-        
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 区域信息
@@ -588,9 +585,9 @@ namespace WH.RecipeCellRootBase
             if (_points.Count > 0)
             {
                 rect = new Rect(
-                                new Point(points.Select(o => o.X).Min(), points.Select(o => o.Y).Min()),
-                                new Point(points.Select(o => o.X).Max(), points.Select(o => o.Y).Max())
-                            );
+                    new Point(points.Select(o => o.X).Min(), points.Select(o => o.Y).Min()),
+                    new Point(points.Select(o => o.X).Max(), points.Select(o => o.Y).Max())
+                );
             }
             else
             {

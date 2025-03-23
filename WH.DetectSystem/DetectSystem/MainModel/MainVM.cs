@@ -797,8 +797,25 @@ namespace WH.DetectSystem.Models
                                         drawView.Clear(false);
                                         foreach (var edge in cell.DrawEdges)
                                         {
-                                            drawView.SetPen(edge.BrushDraw);
-                                            drawView.ImgDrawPoints(edge.Points, false);
+                                            switch (edge.DrawType)
+                                            {
+                                                case EMDRAWTYPE.EMDRAWTYPE_POINTS:
+                                                    drawView.SetPen(edge.BrushDraw);
+                                                    drawView.ImgDrawPoints(edge.Points, false);
+                                                    break;
+                                                case EMDRAWTYPE.EMDRAWTYPE_REGION:
+                                                    drawView.SetPen(edge.BrushDraw);
+                                                    drawView.ImgDrawRegion(edge.Points, false);
+                                                    break;
+                                                case EMDRAWTYPE.EMDRAWTYPE_Text:
+                                                    drawView.SetFontBrush(edge.BrushDraw);
+                                                    drawView.ImgDrawText(
+                                                        edge.Text,
+                                                        edge.TextPos,
+                                                        false
+                                                    );
+                                                    break;
+                                            }
                                         }
                                         if (!cell.IsOK)
                                         {

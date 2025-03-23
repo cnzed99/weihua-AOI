@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using WH.Entity.Attribute;
 using WH.RecipeCellRootBase;
 
 namespace WH.RunCell
@@ -427,16 +428,71 @@ namespace WH.RunCell
     }
 
     /// <summary>
+    /// 2025.3.23 李焕彬
+    /// 绘制区域类型
+    /// </summary>
+    public enum EMDRAWTYPE
+    {
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 不闭合区域
+        /// </summary>
+        [EnumString("不连贯区域", "Points")]
+        EMDRAWTYPE_POINTS,
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 闭合区域
+        /// </summary>
+        [EnumString("连贯区域", "Region")]
+        EMDRAWTYPE_REGION,
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 文字
+        /// </summary>
+        [EnumString("文字", "Text")]
+        EMDRAWTYPE_Text,
+    }
+
+    /// <summary>
     /// 2024.9.6 李焕彬
     /// 绘制区域，含绘制颜色
     /// </summary>
     public class CEdgeDraw
     {
-        public CEdgeDraw(List<Point> points, Brush brush)
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 显示区域
+        /// </summary>
+        /// <param name="points">点集</param>
+        /// <param name="brush">画刷</param>
+        /// <param name="isClosed">是否为闭合区域</param>
+        public CEdgeDraw(List<Point> points, Brush brush, bool isClosed = false)
         {
+            DrawType = isClosed ? EMDRAWTYPE.EMDRAWTYPE_REGION : EMDRAWTYPE.EMDRAWTYPE_POINTS;
             this.Points = points;
             this.BrushDraw = brush;
         }
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 显示文字
+        /// </summary>
+        /// <param name="text">文字</param>
+        /// <param name="pos">显示位置</param>
+        /// <param name="brush">画刷</param>
+        /// <param name="fontSize">字体大小</param>
+        public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15)
+        {
+            DrawType = EMDRAWTYPE.EMDRAWTYPE_Text;
+            this.Text = text;
+            this.TextPos = pos;
+            this.BrushDraw = brush;
+            this.FontSize = fontSize;
+        }
+
+        public EMDRAWTYPE DrawType { get; set; }
 
         /// <summary>
         /// 2024.9.6 李焕彬
@@ -449,5 +505,23 @@ namespace WH.RunCell
         /// 绘制颜色
         /// </summary>
         public Brush BrushDraw { get; set; }
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 显示文字
+        /// </summary>
+        public string Text { get; set; }
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 显示文字位置
+        /// </summary>
+        public Point TextPos { get; set; }
+
+        /// <summary>
+        /// 2025.3.23 李焕彬
+        /// 字体大小
+        /// </summary>
+        public int FontSize { get; set; }
     }
 }

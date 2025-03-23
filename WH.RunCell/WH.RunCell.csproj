@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
   </ItemGroup>
 
