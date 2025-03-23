@@ -809,6 +809,7 @@ namespace WH.DetectSystem.Models
                                                     break;
                                                 case EMDRAWTYPE.EMDRAWTYPE_Text:
                                                     drawView.SetFontBrush(edge.BrushDraw);
+                                                    drawView.SetFontSize(edge.FontSize);
                                                     drawView.ImgDrawText(
                                                         edge.Text,
                                                         edge.TextPos,
