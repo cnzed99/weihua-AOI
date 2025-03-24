@@ -708,7 +708,7 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Error(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerDelayIs + value);
+                    CCameraManagement.CamLogger.Info(Properties.Resources.CameraSerialNumber + paramSetting.SerialNumber + Properties.Resources.ExecuteSetTriggerDelayIs + value);
                     dvpStatus status = DVPCamera.dvpSetTriggerDelay(CamHandle, (double)value);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {

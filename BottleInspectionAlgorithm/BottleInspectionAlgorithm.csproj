@@ -17,9 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.Extensions" />
     <PackageReference Include="OpenCvSharp4.runtime.win" />
-    <PackageReference Include="PaddleOCRSharp" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions.OpenCvSharp" />
+    <PackageReference Include="OpenVINO.CSharp.Windows" />
+    <PackageReference Include="SharpCompress" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +35,9 @@
   <ItemGroup>
     <Reference Include="halcondotnet">
       <HintPath>C:\Program Files\MVTec\HALCON-24.05-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="TensorRtSharp">
+      <HintPath>bin\dll\net48\TensorRtSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -170,6 +170,7 @@
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="System.Threading.Channels" />
     <PackageReference Include="ValueConverters" />
+	  <PackageReference Include="SharpCompress" />
   </ItemGroup>
 
   <ItemGroup>
