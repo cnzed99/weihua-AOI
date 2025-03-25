@@ -126,7 +126,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "对焦插件", "对焦插�
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindVisionCamFpga", "MindVisionCamFpga\MindVisionCamFpga.csproj", "{A16838FD-87EC-47E7-A296-1616E9C73504}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoloobbAlgorithm", "YoloobbAlgorithm\YoloobbAlgorithm.csproj", "{EF160349-4E80-4599-AEA1-EAEDE91AD02C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneralMLOBB", "YoloobbAlgorithm\GeneralMLOBB.csproj", "{EF160349-4E80-4599-AEA1-EAEDE91AD02C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IKapVisionCam", "IKapVisionCam\IKapVisionCam.csproj", "{8EAD759E-09F4-4147-8244-C252B75CDA65}"
 EndProject
@@ -136,11 +136,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "运动控制", "运动控�
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "控制插件", "控制插件", "{9E388A68-F944-4817-AFBC-41E2830C459E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motion", "Motion\Motion.csproj", "{2D87785E-193A-4081-853F-70489193AF26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motion", "Motion\Motion.csproj", "{2D87785E-193A-4081-853F-70489193AF26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlcControl", "PlcControl\PlcControl.csproj", "{F442E8C0-C3F3-4AD9-BBF9-9E5F82B2A1F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlcControl", "PlcControl\PlcControl.csproj", "{F442E8C0-C3F3-4AD9-BBF9-9E5F82B2A1F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoThinkCam", "DoThinkCam\DoThinkCam.csproj", "{65EE2AA0-5A3C-4FAE-9F00-F6620614DD2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoThinkCam", "DoThinkCam\DoThinkCam.csproj", "{65EE2AA0-5A3C-4FAE-9F00-F6620614DD2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcrAlgorithm", "OcrAlgorithm\OcrAlgorithm.csproj", "{9B31AFB1-5DFC-479B-8441-1EE5F94EC38D}"
 EndProject

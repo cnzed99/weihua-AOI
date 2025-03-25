@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using OpenCvSharp.Flann;
 using OpenVinoSharp.Extensions.process;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
+using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -29,13 +31,17 @@ namespace YoloobbAlgorithm
 
         private string infer_type = "det";
 
-        // private string engine_type_str = "OpenVINO";
-        private string engine_type_str = "TensorRT";
+        private string engine_type_str = "OpenVINO";
 
-        string Model_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\1024OBB-p99.engine";
-        string name_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\classes.txt";
+        //private string engine_type_str = "TensorRT";
 
-        string[] Detect_names;
+        //private string Model_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\1024OBB-p99.engine";
+        //private string name_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\classes.txt";
+        private string Model_Path =
+            $".\\AlgorithmPlug\\GeneralMLOBB\\{AppConfig.OtherStringSetting("Model_Path")}.onnx";
+
+        private string name_Path = ".\\AlgorithmPlug\\GeneralMLOBB\\classes.txt";
+        private string[] Detect_names;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -50,21 +56,16 @@ namespace YoloobbAlgorithm
                 Detect_names = File.ReadAllLines(name_Path);
             }
 
-            if (Detect_names?.Length > 0) { }
-
-            DefectSpecies = new()
+            if (Detect_names?.Length > 0)
             {
-                new(
-                    "表面缺陷类",
-                    new()
-                    {
-                        new("棉絮", Category.区域),
-                        new("污渍", Category.区域),
-                        new("黑点", Category.区域),
-                        new("分数", Category.值)
-                    }
-                ),
-            };
+                List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
+                Detect_names.ForEach(na =>
+                {
+                    cDefectRecipes.Add(new(na, Category.区域));
+                });
+                DefectSpecies = new() { new("表面缺陷类", cDefectRecipes), };
+            }
+
             DefectFeatures = new();
 
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
@@ -73,7 +74,7 @@ namespace YoloobbAlgorithm
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
 
-            LoadModel();
+            //LoadModel();
         }
 
         /// <summary>
@@ -111,7 +112,6 @@ namespace YoloobbAlgorithm
             List<ObbData> sResultInfos = ImageInfer(cell);
             foreach (var ds in DefectSpecies)
             {
-
                 foreach (var de in ds.RecipeDefects)
                 {
                     CellDetection cellDetection1 = new CellDetection();
@@ -120,13 +120,13 @@ namespace YoloobbAlgorithm
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
                     List<ObbData> infos = new List<ObbData>();
-                    sResultInfos.ForEach(info => {
+                    sResultInfos.ForEach(info =>
+                    {
                         int index = int.Parse(info.lable);
                         if (Detect_names[index] == de.Name)
                         {
-                            
                             SRegion sRegion = GetDetectRegion(info);
-                           
+
                             cellDetection1.regionOut.Add(sRegion);
                             infos.Add(info);
                         }
@@ -135,9 +135,6 @@ namespace YoloobbAlgorithm
                     infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }
-            
-
-           
 
             //for (int i = 0; i < sResultInfos.Count; i++)
             //{
@@ -152,7 +149,8 @@ namespace YoloobbAlgorithm
             //}
         }
 
-        void LoadModel()
+        [OnDeserialized]
+        private void LoadModel(StreamingContext context)
         {
             string model_type_str = "YOLOv8Obb";
 
@@ -229,11 +227,11 @@ namespace YoloobbAlgorithm
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
-                int Categ_num = param.Categ_num;
+                int Categ_num = Detect_names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
                 int Input_size = param.Input_size;
-
+                ImgSize Output_size = param.Output_size;
                 yolo = YOLO.GetYolo(
                     model_type,
                     Model_Path,
@@ -242,26 +240,26 @@ namespace YoloobbAlgorithm
                     Categ_num,
                     Score,
                     Nms,
-                    Input_size
+                    Input_size,
+                    Output_size
                 );
             }
         }
 
-        List<ObbData> ImageInfer(Cell cell)
+        private List<ObbData> ImageInfer(Cell cell)
         {
             List<ObbData> sResultInfos = new List<ObbData>();
-            
+
             Mat img = new Mat(
                 cell.Image.ImageHeight,
                 cell.Image.ImageWidth,
-                MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel+7)/8),
+                MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
                 cell.Image.ImageData
             );
             // img.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             //  Mat img = Cv2.ImRead("D:\\本地代码仓库\\yolo8 demo\\datasets\\Hamsausage0929\\images\\train\\0.jpg");
             //await Task.Run(() =>
             //{
-            
             BaseResult result;
             result = yolo.predict(img);
             ObbResult obbResult = result as ObbResult;
@@ -274,7 +272,7 @@ namespace YoloobbAlgorithm
                     //reinfo.ResultPoints = array.ToList();
                     //reinfo.LabelStr = obbResult.datas[i].lable;
                     //reinfo.ResultScore = obbResult.datas[i].score;
-                    
+
                     sResultInfos.Add(obbResult.datas[i]);
                     //for (int j = 0; j < 4; j++)
                     //{
@@ -299,15 +297,23 @@ namespace YoloobbAlgorithm
             sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
             sRegioninfo.Score = info.score;
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
-            info.box.Points().ForEach(p=>rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
-            
+            info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
+
             SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
             var rect = info.box.BoundingRect();
-            detectRegion.rect = new System.Windows.Rect(new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y), new System.Windows.Size(rect.Width, rect.Height));
+            detectRegion.rect = new System.Windows.Rect(
+                new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y),
+                new System.Windows.Size(rect.Width, rect.Height)
+            );
             return detectRegion;
         }
 
-        private void GetRecLen(List<Point2f> rec2Points, out double LongLen, out double ShorLen,out double phi)
+        private void GetRecLen(
+            List<Point2f> rec2Points,
+            out double LongLen,
+            out double ShorLen,
+            out double phi
+        )
         {
             double templen1 = 0;
             double templen2 = 0;
@@ -319,7 +325,9 @@ namespace YoloobbAlgorithm
             {
                 LongLen = templen1;
                 ShorLen = templen2;
-                phi = Math.Atan((rec2Points[1].X - rec2Points[0].X) / (rec2Points[1].Y - rec2Points[0].Y));
+                phi = Math.Atan(
+                    (rec2Points[1].X - rec2Points[0].X) / (rec2Points[1].Y - rec2Points[0].Y)
+                );
             }
             else
             {
@@ -387,25 +395,35 @@ namespace YoloobbAlgorithm
         [property: Description("NMScore")]
         private float nms = 0.5f;
 
-        /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 缺陷类型数量
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("缺陷类型数量")]
-        [property: Description("已经标注的缺陷类型数量")]
-        private int categ_num = 3;
+        ///// <summary>
+        ///// 2024.10.28 鲍赞宝
+        ///// 缺陷类型数量
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("基础参数")]
+        //[property: DisplayName("缺陷类型数量")]
+        //[property: Description("已经标注的缺陷类型数量")]
+        //private int categ_num = 3;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 缺陷类型数量
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("缺陷类型数量")]
-        [property: Description("已经标注的缺陷类型数量")]
-        private int input_size = 1024;
+        [property: Category("尺寸参数")]
+        [property: DisplayName("模型尺寸1")]
+        [property: Description("模型尺寸1")]
+        private int input_size = 640;
+
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// 缺陷类型数量
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("尺寸参数")]
+        [property: DisplayName("模型尺寸2")]
+        [property: Description("模型尺寸2")]
+        private ImgSize output_size = ImgSize.S640;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝

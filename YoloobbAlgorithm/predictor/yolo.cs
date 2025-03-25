@@ -28,7 +28,7 @@ namespace YoloobbAlgorithm
         private Predictor m_predictor;
 
         //  Log m_log = Log.Instance;
-        Stopwatch sw = new Stopwatch();
+        private Stopwatch sw = new Stopwatch();
 
         public YOLO()
         {
@@ -58,11 +58,11 @@ namespace YoloobbAlgorithm
             m_output_names = output_names;
         }
 
-        float[] preprocess(Mat img)
+        private float[] preprocess(Mat img)
         {
             m_image_size = new List<int> { (int)img.Size().Width, (int)img.Size().Height };
             Mat mat = new Mat();
-            if (img.Type().Channels==4)
+            if (img.Type().Channels == 4)
             {
                 Cv2.CvtColor(img, mat, ColorConversionCodes.BGR2RGB);
                 img.Dispose();
@@ -71,16 +71,14 @@ namespace YoloobbAlgorithm
             {
                 mat = img;
             }
-            
-            
-            
+
             // mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             mat = Resize.letterbox_img(mat, (int)m_input_size[2], out m_factor);
             mat = Normalize.run(mat, true);
             return Permute.run(mat);
         }
 
-        List<float[]> infer(Mat img)
+        private List<float[]> infer(Mat img)
         {
             List<float[]> re;
             //if (m_log.Flag_time)
@@ -160,7 +158,8 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size
+            int input_size,
+            ImgSize output_size
         )
         {
             //else if (model_type == ModelType.YOLOv8Det)
@@ -199,7 +198,8 @@ namespace YoloobbAlgorithm
                 categ_nums,
                 det_thresh,
                 det_nms_thresh,
-                input_size
+                input_size,
+                output_size
             );
         }
 
