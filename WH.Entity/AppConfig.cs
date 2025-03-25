@@ -109,6 +109,41 @@ namespace WH.Entity
         }
 
         /// <summary>
+        /// 20250325 TCG
+        /// 获取bool预设
+        /// </summary>
+        /// <returns>true则是</returns>
+        public static bool OtherBoolSetting(string propName)
+        {
+            try
+            {
+                if (
+                    bool.TryParse(AppConfig.Config[$"App:Config:{propName}"], out bool prop) && prop
+                )
+                {
+                    return true;
+                }
+            }
+            catch (Exception) { }
+            return false;
+        }
+
+        /// <summary>
+        /// 20250325 TCG
+        /// 获取string预设
+        /// </summary>
+        /// <returns>true则是</returns>
+        public static string OtherStringSetting(string propName)
+        {
+            try
+            {
+                return AppConfig.Config[$"App:Config:{propName}"];
+            }
+            catch (Exception) { }
+            return "false";
+        }
+
+        /// <summary>
         /// 2024.10.22 李焕彬
         /// 设置主题是否暗色
         /// </summary>

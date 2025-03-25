@@ -2,9 +2,11 @@
   "APP": {
     "Config": {
       "hasMarkConfig": false,
-      "hasFocusConfig": true,
-      "hasMotionConfig": true,
-      "IsDark": true
+      "hasFocusConfig": false,
+      "hasMotionConfig": false,
+      "IsDark": true,
+      "Model_Path": "xilinping",
+      "Name_Path": "true"
     }
   }
 }

@@ -19,7 +19,8 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size
+            int input_size,
+            ImgSize output_size
         )
             : base(
                 model_path,
@@ -30,9 +31,10 @@ namespace YoloobbAlgorithm
                 det_nms_thresh,
                 new int[] { 1, 3, input_size, input_size },
                 new List<string> { "images" },
-                new List<int[]> { new int[] { 1, 5 + categ_nums, (int)ImgSize.S1024 } },
+                new List<int[]> { new int[] { 1, 5 + categ_nums, (int)output_size } },
                 new List<string> { "output0" }
-            ) { }
+            )
+        { }
 
         protected override BaseResult postprocess(List<float[]> results)
         {
