@@ -31,14 +31,14 @@ namespace YoloobbAlgorithm
 
         private string infer_type = "det";
 
-        private string engine_type_str = "OpenVINO";
+        //private string engine_type_str = "OpenVINO";
 
         //private string engine_type_str = "TensorRT";
 
         //private string Model_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\1024OBB-p99.engine";
         //private string name_Path = ".\\AlgorithmPlug\\YoloobbAlgorithm\\classes.txt";
         private string Model_Path =
-            $".\\AlgorithmPlug\\GeneralMLOBB\\{AppConfig.OtherStringSetting("Model_Path")}.onnx";
+            $".\\AlgorithmPlug\\GeneralMLOBB\\{AppConfig.OtherStringSetting("Model_Path")}";
 
         private string name_Path = ".\\AlgorithmPlug\\GeneralMLOBB\\classes.txt";
         private string[] Detect_names;
@@ -152,10 +152,11 @@ namespace YoloobbAlgorithm
         [OnDeserialized]
         private void LoadModel(StreamingContext context)
         {
+            CParam param = AlgorParams[0] as CParam;
             string model_type_str = "YOLOv8Obb";
 
             ModelType model_type = MyEnum.GetModelType<ModelType>(model_type_str);
-            EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
+            EngineType engine_type = param.EngineType;
 
             if ((model_type == ModelType.YOLOv8Det) || (model_type == ModelType.YOLOWorld))
             {
@@ -182,48 +183,47 @@ namespace YoloobbAlgorithm
                 infer_type = "cls";
             }
 
-            string extension = Path.GetExtension(Model_Path);
-            if (EngineType.TensorRT == engine_type)
-            {
-                //if ((extension != ".engine") && (extension == ".onnx"))
-                //{
-                //    OnnxToEngine from = new OnnxToEngine(Model_Path);
-                //    from.Show();
-                //    string directory = Path.GetDirectoryName(Model_Path);
-                //    string file = Path.GetFileNameWithoutExtension(Model_Path);
-                //    Model_Path = Path.Combine(directory, file) + ".engine";
+            //string extension = Path.GetExtension(Model_Path);
+            //if (EngineType.TensorRT == engine_type)
+            //{
+            //    //if ((extension != ".engine") && (extension == ".onnx"))
+            //    //{
+            //    //    OnnxToEngine from = new OnnxToEngine(Model_Path);
+            //    //    from.Show();
+            //    //    string directory = Path.GetDirectoryName(Model_Path);
+            //    //    string file = Path.GetFileNameWithoutExtension(Model_Path);
+            //    //    Model_Path = Path.Combine(directory, file) + ".engine";
 
-                //    return;
-                //}
-                //else if (extension == ".engine") { }
-                //else
-                //{
-                //   // show_worn_msg_box("Please select the correct model format.");
-                //    return;
-                //}
-            }
-            else
-            {
-                if (
-                    (
-                        extension == ".onnx"
-                        && (
-                            EngineType.ONNX == engine_type
-                            || EngineType.OpenVINO == engine_type
-                            || EngineType.OpenCV == engine_type
-                        )
-                    ) || (extension == ".xml" && EngineType.OpenVINO == engine_type)
-                ) { }
-                else
-                {
-                    // show_worn_msg_box("Please select the correct model format.");
-                    return;
-                }
-            }
+            //    //    return;
+            //    //}
+            //    //else if (extension == ".engine") { }
+            //    //else
+            //    //{
+            //    //   // show_worn_msg_box("Please select the correct model format.");
+            //    //    return;
+            //    //}
+            //}
+            //else
+            //{
+            //    if (
+            //        (
+            //            extension == ".onnx"
+            //            && (
+            //                EngineType.ONNX == engine_type
+            //                || EngineType.OpenVINO == engine_type
+            //                || EngineType.OpenCV == engine_type
+            //            )
+            //        ) || (extension == ".xml" && EngineType.OpenVINO == engine_type)
+            //    ) { }
+            //    else
+            //    {
+            //        // show_worn_msg_box("Please select the correct model format.");
+            //        return;
+            //    }
+            //}
 
             yolo.Dispose();
 
-            CParam param = AlgorParams[0] as CParam;
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
@@ -232,9 +232,13 @@ namespace YoloobbAlgorithm
                 float Nms = param.Nms;
                 int Input_size = param.Input_size;
                 ImgSize Output_size = param.Output_size;
+                string model_path =
+                    param.EngineType == EngineType.TensorRT
+                        ? Model_Path + ".engine"
+                        : Model_Path + ".onnx";
                 yolo = YOLO.GetYolo(
                     model_type,
-                    Model_Path,
+                    model_path,
                     engine_type,
                     CurrentDevice,
                     Categ_num,
@@ -406,8 +410,8 @@ namespace YoloobbAlgorithm
         //private int categ_num = 3;
 
         /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 缺陷类型数量
+        /// 20250331 TCG
+        /// 模型尺寸
         /// </summary>
         [ObservableProperty]
         [property: Category("尺寸参数")]
@@ -416,8 +420,8 @@ namespace YoloobbAlgorithm
         private int input_size = 640;
 
         /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 缺陷类型数量
+        /// 20250331 TCG
+        /// 模型尺寸
         /// </summary>
         [ObservableProperty]
         [property: Category("尺寸参数")]
@@ -430,9 +434,19 @@ namespace YoloobbAlgorithm
         /// 驱动设备
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
+        [property: Category("加载参数")]
         [property: DisplayName("驱动设备")]
         [property: Description("驱动设备")]
         private string currentDevice = "GPU.0";
+
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// 驱动设备
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("加载参数")]
+        [property: DisplayName("平台")]
+        [property: Description("平台")]
+        private EngineType engineType = EngineType.OpenVINO;
     }
 }
