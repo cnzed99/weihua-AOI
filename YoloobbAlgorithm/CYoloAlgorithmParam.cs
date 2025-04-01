@@ -32,7 +32,7 @@ namespace YoloobbAlgorithm
         private string infer_type = "det";
 
 
-       // internal string engine_type_str { get; set; }= "OpenVINO";
+        // internal string engine_type_str { get; set; }= "OpenVINO";
 
         // private string engine_type_str = "OpenVINO";
         //  private string engine_type_str = "TensorRT";
@@ -43,7 +43,7 @@ namespace YoloobbAlgorithm
         /// 2025.3.3 鲍赞宝
         /// 模型文件夹 
         /// </summary>
-        string Model_Dirpath = ".\\AlgorithmPlug\\YoloobbAlgorithm\\Models";
+        //string Model_Dirpath = ".\\Models";
         /// <summary>
         /// 2025.3.3 鲍赞宝
         /// 模型路径
@@ -56,7 +56,7 @@ namespace YoloobbAlgorithm
         string name_Path;
 
 
-        string[] Detect_names;
+        protected string[] Detect_names;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -65,52 +65,51 @@ namespace YoloobbAlgorithm
         public CYoloAlgorithmParam()
             : base()
         {
-            //AlgorithmType = "FrontAlgorithm";
-            string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" }; 
+            //string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" }; 
 
-            if (Directory.Exists(Model_Dirpath))
-            {
-                var files = searchPatterns
-                .SelectMany(pattern => Directory.GetFiles(Model_Dirpath, pattern))
-                .ToList();
+            //if (Directory.Exists(Model_Dirpath))
+            //{
+            //    var files = searchPatterns
+            //    .SelectMany(pattern => Directory.GetFiles(Model_Dirpath, pattern))
+            //    .ToList();
 
-                if (files.Count>0)
-                {
-                    Model_Path = files[0];
-                    name_Path= Model_Dirpath+ "\\classes.txt";
-                    Detect_names = File.ReadAllLines(name_Path);
-                }
+            //    if (files.Count>0)
+            //    {
+            //        Model_Path = files[0];
+            //        name_Path= Model_Dirpath+ "\\classes.txt";
+            //        Detect_names = File.ReadAllLines(name_Path);
+            //    }
 
-                if (Detect_names?.Length > 0)
-                {
-                    List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
-                    DefectSpecies = new List<CDefectSpecies>();
+            //if (Detect_names?.Length > 0)
+            //{
+            //    List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
+            //    DefectSpecies = new List<CDefectSpecies>();
 
-                    for (int i = 0; i < Detect_names.Length; i++)
-                    {
-                        CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
-                        cDefectRecipes.Add(defectRecipe);
-                    }
-                    //CDefectRecipe defectRecipe1 = new CDefectRecipe("分数", Category.值);
-                    //cDefectRecipes.Add(defectRecipe1);
+            //    for (int i = 0; i < Detect_names.Length; i++)
+            //    {
+            //        CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
+            //        cDefectRecipes.Add(defectRecipe);
+            //    }
+            //    //CDefectRecipe defectRecipe1 = new CDefectRecipe("分数", Category.值);
+            //    //cDefectRecipes.Add(defectRecipe1);
 
-                    CDefectSpecies defectSpecies = new CDefectSpecies("盐水袋", cDefectRecipes);
-                    DefectSpecies.Add(defectSpecies);
-                }
+            //    CDefectSpecies defectSpecies = new CDefectSpecies("盐水袋", cDefectRecipes);
+            //    DefectSpecies.Add(defectSpecies);
+            //}
 
-                DefectFeatures = new();
+            //DefectFeatures = new();
 
-                DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
-                DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
-                DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
-                DefectFeatures.Add(new("Score", "分数", "Score", ""));
-                DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
+            //DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
+            //DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
+            //DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
+            //DefectFeatures.Add(new("Score", "分数", "Score", ""));
+            //DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
 
-               // LoadModel();
+            // LoadModel();
 
-            }
+            //}
 
-      
+
         }
 
         /// <summary>
@@ -137,6 +136,28 @@ namespace YoloobbAlgorithm
             };
         }
 
+        protected void ReadNames(string modelDirpath)
+        {
+            //AlgorithmType = "FrontAlgorithm";
+            string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" };
+
+            if (Directory.Exists(modelDirpath))
+            {
+                var files = searchPatterns
+                .SelectMany(pattern => Directory.GetFiles(modelDirpath, pattern))
+                .ToList();
+
+                if (files.Count > 0)
+                {
+                    Model_Path = files[0];
+                    name_Path = modelDirpath + "\\classes.txt";
+                    Detect_names = File.ReadAllLines(name_Path);
+                }
+
+            }
+
+        }
+
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 执行算法
@@ -148,7 +169,8 @@ namespace YoloobbAlgorithm
             var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CParam;
             if (paramClass != null)
             {
-                List<ObbData> sResultInfos = ImageInfer(cell, paramClass.Score, paramClass.Nms);
+                Mat img=GetMatImage(cell, paramClass);
+                List<ObbData> sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
                 if (sResultInfos.Count == 0) { return; }
 
                 foreach (var ds in DefectSpecies)
@@ -178,7 +200,7 @@ namespace YoloobbAlgorithm
                     }
                 }
             }
-            
+
         }
         [OnDeserialized]
         void LoadModel(StreamingContext context)
@@ -276,53 +298,13 @@ namespace YoloobbAlgorithm
             }
         }
 
-        List<ObbData> ImageInfer(Cell cell,float score,float nms)
+        public List<ObbData> ImageInfer(Mat img, float score, float nms)
         {
             List<ObbData> sResultInfos = new List<ObbData>();
-            
-            Mat img = new Mat(
-                cell.Image.ImageHeight,
-                cell.Image.ImageWidth,
-                MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel+7)/8),
-                cell.Image.ImageData
-            );
-            // img.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
-            //  Mat img = Cv2.ImRead("D:\\本地代码仓库\\yolo8 demo\\datasets\\Hamsausage0929\\images\\train\\0.jpg");
-            //await Task.Run(() =>
-            //{
-            
             BaseResult result;
             result = yolo.predict(img, score, nms);
             ObbResult? obbResult = result as ObbResult;
 
-            //if (obbResult != null)
-            //{
-            //    if (obbResult.count > 0)
-            //    {
-            //        sResultInfos.Add(obbResult.datas[0]);
-
-            //        for (int i = 0; i < obbResult.count; i++)
-            //        {
-            //            bool isOverlapping = false;
-
-            //            foreach (var coord in sResultInfos)
-            //            {
-            //                double distance = CalculateDistance(obbResult.datas[i], coord);
-            //                if (distance < 100)
-            //                {
-            //                    isOverlapping = true;
-            //                    break; // 找到重叠则不再检查其他坐标  
-            //                }
-            //            }
-            //            // 如果未重叠，则加入到 uniqueCoordinates  
-            //            if (!isOverlapping)
-            //            {
-            //                sResultInfos.Add(obbResult.datas[i]);
-            //            }
-
-            //        }
-            //    }
-            //}
             if (obbResult != null)
             {
 
@@ -334,7 +316,7 @@ namespace YoloobbAlgorithm
             return sResultInfos;
         }
 
-        private SRegion GetDetectRegion(ObbData info)
+        public SRegion GetDetectRegion(ObbData info)
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
             //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);
@@ -344,8 +326,8 @@ namespace YoloobbAlgorithm
             sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
             sRegioninfo.Score = info.score;
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
-            info.box.Points().ForEach(p=>rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
-            
+            info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
+
             SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
             var rect = info.box.BoundingRect();
             detectRegion.rect = new System.Windows.Rect(new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y), new System.Windows.Size(rect.Width, rect.Height));
@@ -398,6 +380,16 @@ namespace YoloobbAlgorithm
         {
             return len1 * len2;
         }
+
+        public virtual Mat GetMatImage(Cell cell, CParamBase param)
+        {
+            Mat img = new Mat(
+          cell.Image.ImageHeight,
+          cell.Image.ImageWidth,
+          MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
+          cell.Image.ImageData);
+            return img;
+        }
     }
 
     /// <summary>
@@ -412,15 +404,7 @@ namespace YoloobbAlgorithm
         public CParam(string name, Token token)
             : base(name, token) { }
 
-        /// <summary>
-        /// 2025.3.1 鲍赞宝
-        /// 最小分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("模型类型")]
-        [property: Description("模型类型")]
-        private EngineType engineType = EngineType.OpenVINO;
+
 
 
         /// <summary>
@@ -429,7 +413,7 @@ namespace YoloobbAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("最小分数阈值")]
+        [property: DisplayName("01.最小分数阈值")]
         [property: Description("最小分数阈值")]
         private float score = 0.6f;
 
@@ -439,9 +423,20 @@ namespace YoloobbAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("NMScore")]
+        [property: DisplayName("02.NMScore")]
         [property: Description("NMScore")]
         private float nms = 0.5f;
+
+
+        /// <summary>
+        /// 2025.3.1 鲍赞宝
+        /// 最小分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("03.模型类型")]
+        [property: Description("模型类型")]
+        private EngineType engineType = EngineType.OpenVINO;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -449,7 +444,7 @@ namespace YoloobbAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("缺陷类型数量")]
+        [property: DisplayName("04.缺陷类型数量")]
         [property: Description("已经标注的缺陷类型数量")]
         private int categ_num = 1;
 
@@ -459,7 +454,7 @@ namespace YoloobbAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("输入图片大小")]
+        [property: DisplayName("05.输入图片大小")]
         [property: Description("检测的图片精度")]
         private InputImgSize input_size = InputImgSize.IN640;
 
@@ -469,11 +464,11 @@ namespace YoloobbAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("驱动设备")]
+        [property: DisplayName("06.驱动设备")]
         [property: Description("驱动设备")]
         private string currentDevice = "GPU.0";
     }
 
-    
+
 
 }

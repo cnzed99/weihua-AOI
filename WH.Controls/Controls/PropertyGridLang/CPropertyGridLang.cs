@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,12 +40,14 @@ namespace WH.Controls
                 typeof(CPropertyGridLang),
                 new FrameworkPropertyMetadata(typeof(CPropertyGridLang))
             );
+            
         }
 
         public CPropertyGridLang()
             : base()
         {
             ShowSortButton = false;
+            
         }
 
         /// <summary>

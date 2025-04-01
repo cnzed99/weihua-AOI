@@ -267,13 +267,17 @@
     </hc:Window.NonClientAreaContent>
     <!--  中间内容  -->
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="174*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
             <RowDefinition />
             <RowDefinition Height="15" />
         </Grid.RowDefinitions>
         <!--  次菜单栏  -->
-        <DockPanel Grid.Row="0">
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
             <StackPanel Width="150" HorizontalAlignment="Left">
                 <Image 
                     Margin="5"
@@ -428,7 +432,7 @@
 
         </DockPanel>
         <!--  中间内容  -->
-        <hc:DrawerContainer Grid.Row="1">
+        <hc:DrawerContainer Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,15" Grid.RowSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.6*" />
@@ -684,7 +688,7 @@
 
         </hc:Drawer>-->
         <!--  状态栏  -->
-        <DockPanel Grid.Row="2">
+        <DockPanel Grid.Row="2" Grid.ColumnSpan="2">
             <StackPanel
                 Margin="5,0"
                 DockPanel.Dock="Left"
@@ -741,7 +745,7 @@
             MaxHeight="500"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            VerticalScrollBarVisibility="Hidden">
+            VerticalScrollBarVisibility="Hidden" Grid.Column="1">
             <StackPanel
                 Margin="0,10,0,20"
                 VerticalAlignment="Bottom"
@@ -752,7 +756,7 @@
             Width="400"
             VerticalAlignment="Center"
             d:Visibility="visible"
-            Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
+            Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}" Grid.Column="1" Margin="492,0,500,0">
             <!--<hc:AnimationPath
                 Width="300"
                 Data="{DynamicResource logo}"

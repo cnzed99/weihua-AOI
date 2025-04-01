@@ -44,7 +44,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <ComboBox.SelectedItem>
-                            <MultiBinding>
+                            <MultiBinding >
                                 <MultiBinding.Converter>
                                     <local:string2ComboxSelectItemPc />
                                 </MultiBinding.Converter>
@@ -73,7 +73,7 @@
             </GroupBox.Header>
             <wh:CPropertyGridLang
                 IsEditable="{Binding LoginPerson.IsTechnologist}"
-                SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"
+                SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem,UpdateSourceTrigger=PropertyChanged}"
                 lang="{x:Static local:CLang.s_Instance}" />
         </GroupBox>
         <!--<GroupBox Grid.Row="2" Style="{StaticResource GroupBoxTab}">

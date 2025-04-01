@@ -86,13 +86,10 @@ namespace YoloobbAlgorithm
             {
                 mat = img;
             }
-            
-            
-            
-            // mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             mat = Resize.letterbox_img(mat, (int)m_input_size[2], out m_factor);
             mat = Normalize.run(mat, true);
             return Permute.run(mat);
+         
         }
 
         List<float[]> infer(Mat img)
