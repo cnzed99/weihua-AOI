@@ -167,7 +167,7 @@ namespace NormalSalineBagAlgorithm
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
-        /// 计算矩形长短边
+        /// 计算点距离
         /// </summary>
         /// <param name="point1"></param>
         /// <param name="point2"></param>

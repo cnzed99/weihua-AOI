@@ -169,7 +169,7 @@ namespace YoloobbAlgorithm
             var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CParam;
             if (paramClass != null)
             {
-                Mat img=GetMatImage(cell, paramClass);
+                Mat img = GetMatImage(cell, paramClass);
                 List<ObbData> sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
                 if (sResultInfos.Count == 0) { return; }
 
@@ -206,9 +206,10 @@ namespace YoloobbAlgorithm
         void LoadModel(StreamingContext context)
         {
             CParam param = AlgorParams[0] as CParam;
-            string model_type_str = "YOLOv8Obb";
+             string model_type_str = "YOLOv8Obb";
 
-            ModelType model_type = MyEnum.GetModelType<ModelType>(model_type_str);
+             ModelType model_type = MyEnum.GetModelType<ModelType>(model_type_str);
+           // ModelType model_type = param.ModelType;
             // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
             EngineType engine_type = param.EngineType;
 
@@ -430,13 +431,15 @@ namespace YoloobbAlgorithm
 
         /// <summary>
         /// 2025.3.1 鲍赞宝
-        /// 最小分数阈值
+        /// 工程类型
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("03.模型类型")]
-        [property: Description("模型类型")]
+        [property: DisplayName("03.工程类型")]
+        [property: Description("工程类型")]
         private EngineType engineType = EngineType.OpenVINO;
+
+
 
         /// <summary>
         /// 2024.10.28 鲍赞宝

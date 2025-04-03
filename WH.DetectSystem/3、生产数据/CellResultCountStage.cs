@@ -7,6 +7,7 @@ using Mysqlx;
 using ProjProduceData;
 using WH.Entity;
 using WH.RunCell;
+using WH.RecipeCellRootBase;
 
 namespace WH.DetectSystem
 {
@@ -26,7 +27,11 @@ namespace WH.DetectSystem
                 {
                     foreach (var algorithmOut in cell.AlgorithmOut)
                     {
-                        defectCounttotal += algorithmOut.regionOut.Count;
+                        if (algorithmOut.Category== Category.值)
+                        {
+                            defectCounttotal += (int) algorithmOut.Value.Max();
+                        }
+                       
                     }
                     produce.Ng += defectCounttotal;
                     // produce.Ng += 1;
@@ -51,6 +56,7 @@ namespace WH.DetectSystem
                 {
                     defect.PercentofAll = (double)defect.Number / produce.Total;
                 }
+
             }
             else
             {
