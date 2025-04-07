@@ -18,8 +18,8 @@ namespace YoloDeployPlatform.tracker
         public float[] LastObservation { get; set; }
         public bool IsConfirmed => Hits >= MinHits;
         public List<Point> PathHistory { get; } = new List<Point>();
-        private const int MinHits = 3;
-        private int MaxPathHistory = 20;
+        private const int MinHits = 5;
+        private int MaxPathHistory = 10;
 
         public Track(int id, Rect bbox)
         {

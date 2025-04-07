@@ -164,8 +164,8 @@ namespace 断面毛刺检测软件.Views
             {
                 if (value.Count > 0)
                 {
-                    imgFiles = value;
-                    MMainVM.TestImgFiles = value;
+                    imgFiles = value.OrderBy(f => File.GetCreationTime(f)).ToList();
+                    MMainVM.TestImgFiles = imgFiles;
                     ImgNames.Clear();
                     string[] fileNames = Array.ConvertAll<string, string>(
                         imgFiles.ToArray(),
