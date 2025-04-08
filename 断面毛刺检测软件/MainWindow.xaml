@@ -546,7 +546,7 @@
                                 </TextBlock>
                                 <ToggleButton
                                     Margin="0,7,90,7"
-                                    HorizontalAlignment="Right"
+                                    HorizontalAlignment="Center"
                                     VerticalAlignment="Top"
                                     IsChecked="{Binding IsStart}"
                                     IsEnabled="{Binding Source={StaticResource CurUser}, Path=Data.IsOperator}"

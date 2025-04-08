@@ -642,6 +642,31 @@ namespace 断面毛刺检测软件
         #region 数据清空
         private void DataClear_Click(object sender, RoutedEventArgs e)
         {
+            if (MessageBox.Show("确认清空测试数据？", "提示", MessageBoxButton.YesNo)
+                == MessageBoxResult.Yes)
+            { 
+                try
+                {
+                    foreach (var item in CMainList.CMainVMs)
+                    {
+                        item.MaociDefectsProduce?.Clear();
+                    }
+                    foreach (var item in CMainList.CMainMModel.CProcessGroups)
+                    {
+                        item.MaociDefectsProduce?.Clear();
+                        item.Cells.Clear();
+                    }
+                    OperateLog.Info(Properties.Resources.DataClear);
+                }
+                catch (Exception ex)
+                {
+
+                    Growl.Error(Properties.Resources.DataClear + "\r\n" + ex.Message);
+                }            
+            }
+
+            return;
+
             try
             {
                 Growl.AskGlobal(

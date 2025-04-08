@@ -15,13 +15,19 @@ namespace BottleInspectionAlgorithm
     /// 2025.01.09 易群生
     /// PC算法参数
     /// </summary>
-    public struct SOCRDateAlgorParam
+    public struct BottleInspectionAlgorithmParam
     {
         /// <summary>
         /// 2025.01.09 易群生
         /// 标准日期的来源：1 固定（由UI界面输入）；2 其他来源(从客户服务器读取)
         /// </summary>
         //public int StandardDateSource = 1;
+
+        /// <summary>
+        /// 2025.04.05 易群生
+        /// 强制设定测试结果："ok"-强制设定测试结果全部为ok，"ng"-强制设定测试结果全部为ng,""-实际测试结果
+        /// </summary>
+        public String InspectionResult = "";
 
         /// <summary>
         /// 2025.03.15 易群生
@@ -56,9 +62,15 @@ namespace BottleInspectionAlgorithm
 
         /// <summary>
         /// 2025.03.20 易群生
-        /// 标签亮度
+        /// 标签亮度上限
         /// </summary>
-        public int LabelBrightness = 80;
+        public int LabelBrightnessMax = 80;
+
+        /// <summary>
+        /// 2025.03.20 易群生
+        /// 标签亮度下限
+        /// </summary>
+        public int LabelBrightnessMin = 40;
 
         /// <summary>
         /// 标准日期
@@ -104,9 +116,15 @@ namespace BottleInspectionAlgorithm
 
         /// <summary>
         /// 2025.03.20 易群生
-        /// 蓝盖亮度
+        /// 蓝盖亮度上限
         /// </summary>
-        public int BlueCapBrightness = 100;
+        public int BlueCapBrightnessMax = 100;
+
+        /// <summary>
+        /// 2025.03.20 易群生
+        /// 蓝盖亮度下限
+        /// </summary>
+        public int BlueCapBrightnessMin = 40;
 
         /// <summary>
         /// 2025.03.20 易群生
@@ -120,44 +138,28 @@ namespace BottleInspectionAlgorithm
         /// </summary>
         public int BlueCapDiameter = 300;
 
-
-        /// <summary>
-        /// 2025.03.20 易群生
-        /// 铝盖亮度
-        /// </summary>
-        public int CapBrightness = 100;
-
-        /// <summary>
-        /// 2025.03.20 易群生
-        /// 铝盖厚度
-        /// </summary>
-        public int CapThickness = 40;
-
-        /// <summary>
-        /// 2025.03.20 易群生
-        /// 铝盖直径
-        /// </summary>
-        public int CapDiameter = 300;
-
         /// <summary>
         /// 2025.01.09 易群生
         /// 构造
         /// </summary>
         /// <param name="param">算法参数类</param>
-        public SOCRDateAlgorParam(CPcParam param)
+        public BottleInspectionAlgorithmParam(CPcParam param)
         {
+            this.InspectionResult = param.InspectionResult;
             this.LabelMinRow = param.LabelMinRow;
             this.LabelMaxRow = param.LabelMaxRow;
-            this.BottleDiameter = param.BottleDiameter; 
+            this.LabelBrightnessMax = param.LabelBrightnessMax;
+            this.LabelBrightnessMin = param.LabelBrightnessMin;
 
+            this.BottleDiameter = param.BottleDiameter; 
 
             this.StandardDate = param.StandardDate;
 
             this.DateMinRow = param.DateMinRow;
             this.DateMaxRow = param.DateMaxRow;
             this.DateAngleIndex = param.DateAngleIndex;
-            this.DateDeltaBrightness = param.DateDeltaBrightness;
 
+            this.DateDeltaBrightness = param.DateDeltaBrightness;
 
             this.CylinderRadiusMM = param.CylinderRadiusMM;
             this.PixelSizeMM = param.PixelSizeMM;
@@ -165,15 +167,10 @@ namespace BottleInspectionAlgorithm
             this.CapMinRow = param.CapMinRow;
             this.CapMaxRow = param.CapMaxRow;
 
-            this.BlueCapBrightness = param.BlueCapBrightness;
+            this.BlueCapBrightnessMax = param.BlueCapBrightnessMax;
+            this.BlueCapBrightnessMin = param.BlueCapBrightnessMin;
             this.BlueCapThickness = param.BlueCapThickness;
             this.BlueCapDiameter = param.BlueCapDiameter;
-
-            this.CapBrightness = param.CapBrightness;
-            this.CapThickness = param.CapThickness;
-            this.CapDiameter = param.CapDiameter;
-
-
         }
 
         /// <summary>
@@ -182,12 +179,15 @@ namespace BottleInspectionAlgorithm
         /// </summary>
         /// <param name="umPerPixel">像素当量</param>
         /// <returns></returns>
-        public SOCRDateAlgorParam(CPcParam param, double umPerPixel)
+        public BottleInspectionAlgorithmParam(CPcParam param, double umPerPixel)
         {
+            this.InspectionResult = param.InspectionResult;
             this.LabelMinRow = param.LabelMinRow;
             this.LabelMaxRow = param.LabelMaxRow;
-            this.BottleDiameter = param.BottleDiameter;
+            this.LabelBrightnessMax = param.LabelBrightnessMax;
+            this.LabelBrightnessMin = param.LabelBrightnessMin;
 
+            this.BottleDiameter = param.BottleDiameter;
             this.StandardDate = param.StandardDate;
 
             this.DateMinRow = param.DateMinRow;
@@ -195,20 +195,16 @@ namespace BottleInspectionAlgorithm
             this.DateAngleIndex = param.DateAngleIndex;
             this.DateDeltaBrightness = param.DateDeltaBrightness;
 
-
             this.CylinderRadiusMM = param.CylinderRadiusMM;
             this.PixelSizeMM = param.PixelSizeMM;
 
             this.CapMinRow = param.CapMinRow;
             this.CapMaxRow = param.CapMaxRow;
 
-            this.BlueCapBrightness = param.BlueCapBrightness;
+            this.BlueCapBrightnessMax = param.BlueCapBrightnessMax;
+            this.BlueCapBrightnessMin = param.BlueCapBrightnessMin;
             this.BlueCapThickness = param.BlueCapThickness;
             this.BlueCapDiameter = param.BlueCapDiameter;
-
-            this.CapBrightness = param.CapBrightness;
-            this.CapThickness = param.CapThickness;
-            this.CapDiameter = param.CapDiameter;
         }
     };
 

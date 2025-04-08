@@ -43,6 +43,8 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using System.Windows;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -534,19 +536,28 @@ namespace WH.DetectSystem.ViewModels
         {
             if (SelectedProcess != null)
             {
-                Growl.AskGlobal(
-                    Properties.Resources.DelecteAsk,
-                    b =>
-                    {
-                        if (b)
-                        {
-                            SelectedProcess.ProcessGroup?.RemoveProcess(SelectedProcess);
-                            UpdateMainVMs();
-                            OperateLog.Info(Properties.Resources.删除制程);
-                        }
-                        return true;
-                    }
-                );
+                if (HandyControl.Controls.MessageBox.Show("确认清空测试数据？", "提示", MessageBoxButton.YesNo)
+                    == MessageBoxResult.Yes)
+                {
+                    SelectedProcess.ProcessGroup?.RemoveProcess(SelectedProcess);
+                    UpdateMainVMs();
+                    OperateLog.Info(Properties.Resources.删除制程);
+                }
+                return;
+
+                //Growl.AskGlobal(
+                //    Properties.Resources.DelecteAsk,
+                //    b =>
+                //    {
+                //        if (b)
+                //        {
+                //            SelectedProcess.ProcessGroup?.RemoveProcess(SelectedProcess);
+                //            UpdateMainVMs();
+                //            OperateLog.Info(Properties.Resources.删除制程);
+                //        }
+                //        return true;
+                //    }
+                //);
             }
         }
 
