@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CameraModule;
 using MvCamCtrl.NET;
@@ -163,8 +164,8 @@ namespace HIKVisionCam
                 paramSetting.ImageHeight = pFrameInfo.nHeight;
                 paramSetting.CameraType =
                     pFrameInfo.enPixelType == MvGvspPixelType.PixelType_Gvsp_Mono8
-                        ? EMCAMERATYPE.EMCAMTYPEGRAY
-                        : EMCAMERATYPE.EMCAMTYPECOLOR;
+                        ? PixelFormats.Gray8
+                        : PixelFormats.Rgb24;
             }
             catch (Exception ex)
             {
@@ -395,7 +396,7 @@ namespace HIKVisionCam
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-        public override bool GetCameraType(out EMCAMERATYPE cameraType)
+        public override bool GetCameraType(out PixelFormat cameraType)
         {
             try
             {
@@ -406,15 +407,13 @@ namespace HIKVisionCam
                     CCameraManagement.CamLogger.Error(
                         Properties.Resources.ErrorGetCamType + nRet.ToString()
                     );
-                    cameraType = EMCAMERATYPE.EMCAMTYPEGRAY;
+                    cameraType = PixelFormats.Gray8;
                     return false;
                 }
                 else
                 {
                     cameraType =
-                        enumValue.nCurValue == 0x01080001
-                            ? EMCAMERATYPE.EMCAMTYPEGRAY
-                            : EMCAMERATYPE.EMCAMTYPECOLOR;
+                        enumValue.nCurValue == 0x01080001 ? PixelFormats.Gray8 : PixelFormats.Rgb24;
                     return true;
                 }
             }
@@ -423,7 +422,7 @@ namespace HIKVisionCam
                 CCameraManagement.CamLogger.Error(
                     Properties.Resources.ErrorGetCamType2 + paramSetting.SerialNumber + ex.Message
                 );
-                cameraType = EMCAMERATYPE.EMCAMTYPEGRAY;
+                cameraType = PixelFormats.Gray8;
                 return false;
             }
         }

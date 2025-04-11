@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace CameraModule.Model
 {
@@ -57,7 +58,7 @@ namespace CameraModule.Model
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-        public bool GetCameraType(out EMCAMERATYPE cameraType);
+        public bool GetCameraType(out PixelFormat cameraType);
 
         /// <summary>
         /// 2024.7.23 李焕彬

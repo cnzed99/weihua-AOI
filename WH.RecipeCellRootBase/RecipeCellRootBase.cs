@@ -207,8 +207,7 @@ namespace WH.RecipeCellRootBase
             ImageHeight = imageHeight;
             ImageData = imageData;
             PixelFormat = pixelFormat;
-            int bitsPerPixel = pixelFormat == PixelFormats.Gray8 ? 8 : 24;
-            StrideWidth = imageWidth * ((bitsPerPixel + 7) / 8);
+            StrideWidth = imageWidth * ((pixelFormat.BitsPerPixel + 7) / 8);
             ImageSize = StrideWidth * ImageHeight;
         }
 

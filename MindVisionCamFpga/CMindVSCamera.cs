@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using CameraModule;
 using MVSDK;
 using Newtonsoft.Json.Linq;
@@ -140,8 +141,8 @@ namespace MindVisionCamFpga
                 paramSetting.ImageHeight = pFrameHead.iHeight;
                 paramSetting.CameraType =
                     pFrameHead.uiMediaType == (uint)emImageFormat.CAMERA_MEDIA_TYPE_MONO8
-                        ? EMCAMERATYPE.EMCAMTYPEGRAY
-                        : EMCAMERATYPE.EMCAMTYPECOLOR;
+                        ? PixelFormats.Gray8
+                        : PixelFormats.Rgb24;
             }
             catch (Exception ex)
             {
@@ -322,9 +323,12 @@ namespace MindVisionCamFpga
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-        public override bool GetCameraType(out EMCAMERATYPE cameraType)
+        public override bool GetCameraType(out PixelFormat cameraType)
         {
-            cameraType = (EMCAMERATYPE)Marshal.ReadInt32(tCameraCapability.pMediaTypeDesc);
+            cameraType =
+                Marshal.ReadInt32(tCameraCapability.pMediaTypeDesc) == 0
+                    ? PixelFormats.Gray8
+                    : PixelFormats.Rgb24;
             return true;
         }
 

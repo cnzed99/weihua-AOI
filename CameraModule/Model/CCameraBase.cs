@@ -165,7 +165,7 @@ namespace CameraModule
 
         /// <summary>
         /// 李焕彬 2024.7.24
-        /// 开启采图，软触发
+        /// 开启采图，执行软触发前会设为true
         /// </summary>
         protected bool startGrabSoft = false;
 
@@ -192,6 +192,12 @@ namespace CameraModule
         /// 相机连接状态
         /// </summary>
         public bool Connected { get; set; } = false;
+
+        /// <summary>
+        /// 李焕彬 2025.4.11
+        /// 原始图像数据行宽，-1:自动生成行宽,原始图像数据为rgba时需要设置
+        /// </summary>
+        protected int imageBufferStride = -1;
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -245,8 +251,11 @@ namespace CameraModule
         {
             int widthNew = Setting.ImageWidth;
             int heightNew = Setting.ImageHeight;
-            int bitsPerPixel = Setting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY ? 8 : 24;
-            int stride = Setting.ImageWidth * ((bitsPerPixel + 7) / 8);
+            int bitsPerPixel = Setting.CameraType.BitsPerPixel;
+            int stride =
+                imageBufferStride > 0
+                    ? imageBufferStride
+                    : Setting.ImageWidth * ((bitsPerPixel + 7) / 8);
             switch (Setting.ImageRotate)
             {
                 case EMIMAGEROTATE.EMROTATE0:
@@ -267,7 +276,7 @@ namespace CameraModule
             IntPtr ptrNew = Marshal.AllocHGlobal(strideNew * heightNew);
             RotateImage(
                 (int)Setting.ImageRotate,
-                Setting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY ? 1 : 3,
+                bitsPerPixel / 8,
                 Setting.ImageWidth,
                 Setting.ImageHeight,
                 stride,
@@ -277,15 +286,7 @@ namespace CameraModule
                 strideNew,
                 ptrNew
             );
-            CImage image = new CImage(
-                widthNew,
-                heightNew,
-                strideNew,
-                ptrNew,
-                Setting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY
-                    ? PixelFormats.Gray8
-                    : PixelFormats.Rgb24
-            );
+            CImage image = new CImage(widthNew, heightNew, strideNew, ptrNew, Setting.CameraType);
             ExportImage(image);
 
             return true;
@@ -520,7 +521,7 @@ namespace CameraModule
         public abstract bool StopGrab();
         public abstract bool GetImageWidth(out int value);
         public abstract bool GetImageHeight(out int value);
-        public abstract bool GetCameraType(out EMCAMERATYPE cameraType);
+        public abstract bool GetCameraType(out PixelFormat cameraType);
         protected abstract void SetTriggerMode(EMTRIGGERMODE mode);
         public abstract bool GetTriggerMode(out EMTRIGGERMODE mode);
         public abstract bool GetExposureTime(out uint value);

@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Xml.Linq;
 using CameraModule;
 using DVPCameraType;
@@ -210,8 +211,8 @@ namespace DoThinkCam
 
                 paramSetting.CameraType =
                     refFrame.format == dvpImageFormat.FORMAT_MONO
-                        ? EMCAMERATYPE.EMCAMTYPEGRAY
-                        : EMCAMERATYPE.EMCAMTYPECOLOR;
+                        ? PixelFormats.Gray8
+                        : PixelFormats.Rgb24;
 
                 return 0;
             }
@@ -534,7 +535,7 @@ namespace DoThinkCam
                         if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
                         {
                             base.ExecuteSoftwareTrigger();
-                            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPECOLOR)
+                            if (paramSetting.CameraType == PixelFormats.Rgb24)
                             {
                                 OpenLight();
                             }
@@ -689,95 +690,78 @@ namespace DoThinkCam
                     );
                     // dvpStatus status = DVPCamera.dvpSetExposure(CamHandle, (double)value);
                     dvpStatus status;
-                    switch (paramSetting.CameraType)
+                    if (paramSetting.CameraType == PixelFormats.Gray8)
                     {
-                        case EMCAMERATYPE.EMCAMTYPEGRAY:
-                            switch (Channel)
-                            {
-                                case 1:
-                                    status = DVPCamera.dvpWriteGenICamReg(
-                                        CamHandle,
-                                        0x1201000,
-                                        value
-                                    );
-                                    if (status != dvpStatus.DVP_STATUS_OK)
-                                    {
-                                        CCameraManagement.CamLogger.Error(
-                                            Properties.Resources.CameraSerialNumber
-                                                + paramSetting.SerialNumber
-                                                + Properties
-                                                    .Resources
-                                                    .ExecuteSetChannel1ExposureTimeFail
-                                        );
-                                    }
-                                    break;
-                                case 2:
-                                    status = DVPCamera.dvpWriteGenICamReg(
-                                        CamHandle,
-                                        0x1201004,
-                                        value
-                                    );
-                                    if (status != dvpStatus.DVP_STATUS_OK)
-                                    {
-                                        CCameraManagement.CamLogger.Error(
-                                            Properties.Resources.CameraSerialNumber
-                                                + paramSetting.SerialNumber
-                                                + Properties
-                                                    .Resources
-                                                    .ExecuteSetChannel2ExposureTimeFail
-                                        );
-                                    }
-                                    break;
-                                case 3:
-                                    status = DVPCamera.dvpWriteGenICamReg(
-                                        CamHandle,
-                                        0x1201008,
-                                        value
-                                    );
-                                    if (status != dvpStatus.DVP_STATUS_OK)
-                                    {
-                                        CCameraManagement.CamLogger.Error(
-                                            Properties.Resources.CameraSerialNumber
-                                                + paramSetting.SerialNumber
-                                                + Properties
-                                                    .Resources
-                                                    .ExecuteSetChannel3ExposureTimeFail
-                                        );
-                                    }
-                                    break;
-                                case 4:
-                                    status = DVPCamera.dvpWriteGenICamReg(
-                                        CamHandle,
-                                        0x120100c,
-                                        value
-                                    );
-                                    if (status != dvpStatus.DVP_STATUS_OK)
-                                    {
-                                        CCameraManagement.CamLogger.Error(
-                                            Properties.Resources.CameraSerialNumber
-                                                + paramSetting.SerialNumber
-                                                + Properties
-                                                    .Resources
-                                                    .ExecuteSetChannel4ExposureTimeFail
-                                        );
-                                    }
-                                    break;
-                            }
-                            break;
-                        case EMCAMERATYPE.EMCAMTYPECOLOR:
-                            if (Channel == 4)
-                            {
-                                status = DVPCamera.dvpSetExposure(CamHandle, (double)value);
+                        switch (Channel)
+                        {
+                            case 1:
+                                status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201000, value);
                                 if (status != dvpStatus.DVP_STATUS_OK)
                                 {
                                     CCameraManagement.CamLogger.Error(
                                         Properties.Resources.CameraSerialNumber
                                             + paramSetting.SerialNumber
-                                            + Properties.Resources.ExecuteSetExposureTimeFail
+                                            + Properties
+                                                .Resources
+                                                .ExecuteSetChannel1ExposureTimeFail
                                     );
                                 }
+                                break;
+                            case 2:
+                                status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201004, value);
+                                if (status != dvpStatus.DVP_STATUS_OK)
+                                {
+                                    CCameraManagement.CamLogger.Error(
+                                        Properties.Resources.CameraSerialNumber
+                                            + paramSetting.SerialNumber
+                                            + Properties
+                                                .Resources
+                                                .ExecuteSetChannel2ExposureTimeFail
+                                    );
+                                }
+                                break;
+                            case 3:
+                                status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x1201008, value);
+                                if (status != dvpStatus.DVP_STATUS_OK)
+                                {
+                                    CCameraManagement.CamLogger.Error(
+                                        Properties.Resources.CameraSerialNumber
+                                            + paramSetting.SerialNumber
+                                            + Properties
+                                                .Resources
+                                                .ExecuteSetChannel3ExposureTimeFail
+                                    );
+                                }
+                                break;
+                            case 4:
+                                status = DVPCamera.dvpWriteGenICamReg(CamHandle, 0x120100c, value);
+                                if (status != dvpStatus.DVP_STATUS_OK)
+                                {
+                                    CCameraManagement.CamLogger.Error(
+                                        Properties.Resources.CameraSerialNumber
+                                            + paramSetting.SerialNumber
+                                            + Properties
+                                                .Resources
+                                                .ExecuteSetChannel4ExposureTimeFail
+                                    );
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (Channel == 4)
+                        {
+                            status = DVPCamera.dvpSetExposure(CamHandle, (double)value);
+                            if (status != dvpStatus.DVP_STATUS_OK)
+                            {
+                                CCameraManagement.CamLogger.Error(
+                                    Properties.Resources.CameraSerialNumber
+                                        + paramSetting.SerialNumber
+                                        + Properties.Resources.ExecuteSetExposureTimeFail
+                                );
                             }
-                            break;
+                        }
                     }
                 }
             }
@@ -1385,12 +1369,12 @@ namespace DoThinkCam
                     switch (refSourceFormat)
                     {
                         case dvpStreamFormat.S_MONO8:
-                            paramSetting.CameraType = EMCAMERATYPE.EMCAMTYPEGRAY;
+                            paramSetting.CameraType = PixelFormats.Gray8;
                             break;
                         case dvpStreamFormat.S_RAW8:
                         case dvpStreamFormat.S_RGB24:
                         case dvpStreamFormat.S_BGR24:
-                            paramSetting.CameraType = EMCAMERATYPE.EMCAMTYPECOLOR;
+                            paramSetting.CameraType = PixelFormats.Rgb24;
                             break;
                     }
                 }
@@ -1515,7 +1499,7 @@ namespace DoThinkCam
         /// </summary>
         protected void OpenLight()
         {
-            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY)
+            if (paramSetting.CameraType == PixelFormats.Gray8)
                 return;
             int[] buffer = new int[2];
             buffer[0] = 0x1100A00;
@@ -1539,7 +1523,7 @@ namespace DoThinkCam
         /// </summary>
         private void CloseLight()
         {
-            if (paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY)
+            if (paramSetting.CameraType == PixelFormats.Gray8)
                 return;
             int[] buffer = new int[2];
             buffer[0] = 0x1100A00;
@@ -1558,9 +1542,9 @@ namespace DoThinkCam
             }
         }
 
-        public override bool GetCameraType(out EMCAMERATYPE cameraType)
+        public override bool GetCameraType(out PixelFormat cameraType)
         {
-            cameraType = EMCAMERATYPE.EMCAMTYPECOLOR;
+            cameraType = PixelFormats.Rgb24;
             return true;
         }
 

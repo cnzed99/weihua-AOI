@@ -579,19 +579,19 @@ namespace OfflineTestCam
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-        public override bool GetCameraType(out EMCAMERATYPE cameraType)
+        public override bool GetCameraType(out PixelFormat cameraType)
         {
             if (images.Count > 0)
             {
                 cameraType =
                     images[0].PixelFormat.BitsPerPixel == 8
-                        ? EMCAMERATYPE.EMCAMTYPEGRAY
-                        : EMCAMERATYPE.EMCAMTYPECOLOR;
+                        ? PixelFormats.Gray8
+                        : PixelFormats.Rgb24;
                 return true;
             }
             else
             {
-                cameraType = EMCAMERATYPE.EMCAMTYPEGRAY;
+                cameraType = PixelFormats.Gray8;
                 return false;
             }
         }

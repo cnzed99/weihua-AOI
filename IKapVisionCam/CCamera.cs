@@ -383,7 +383,7 @@ namespace IKapVisionCam
                                 paramSetting.ImageWidth,
                                 paramSetting.ImageHeight,
                                 pUserBuffer,
-                                paramSetting.CameraType == EMCAMERATYPE.EMCAMTYPEGRAY
+                                paramSetting.CameraType == PixelFormats.Gray8
                                     ? PixelFormats.Gray8
                                     : PixelFormats.Rgb24
                             );
@@ -814,12 +814,11 @@ namespace IKapVisionCam
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-        public override bool GetCameraType(out EMCAMERATYPE cameraType)
+        public override bool GetCameraType(out PixelFormat cameraType)
         {
             CameraHandle cameraHandle = new CameraHandle();
             IKapBoard.IKapGetInfo(m_hBoard, (uint)INFO_ID.IKP_IMAGE_TYPE, ref cameraHandle);
-            cameraType =
-                (int)cameraHandle == 0 ? EMCAMERATYPE.EMCAMTYPEGRAY : EMCAMERATYPE.EMCAMTYPECOLOR;
+            cameraType = (int)cameraHandle == 0 ? PixelFormats.Gray8 : PixelFormats.Rgb24;
             return true;
         }
 

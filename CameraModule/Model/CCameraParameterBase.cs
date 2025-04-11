@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HandyControl.Controls;
 using Newtonsoft.Json;
@@ -106,7 +107,7 @@ namespace CameraModule
                                 CCameraManagement.CameraDict.Add(serialNumber, Camtemp);
                                 CCameraManagement.CamParamDict.Add(serialNumber, paramtemp);
 
-                                CCameraManagement.CameraDict[old].EndCamera();//CloseCamera修改为EndCamera
+                                CCameraManagement.CameraDict[old].EndCamera(); //CloseCamera修改为EndCamera
 
                                 CCameraManagement.CameraDict.Remove(old);
                                 CCameraManagement.CamParamDict.Remove(old);
@@ -156,15 +157,14 @@ namespace CameraModule
 
         /// <summary>
         /// 2024.7.23 李焕彬
-        /// 相机类型
+        /// 像素格式
         /// </summary>
         [property: Category("通用参数")]
-        [property: DisplayName("06.相机类型")]
-        [property: Description("06.相机类型")]
-        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        [property: DisplayName("06.像素格式")]
+        [property: Description("06.像素格式")]
         [property: ReadOnly(true)]
         [ObservableProperty]
-        private EMCAMERATYPE cameraType;
+        private PixelFormat cameraType = PixelFormats.Rgb24;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -464,26 +464,26 @@ namespace CameraModule
         }
     }
 
-    /// <summary>
-    /// 2024.7.17 李焕彬
-    /// 相机类型
-    /// </summary>
-    public enum EMCAMERATYPE
-    {
-        /// <summary>
-        /// 2024.7.17 李焕彬
-        /// 黑白
-        /// </summary>
-        [EnumString("黑白", "GRAY")]
-        EMCAMTYPEGRAY,
+    ///// <summary>
+    ///// 2024.7.17 李焕彬
+    ///// 相机类型
+    ///// </summary>
+    //public enum EMCAMERATYPE
+    //{
+    //    /// <summary>
+    //    /// 2024.7.17 李焕彬
+    //    /// 黑白
+    //    /// </summary>
+    //    [EnumString("黑白", "GRAY")]
+    //    EMCAMTYPEGRAY,
 
-        /// <summary>
-        /// 2024.7.17 李焕彬
-        /// 彩色
-        /// </summary>
-        [EnumString("彩色", "COLOR")]
-        EMCAMTYPECOLOR,
-    }
+    //    /// <summary>
+    //    /// 2024.7.17 李焕彬
+    //    /// 彩色
+    //    /// </summary>
+    //    [EnumString("彩色", "COLOR")]
+    //    EMCAMTYPECOLOR,
+    //}
 
     /// <summary>
     /// 2024.7.17 李焕彬
