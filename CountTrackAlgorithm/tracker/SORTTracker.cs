@@ -13,8 +13,8 @@ namespace YoloDeployPlatform.tracker
     {
         public readonly List<Track> _tracks;
         private int _nextId;
-        private readonly int _maxAge;
-        private readonly float _iouThreshold;
+        private  int _maxAge;
+        private  float _iouThreshold;
 
         public readonly CountingLine _countingLine;
         //private int _crossCount = 0;
@@ -62,7 +62,7 @@ namespace YoloDeployPlatform.tracker
             // 4. 处理未匹配的检测 - 创建新跟踪器
             foreach (var detectionIdx in unmatchedDetections)
             {
-                _tracks.Add(new Track(_nextId++, detections[detectionIdx].box));
+                _tracks.Add(new Track(_nextId++, detections[detectionIdx].box, MinHits));
             }
 
             // 5. 处理未匹配的跟踪器 - 标记为丢失
@@ -186,7 +186,7 @@ namespace YoloDeployPlatform.tracker
             // 4. 处理未匹配的检测 - 创建新跟踪器
             foreach (var detectionIdx in unmatchedDetections)
             {
-                _tracks.Add(new Track(_nextId++, detections[detectionIdx].box.BoundingRect()));
+                _tracks.Add(new Track(_nextId++, detections[detectionIdx].box.BoundingRect(),MinHits));
             }
 
             // 5. 处理未匹配的跟踪器 - 标记为丢失
@@ -285,8 +285,10 @@ namespace YoloDeployPlatform.tracker
             return (matches, unmatchedDetections, unmatchedTracks);
         }
 
-        public List<(int Id, float[] Bbox)> Update(List<ObbData> detections,out int corssCount, int MinHits = 3, int iteratorDis = 5)
+        public List<(int Id, float[] Bbox)> Update(List<ObbData> detections,int maxAge,float iouThreshold,int inflateW, int inflateH, out int corssCount, int MinHits = 3, int iteratorDis = 5)
         {
+            _maxAge = maxAge;
+            _iouThreshold = iouThreshold;
             var result = new List<(int Id, float[] Bbox)>();
             if (detections.Count == 0)
             {
@@ -300,18 +302,22 @@ namespace YoloDeployPlatform.tracker
             }
 
             // 2. 数据关联
-            var (matches, unmatchedDetections, unmatchedTracks) = Associate(detections);
+            var (matches, unmatchedDetections, unmatchedTracks) = Associate(detections, inflateW, inflateH);
 
             // 3. 更新匹配的跟踪器
             foreach (var (detectionIdx, trackIdx) in matches)
             {
-                _tracks[trackIdx].Update(detections[detectionIdx].box.BoundingRect());
+                var rect = detections[detectionIdx].box.BoundingRect();
+                rect.Inflate(inflateW, inflateH);
+                _tracks[trackIdx].Update(rect);
             }
 
             // 4. 处理未匹配的检测 - 创建新跟踪器
             foreach (var detectionIdx in unmatchedDetections)
             {
-                _tracks.Add(new Track(_nextId++, detections[detectionIdx].box.BoundingRect()));
+                var rect = detections[detectionIdx].box.BoundingRect();
+                rect.Inflate(inflateW, inflateH);
+                _tracks.Add(new Track(_nextId++, rect, MinHits));
             }
 
             // 5. 处理未匹配的跟踪器 - 标记为丢失
@@ -339,7 +345,7 @@ namespace YoloDeployPlatform.tracker
             return result;
         }
 
-        private (List<(int, int)>, List<int>, List<int>) Associate(List<ObbData> detections)
+        private (List<(int, int)>, List<int>, List<int>) Associate(List<ObbData> detections, int inflateW,int inflateH)
         {
             if (_tracks.Count == 0)
             {
@@ -356,7 +362,10 @@ namespace YoloDeployPlatform.tracker
             {
                 for (int t = 0; t < _tracks.Count; t++)
                 {
-                    var abox = KalmanFilter.ParseBbox(detections[d].box.BoundingRect());
+                    var rect = detections[d].box.BoundingRect();
+                    rect.Inflate(inflateW, inflateH);
+
+                    var abox = KalmanFilter.ParseBbox(rect);
                     iouMatrix[d, t] = CalculateIoU(abox, _tracks[t].GetState());
                 }
             }
@@ -369,7 +378,28 @@ namespace YoloDeployPlatform.tracker
             if (iouMatrix.GetLength(1) > 0)
             {
                 // 使用Munkres/Hungarian算法
-                var (rowIndices, colIndices) = HungarianAlgorithm.FindAssignments(iouMatrix, true);
+                // var (rowIndices, colIndices) = HungarianAlgorithm.FindAssignments(iouMatrix, true);
+
+                var rows = new List<int>();
+                var cols = new List<int>();
+                var ids = new List<int>();
+                for (int i = 0; i < iouMatrix.GetLength(0); i++)
+                {
+                    int id = 0;
+                    float temp = 0;
+                    for (int j = 0; j < iouMatrix.GetLength(1); j++)
+                    {
+                        if (iouMatrix[i, j] >= temp && !ids.Contains(j))
+                        {
+                            temp = iouMatrix[i, j];
+                            id = j;
+                        }
+                    }
+                    rows.Add(i);
+                    cols.Add(id);
+                    ids.Add(id);
+                }
+                var (rowIndices, colIndices) = (rows.ToArray(), cols.ToArray());
 
                 for (int i = 0; i < rowIndices.Length; i++)
                 {

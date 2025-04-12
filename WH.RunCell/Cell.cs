@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -50,6 +51,7 @@ namespace WH.RunCell
         /// 输出缺陷
         /// </summary>
         public List<CellDetection> AlgorithmOut { get; set; } = new List<CellDetection>();
+      
 
         /// <summary>
         /// 是否是OK产品

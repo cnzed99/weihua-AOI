@@ -12,6 +12,7 @@ using YoloobbAlgorithm;
 using System.ComponentModel;
 using System.Windows.Media;
 using System.Runtime.Serialization;
+using YoloDeployPlatform.Bytetrack;
 
 namespace CountTrackAlgorithm
 {
@@ -24,7 +25,7 @@ namespace CountTrackAlgorithm
         /// </summary>
         /// 
 
-        private SORTTracker tracker;
+        private ByteTracker tracker;
         public CountTrackAlgorithm()
             : base()
         {
@@ -43,6 +44,9 @@ namespace CountTrackAlgorithm
                 }
                 CDefectRecipe defectRecipe1 = new CDefectRecipe("数值", Category.值);
                 cDefectRecipes.Add(defectRecipe1);
+
+                //CDefectRecipe defectRecipe2 = new CDefectRecipe("ID", Category.值);
+                //cDefectRecipes.Add(defectRecipe2);
 
                 CDefectSpecies defectSpecies = new CDefectSpecies("盐水袋", cDefectRecipes);
                 DefectSpecies.Add(defectSpecies);
@@ -77,7 +81,7 @@ namespace CountTrackAlgorithm
                 var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CCountTrackParam;
                 Point start = new Point(paramClass.StartX, paramClass.StartY);
                 Point end = new Point(paramClass.EndX, paramClass.EndY);
-                tracker = new SORTTracker(new CountingLine(start, end), paramClass.MaxAge, paramClass.IouThreshold,paramClass.Direction);
+                tracker = new ByteTracker(new CountingLine(start, end), paramClass.MaxTimeLost, paramClass.IouThreshold,paramClass.Direction);
             }
             catch (Exception)
             {
@@ -131,35 +135,36 @@ namespace CountTrackAlgorithm
                     }
                 }
 
-                var tracks = tracker.Update(baseResultInfos,out int corssCount, MinHits:paramClass.MinHits, iteratorDis: paramClass.IteratorDis);
-
+                // var tracks = tracker.Update(sResultInfos, paramClass.MaxAge, paramClass.IouThreshold,paramClass.InflateW,paramClass.InflateH, out int corssCount, MinHits:paramClass.MinHits, iteratorDis: paramClass.IteratorDis);
+                var tracks = tracker.Update(sResultInfos, paramClass.MaxTimeLost, paramClass.IouThreshold, paramClass.TrackHighThreshold,
+                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX, out int corssCount);
                 foreach (var track in tracks)
                 {
                     List<System.Windows.Point> pathPoints = new List<System.Windows.Point>();
-                    List<Point> path = tracker._tracks.Find(tr => tr.Id == track.Id).PathHistory;
-                    foreach (var p in path)
+                    //List<Point> path = track.PathHistory;
+
+                    foreach (var p in track.PathHistory)
                     {
                         pathPoints.Add(new System.Windows.Point(p.X, p.Y));
                     }
                     cell.DrawEdges.Add(new CEdgeDraw(pathPoints, Brushes.Red));
 
-                    float w = (track.Bbox[2] * track.Bbox[3]) / 2f;
-                    float h = track.Bbox[3] / 2f;
+                    //float w = (track.Bbox[2] * track.Bbox[3]) / 2f;
+                    //float h = track.Bbox[3] / 2f;
 
-                    float topLeftX = track.Bbox[0] - w;
-                    float topLeftY = track.Bbox[1] - h;
-                    float bottomRightX = track.Bbox[0] + w;
-                    float bottomRightY = track.Bbox[1] + h;
+                    //float topLeftX = track.Bbox[0] - w;
+                    //float topLeftY = track.Bbox[1] - h;
+                    //float bottomRightX = track.Bbox[0] + w;
+                    //float bottomRightY = track.Bbox[1] + h;
                     // 追踪的正矩形框
                     List<System.Windows.Point> rec1MarkPoints = new List<System.Windows.Point>();
-                    rec1MarkPoints.Add(new System.Windows.Point(topLeftX, topLeftY));
-                    rec1MarkPoints.Add(new System.Windows.Point(bottomRightX, topLeftY));
-                    rec1MarkPoints.Add(new System.Windows.Point(bottomRightX, bottomRightY));
-                    rec1MarkPoints.Add(new System.Windows.Point(topLeftX, bottomRightY));
-                    rec1MarkPoints.Add(new System.Windows.Point(topLeftX, topLeftY));
+                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
+                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Y));
+                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom));
+                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Bottom));
+                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
                     cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink));
 
-         
                 }
                 //计数线显示
                 List<System.Windows.Point> countLinePoints = new List<System.Windows.Point>();
@@ -268,13 +273,13 @@ namespace CountTrackAlgorithm
 
         /// <summary>
         /// 2025.4.1 鲍赞宝
-        /// 最大
+        /// 连续10帧找不到目标时丢弃该目标
         /// </summary>
         [ObservableProperty]
         [property: Category("算法参数")]
-        [property: DisplayName("02.maxAge")]
-        [property: Description("maxAge")]
-        private int maxAge = 5;
+        [property: DisplayName("02.MaxTimeLost")]
+        [property: Description("连续几帧找不到目标时丢弃该目标")]
+        private int maxTimeLost = 10;
 
         /// <summary>
         /// 2025.4.1 鲍赞宝
@@ -303,13 +308,13 @@ namespace CountTrackAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("算法参数")]
-        [property: DisplayName("05.代数距离")]
+        [property: DisplayName("05.IteratorDis")]
         [property: Description("代数距离")]
         private int iteratorDis = 5;
 
         /// <summary>
         /// 2025.4.1 鲍赞宝
-        /// 代数距离
+        /// 最小击中次数
         /// </summary>
         [ObservableProperty]
         [property: Category("算法参数")]
@@ -317,7 +322,58 @@ namespace CountTrackAlgorithm
         [property: Description("MinHits")]
         private int minHits = 3;
 
-        
+        ///// <summary>
+        ///// 2025.4.1 鲍赞宝
+        ///// 膨胀宽
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("算法参数")]
+        //[property: DisplayName("07.宽度膨胀")]
+        //[property: Description("宽度膨胀")]
+        //private int inflateW = 100;
+
+        ///// <summary>
+        ///// 2025.4.1 鲍赞宝
+        ///// 膨胀宽
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("算法参数")]
+        //[property: DisplayName("08.高度膨胀")]
+        //[property: Description("高度膨胀")]
+        //private int inflateH = 100;
+
+
+        /// <summary>
+        /// 2025.4.11 鲍赞宝
+        /// 高分检测框阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("09.TrackHighThreshold")]
+        [property: Description("高分检测框阈值")]
+        private float trackHighThreshold = 0.6f;
+
+        /// <summary>
+        /// 2025.4.11 鲍赞宝
+        /// 低分检测框阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("10.TrackLowThreshold")]
+        [property: Description("低分检测框阈值")]
+        private float trackLowThreshold  = 0.1f;
+
+        /// <summary>
+        /// 2025.4.11 鲍赞宝
+        /// 速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("11.VX")]
+        [property: Description("速度")]
+        private float velocityX = -70.0f;
+
+
 
         /// <summary>
         /// 2025.4.1 鲍赞宝

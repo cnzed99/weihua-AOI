@@ -36,7 +36,6 @@
                         Width="150"
                         Margin="5,3"
                         DockPanel.Dock="Left"
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
                         ItemsSource="{Binding Config.AlgorParams}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -59,7 +58,6 @@
                         Command="{Binding AddParamCommand}"
                         Content="{Binding [Add], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
                         Style="{DynamicResource ButtonPrimary}" />
                     <Button
                         Width="70"
@@ -67,12 +65,10 @@
                         CommandParameter="{Binding ElementName=cmb_pcParam, Path=SelectedItem}"
                         Content="{Binding [Delete], Source={x:Static local:CLang.s_Instance}}"
                         DockPanel.Dock="Right"
-                        IsEnabled="{Binding LoginPerson.IsTechnologist}"
                         Style="{DynamicResource ButtonDanger}" />
                 </StackPanel>
             </GroupBox.Header>
             <wh:CPropertyGridLang
-                IsEditable="{Binding LoginPerson.IsTechnologist}"
                 SelectedObject="{Binding ElementName=cmb_pcParam, Path=SelectedItem,UpdateSourceTrigger=PropertyChanged}"
                 lang="{x:Static local:CLang.s_Instance}" />
         </GroupBox>

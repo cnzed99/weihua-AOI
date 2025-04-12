@@ -18,10 +18,10 @@ namespace YoloDeployPlatform.tracker
         public float[] LastObservation { get; set; }
         public bool IsConfirmed => Hits >= MinHits;
         public List<Point> PathHistory { get; } = new List<Point>();
-        private const int MinHits = 5;
+        private  int MinHits = 5;
         private int MaxPathHistory = 10;
 
-        public Track(int id, Rect bbox)
+        public Track(int id, Rect bbox,int minHits)
         {
             var box = KalmanFilter.ParseBbox(bbox);
             Id = id;
@@ -30,6 +30,7 @@ namespace YoloDeployPlatform.tracker
             Hits = 1;
             HitStreak = 1;
             LastObservation = box;
+            MinHits = minHits;
             // 记录中心点轨迹
             var center = new Point(box[0], box[1]);
             PathHistory.Add(center);

@@ -325,7 +325,7 @@ namespace YoloobbAlgorithm
             sRegioninfo.ShorLen = info.box.Size.Height;
             sRegioninfo.Phi = info.box.Angle;
             sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
-            sRegioninfo.Score = info.score;
+            sRegioninfo.Score = info.score*100.0f;
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
             info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
 
