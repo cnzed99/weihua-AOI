@@ -51,8 +51,11 @@ namespace WH.RunCell
         /// 输出缺陷
         /// </summary>
         public List<CellDetection> AlgorithmOut { get; set; } = new List<CellDetection>();
-      
 
+        /// <summary>
+        /// 其他要显示的信息
+        /// </summary>
+        public List<OtherInfo> ShowOtherInfos { get; set; } = new List<OtherInfo>();
         /// <summary>
         /// 是否是OK产品
         /// </summary>
@@ -452,4 +455,35 @@ namespace WH.RunCell
         /// </summary>
         public Brush BrushDraw { get; set; }
     }
+
+    /// <summary>
+    /// 2025.4.12  鲍赞宝
+    /// 绘制其他信息，含绘制颜色
+    /// </summary>
+    public class OtherInfo
+    {
+        public OtherInfo(StringBuilder info,Point pointc, Brush brush)
+        {
+            this.Pointc = pointc;
+            this.Infostr = info;
+            this.BrushDraw = brush;
+        }
+        /// <summary>
+        /// 显示的坐标
+        /// </summary>
+        public Point Pointc { get; set; }
+
+        /// <summary>
+        /// 2025.4.12  鲍赞宝
+        /// 绘制的信息
+        /// </summary>
+        public StringBuilder Infostr { get; set; }
+
+        /// <summary>
+        /// 2025.4.12  鲍赞宝
+        /// 绘制颜色
+        /// </summary>
+        public Brush BrushDraw { get; set; }
+    }
+
 }

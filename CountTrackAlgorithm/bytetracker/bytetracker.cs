@@ -20,7 +20,7 @@ namespace YoloDeployPlatform.Bytetrack
         public float Top => Y;
         public float Right => X + Width;
         public float Bottom => Y + Height;
-
+        public float Vx, Vy;
         public static BoundingBox FromXYXY(
             float x1,
             float y1,
@@ -97,7 +97,7 @@ namespace YoloDeployPlatform.Bytetrack
 
     public class KalmanFilter
     {
-        private Vector8 mean; // x, y, w, h, vx, vy, vw, vh
+        public Vector8 mean; // x, y, w, h, vx, vy, vw, vh
         private Matrix8x8 covariance;
 
         private readonly Matrix8x8 motionMat;

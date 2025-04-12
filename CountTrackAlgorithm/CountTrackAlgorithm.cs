@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Windows.Media;
 using System.Runtime.Serialization;
 using YoloDeployPlatform.Bytetrack;
+using System.Text;
 
 namespace CountTrackAlgorithm
 {
@@ -165,6 +166,23 @@ namespace CountTrackAlgorithm
                     rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
                     cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink));
 
+                    //List<System.Windows.Point> preMarkPoints = new List<System.Windows.Point>();
+                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
+                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Y));
+                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom));
+                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Bottom));
+                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
+                    //cell.DrawEdges.Add(new CEdgeDraw(preMarkPoints, Brushes.Pink));
+
+                    StringBuilder otherInfobuilder = new StringBuilder($"TrackId:{track.TrackId}\r");
+                    otherInfobuilder.Append($"Iou:{track.Iou}\r");
+                    otherInfobuilder.Append($"Age:{track.Age} \r");
+                    otherInfobuilder.Append($"TimeSinceUpdate:{track.TimeSinceUpdate} \r");
+                    otherInfobuilder.Append($"Hits:{track.Hits}\r");
+                    otherInfobuilder.Append($"VX:{track.Filter.mean.VX}\r");
+                    OtherInfo otherInfo=new OtherInfo(otherInfobuilder, new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom), Brushes.LightCyan);
+
+                    cell.ShowOtherInfos.Add(otherInfo);
                 }
                 //计数线显示
                 List<System.Windows.Point> countLinePoints = new List<System.Windows.Point>();
@@ -322,25 +340,25 @@ namespace CountTrackAlgorithm
         [property: Description("MinHits")]
         private int minHits = 3;
 
-        ///// <summary>
-        ///// 2025.4.1 鲍赞宝
-        ///// 膨胀宽
-        ///// </summary>
-        //[ObservableProperty]
-        //[property: Category("算法参数")]
-        //[property: DisplayName("07.宽度膨胀")]
-        //[property: Description("宽度膨胀")]
-        //private int inflateW = 100;
+        /// <summary>
+        /// 2025.4.1 鲍赞宝
+        /// 膨胀宽
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("07.宽度膨胀")]
+        [property: Description("宽度膨胀")]
+        private int inflateW = 100;
 
-        ///// <summary>
-        ///// 2025.4.1 鲍赞宝
-        ///// 膨胀宽
-        ///// </summary>
-        //[ObservableProperty]
-        //[property: Category("算法参数")]
-        //[property: DisplayName("08.高度膨胀")]
-        //[property: Description("高度膨胀")]
-        //private int inflateH = 100;
+        /// <summary>
+        /// 2025.4.1 鲍赞宝
+        /// 膨胀宽
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("08.高度膨胀")]
+        [property: Description("高度膨胀")]
+        private int inflateH = 100;
 
 
         /// <summary>

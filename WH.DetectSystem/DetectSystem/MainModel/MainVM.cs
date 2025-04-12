@@ -776,6 +776,15 @@ namespace WH.DetectSystem.Models
                                             drawView.SetPen(edge.BrushDraw);
                                             drawView.ImgDrawPoints(edge.Points, false);
                                         }
+                                        foreach (var info in cell.ShowOtherInfos)
+                                        {
+                                            drawView.SetPen(info.BrushDraw);
+                                            drawView.ImgDrawText(
+                                                          info.Infostr.ToString(),
+                                                          info.Pointc,
+                                                          true
+                                            );
+                                        }
                                         if (!cell.IsOK)
                                         {
                                             DefectFilter dstFilter = cell.Detection.DefectFilter;
