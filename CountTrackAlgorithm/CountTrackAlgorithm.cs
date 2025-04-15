@@ -138,7 +138,7 @@ namespace CountTrackAlgorithm
 
                 // var tracks = tracker.Update(sResultInfos, paramClass.MaxAge, paramClass.IouThreshold,paramClass.InflateW,paramClass.InflateH, out int corssCount, MinHits:paramClass.MinHits, iteratorDis: paramClass.IteratorDis);
                 var tracks = tracker.Update(sResultInfos, paramClass.MaxTimeLost, paramClass.IouThreshold, paramClass.TrackHighThreshold,
-                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX,paramClass.InflateW,paramClass.InflateH, out int corssCount);
+                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX, paramClass.VelocityY,paramClass.InflateW,paramClass.InflateH, out int corssCount);
                 foreach (var track in tracks)
                 {
                     List<System.Windows.Point> pathPoints = new List<System.Windows.Point>();
@@ -381,8 +381,18 @@ namespace CountTrackAlgorithm
         [ObservableProperty]
         [property: Category("算法参数")]
         [property: DisplayName("11.VX")]
-        [property: Description("速度")]
+        [property: Description("X方向速度")]
         private float velocityX = -70.0f;
+
+        /// <summary>
+        /// 2025.4.11 鲍赞宝
+        /// 速度
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("算法参数")]
+        [property: DisplayName("12.VY")]
+        [property: Description("Y方向速度")]
+        private float velocityY = 0.0f;
 
 
 

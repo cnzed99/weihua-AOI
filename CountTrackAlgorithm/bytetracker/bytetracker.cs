@@ -110,7 +110,7 @@ namespace YoloDeployPlatform.Bytetrack
         private readonly float stdWeightPosition = 1.0f / 20;
         private readonly float stdWeightVelocity = 1.0f / 160;
 
-        public KalmanFilter(float vx)
+        public KalmanFilter(float vx,float vy)
         {
             motionMat = Matrix8x8.Identity;
             updateMat = Matrix4x8.Identity;
@@ -121,6 +121,7 @@ namespace YoloDeployPlatform.Bytetrack
             }
             // mean.VX = -70f;
             mean.VX = vx;
+            mean.VY = vy;
             // 初始化协方差矩阵
             covariance = Matrix8x8.Identity;
         }
@@ -218,7 +219,7 @@ namespace YoloDeployPlatform.Bytetrack
 
 
         public List<TrackState> Update(List<ObbData> detects,int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, int inflateW, int inflateH, out int corssCount)
+                    float trackLowThreshold, int minHits, int iteratorDis,float vx, float vy, int inflateW, int inflateH, out int corssCount)
         {
             if (trackHighThreshold < trackLowThreshold)
             {
@@ -319,7 +320,7 @@ namespace YoloDeployPlatform.Bytetrack
                 var newTrack = new TrackState
                 {
                     TrackId = nextId++,
-                    Filter = new KalmanFilter(vx),
+                    Filter = new KalmanFilter(vx,vy),
                     PredictedBox = det,
                     Score = det.Score,
                     ClassId = det.ClassId,
@@ -336,7 +337,7 @@ namespace YoloDeployPlatform.Bytetrack
             return trackStates.Where(t => t.TimeSinceUpdate == 0).ToList();
         }
         public List<TrackState> Update(ObbResult detects, int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, int inflateW, int inflateH, out int corssCount)
+                    float trackLowThreshold, int minHits, int iteratorDis,float vx, float vy,int inflateW, int inflateH, out int corssCount)
         {
             if (trackHighThreshold < trackLowThreshold)
             {
@@ -437,7 +438,7 @@ namespace YoloDeployPlatform.Bytetrack
                 var newTrack = new TrackState
                 {
                     TrackId = nextId++,
-                    Filter = new KalmanFilter(vx),
+                    Filter = new KalmanFilter(vx,vy),
                     PredictedBox = det,
                     Score = det.Score,
                     ClassId = det.ClassId,
