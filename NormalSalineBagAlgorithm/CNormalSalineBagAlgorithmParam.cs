@@ -146,9 +146,7 @@ namespace NormalSalineBagAlgorithm
                             int index = int.Parse(info.lable);
                             if (Detect_names[index] == de.Name)
                             {
-
                                 SRegion sRegion = GetDetectRegion(info);
-
                                 cellDetection1.regionOut.Add(sRegion);
                                 infos.Add(info);
                             }

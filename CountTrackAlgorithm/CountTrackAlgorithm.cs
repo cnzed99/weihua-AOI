@@ -138,7 +138,7 @@ namespace CountTrackAlgorithm
 
                 // var tracks = tracker.Update(sResultInfos, paramClass.MaxAge, paramClass.IouThreshold,paramClass.InflateW,paramClass.InflateH, out int corssCount, MinHits:paramClass.MinHits, iteratorDis: paramClass.IteratorDis);
                 var tracks = tracker.Update(sResultInfos, paramClass.MaxTimeLost, paramClass.IouThreshold, paramClass.TrackHighThreshold,
-                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX, out int corssCount);
+                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX,paramClass.InflateW,paramClass.InflateH, out int corssCount);
                 foreach (var track in tracks)
                 {
                     List<System.Windows.Point> pathPoints = new List<System.Windows.Point>();
@@ -166,20 +166,13 @@ namespace CountTrackAlgorithm
                     rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
                     cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink));
 
-                    //List<System.Windows.Point> preMarkPoints = new List<System.Windows.Point>();
-                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
-                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Y));
-                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom));
-                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Bottom));
-                    //preMarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
-                    //cell.DrawEdges.Add(new CEdgeDraw(preMarkPoints, Brushes.Pink));
-
                     StringBuilder otherInfobuilder = new StringBuilder($"TrackId:{track.TrackId}\r");
                     otherInfobuilder.Append($"Iou:{track.Iou}\r");
-                    otherInfobuilder.Append($"Age:{track.Age} \r");
-                    otherInfobuilder.Append($"TimeSinceUpdate:{track.TimeSinceUpdate} \r");
-                    otherInfobuilder.Append($"Hits:{track.Hits}\r");
+                    //otherInfobuilder.Append($"Age:{track.Age} \r");
+                    //otherInfobuilder.Append($"TimeSinceUpdate:{track.TimeSinceUpdate} \r");
+                    //otherInfobuilder.Append($"Hits:{track.Hits}\r");
                     otherInfobuilder.Append($"VX:{track.Filter.mean.VX}\r");
+                    otherInfobuilder.Append($"VY:{track.Filter.mean.VY}\r");
                     OtherInfo otherInfo=new OtherInfo(otherInfobuilder, new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom), Brushes.LightCyan);
 
                     cell.ShowOtherInfos.Add(otherInfo);

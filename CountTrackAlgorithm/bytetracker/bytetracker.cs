@@ -30,24 +30,29 @@ namespace YoloDeployPlatform.Bytetrack
             int classId
         ) => new(x1, y1, x2 - x1, y2 - y1, score, classId);
 
-        public static List<BoundingBox> odd2BoundingBox(ObbResult obbs)
+        public static List<BoundingBox> odd2BoundingBox(ObbResult obbs, int inflateW, int inflateH)
         {
             List<BoundingBox> boundingBoxes = new List<BoundingBox>();
             foreach (var item in obbs.datas)
             {
+                // var rect = item.box.BoundingRect();
                 var rect = item.box.BoundingRect();
+                rect.Inflate(inflateW, inflateH);
                 boundingBoxes.Add(
                     new BoundingBox(rect.X, rect.Y, rect.Width, rect.Height, item.score, item.index)
                 );
             }
             return boundingBoxes;
         }
-        public static List<BoundingBox> odd2BoundingBox(List<ObbData> obbs)
+        public static List<BoundingBox> odd2BoundingBox(List<ObbData> obbs,int inflateW, int inflateH)
         {
             List<BoundingBox> boundingBoxes = new List<BoundingBox>();
             foreach (var item in obbs)
             {
                 var rect = item.box.BoundingRect();
+                rect.Inflate(inflateW, inflateH);
+
+              //  var rect = item.box.BoundingRect();
                 boundingBoxes.Add(
                     new BoundingBox(rect.X, rect.Y, rect.Width, rect.Height, item.score, item.index)
                 );
@@ -213,7 +218,7 @@ namespace YoloDeployPlatform.Bytetrack
 
 
         public List<TrackState> Update(List<ObbData> detects,int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, out int corssCount)
+                    float trackLowThreshold, int minHits, int iteratorDis,float vx, int inflateW, int inflateH, out int corssCount)
         {
             if (trackHighThreshold < trackLowThreshold)
             {
@@ -253,7 +258,7 @@ namespace YoloDeployPlatform.Bytetrack
             MaxTimeLost = maxTimeLost;
             IoUThreshold=iouThreshold;
 
-            var detections = BoundingBox.odd2BoundingBox(detects);
+            var detections = BoundingBox.odd2BoundingBox(detects, inflateW, inflateH);
             // 步骤1: 预测所有现有轨迹
             foreach (var track in trackStates)
             {
@@ -331,7 +336,7 @@ namespace YoloDeployPlatform.Bytetrack
             return trackStates.Where(t => t.TimeSinceUpdate == 0).ToList();
         }
         public List<TrackState> Update(ObbResult detects, int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, out int corssCount)
+                    float trackLowThreshold, int minHits, int iteratorDis,float vx, int inflateW, int inflateH, out int corssCount)
         {
             if (trackHighThreshold < trackLowThreshold)
             {
@@ -371,7 +376,7 @@ namespace YoloDeployPlatform.Bytetrack
             MaxTimeLost = maxTimeLost;
             IoUThreshold = iouThreshold;
 
-            var detections = BoundingBox.odd2BoundingBox(detects);
+            var detections = BoundingBox.odd2BoundingBox(detects, inflateW, inflateH);
             // 步骤1: 预测所有现有轨迹
             foreach (var track in trackStates)
             {
