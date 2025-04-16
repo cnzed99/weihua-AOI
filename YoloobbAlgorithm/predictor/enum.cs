@@ -50,6 +50,7 @@ namespace YoloobbAlgorithm
 
     public enum ImgSize
     {
+        S320=2100,
         S640 = 8400,
         S1024 = 21504,
         S2048 = 86016,
@@ -58,8 +59,9 @@ namespace YoloobbAlgorithm
     /// 
     /// </summary>
     public enum InputImgSize 
-    { 
-        IN640=640,
+    {
+        IN320 = 320,
+        IN640 =640,
         IN1024=1024,
         IN2048=2048,
     }

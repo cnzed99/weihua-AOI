@@ -55,6 +55,9 @@ namespace YoloobbAlgorithm
             int outputsize;
             switch (input_size)
             {
+                case InputImgSize.IN320:
+                    outputsize = (int)ImgSize.S320;
+                    break;
                 case InputImgSize.IN640:
                     outputsize = (int)ImgSize.S640;
                     break;
