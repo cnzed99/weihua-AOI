@@ -72,13 +72,6 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         string focus;
 
-        /// <summary>
-        /// 2025.3.6 李焕彬
-        /// 控制方法
-        /// </summary>
-        [ObservableProperty]
-        string motion;
-
         CProcessGroupModel groupVM;
 
         /// <summary>
@@ -137,7 +130,6 @@ namespace WH.DetectSystem.ViewModels
                 || string.IsNullOrEmpty(this.CameraSerial)
                 || string.IsNullOrEmpty(this.Algorithm)
                 || (string.IsNullOrEmpty(this.Focus) && AppConfig.HasFocusConfig())
-                || (string.IsNullOrEmpty(this.Motion) && AppConfig.HasMotionConfig())
                 || GroupVM == null
             )
             {
@@ -154,7 +146,6 @@ namespace WH.DetectSystem.ViewModels
                 this.Name,
                 this.Algorithm,
                 this.Focus,
-                this.Motion,
                 this.CameraSerial.Split('-')[0],
                 GroupVM
             );

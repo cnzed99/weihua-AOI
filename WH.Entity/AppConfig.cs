@@ -72,22 +72,32 @@ namespace WH.Entity
         /// 是否有plc控制
         /// </summary>
         /// <returns></returns>
-        public static bool HasMotionConfig()
+        public static bool HasMotion()
         {
             try
             {
-                if (
-                    bool.TryParse(
-                        AppConfig.Config["App:Config:hasMotionConfig"],
-                        out bool hasMotionConfig
-                    ) && hasMotionConfig
-                )
+                if (AppConfig.Config["App:Config:MotionPlug"] != "")
                 {
                     return true;
                 }
             }
             catch (Exception) { }
             return false;
+        }
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// plc控制插件名
+        /// </summary>
+        /// <returns></returns>
+        public static string MotionPulgName()
+        {
+            try
+            {
+                return AppConfig.Config["App:Config:MotionPlug"];
+            }
+            catch (Exception) { }
+            return "";
         }
 
         /// <summary>

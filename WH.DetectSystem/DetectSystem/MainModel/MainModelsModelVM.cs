@@ -169,6 +169,13 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public CMotionManagement MotionManagement { get; set; }
 
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 控制VM
+        /// </summary>
+        [ObservableProperty]
+        CMotionVMBase motionCtrlVM;
+
         #region 启停 状态
         bool isStart = false;
 
@@ -199,6 +206,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     mainVM.IsStart = isStart;
                 }
+                MotionCtrlVM?.SetRunning(IsStart);
             }
         }
 
@@ -421,6 +429,16 @@ namespace WH.DetectSystem.ViewModels
                 try
                 {
                     MotionManagement = new CMotionManagement();
+                    //初始化运动控制
+                    if (
+                        AppConfig.HasMotion()
+                        && CMotionManagement.MotionHeper.ContainsKey(AppConfig.MotionPulgName())
+                    )
+                    {
+                        MotionCtrlVM = CMotionManagement
+                            .MotionHeper[AppConfig.MotionPulgName()]
+                            .CreateNewMotion();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -591,10 +609,6 @@ namespace WH.DetectSystem.ViewModels
                     if (mainVM.FocusConfig != null)
                     {
                         WeakReferenceMessenger.Default.UnregisterAll(mainVM.FocusConfig);
-                    }
-                    if (mainVM.MotionConfig != null)
-                    {
-                        WeakReferenceMessenger.Default.UnregisterAll(mainVM.MotionConfig);
                     }
                     mainVM.StopTask();
                 }

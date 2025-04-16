@@ -37,8 +37,13 @@ namespace PlcControl
         public CMotionCtrlVM()
             : base()
         {
-            TestControl = new MotionCtrl(this);
-            UpdateInfoAlarm();
+            Application.Current.Dispatcher.Invoke(
+                new Action(() =>
+                {
+                    TestControl = new MotionCtrl(this);
+                    UpdateInfoAlarm();
+                })
+            );
         }
 
         /// <summary>
@@ -119,7 +124,6 @@ namespace PlcControl
         /// </summary>
         public override void InitControl()
         {
-            base.InitControl();
             if (modbusTcp != null)
             {
                 modbusTcp.Close();
@@ -144,17 +148,13 @@ namespace PlcControl
                 if (this.Connected)
                 {
                     InitWrite();
-                    Growl.Success(
-                        MotionConfig.PrcessName + "-" + Properties.Resources.SuccessConnect
-                    );
-                    SysLog.Info(
-                        MotionConfig.PrcessName + "-" + Properties.Resources.SuccessConnect
-                    );
+                    Growl.Success(Properties.Resources.SuccessConnect);
+                    SysLog.Info(Properties.Resources.SuccessConnect);
                 }
                 else
                 {
-                    Growl.Error(MotionConfig.PrcessName + "-" + Properties.Resources.ConnectError);
-                    SysLog.Error(MotionConfig.PrcessName + "-" + Properties.Resources.ConnectError);
+                    Growl.Error(Properties.Resources.ConnectError);
+                    SysLog.Error(Properties.Resources.ConnectError);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace PlcControl
             }
             else
             {
-                Growl.Warning(MotionConfig.PrcessName + "-" + Properties.Resources.Connected);
+                Growl.Warning(Properties.Resources.Connected);
             }
         }
 
@@ -227,7 +227,7 @@ namespace PlcControl
                 if (signalIns.Count > 0)
                 {
                     Growl.AskGlobal(
-                        MotionConfig.PrcessName + "-" + Properties.Resources.DelecteAsk,
+                        Properties.Resources.DelecteAsk,
                         b =>
                         {
                             if (b)
@@ -267,7 +267,7 @@ namespace PlcControl
                 if (signalOuts.Count > 0)
                 {
                     Growl.AskGlobal(
-                        MotionConfig.PrcessName + "-" + Properties.Resources.DelecteAsk,
+                        Properties.Resources.DelecteAsk,
                         b =>
                         {
                             if (b)
@@ -303,7 +303,7 @@ namespace PlcControl
         public void DelRegister(CElement registerSet)
         {
             Growl.AskGlobal(
-                MotionConfig.PrcessName + "-" + Properties.Resources.DelecteAsk,
+                Properties.Resources.DelecteAsk,
                 b =>
                 {
                     if (b)
@@ -436,7 +436,7 @@ namespace PlcControl
             }
             catch (Exception err)
             {
-                SysLog.Error(MotionConfig.PrcessName + "-" + err.Message);
+                SysLog.Error(err.Message);
             }
         }
 
@@ -458,5 +458,44 @@ namespace PlcControl
         /// 复位
         /// </summary>
         public override void Reset() { }
+
+        #region 保存参数
+
+        public override void SaveConfig()
+        {
+            try
+            {
+                ConfigAPI.Save(MotionConfig, c_parameterPath);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region 读取参数
+
+        public override void LoadConfig()
+        {
+            try
+            {
+                if (File.Exists(c_parameterPath))
+                {
+                    MotionConfig = ConfigAPI.Load<CMotionConfig>(c_parameterPath);
+                    if (MotionConfig == null)
+                    {
+                        MotionConfig = new();
+                    }
+                }
+                else
+                {
+                    MotionConfig = new();
+                }
+            }
+            catch (Exception)
+            {
+                MotionConfig = new();
+            }
+        }
+
+        #endregion
     }
 }
