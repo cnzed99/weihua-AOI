@@ -3,7 +3,7 @@
     "Config": {
       "hasMarkConfig": false,
       "hasFocusConfig": false,
-      "hasMotionConfig": false,
+      "MotionPlug": "PlcControl",
       "IsDark": true,
       "Model_Path": "xilinping",
       "Name_Path": "true"

@@ -42,7 +42,7 @@ namespace PlcControl
             base.Receive(message);
             if (message.obj.GetType() == typeof(CMotionConfig))
             {
-                OperateLog.Info($"{PrcessName}-运动控制-{message.message}");
+                OperateLog.Info($"运动控制-{message.message}");
                 return;
             }
             foreach (var signal in SignalIns)
@@ -51,7 +51,7 @@ namespace PlcControl
                 {
                     if (signal == message.obj)
                     {
-                        OperateLog.Info($"{PrcessName}-运动控制-{signal.Name}:{message.message}");
+                        OperateLog.Info($"运动控制-{signal.Name}:{message.message}");
                         return;
                     }
                     continue;
@@ -63,7 +63,7 @@ namespace PlcControl
                 {
                     if (signal == message.obj)
                     {
-                        OperateLog.Info($"{PrcessName}-运动控制-{signal.Name}:{message.message}");
+                        OperateLog.Info($"运动控制-{signal.Name}:{message.message}");
                         return;
                     }
                     continue;
@@ -75,25 +75,12 @@ namespace PlcControl
                 {
                     if (reg == message.obj)
                     {
-                        OperateLog.Info($"{PrcessName}-运动控制-寄存器-{reg.Name}:{message.message}");
+                        OperateLog.Info($"运动控制-寄存器-{reg.Name}:{message.message}");
                         return;
                     }
                     continue;
                 }
             }
-        }
-
-        /// <summary>
-        /// 2025.3.6 李焕彬
-        /// 创建VM
-        /// </summary>
-        /// <returns>VM</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public override CMotionVMBase CreateCtrlVM()
-        {
-            var vm = new CMotionCtrlVM();
-            vm.MotionConfig = this;
-            return vm;
         }
 
         /// <summary>

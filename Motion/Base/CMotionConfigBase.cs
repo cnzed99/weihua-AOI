@@ -17,6 +17,7 @@ namespace Motion
         public CMotionConfigBase()
         {
             this.token = new Token("", "Motion");
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(this, token);
         }
 
         /// <summary>
@@ -29,27 +30,9 @@ namespace Motion
 
         /// <summary>
         /// 2025.3.6 李焕彬
-        /// 所属制程名
-        /// </summary>
-        [property: IgnoreModifyLog]
-        public string PrcessName { get; set; }
-
-        /// <summary>
-        /// 2025.3.6 李焕彬
         /// 日志消息处理
         /// </summary>
         /// <param name="message">消息</param>
         public virtual void Receive(OperateMessage message) { }
-
-        /// <summary>
-        /// 2025.3.6 李焕彬
-        /// 创建VM
-        /// </summary>
-        /// <returns>VM</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual CMotionVMBase CreateCtrlVM()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

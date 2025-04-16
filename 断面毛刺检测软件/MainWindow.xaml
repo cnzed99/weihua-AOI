@@ -628,9 +628,9 @@
                     <hc:TabItem
                         Padding="0"
                         Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
-                        Visibility="{Binding SelectedProcess.MotionCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
+                        Visibility="{Binding MotionCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                            <ContentControl Content="{Binding SelectedProcess.MotionCtrlVM.TestControl}" />
+                            <ContentControl Content="{Binding MotionCtrlVM.TestControl}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
                     <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">

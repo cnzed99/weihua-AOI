@@ -15,7 +15,7 @@ namespace Motion
     {
         public CMotionManagement()
         {
-            if (AppConfig.HasMotionConfig())
+            if (AppConfig.HasMotion())
             {
                 MotionHeper = CLoadMotionPlugs.LoadMotion();
             }
