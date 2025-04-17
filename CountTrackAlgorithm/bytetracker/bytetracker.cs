@@ -4,10 +4,12 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using OpenVinoSharp.Extensions.result;
 using YoloDeployPlatform.tracker;
+
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Point = OpenCvSharp.Point;
 
@@ -20,7 +22,9 @@ namespace YoloDeployPlatform.Bytetrack
         public float Top => Y;
         public float Right => X + Width;
         public float Bottom => Y + Height;
-        public float Vx, Vy;
+        public float Vx,
+            Vy;
+
         public static BoundingBox FromXYXY(
             float x1,
             float y1,
@@ -44,7 +48,12 @@ namespace YoloDeployPlatform.Bytetrack
             }
             return boundingBoxes;
         }
-        public static List<BoundingBox> odd2BoundingBox(List<ObbData> obbs,int inflateW, int inflateH)
+
+        public static List<BoundingBox> odd2BoundingBox(
+            List<ObbData> obbs,
+            int inflateW,
+            int inflateH
+        )
         {
             List<BoundingBox> boundingBoxes = new List<BoundingBox>();
             foreach (var item in obbs)
@@ -52,7 +61,7 @@ namespace YoloDeployPlatform.Bytetrack
                 var rect = item.box.BoundingRect();
                 rect.Inflate(inflateW, inflateH);
 
-              //  var rect = item.box.BoundingRect();
+                //  var rect = item.box.BoundingRect();
                 boundingBoxes.Add(
                     new BoundingBox(rect.X, rect.Y, rect.Width, rect.Height, item.score, item.index)
                 );
@@ -75,10 +84,10 @@ namespace YoloDeployPlatform.Bytetrack
         public List<Point> PathHistory { get; } = new List<Point>();
 
         public int Hits { get; set; }
-        private  int MinHits = 3;
+        private int MinHits = 3;
         private int MaxPathHistory = 20;
 
-        public void update(BoundingBox det, float iou,int minHits)
+        public void update(BoundingBox det, float iou, int minHits)
         {
             Filter.Update(det);
             Score = det.Score;
@@ -110,7 +119,7 @@ namespace YoloDeployPlatform.Bytetrack
         private readonly float stdWeightPosition = 1.0f / 20;
         private readonly float stdWeightVelocity = 1.0f / 160;
 
-        public KalmanFilter(float vx,float vy)
+        public KalmanFilter(float vx, float vy)
         {
             motionMat = Matrix8x8.Identity;
             updateMat = Matrix4x8.Identity;
@@ -198,8 +207,10 @@ namespace YoloDeployPlatform.Bytetrack
 
         public float IoUThreshold { get; set; } = 0.3f; //预测框与检测框匹配阈值
         public readonly CountingLine _countingLine;
-       // private int _crossCount = 0;
+
+        // private int _crossCount = 0;
         private readonly CrossDirection _crossDirection;
+
         private readonly HashSet<int> _countedTracks = new HashSet<int>();
 
         public ByteTracker(
@@ -217,19 +228,30 @@ namespace YoloDeployPlatform.Bytetrack
             _crossDirection = direction;
         }
 
-
-        public List<TrackState> Update(List<ObbData> detects,int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, float vy, int inflateW, int inflateH, out int corssCount)
+        public List<TrackState> Update(
+            List<ObbData> detects,
+            int maxTimeLost,
+            float iouThreshold,
+            float trackHighThreshold,
+            float trackLowThreshold,
+            int minHits,
+            int iteratorDis,
+            float vx,
+            float vy,
+            int inflateW,
+            int inflateH,
+            out int corssCount
+        )
         {
             if (trackHighThreshold < trackLowThreshold)
             {
                 trackHighThreshold = trackLowThreshold + 0.5f;
             }
-            if (trackHighThreshold>1.0f)
+            if (trackHighThreshold > 1.0f)
             {
                 trackHighThreshold = 1.0f;
             }
-            if (trackHighThreshold <0.0f)
+            if (trackHighThreshold < 0.0f)
             {
                 trackHighThreshold = 0.6f;
             }
@@ -246,7 +268,7 @@ namespace YoloDeployPlatform.Bytetrack
             {
                 trackLowThreshold = 0.1f;
             }
-            if(iouThreshold > 1.0f|| iouThreshold<0.0f)
+            if (iouThreshold > 1.0f || iouThreshold < 0.0f)
             {
                 iouThreshold = 0.3f;
             }
@@ -254,10 +276,10 @@ namespace YoloDeployPlatform.Bytetrack
             {
                 maxTimeLost = 1;
             }
-            TrackHighThreshold =trackHighThreshold;
-            TrackLowThreshold=trackLowThreshold;
+            TrackHighThreshold = trackHighThreshold;
+            TrackLowThreshold = trackLowThreshold;
             MaxTimeLost = maxTimeLost;
-            IoUThreshold=iouThreshold;
+            IoUThreshold = iouThreshold;
 
             var detections = BoundingBox.odd2BoundingBox(detects, inflateW, inflateH);
             // 步骤1: 预测所有现有轨迹
@@ -317,10 +339,12 @@ namespace YoloDeployPlatform.Bytetrack
             // 步骤6: 初始化新轨迹 (仅高分数检测)
             foreach (var det in unmatchedDets.Where(d => d.Score >= TrackHighThreshold))
             {
+                if (det.X < _countingLine.Start.X)
+                    continue; //已过线的不再追踪
                 var newTrack = new TrackState
                 {
                     TrackId = nextId++,
-                    Filter = new KalmanFilter(vx,vy),
+                    Filter = new KalmanFilter(vx, vy),
                     PredictedBox = det,
                     Score = det.Score,
                     ClassId = det.ClassId,
@@ -330,14 +354,29 @@ namespace YoloDeployPlatform.Bytetrack
                 trackStates.Add(newTrack);
             }
 
-            // 步骤7: 移除丢失的轨迹
-            trackStates = trackStates.Where(t => t.TimeSinceUpdate <= MaxTimeLost).ToList();
+            // 步骤7: 移除丢失的轨迹 过线丢弃
+            trackStates = trackStates
+                .Where(t => t.TimeSinceUpdate <= MaxTimeLost && !_countedTracks.Contains(t.TrackId))
+                .ToList(); //超过最大丢失帧数或已过计数线
             // 检查过线情况
             CheckLineCrossing(iteratorDis, out corssCount);
             return trackStates.Where(t => t.TimeSinceUpdate == 0).ToList();
         }
-        public List<TrackState> Update(ObbResult detects, int maxTimeLost, float iouThreshold, float trackHighThreshold,
-                    float trackLowThreshold, int minHits, int iteratorDis,float vx, float vy,int inflateW, int inflateH, out int corssCount)
+
+        public List<TrackState> Update(
+            ObbResult detects,
+            int maxTimeLost,
+            float iouThreshold,
+            float trackHighThreshold,
+            float trackLowThreshold,
+            int minHits,
+            int iteratorDis,
+            float vx,
+            float vy,
+            int inflateW,
+            int inflateH,
+            out int corssCount
+        )
         {
             if (trackHighThreshold < trackLowThreshold)
             {
@@ -438,7 +477,7 @@ namespace YoloDeployPlatform.Bytetrack
                 var newTrack = new TrackState
                 {
                     TrackId = nextId++,
-                    Filter = new KalmanFilter(vx,vy),
+                    Filter = new KalmanFilter(vx, vy),
                     PredictedBox = det,
                     Score = det.Score,
                     ClassId = det.ClassId,
@@ -535,7 +574,7 @@ namespace YoloDeployPlatform.Bytetrack
             return intersection / (areaA + areaB - intersection);
         }
 
-        private void CheckLineCrossing(int iteratorDis,out int crossCount)
+        private void CheckLineCrossing(int iteratorDis, out int crossCount)
         {
             int _crossCount = 0;
             foreach (
@@ -565,7 +604,7 @@ namespace YoloDeployPlatform.Bytetrack
                     }
                 }
             }
-           crossCount=_crossCount;
+            crossCount = _crossCount;
         }
 
         private bool IsCrossingLine(OpenCvSharp.Point p1, OpenCvSharp.Point p2, CountingLine line)
@@ -601,7 +640,7 @@ namespace YoloDeployPlatform.Bytetrack
             return false;
         }
 
-       // public int GetCrossCount() => _crossCount;
+        // public int GetCrossCount() => _crossCount;
 
         private CrossDirection GetCrossDirection(
             OpenCvSharp.Point prevPos,
