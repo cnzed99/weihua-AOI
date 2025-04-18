@@ -1,32 +1,31 @@
-﻿
+﻿using System.ComponentModel;
+using System.DirectoryServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
-using System.DirectoryServices;
-using System.Windows.Controls.Primitives;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using YoloDeployPlatform.Bytetrack;
 using YoloDeployPlatform.tracker;
 using YoloobbAlgorithm;
-using System.ComponentModel;
-using System.Windows.Media;
-using System.Runtime.Serialization;
-using YoloDeployPlatform.Bytetrack;
-using System.Text;
 
 namespace CountTrackAlgorithm
 {
     public class CountTrackAlgorithm : CYoloAlgorithmParam
     {
-
         /// <summary>
         /// 2025.4.1 鲍赞宝
         /// 算法参数派生类
         /// </summary>
-        /// 
+        ///
 
         private ByteTracker tracker;
+
         public CountTrackAlgorithm()
             : base()
         {
@@ -52,7 +51,6 @@ namespace CountTrackAlgorithm
                 CDefectSpecies defectSpecies = new CDefectSpecies("盐水袋", cDefectRecipes);
                 DefectSpecies.Add(defectSpecies);
             }
-   
 
             DefectFeatures = new();
 
@@ -73,21 +71,23 @@ namespace CountTrackAlgorithm
             this.AlgorParams.Add(new CCountTrackParam(name, token));
         }
 
-
         [OnDeserialized]
-        void IniTarck(StreamingContext context)
+        private void IniTarck(StreamingContext context)
         {
             try
             {
-                var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CCountTrackParam;
+                var paramClass =
+                    AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CCountTrackParam;
                 Point start = new Point(paramClass.StartX, paramClass.StartY);
                 Point end = new Point(paramClass.EndX, paramClass.EndY);
-                tracker = new ByteTracker(new CountingLine(start, end), paramClass.MaxTimeLost, paramClass.IouThreshold,paramClass.Direction);
+                tracker = new ByteTracker(
+                    new CountingLine(start, end),
+                    paramClass.MaxTimeLost,
+                    paramClass.IouThreshold,
+                    paramClass.Direction
+                );
             }
-            catch (Exception)
-            {
-            }
-
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -98,7 +98,8 @@ namespace CountTrackAlgorithm
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CCountTrackParam;
+            var paramClass =
+                AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CCountTrackParam;
             if (paramClass != null)
             {
                 Mat img = GetMatImage(cell, paramClass);
@@ -123,22 +124,33 @@ namespace CountTrackAlgorithm
                                 if (distance < paramClass.OverlapDis)
                                 {
                                     isOverlapping = true;
-                                    break; // 找到重叠则不再检查其他坐标  
+                                    break; // 找到重叠则不再检查其他坐标
                                 }
                             }
-                            // 如果未重叠，则加入到 uniqueCoordinates  
+                            // 如果未重叠，则加入到 uniqueCoordinates
                             if (!isOverlapping)
                             {
                                 sResultInfos.Add(baseResultInfos[i]);
                             }
-
                         }
                     }
                 }
 
                 // var tracks = tracker.Update(sResultInfos, paramClass.MaxAge, paramClass.IouThreshold,paramClass.InflateW,paramClass.InflateH, out int corssCount, MinHits:paramClass.MinHits, iteratorDis: paramClass.IteratorDis);
-                var tracks = tracker.Update(sResultInfos, paramClass.MaxTimeLost, paramClass.IouThreshold, paramClass.TrackHighThreshold,
-                    paramClass.TrackLowThreshold,  paramClass.MinHits, paramClass.IteratorDis, paramClass.VelocityX, paramClass.VelocityY,paramClass.InflateW,paramClass.InflateH, out int corssCount);
+                var tracks = tracker.Update(
+                    sResultInfos,
+                    paramClass.MaxTimeLost,
+                    paramClass.IouThreshold,
+                    paramClass.TrackHighThreshold,
+                    paramClass.TrackLowThreshold,
+                    paramClass.MinHits,
+                    paramClass.IteratorDis,
+                    paramClass.VelocityX,
+                    paramClass.VelocityY,
+                    paramClass.InflateW,
+                    paramClass.InflateH,
+                    out int corssCount
+                );
                 foreach (var track in tracks)
                 {
                     List<System.Windows.Point> pathPoints = new List<System.Windows.Point>();
@@ -159,21 +171,44 @@ namespace CountTrackAlgorithm
                     //float bottomRightY = track.Bbox[1] + h;
                     // 追踪的正矩形框
                     List<System.Windows.Point> rec1MarkPoints = new List<System.Windows.Point>();
-                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
-                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Y));
-                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom));
-                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Bottom));
-                    rec1MarkPoints.Add(new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y));
+                    rec1MarkPoints.Add(
+                        new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y)
+                    );
+                    rec1MarkPoints.Add(
+                        new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Y)
+                    );
+                    rec1MarkPoints.Add(
+                        new System.Windows.Point(
+                            track.PredictedBox.Right,
+                            track.PredictedBox.Bottom
+                        )
+                    );
+                    rec1MarkPoints.Add(
+                        new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Bottom)
+                    );
+                    rec1MarkPoints.Add(
+                        new System.Windows.Point(track.PredictedBox.X, track.PredictedBox.Y)
+                    );
                     cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink));
 
-                    StringBuilder otherInfobuilder = new StringBuilder($"TrackId:{track.TrackId}\r");
+                    StringBuilder otherInfobuilder = new StringBuilder(
+                        $"TrackId:{track.TrackId}\r"
+                    );
+                    otherInfobuilder.Append($"Score:{track.Score}\r");
                     otherInfobuilder.Append($"Iou:{track.Iou}\r");
                     //otherInfobuilder.Append($"Age:{track.Age} \r");
                     //otherInfobuilder.Append($"TimeSinceUpdate:{track.TimeSinceUpdate} \r");
                     //otherInfobuilder.Append($"Hits:{track.Hits}\r");
                     otherInfobuilder.Append($"VX:{track.Filter.mean.VX}\r");
                     otherInfobuilder.Append($"VY:{track.Filter.mean.VY}\r");
-                    OtherInfo otherInfo=new OtherInfo(otherInfobuilder, new System.Windows.Point(track.PredictedBox.Right, track.PredictedBox.Bottom), Brushes.LightCyan);
+                    OtherInfo otherInfo = new OtherInfo(
+                        otherInfobuilder,
+                        new System.Windows.Point(
+                            track.PredictedBox.Right,
+                            track.PredictedBox.Bottom
+                        ),
+                        Brushes.LightCyan
+                    );
 
                     cell.ShowOtherInfos.Add(otherInfo);
                 }
@@ -191,13 +226,13 @@ namespace CountTrackAlgorithm
                         cellDetection1.Type = ds.Name;
                         cellDetection1.Category = de.Category;
                         cellDetection1.RecipeDefectName = de.Name;
-                       
+
                         if (de.Category == Category.值)
                         {
-                            cellDetection1.Value=new List<float>() { corssCount };
+                            cellDetection1.Value = new List<float>() { corssCount };
                         }
-                        else 
-                        { 
+                        else
+                        {
                             cellDetection1.Value = new List<float>();
                         }
                         List<ObbData> infos = new List<ObbData>();
@@ -206,7 +241,6 @@ namespace CountTrackAlgorithm
                             int index = int.Parse(info.lable);
                             if (Detect_names[index] == de.Name)
                             {
-
                                 SRegion sRegion = GetDetectRegion(info);
 
                                 cellDetection1.regionOut.Add(sRegion);
@@ -218,7 +252,6 @@ namespace CountTrackAlgorithm
                     }
                 }
             }
-
         }
 
         /// <summary>
@@ -235,11 +268,14 @@ namespace CountTrackAlgorithm
             return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
-        private SRegion GetDetectRegion2(System.Windows.Point p1, System.Windows.Point p2, double w, double h)
+        private SRegion GetDetectRegion2(
+            System.Windows.Point p1,
+            System.Windows.Point p2,
+            double w,
+            double h
+        )
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
-
-
 
             sRegioninfo.LongLen = w;
             sRegioninfo.ShorLen = h;
@@ -254,11 +290,13 @@ namespace CountTrackAlgorithm
             SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
             //var rect = info.box.BoundingRect();
 
-            detectRegion.rect = new System.Windows.Rect(new System.Windows.Point(p1.X, p1.Y), new System.Windows.Size(w, h));
+            detectRegion.rect = new System.Windows.Rect(
+                new System.Windows.Point(p1.X, p1.Y),
+                new System.Windows.Size(w, h)
+            );
             return detectRegion;
         }
     }
-
 
     /// <summary>
     /// 2024.10.28 鲍赞宝
@@ -270,7 +308,7 @@ namespace CountTrackAlgorithm
             : base() { }
 
         public CCountTrackParam(string name, Token token)
-         : base(name, token) { }
+            : base(name, token) { }
 
         /// <summary>
         /// 2025.3.25 鲍赞宝
@@ -301,7 +339,6 @@ namespace CountTrackAlgorithm
         [property: DisplayName("03.iouThreshold")]
         [property: Description("iouThreshold")]
         private float iouThreshold = 0.3f;
-
 
         /// <summary>
         /// 2025.4.1 鲍赞宝
@@ -353,7 +390,6 @@ namespace CountTrackAlgorithm
         [property: Description("高度膨胀")]
         private int inflateH = 100;
 
-
         /// <summary>
         /// 2025.4.11 鲍赞宝
         /// 高分检测框阈值
@@ -372,7 +408,7 @@ namespace CountTrackAlgorithm
         [property: Category("算法参数")]
         [property: DisplayName("10.TrackLowThreshold")]
         [property: Description("低分检测框阈值")]
-        private float trackLowThreshold  = 0.1f;
+        private float trackLowThreshold = 0.1f;
 
         /// <summary>
         /// 2025.4.11 鲍赞宝
@@ -393,8 +429,6 @@ namespace CountTrackAlgorithm
         [property: DisplayName("12.VY")]
         [property: Description("Y方向速度")]
         private float velocityY = 0.0f;
-
-
 
         /// <summary>
         /// 2025.4.1 鲍赞宝
@@ -435,8 +469,5 @@ namespace CountTrackAlgorithm
         [property: DisplayName("04.终点Y")]
         [property: Description("终点Y")]
         private int endY = 0;
-
-
-
     }
 }
