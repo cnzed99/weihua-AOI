@@ -163,19 +163,6 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public CFocusManagement FocusManagement { get; set; }
 
-        /// <summary>
-        /// 2025.3.6 李焕彬
-        /// 对焦插件管理
-        /// </summary>
-        public CMotionManagement MotionManagement { get; set; }
-
-        /// <summary>
-        /// 2025.3.6 李焕彬
-        /// 控制VM
-        /// </summary>
-        [ObservableProperty]
-        CMotionVMBase motionCtrlVM;
-
         #region 启停 状态
         bool isStart = false;
 
@@ -206,7 +193,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     mainVM.IsStart = isStart;
                 }
-                MotionCtrlVM?.SetRunning(IsStart);
+                CMotionManagement.MotionCtrlVM?.SetRunning(IsStart);
             }
         }
 
@@ -422,27 +409,6 @@ namespace WH.DetectSystem.ViewModels
                 catch (Exception ex)
                 {
                     Growl.Error(Properties.Resources.对焦插件读取失败 + "\r\n" + ex.Message);
-                }
-                #endregion
-
-                #region 读取所有控制插件
-                try
-                {
-                    MotionManagement = new CMotionManagement();
-                    //初始化运动控制
-                    if (
-                        AppConfig.HasMotion()
-                        && CMotionManagement.MotionHeper.ContainsKey(AppConfig.MotionPulgName())
-                    )
-                    {
-                        MotionCtrlVM = CMotionManagement
-                            .MotionHeper[AppConfig.MotionPulgName()]
-                            .CreateNewMotion();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Growl.Error(Properties.Resources.控制插件读取失败 + "\r\n" + ex.Message);
                 }
                 #endregion
 

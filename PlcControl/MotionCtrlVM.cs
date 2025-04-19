@@ -465,7 +465,7 @@ namespace PlcControl
         {
             try
             {
-                ConfigAPI.Save(MotionConfig, c_parameterPath);
+                ConfigAPI.Save(MotionConfig, c_configSavePath);
             }
             catch (Exception) { }
         }
@@ -477,9 +477,9 @@ namespace PlcControl
         {
             try
             {
-                if (File.Exists(c_parameterPath))
+                if (File.Exists(c_configSavePath))
                 {
-                    MotionConfig = ConfigAPI.Load<CMotionConfig>(c_parameterPath);
+                    MotionConfig = ConfigAPI.Load<CMotionConfig>(c_configSavePath);
                     if (MotionConfig == null)
                     {
                         MotionConfig = new();
