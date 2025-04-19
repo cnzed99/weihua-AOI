@@ -84,7 +84,7 @@ namespace Motion
         /// <summary>
         /// 运动控制保存的路径
         /// </summary>
-        public const string c_parameterPath = "..\\SystemConfig\\MotionConfig.Json";
+        public const string c_configSavePath = "..\\SystemConfig\\MotionConfig.Json";
 
         #region 保存参数
 
