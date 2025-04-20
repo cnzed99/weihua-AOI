@@ -161,36 +161,38 @@ namespace OfflineTestCam
                         Task.Factory.StartNew(new Action(PreFilter)); //初筛
                     }
 
-                    taskTimerRecv = Task.Factory.StartNew(() =>
-                    {
-                        Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                        startTimerRecv = true;
-                        Stopwatch sw = Stopwatch.StartNew();
-                        double msPerTick = 1000.0 / Stopwatch.Frequency;
-                        while (startTimerRecv)
-                        {
-                            if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
-                            {
-                                if (
-                                    sw.ElapsedTicks * msPerTick
-                                    > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
-                                )
-                                {
-                                    sw.Restart();
-                                    lock (images)
-                                    {
-                                        if (images.Count > 0)
-                                        {
-                                            OnFrameReadyFunc(
-                                                images[indexRecv % images.Count].ImageData
-                                            );
-                                            indexRecv++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    //taskTimerRecv = Task.Factory.StartNew(() =>
+                    //{
+                    //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                    //    startTimerRecv = true;
+                    //    Stopwatch sw = Stopwatch.StartNew();
+                    //    double msPerTick = 1000.0 / Stopwatch.Frequency;
+                    //    while (startTimerRecv)
+                    //    {
+                    //        if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
+                    //        {
+                    //            if (
+                    //                sw.ElapsedTicks * msPerTick
+                    //                > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
+                    //            )
+                    //            {
+                    //                sw.Restart();
+                    //                lock (images)
+                    //                {
+                    //                    if (images.Count > 0)
+                    //                    {
+                    //                        OnFrameReadyFunc(
+                    //                            images[indexRecv % images.Count].ImageData
+                    //                        );
+                    //                        indexRecv++;
+                    //                    }
+                    //                }
+                    //            }
+                    //          Thread.Sleep(1);
+                    //        }
+                    //    }
+
+                    //});
                 }
             }
             catch (Exception ex)

@@ -51,7 +51,7 @@ namespace StichingFourCam
         /// 2025.4.20 李焕彬
         /// 拼图算法日志
         /// </summary>
-        protected CLogRec StichingLog = CLogRec.Create("StichingAlg", "D:/Data");
+        public static CLogRec StichingLog = CLogRec.Create("StichingAlg", "D:/Data");
 
         List<string> camSerials;
 
