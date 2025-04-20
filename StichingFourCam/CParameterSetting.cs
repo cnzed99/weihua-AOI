@@ -27,6 +27,11 @@ namespace StichingFourCam
             : base(serialnumber, cameraSupplier) { }
 
         [ObservableProperty]
+        [property: Category("结果显示")]
+        [property: DisplayName("拼图耗时ms")]
+        long processTime = 0;
+
+        [ObservableProperty]
         [property: Category("拼图参数")]
         [property: DisplayName("拍照间隔ms")]
         int timeLimit = 200;

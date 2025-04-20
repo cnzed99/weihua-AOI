@@ -7,7 +7,9 @@
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\CamPlug\$(TargetName)\ /d /y" />
-		<Exec Command="xcopy $(OutDir)halcondotnet.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
+		<Exec Command="xcopy $(SolutionDir)StichingFourCam\halcondotnetxl.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
+		<Exec Command="xcopy $(SolutionDir)StichingFourCam\halconxl.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
+		<Exec Command="xcopy $(SolutionDir)StichingFourCam\hcanvas.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
 	</Target>
 
 	<ItemGroup>
@@ -18,11 +20,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="HalconDotNet" />
+		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+	  <Reference Include="halcondotnetxl">
+	    <HintPath>halcondotnetxl.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>
