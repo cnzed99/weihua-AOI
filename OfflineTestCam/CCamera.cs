@@ -156,7 +156,10 @@ namespace OfflineTestCam
                 if (images.Count > 0)
                 {
                     frameSize = images[0].ImageSize;
-                    Task.Factory.StartNew(new Action(PreFilter)); //初筛
+                    if (paramSetting.UseFilter)
+                    {
+                        Task.Factory.StartNew(new Action(PreFilter)); //初筛
+                    }
 
                     taskTimerRecv = Task.Factory.StartNew(() =>
                     {
