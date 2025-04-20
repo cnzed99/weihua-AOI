@@ -123,7 +123,7 @@ namespace StichingFourCam
         /// 2025.4.19 李焕彬
         /// 4个相机cell存储
         /// </summary>
-        List<Cell> saveCells = new List<Cell>();
+        List<(DateTime createTime, Cell cell)> saveCells = new();
 
         Task taskReceive = null;
 
@@ -138,16 +138,23 @@ namespace StichingFourCam
                     {
                         lock (objLock)
                         {
-                            saveCells.Add(cell);
-                            if (saveCells.Count > 20)
+                            var timeNow = DateTime.Now;
+                            saveCells.Add((timeNow, cell));
+                            if (saveCells.Count > 10)
                             {
-                                saveCells[0].Dispose();
+                                saveCells[0].cell.Dispose();
                                 saveCells.RemoveAt(0);
                             }
                             bool isFindAll = true;
                             foreach (var item in camSerials)
                             {
-                                if (saveCells.FindIndex(c => c.CamSerial == item) < 0)
+                                if (
+                                    saveCells.FindIndex(c =>
+                                        c.cell.CamSerial == item
+                                        && (timeNow - c.createTime)
+                                            < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
+                                    ) < 0
+                                )
                                     isFindAll = false;
                             }
                             if (isFindAll)
@@ -155,8 +162,12 @@ namespace StichingFourCam
                                 List<Cell> cellFind = new List<Cell>();
                                 foreach (var item in camSerials)
                                 {
-                                    var result = saveCells.Find(c => c.CamSerial == item);
-                                    cellFind.Add(result);
+                                    var result = saveCells.Find(c =>
+                                        c.cell.CamSerial == item
+                                        && (timeNow - c.createTime)
+                                            < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
+                                    );
+                                    cellFind.Add(result.cell);
                                 }
                                 Stopwatch sw = Stopwatch.StartNew();
                                 var stichingImage = hDevelopExport.action(
@@ -173,7 +184,7 @@ namespace StichingFourCam
 
                                 foreach (var item in saveCells)
                                 {
-                                    item.Dispose();
+                                    item.cell.Dispose();
                                 }
                                 saveCells.Clear();
                             }
