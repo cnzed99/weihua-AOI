@@ -223,9 +223,8 @@
                     <MenuItem
                         Width="100"
                         Click="MotionPlug_Click"
-                        Visibility="{Binding Source={x:Static mo:CMotionManagement.MotionHeper}, Converter={StaticResource EmptyToVisibilityConverter}}"
-                        Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}">
-                    </MenuItem>
+                        Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
+                        Visibility="{Binding Source={x:Static mo:CMotionManagement.MotionHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
                 </MenuItem>
                 <MenuItem Name="HelpMenu" Header="{Binding [Help], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
