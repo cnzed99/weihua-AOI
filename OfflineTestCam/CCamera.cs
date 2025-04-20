@@ -21,7 +21,7 @@ namespace OfflineTestCam
     ///2025.1.14 李焕彬
     ///缓存图像数据
     /// </summary>
-    class CBuffer
+    internal class CBuffer
     {
         public CBuffer(IntPtr ptr, bool isUsing)
         {
@@ -73,67 +73,67 @@ namespace OfflineTestCam
         /// 2025.1.14 李焕彬
         /// 图像缓存
         /// </summary>
-        List<CBuffer> buffers = new();
+        private List<CBuffer> buffers = new();
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 缓存个数
         /// </summary>
-        int bufferSize = 100;
+        private int bufferSize = 100;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 帧数据大小
         /// </summary>
-        int frameSize = 0;
+        private int frameSize = 0;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 当前写入帧序号
         /// </summary>
-        int curFrame = 0;
+        private int curFrame = 0;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 线程锁
         /// </summary>
-        object bufferLock = new object();
+        private object bufferLock = new object();
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 断面初筛算法参数组
         /// </summary>
-        List<SMaociAlgorParam> algParams = new();
+        private List<SMaociAlgorParam> algParams = new();
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 侧面初筛算法参数组
         /// </summary>
-        List<SSideMaociAlgorParam> algParamSides = new();
+        private List<SSideMaociAlgorParam> algParamSides = new();
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 定时器线程
         /// </summary>
-        Task taskTimerRecv;
+        private Task taskTimerRecv;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 开始定时器
         /// </summary>
-        bool startTimerRecv = false;
+        private bool startTimerRecv = false;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 图像索引
         /// </summary>
-        int indexRecv = 0;
+        private int indexRecv = 0;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 已加载图像集
         /// </summary>
-        List<CImage> images = new List<CImage>();
+        private List<CImage> images = new List<CImage>();
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -158,39 +158,39 @@ namespace OfflineTestCam
                     frameSize = images[0].ImageSize;
                     if (paramSetting.UseFilter)
                     {
-                        Task.Factory.StartNew(new Action(PreFilter)); //初筛
+                        //Task.Factory.StartNew(new Action(PreFilter)); //初筛
                     }
 
-                    taskTimerRecv = Task.Factory.StartNew(() =>
-                    {
-                        Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                        startTimerRecv = true;
-                        Stopwatch sw = Stopwatch.StartNew();
-                        double msPerTick = 1000.0 / Stopwatch.Frequency;
-                        while (startTimerRecv)
-                        {
-                            if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
-                            {
-                                if (
-                                    sw.ElapsedTicks * msPerTick
-                                    > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
-                                )
-                                {
-                                    sw.Restart();
-                                    lock (images)
-                                    {
-                                        if (images.Count > 0)
-                                        {
-                                            OnFrameReadyFunc(
-                                                images[indexRecv % images.Count].ImageData
-                                            );
-                                            indexRecv++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    //taskTimerRecv = Task.Factory.StartNew(() =>
+                    //{
+                    //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                    //    startTimerRecv = true;
+                    //    Stopwatch sw = Stopwatch.StartNew();
+                    //    double msPerTick = 1000.0 / Stopwatch.Frequency;
+                    //    while (startTimerRecv)
+                    //    {
+                    //        if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
+                    //        {
+                    //            if (
+                    //                sw.ElapsedTicks * msPerTick
+                    //                > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
+                    //            )
+                    //            {
+                    //                sw.Restart();
+                    //                lock (images)
+                    //                {
+                    //                    if (images.Count > 0)
+                    //                    {
+                    //                        OnFrameReadyFunc(
+                    //                            images[indexRecv % images.Count].ImageData
+                    //                        );
+                    //                        indexRecv++;
+                    //                    }
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //});
                 }
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace OfflineTestCam
             return true;
         }
 
-        bool received = false;
+        private bool received = false;
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -318,6 +318,7 @@ namespace OfflineTestCam
                                     ptrResult
                                 );
                                 break;
+
                             case EMPREALGORITHM.EMPREALGORITHMSIDEMAOCI:
                                 PreTestSide(
                                     intPtrs,
@@ -568,7 +569,7 @@ namespace OfflineTestCam
             }
         }
 
-        EMTRIGGERMODE modeSet;
+        private EMTRIGGERMODE modeSet;
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -602,7 +603,8 @@ namespace OfflineTestCam
         /// 设置曝光值
         /// </summary>
         /// <param name="value">曝光值</param>
-        public override void SetExposureTime(uint value) { }
+        public override void SetExposureTime(uint value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -621,7 +623,8 @@ namespace OfflineTestCam
         /// 设置增益
         /// </summary>
         /// <param name="value">增益</param>
-        public override void SetGain(float value) { }
+        public override void SetGain(float value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -824,13 +827,15 @@ namespace OfflineTestCam
         /// 2025.1.14 李焕彬
         /// 保存用户参数
         /// </summary>
-        public override void UserSaveParam() { }
+        public override void UserSaveParam()
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 加载用户参数
         /// </summary>
-        public override void UserLoadParam() { }
+        public override void UserLoadParam()
+        { }
 
         public override void SetCustomParam(uint value)
         {

@@ -26420,12 +26420,7 @@ namespace StichingFourCam
                 {
                     hv_SilhouetteMaxTilt = (new HTuple(10)).TupleRad();
                 }
-                //
-                //Control the graphics output.
-                ExpTmpLocalVar_WindowWidthLimit = 800;
-                ExpSetGlobalVar_WindowWidthLimit(ExpTmpLocalVar_WindowWidthLimit);
-                ExpTmpLocalVar_WindowHeightLimit = 600;
-                ExpSetGlobalVar_WindowHeightLimit(ExpTmpLocalVar_WindowHeightLimit);
+
                 dev_update_off();
                 //
                 //Ensure a correct value for the control of the display of intermediate results and
