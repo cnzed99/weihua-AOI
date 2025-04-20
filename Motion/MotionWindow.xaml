@@ -11,6 +11,6 @@
     Height="550"
     mc:Ignorable="d">
     <Grid>
-        <ContentControl Content="{Binding TestControl}"/>
+        <ContentControl Content="{Binding TestControl}" />
     </Grid>
 </hc:Window>

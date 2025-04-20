@@ -166,20 +166,23 @@ namespace OfflineTestCam
                         double msPerTick = 1000.0 / Stopwatch.Frequency;
                         while (startTimerRecv)
                         {
-                            if (
-                                sw.ElapsedTicks * msPerTick
-                                > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
-                            )
+                            if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
                             {
-                                sw.Restart();
-                                lock (images)
+                                if (
+                                    sw.ElapsedTicks * msPerTick
+                                    > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
+                                )
                                 {
-                                    if (images.Count > 0)
+                                    sw.Restart();
+                                    lock (images)
                                     {
-                                        OnFrameReadyFunc(
-                                            images[indexRecv % images.Count].ImageData
-                                        );
-                                        indexRecv++;
+                                        if (images.Count > 0)
+                                        {
+                                            OnFrameReadyFunc(
+                                                images[indexRecv % images.Count].ImageData
+                                            );
+                                            indexRecv++;
+                                        }
                                     }
                                 }
                             }
@@ -479,45 +482,14 @@ namespace OfflineTestCam
         /// </summary>
         public override void ExecuteSoftwareTrigger()
         {
-            //try
-            //{
-            //    if (this.Connected)
-            //    {
-            //        base.ExecuteSoftwareTrigger();
-            //        received = false;
-            //        int ret = IKapBoard.IKapSetInfo(
-            //            m_hBoard,
-            //            (int)INFO_ID.IKP_SOFTWARE_TRIGGER_START,
-            //            1
-            //        );
-            //        CheckIKapBoard(ret);
-            //        Stopwatch stopwatch = new Stopwatch();
-            //        stopwatch.Start();
-            //        while (true)
-            //        {
-            //            Thread.Sleep(10);
-            //            if (!received)
-            //            {
-            //                ret = IKapBoard.IKapSetInfo(
-            //                    m_hBoard,
-            //                    (int)INFO_ID.IKP_SOFTWARE_TRIGGER_START,
-            //                    1
-            //                );
-            //            }
-            //            if (received || stopwatch.ElapsedMilliseconds > 1000)
-            //            {
-            //                break;
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorSoftWare2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    throw;
-            //}
+            if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+            {
+                if (images.Count > 0)
+                {
+                    OnFrameReadyFunc(images[indexRecv % images.Count].ImageData);
+                    indexRecv++;
+                }
+            }
         }
 
         /// <summary>
@@ -583,10 +555,7 @@ namespace OfflineTestCam
         {
             if (images.Count > 0)
             {
-                cameraType =
-                    images[0].PixelFormat.BitsPerPixel == 8
-                        ? PixelFormats.Gray8
-                        : PixelFormats.Rgb24;
+                cameraType = images[0].PixelFormat;
                 return true;
             }
             else
@@ -596,15 +565,20 @@ namespace OfflineTestCam
             }
         }
 
+        EMTRIGGERMODE modeSet;
+
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 设置触发源
         /// </summary>
-        protected override void SetTriggerMode(EMTRIGGERMODE mode) { }
+        protected override void SetTriggerMode(EMTRIGGERMODE mode)
+        {
+            modeSet = mode;
+        }
 
         public override bool GetTriggerMode(out EMTRIGGERMODE mode)
         {
-            mode = EMTRIGGERMODE.EMTRIGGERNONE;
+            mode = modeSet;
             return true;
         }
 
