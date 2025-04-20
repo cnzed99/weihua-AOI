@@ -336,6 +336,7 @@ namespace CameraModule
                             GetImageFunc(ptr);
                         }
                     }
+                    Thread.Sleep(5);
                 }
                 catch (Exception) { }
             }
