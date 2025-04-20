@@ -29,7 +29,7 @@ namespace StichingFourCam
         [ObservableProperty]
         [property: Category("拼图参数")]
         [property: DisplayName("拍照间隔ms")]
-        int timeLimit;
+        int timeLimit = 200;
 
         private string serialNumber1;
 
