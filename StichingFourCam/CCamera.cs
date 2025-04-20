@@ -35,7 +35,7 @@ namespace StichingFourCam
         /// </summary>
         internal CParameterSetting paramSetting { get; set; }
 
-        HDevelopExport hDevelopExport { get; set; }
+        HDevelopExportPro hDevelopExport { get; set; }
 
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(20) { FullMode = BoundedChannelFullMode.Wait };
@@ -81,7 +81,7 @@ namespace StichingFourCam
                         paramSetting.SerialNumber3,
                         paramSetting.SerialNumber4
                     };
-                    hDevelopExport = new HDevelopExport(
+                    hDevelopExport = new(
                         CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageWidth,
                         CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageHeight
                     );
@@ -176,6 +176,7 @@ namespace StichingFourCam
                                     cellFind[2].Image,
                                     cellFind[3].Image
                                 );
+                                paramSetting.ProcessTime = sw.ElapsedMilliseconds;
                                 StichingLog.Info($"执行拼图算法处理时间：{sw.ElapsedMilliseconds}ms!");
                                 paramSetting.ImageWidth = stichingImage.ImageWidth;
                                 paramSetting.ImageHeight = stichingImage.ImageHeight;
