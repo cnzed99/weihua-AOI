@@ -118,6 +118,11 @@ namespace OfflineTestCam
         Task taskTimerRecv;
 
         /// <summary>
+        /// 初筛线程
+        /// </summary>
+        Task taskFilter;
+
+        /// <summary>
         /// 2025.1.14 李焕彬
         /// 开始定时器
         /// </summary>
@@ -156,43 +161,10 @@ namespace OfflineTestCam
                 if (images.Count > 0)
                 {
                     frameSize = images[0].ImageSize;
-                    if (paramSetting.UseFilter)
+                    if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
                     {
-                        Task.Factory.StartNew(new Action(PreFilter)); //初筛
+                        CreateInternalTriggerTask();
                     }
-
-                    //taskTimerRecv = Task.Factory.StartNew(() =>
-                    //{
-                    //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                    //    startTimerRecv = true;
-                    //    Stopwatch sw = Stopwatch.StartNew();
-                    //    double msPerTick = 1000.0 / Stopwatch.Frequency;
-                    //    while (startTimerRecv)
-                    //    {
-                    //        if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERNONE)
-                    //        {
-                    //            if (
-                    //                sw.ElapsedTicks * msPerTick
-                    //                > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
-                    //            )
-                    //            {
-                    //                sw.Restart();
-                    //                lock (images)
-                    //                {
-                    //                    if (images.Count > 0)
-                    //                    {
-                    //                        OnFrameReadyFunc(
-                    //                            images[indexRecv % images.Count].ImageData
-                    //                        );
-                    //                        indexRecv++;
-                    //                    }
-                    //                }
-                    //            }
-                    //          Thread.Sleep(1);
-                    //        }
-                    //    }
-
-                    //});
                 }
             }
             catch (Exception ex)
@@ -203,6 +175,36 @@ namespace OfflineTestCam
             }
 
             return true;
+        }
+
+        public void CreateInternalTriggerTask()
+        {
+            taskTimerRecv = Task.Factory.StartNew(() =>
+            {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                startTimerRecv = true;
+                Stopwatch sw = Stopwatch.StartNew();
+                double msPerTick = 1000.0 / Stopwatch.Frequency;
+                while (startTimerRecv)
+                {
+                    if (
+                        sw.ElapsedTicks * msPerTick
+                        > 1000.0 / ((double)paramSetting.InterTriggerFrequence)
+                    )
+                    {
+                        sw.Restart();
+                        lock (images)
+                        {
+                            if (images.Count > 0)
+                            {
+                                OnFrameReadyFunc(images[indexRecv % images.Count].ImageData);
+                                indexRecv++;
+                            }
+                        }
+                    }
+                    Thread.Sleep(1);
+                }
+            });
         }
 
         bool received = false;
@@ -226,6 +228,17 @@ namespace OfflineTestCam
                     && paramSetting.TriggerMode != EMTRIGGERMODE.EMTRIGGERSOFTWARE
                 )
                 {
+                    if (taskFilter == null)
+                    {
+                        curFrame = 0;
+                        for (int g = 0; g < bufferSize; g++)
+                        {
+                            buffers.Add(new(Marshal.AllocHGlobal(frameSize), false));
+                            algParams.Add(new(paramSetting, paramSetting.MmPerPixel * 1000));
+                            algParamSides.Add(new(paramSetting, paramSetting.MmPerPixel * 1000));
+                        }
+                        taskFilter = Task.Factory.StartNew(new Action(PreFilter)); //初筛
+                    }
                     lock (bufferLock)
                     {
                         if (!buffers[curFrame % bufferSize].isUsing)
@@ -259,18 +272,11 @@ namespace OfflineTestCam
         public void PreFilter()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            for (int g = 0; g < bufferSize; g++)
-            {
-                buffers.Add(new(Marshal.AllocHGlobal(frameSize), false));
-                algParams.Add(new(paramSetting, paramSetting.MmPerPixel * 1000));
-                algParamSides.Add(new(paramSetting, paramSetting.MmPerPixel * 1000));
-            }
             IntPtr ptrResult = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * 50);
             int[] result = new int[50];
             int[] indexs = new int[50];
             IntPtr[] intPtrs = new IntPtr[50];
             int useBuffers = 0;
-            curFrame = 0;
             int lastFrame = 0;
             int stride = Setting.ImageWidth * ((8 + 7) / 8);
             Stopwatch sw = new Stopwatch();
@@ -439,6 +445,8 @@ namespace OfflineTestCam
                 }
                 images.Clear();
             }
+            taskFilter?.Wait();
+            taskFilter = null;
         }
 
         /// <summary>
@@ -487,13 +495,10 @@ namespace OfflineTestCam
         /// </summary>
         public override void ExecuteSoftwareTrigger()
         {
-            if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+            if (images.Count > 0)
             {
-                if (images.Count > 0)
-                {
-                    OnFrameReadyFunc(images[indexRecv % images.Count].ImageData);
-                    indexRecv++;
-                }
+                OnFrameReadyFunc(images[indexRecv % images.Count].ImageData);
+                indexRecv++;
             }
         }
 
@@ -578,7 +583,20 @@ namespace OfflineTestCam
         /// </summary>
         protected override void SetTriggerMode(EMTRIGGERMODE mode)
         {
-            modeSet = mode;
+            if (modeSet != mode)
+            {
+                modeSet = mode;
+                switch (modeSet)
+                {
+                    case EMTRIGGERMODE.EMTRIGGERNONE:
+                        CreateInternalTriggerTask();
+                        break;
+                    case EMTRIGGERMODE.EMTRIGGERSOFTWARE:
+                        startTimerRecv = false;
+                        taskTimerRecv?.Wait();
+                        break;
+                }
+            }
         }
 
         public override bool GetTriggerMode(out EMTRIGGERMODE mode)
