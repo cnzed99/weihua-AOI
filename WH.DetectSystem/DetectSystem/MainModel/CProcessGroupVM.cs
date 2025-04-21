@@ -5,11 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using AlarmSetCtrl;
+using AlarmSetCtrl.View;
 using AlgorithmDll;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Mapster;
 using MySqlOperatesApi;
 using Mysqlx.Crud;
 using MySqlX.XDevAPI;
@@ -47,6 +51,13 @@ namespace WH.DetectSystem.Models
         CDefectsDataVM cDefectsDataVM = new CDefectsDataVM();
 
         /// <summary>
+        /// 报警设置
+        /// </summary>
+        [AdaptIgnore]
+        [ObservableProperty]
+        CAlarmSetConfigVM alarmSetVM = new CAlarmSetConfigVM(); //报警
+
+        /// <summary>
         /// 2024.9.6 李焕彬
         /// 数据库
         /// </summary>
@@ -75,6 +86,12 @@ namespace WH.DetectSystem.Models
             CDefectsDataVM.DefectsProduce.SetFilter(
                 this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
             );
+
+            AlarmSetVM.CAlarmSet = AlarmSetConfig;
+            AlarmSetVM.Reset();
+            AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
+            AlarmSetVM.SetQuality(MaociQualityConfig);
+
             MySqlVM.MysqlExecute.Clone(MysqlBLL);
             NameUpdata();
             MySqlVM.ActionUpdateParam += () =>
@@ -106,6 +123,7 @@ namespace WH.DetectSystem.Models
             CDefectsDataVM.DefectsProduce.SetFilter(
                 this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
             );
+            AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
         }
 
         /// <summary>
@@ -121,7 +139,17 @@ namespace WH.DetectSystem.Models
                 CDefectsDataVM.DefectsProduce.SetFilter(
                     this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
                 );
+                AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
             }
+        }
+
+        [RelayCommand]
+        public void OpenAlarmSet()
+        {
+            AlarmSetWindow alarmSetWindow = new AlarmSetWindow();
+            alarmSetWindow.Title = Name + "-报警设置";
+            alarmSetWindow.DataContext = AlarmSetVM;
+            alarmSetWindow.Show();
         }
 
         /// <summary>

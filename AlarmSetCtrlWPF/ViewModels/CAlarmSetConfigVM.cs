@@ -92,21 +92,21 @@ namespace AlarmSetCtrl
                 if (
                     SourceAlarm is not null
                     && SourceAlarm.Source is Quality qua
-                    && CAlarmSet.Qualities.Contains(qua)
+                    && Qualities.Contains(qua)
                 )
                     MAlarm.Source = SourceAlarm.Source;
 
-                SourceList = CAlarmSet.Qualities;
+                SourceList = Qualities;
             }
             else
             {
                 if (
                     SourceAlarm is not null
                     && SourceAlarm.Source is DefectFilter de
-                    && CAlarmSet.DefectList.Contains(de)
+                    && DefectList.Contains(de)
                 )
                     MAlarm.Source = SourceAlarm.Source;
-                SourceList = CAlarmSet.DefectList;
+                SourceList = DefectList;
             }
         }
 
@@ -195,5 +195,165 @@ namespace AlarmSetCtrl
         /// </summary>
         [ObservableProperty]
         Alarm sourceAlarm;
+
+        /// <summary>
+        ///  2024.6.25 鲍赞宝
+        /// 缺陷等级列表
+        /// 20240711 TCG 初始化时传引用过来
+        /// </summary>
+        [ObservableProperty]
+        ObservableCollection<Quality> qualities = new();
+
+        /// <summary>
+        /// 20240711 TCG
+        /// 缺陷列表
+        /// </summary>
+        [ObservableProperty]
+        private ObservableCollection<DefectFilter> defectList = new();
+
+        /// <summary>
+        /// 2024.9.5 李焕彬
+        /// 缺陷配置
+        /// </summary>
+        List<CFilterConfig> filterConfigs;
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初始化缺陷统计
+        /// </summary>
+        /// <param name="filterConfigsNew"></param>
+        public void SetFilter(List<CFilterConfig> filterConfigsNew)
+        {
+            if (this.filterConfigs != null)
+            {
+                foreach (var item in this.filterConfigs)
+                {
+                    item.DefectList.CollectionChanged -= DefectList_CollectionChanged;
+                }
+            }
+            this.filterConfigs = filterConfigsNew;
+            UpdateDefects();
+            foreach (var item in filterConfigs)
+            {
+                item.DefectList.CollectionChanged += DefectList_CollectionChanged;
+            }
+        }
+
+        public void UpdateDefects()
+        {
+            List<string> defectExists = new List<string>();
+            foreach (var config in filterConfigs)
+            {
+                foreach (var defect in config.DefectList)
+                {
+                    defectExists.Add(defect.Name);
+                    if (DefectList.FirstOrDefault(o => o.Name == defect.Name) == null)
+                    {
+                        DefectList.Add(defect);
+                    }
+                }
+            }
+            for (int i = DefectList.Count - 1; i >= 0; i--)
+            {
+                if (!defectExists.Contains(DefectList[i].Name))
+                {
+                    DefectList.RemoveAt(i);
+                }
+            }
+            Synchronization();
+        }
+
+        private void DefectList_CollectionChanged(
+            object sender,
+            System.Collections.Specialized.NotifyCollectionChangedEventArgs e
+        )
+        {
+            UpdateDefects();
+        }
+
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// 初始化缺陷统计
+        /// </summary>
+        /// <param name="qualityConfigNew"></param>
+        public void SetQuality(CQualityConfig qualityConfigNew)
+        {
+            this.Qualities = qualityConfigNew.Qualities;
+            Synchronization(true);
+        }
+
+        /// <summary>
+        /// 20240715 TCG
+        /// 同步缺陷和质量等级实例，同时移除不适用的报警源 报警配置
+        /// </summary>
+        protected void Synchronization(bool isQuality = false)
+        {
+            var DeList = DefectList.ToList();
+            var QaList = Qualities.ToList();
+
+            var alarmNeedRemove = new List<Alarm>();
+            foreach (var alarm in CAlarmSet.AlarmList)
+            {
+                if (!isQuality && alarm.Source is DefectFilter de)
+                {
+                    var index = DeList.FindIndex(d => d.Name == de.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = DeList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+                else if (isQuality && alarm.Source is Quality qa)
+                {
+                    var index = QaList.FindIndex(d => d.Name == qa.Name);
+                    if (index >= 0)
+                    {
+                        alarm.Source = QaList[index];
+                    }
+                    else
+                    {
+                        alarmNeedRemove.Add(alarm);
+                    }
+                }
+            }
+
+            foreach (var alarm in CAlarmSet.AlarmList)
+            {
+                if (alarm.AlarmAgreement == null)
+                    continue;
+                if (
+                    alarm.AlarmAgreement?.GUID != null
+                    && CCommunicationManagement.CommParamDic.TryGetValue(
+                        alarm.AlarmAgreement?.GUID,
+                        out CCommunicationSettingBase comParams
+                    )
+                )
+                {
+                    var index = comParams
+                        .AlarmAgreements.ToList()
+                        .FindIndex(al =>
+                            (al.Name == alarm.AlarmAgreement.Name)
+                            && (al.ComName == alarm.AlarmAgreement.ComName)
+                        );
+                    if (index >= 0)
+                    {
+                        alarm.AlarmAgreement = comParams.AlarmAgreements[index];
+                    }
+                }
+                else
+                {
+                    alarmNeedRemove.Add(alarm);
+                }
+            }
+
+            //移除不适用的报警设置
+            foreach (var alarm in alarmNeedRemove)
+            {
+                CAlarmSet.AlarmList.Remove(alarm);
+            }
+        }
     }
 }

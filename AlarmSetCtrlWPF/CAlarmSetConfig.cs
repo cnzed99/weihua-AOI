@@ -46,118 +46,12 @@ namespace AlarmSetCtrl
         }
 
         /// <summary>
-        /// 20240711 TCG
-        /// 初始化报警
-        /// </summary>
-        /// <param name="cAlarmSet"></param>
-        /// <param name="filterConfig"></param>
-        /// <param name="qualityConfig"></param>
-        public void SetCAlarm(CFilterConfig filterConfig, CQualityConfig qualityConfig)
-        {
-            this.DefectList = filterConfig.DefectList;
-            this.Qualities = qualityConfig.Qualities;
-
-            Synchronization();
-        }
-
-        /// <summary>
-        /// 20240715 TCG
-        /// 同步缺陷和质量等级实例，同时移除不适用的报警源 报警配置
-        /// </summary>
-        protected void Synchronization()
-        {
-            var DeList = DefectList.ToList();
-            var QaList = Qualities.ToList();
-
-            var alarmNeedRemove = new List<Alarm>();
-            foreach (var alarm in AlarmList)
-            {
-                if (alarm.Source is DefectFilter de)
-                {
-                    var index = DeList.FindIndex(d => d.Name == de.Name);
-                    if (index >= 0)
-                    {
-                        alarm.Source = DeList[index];
-                    }
-                    else
-                    {
-                        alarmNeedRemove.Add(alarm);
-                    }
-                }
-                else if (alarm.Source is Quality qa)
-                {
-                    var index = QaList.FindIndex(d => d.Name == qa.Name);
-                    if (index >= 0)
-                    {
-                        alarm.Source = QaList[index];
-                    }
-                    else
-                    {
-                        alarmNeedRemove.Add(alarm);
-                    }
-                }
-            }
-
-            foreach (var alarm in AlarmList)
-            {
-                if (
-                    alarm.AlarmAgreement?.GUID != null
-                    && CCommunicationManagement.CommParamDic.TryGetValue(
-                        alarm.AlarmAgreement?.GUID,
-                        out CCommunicationSettingBase comParams
-                    )
-                )
-                {
-                    var index = comParams
-                        .AlarmAgreements.ToList()
-                        .FindIndex(al =>
-                            (al.Name == alarm.AlarmAgreement.Name)
-                            && (al.ComName == alarm.AlarmAgreement.ComName)
-                        );
-                    if (index >= 0)
-                    {
-                        alarm.AlarmAgreement = comParams.AlarmAgreements[index];
-                    }
-                }
-                else
-                {
-                    alarmNeedRemove.Add(alarm);
-                }
-            }
-
-            //移除不适用的报警设置
-            foreach (var alarm in alarmNeedRemove)
-            {
-                AlarmList.Remove(alarm);
-            }
-        }
-
-        /// <summary>
         /// 2024.6.25 鲍赞宝
         /// 报警规则集合
         /// </summary>
         [ObservableProperty]
         [property: DisplayName("报警规则")]
         ObservableCollection<Alarm> alarmList;
-
-        /// <summary>
-        ///  2024.6.25 鲍赞宝
-        /// 缺陷等级列表
-        /// 20240711 TCG 初始化时传引用过来
-        /// </summary>
-        [property: JsonIgnore]
-        [ObservableProperty]
-        [property: IgnoreModifyLog]
-        ObservableCollection<Quality> qualities = new();
-
-        /// <summary>
-        /// 20240711 TCG
-        /// 缺陷列表
-        /// </summary>
-        [property: JsonIgnore]
-        [ObservableProperty]
-        [property: IgnoreModifyLog]
-        private ObservableCollection<DefectFilter> defectList = new();
 
         /// <summary>
         /// 2024.6.25 鲍赞宝
@@ -436,7 +330,7 @@ namespace AlarmSetCtrl
         /// </summary>
         [property: DisplayName("报警协议")]
         [ObservableProperty]
-        CAlarmAgreement alarmAgreement = new();
+        CAlarmAgreement alarmAgreement;
 
         /// <summary>
         /// 20240715 TCG

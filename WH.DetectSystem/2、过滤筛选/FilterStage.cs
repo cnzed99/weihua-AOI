@@ -31,7 +31,7 @@ namespace WH.DetectSystem
             }
             foreach (var sp in filterConfig.SpeciesFilters)
             {
-                sp.Result = true;//检测类重置为OK
+                sp.Result = true; //检测类重置为OK
             }
             foreach (var algorithmOut in cell.AlgorithmOut)
             {
@@ -132,9 +132,11 @@ namespace WH.DetectSystem
                                             //}
                                             for (int i = 0; i < selRegionALL.Count; i++)
                                             {
-                                                detection.DetectLog.Add(new StringBuilder(
-                                                 $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
-                                             ));
+                                                detection.DetectLog.Add(
+                                                    new StringBuilder(
+                                                        $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
+                                                    )
+                                                );
                                             }
                                             //detection.DetectLog.AppendLine(
                                             //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
@@ -185,12 +187,14 @@ namespace WH.DetectSystem
                                                     maxRegion
                                                 );
                                             }
-                                            detection.DetectLog[i].AppendLine(
-                                                $"{item.Feature.GetName()}:{item.Value:F2}"
-                                            );
+                                            detection
+                                                .DetectLog[i]
+                                                .AppendLine(
+                                                    $"{item.Feature.GetName()}:{item.Value:F2}"
+                                                );
                                         }
                                     }
-                                    
+
                                     //SRegion maxRegion = detection.regionOut.Last();
                                     //foreach (var item in de.ResultList)
                                     //{
@@ -215,9 +219,11 @@ namespace WH.DetectSystem
                                     foreach (var item in de.ResultList)
                                     {
                                         item.Value = 0;
-                                        detection.DetectLog.Add(new StringBuilder(
-                                            $"{item.Feature.GetName()}:{item.Value:F2}"
-                                        ));
+                                        detection.DetectLog.Add(
+                                            new StringBuilder(
+                                                $"{item.Feature.GetName()}:{item.Value:F2}"
+                                            )
+                                        );
                                     }
                                 }
                             }
@@ -280,11 +286,13 @@ namespace WH.DetectSystem
                                             //    }
                                             //    once = true;
                                             //}
-                                            for (int i = 0; i<selValueALL.Count; i++)
+                                            for (int i = 0; i < selValueALL.Count; i++)
                                             {
-                                                detection.DetectLog.Add(new StringBuilder(
-                                                 $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
-                                             ));
+                                                detection.DetectLog.Add(
+                                                    new StringBuilder(
+                                                        $"{detection.DefectFilter.Name}:过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}\r\n"
+                                                    )
+                                                );
                                             }
                                             //detection.DetectLog.AppendLine(
                                             //    $"过滤器{de.FilterList.IndexOf(filter)}-分选{filter.SelectList.IndexOf(select)}"
@@ -315,9 +323,11 @@ namespace WH.DetectSystem
                                         item.Value =
                                             detection.Value.Count > 0 ? detection.Value.Max() : 0;
                                     }
-                                    detection.DetectLog.Add(new StringBuilder(
+                                    detection.DetectLog.Add(
+                                        new StringBuilder(
                                             $"{item.Feature.GetName()}:{item.Value:F2}"
-                                        ));
+                                        )
+                                    );
                                     //detection.DetectLog.AppendLine(
                                     //    $"{item.Feature.GetName()}:{item.Value:F2}"
                                     //);
@@ -332,23 +342,27 @@ namespace WH.DetectSystem
                         if (cell.Detection == null)
                         {
                             cell.Detection = detection;
-                            cell.Quality = detection.DefectFilter.QualityLevel;
+                            cell.Quality = qualityLevel;
                         }
                         else
                         {
-                            if (cell.Detection.DefectFilter.QualityLevel < qualityLevel) //质量等级 还需判断优先级
+                            if (
+                                cell.Detection.DefectFilter.QualityLevel.Priority
+                                < qualityLevel.Priority
+                            ) //质量等级 还需判断优先级
                             {
                                 cell.Detection = detection;
-                                cell.Quality = detection.DefectFilter.QualityLevel;
+                                cell.Quality = qualityLevel;
                             }
                             else if (
-                                cell.Detection.DefectFilter.QualityLevel == qualityLevel
+                                cell.Detection.DefectFilter.QualityLevel.Priority
+                                    == qualityLevel.Priority
                                 && cell.Detection?.DefectFilter.Priority
                                     < detection.DefectFilter.Priority
                             ) //质量等级相等时 判断优先级
                             {
                                 cell.Detection = detection;
-                                cell.Quality = detection.DefectFilter.QualityLevel;
+                                cell.Quality = qualityLevel;
                             }
                         }
                         cell.IsOK = false;
