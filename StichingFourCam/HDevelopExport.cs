@@ -26301,11 +26301,14 @@ namespace StichingFourCam
 
     public class HDevelopExportPro : HDevelopExport
     {
-        public HDevelopExportPro(int width, int height)
+        public HDevelopExportPro(CParameterSetting _camSetting, int width, int height)
             : base()
         {
+            camSetting = _camSetting;
             init(width, height);
         }
+
+        CParameterSetting camSetting;
 
         // Stack for temporary objects
         HObject[] OTemp = new HObject[20];
@@ -26397,29 +26400,29 @@ namespace StichingFourCam
             try
             {
                 hv_PixelSizeInMM.Dispose();
-                hv_PixelSizeInMM = 0.232;
+                hv_PixelSizeInMM = camSetting.PixelsizeInMM;
                 //
                 //Control parameters for fine tuning:
                 //- Parameters for the fine tuning of the fine adjustment.
                 hv_FineAdjustmentMatchingWidth.Dispose();
-                hv_FineAdjustmentMatchingWidth = 20;
+                hv_FineAdjustmentMatchingWidth = camSetting.FineAdjustmentMatchingWidth;
                 hv_FineAdjustmentMaxShift.Dispose();
-                hv_FineAdjustmentMaxShift = 15;
+                hv_FineAdjustmentMaxShift = camSetting.FineAdjustmentMaxShift;
                 hv_BlendingSeam.Dispose();
-                hv_BlendingSeam = 1;
+                hv_BlendingSeam = camSetting.BlendingSeam;
                 //- Parameters for the fine tuning of the silhouette extraction.
                 hv_SilhouetteMeasureDistance.Dispose();
-                hv_SilhouetteMeasureDistance = 100;
+                hv_SilhouetteMeasureDistance = camSetting.SilhouetteMeasureDistance;
                 hv_SilhouetteMeasureLength2.Dispose();
-                hv_SilhouetteMeasureLength2 = 100;
+                hv_SilhouetteMeasureLength2 = camSetting.SilhouetteMeasureLength2;
                 hv_SilhouetteMeasureSigma.Dispose();
-                hv_SilhouetteMeasureSigma = 1;
+                hv_SilhouetteMeasureSigma = camSetting.SilhouetteMeasuresigma;
                 hv_SilhouetteMeasureThreshold.Dispose();
-                hv_SilhouetteMeasureThreshold = 30;
+                hv_SilhouetteMeasureThreshold = camSetting.SilhouetteMeasureThreshold;
                 hv_SilhouetteMaxTilt.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_SilhouetteMaxTilt = (new HTuple(10)).TupleRad();
+                    hv_SilhouetteMaxTilt = (new HTuple(camSetting.SilhouetteMaxTilt)).TupleRad();
                 }
                 //
                 //Control the graphics output.
@@ -26460,11 +26463,11 @@ namespace StichingFourCam
                 //
                 //Set suitable data of object
                 hv_CylinderRadiusInMM.Dispose();
-                hv_CylinderRadiusInMM = 15;
+                hv_CylinderRadiusInMM = camSetting.CylinderRadiusInMM;
                 hv_LabelMinRow.Dispose();
-                hv_LabelMinRow = 600;
+                hv_LabelMinRow = camSetting.LabelMinRow;
                 hv_LabelMaxRow.Dispose();
-                hv_LabelMaxRow = 1700;
+                hv_LabelMaxRow = camSetting.LabelMaxRow;
                 //
                 //Convert control parameters into meters.
                 hv_PixelSize.Dispose();
@@ -26989,9 +26992,9 @@ namespace StichingFourCam
                 //
                 //拼接图像
                 hv_HighImageQuality.Dispose();
-                hv_HighImageQuality = 0;
+                hv_HighImageQuality = camSetting.HighImageQuality ? 1 : 0;
                 hv_PerformFineAdjustment.Dispose();
-                hv_PerformFineAdjustment = 0;
+                hv_PerformFineAdjustment = camSetting.PerformFineAdjustment ? 1 : 0;
                 ho_FinalMosaic.Dispose();
                 stitch_images_WH20250312(
                     ho_Regions,
@@ -27018,18 +27021,22 @@ namespace StichingFourCam
                     hv_LabelMinRow,
                     hv_LabelMaxRow
                 );
-                HOperatorSet.ConcatObj(ho_FinalMosaic, ho_FinalMosaic, out HObject objectsConcat);
-                HOperatorSet.TileImages(objectsConcat, out HObject tiledImage, 2, "vertical");
-                //stitch_images_COPY_1 (Regions, ImagesRectified, ImagesGrayRectified, FinalMosaic, WindowHandle, ColorMosaic, HighImageQuality, PerformFineAdjustment, FineAdjustmentMaxShift, FineAdjustmentMatchingWidth, BlendingSeam, CameraSetupModelZeroDistInCylinderOrigin, NumCameras, MosaicWidth, MosaicHeight, CylinderPointsX, CylinderPointsY, CylinderPointsZ, NumSlices, NumPointsPerSlice, CylinderRadius, LabelMinRow, LabelMaxRow)
+                if (camSetting.TiledImage)
                 {
-                    HObject ExpTmpOutVar_0;
-                    HOperatorSet.ConvertImageType(tiledImage, out ExpTmpOutVar_0, "byte");
-                    tiledImage.Dispose();
-                    tiledImage = ExpTmpOutVar_0;
+                    HOperatorSet.ConcatObj(
+                        ho_FinalMosaic,
+                        ho_FinalMosaic,
+                        out HObject objectsConcat
+                    );
+                    HOperatorSet.TileImages(objectsConcat, out HObject tiledImage, 2, "vertical");
+                    ho_FinalMosaic.Dispose();
+                    ho_FinalMosaic = tiledImage;
                 }
-                var ptrFinal = GetColorImagePointer(tiledImage, out int width, out int height);
+                HOperatorSet.ConvertImageType(ho_FinalMosaic, out HObject ExpTmpOutVar_0, "byte");
+                //HOperatorSet.WriteImage(ExpTmpOutVar_0, "bmp", 0, "image1");
+                var ptrFinal = GetColorImagePointer(ExpTmpOutVar_0, out int width, out int height);
+                ExpTmpOutVar_0.Dispose();
                 ho_FinalMosaic.Dispose();
-                tiledImage.Dispose();
                 ho_Image.Dispose();
                 return new CImage(width, height, ptrFinal, PixelFormats.Rgb24);
                 //Eliminate distortions from the images.

@@ -32,7 +32,7 @@ namespace StichingFourCam
         long processTime = 0;
 
         [ObservableProperty]
-        [property: Category("拼图参数")]
+        [property: Category("相机参数")]
         [property: DisplayName("拍照间隔ms")]
         int timeLimit = 200;
 
@@ -42,7 +42,7 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 相机1序列号
         /// </summary>
-        [property: Category("拼图参数")]
+        [property: Category("相机参数")]
         [property: DisplayName("相机1序列号")]
         [property: Description("相机1序列号")]
         [property: Editor(typeof(CComboxEditorPro), typeof(CComboxEditorPro))]
@@ -58,7 +58,7 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 相机2序列号
         /// </summary>
-        [property: Category("拼图参数")]
+        [property: Category("相机参数")]
         [property: DisplayName("相机2序列号")]
         [property: Description("相机2序列号")]
         [property: Editor(typeof(CComboxEditorPro), typeof(CComboxEditorPro))]
@@ -74,7 +74,7 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 相机3序列号
         /// </summary>
-        [property: Category("拼图参数")]
+        [property: Category("相机参数")]
         [property: DisplayName("相机3序列号")]
         [property: Description("相机3序列号")]
         [property: Editor(typeof(CComboxEditorPro), typeof(CComboxEditorPro))]
@@ -90,7 +90,7 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 相机4序列号
         /// </summary>
-        [property: Category("拼图参数")]
+        [property: Category("相机参数")]
         [property: DisplayName("相机4序列号")]
         [property: Description("相机4序列号")]
         [property: Editor(typeof(CComboxEditorPro), typeof(CComboxEditorPro))]
@@ -98,6 +98,321 @@ namespace StichingFourCam
         {
             get { return serialNumber4; }
             set { SetProperty(ref serialNumber4, value); }
+        }
+
+        private double pixelsizeInMM = 0.232;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("PixelsizeInMM")]
+        [property: Description("PixelsizeInMM")]
+        public double PixelsizeInMM
+        {
+            get { return pixelsizeInMM; }
+            set
+            {
+                if (SetProperty(ref pixelsizeInMM, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double fineAdjustmentMatchingWidth = 50;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("FineAdjustmentMatchingWidth ")]
+        [property: Description("FineAdjustmentMatchingWidth ")]
+        public double FineAdjustmentMatchingWidth
+        {
+            get { return fineAdjustmentMatchingWidth; }
+            set
+            {
+                if (SetProperty(ref fineAdjustmentMatchingWidth, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double fineAdjustmentMaxShift = 15;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("FineAdjustmentMaxShift ")]
+        [property: Description("FineAdjustmentMaxShift ")]
+        public double FineAdjustmentMaxShift
+        {
+            get { return fineAdjustmentMaxShift; }
+            set
+            {
+                if (SetProperty(ref fineAdjustmentMaxShift, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double blendingSeam = 1;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("BlendingSeam")]
+        [property: Description("BlendingSeam")]
+        public double BlendingSeam
+        {
+            get { return blendingSeam; }
+            set
+            {
+                if (SetProperty(ref blendingSeam, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double silhouetteMeasureDistance = 100;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("SilhouetteMeasureDistance")]
+        [property: Description("SilhouetteMeasureDistance")]
+        public double SilhouetteMeasureDistance
+        {
+            get { return silhouetteMeasureDistance; }
+            set
+            {
+                if (SetProperty(ref silhouetteMeasureDistance, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double silhouetteMeasureLength2 = 200;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("SilhouetteMeasureLength2")]
+        [property: Description("SilhouetteMeasureLength2")]
+        public double SilhouetteMeasureLength2
+        {
+            get { return silhouetteMeasureLength2; }
+            set
+            {
+                if (SetProperty(ref silhouetteMeasureLength2, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double silhouetteMeasuresigma = 1;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("SilhouetteMeasuresigma")]
+        [property: Description("SilhouetteMeasuresigma")]
+        public double SilhouetteMeasuresigma
+        {
+            get { return silhouetteMeasuresigma; }
+            set
+            {
+                if (SetProperty(ref silhouetteMeasuresigma, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double silhouetteMeasureThreshold = 30;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("SilhouetteMeasureThreshold")]
+        [property: Description("SilhouetteMeasureThreshold")]
+        public double SilhouetteMeasureThreshold
+        {
+            get { return silhouetteMeasureThreshold; }
+            set
+            {
+                if (SetProperty(ref silhouetteMeasureThreshold, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double silhouetteMaxTilt = 10;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("SilhouetteMaxTilt ")]
+        [property: Description("SilhouetteMaxTilt ")]
+        public double SilhouetteMaxTilt
+        {
+            get { return silhouetteMaxTilt; }
+            set
+            {
+                if (SetProperty(ref silhouetteMaxTilt, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double cylinderRadiusInMM = 15;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("CylinderRadiusInMM ")]
+        [property: Description("CylinderRadiusInMM ")]
+        public double CylinderRadiusInMM
+        {
+            get { return cylinderRadiusInMM; }
+            set
+            {
+                if (SetProperty(ref cylinderRadiusInMM, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double labelMinRow = 600;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("LabelMinRow ")]
+        [property: Description("LabelMinRow ")]
+        public double LabelMinRow
+        {
+            get { return labelMinRow; }
+            set
+            {
+                if (SetProperty(ref labelMinRow, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private double labelMaxRow = 1700;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("LabelMaxRow")]
+        [property: Description("LabelMaxRow")]
+        public double LabelMaxRow
+        {
+            get { return labelMaxRow; }
+            set
+            {
+                if (SetProperty(ref labelMaxRow, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private bool highImageQuality = false;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("HighImageQuality ")]
+        [property: Description("HighImageQuality ")]
+        public bool HighImageQuality
+        {
+            get { return highImageQuality; }
+            set
+            {
+                if (SetProperty(ref highImageQuality, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private bool performFineAdjustment = false;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("PerformFineAdjustment")]
+        [property: Description("PerformFineAdjustment")]
+        public bool PerformFineAdjustment
+        {
+            get { return performFineAdjustment; }
+            set
+            {
+                if (SetProperty(ref performFineAdjustment, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
+        }
+
+        private bool tiledImage = false;
+
+        /// <summary>
+        /// 2025.1.14 李焕彬
+        ///
+        /// </summary>
+        [property: Category("拼图算法参数")]
+        [property: DisplayName("TiledImage")]
+        [property: Description("TiledImage")]
+        public bool TiledImage
+        {
+            get { return tiledImage; }
+            set
+            {
+                if (SetProperty(ref tiledImage, value) && Connected)
+                {
+                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+                }
+            }
         }
     }
 

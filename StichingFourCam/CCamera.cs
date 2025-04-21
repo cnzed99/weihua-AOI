@@ -82,6 +82,7 @@ namespace StichingFourCam
                         paramSetting.SerialNumber4
                     };
                     hDevelopExport = new(
+                        paramSetting,
                         CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageWidth,
                         CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageHeight
                     );
@@ -222,6 +223,34 @@ namespace StichingFourCam
             {
                 CCameraManagement.CamLogger.Error(
                     Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
+                );
+            }
+        }
+
+        /// <summary>
+        /// 更新拼图参数
+        /// </summary>
+        public void UpdateStichingParam()
+        {
+            try
+            {
+                lock (objLock)
+                {
+                    if (Connected)
+                    {
+                        hDevelopExport.terminal();
+                        hDevelopExport = new(
+                            paramSetting,
+                            CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageWidth,
+                            CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageHeight
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CCameraManagement.CamLogger.Error(
+                    "拼接参数更新设置错误" + paramSetting.SerialNumber + ex.Message
                 );
             }
         }
