@@ -498,7 +498,8 @@ namespace PlcControl
             {
                 if (tcpClient.Connected)
                 {
-                    master.WriteSingleCoil(slaveAddress, startAddress, value);
+                    bool[] data = new bool[1] { value };
+                    master.WriteMultipleCoils(slaveAddress, startAddress, data);
                 }
             }
             catch (Exception ex)

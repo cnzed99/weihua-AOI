@@ -9,6 +9,8 @@
     Title="控制插件"
     Width="650"
     Height="550"
+    Topmost="True"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
         <ContentControl Content="{Binding TestControl}" />
