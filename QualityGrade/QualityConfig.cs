@@ -97,7 +97,7 @@ namespace QualityGrade
     /// 质量
     /// </summary>
     [DisplayName("等级")]
-    public partial class Quality : ConfigModifyObservableBase, IEquatable<Quality>
+    public partial class Quality : ConfigModifyObservableBase
     {
         public Quality()
         {
@@ -173,70 +173,70 @@ namespace QualityGrade
             return Name;
         }
 
-        /// <summary>
-        /// 20240705 TCG
-        /// 增加比较运算符 比较优先级大小
-        /// </summary>
-        /// <param name="obj1"></param>
-        /// <param name="obj2"></param>
-        /// <returns></returns>
-        public static bool operator >(Quality obj1, Quality obj2)
-        {
-            if (obj1 is null || obj2 is null)
-                return false;
-            return obj1?.Priority > obj2?.Priority;
-        }
+        ///// <summary>
+        ///// 20240705 TCG
+        ///// 增加比较运算符 比较优先级大小
+        ///// </summary>
+        ///// <param name="obj1"></param>
+        ///// <param name="obj2"></param>
+        ///// <returns></returns>
+        //public static bool operator >(Quality obj1, Quality obj2)
+        //{
+        //    if (obj1 is null || obj2 is null)
+        //        return false;
+        //    return obj1?.Priority > obj2?.Priority;
+        //}
 
-        /// <summary>
-        /// 20240705 TCG
-        /// 增加比较运算符 比较优先级大小
-        /// </summary>
-        public static bool operator <(Quality obj1, Quality obj2)
-        {
-            if (obj1 is null || obj2 is null)
-                return false;
-            return obj1?.Priority < obj2?.Priority;
-        }
+        ///// <summary>
+        ///// 20240705 TCG
+        ///// 增加比较运算符 比较优先级大小
+        ///// </summary>
+        //public static bool operator <(Quality obj1, Quality obj2)
+        //{
+        //    if (obj1 is null || obj2 is null)
+        //        return false;
+        //    return obj1?.Priority < obj2?.Priority;
+        //}
 
-        /// <summary>
-        /// 20240705 TCG
-        /// 增加比较运算符 比较优先级大小
-        /// </summary>
-        public static bool operator ==(Quality obj1, Quality obj2)
-        {
-            if (obj1 is null && obj2 is null)
-                return true;
-            return obj1?.Priority == obj2?.Priority;
-        }
+        ///// <summary>
+        ///// 20240705 TCG
+        ///// 增加比较运算符 比较优先级大小
+        ///// </summary>
+        //public static bool operator ==(Quality obj1, Quality obj2)
+        //{
+        //    if (obj1 is null && obj2 is null)
+        //        return true;
+        //    return obj1?.Priority == obj2?.Priority;
+        //}
 
-        /// <summary>
-        /// 20240705 TCG
-        /// 增加比较运算符 比较优先级大小
-        /// </summary>
-        public static bool operator !=(Quality obj1, Quality obj2)
-        {
-            if (obj1 == obj2)
-                return false;
-            return obj1?.Priority != obj2?.Priority;
-        }
+        ///// <summary>
+        ///// 20240705 TCG
+        ///// 增加比较运算符 比较优先级大小
+        ///// </summary>
+        //public static bool operator !=(Quality obj1, Quality obj2)
+        //{
+        //    if (obj1 == obj2)
+        //        return false;
+        //    return obj1?.Priority != obj2?.Priority;
+        //}
 
-        public override bool Equals(object obj)
-        {
-            if (obj is Quality quality)
-            {
-                return this == quality;
-            }
-            return false;
-        }
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is Quality quality)
+        //    {
+        //        return this == quality;
+        //    }
+        //    return false;
+        //}
 
-        public bool Equals(Quality other)
-        {
-            return this == other;
-        }
+        //public bool Equals(Quality other)
+        //{
+        //    return this == other;
+        //}
 
-        public override int GetHashCode()
-        {
-            return Priority.GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return Priority.GetHashCode();
+        //}
     }
 }
