@@ -195,12 +195,15 @@ namespace Modbus
                                     case EMELEMTYPE.EMELEMM:
                                         e.ReadValue = ReadCoil(e.Addr) ? 1 : 0;
                                         break;
+
                                     case EMELEMTYPE.EMELEMD_REAL:
                                         e.ReadValue = ReadHoldingRegisterReal(e.Addr);
                                         break;
+
                                     case EMELEMTYPE.EMELEMD_INT:
                                         e.ReadValue = ReadHoldingRegisterInt16(e.Addr);
                                         break;
+
                                     case EMELEMTYPE.EMELEMD_DINT:
                                         e.ReadValue = ReadHoldingRegisterInt32(e.Addr);
                                         break;
@@ -258,12 +261,15 @@ namespace Modbus
                     case EMELEMTYPE.EMELEMM:
                         WriteSingleCoil(element.Addr, element.WriteValue >= 1);
                         break;
+
                     case EMELEMTYPE.EMELEMD_REAL:
                         WriteSingleRegisterReal(element.Addr, element.WriteValue);
                         break;
+
                     case EMELEMTYPE.EMELEMD_INT:
                         WriteSingleRegisterInt16(element.Addr, (Int16)element.WriteValue);
                         break;
+
                     case EMELEMTYPE.EMELEMD_DINT:
                         WriteSingleRegisterInt32(element.Addr, (Int32)element.WriteValue);
                         break;
@@ -396,7 +402,8 @@ namespace Modbus
             {
                 if (tcpClient.Connected)
                 {
-                    master.WriteSingleCoil(slaveAddress, startAddress, value);
+                    bool[] data = new bool[1] { value };
+                    master.WriteMultipleCoils(slaveAddress, startAddress, data);
                 }
             }
             catch (Exception ex)
