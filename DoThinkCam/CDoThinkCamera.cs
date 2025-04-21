@@ -208,7 +208,6 @@ namespace DoThinkCam
                 ImageQueueChannel.Writer.TryWrite(pBuffer);
                 paramSetting.ImageWidth = refFrame.iWidth;
                 paramSetting.ImageHeight = refFrame.iHeight;
-
                 paramSetting.CameraType =
                     refFrame.format == dvpImageFormat.FORMAT_MONO
                         ? PixelFormats.Gray8
@@ -392,18 +391,18 @@ namespace DoThinkCam
             }
         }
 
-        protected override void SetTriggerMode(EMTRIGGERMODE mode)
+        protected override void SetTriggerMode(EMTRIGGERMODE soure)
         {
-            switch (mode)
+            switch (soure)
             {
                 case EMTRIGGERMODE.EMTRIGGERNONE:
-                    SetTriggerMode(false);
+                    SetTriggerMode(false, soure);
                     break;
                 case EMTRIGGERMODE.EMTRIGGERSOFTWARE:
-                    SetTriggerMode(true);
+                    SetTriggerMode(true, soure);
                     break;
                 case EMTRIGGERMODE.EMTRIGGERHARDWARE:
-                    SetTriggerMode(true);
+                    SetTriggerMode(true, soure);
                     break;
             }
         }
@@ -411,7 +410,7 @@ namespace DoThinkCam
         /// <summary>
         /// 修改相机触发模式和触发源
         /// </summary>
-        public void SetTriggerMode(bool modle)
+        public void SetTriggerMode(bool modle, EMTRIGGERMODE soure)
         {
             try
             {
@@ -439,8 +438,23 @@ namespace DoThinkCam
                         status = DVPCamera.dvpGetTriggerState(CamHandle, ref isOn);
                         if (isOn) //判断是触发模式还是连续模式
                         {
-                            dvpTriggerSource sorue = dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE;
-                            status = DVPCamera.dvpGetTriggerSource(CamHandle, ref sorue);
+                            switch (soure)
+                            {
+                                case EMTRIGGERMODE.EMTRIGGERSOFTWARE:
+                                    status = DVPCamera.dvpSetTriggerSource(
+                                        CamHandle,
+                                        dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE
+                                    );
+                                    break;
+                                case EMTRIGGERMODE.EMTRIGGERHARDWARE:
+                                    status = DVPCamera.dvpSetTriggerSource(
+                                        CamHandle,
+                                        dvpTriggerSource.TRIGGER_SOURCE_LINE1
+                                    );
+                                    break;
+                            }
+                            //dvpTriggerSource sorue = dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE;
+                            //status = DVPCamera.dvpGetTriggerSource(CamHandle, ref sorue);
                             //if (sorue == dvpTriggerSource.TRIGGER_SOURCE_SOFTWARE)
                             //{
                             //    paramSetting.TriggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
@@ -864,13 +878,14 @@ namespace DoThinkCam
             {
                 if (this.Connected)
                 {
-                    CCameraManagement.CamLogger.Error(
+                    CCameraManagement.CamLogger.Info(
                         Properties.Resources.CameraSerialNumber
                             + paramSetting.SerialNumber
                             + Properties.Resources.ExecuteSetTriggerDelayIs
                             + value
                     );
                     dvpStatus status = DVPCamera.dvpSetTriggerDelay(CamHandle, (double)value);
+                    status = DVPCamera.dvpSetStrobeDelay(CamHandle, (double)value);
                     if (status != dvpStatus.DVP_STATUS_OK)
                     {
                         CCameraManagement.CamLogger.Error(
