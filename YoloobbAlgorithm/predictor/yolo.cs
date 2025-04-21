@@ -10,7 +10,7 @@ using OpenVinoSharp.Extensions.model;
 using OpenVinoSharp.Extensions.process;
 using OpenVinoSharp.Extensions.result;
 
-namespace YoloobbAlgorithm
+namespace GeneralMLOBBAlgorithm
 {
     public class YOLO : IDisposable
     {
@@ -28,7 +28,7 @@ namespace YoloobbAlgorithm
         private Predictor m_predictor;
 
         //  Log m_log = Log.Instance;
-        private Stopwatch sw = new Stopwatch();
+        Stopwatch sw = new Stopwatch();
 
         public YOLO()
         {
@@ -42,9 +42,8 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int[] input_size,
-            List<string> input_names,
-            List<int[]> output_sizes,
+            InputImgSize input_size,
+            List<string> input_names,            
             List<string> output_names
         )
         {
@@ -52,17 +51,36 @@ namespace YoloobbAlgorithm
             m_categ_nums = categ_nums;
             m_det_thresh = det_thresh;
             m_det_nms_thresh = det_nms_thresh;
-            m_input_size = input_size;
-            m_output_sizes = output_sizes;
+            m_input_size = new int[] { 1, 3, (int)input_size, (int)input_size };
+            int outputsize;
+            switch (input_size)
+            {
+                case InputImgSize.IN320:
+                    outputsize = (int)ImgSize.S320;
+                    break;
+                case InputImgSize.IN640:
+                    outputsize = (int)ImgSize.S640;
+                    break;
+                case InputImgSize.IN1024:
+                    outputsize = (int)ImgSize.S1024;
+                    break;
+                case InputImgSize.IN2048:
+                    outputsize = (int)ImgSize.S2048;
+                    break;
+                default:
+                    outputsize = (int)ImgSize.S640;
+                    break;
+            }
+            m_output_sizes = new List<int[]> { new int[] { 1, 5 + categ_nums, outputsize } };
             m_input_names = input_names;
             m_output_names = output_names;
         }
 
-        private float[] preprocess(Mat img)
+        float[] preprocess(Mat img)
         {
             m_image_size = new List<int> { (int)img.Size().Width, (int)img.Size().Height };
             Mat mat = new Mat();
-            if (img.Type().Channels == 4)
+            if (img.Type().Channels==4)
             {
                 Cv2.CvtColor(img, mat, ColorConversionCodes.BGR2RGB);
                 img.Dispose();
@@ -71,14 +89,13 @@ namespace YoloobbAlgorithm
             {
                 mat = img;
             }
-
-            // mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");
             mat = Resize.letterbox_img(mat, (int)m_input_size[2], out m_factor);
             mat = Normalize.run(mat, true);
             return Permute.run(mat);
+         
         }
 
-        private List<float[]> infer(Mat img)
+        List<float[]> infer(Mat img)
         {
             List<float[]> re;
             //if (m_log.Flag_time)
@@ -118,14 +135,14 @@ namespace YoloobbAlgorithm
             return re;
         }
 
-        public BaseResult predict(Mat img)
+        public BaseResult predict(Mat img,float det_thresh_in, float det_nms_thresh_in)
         {
             List<float[]> result_data = infer(img);
             BaseResult re;
             //if (m_log.Flag_time)
             //{
             sw.Restart();
-            re = postprocess(result_data);
+            re = postprocess(result_data, det_thresh_in, det_nms_thresh_in);
             sw.Stop();
             //m_log.print(
             //    "Result data process successfull, spend time: "
@@ -140,7 +157,7 @@ namespace YoloobbAlgorithm
             return re;
         }
 
-        protected virtual BaseResult postprocess(List<float[]> results)
+        protected virtual BaseResult postprocess(List<float[]> results,float det_thresh,float det_nms_thresh)
         {
             return new BaseResult();
         }
@@ -158,8 +175,7 @@ namespace YoloobbAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size,
-            ImgSize output_size
+            InputImgSize input_size
         )
         {
             //else if (model_type == ModelType.YOLOv8Det)
@@ -198,8 +214,7 @@ namespace YoloobbAlgorithm
                 categ_nums,
                 det_thresh,
                 det_nms_thresh,
-                input_size,
-                output_size
+                input_size
             );
         }
 

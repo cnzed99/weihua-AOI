@@ -3,7 +3,7 @@ using OpenCvSharp;
 using System.Drawing;
 using WH.RecipeCellRootBase;
 
-namespace YoloobbAlgorithm
+namespace GeneralMLOBBAlgorithm
 {
     /// <summary>
     /// 2024.10.31 ±«ÔÞ±¦
