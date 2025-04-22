@@ -510,6 +510,32 @@ namespace CameraModule
             Setting.TriggerPulseWidth = Setting.TriggerPulseWidth;
         }
 
+        public virtual int GetImageWidth()
+        {
+            switch (Setting.ImageRotate)
+            {
+                case EMIMAGEROTATE.EMROTATE90:
+                    return Setting.ImageHeight;
+                case EMIMAGEROTATE.EMROTATE270:
+                    return Setting.ImageHeight;
+                default:
+                    return Setting.ImageWidth;
+            }
+        }
+
+        public virtual int GetImageHeight()
+        {
+            switch (Setting.ImageRotate)
+            {
+                case EMIMAGEROTATE.EMROTATE90:
+                    return Setting.ImageWidth;
+                case EMIMAGEROTATE.EMROTATE270:
+                    return Setting.ImageWidth;
+                default:
+                    return Setting.ImageHeight;
+            }
+        }
+
         public void SetTriggerModePro(EMTRIGGERMODE mode)
         {
             startGrabSoft = false;
