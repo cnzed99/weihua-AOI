@@ -43,7 +43,7 @@ namespace StichingFourCam
         /// <summary>
         /// 取图队列
         /// </summary>
-        public readonly Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
+        public Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
             s_SaveImgchannelOptions
         );
 
@@ -83,9 +83,10 @@ namespace StichingFourCam
                     };
                     hDevelopExport = new(
                         paramSetting,
-                        CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageWidth,
-                        CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageHeight
+                        CCameraManagement.CameraDict[paramSetting.SerialNumber1].GetImageWidth(),
+                        CCameraManagement.CameraDict[paramSetting.SerialNumber1].GetImageHeight()
                     );
+                    m_WaitImgChannel = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
                     CCameraManagement.CameraDict[paramSetting.SerialNumber1].OutputImageChannel =
                         m_WaitImgChannel;
                     CCameraManagement.CameraDict[paramSetting.SerialNumber2].OutputImageChannel =
@@ -241,8 +242,12 @@ namespace StichingFourCam
                         hDevelopExport.terminal();
                         hDevelopExport = new(
                             paramSetting,
-                            CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageWidth,
-                            CCameraManagement.CamParamDict[paramSetting.SerialNumber1].ImageHeight
+                            CCameraManagement
+                                .CameraDict[paramSetting.SerialNumber1]
+                                .GetImageWidth(),
+                            CCameraManagement
+                                .CameraDict[paramSetting.SerialNumber1]
+                                .GetImageHeight()
                         );
                     }
                 }

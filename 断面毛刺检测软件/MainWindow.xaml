@@ -468,7 +468,7 @@
                                             <GroupBox Margin="5" Style="{StaticResource GroupBoxTab}">
                                                 <GroupBox.Header>
                                                     <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}">
-                                                        <TextBlock Text="{Binding Name}" Style="{DynamicResource TextBlockDefault}"/>
+                                                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{Binding Name}" />
                                                         <Button
                                                             Command="{Binding OpenAlarmSetCommand}"
                                                             Content="报警设置"
