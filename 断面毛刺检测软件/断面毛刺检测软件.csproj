@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <None Remove="Resources\logo1.png" />
+    <None Remove="Resources\华盛控.png" />
     <None Remove="Resources\图标\a-bangzhuzhichiwentijieda.png" />
     <None Remove="Resources\图标\a-biaoqianbiaoji.png" />
     <None Remove="Resources\图标\a-caidanliebiao.png" />
@@ -176,6 +177,7 @@
     <Resource Include="Resources\logo1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\华盛控.png" />
     <Resource Include="Resources\图标\工具\手动调试.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
