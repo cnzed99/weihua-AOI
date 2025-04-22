@@ -465,10 +465,16 @@
                                 <ItemsControl ItemsSource="{Binding CMainMModel.CProcessGroups}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <GroupBox
-                                                Margin="5"
-                                                Header="{Binding Name}"
-                                                Style="{StaticResource GroupBoxTab}">
+                                            <GroupBox Margin="5" Style="{StaticResource GroupBoxTab}">
+                                                <GroupBox.Header>
+                                                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}">
+                                                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{Binding Name}" />
+                                                        <Button
+                                                            Command="{Binding OpenAlarmSetCommand}"
+                                                            Content="报警设置"
+                                                            Style="{DynamicResource ButtonPrimary}" />
+                                                    </DockPanel>
+                                                </GroupBox.Header>
                                                 <pro:SummaryCtrl DataContext="{Binding CDefectsDataVM}" />
                                             </GroupBox>
                                         </DataTemplate>

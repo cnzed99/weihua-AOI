@@ -842,8 +842,8 @@ namespace 断面毛刺检测软件
                                 WaitTime = 3,
                             }
                         );
-                        SysLog.Error(message.alarm.RegularShow);
                     }
+                    SysLog.Error(message.alarm.RegularShow);
                 })
             );
         }

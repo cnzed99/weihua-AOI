@@ -106,8 +106,9 @@ namespace WH.DetectSystem.Models
                 this.SDFilterVM.QualityConfig = MaociQualityConfig;
                 this.QualityVM.QualityConfig = MaociQualityConfig;
                 MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-                MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+                AlarmSetVM.SetQuality(MaociQualityConfig);
                 MaociDefectsProduce.SetQuality(MaociQualityConfig);
+                this.AlarmSetVM.SetFilter(new() { MaociFilterConfig });
                 MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             }
             get => ProcessGroup?.MaociQualityConfig;
@@ -628,9 +629,11 @@ namespace WH.DetectSystem.Models
                                 LastImage = ModelImage;
                             }
                             MaociDefectsProduce.Excute(cell);
+                            MaociAlarmSetConfig.Excute(cell);
                             if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
                             {
                                 ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
+                                ProcessGroup.AlarmSetConfig.Excute(cellOut.Cell);
                                 if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
                                 {
                                     //cell.Dispose();
@@ -999,7 +1002,7 @@ namespace WH.DetectSystem.Models
             Task dataBaseTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                object objAlarmLock = new object(); //报警监控用
+                // object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
@@ -1044,27 +1047,27 @@ namespace WH.DetectSystem.Models
                         }
                     }
 
-                    #region 报警
-                    try
-                    {
-                        lock (objAlarmLock)
-                        {
-                            MaociAlarmSetConfig.Excute(cell);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                    }
-                    finally
-                    {
-                        //取消单个制程数据库存储
-                        //if (!m_dataBaseChannel.Writer.TryWrite(cell))
-                        //    cell.Dispose();
-                    }
-                    #endregion
+                    //#region 报警
+                    //try
+                    //{
+                    //    lock (objAlarmLock)
+                    //    {
+
+                    //    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    await m_InfoChannel.Writer.WriteAsync(
+                    //        new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                    //    );
+                    //}
+                    //finally
+                    //{
+                    //    //取消单个制程数据库存储
+                    //    //if (!m_dataBaseChannel.Writer.TryWrite(cell))
+                    //    //    cell.Dispose();
+                    //}
+                    //#endregion
 
                     //cell.Dispose();
                 }
@@ -1193,7 +1196,7 @@ namespace WH.DetectSystem.Models
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
             this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
             this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-            this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+            this.AlarmSetVM.SetFilter(new() { MaociFilterConfig });
             MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             this.MaociHistoryModel.SetHistory(MaociFilterConfig);
             if (FocusCtrlVM is not null)

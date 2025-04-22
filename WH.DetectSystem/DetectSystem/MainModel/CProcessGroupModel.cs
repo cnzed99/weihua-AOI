@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AlarmSetCtrl;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using ProjProduceData;
@@ -64,6 +65,13 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [JsonProperty]
         public CDefectsProduce MaociDefectsProduce { get; set; } = new CDefectsProduce();
+
+        /// <summary>
+        /// 20240706 TCG
+        /// 报警设置
+        /// </summary>
+        [JsonProperty]
+        public CAlarmSetConfig AlarmSetConfig { get; set; } = new CAlarmSetConfig();
 
         /// <summary>
         /// 2024.9.2 李焕彬
