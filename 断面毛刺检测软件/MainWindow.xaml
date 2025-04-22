@@ -246,7 +246,6 @@
                         <MenuItem.Icon>
                             <svg1:SVGImage Source="/Resources/图标/语言/语言.svg" />
                         </MenuItem.Icon>
-
                     </MenuItem>
                     <MenuItem
                         Width="100"
@@ -257,7 +256,6 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-
             </Menu>
             <TextBlock
                 Grid.Column="1"
@@ -284,7 +282,7 @@
                 <Image
                     Margin="5"
                     HorizontalAlignment="Left"
-                    Source="/Resources/组合-2.png" />
+                    Source="/Resources/华盛控.png" />
                 <TextBlock HorizontalAlignment="Center" Text="{Binding version, StringFormat='{}Version:{0}'}" />
             </StackPanel>
             <Grid>
@@ -294,7 +292,6 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-
                 </Grid.ColumnDefinitions>
                 <Border
                     Grid.Column="0"
@@ -393,7 +390,6 @@
                             DockPanel.Dock="Right"
                             Text="{Binding SystemTime}"
                             TextAlignment="Center" />
-
                     </StackPanel>
                     <!--  用户登录  -->
                     <StackPanel Grid.Column="4" Width="80">
@@ -428,10 +424,7 @@
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
-
-
             </Grid>
-
         </DockPanel>
         <!--  中间内容  -->
         <hc:DrawerContainer Grid.Row="1">
@@ -673,21 +666,16 @@
                                 </hc:TabControl>
                             </hc:SimplePanel>
                         </hc:TabItem>
-
                     </hc:TabControl>
-
                 </hc:SimplePanel>
-
             </Grid>
         </hc:DrawerContainer>
 
-
         <!--<hc:Drawer Dock="Right" ShowMode="Cover" IsOpen="{Binding ElementName=Btn_StartStop,Path=IsChecked}" ShowMask="False" MaskCanClose="False">
             <hc:SimplePanel  Width="300" Background="{DynamicResource RegionBrush}">
-                <TextBlock Text="抽屉窗口"/>
-                <Button Style="{DynamicResource ButtonIcon}" Command="hc:ControlCommands.Close" hc:IconElement.Geometry="{DynamicResource DeleteFillCircleGeometry}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                <TextBlock Text="抽屉窗口" />
+                <Button Style="{DynamicResource ButtonIcon}" Command="hc:ControlCommands.Close" hc:IconElement.Geometry="{DynamicResource DeleteFillCircleGeometry}" HorizontalAlignment="Right" VerticalAlignment="Top" />
             </hc:SimplePanel>
-
         </hc:Drawer>-->
         <!--  状态栏  -->
         <DockPanel Grid.Row="2">
@@ -701,7 +689,6 @@
                 <TextBlock Margin="10,0,0,0" Text="{Binding [Filter], Source={x:Static local:CLang.Instance}}" />
                 <TextBlock Margin="2,0" Text="{Binding SelectedProcess.FilterTime}" />
                 <TextBlock Text="ms" />
-
             </StackPanel>
             <DockPanel LastChildFill="True">
                 <TextBlock
@@ -712,8 +699,6 @@
                     Margin="5,0"
                     DockPanel.Dock="Right"
                     Text="{Binding [RunTime], Source={x:Static local:CLang.Instance}}" />
-
-
 
                 <TextBlock
                     Margin="5,0"
@@ -738,7 +723,6 @@
                 <TextBlock DockPanel.Dock="Right" Text="{Binding [CurrentUser], Source={x:Static local:CLang.Instance}}" />
                 <hc:SimplePanel DockPanel.Dock="Left" />
             </DockPanel>
-
         </DockPanel>
         <!--  消息弹窗  -->
         <ScrollViewer
@@ -776,6 +760,5 @@
                 Style="{StaticResource TextBlockDefault}"
                 TextWrapping="Wrap" />
         </StackPanel>
-
     </Grid>
 </hc:Window>
