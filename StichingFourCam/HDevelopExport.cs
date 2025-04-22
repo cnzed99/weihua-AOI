@@ -26399,6 +26399,10 @@ namespace StichingFourCam
 
             try
             {
+                HOperatorSet.ReadCameraSetupModel(
+                    "123.handle",
+                    out hv_CameraSetupModelZeroDistInCylinderOrigin
+                );
                 hv_PixelSizeInMM.Dispose();
                 hv_PixelSizeInMM = camSetting.PixelsizeInMM;
                 //
@@ -26942,37 +26946,37 @@ namespace StichingFourCam
                 hv_BackgroundMayContainTexture.Dispose();
                 hv_BackgroundMayContainTexture = 0;
                 //determine_rotation_axis_3d (ImagesRectified, CylinderRadius, MeasureHandles, Width, Height, CameraSetupModelZeroDist, NumCameras, PoseCylinderApprox, MinPairDist, MaxPairDist, SilhouetteMeasureSigma, SilhouetteMeasureThreshold, SilhouetteMaxTilt, 0.1 * PixelSize, PoseCylinder, CameraSetupModelZeroDistInCylinderOrigin)
-                using (HDevDisposeHelper dh = new HDevDisposeHelper())
-                {
-                    hv_PoseCylinder.Dispose();
-                    hv_Quality.Dispose();
-                    hv_CameraSetupModelZeroDistInCylinderOrigin.Dispose();
-                    hv_RadiusEstimated.Dispose();
-                    determine_rotation_axis_3d_COPY_2(
-                        ho_ImagesRectified,
-                        ho_ImagesGrayRectified,
-                        hv_CylinderRadius,
-                        hv_BackgroundMayContainTexture,
-                        hv_MeasureHandles1,
-                        hv_MeasureHandles2,
-                        hv_MeasureHandles3,
-                        hv_MeasureHandles4,
-                        hv_Width,
-                        hv_Height,
-                        hv_CameraSetupModelZeroDist,
-                        hv_NumCameras,
-                        hv_MinPairDist,
-                        hv_MaxPairDist,
-                        hv_SilhouetteMeasureSigma,
-                        hv_SilhouetteMeasureThreshold,
-                        hv_SilhouetteMaxTilt,
-                        0.1 * hv_PixelSize,
-                        out hv_PoseCylinder,
-                        out hv_Quality,
-                        out hv_CameraSetupModelZeroDistInCylinderOrigin,
-                        out hv_RadiusEstimated
-                    );
-                }
+                //using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                //{
+                //    hv_PoseCylinder.Dispose();
+                //    hv_Quality.Dispose();
+                //    hv_CameraSetupModelZeroDistInCylinderOrigin.Dispose();
+                //    hv_RadiusEstimated.Dispose();
+                //    determine_rotation_axis_3d_COPY_2(
+                //        ho_ImagesRectified,
+                //        ho_ImagesGrayRectified,
+                //        hv_CylinderRadius,
+                //        hv_BackgroundMayContainTexture,
+                //        hv_MeasureHandles1,
+                //        hv_MeasureHandles2,
+                //        hv_MeasureHandles3,
+                //        hv_MeasureHandles4,
+                //        hv_Width,
+                //        hv_Height,
+                //        hv_CameraSetupModelZeroDist,
+                //        hv_NumCameras,
+                //        hv_MinPairDist,
+                //        hv_MaxPairDist,
+                //        hv_SilhouetteMeasureSigma,
+                //        hv_SilhouetteMeasureThreshold,
+                //        hv_SilhouetteMaxTilt,
+                //        0.1 * hv_PixelSize,
+                //        out hv_PoseCylinder,
+                //        out hv_Quality,
+                //        out hv_CameraSetupModelZeroDistInCylinderOrigin,
+                //        out hv_RadiusEstimated
+                //    );
+                //}
                 //
                 //确定拼接图像各组成部分的位置
                 ho_Regions.Dispose();
@@ -27033,7 +27037,7 @@ namespace StichingFourCam
                     ho_FinalMosaic = tiledImage;
                 }
                 HOperatorSet.ConvertImageType(ho_FinalMosaic, out HObject ExpTmpOutVar_0, "byte");
-                //HOperatorSet.WriteImage(ExpTmpOutVar_0, "bmp", 0, "image1");
+                HOperatorSet.WriteImage(ExpTmpOutVar_0, "bmp", 0, "image1");
                 var ptrFinal = GetColorImagePointer(ExpTmpOutVar_0, out int width, out int height);
                 ExpTmpOutVar_0.Dispose();
                 ho_FinalMosaic.Dispose();
