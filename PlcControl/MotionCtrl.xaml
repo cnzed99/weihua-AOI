@@ -214,6 +214,7 @@
                             DockPanel.Dock="Right"
                             IsEnabled="{Binding Source={StaticResource isReadOnly}, Path=Data.IsEngineer}"
                             Style="{DynamicResource ButtonPrimary}" />
+
                     </DockPanel>
                 </GroupBox.Header>
                 <DataGrid

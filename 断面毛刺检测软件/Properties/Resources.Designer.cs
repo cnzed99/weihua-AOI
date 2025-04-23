@@ -377,7 +377,7 @@ namespace 断面毛刺检测软件.Properties {
         }
         
         /// <summary>
-        ///   查找类似 控制插件 的本地化字符串。
+        ///   查找类似 控制 的本地化字符串。
         /// </summary>
         public static string Motion {
             get {

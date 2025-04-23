@@ -1,11 +1,7 @@
-﻿using System.IO;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 using WH.Controls;
-using WH.Entity;
-using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -16,15 +12,8 @@ namespace Motion
     /// 2025.3.6 李焕彬
     /// 控制控件VM
     /// </summary>
-    public abstract partial class CMotionVMBase : ObservableObject
+    public partial class CMotionVMBase : ObservableObject
     {
-        public CMotionVMBase()
-        {
-            LoadConfig();
-            InitControl();
-            loginPerson = CLoginViewModel.SloinPerson;
-        }
-
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 显示控件
@@ -58,6 +47,13 @@ namespace Motion
 
         /// <summary>
         /// 2025.3.6 李焕彬
+        /// 运动控制配置
+        /// </summary>
+        [ObservableProperty]
+        private CMotionConfigBase config;
+
+        /// <summary>
+        /// 2025.3.6 李焕彬
         /// 报警信息
         /// </summary>
         [ObservableProperty]
@@ -73,28 +69,12 @@ namespace Motion
         /// 2025.3.6 李焕彬
         /// 初始化控制
         /// </summary>
-        public abstract void InitControl();
+        public virtual void InitControl() { }
 
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 复位
         /// </summary>
-        public abstract void Reset();
-
-        /// <summary>
-        /// 运动控制保存的路径
-        /// </summary>
-        public const string c_configSavePath = "..\\SystemConfig\\MotionConfig.Json";
-
-        #region 保存参数
-
-        public abstract void SaveConfig();
-        #endregion
-
-        #region 读取参数
-
-        public abstract void LoadConfig();
-
-        #endregion
+        public virtual void Reset() { }
     }
 }

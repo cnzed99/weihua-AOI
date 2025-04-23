@@ -142,6 +142,11 @@ namespace WH.DetectSystem.Models
                 MarkCtrlVM.MarkConfig = MarkConfig;
                 MarkCtrlVM.Connect();
             }
+            if (AppConfig.HasMotionConfig())
+            {
+                MotionCtrlVM = MotionConfig.CreateCtrlVM();
+                MotionCtrlVM.InitControl();
+            }
 
             AlarmSetVM.Reset();
             HistoryVM.Reset();
@@ -189,6 +194,11 @@ namespace WH.DetectSystem.Models
                     FocusConfig,
                     FocusConfig.token
                 );
+            if (MotionConfig is not null)
+                WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                    MotionConfig,
+                    MotionConfig.token
+                );
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
         }
@@ -230,6 +240,7 @@ namespace WH.DetectSystem.Models
             string name,
             string algorithm,
             string focus,
+            string motion,
             string cameraSerial,
             CProcessGroupModel processGroup
         )
@@ -239,6 +250,7 @@ namespace WH.DetectSystem.Models
             this.Name = name;
             this.Algorithm = algorithm;
             this.Focus = focus;
+            this.Motion = motion;
             this.CameraSerial = cameraSerial;
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
@@ -249,6 +261,10 @@ namespace WH.DetectSystem.Models
             if (AppConfig.HasMarkConfig())
             {
                 MarkConfig = new CMarkConfig();
+            }
+            if (AppConfig.HasMotionConfig())
+            {
+                MotionConfig = CMotionManagement.MotionHeper[Motion].CreateNewMotion();
             }
             this.UpdateToken(); //更新Token要在Init前
             this.UpdateName();
@@ -326,6 +342,13 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         CFocusCtrlVMBase focusCtrlVM;
 
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 控制VM
+        /// </summary>
+        [ObservableProperty]
+        CMotionVMBase motionCtrlVM;
+
         #region 启停 状态
 
         /// <summary>
@@ -361,6 +384,7 @@ namespace WH.DetectSystem.Models
                 }
                 FocusCtrlVM?.SetRunning(IsStart);
                 MarkCtrlVM?.SetRunning(IsStart);
+                MotionCtrlVM?.SetRunning(IsStart);
             }
         }
 
@@ -378,6 +402,7 @@ namespace WH.DetectSystem.Models
                 isManualTest = value;
                 FocusCtrlVM?.SetRunning(isManualTest);
                 MarkCtrlVM?.SetRunning(isManualTest);
+                MotionCtrlVM?.SetRunning(isManualTest);
             }
         }
 
@@ -1160,10 +1185,7 @@ namespace WH.DetectSystem.Models
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
             }
             this.CameraSerial = cameraSerial;
-            if (AppConfig.HasFocusConfig())
-            {
-                FocusCtrlVM.SetCameraSerial(CameraSerial);
-            }           
+            FocusCtrlVM.SetCameraSerial(CameraSerial);
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
@@ -1246,6 +1268,28 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 更新控制
+        /// </summary>
+        public void UpdateMotion(string motion)
+        {
+            if (!AppConfig.HasMotionConfig())
+                return;
+            //修改之前注销自动控制消息
+            WeakReferenceMessenger.Default.UnregisterAll(MotionConfig);
+
+            this.Motion = motion;
+            this.MotionConfig = CMotionManagement.MotionHeper[Motion].CreateNewMotion();
+            this.MotionCtrlVM = this.MotionConfig.CreateCtrlVM();
+
+            //修改之后注册自动对焦消息
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                MotionConfig,
+                MotionConfig.token
+            );
+        }
+
+        /// <summary>
         /// 2024.9.2 李焕彬
         /// 新建制程时更新Token
         /// </summary>
@@ -1271,6 +1315,11 @@ namespace WH.DetectSystem.Models
                 FocusConfig.token.ProGuid = GUID;
                 ConfigModifyObservableBase.UpdateToken(FocusConfig, FocusConfig.token);
             }
+            if (AppConfig.HasMotionConfig())
+            {
+                MotionConfig.token.ProGuid = GUID;
+                ConfigModifyObservableBase.UpdateToken(MotionConfig, MotionConfig.token);
+            }
         }
 
         /// <summary>
@@ -1286,6 +1335,8 @@ namespace WH.DetectSystem.Models
                 MarkConfig.PrcessName = Name;
             if (FocusConfig is not null)
                 FocusConfig.PrcessName = Name;
+            if (MotionConfig is not null)
+                MotionConfig.PrcessName = Name;
         }
 
         /// <summary>
@@ -1302,6 +1353,8 @@ namespace WH.DetectSystem.Models
                 this.MarkCtrlVM.LoginPerson = loginPerson;
             if (FocusCtrlVM is not null)
                 this.FocusCtrlVM.LoginPerson = loginPerson;
+            if (MotionCtrlVM is not null)
+                this.MotionCtrlVM.LoginPerson = loginPerson;
             this.HistoryVM.LoginPerson = loginPerson;
         }
     }

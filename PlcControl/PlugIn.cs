@@ -15,10 +15,10 @@ namespace PlcControl
         /// 2025.3.6 李焕彬
         /// 创建新控制
         /// </summary>
-        public CMotionVMBase CreateNewMotion()
+        public CMotionConfigBase CreateNewMotion()
         {
-            CMotionVMBase motioVM = new CMotionCtrlVM();
-            return motioVM;
+            CMotionConfig motionConfig = new CMotionConfig();
+            return motionConfig;
         }
     }
 }

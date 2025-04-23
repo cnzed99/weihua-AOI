@@ -22,7 +22,6 @@ using HandyControl.Data;
 using HandyControl.Tools;
 using HistoryPlayback.Model;
 using Microsoft.Win32;
-using Motion;
 using MySqlOperatesApi;
 using SaveImageManage;
 using WH.Controls;
@@ -254,7 +253,6 @@ namespace 断面毛刺检测软件
                 CCameraManagement.SaveAllCamConfig();
                 CCommunicationManagement.CloseAllComm();
                 CCameraManagement.CloseAllCameras();
-                CMotionManagement.SaveMotionConfig();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Application.Current.Shutdown();
             }
@@ -866,11 +864,6 @@ namespace 断面毛刺检测软件
                 newProcessWindow.ShowDialog();
                 OperateLog.Info(Properties.Resources.ProcessEdit);
             }
-        }
-
-        private void MotionPlug_Click(object sender, RoutedEventArgs e)
-        {
-            CMotionManagement.OpenMotionWindow();
         }
     }
 

@@ -62,8 +62,7 @@
                 <TextBox
                     hc:TitleElement.Title="{Binding [DisplayFrameRate], Source={x:Static local:CLang.SystemSettings}}"
                     hc:TitleElement.TitlePlacement="Left"
-                    Style="{DynamicResource TextBoxExtend}"
-                    Text="{Binding DisplayFrameRate}" />
+                    Style="{DynamicResource TextBoxExtend}" Text="{Binding DisplayFrameRate}"/>
             </StackPanel>
 
         </GroupBox>

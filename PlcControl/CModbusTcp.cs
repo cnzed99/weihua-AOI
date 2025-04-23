@@ -34,18 +34,6 @@ namespace PlcControl
             CModbusTcp modbusTcp = s_modbusTcps.FirstOrDefault(o => o.ip == ip && o.port == port);
             if (modbusTcp != null)
             {
-                if (!modbusTcp.tcpClient.Connected)
-                {
-                    try
-                    {
-                        modbusTcp.ReConnectToPLC();
-                    }
-                    catch (Exception err)
-                    {
-                        Growl.Error(err.Message);
-                        CMotionCtrlVM.SysLog.Error(err.Message);
-                    }
-                }
                 modbusTcp.userCount++;
                 return modbusTcp;
             }
@@ -55,79 +43,79 @@ namespace PlcControl
         }
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// tcp
         /// </summary>
         private TcpClient tcpClient = new TcpClient();
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// ModbusFactory
         /// </summary>
         private ModbusFactory factory;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// IModbusMaster接口
         /// </summary>
         private IModbusMaster master;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 传送XY的状态
         /// </summary>
         public Action<bool[], bool[]> SendXYData;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 读取元件事件
         /// </summary>
         public Action ReadElemData;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 循环标志
         /// </summary>
         private bool isStart = false;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// TCP线程
         /// </summary>
         private Task taskTcp = null;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 连接事件
         /// </summary>
         public Action<bool> actionConnect;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 比例转换,暂时用1
         /// </summary>
         public static float s_Convert = 1.0f;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 站地址
         /// </summary>
         private byte slaveAddress = 0x01;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// ip地址
         /// </summary>
         private string ip;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 端口号
         /// </summary>
         private int port;
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 引用数目
         /// </summary>
         private int userCount = 1;
@@ -140,7 +128,7 @@ namespace PlcControl
         }
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 连接到PLC
         /// </summary>
         public void ConnectToPLC()
@@ -168,37 +156,10 @@ namespace PlcControl
         }
 
         /// <summary>
-        /// 2025.1.14 李焕彬
-        /// 重新连接到PLC，读取线程还在
-        /// </summary>
-        public Task ReConnectToPLC()
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    //建立连接
-                    tcpClient = new TcpClient();
-                    tcpClient.Connect(ip, port);
-                    factory = new ModbusFactory();
-                    master = factory.CreateMaster(tcpClient);
-                    master.Transport.ReadTimeout = 1000;
-                    master.Transport.WriteTimeout = 1000;
-                    master.Transport.Retries = 10;
-                }
-                catch (Exception err)
-                {
-                    Growl.Error(err.Message);
-                    CMotionCtrlVM.SysLog.Error(err.Message);
-                }
-            });
-        }
-
-        /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 实时刷新数据
         /// </summary>
-        private async void OnRefresh()
+        private void OnRefresh()
         {
             while (isStart)
             {
@@ -206,41 +167,38 @@ namespace PlcControl
                 {
                     if (tcpClient.Connected)
                     {
-                        //plc连接事件
-                        actionConnect?.Invoke(true);
-                        ////读取X0-X17状态   //0xF800‑0xFBFF
-                        //bool[] xState = master.ReadInputs(0x01, 0xF800, 0x10);
-                        ////读取Y0-Y17状态   //0xFC00‑0xFFFF
-                        //bool[] yState = master.ReadCoils(0x01, 0xFC00, 0x10);
+                        //读取X0-X17状态   //0xF800‑0xFBFF
+                        //bool[] xState = master.ReadInputs(0x01, 0x0, 1610);
+                        //bool[] xState = master.ReadCoils(0x01, 0x0, 2047);
+                        //读取Y0-Y17状态   //0xFC00‑0xFFFF
+                        //bool[] yState = master.ReadCoils(0x01, 0x0, 14999);
                         //List<bool> xyState = new List<bool>();
-                        ////数组合并
+                        //数组合并
                         //xyState.AddRange(xState);
                         //xyState.AddRange(yState);
-                        ////触发事件，传递XY的状态
+                        //触发事件，传递XY的状态
                         //SendXYData?.Invoke(xState, yState);
                         //触发事件，读取元件
                         ReadElemData?.Invoke();
+                        //plc连接事件
+                        actionConnect?.Invoke(true);
                         Thread.Sleep(10);
                     }
                     else
                     {
-                        Thread.Sleep(3000);
-                        await ReConnectToPLC();
-                        if (!tcpClient.Connected)
-                        {
-                            actionConnect?.Invoke(false); //plc断开事件
-                        }
+                        //plc断开事件
+                        actionConnect?.Invoke(false);
                     }
                 }
                 catch (Exception)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(500);
                 }
             }
         }
 
         /// <summary>
-        /// 2024.7.12 李焕彬
+        /// 2025.3.6 李焕彬
         /// 关闭线程
         /// </summary>
         public void Close()
@@ -249,9 +207,6 @@ namespace PlcControl
             if (userCount == 0)
             {
                 isStart = false;
-                taskTcp?.Wait();
-                this.Close();
-                s_modbusTcps.Remove(this);
             }
         }
 
@@ -498,8 +453,7 @@ namespace PlcControl
             {
                 if (tcpClient.Connected)
                 {
-                    bool[] data = new bool[1] { value };
-                    master.WriteMultipleCoils(slaveAddress, startAddress, data);
+                    master.WriteSingleCoil(slaveAddress, startAddress, value);
                 }
             }
             catch (Exception ex)

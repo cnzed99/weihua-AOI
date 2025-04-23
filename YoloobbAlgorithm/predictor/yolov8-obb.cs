@@ -8,7 +8,7 @@ using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using OpenVinoSharp.Extensions.result;
 
-namespace GeneralMLOBBAlgorithm
+namespace YoloobbAlgorithm
 {
     public class YOLOv8Obb : YOLO
     {
@@ -19,7 +19,8 @@ namespace GeneralMLOBBAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            InputImgSize input_size
+            int input_size,
+            ImgSize output_size
         )
             : base(
                 model_path,
@@ -28,15 +29,15 @@ namespace GeneralMLOBBAlgorithm
                 categ_nums,
                 det_thresh,
                 det_nms_thresh,
-                input_size,
-                new List<string> { "images" },             
+                new int[] { 1, 3, input_size, input_size },
+                new List<string> { "images" },
+                new List<int[]> { new int[] { 1, 5 + categ_nums, (int)output_size } },
                 new List<string> { "output0" }
-            ) { }
+            )
+        { }
 
-        protected override BaseResult postprocess(List<float[]> results, float det_thresh, float det_nms_thresh)
+        protected override BaseResult postprocess(List<float[]> results)
         {
-            this.m_det_thresh = det_thresh;
-            this.m_det_nms_thresh = det_nms_thresh;
             Mat result_data = new Mat(
                 this.m_output_sizes[0][1],
                 this.m_output_sizes[0][2],

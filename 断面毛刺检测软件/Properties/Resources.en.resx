@@ -340,6 +340,6 @@
     <value>Failed to add process!</value>
   </data>
   <data name="Motion" xml:space="preserve">
-    <value>MotionPlug</value>
+    <value>Motion</value>
   </data>
 </root>

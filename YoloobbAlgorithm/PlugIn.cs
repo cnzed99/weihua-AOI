@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AlgorithmDll;
 using Newtonsoft.Json;
 
-namespace GeneralMLOBBAlgorithm
+namespace YoloobbAlgorithm
 {
     public class PlugIn : IAlgorithm
     {
@@ -18,7 +18,7 @@ namespace GeneralMLOBBAlgorithm
         /// <returns>算法参数</returns>
         public CAlgorithmParamBase CreateNewAlgorithm()
         {
-            GeneralMLOBBAlgorithmParam cAlgorithmParam = new GeneralMLOBBAlgorithmParam();
+            CYoloAlgorithmParam cAlgorithmParam = new CYoloAlgorithmParam();
             return cAlgorithmParam;
         }
 
