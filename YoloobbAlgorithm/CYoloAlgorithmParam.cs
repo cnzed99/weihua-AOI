@@ -15,6 +15,7 @@ using OpenCvSharp.Flann;
 using OpenVinoSharp.Extensions.process;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
+using WH.Controls;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
@@ -448,5 +449,15 @@ namespace YoloobbAlgorithm
         [property: DisplayName("平台")]
         [property: Description("平台")]
         private EngineType engineType = EngineType.OpenVINO;
+
+        //[ObservableProperty]
+        //[property: Category("设置界面")]
+        //[property: DisplayName("打开设置界面")]
+        //[property: Description("打开设置界面")]
+        //[property: Editor(
+        //    typeof(COpenSetWindowPropertyEditor),
+        //    typeof(COpenSetWindowPropertyEditor)
+        //)]
+        //private OpenSetWindowProperty isOpened = new OpenSetWindowProperty("123", false);
     }
 }

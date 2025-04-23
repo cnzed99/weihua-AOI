@@ -11,4 +11,5 @@
     <Style BasedOn="{StaticResource ButtonDefault}" TargetType="{x:Type local:CCollectionButton}" />
     <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type ctrl:COMSComboBox}" />
     <Style BasedOn="{StaticResource ComboBoxBaseStyle}" TargetType="{x:Type local:ColorComboBox}" />
+    <Style BasedOn="{StaticResource ToggleButtonSwitchBaseStyle}" TargetType="{x:Type local:COpenSetWindowButton}" />
 </ResourceDictionary>

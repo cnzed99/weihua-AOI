@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using HandyControl.Controls;
-using WH.Controls.Controls;
 
 namespace WH.Controls
 {
@@ -14,23 +14,23 @@ namespace WH.Controls
     /// 2024.7.18 李焕彬
     /// 属性编辑器枚举控件扩展，适应枚举值特性
     /// </summary>
-    public class COMDevicePropertyEditor : PropertyEditorBase
+    public class COpenSetWindowPropertyEditor : PropertyEditorBase
     {
         /// <summary>
-        /// 20270729 TCG
+        /// 2024.7.18 李焕彬
         /// 创建具体操作控件
         /// </summary>
         /// <param name="propertyItem">PropertyItem</param>
         /// <returns>具体操作控件</returns>
         public override FrameworkElement CreateElement(PropertyItem propertyItem) =>
-            new COMSComboBox { IsEnabled = !propertyItem.IsReadOnly, };
+            new COpenSetWindowButton { IsEnabled = !propertyItem.IsReadOnly };
 
         /// <summary>
-        /// 20270729 TCG
+        /// 2024.7.18 李焕彬
         /// 获取具体操作控件中需要绑定的依赖属性
         /// </summary>
         /// <returns></returns>
         public override DependencyProperty GetDependencyProperty() =>
-            COMSComboBox.ComDeviceProperty;
+            COpenSetWindowButton.OpenSetWindowProperty;
     }
 }
