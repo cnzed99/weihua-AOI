@@ -1160,7 +1160,10 @@ namespace WH.DetectSystem.Models
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
             }
             this.CameraSerial = cameraSerial;
-            FocusCtrlVM.SetCameraSerial(CameraSerial);
+            if (AppConfig.HasFocusConfig())
+            {
+                FocusCtrlVM.SetCameraSerial(CameraSerial);
+            }           
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)

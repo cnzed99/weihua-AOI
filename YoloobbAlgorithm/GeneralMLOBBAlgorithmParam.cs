@@ -22,7 +22,7 @@ using System.Runtime.Serialization;
 
 namespace GeneralMLOBBAlgorithm
 {
-    public class GeneralMLOBBAlgorithm : CAlgorithmParamBase
+    public class GeneralMLOBBAlgorithmParam : CAlgorithmParamBase
     {
         /// <summary>
         /// yolo对象
@@ -62,7 +62,7 @@ namespace GeneralMLOBBAlgorithm
         /// 2024.10.28 鲍赞宝
         /// 算法参数派生类
         /// </summary>
-        public GeneralMLOBBAlgorithm()
+        public GeneralMLOBBAlgorithmParam()
             : base()
         {
             //string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" }; 
