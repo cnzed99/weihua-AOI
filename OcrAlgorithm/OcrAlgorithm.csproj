@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy $(OutDir) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
 		<Exec Command="xcopy $(ProjectDir)model $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\model\ /e /d /y" />
 		<Exec Command="xcopy $(ProjectDir)dict $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\dict\ /e /d /y" />
 		<Exec Command="xcopy $(ProjectDir)runtimes $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\runtimes\ /e /d /y" />
