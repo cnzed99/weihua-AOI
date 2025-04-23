@@ -105,6 +105,7 @@ namespace SDFilter
         protected void Synchronization(CQualityConfig MaociQuality)
         {
             #region 同步毛刺过滤配置
+
             foreach (var spFilter in SpeciesFilters)
             {
                 foreach (var reFilger in spFilter.RecipeDefects)
@@ -127,7 +128,8 @@ namespace SDFilter
                     }
                 }
             }
-            #endregion
+
+            #endregion 同步毛刺过滤配置
         }
 
         protected void UpdateDefectList()
@@ -659,6 +661,14 @@ namespace SDFilter
         private bool filterSelectEnable = true;
 
         /// <summary>
+        /// 20250423 TCG
+        /// 是否翻转过滤分选器结果
+        /// </summary>
+        [property: DisplayName("是否翻转过滤分选器结果")]
+        [ObservableProperty]
+        private bool isReversal = false;
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// </summary>
         /// <returns></returns>
@@ -821,30 +831,32 @@ namespace SDFilter
         }
 
         /// <summary>
-        /// 2024.6.27 李焕彬
+        /// 20250423 TCG
         /// 筛选所有特征值在最大最小值限定范围内的区域
         /// </summary>
         /// <param name="sRegionIn">待筛选区域</param>
         /// <param name="sRegionOut">在限定范围内的区域</param>
-        /// <returns>在限定范围内的区域数量为0时为true，否则为false</returns>
+        /// <returns>在限定范围内时为false，否则为true</returns>
         public bool Excute(List<SRegion> sRegionIn, out List<SRegion> sRegionOut)
         {
             sRegionOut = new List<SRegion>();
             if (Character == null)
                 return false;
-            if (sRegionIn is not null)
+            if (Character == CFeacture.FeactureCount) //数量判断
             {
-                if (Character == CFeacture.FeactureCount)
+                //true为OK false为NG 找到所有在限定范围内的缺陷region
+                //当筛选条件是0 即要求检出为无时NG，返回值不能为true
+                if (Excute(sRegionIn.Count))
                 {
-                    if (Excute(sRegionIn.Count))
-                        sRegionOut = sRegionIn;
+                    sRegionOut = sRegionIn;
+                    return false; //在限定范围内时 返回true
                 }
                 else
-                {
-                    sRegionOut = sRegionIn.FindAll(o =>
-                        Excute(o.regionInfo.GetValue(Character, o))
-                    );
-                }
+                    return true; //不在限定范围内时 返回false
+            }
+            if (sRegionIn is not null)
+            {
+                sRegionOut = sRegionIn.FindAll(o => Excute(o.regionInfo.GetValue(Character, o))); //true为OK false为NG 找到所有在限定范围内的缺陷region
             }
 
             return sRegionOut.Count == 0;
@@ -857,7 +869,8 @@ namespace SDFilter
     /// </summary>
     public partial class FilterResult : ObservableObject
     {
-        public FilterResult() { }
+        public FilterResult()
+        { }
 
         public FilterResult(CFeacture detectFeature)
         {

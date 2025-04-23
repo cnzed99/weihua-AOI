@@ -51,7 +51,6 @@
                 <Setter Property="Margin" Value="6,0" />
                 <Setter Property="IsEditable" Value="False" />
                 <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
-
             </Style>
             <Style
                 x:Key="Button"
@@ -245,7 +244,6 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </StackPanel>
-
                     </Expander>
                 </Border>
             </DataTemplate>
@@ -321,11 +319,14 @@
                                             <ColumnDefinition Width="10" />
                                             <ColumnDefinition Width="100" />
                                             <ColumnDefinition Width="60" />
-                                            <ColumnDefinition Width="310" />
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="250" />
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="77" />
                                         </Grid.ColumnDefinitions>
+                                        <!--  显示 “+” “-”  -->
                                         <TextBlock VerticalAlignment="Center" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
+                                        <!--  显示 过滤分选器：number  -->
                                         <TextBlock
                                             Grid.Column="1"
                                             HorizontalAlignment="Left"
@@ -341,8 +342,12 @@
                                             Grid.Column="2"
                                             Content="{Binding [Enable], Source={x:Static local:CLang.s_Instance}}"
                                             IsChecked="{Binding FilterSelectEnable}" />
+                                        <CheckBox
+                                            Grid.Column="3"
+                                            Content="{Binding [IsRevalsal], Source={x:Static local:CLang.s_Instance}}"
+                                            IsChecked="{Binding IsReversal}" />
                                         <ComboBox
-                                            Grid.Column="4"
+                                            Grid.Column="5"
                                             Width="180"
                                             Margin="2"
                                             ItemsSource="{Binding UnionMethod, Converter={StaticResource EnumProviderConverter}}"
@@ -351,7 +356,7 @@
                                             Visibility="{Binding Path=DataContext.RecipeDefect.Category, RelativeSource={RelativeSource AncestorType={x:Type local:DefectFilterSetWin}}, Converter={StaticResource String2VisiblityReConverter}, ConverterParameter=值}" />
                                         <Button
                                             Name="btn_DeleteFilter"
-                                            Grid.Column="5"
+                                            Grid.Column="6"
                                             Margin="5,0,5,0"
                                             HorizontalAlignment="Right"
                                             Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteFilterConfigCommand}"
@@ -436,7 +441,6 @@
                                 </StackPanel>
                             </Expander>
                         </Border>
-
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

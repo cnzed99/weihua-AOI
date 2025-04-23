@@ -20,6 +20,7 @@ namespace WH.DetectSystem
         /// <summary>
         /// 20240704 TCG
         /// 对cell 中的缺陷进行过滤 得到最终的定级缺陷你，写入Cell中
+        /// true为OK false为NG
         /// </summary>
         /// <param name="filter">过滤参数</param>
         /// <param name="cell">检测对象</param>
@@ -41,7 +42,7 @@ namespace WH.DetectSystem
                     ].DefectFilters
                 ) //缺陷
                 {
-                    de.Result = true;
+                    de.Result = true; //true为OK false为NG
                     CellDetection detection = algorithmOut.Clone();
                     detection.DefectFilter = de;
                     if (cell.CancelSource.IsCancellationRequested)
@@ -55,7 +56,7 @@ namespace WH.DetectSystem
                                 var OriginRegList = Originregs.ToList();
                                 foreach (var filter in de.FilterList) //过滤分选器
                                 {
-                                    filter.Result = true;
+                                    filter.Result = true; //true为OK false为NG
                                     //如果过滤分选器未使能或前面的过滤分选已经判定为NG，则跳过，不用break,是要把上一次的结果置为true，filter.Result = true;
                                     if (!filter.FilterSelectEnable || !de.Result)
                                     {
@@ -69,13 +70,13 @@ namespace WH.DetectSystem
                                         switch (filter.UnionMethod)
                                         {
                                             case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
-                                            {
-                                                SRegion regionUnion = detectRegion[0]
-                                                    .regionInfo.Union(detectRegion);
-                                                detectRegion.Clear();
-                                                detectRegion.Add(regionUnion);
-                                                break;
-                                            }
+                                                {
+                                                    SRegion regionUnion = detectRegion[0]
+                                                        .regionInfo.Union(detectRegion);
+                                                    detectRegion.Clear();
+                                                    detectRegion.Add(regionUnion);
+                                                    break;
+                                                }
                                         }
                                     }
 
@@ -98,7 +99,7 @@ namespace WH.DetectSystem
                                         SRegion[] regions = new SRegion[filterOuts.Count];
                                         filterOuts.CopyTo(regions); //复制而不是引用 同一过滤分选中的不同分选器 分选同一组过滤对象，分选器之间是或的关系
                                         List<SRegion> selRegion = new List<SRegion>(regions);
-                                        bool bResult = true;
+                                        bool bResult = true; //true为OK false为NG
                                         OneSelectParams oneSelectParams = null; //若有数量判断，则留到分选完后由数量决定最终结果
                                         foreach (var selParam in select.SelectParams)
                                         {
@@ -109,12 +110,13 @@ namespace WH.DetectSystem
                                         }
                                         //if (!bResult)
                                         //    detection.regionOut = selRegion;
+                                        //数量最后判断 且分选内只能有一个数量筛选条件
                                         if (oneSelectParams != null)
                                             bResult = oneSelectParams.Excute(
                                                 selRegion,
                                                 out selRegion
                                             ); //数量判断
-                                        if (!bResult)
+                                        if (!bResult) //bResult在限定范围内时为false,否则为true
                                         {
                                             // detection.regionOut = selRegion;
                                             selRegionALL.AddRange(selRegion);
@@ -228,6 +230,7 @@ namespace WH.DetectSystem
                                 }
                             }
                             break;
+
                         case Category.值:
                             {
                                 foreach (var filter in de.FilterList) //过滤分选器
