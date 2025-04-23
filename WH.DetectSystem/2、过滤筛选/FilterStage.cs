@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SDFilter;
+using SVGImage.SVG.Filters;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
@@ -54,8 +55,10 @@ namespace WH.DetectSystem
                                 SRegion[] Originregs = new SRegion[detection.regionOut.Count];
                                 detection.regionOut.CopyTo(Originregs); //复制而不是引用 原始区域
                                 var OriginRegList = Originregs.ToList();
+                                
                                 foreach (var filter in de.FilterList) //过滤分选器
                                 {
+                                   
                                     filter.Result = true; //true为OK false为NG
                                     //如果过滤分选器未使能或前面的过滤分选已经判定为NG，则跳过，不用break,是要把上一次的结果置为true，filter.Result = true;
                                     if (!filter.FilterSelectEnable || !de.Result)
@@ -153,9 +156,17 @@ namespace WH.DetectSystem
                                     if (!detection.Result)
                                     {
                                         filter.Result = false;
+                                        //de.Result = false;
+                                        //filterConfig[detection.Type].Result = false;
+
+                                        //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
+                                    }
+                                    if (filter.IsReversal) detection.Result = !detection.Result;
+                                    if (!detection.Result)//反转结果
+                                    {
+                                        
                                         de.Result = false;
                                         filterConfig[detection.Type].Result = false;
-                                        //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
                                     }
                                 }
                                 if (detection.regionOut?.Count > 0 && de.ResultList.Count > 0)
