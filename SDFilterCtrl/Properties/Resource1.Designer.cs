@@ -160,6 +160,15 @@ namespace SDFilter.Properties {
         }
         
         /// <summary>
+        ///   查找类似 翻转结果 的本地化字符串。
+        /// </summary>
+        public static string IsReversal {
+            get {
+                return ResourceManager.GetString("IsReversal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 下限 的本地化字符串。
         /// </summary>
         public static string LowLimit {

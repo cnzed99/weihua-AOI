@@ -37,6 +37,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using static Mysqlx.Crud.Order.Types;
+using System.Collections.ObjectModel;
 
 namespace WH.DetectSystem.Models
 {
@@ -106,8 +107,9 @@ namespace WH.DetectSystem.Models
                 this.SDFilterVM.QualityConfig = MaociQualityConfig;
                 this.QualityVM.QualityConfig = MaociQualityConfig;
                 MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-                MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+                AlarmSetVM.SetQuality(MaociQualityConfig);
                 MaociDefectsProduce.SetQuality(MaociQualityConfig);
+                this.AlarmSetVM.SetFilter(new() { MaociFilterConfig });
                 MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             }
             get => ProcessGroup?.MaociQualityConfig;
@@ -351,14 +353,14 @@ namespace WH.DetectSystem.Models
                     return;
                 }
                 SetProperty(ref isStart, value);
-                if (value)
-                {
-                    UpdateVMLoginPerson(loginPerson);
-                }
-                else
-                {
-                    UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
-                }
+                //if (value)
+                //{
+                //    UpdateVMLoginPerson(loginPerson);
+                //}
+                //else
+                //{
+                //    UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
+                //}
                 FocusCtrlVM?.SetRunning(IsStart);
                 MarkCtrlVM?.SetRunning(IsStart);
             }
@@ -462,6 +464,10 @@ namespace WH.DetectSystem.Models
 
         public AutoResetEvent WaitSignal = new AutoResetEvent(false);
 
+        private bool abc(FilterAndSelect filter)
+        {
+            return filter.IsReversal;
+        }
         private void InitTask()
         {
             #region 信息记录线程
@@ -628,9 +634,11 @@ namespace WH.DetectSystem.Models
                                 LastImage = ModelImage;
                             }
                             MaociDefectsProduce.Excute(cell);
+                            MaociAlarmSetConfig.Excute(cell);
                             if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
                             {
                                 ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
+                                ProcessGroup.AlarmSetConfig.Excute(cellOut.Cell);
                                 if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
                                 {
                                     //cell.Dispose();
@@ -894,6 +902,46 @@ namespace WH.DetectSystem.Models
                                         }
                                         else
                                         {
+                                            var value = cell.Detections.TakeWhile(de => ((ObservableCollection<FilterAndSelect>)de.DefectFilter.FilterList).TakeWhile<FilterAndSelect>(abc).Count() > 0);
+                                            foreach (var detection in value)
+                                            {
+                                                if (
+                                                    
+                                                    detection.Category != Category.区域
+                                                    || detection.regionOut.Count == 0
+                                                )
+                                                    continue;
+                                                DefectFilter defectFilter =
+                                                    detection.DefectFilter;
+                                                drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                drawView.SetFontBrush(
+                                                    defectFilter.ShowColor.Brush
+                                                );
+                                                for (
+                                                    int i = 0;
+                                                    i < detection.regionOut.Count;
+                                                    i++
+                                                )
+                                                {
+                                                    drawView.ImgDrawRegion(
+                                                        detection.regionOut[i].points,
+                                                        false
+                                                    );
+                                                    drawView.ImgDrawText(
+                                                        detection.DetectLog[i].ToString(),
+                                                        detection.regionOut[i].GetCenter(),
+                                                        false
+                                                    );
+                                                    //if (i == detection.regionOut.Count - 1)
+                                                    //{
+                                                    //    drawView.ImgDrawText(
+                                                    //        detection.DetectLog.ToString(),
+                                                    //        detection.regionOut[i].GetCenter(),
+                                                    //        false
+                                                    //    );
+                                                    //}
+                                                }
+                                            }
                                             drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                             drawView.WinDrawText(
                                                 "OK",
@@ -999,7 +1047,7 @@ namespace WH.DetectSystem.Models
             Task dataBaseTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
-                object objAlarmLock = new object(); //报警监控用
+                // object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
@@ -1044,27 +1092,27 @@ namespace WH.DetectSystem.Models
                         }
                     }
 
-                    #region 报警
-                    try
-                    {
-                        lock (objAlarmLock)
-                        {
-                            MaociAlarmSetConfig.Excute(cell);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
-                        );
-                    }
-                    finally
-                    {
-                        //取消单个制程数据库存储
-                        //if (!m_dataBaseChannel.Writer.TryWrite(cell))
-                        //    cell.Dispose();
-                    }
-                    #endregion
+                    //#region 报警
+                    //try
+                    //{
+                    //    lock (objAlarmLock)
+                    //    {
+
+                    //    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    await m_InfoChannel.Writer.WriteAsync(
+                    //        new PrintMsg("监控报警出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
+                    //    );
+                    //}
+                    //finally
+                    //{
+                    //    //取消单个制程数据库存储
+                    //    //if (!m_dataBaseChannel.Writer.TryWrite(cell))
+                    //    //    cell.Dispose();
+                    //}
+                    //#endregion
 
                     //cell.Dispose();
                 }
@@ -1196,7 +1244,7 @@ namespace WH.DetectSystem.Models
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
             this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
             this.MaociFilterConfig.SetSDFilterVM(MaociQualityConfig);
-            this.MaociAlarmSetConfig.SetCAlarm(MaociFilterConfig, MaociQualityConfig);
+            this.AlarmSetVM.SetFilter(new() { MaociFilterConfig });
             MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             this.MaociHistoryModel.SetHistory(MaociFilterConfig);
             if (FocusCtrlVM is not null)

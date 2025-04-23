@@ -45,10 +45,10 @@
             Margin="19.333,15,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Text="{Binding [Welcome], Source = {x:Static prop:LangManager.welPage}}"
             FontFamily="Yu Gothic UI Semibold"
             FontSize="20"
-            Foreground="#43FFFFFF" />
+            Foreground="#43FFFFFF"
+            Text="{Binding [Welcome], Source={x:Static prop:LangManager.welPage}}" />
         <Button
             x:Name="btn_Close"
             Width="26.333"
@@ -80,26 +80,26 @@
             Margin="19.333,45.333,17.666,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            TextAlignment="Center"
-            Text="标题"
             FontSize="20"
-            Foreground="White" />
+            Foreground="White"
+            Text="标题"
+            TextAlignment="Center" />
         <TextBlock
             Margin="64.666,81.999,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Text="{Binding [Startup], Source = {x:Static prop:LangManager.welPage}}"
             FontFamily="Yu Gothic UI Semibold"
             FontSize="16"
-            Foreground="#43FFFFFF" />
+            Foreground="#43FFFFFF"
+            Text="{Binding [Startup], Source={x:Static prop:LangManager.welPage}}" />
         <TextBlock
             Margin="64.666,168.576,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Text="{Binding [Recent], Source = {x:Static prop:LangManager.welPage}}"
             FontFamily="Yu Gothic UI Semibold"
             FontSize="16"
-            Foreground="#43FFFFFF" />
+            Foreground="#43FFFFFF"
+            Text="{Binding [Recent], Source={x:Static prop:LangManager.welPage}}" />
         <Button
             Name="btn_MainFrm"
             Width="100"
@@ -108,7 +108,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Click="btn_MainFrm_Click"
-            Content="{Binding [Main], Source = {x:Static prop:LangManager.welPage}}"
+            Content="{Binding [Main], Source={x:Static prop:LangManager.welPage}}"
             Style="{DynamicResource PageButton}" />
         <Button
             Name="btn_OpenProj"
@@ -118,7 +118,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Click="btnOpen_Click"
-            Content="{Binding [OpenProj], Source = {x:Static prop:LangManager.welPage}}"
+            Content="{Binding [OpenProj], Source={x:Static prop:LangManager.welPage}}"
             Style="{DynamicResource PageButton}" />
         <Label
             Width="254"
@@ -129,7 +129,7 @@
             Content=""
             Foreground="{x:Null}">
             <Label.Background>
-                <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/组合-2.png" Stretch="Uniform" />
+                <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/华盛控.png" Stretch="Uniform" />
             </Label.Background>
         </Label>
         <Grid

@@ -195,4 +195,7 @@
   <data name="算法修改询问" xml:space="preserve">
     <value>缺陷输出类型不同，切换后过滤分选特征需要重新设置！</value>
   </data>
+  <data name="IsReversal" xml:space="preserve">
+    <value>翻转结果</value>
+  </data>
 </root>
