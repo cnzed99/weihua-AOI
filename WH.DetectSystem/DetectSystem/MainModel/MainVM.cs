@@ -37,6 +37,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using static Mysqlx.Crud.Order.Types;
+using System.Collections.ObjectModel;
 
 namespace WH.DetectSystem.Models
 {
@@ -352,14 +353,14 @@ namespace WH.DetectSystem.Models
                     return;
                 }
                 SetProperty(ref isStart, value);
-                if (value)
-                {
-                    UpdateVMLoginPerson(loginPerson);
-                }
-                else
-                {
-                    UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
-                }
+                //if (value)
+                //{
+                //    UpdateVMLoginPerson(loginPerson);
+                //}
+                //else
+                //{
+                //    UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
+                //}
                 FocusCtrlVM?.SetRunning(IsStart);
                 MarkCtrlVM?.SetRunning(IsStart);
             }
@@ -463,6 +464,10 @@ namespace WH.DetectSystem.Models
 
         public AutoResetEvent WaitSignal = new AutoResetEvent(false);
 
+        private bool abc(FilterAndSelect filter)
+        {
+            return filter.IsReversal;
+        }
         private void InitTask()
         {
             #region 信息记录线程
@@ -897,6 +902,46 @@ namespace WH.DetectSystem.Models
                                         }
                                         else
                                         {
+                                            var value = cell.Detections.TakeWhile(de => ((ObservableCollection<FilterAndSelect>)de.DefectFilter.FilterList).TakeWhile<FilterAndSelect>(abc).Count() > 0);
+                                            foreach (var detection in value)
+                                            {
+                                                if (
+                                                    
+                                                    detection.Category != Category.区域
+                                                    || detection.regionOut.Count == 0
+                                                )
+                                                    continue;
+                                                DefectFilter defectFilter =
+                                                    detection.DefectFilter;
+                                                drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                drawView.SetFontBrush(
+                                                    defectFilter.ShowColor.Brush
+                                                );
+                                                for (
+                                                    int i = 0;
+                                                    i < detection.regionOut.Count;
+                                                    i++
+                                                )
+                                                {
+                                                    drawView.ImgDrawRegion(
+                                                        detection.regionOut[i].points,
+                                                        false
+                                                    );
+                                                    drawView.ImgDrawText(
+                                                        detection.DetectLog[i].ToString(),
+                                                        detection.regionOut[i].GetCenter(),
+                                                        false
+                                                    );
+                                                    //if (i == detection.regionOut.Count - 1)
+                                                    //{
+                                                    //    drawView.ImgDrawText(
+                                                    //        detection.DetectLog.ToString(),
+                                                    //        detection.regionOut[i].GetCenter(),
+                                                    //        false
+                                                    //    );
+                                                    //}
+                                                }
+                                            }
                                             drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                             drawView.WinDrawText(
                                                 "OK",

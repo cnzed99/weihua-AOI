@@ -180,15 +180,15 @@ namespace WH.DetectSystem.ViewModels
             set
             {
                 SetProperty(ref isStart, value);
-                if (value)
-                {
-                    CLoginViewModel.SloinPerson.Adapt(loginPerson);
-                    CLoginViewModel.SloinPerson.IsNoPermission = true;
-                }
-                else
-                {
-                    loginPerson.Adapt(CLoginViewModel.SloinPerson);
-                }
+                //if (value)
+                //{
+                //    CLoginViewModel.SloinPerson.Adapt(loginPerson);
+                //    CLoginViewModel.SloinPerson.IsNoPermission = true;
+                //}
+                //else
+                //{
+                //    loginPerson.Adapt(CLoginViewModel.SloinPerson);
+                //}
                 foreach (var mainVM in CMainVMs)
                 {
                     mainVM.IsStart = isStart;
