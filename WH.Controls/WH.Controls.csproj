@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\COpenSetWindowPropertyEditor\ButtonProperty.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Controls\UserLogin\Imgs\logogreen.png" />
     <None Remove="Controls\UserLogin\Imgs\任务栏1.ico" />
     <None Remove="Controls\UserLogin\Imgs\任务栏2.ico" />
