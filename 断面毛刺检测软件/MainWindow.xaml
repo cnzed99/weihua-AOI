@@ -16,6 +16,7 @@
     xmlns:local="clr-namespace:断面毛刺检测软件"
     xmlns:mark="clr-namespace:MarkControl;assembly=MarkControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mo="clr-namespace:Motion;assembly=Motion"
     xmlns:pro="clr-namespace:ProjProduceData;assembly=ProjProduceData"
     xmlns:qua="clr-namespace:QualityGrade;assembly=QualityGrade"
     xmlns:svg1="https://github.com/dotnetprojects/SVGImage"
@@ -219,6 +220,11 @@
                             <svg1:SVGImage Source="/Resources/图标/图片设置/截屏保存.svg" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem
+                        Width="100"
+                        Click="MotionPlug_Click"
+                        Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
+                        Visibility="{Binding Source={x:Static mo:CMotionManagement.MotionHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
                 </MenuItem>
                 <MenuItem Name="HelpMenu" Header="{Binding [Help], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.Icon>
@@ -623,14 +629,6 @@
                         Visibility="{Binding SelectedProcess.FocusCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
                         <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                             <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
-                        </hc:SimplePanel>
-                    </hc:TabItem>
-                    <hc:TabItem
-                        Padding="0"
-                        Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
-                        Visibility="{Binding SelectedProcess.MotionCtrlVM, Converter={StaticResource EmptyToVisibilityConverter}}">
-                        <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                            <ContentControl Content="{Binding SelectedProcess.MotionCtrlVM.TestControl}" />
                         </hc:SimplePanel>
                     </hc:TabItem>
                     <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">

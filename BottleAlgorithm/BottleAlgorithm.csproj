@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
+    <Exec Command="xcopy $(OutDir)TensorRtExtern.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)TensorRtSharp.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)SharpCompress.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)GeneralMLOBBAlgorithm.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)halcondotnet.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YoloobbAlgorithm\GeneralMLOBBAlgorithm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>C:\Program Files\MVTec\HALCON-18.11-Steady\bin\dotnet35\halcondotnet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

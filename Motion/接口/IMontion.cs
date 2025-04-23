@@ -21,7 +21,7 @@ namespace Motion
         /// 2025.3.6 李焕彬
         /// 创建新控制
         /// </summary>
-        CMotionConfigBase CreateNewMotion();
+        CMotionVMBase CreateNewMotion();
     }
 
     /// <summary>
