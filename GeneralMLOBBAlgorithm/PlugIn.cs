@@ -18,7 +18,7 @@ namespace GeneralMLOBBAlgorithm
         /// <returns>算法参数</returns>
         public CAlgorithmParamBase CreateNewAlgorithm()
         {
-            GeneralMLOBBAlgorithm cAlgorithmParam = new GeneralMLOBBAlgorithm();
+            GeneralMLOBBAlgorithmParam cAlgorithmParam = new GeneralMLOBBAlgorithmParam();
             return cAlgorithmParam;
         }
 
