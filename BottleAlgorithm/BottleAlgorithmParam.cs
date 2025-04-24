@@ -28,7 +28,7 @@ namespace BottleAlgorithm
         /// <summary>
         /// 2025.01.09初始化算法
         /// </summary>
-        private bool m_bFlagInitialAlgorithmParam;
+       // private bool m_bFlagInitialAlgorithmParam;
         /// <summary>
         /// OCR 检测区域
         /// </summary>
@@ -81,16 +81,19 @@ namespace BottleAlgorithm
 
                 for (int i = 0; i < Detect_names.Length; i++)
                 {
-                    if (Detect_names[i] == "三期")
-                    {
-                        CDefectRecipe defectRecipe1 = new CDefectRecipe(Detect_names[i], Category.值);
-                        cDefectRecipes.Add(defectRecipe1);
-                    }
-                    else
-                    {
-                        CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
-                        cDefectRecipes.Add(defectRecipe);
-                    }
+                    //if (Detect_names[i] == "三期")
+                    //{
+                    //    CDefectRecipe defectRecipe1 = new CDefectRecipe(Detect_names[i], Category.值);
+                    //    cDefectRecipes.Add(defectRecipe1);
+                    //}
+                    //else
+                    //{
+                    //    CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
+                    //    cDefectRecipes.Add(defectRecipe);
+                    //}
+
+                    CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
+                    cDefectRecipes.Add(defectRecipe);
                 }
 
 
@@ -112,7 +115,7 @@ namespace BottleAlgorithm
             DefectFeatures.Add(new("Height", "高度", "Height", "um"));
             DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
 
-            m_bFlagInitialAlgorithmParam = true;
+          //  m_bFlagInitialAlgorithmParam = true;
             //初始化Halcon OCR
             // InitialHalconOcrLib();
         }
@@ -145,11 +148,12 @@ namespace BottleAlgorithm
                 m_CapTestResult = 0;
                 m_LabelTestResult = 0;
 
-                //base.DetectImage(cell);
+
                 #region OBB
+                 base.DetectImage(cell);
                 Mat img = GetMatImage(cell, param);
                 List<ObbData> sResultInfos = ImageInfer(img, param.Score, param.Nms);
-               // if (sResultInfos.Count == 0) { return; }
+                // if (sResultInfos.Count == 0) { return; }
 
                 foreach (var ds in DefectSpecies)
                 {
@@ -161,42 +165,41 @@ namespace BottleAlgorithm
                         cellDetection1.RecipeDefectName = de.Name;
                         cellDetection1.Value = new List<float>();
                         List<ObbData> infos = new List<ObbData>();
-                        if (sResultInfos.Count == 0)
-                        {
-                            if (de.Category == Category.值)
-                            {
-                                cellDetection1.Value.Add(2.0f); //没识别到三期
-                            }
+                        //if (sResultInfos.Count == 0)
+                        //{
+                        //    if (de.Category == Category.值)
+                        //    {
+                        //        cellDetection1.Value.Add(2.0f); //没识别到三期
+                        //    }
 
-                        }
-                        else
-                        {
+                        //}
+                        //else
+                        //{
                             sResultInfos.ForEach(info =>
                             {
                                 int index = int.Parse(info.lable);
                                 if (Detect_names[index] == de.Name)
                                 {
-                                    if (de.Category == Category.值) //识别到三期
+                                    if (de.Name == "三期") //识别到三期
                                     {
-                                        cellDetection1.Value.Add(1.0f);
+                                        //cellDetection1.Value.Add(1.0f);
                                         List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
                                         info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
                                         rec1Points.Add(rec1Points[0]);
                                         cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.LightPink));
 
                                     }
-                                    else
-                                    {
-                                        SRegion sRegion = GetDetectRegion(info);
-                                        cellDetection1.regionOut.Add(sRegion);
-                                        infos.Add(info);
-                                    }
+                                    SRegion sRegion = GetDetectRegion(info);
+                                    cellDetection1.regionOut.Add(sRegion);
+                                    infos.Add(info);
+
+
 
                                 }
                             });
-                        }
+                       // }
 
-                       
+
                         cell.AlgorithmOut.Add(cellDetection1);
                         infos.ForEach(info => sResultInfos.Remove(info));
                     }
