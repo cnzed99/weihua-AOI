@@ -550,7 +550,7 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <ToggleButton
-                                    Margin="0,7,90,7"
+                                    Margin="0,7,170,7"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     IsChecked="{Binding IsStart}"
