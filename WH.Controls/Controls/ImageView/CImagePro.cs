@@ -864,7 +864,7 @@ namespace WH.Controls
                     )
                     {
                         Regions.Add(new SDrawRegion(_Pen, region));
-                        region = new List<Point>();
+                       // region = new List<Point>();
                     }
                     region.Add(item);
                 }
