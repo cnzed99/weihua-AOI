@@ -110,56 +110,60 @@ namespace GeneralML
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            BaseResult sResultInfos = ImageInfer(cell);
-
-            foreach (var ds in DefectSpecies)
+            var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CParam;
+            if (paramClass != null)
             {
-                foreach (var de in ds.RecipeDefects)
+                BaseResult sResultInfos = ImageInfer(cell, paramClass.Score, paramClass.Nms);
+
+                foreach (var ds in DefectSpecies)
                 {
-                    CellDetection cellDetection1 = new CellDetection();
-                    cellDetection1.Type = ds.Name;
-                    cellDetection1.Category = de.Category;
-                    cellDetection1.RecipeDefectName = de.Name;
-                    cellDetection1.Value = new List<float>();
-                    //List<ObbData> infos = new List<ObbData>();
-                    switch (_ModelType)
+                    foreach (var de in ds.RecipeDefects)
                     {
-                        case ModelType.Det:
-                            DetResult detrets = sResultInfos as DetResult;
+                        CellDetection cellDetection1 = new CellDetection();
+                        cellDetection1.Type = ds.Name;
+                        cellDetection1.Category = de.Category;
+                        cellDetection1.RecipeDefectName = de.Name;
+                        cellDetection1.Value = new List<float>();
+                        //List<ObbData> infos = new List<ObbData>();
+                        switch (_ModelType)
+                        {
+                            case ModelType.Det:
+                                DetResult detrets = sResultInfos as DetResult;
 
-                            detrets.for_each(info =>
-                            {
-                                int index = int.Parse(info.lable);
-                                if (Detect_names[index] == de.Name)
+                                detrets.for_each(info =>
                                 {
-                                    SRegion sRegion = GetDetectRegion(info);
+                                    int index = int.Parse(info.lable);
+                                    if (Detect_names[index] == de.Name)
+                                    {
+                                        SRegion sRegion = GetDetectRegion(info);
 
-                                    cellDetection1.regionOut.Add(sRegion);
-                                    //infos.Add(info);
-                                }
-                            });
-                            break;
+                                        cellDetection1.regionOut.Add(sRegion);
+                                        //infos.Add(info);
+                                    }
+                                });
+                                break;
 
-                        case ModelType.Obb:
-                            ObbResult obbrets = sResultInfos as ObbResult;
-                            obbrets.for_each(info =>
-                            {
-                                int index = int.Parse(info.lable);
-                                if (Detect_names[index] == de.Name)
+                            case ModelType.Obb:
+                                ObbResult obbrets = sResultInfos as ObbResult;
+                                obbrets.for_each(info =>
                                 {
-                                    SRegion sRegion = GetDetectRegion(info);
+                                    int index = int.Parse(info.lable);
+                                    if (Detect_names[index] == de.Name)
+                                    {
+                                        SRegion sRegion = GetDetectRegion(info);
 
-                                    cellDetection1.regionOut.Add(sRegion);
-                                    //infos.Add(info);
-                                }
-                            });
-                            //infos.ForEach(info => sResultInfos.Remove(info));
-                            break;
+                                        cellDetection1.regionOut.Add(sRegion);
+                                        //infos.Add(info);
+                                    }
+                                });
+                                //infos.ForEach(info => sResultInfos.Remove(info));
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
+                        cell.AlgorithmOut.Add(cellDetection1);
                     }
-                    cell.AlgorithmOut.Add(cellDetection1);
                 }
             }
 
@@ -279,7 +283,7 @@ namespace GeneralML
             }
         }
 
-        private BaseResult ImageInfer(Cell cell)
+        private BaseResult ImageInfer(Cell cell, float score, float nms)
         {
             List<ObbData> sResultInfos = new List<ObbData>();
 
@@ -294,7 +298,7 @@ namespace GeneralML
             //await Task.Run(() =>
             //{
             BaseResult result;
-            result = yolo.predict(img);
+            result = yolo.predict(img, score, nms);
             //switch (_ModelType)
             //{
             //    case ModelType.Det:

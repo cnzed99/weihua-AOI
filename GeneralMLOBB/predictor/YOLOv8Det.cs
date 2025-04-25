@@ -35,8 +35,14 @@ namespace GeneralML
             )
         { }
 
-        protected override BaseResult postprocess(List<float[]> results)
+        protected override BaseResult postprocess(
+            List<float[]> results,
+            float det_thresh,
+            float det_nms_thresh
+        )
         {
+            this.m_det_thresh = det_thresh;
+            this.m_det_nms_thresh = det_nms_thresh;
             Mat result_data = new Mat(
                 this.m_output_sizes[0][1],
                 this.m_output_sizes[0][2],

@@ -29,7 +29,7 @@ namespace GeneralMLOBBAlgorithm
         /// </summary>
         private YOLO yolo = new YOLO();
 
-        private string infer_type = "det";
+        protected ModelType _ModelType = ModelType.YOLOv8Det;
 
         // internal string engine_type_str { get; set; }= "OpenVINO";
 
@@ -47,13 +47,13 @@ namespace GeneralMLOBBAlgorithm
         /// 2025.3.3 鲍赞宝
         /// 模型路径
         /// </summary>
-        string Model_Path;
+        private string Model_Path;
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
         /// 缺陷名称路径
         /// </summary>
-        string name_Path;
+        private string name_Path;
 
         protected string[] Detect_names;
 
@@ -174,8 +174,8 @@ namespace GeneralMLOBBAlgorithm
             if (paramClass != null)
             {
                 Mat img = GetMatImage(cell, paramClass);
-                List<ObbData> sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
-                if (sResultInfos.Count == 0)
+                BaseResult sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
+                if (sResultInfos is null)
                 {
                     return;
                 }
@@ -189,27 +189,52 @@ namespace GeneralMLOBBAlgorithm
                         cellDetection1.Category = de.Category;
                         cellDetection1.RecipeDefectName = de.Name;
                         cellDetection1.Value = new List<float>();
-                        List<ObbData> infos = new List<ObbData>();
-                        sResultInfos.ForEach(info =>
+                        switch (_ModelType)
                         {
-                            int index = int.Parse(info.lable);
-                            if (Detect_names[index] == de.Name)
-                            {
-                                SRegion sRegion = GetDetectRegion(info);
+                            case ModelType.YOLOv8Det:
+                                DetResult detrets = sResultInfos as DetResult;
 
-                                cellDetection1.regionOut.Add(sRegion);
-                                infos.Add(info);
-                            }
-                        });
+                                detrets.for_each(info =>
+                                {
+                                    int index = int.Parse(info.lable);
+                                    if (Detect_names[index] == de.Name)
+                                    {
+                                        SRegion sRegion = GetDetectRegion(info);
+
+                                        cellDetection1.regionOut.Add(sRegion);
+                                        //infos.Add(info);
+                                    }
+                                });
+                                break;
+
+                            case ModelType.YOLOv8Obb:
+                                ObbResult obbrets = sResultInfos as ObbResult;
+                                obbrets.for_each(info =>
+                                {
+                                    int index = int.Parse(info.lable);
+                                    if (Detect_names[index] == de.Name)
+                                    {
+                                        SRegion sRegion = GetDetectRegion(info);
+
+                                        cellDetection1.regionOut.Add(sRegion);
+                                        //infos.Add(info);
+                                    }
+                                });
+                                //infos.ForEach(info => sResultInfos.Remove(info));
+                                break;
+
+                            default:
+                                break;
+                        }
                         cell.AlgorithmOut.Add(cellDetection1);
-                        infos.ForEach(info => sResultInfos.Remove(info));
+                        //infos.ForEach(info => sResultInfos.Remove(info));
                     }
                 }
             }
         }
 
         [OnDeserialized]
-        void LoadModel(StreamingContext context)
+        private void LoadModel(StreamingContext context)
         {
             CParam param = AlgorParams[0] as CParam;
             string model_type_str = "YOLOv8Obb";
@@ -219,30 +244,30 @@ namespace GeneralMLOBBAlgorithm
             // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
             EngineType engine_type = param.EngineType;
 
-            if ((model_type == ModelType.YOLOv8Det) || (model_type == ModelType.YOLOWorld))
-            {
-                infer_type = "det";
-            }
-            else if (
-                (model_type == ModelType.YOLOv9Seg)
-                || (model_type == ModelType.YOLOv8Seg)
-                || (model_type == ModelType.YOLOv5Seg)
-            )
-            {
-                infer_type = "seg";
-            }
-            else if ((model_type == ModelType.YOLOv8Pose))
-            {
-                infer_type = "pose";
-            }
-            else if ((model_type == ModelType.YOLOv8Obb))
-            {
-                infer_type = "obb";
-            }
-            else if ((model_type == ModelType.YOLOv8Cls))
-            {
-                infer_type = "cls";
-            }
+            //if ((model_type == ModelType.YOLOv8Det) || (model_type == ModelType.YOLOWorld))
+            //{
+            //    infer_type = "det";
+            //}
+            //else if (
+            //    (model_type == ModelType.YOLOv9Seg)
+            //    || (model_type == ModelType.YOLOv8Seg)
+            //    || (model_type == ModelType.YOLOv5Seg)
+            //)
+            //{
+            //    infer_type = "seg";
+            //}
+            //else if ((model_type == ModelType.YOLOv8Pose))
+            //{
+            //    infer_type = "pose";
+            //}
+            //else if ((model_type == ModelType.YOLOv8Obb))
+            //{
+            //    infer_type = "obb";
+            //}
+            //else if ((model_type == ModelType.YOLOv8Cls))
+            //{
+            //    infer_type = "cls";
+            //}
 
             //string extension = Path.GetExtension(Model_Path);
             //if (EngineType.TensorRT == engine_type)
@@ -310,24 +335,50 @@ namespace GeneralMLOBBAlgorithm
             }
         }
 
-        public List<ObbData> ImageInfer(Mat img, float score, float nms)
+        public BaseResult ImageInfer(Mat img, float score, float nms)
         {
-            List<ObbData> sResultInfos = new List<ObbData>();
+            List<IResultData> sResultInfos = new List<IResultData>();
             BaseResult result;
             result = yolo.predict(img, score, nms);
-            ObbResult? obbResult = result as ObbResult;
 
-            if (obbResult != null)
-            {
-                for (int i = 0; i < obbResult.count; i++)
-                {
-                    sResultInfos.Add(obbResult.datas[i]);
-                }
-            }
-            return sResultInfos;
+            //if (result != null)
+            //{
+            //    for (int i = 0; i < result.count; i++)
+            //    {
+            //        sResultInfos.Add(obbResult.datas[i]);
+            //    }
+            //}
+            return result;
         }
 
-        public SRegion GetDetectRegion(ObbData info)
+        protected SRegion GetDetectRegion(DetData info)
+        {
+            SRegionInfo sRegioninfo = new SRegionInfo();
+            //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);
+            sRegioninfo.LongLen = info.box.Size.Width;
+            sRegioninfo.ShorLen = info.box.Size.Height;
+            sRegioninfo.Phi = 0f;
+            sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
+            sRegioninfo.Score = info.score;
+            List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+            {
+                new System.Windows.Point(info.box.X, info.box.Y),
+                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y),
+                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y + info.box.Height),
+                new System.Windows.Point(info.box.X, info.box.Y + info.box.Height),
+            };
+            //rec1Points.Add(new System.Windows.Point(info.box.X, info.box.Y));
+
+            SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
+            var rect = info.box;
+            detectRegion.rect = new System.Windows.Rect(
+                new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y),
+                new System.Windows.Size(rect.Width, rect.Height)
+            );
+            return detectRegion;
+        }
+
+        protected SRegion GetDetectRegion(ObbData info)
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
             //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);

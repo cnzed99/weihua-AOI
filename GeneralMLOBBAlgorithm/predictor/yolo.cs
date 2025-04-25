@@ -125,7 +125,7 @@ namespace GeneralMLOBBAlgorithm
             //if (m_log.Flag_time)
             //{
             sw.Restart();
-            re = postprocess(result_data,det_thresh_in, det_nms_thresh_in);
+            re = postprocess(result_data, det_thresh_in, det_nms_thresh_in);
             sw.Stop();
             //m_log.print(
             //    "Result data process successfull, spend time: "
@@ -140,7 +140,11 @@ namespace GeneralMLOBBAlgorithm
             return re;
         }
 
-        protected virtual BaseResult postprocess(List<float[]> results, float det_thresh, float det_nms_thresh)
+        protected virtual BaseResult postprocess(
+            List<float[]> results,
+            float det_thresh,
+            float det_nms_thresh
+        )
         {
             return new BaseResult();
         }
@@ -162,10 +166,19 @@ namespace GeneralMLOBBAlgorithm
             ImgSize output_size
         )
         {
-            //else if (model_type == ModelType.YOLOv8Det)
-            //{
-            //    return new YOLOv8Det(model_path, engine, device, categ_nums, det_thresh, det_nms_thresh, input_size);
-            //}
+            if (model_type == ModelType.YOLOv8Det)
+            {
+                return new YOLOv8Det(
+                    model_path,
+                    engine,
+                    device,
+                    categ_nums,
+                    det_thresh,
+                    det_nms_thresh,
+                    input_size,
+                    output_size
+                );
+            }
             //else if (model_type == ModelType.YOLOv8Seg)
             //{
             //    return new YOLOv8Seg(model_path, engine, device, categ_nums, det_thresh, det_nms_thresh, input_size);
