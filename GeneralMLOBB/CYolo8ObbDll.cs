@@ -1,9 +1,8 @@
-
-using OpenCvSharp;
 using System.Drawing;
+using OpenCvSharp;
 using WH.RecipeCellRootBase;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     /// <summary>
     /// 2024.10.31 鲍赞宝
@@ -12,24 +11,23 @@ namespace YoloobbAlgorithm
     public struct SResultInfo
     {
         public SResultInfo()
-        {
-        }
+        { }
+
         /// <summary>
         /// 检测标签
         /// </summary>
-        public string LabelStr=string.Empty;
+        public string LabelStr = string.Empty;
+
         /// <summary>
         /// 检测结果分数
         /// </summary>
         public double ResultScore = 0.0;
+
         /// <summary>
         /// 检测结果区域点位
         /// </summary>
-        public List<Point2f> ResultPoints =new List<Point2f>();
-
-
+        public List<Point2f> ResultPoints = new List<Point2f>();
     }
-
 
     /// <summary>
     /// 2024.6.25 李焕彬
@@ -79,23 +77,28 @@ namespace YoloobbAlgorithm
         /// </summary>
         public double Area = 0;
 
-        public SRegionInfo() { }
+        public SRegionInfo()
+        { }
 
         public double GetValue(CFeacture feacture, SRegion region)
         {
             switch (feacture.Id)
             {
-                
                 case "Area":
                     return Area;
+
                 case "LongLength":
                     return LongLen;
+
                 case "ShortLength":
                     return ShorLen;
+
                 case "Angle":
                     return Phi;
+
                 case "Score":
                     return Score;
+
                 default:
                     return 0;
             }
@@ -110,7 +113,7 @@ namespace YoloobbAlgorithm
             //regionInfo.HeightBound = regions
             //    .Select(o => ((SRegionInfo)o.regionInfo).HeightBound)
             //    .Sum();
-            
+
             regionInfo.LongLen = regions.Select(o => ((SRegionInfo)o.regionInfo).LongLen).Sum();
             regionInfo.ShorLen = regions.Select(o => ((SRegionInfo)o.regionInfo).ShorLen).Sum();
             regionInfo.Phi = regions.Select(o => ((SRegionInfo)o.regionInfo).Phi).Max();
@@ -123,8 +126,5 @@ namespace YoloobbAlgorithm
             }
             return new SRegion(regionInfo, pts);
         }
-       
     };
-
-
 }

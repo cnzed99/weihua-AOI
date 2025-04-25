@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AlgorithmDll;
 using Newtonsoft.Json;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     public class PlugIn : IAlgorithm
     {
