@@ -14,6 +14,7 @@ namespace StichingFourCam
     public partial class HDevelopExport
     {
 #if !(NO_EXPORT_MAIN || NO_EXPORT_APP_MAIN)
+
         public HDevelopExport()
         {
             // Default settings used in HDevelop
@@ -22,13 +23,14 @@ namespace StichingFourCam
             if (HalconAPI.isWindows)
                 HOperatorSet.SetSystem("use_window_thread", "true");
         }
+
 #endif
 
-        HTuple DisplayIntermediateResults;
-        HTuple WindowWidthLimit;
-        HTuple WindowHeightLimit;
+        private HTuple DisplayIntermediateResults;
+        private HTuple WindowWidthLimit;
+        private HTuple WindowHeightLimit;
 
-        HTuple ExpGetGlobalVar_DisplayIntermediateResults()
+        private HTuple ExpGetGlobalVar_DisplayIntermediateResults()
         {
             return DisplayIntermediateResults;
         }
@@ -580,7 +582,6 @@ namespace StichingFourCam
             // dev_update_pc(...); only in hdevelop
             // dev_update_var(...); only in hdevelop
             // dev_update_window(...); only in hdevelop
-
 
             return;
         }
@@ -1618,6 +1619,7 @@ namespace StichingFourCam
                                 hv_CameraType = "area_scan_telecentric_division";
                             }
                             break;
+
                         case 10:
                             //CameraType: 'area_scan_tilt_division' or 'area_scan_telecentric_tilt_division'
                             if (
@@ -1643,6 +1645,7 @@ namespace StichingFourCam
                                 hv_CameraType = "area_scan_tilt_bilateral_telecentric_division";
                             }
                             break;
+
                         case 12:
                             //CameraType: 'area_scan_polynomial' or 'area_scan_telecentric_polynomial'
                             if (
@@ -1666,6 +1669,7 @@ namespace StichingFourCam
                                 hv_CameraType = "area_scan_telecentric_polynomial";
                             }
                             break;
+
                         case 14:
                             //CameraType: 'area_scan_tilt_polynomial' or 'area_scan_telecentric_tilt_polynomial'
                             if (
@@ -1700,6 +1704,7 @@ namespace StichingFourCam
                             hv_CameraType.Dispose();
                             hv_CameraType = "line_scan";
                             break;
+
                         default:
                             throw new HalconException("Wrong number of values in CameraParam.");
                             break;
@@ -6900,7 +6905,7 @@ namespace StichingFourCam
                     devThread = new HDevThread(
                         context,
                         (HDevThread.ProcCallback)
-                            delegate(HDevThread devThreadCB)
+                            delegate (HDevThread devThreadCB)
                             {
                                 try
                                 {
@@ -7308,7 +7313,7 @@ namespace StichingFourCam
                     devThread = new HDevThread(
                         context,
                         (HDevThread.ProcCallback)
-                            delegate(HDevThread devThreadCB)
+                            delegate (HDevThread devThreadCB)
                             {
                                 try
                                 {
@@ -7716,7 +7721,7 @@ namespace StichingFourCam
                     devThread = new HDevThread(
                         context,
                         (HDevThread.ProcCallback)
-                            delegate(HDevThread devThreadCB)
+                            delegate (HDevThread devThreadCB)
                             {
                                 try
                                 {
@@ -8124,7 +8129,7 @@ namespace StichingFourCam
                     devThread = new HDevThread(
                         context,
                         (HDevThread.ProcCallback)
-                            delegate(HDevThread devThreadCB)
+                            delegate (HDevThread devThreadCB)
                             {
                                 try
                                 {
@@ -12582,6 +12587,7 @@ namespace StichingFourCam
                         hv_b2.Dispose();
                         hv_b2 = new HTuple(hv_L2b);
                         break;
+
                     case 2:
                         hv_a1.Dispose();
                         hv_a1 = new HTuple(hv_L2a);
@@ -12592,6 +12598,7 @@ namespace StichingFourCam
                         hv_b2.Dispose();
                         hv_b2 = new HTuple(hv_L1b);
                         break;
+
                     default:
                         throw new HalconException("Wrong value of FootOnLine: " + hv_FootOnLine);
                         break;
@@ -13622,6 +13629,7 @@ namespace StichingFourCam
                             ho_ImageTo.Dispose();
                             HOperatorSet.ConvertImageType(ho_ImageT1, out ho_ImageTo, "real");
                             break;
+
                         case 2:
                             ho_GrayFrom.Dispose();
                             HOperatorSet.Rgb1ToGray(ho_ImageFrom, out ho_GrayFrom);
@@ -18304,6 +18312,7 @@ namespace StichingFourCam
                                         "real"
                                     );
                                     break;
+
                                 case 2:
                                     ho_GrayFrom.Dispose();
                                     HOperatorSet.Rgb1ToGray(ho_ImageFrom, out ho_GrayFrom);
@@ -21478,6 +21487,7 @@ namespace StichingFourCam
                                         "real"
                                     );
                                     break;
+
                                 case 2:
                                     ho_GrayFrom.Dispose();
                                     HOperatorSet.Rgb1ToGray(ho_ImageFrom, out ho_GrayFrom);
@@ -24753,6 +24763,7 @@ namespace StichingFourCam
                                         "real"
                                     );
                                     break;
+
                                 case 2:
                                     ho_GrayFrom.Dispose();
                                     HOperatorSet.Rgb1ToGray(ho_ImageFrom, out ho_GrayFrom);
@@ -26308,83 +26319,114 @@ namespace StichingFourCam
             init(width, height);
         }
 
-        CParameterSetting camSetting;
+        private CParameterSetting camSetting;
 
         // Stack for temporary objects
-        HObject[] OTemp = new HObject[20];
+        private HObject[] OTemp = new HObject[20];
 
         // Local iconic variables
 
-        HObject ho_Rectangle = null,
+        private HObject ho_Rectangle = null,
             ho_RectificationMaps;
-        HObject ho_ObjectSelected = null,
+
+        private HObject ho_ObjectSelected = null,
             ho_ImagesRectified = null;
-        HObject ho_ImagesGrayRectified = null,
+
+        private HObject ho_ImagesGrayRectified = null,
             ho_Regions = null,
             ho_FinalMosaic = null;
 
         // Local control variables
 
-        HTuple ExpTmpLocalVar_DisplayIntermediateResults = new HTuple();
-        HTuple ExpTmpLocalVar_WindowWidthLimit = new HTuple();
-        HTuple ExpTmpLocalVar_WindowHeightLimit = new HTuple();
-        HTuple hv_PixelSizeInMM = new HTuple(),
+        private HTuple ExpTmpLocalVar_DisplayIntermediateResults = new HTuple();
+        private HTuple ExpTmpLocalVar_WindowWidthLimit = new HTuple();
+        private HTuple ExpTmpLocalVar_WindowHeightLimit = new HTuple();
+
+        private HTuple hv_PixelSizeInMM = new HTuple(),
             hv_FineAdjustmentMatchingWidth = new HTuple();
-        HTuple hv_FineAdjustmentMaxShift = new HTuple(),
+
+        private HTuple hv_FineAdjustmentMaxShift = new HTuple(),
             hv_BlendingSeam = new HTuple();
-        HTuple hv_SilhouetteMeasureDistance = new HTuple(),
+
+        private HTuple hv_SilhouetteMeasureDistance = new HTuple(),
             hv_SilhouetteMeasureLength2 = new HTuple();
-        HTuple hv_SilhouetteMeasureSigma = new HTuple(),
+
+        private HTuple hv_SilhouetteMeasureSigma = new HTuple(),
             hv_SilhouetteMeasureThreshold = new HTuple();
-        HTuple hv_SilhouetteMaxTilt = new HTuple(),
+
+        private HTuple hv_SilhouetteMaxTilt = new HTuple(),
             hv_Width = new HTuple();
-        HTuple hv_Height = new HTuple(),
+
+        private HTuple hv_Height = new HTuple(),
             hv_WindowHandle = new HTuple();
-        HTuple hv_CameraSetupModel = new HTuple(),
+
+        private HTuple hv_CameraSetupModel = new HTuple(),
             hv_CamPose0 = new HTuple();
-        HTuple hv_CylinderRadiusInMM = new HTuple(),
+
+        private HTuple hv_CylinderRadiusInMM = new HTuple(),
             hv_LabelMinRow = new HTuple();
-        HTuple hv_LabelMaxRow = new HTuple(),
+
+        private HTuple hv_LabelMaxRow = new HTuple(),
             hv_PixelSize = new HTuple();
-        HTuple hv_CylinderRadius = new HTuple(),
+
+        private HTuple hv_CylinderRadius = new HTuple(),
             hv_MeasureHandles1 = new HTuple();
-        HTuple hv_Row = new HTuple(),
+
+        private HTuple hv_Row = new HTuple(),
             hv_MeasureHandle = new HTuple();
-        HTuple hv_MeasureHandles2 = new HTuple(),
+
+        private HTuple hv_MeasureHandles2 = new HTuple(),
             hv_MeasureHandles3 = new HTuple();
-        HTuple hv_MeasureHandles4 = new HTuple(),
+
+        private HTuple hv_MeasureHandles4 = new HTuple(),
             hv_CameraSetupModelZeroDist = new HTuple();
-        HTuple hv_NumCameras = new HTuple(),
+
+        private HTuple hv_NumCameras = new HTuple(),
             hv_PoseCylinderApprox = new HTuple();
-        HTuple hv_HomMat3DCylinderApprox = new HTuple(),
+
+        private HTuple hv_HomMat3DCylinderApprox = new HTuple(),
             hv_MinZ = new HTuple();
-        HTuple hv_MaxZ = new HTuple(),
+
+        private HTuple hv_MaxZ = new HTuple(),
             hv_MinPairDist = new HTuple();
-        HTuple hv_MaxPairDist = new HTuple(),
+
+        private HTuple hv_MaxPairDist = new HTuple(),
             hv_NumSlices = new HTuple();
-        HTuple hv_NumPointsPerSlice = new HTuple(),
+
+        private HTuple hv_NumPointsPerSlice = new HTuple(),
             hv_MinZI = new HTuple();
-        HTuple hv_MaxZI = new HTuple(),
+
+        private HTuple hv_MaxZI = new HTuple(),
             hv_CylinderPointsX = new HTuple();
-        HTuple hv_CylinderPointsY = new HTuple(),
+
+        private HTuple hv_CylinderPointsY = new HTuple(),
             hv_CylinderPointsZ = new HTuple();
-        HTuple hv_MosaicHeight = new HTuple(),
+
+        private HTuple hv_MosaicHeight = new HTuple(),
             hv_MosaicWidth = new HTuple();
-        HTuple hv_ColorMosaic = new HTuple(),
+
+        private HTuple hv_ColorMosaic = new HTuple(),
             hv_t = new HTuple();
-        HTuple hv_i = new HTuple(),
+
+        private HTuple hv_i = new HTuple(),
             hv_Channels = new HTuple();
-        HTuple hv_SecondsStart = new HTuple(),
+
+        private HTuple hv_SecondsStart = new HTuple(),
             hv_BackgroundMayContainTexture = new HTuple();
-        HTuple hv_PoseCylinder = new HTuple(),
+
+        private HTuple hv_PoseCylinder = new HTuple(),
             hv_CameraSetupModelZeroDistInCylinderOrigin = new HTuple();
-        HTuple hv_Quality = new HTuple(),
+
+        private HTuple hv_Quality = new HTuple(),
             hv_RadiusEstimated = new HTuple();
-        HTuple hv_HighImageQuality = new HTuple(),
+
+        private HTuple hv_HighImageQuality = new HTuple(),
             hv_PerformFineAdjustment = new HTuple();
-        HTuple hv_SecondsStop = new HTuple(),
+
+        private HTuple hv_SecondsStop = new HTuple(),
             hv_TimeMS = new HTuple();
-        HTuple hv_Message = new HTuple();
+
+        private HTuple hv_Message = new HTuple();
 
         private void init(int width, int height)
         {
@@ -26800,7 +26842,7 @@ namespace StichingFourCam
             }
         }
 
-        IntPtr combinedPtr = IntPtr.Zero;
+        private IntPtr combinedPtr = IntPtr.Zero;
 
         public IntPtr GetColorImagePointer(HObject colorImage, out int width, out int height)
         {
@@ -26865,7 +26907,7 @@ namespace StichingFourCam
             return combinedPtr;
         }
 
-        HObject TransformBgraImage(CImage data)
+        private HObject TransformBgraImage(CImage data)
         {
             string format = "rgb";
             if (data.PixelFormat == PixelFormats.Bgr32)
@@ -26927,14 +26969,14 @@ namespace StichingFourCam
 
                 ho_ImagesRectified.Dispose();
                 ho_ImagesGrayRectified.Dispose();
-                eliminate_radial_distortions(
-                    ho_Image,
-                    ho_RectificationMaps,
-                    out ho_ImagesRectified,
-                    out ho_ImagesGrayRectified,
-                    hv_NumCameras,
-                    hv_Channels
-                );
+                //eliminate_radial_distortions(
+                //    ho_Image,
+                //    ho_RectificationMaps,
+                //    out ho_ImagesRectified,
+                //    out ho_ImagesGrayRectified,
+                //    hv_NumCameras,
+                //    hv_Channels
+                //);
                 //
                 //Determine the pose of the rotation axis in 3D and create an additional camera setup model
                 //with the origin on the rotation axis.
@@ -26997,8 +27039,8 @@ namespace StichingFourCam
                 ho_FinalMosaic.Dispose();
                 stitch_images_WH20250312(
                     ho_Regions,
-                    ho_ImagesRectified,
-                    ho_ImagesGrayRectified,
+                    ho_Image,
+                    ho_Image,
                     out ho_FinalMosaic,
                     hv_WindowHandle,
                     hv_ColorMosaic,
