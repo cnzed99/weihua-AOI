@@ -35,7 +35,7 @@ namespace StichingFourCam
         /// </summary>
         internal CParameterSetting paramSetting { get; set; }
 
-        HDevelopExportPro hDevelopExport { get; set; }
+        private HDevelopExportPro hDevelopExport { get; set; }
 
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(20) { FullMode = BoundedChannelFullMode.Wait };
@@ -53,7 +53,7 @@ namespace StichingFourCam
         /// </summary>
         public static CLogRec StichingLog = CLogRec.Create("StichingAlg", "D:/Data");
 
-        List<string> camSerials;
+        private List<string> camSerials;
 
         public CCamera()
             : base() { }
@@ -119,15 +119,15 @@ namespace StichingFourCam
         /// 2025.4.19 李焕彬
         /// 汇总结果lock用
         /// </summary>
-        Object objLock = new object();
+        private Object objLock = new object();
 
         /// <summary>
         /// 2025.4.19 李焕彬
         /// 4个相机cell存储
         /// </summary>
-        List<(DateTime createTime, Cell cell)> saveCells = new();
+        private List<(DateTime createTime, Cell cell)> saveCells = new();
 
-        Task taskReceive = null;
+        private Task taskReceive = null;
 
         public void StartReceiveThread()
         {
@@ -172,12 +172,14 @@ namespace StichingFourCam
                                     cellFind.Add(result.cell);
                                 }
                                 Stopwatch sw = Stopwatch.StartNew();
-                                var stichingImage = hDevelopExport.action(
-                                    cellFind[0].Image,
-                                    cellFind[1].Image,
-                                    cellFind[2].Image,
-                                    cellFind[3].Image
-                                );
+                                var stichingImage = hDevelopExport
+                                    .action(
+                                        cellFind[0].Image,
+                                        cellFind[1].Image,
+                                        cellFind[2].Image,
+                                        cellFind[3].Image
+                                    )
+                                    .Result;
                                 paramSetting.ProcessTime = sw.ElapsedMilliseconds;
                                 StichingLog.Info($"执行拼图算法处理时间：{sw.ElapsedMilliseconds}ms!");
                                 paramSetting.ImageWidth = stichingImage.ImageWidth;
@@ -424,7 +426,7 @@ namespace StichingFourCam
             return true;
         }
 
-        EMTRIGGERMODE modeSet;
+        private EMTRIGGERMODE modeSet;
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -458,7 +460,8 @@ namespace StichingFourCam
         /// 设置曝光值
         /// </summary>
         /// <param name="value">曝光值</param>
-        public override void SetExposureTime(uint value) { }
+        public override void SetExposureTime(uint value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -477,7 +480,8 @@ namespace StichingFourCam
         /// 设置增益
         /// </summary>
         /// <param name="value">增益</param>
-        public override void SetGain(float value) { }
+        public override void SetGain(float value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -496,14 +500,16 @@ namespace StichingFourCam
         /// 设置Gamma值
         /// </summary>
         /// <param name="value">Gamma值</param>
-        public override void SetGamma(float value) { }
+        public override void SetGamma(float value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 设置相机触发延时时间
         /// </summary>
         /// <param name="value">触发延时时间</param>
-        public override void SetTriggerDelay(uint value) { }
+        public override void SetTriggerDelay(uint value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -522,7 +528,8 @@ namespace StichingFourCam
         ///设置输出脉冲宽度
         /// </summary>
         /// <param name="value">输出脉冲宽度</param>
-        public override void SetTriggerPulseWidth(uint value) { }
+        public override void SetTriggerPulseWidth(uint value)
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -540,13 +547,15 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 保存用户参数
         /// </summary>
-        public override void UserSaveParam() { }
+        public override void UserSaveParam()
+        { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 加载用户参数
         /// </summary>
-        public override void UserLoadParam() { }
+        public override void UserLoadParam()
+        { }
 
         public override void SetCustomParam(uint value)
         {

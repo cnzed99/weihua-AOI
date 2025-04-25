@@ -26932,15 +26932,36 @@ namespace StichingFourCam
             return image1;
         }
 
-        public CImage action(CImage data1, CImage data2, CImage data3, CImage data4)
+        public async Task<CImage> action(CImage data1, CImage data2, CImage data3, CImage data4)
         {
-            HObject image1 = TransformBgraImage(data1);
-            HObject image2 = TransformBgraImage(data2);
-            HObject image3 = TransformBgraImage(data3);
-            HObject image4 = TransformBgraImage(data4);
-            HOperatorSet.ConcatObj(image1, image2, out HObject ho_Image);
-            HOperatorSet.ConcatObj(ho_Image, image3, out ho_Image);
-            HOperatorSet.ConcatObj(ho_Image, image4, out ho_Image);
+            Task<HObject> task1 = Task.Run(HObject () =>
+            {
+                HObject image = TransformBgraImage(data1);
+                return image;
+            });
+            Task<HObject> task2 = Task.Run(HObject () =>
+            {
+                HObject image = TransformBgraImage(data2);
+                return image;
+            });
+            Task<HObject> task3 = Task.Run(HObject () =>
+            {
+                HObject image = TransformBgraImage(data3);
+                return image;
+            });
+            Task<HObject> task4 = Task.Run(HObject () =>
+            {
+                HObject image = TransformBgraImage(data4);
+                return image;
+            });
+            //HObject image1 = TransformBgraImage(data1);
+            //HObject image2 = TransformBgraImage(data2);
+            //HObject image3 = TransformBgraImage(data3);
+            //HObject image4 = TransformBgraImage(data4);
+            await Task.WhenAll(task1, task2, task3, task4);
+            HOperatorSet.ConcatObj(task1.Result, task2.Result, out HObject ho_Image);
+            HOperatorSet.ConcatObj(ho_Image, task3.Result, out ho_Image);
+            HOperatorSet.ConcatObj(ho_Image, task4.Result, out ho_Image);
             try
             {
                 hv_ColorMosaic.Dispose();
@@ -27074,7 +27095,7 @@ namespace StichingFourCam
                     ho_FinalMosaic = tiledImage;
                 }
                 HOperatorSet.ConvertImageType(ho_FinalMosaic, out HObject ExpTmpOutVar_0, "byte");
-                HOperatorSet.WriteImage(ExpTmpOutVar_0, "bmp", 0, "image1");
+                //HOperatorSet.WriteImage(ExpTmpOutVar_0, "bmp", 0, "image1");
                 var ptrFinal = GetColorImagePointer(ExpTmpOutVar_0, out int width, out int height);
                 ExpTmpOutVar_0.Dispose();
                 ho_FinalMosaic.Dispose();
