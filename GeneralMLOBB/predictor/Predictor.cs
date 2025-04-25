@@ -14,7 +14,7 @@ using OpenVinoSharp;
 using TensorRtSharp.Custom;
 using Size = OpenCvSharp.Size;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     public class Predictor : IDisposable
     {

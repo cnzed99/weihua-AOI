@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     public static class MyEnum
     {
@@ -32,20 +32,24 @@ namespace YoloobbAlgorithm
 
     public enum ModelType
     {
-        YOLOv5Det,
-        YOLOv5Seg,
-        YOLOv5Cls,
-        YOLOv6Det,
-        YOLOv7Det,
-        YOLOv8Det,
-        YOLOv8Seg,
-        YOLOv8Cls,
-        YOLOv8Pose,
-        YOLOv8Obb,
-        YOLOv9Det,
-        YOLOv9Seg,
-        YOLOWorld,
-        YOLOv10Det
+        //YOLOv5Det,
+        //YOLOv5Seg,
+        //YOLOv5Cls,
+        //YOLOv6Det,
+        //YOLOv7Det,
+        //YOLOv8Det,
+        Det,
+
+        //YOLOv8Seg,
+        //YOLOv8Cls,
+        //YOLOv8Pose,
+        //YOLOv8Obb,
+        Obb,
+
+        //YOLOv9Det,
+        //YOLOv9Seg,
+        //YOLOWorld,
+        //YOLOv10Det
     }
 
     public enum ImgSize

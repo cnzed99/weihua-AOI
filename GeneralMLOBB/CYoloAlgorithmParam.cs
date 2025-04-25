@@ -21,7 +21,7 @@ using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     public class CYoloAlgorithmParam : CAlgorithmParamBase
     {
@@ -30,7 +30,7 @@ namespace YoloobbAlgorithm
         /// </summary>
         private YOLO yolo = new YOLO();
 
-        private string infer_type = "det";
+        private ModelType _ModelType { get; set; }
 
         //private string engine_type_str = "OpenVINO";
 
@@ -110,7 +110,8 @@ namespace YoloobbAlgorithm
         /// <returns>检测结果</returns>
         public override void DetectImage(Cell cell)
         {
-            List<ObbData> sResultInfos = ImageInfer(cell);
+            BaseResult sResultInfos = ImageInfer(cell);
+
             foreach (var ds in DefectSpecies)
             {
                 foreach (var de in ds.RecipeDefects)
@@ -120,20 +121,45 @@ namespace YoloobbAlgorithm
                     cellDetection1.Category = de.Category;
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
-                    List<ObbData> infos = new List<ObbData>();
-                    sResultInfos.ForEach(info =>
+                    //List<ObbData> infos = new List<ObbData>();
+                    switch (_ModelType)
                     {
-                        int index = int.Parse(info.lable);
-                        if (Detect_names[index] == de.Name)
-                        {
-                            SRegion sRegion = GetDetectRegion(info);
+                        case ModelType.Det:
+                            DetResult detrets = sResultInfos as DetResult;
 
-                            cellDetection1.regionOut.Add(sRegion);
-                            infos.Add(info);
-                        }
-                    });
+                            detrets.for_each(info =>
+                            {
+                                int index = int.Parse(info.lable);
+                                if (Detect_names[index] == de.Name)
+                                {
+                                    SRegion sRegion = GetDetectRegion(info);
+
+                                    cellDetection1.regionOut.Add(sRegion);
+                                    //infos.Add(info);
+                                }
+                            });
+                            break;
+
+                        case ModelType.Obb:
+                            ObbResult obbrets = sResultInfos as ObbResult;
+                            obbrets.for_each(info =>
+                            {
+                                int index = int.Parse(info.lable);
+                                if (Detect_names[index] == de.Name)
+                                {
+                                    SRegion sRegion = GetDetectRegion(info);
+
+                                    cellDetection1.regionOut.Add(sRegion);
+                                    //infos.Add(info);
+                                }
+                            });
+                            //infos.ForEach(info => sResultInfos.Remove(info));
+                            break;
+
+                        default:
+                            break;
+                    }
                     cell.AlgorithmOut.Add(cellDetection1);
-                    infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }
 
@@ -154,35 +180,37 @@ namespace YoloobbAlgorithm
         private void LoadModel(StreamingContext context)
         {
             CParam param = AlgorParams[0] as CParam;
-            string model_type_str = "YOLOv8Obb";
-
-            ModelType model_type = MyEnum.GetModelType<ModelType>(model_type_str);
+            //string model_type_str = "YOLOv8Obb";
+            _ModelType = param!.Modeltype;
+            ModelType model_type = param.Modeltype; //MyEnum.GetModelType<ModelType>(model_type_str);
             EngineType engine_type = param.EngineType;
 
-            if ((model_type == ModelType.YOLOv8Det) || (model_type == ModelType.YOLOWorld))
-            {
-                infer_type = "det";
-            }
-            else if (
-                (model_type == ModelType.YOLOv9Seg)
-                || (model_type == ModelType.YOLOv8Seg)
-                || (model_type == ModelType.YOLOv5Seg)
-            )
-            {
-                infer_type = "seg";
-            }
-            else if ((model_type == ModelType.YOLOv8Pose))
-            {
-                infer_type = "pose";
-            }
-            else if ((model_type == ModelType.YOLOv8Obb))
-            {
-                infer_type = "obb";
-            }
-            else if ((model_type == ModelType.YOLOv8Cls))
-            {
-                infer_type = "cls";
-            }
+            //if (
+            //    (model_type == ModelType.Det) /*|| (model_type == ModelType.YOLOWorld)*/
+            //)
+            //{
+            //    infer_type = "det";
+            //}
+            //else if (
+            //    (model_type == ModelType.YOLOv9Seg)
+            //    || (model_type == ModelType.YOLOv8Seg)
+            //    || (model_type == ModelType.YOLOv5Seg)
+            //)
+            //{
+            //    infer_type = "seg";
+            //}
+            //else if ((model_type == ModelType.YOLOv8Pose))
+            //{
+            //    infer_type = "pose";
+            //}
+            //else if ((model_type == ModelType.Obb))
+            //{
+            //    infer_type = "obb";
+            //}
+            ////else if ((model_type == ModelType.YOLOv8Cls))
+            //{
+            //    infer_type = "cls";
+            //}
 
             //string extension = Path.GetExtension(Model_Path);
             //if (EngineType.TensorRT == engine_type)
@@ -251,7 +279,7 @@ namespace YoloobbAlgorithm
             }
         }
 
-        private List<ObbData> ImageInfer(Cell cell)
+        private BaseResult ImageInfer(Cell cell)
         {
             List<ObbData> sResultInfos = new List<ObbData>();
 
@@ -267,29 +295,71 @@ namespace YoloobbAlgorithm
             //{
             BaseResult result;
             result = yolo.predict(img);
-            ObbResult obbResult = result as ObbResult;
-            if (obbResult != null)
-            {
-                for (int i = 0; i < obbResult.count; i++)
-                {
-                    //SResultInfo reinfo = new SResultInfo();
-                    //Point2f[] array = obbResult.datas[i].box.Points();
-                    //reinfo.ResultPoints = array.ToList();
-                    //reinfo.LabelStr = obbResult.datas[i].lable;
-                    //reinfo.ResultScore = obbResult.datas[i].score;
+            //switch (_ModelType)
+            //{
+            //    case ModelType.Det:
+            //        DetResult detResult = result as DetResult;
+            //        if(detResult != null)
+            //        {
+            //        }
+            //        break;
 
-                    sResultInfos.Add(obbResult.datas[i]);
-                    //for (int j = 0; j < 4; j++)
-                    //{
-                    //    Cv2.Line(image, (Point)array[j], (Point)array[(j + 1) % 4], new Scalar(255.0, 100.0, 200.0), 2);
-                    //}
+            //    case ModelType.Obb:
+            //        ObbResult obbResult = result as ObbResult;
+            //        if (obbResult != null)
+            //        {
+            //            for (int i = 0; i < obbResult.count; i++)
+            //            {
+            //                //SResultInfo reinfo = new SResultInfo();
+            //                //Point2f[] array = obbResult.datas[i].box.Points();
+            //                //reinfo.ResultPoints = array.ToList();
+            //                //reinfo.LabelStr = obbResult.datas[i].lable;
+            //                //reinfo.ResultScore = obbResult.datas[i].score;
 
-                    // Cv2.PutText(image, obbResult.datas[i].lable + "-" + obbResult.datas[i].score.ToString("0.00"), (Point)array[0], HersheyFonts.HersheySimplex, 0.8, new Scalar(0.0, 0.0, 0.0), 2);
-                }
-            }
+            //                sResultInfos.Add(obbResult.datas[i]);
+            //                //for (int j = 0; j < 4; j++)
+            //                //{
+            //                //    Cv2.Line(image, (Point)array[j], (Point)array[(j + 1) % 4], new Scalar(255.0, 100.0, 200.0), 2);
+            //                //}
+
+            //                // Cv2.PutText(image, obbResult.datas[i].lable + "-" + obbResult.datas[i].score.ToString("0.00"), (Point)array[0], HersheyFonts.HersheySimplex, 0.8, new Scalar(0.0, 0.0, 0.0), 2);
+            //            }
+            //        }
+            //        break;
+
+            //    default:
+            //        break;
+            //}
 
             //});
-            return sResultInfos;
+            return result;
+        }
+
+        private SRegion GetDetectRegion(DetData info)
+        {
+            SRegionInfo sRegioninfo = new SRegionInfo();
+            //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);
+            sRegioninfo.LongLen = info.box.Size.Width;
+            sRegioninfo.ShorLen = info.box.Size.Height;
+            sRegioninfo.Phi = 0f;
+            sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
+            sRegioninfo.Score = info.score;
+            List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+            {
+                new System.Windows.Point(info.box.X, info.box.Y),
+                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y),
+                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y + info.box.Height),
+                new System.Windows.Point(info.box.X, info.box.Y + info.box.Height),
+            };
+            //rec1Points.Add(new System.Windows.Point(info.box.X, info.box.Y));
+
+            SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
+            var rect = info.box;
+            detectRegion.rect = new System.Windows.Rect(
+                new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y),
+                new System.Windows.Size(rect.Width, rect.Height)
+            );
+            return detectRegion;
         }
 
         private SRegion GetDetectRegion(ObbData info)
@@ -449,6 +519,16 @@ namespace YoloobbAlgorithm
         [property: DisplayName("平台")]
         [property: Description("平台")]
         private EngineType engineType = EngineType.OpenVINO;
+
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// 驱动设备
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("加载参数")]
+        [property: DisplayName("类型")]
+        [property: Description("类型")]
+        private ModelType modeltype = ModelType.Obb;
 
         //[ObservableProperty]
         //[property: Category("设置界面")]

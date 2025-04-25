@@ -10,7 +10,7 @@ using OpenVinoSharp.Extensions.model;
 using OpenVinoSharp.Extensions.process;
 using OpenVinoSharp.Extensions.result;
 
-namespace YoloobbAlgorithm
+namespace GeneralML
 {
     public class YOLO : IDisposable
     {
@@ -162,17 +162,35 @@ namespace YoloobbAlgorithm
             ImgSize output_size
         )
         {
-            //else if (model_type == ModelType.YOLOv8Det)
-            //{
-            //    return new YOLOv8Det(model_path, engine, device, categ_nums, det_thresh, det_nms_thresh, input_size);
-            //}
+            if (model_type == ModelType.Det)
+            {
+                return new YOLOv8Det(
+                    model_path,
+                    engine,
+                    device,
+                    categ_nums,
+                    det_thresh,
+                    det_nms_thresh,
+                    input_size,
+                    output_size
+                );
+            }
             //else if (model_type == ModelType.YOLOv8Seg)
             //{
             //    return new YOLOv8Seg(model_path, engine, device, categ_nums, det_thresh, det_nms_thresh, input_size);
             //}
-            //else if (model_type == ModelType.YOLOv8Obb)
+            //else if (model_type == ModelType.Obb)
             //{
-            //    return new YOLOv8Obb(model_path, engine, device, categ_nums, det_thresh, det_nms_thresh, input_size);
+            //    return new YOLOv8Obb(
+            //        model_path,
+            //        engine,
+            //        device,
+            //        categ_nums,
+            //        det_thresh,
+            //        det_nms_thresh,
+            //        input_size,
+            //        output_size
+            //    );
             //}
             //else if (model_type == ModelType.YOLOv8Pose)
             //{
