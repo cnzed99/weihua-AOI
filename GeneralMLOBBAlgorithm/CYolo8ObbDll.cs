@@ -37,17 +37,17 @@ namespace GeneralMLOBBAlgorithm
     /// </summary>
     public struct SRegionInfo : IRegionInfo
     {
-        ///// <summary>
-        ///// 2024.7.4 李焕彬
-        ///// um垂直宽度
-        ///// </summary>
-        //public double WidthBound = 0;
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直宽度
+        /// </summary>
+        public double WidthBound = 0;
 
-        ///// <summary>
-        ///// 2024.7.4 李焕彬
-        ///// um垂直高度
-        ///// </summary>
-        //public double HeightBound = 0;
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um垂直高度
+        /// </summary>
+        public double HeightBound = 0;
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -78,6 +78,11 @@ namespace GeneralMLOBBAlgorithm
         /// um?面积
         /// </summary>
         public double Area = 0;
+        /// <summary>
+        /// 2024.7.4 李焕彬
+        /// um周长
+        /// </summary>
+        public double ContLen = 0;
 
         public SRegionInfo() { }
 
@@ -85,7 +90,10 @@ namespace GeneralMLOBBAlgorithm
         {
             switch (feacture.Id)
             {
-                
+                case "Width":
+                    return WidthBound;
+                case "Height":
+                    return HeightBound;
                 case "Area":
                     return Area;
                 case "LongLength":
