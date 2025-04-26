@@ -236,6 +236,7 @@ namespace BottleAlgorithm
                 //}
 
                 #endregion 铝盖定位 注释
+                base.DetectImage(cell);
 
                 #region 蓝盖有无
 
@@ -506,7 +507,7 @@ namespace BottleAlgorithm
 
                 #endregion 标签有无
 
-                base.DetectImage(cell);
+                
 
                 #region DET 三期有无
 
