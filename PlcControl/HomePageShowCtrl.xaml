@@ -17,17 +17,14 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>-->
+
             <cov:BoolToBrushConverter
-                x:Key="StatusConverter"
-                FalseValue="Red"
+                x:Key="PLCStatusConverter"
+                FalseValue="Gray"
                 TrueValue="Lime" />
             <cov:BoolToBrushConverter
-    x:Key="PLCStatusConverter"
-    FalseValue="Gray"
-    TrueValue="Lime" />
-            <cov:BoolToBrushConverter
                 x:Key="StatusReConverter"
-                FalseValue="Lime"
+                FalseValue="Gray"
                 TrueValue="Red" />
             <Style BasedOn="{StaticResource TextBoxExtend}" TargetType="TextBox">
                 <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
@@ -53,7 +50,7 @@
             Width="100"
             Height="30"
             Margin="2"
-            wh:StatusDotElement.DotBrush="{Binding IsInBinFull, Converter={StaticResource StatusReConverter}}"
+            wh:StatusDotElement.DotBrush="{Binding IsBinFull, Converter={StaticResource StatusReConverter}}"
             Command="{Binding ClearInBinCommand}"
             Content="满料清料"
             IsEnabled="{Binding ClearInBinCommand.IsRunning, Converter={StaticResource Boolean2BooleanReConverter}}"
