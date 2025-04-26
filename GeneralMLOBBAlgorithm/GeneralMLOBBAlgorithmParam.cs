@@ -212,6 +212,7 @@ namespace GeneralMLOBBAlgorithm
             {
                 foreach (var de in ds.RecipeDefects)
                 {
+                    if (!classNames.Contains(de.Name)) continue;
                     CellDetection cellDetection1 = new CellDetection();
                     cellDetection1.Type = ds.Name;
                     cellDetection1.Category = de.Category;
@@ -221,42 +222,48 @@ namespace GeneralMLOBBAlgorithm
                     {
                         case ModelType.YOLOv8Det:
                             DetResult detrets = sResultInfos as DetResult;
-
-                            detrets.for_each(info =>
+                            var finds = detrets.find_all(info => { int index = int.Parse(info.lable);
+                                return classNames[index] == de.Name;
+                            });
+                            if (finds.Count > 0)
                             {
-                                int index = int.Parse(info.lable);
-                                if (classNames[index] == de.Name)
+                                foreach (var item in finds)
                                 {
-                                    SRegion sRegion = GetDetectRegion(info);
+                                    SRegion sRegion = GetDetectRegion(item);
 
                                     cellDetection1.regionOut.Add(sRegion);
-                                    cell.AlgorithmOut.Add(cellDetection1);
-                                    //infos.Add(info);
+                                    
                                 }
-                            });
+                                
+                            }
+                            //cell.AlgorithmOut.Add(cellDetection1);
+
                             break;
 
                         case ModelType.YOLOv8Obb:
                             ObbResult obbrets = sResultInfos as ObbResult;
-                            obbrets.for_each(info =>
-                            {
+                            var findobbs = obbrets.find_all(info => {
                                 int index = int.Parse(info.lable);
-                                if (classNames[index] == de.Name)
+                                return classNames[index] == de.Name;
+                            });
+                            if (findobbs.Count > 0)
+                            {
+                                foreach (var item in findobbs)
                                 {
-                                    SRegion sRegion = GetDetectRegion(info);
+                                    SRegion sRegion = GetDetectRegion(item);
 
                                     cellDetection1.regionOut.Add(sRegion);
-                                    cell.AlgorithmOut.Add(cellDetection1);
-                                    //infos.Add(info);
+
                                 }
-                            });
+
+                            }
                             //infos.ForEach(info => sResultInfos.Remove(info));
                             break;
 
                         default:
                             break;
                     }
-                    
+                    cell.AlgorithmOut.Add(cellDetection1);
                     //infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }
