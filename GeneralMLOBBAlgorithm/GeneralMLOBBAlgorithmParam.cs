@@ -50,11 +50,9 @@ namespace GeneralMLOBBAlgorithm
         /// </summary>
         private string Model_Path = ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\";
 
-        private string text_Model_Path =
-            ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\threeDataModel.onnx";
+        private string text_Model_Path;
 
-        private string label_Model_Path =
-            ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\LabelDefectModel.onnx";
+        private string label_Model_Path;
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
@@ -337,6 +335,7 @@ namespace GeneralMLOBBAlgorithm
             //}
 
             yolo_text.Dispose();
+            yolo_labeldefect.Dispose();
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
@@ -345,13 +344,24 @@ namespace GeneralMLOBBAlgorithm
                 float Nms = param.Nms;
                 int Input_size = param.Input_size;
                 ImgSize Output_size = param.Output_size;
-                string model_path =
-                    param.EngineType == EngineType.TensorRT
-                        ? Model_Path + ".engine"
-                        : Model_Path + ".onnx";
+                //string model_path =
+                //    param.EngineType == EngineType.TensorRT
+                //        ? Model_Path + ".engine"
+                //        : Model_Path + ".onnx";
                 yolo_text = YOLO.GetYolo(
                     model_type,
-                    model_path,
+                    text_Model_Path,
+                    engine_type,
+                    CurrentDevice,
+                    Categ_num,
+                    Score,
+                    Nms,
+                    Input_size,
+                    Output_size
+                );
+                yolo_labeldefect = YOLO.GetYolo(
+                    model_type,
+                    label_Model_Path,
                     engine_type,
                     CurrentDevice,
                     Categ_num,
