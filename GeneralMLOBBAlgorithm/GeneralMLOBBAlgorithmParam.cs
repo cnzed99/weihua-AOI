@@ -230,6 +230,7 @@ namespace GeneralMLOBBAlgorithm
                                     SRegion sRegion = GetDetectRegion(info);
 
                                     cellDetection1.regionOut.Add(sRegion);
+                                    cell.AlgorithmOut.Add(cellDetection1);
                                     //infos.Add(info);
                                 }
                             });
@@ -245,6 +246,7 @@ namespace GeneralMLOBBAlgorithm
                                     SRegion sRegion = GetDetectRegion(info);
 
                                     cellDetection1.regionOut.Add(sRegion);
+                                    cell.AlgorithmOut.Add(cellDetection1);
                                     //infos.Add(info);
                                 }
                             });
@@ -254,7 +256,7 @@ namespace GeneralMLOBBAlgorithm
                         default:
                             break;
                     }
-                    cell.AlgorithmOut.Add(cellDetection1);
+                    
                     //infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }

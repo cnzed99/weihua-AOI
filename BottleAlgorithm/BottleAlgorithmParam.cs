@@ -1407,12 +1407,27 @@ namespace BottleAlgorithm
             List<System.Windows.Point> rec1Points
         )
         {
-            var de = cell.AlgorithmOut.Find(n => n.RecipeDefectName == IntoDefectName);
-            if (de != null)
+            foreach (var ds in DefectSpecies)
             {
-                SRegion detectRegion = GetDetectRegion(rec1Points);
-                de.regionOut.Add(detectRegion);
+                foreach (var de in ds.RecipeDefects)
+                {
+                    CellDetection cellDetection1 = new CellDetection();
+                    cellDetection1.Type = ds.Name;
+                    cellDetection1.Category = de.Category;
+                    cellDetection1.RecipeDefectName = de.Name;
+                    cellDetection1.Value = new List<float>();
+                    if(de.Name == IntoDefectName)
+                    {
+                        SRegion detectRegion = GetDetectRegion(rec1Points);
+                        cellDetection1.regionOut.Add(detectRegion);
+                        cell.AlgorithmOut.Add(cellDetection1);
+                    }
+                    
+                    //infos.ForEach(info => sResultInfos.Remove(info));
+                }
             }
+            //var de = cell.AlgorithmOut.Find(n => n.RecipeDefectName == IntoDefectName);
+            
         }
 
         public SRegion GetDetectRegion(List<System.Windows.Point> rec1Points)
