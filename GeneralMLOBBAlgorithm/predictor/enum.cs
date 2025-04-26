@@ -32,20 +32,8 @@ namespace GeneralMLOBBAlgorithm
 
     public enum ModelType
     {
-        YOLOv5Det,
-        YOLOv5Seg,
-        YOLOv5Cls,
-        YOLOv6Det,
-        YOLOv7Det,
         YOLOv8Det,
-        YOLOv8Seg,
-        YOLOv8Cls,
-        YOLOv8Pose,
         YOLOv8Obb,
-        YOLOv9Det,
-        YOLOv9Seg,
-        YOLOWorld,
-        YOLOv10Det
     }
 
     public enum ImgSize

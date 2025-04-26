@@ -71,13 +71,14 @@ namespace BottleAlgorithm
             : base()
         {
             string modelDirPath = ".\\AlgorithmPlug\\BottleAlgorithm\\Models";
-            ReadNames(modelDirPath);
+            //ReadNames(modelDirPath);
             DefectSpecies = new List<CDefectSpecies>();
-            if (Detect_names?.Length > 0)
+            string[] ModelNamesAll = text_Model_Names.Concat(LabelDetect_names).ToArray();
+            if (ModelNamesAll?.Length > 0)
             {
                 List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
 
-                for (int i = 0; i < Detect_names.Length; i++)
+                for (int i = 0; i < ModelNamesAll.Length; i++)
                 {
                     //if (Detect_names[i] == "三期")
                     //{
@@ -90,7 +91,7 @@ namespace BottleAlgorithm
                     //    cDefectRecipes.Add(defectRecipe);
                     //}
 
-                    CDefectRecipe defectRecipe = new CDefectRecipe(Detect_names[i], Category.区域);
+                    CDefectRecipe defectRecipe = new CDefectRecipe(ModelNamesAll[i], Category.区域);
                     cDefectRecipes.Add(defectRecipe);
                 }
 
@@ -144,123 +145,6 @@ namespace BottleAlgorithm
                 m_DateStringTestResult = 0;
                 m_CapTestResult = 0;
                 m_LabelTestResult = 0;
-
-                #region DET
-
-                // base.DetectImage(cell);
-                Mat img = GetMatImage(cell, param);
-                BaseResult sResultInfos = ImageInfer(img, param.Score, param.Nms);
-                // if (sResultInfos.Count == 0) { return; }
-
-                foreach (var ds in DefectSpecies)
-                {
-                    foreach (var de in ds.RecipeDefects)
-                    {
-                        CellDetection cellDetection1 = new CellDetection();
-                        cellDetection1.Type = ds.Name;
-                        cellDetection1.Category = de.Category;
-                        cellDetection1.RecipeDefectName = de.Name;
-                        cellDetection1.Value = new List<float>();
-                        switch (_ModelType)
-                        {
-                            case ModelType.YOLOv8Det:
-                                DetResult detrets = sResultInfos as DetResult;
-
-                                detrets.for_each(info =>
-                                {
-                                    int index = int.Parse(info.lable);
-                                    if (Detect_names[index] == de.Name)
-                                    {
-                                        SRegion sRegion = GetDetectRegion(info);
-
-                                        cellDetection1.regionOut.Add(sRegion);
-                                        //infos.Add(info);
-                                    }
-                                });
-                                break;
-
-                            case ModelType.YOLOv8Obb:
-                                ObbResult obbrets = sResultInfos as ObbResult;
-                                obbrets.for_each(info =>
-                                {
-                                    int index = int.Parse(info.lable);
-                                    if (Detect_names[index] == de.Name)
-                                    {
-                                        SRegion sRegion = GetDetectRegion(info);
-
-                                        cellDetection1.regionOut.Add(sRegion);
-                                        //infos.Add(info);
-                                    }
-                                });
-                                //infos.ForEach(info => sResultInfos.Remove(info));
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                        cell.AlgorithmOut.Add(cellDetection1);
-                    }
-                }
-
-                #endregion DET
-
-                #region OBB
-
-                // base.DetectImage(cell);
-                //Mat img = GetMatImage(cell, param);
-                //List<ObbData> sResultInfos = ImageInfer(img, param.Score, param.Nms);
-                //// if (sResultInfos.Count == 0) { return; }
-
-                //foreach (var ds in DefectSpecies)
-                //{
-                //    foreach (var de in ds.RecipeDefects)
-                //    {
-                //        CellDetection cellDetection1 = new CellDetection();
-                //        cellDetection1.Type = ds.Name;
-                //        cellDetection1.Category = de.Category;
-                //        cellDetection1.RecipeDefectName = de.Name;
-                //        cellDetection1.Value = new List<float>();
-                //        List<ObbData> infos = new List<ObbData>();
-                //        //if (sResultInfos.Count == 0)
-                //        //{
-                //        //    if (de.Category == Category.值)
-                //        //    {
-                //        //        cellDetection1.Value.Add(2.0f); //没识别到三期
-                //        //    }
-
-                //        //}
-                //        //else
-                //        //{
-                //        sResultInfos.ForEach(info =>
-                //        {
-                //            int index = int.Parse(info.lable);
-                //            if (Detect_names[index] == de.Name)
-                //            {
-                //                if (de.Name == "三期") //识别到三期
-                //                {
-                //                    //cellDetection1.Value.Add(1.0f);
-                //                    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
-                //                    info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
-                //                    rec1Points.Add(rec1Points[0]);
-                //                    cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.LightPink));
-
-                //                }
-                //                SRegion sRegion = GetDetectRegion(info);
-                //                cellDetection1.regionOut.Add(sRegion);
-                //                infos.Add(info);
-
-                //            }
-                //        });
-                //        // }
-
-                //        cell.AlgorithmOut.Add(cellDetection1);
-                //        infos.ForEach(info => sResultInfos.Remove(info));
-                //    }
-
-                //}
-
-                #endregion OBB
 
                 HOperatorSet.GenEmptyObj(out HObject CameraImage);
                 CameraImage.Dispose();
@@ -333,7 +217,7 @@ namespace BottleAlgorithm
                 HTuple CapMaxRow = param.CapMaxRow;
                 HTuple CapMaxCol = cell.Image.ImageWidth - 1;
 
-                #region 铝盖定位
+                #region 铝盖定位 注释
 
                 //try
                 //{
@@ -351,7 +235,7 @@ namespace BottleAlgorithm
                 //    bFlagCap?.Dispose();
                 //}
 
-                #endregion 铝盖定位
+                #endregion 铝盖定位 注释
 
                 #region 蓝盖有无
 
@@ -622,74 +506,187 @@ namespace BottleAlgorithm
 
                 #endregion 标签有无
 
-                #region OCR
+                base.DetectImage(cell);
 
-                //// cell.OcrResultString = "";
-                //bool HaveTextFlag = false;
-                ////字符为空不检测
-                //if ((param.StandardDate.Trim() != "") && (m_CapTestResult == 0))
+                #region DET 三期有无
+
+                // base.DetectImage(cell);
+                //Mat img = GetMatImage(cell, param);
+                //List<BaseResult> sResultInfos = ImageInfer(img, param.Score, param.Nms);
+                //// if (sResultInfos.Count == 0) { return; }
+
+                //foreach (var ds in DefectSpecies)
                 //{
-                //    Stopwatch tempStopwatch_Ocr = new Stopwatch();
-                //    tempStopwatch_Ocr.Start();
-
-                //    switch (param.LibIndex)
+                //    foreach (var de in ds.RecipeDefects)
                 //    {
-                //        case OCRSELECT.HOCR:
-                //            //2025.03.18 鲍赞宝
-                //            //halcon Ocr
-                //            HaveTextFlag = HalconOCRInspection(CameraImage, param, ref cell);
-                //            break;
-
-                //        case OCRSELECT.POCR:
-                //            //2025.03.18 鲍赞宝
-                //            //百度 Ocr
-                //            // HaveTextFlag = PaddleOCRInspection(param, tempMiddleColumn, ref cell);
-                //            break;
-
-                //        default:
-                //            break;
-                //    }
-                //    tempStopwatch_Ocr.Stop();
-                //    OperateLog.Info("BottleTestTime_Ocr:" + tempStopwatch_Ocr.ElapsedMilliseconds.ToString());
-
-                //    try
-                //    {
-                //        //2025.03.18 鲍赞宝
-                //        //没有识别到三期
-
-                //        if (!HaveTextFlag)
+                //        CellDetection cellDetection1 = new CellDetection();
+                //        cellDetection1.Type = ds.Name;
+                //        cellDetection1.Category = de.Category;
+                //        cellDetection1.RecipeDefectName = de.Name;
+                //        cellDetection1.Value = new List<float>();
+                //        switch (_ModelType)
                 //        {
-                //            //cell.OcrResultString = "";
-                //            List<System.Windows.Point> tempPointList = new List<System.Windows.Point>();
+                //            case ModelType.YOLOv8Det:
+                //                DetResult detrets = sResultInfos as DetResult;
 
-                //            System.Windows.Point tempPoint = new System.Windows.Point();
-                //            tempPoint.X = 0;
-                //            tempPoint.Y = 0;
-                //            tempPointList.Add(tempPoint);
+                //                detrets.for_each(info =>
+                //                {
+                //                    int index = int.Parse(info.lable);
+                //                    if (text_Model_Names[index] == de.Name)
+                //                    {
+                //                        SRegion sRegion = GetDetectRegion(info);
 
-                //            tempPoint.X = 0;
-                //            tempPoint.Y = 0;
-                //            tempPointList.Add(tempPoint);
+                //                        cellDetection1.regionOut.Add(sRegion);
+                //                        //infos.Add(info);
+                //                    }
+                //                });
+                //                break;
 
-                //            cell.DrawEdges.Add(new CEdgeDraw(tempPointList, System.Windows.Media.Brushes.Blue));
+                //            case ModelType.YOLOv8Obb:
+                //                ObbResult obbrets = sResultInfos as ObbResult;
+                //                obbrets.for_each(info =>
+                //                {
+                //                    int index = int.Parse(info.lable);
+                //                    if (text_Model_Names[index] == de.Name)
+                //                    {
+                //                        SRegion sRegion = GetDetectRegion(info);
+
+                //                        cellDetection1.regionOut.Add(sRegion);
+                //                        //infos.Add(info);
+                //                    }
+                //                });
+                //                //infos.ForEach(info => sResultInfos.Remove(info));
+                //                break;
+
+                //            default:
+                //                break;
                 //        }
 
+                //        cell.AlgorithmOut.Add(cellDetection1);
                 //    }
-                //    catch (Exception ex)
-                //    {
-                //        OperateLog.Info("BottleTest_ocr:" + ex.Message.ToString());
-                //    }
-                //}
-                //else
-                //{
-                //    m_DateStringTestResult = 0;
                 //}
 
-                #endregion OCR
+                #endregion DET 三期有无
+
+                #region DET 标签缺陷
+
+                // base.DetectImage(cell);
+                //BaseResult sResultInfos = ImageInfer(img, param.Score, param.Nms);
+                //// if (sResultInfos.Count == 0) { return; }
+
+                //foreach (var ds in DefectSpecies)
+                //{
+                //    foreach (var de in ds.RecipeDefects)
+                //    {
+                //        CellDetection cellDetection1 = new CellDetection();
+                //        cellDetection1.Type = ds.Name;
+                //        cellDetection1.Category = de.Category;
+                //        cellDetection1.RecipeDefectName = de.Name;
+                //        cellDetection1.Value = new List<float>();
+                //        switch (_ModelType)
+                //        {
+                //            case ModelType.YOLOv8Det:
+                //                DetResult detrets = sResultInfos as DetResult;
+
+                //                detrets.for_each(info =>
+                //                {
+                //                    int index = int.Parse(info.lable);
+                //                    if (text_Model_Names[index] == de.Name)
+                //                    {
+                //                        SRegion sRegion = GetDetectRegion(info);
+
+                //                        cellDetection1.regionOut.Add(sRegion);
+                //                        //infos.Add(info);
+                //                    }
+                //                });
+                //                break;
+
+                //            case ModelType.YOLOv8Obb:
+                //                ObbResult obbrets = sResultInfos as ObbResult;
+                //                obbrets.for_each(info =>
+                //                {
+                //                    int index = int.Parse(info.lable);
+                //                    if (text_Model_Names[index] == de.Name)
+                //                    {
+                //                        SRegion sRegion = GetDetectRegion(info);
+
+                //                        cellDetection1.regionOut.Add(sRegion);
+                //                        //infos.Add(info);
+                //                    }
+                //                });
+                //                //infos.ForEach(info => sResultInfos.Remove(info));
+                //                break;
+
+                //            default:
+                //                break;
+                //        }
+
+                //        cell.AlgorithmOut.Add(cellDetection1);
+                //    }
+                //}
+
+                #endregion DET 标签缺陷
+
+                #region OBB
+
+                // base.DetectImage(cell);
+                //Mat img = GetMatImage(cell, param);
+                //List<ObbData> sResultInfos = ImageInfer(img, param.Score, param.Nms);
+                //// if (sResultInfos.Count == 0) { return; }
+
+                //foreach (var ds in DefectSpecies)
+                //{
+                //    foreach (var de in ds.RecipeDefects)
+                //    {
+                //        CellDetection cellDetection1 = new CellDetection();
+                //        cellDetection1.Type = ds.Name;
+                //        cellDetection1.Category = de.Category;
+                //        cellDetection1.RecipeDefectName = de.Name;
+                //        cellDetection1.Value = new List<float>();
+                //        List<ObbData> infos = new List<ObbData>();
+                //        //if (sResultInfos.Count == 0)
+                //        //{
+                //        //    if (de.Category == Category.值)
+                //        //    {
+                //        //        cellDetection1.Value.Add(2.0f); //没识别到三期
+                //        //    }
+
+                //        //}
+                //        //else
+                //        //{
+                //        sResultInfos.ForEach(info =>
+                //        {
+                //            int index = int.Parse(info.lable);
+                //            if (Detect_names[index] == de.Name)
+                //            {
+                //                if (de.Name == "三期") //识别到三期
+                //                {
+                //                    //cellDetection1.Value.Add(1.0f);
+                //                    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
+                //                    info.box.Points().ForEach(p => rec1Points.Add(new System.Windows.Point(p.X, p.Y)));
+                //                    rec1Points.Add(rec1Points[0]);
+                //                    cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.LightPink));
+
+                //                }
+                //                SRegion sRegion = GetDetectRegion(info);
+                //                cellDetection1.regionOut.Add(sRegion);
+                //                infos.Add(info);
+
+                //            }
+                //        });
+                //        // }
+
+                //        cell.AlgorithmOut.Add(cellDetection1);
+                //        infos.ForEach(info => sResultInfos.Remove(info));
+                //    }
+
+                //}
+
+                #endregion OBB
             }
         }
 
-        #region 铝盖定位算法
+        #region 铝盖定位算法 注释
 
         //public void LocationCap(HObject ho_IntoImage, HTuple hv_IntoMinThreshold, HTuple hv_IntoMaxThreshold,
         // HTuple hv_MinRow, HTuple hv_MinCol, HTuple hv_MaxRow, HTuple hv_MaxCol, HTuple hv_CapRadius,
@@ -784,7 +781,7 @@ namespace BottleAlgorithm
         //    return;
         //}
 
-        #endregion 铝盖定位算法
+        #endregion 铝盖定位算法 注释
 
         #region 蓝盖缺失算法
 

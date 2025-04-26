@@ -27,8 +27,9 @@ namespace GeneralMLOBBAlgorithm
         /// <summary>
         /// yolo对象
         /// </summary>
-        private YOLO yolo = new YOLO();
+        private YOLO yolo_text = new YOLO();
 
+        private YOLO yolo_labeldefect = new YOLO();
         protected ModelType _ModelType = ModelType.YOLOv8Det;
 
         // internal string engine_type_str { get; set; }= "OpenVINO";
@@ -47,7 +48,13 @@ namespace GeneralMLOBBAlgorithm
         /// 2025.3.3 鲍赞宝
         /// 模型路径
         /// </summary>
-        private string Model_Path;
+        private string Model_Path = ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\";
+
+        private string text_Model_Path =
+            ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\threeDataModel.onnx";
+
+        private string label_Model_Path =
+            ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\LabelDefectModel.onnx";
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
@@ -55,7 +62,8 @@ namespace GeneralMLOBBAlgorithm
         /// </summary>
         private string name_Path;
 
-        protected string[] Detect_names;
+        protected string[] text_Model_Names;
+        protected string[] LabelDetect_names;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -64,6 +72,15 @@ namespace GeneralMLOBBAlgorithm
         public GeneralMLOBBAlgorithmParam()
             : base()
         {
+            text_Model_Path = Path.Combine(Model_Path, "threeDataModel.onnx");
+            string textModelNamesPath = Path.Combine(Model_Path, "threeDataModelClasses.txt");
+            text_Model_Names = File.ReadAllLines(textModelNamesPath);
+            label_Model_Path = Path.Combine(Model_Path, "LabelDefectModel.onnx");
+            string LabelDetectModelNamesPath = Path.Combine(
+                Model_Path,
+                "LabelDefectModelClasses.txt"
+            );
+            LabelDetect_names = File.ReadAllLines(LabelDetectModelNamesPath);
             //string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" };
 
             //if (Directory.Exists(Model_Dirpath))
@@ -135,31 +152,32 @@ namespace GeneralMLOBBAlgorithm
 
         protected void ReadNames(string modelDirpath)
         {
+            text_Model_Names = File.ReadAllLines(name_Path);
             //AlgorithmType = "FrontAlgorithm";
-            string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" };
+            //string[] searchPatterns = { "*.onnx", "*.engine", "*.pt" };
 
-            if (Directory.Exists(modelDirpath))
-            {
-                var files = searchPatterns
-                    .SelectMany(pattern => Directory.GetFiles(modelDirpath, pattern))
-                    .ToList();
+            //if (Directory.Exists(modelDirpath))
+            //{
+            //    var files = searchPatterns
+            //        .SelectMany(pattern => Directory.GetFiles(modelDirpath, pattern))
+            //        .ToList();
 
-                if (files.Count > 0)
-                {
-                    string directory = Path.GetDirectoryName(files[0]);
-                    if (Directory.Exists(directory))
-                    {
-                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(
-                            files[0]
-                        );
+            //    if (files.Count > 0)
+            //    {
+            //        string directory = Path.GetDirectoryName(files[0]);
+            //        if (Directory.Exists(directory))
+            //        {
+            //            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(
+            //                files[0]
+            //            );
 
-                        string result = Path.Combine(directory, fileNameWithoutExtension);
-                        Model_Path = result;
-                        name_Path = modelDirpath + "\\classes.txt";
-                        Detect_names = File.ReadAllLines(name_Path);
-                    }
-                }
-            }
+            //            string result = Path.Combine(directory, fileNameWithoutExtension);
+            //            //Model_Path = result;
+            //            name_Path = modelDirpath + "\\classes.txt";
+            //            Detect_names = File.ReadAllLines(name_Path);
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -174,61 +192,72 @@ namespace GeneralMLOBBAlgorithm
             if (paramClass != null)
             {
                 Mat img = GetMatImage(cell, paramClass);
-                BaseResult sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
-                if (sResultInfos is null)
-                {
-                    return;
-                }
+                List<BaseResult> sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
+                ParseResult(sResultInfos[0], cell, ModelType.YOLOv8Det, text_Model_Names);
+                ParseResult(sResultInfos[1], cell, ModelType.YOLOv8Det, LabelDetect_names);
+            }
+        }
 
-                foreach (var ds in DefectSpecies)
+        protected void ParseResult(
+            BaseResult sResultInfos,
+            Cell cell,
+            ModelType modelType,
+            string[] classNames
+        )
+        {
+            if (sResultInfos is null)
+            {
+                return;
+            }
+
+            foreach (var ds in DefectSpecies)
+            {
+                foreach (var de in ds.RecipeDefects)
                 {
-                    foreach (var de in ds.RecipeDefects)
+                    CellDetection cellDetection1 = new CellDetection();
+                    cellDetection1.Type = ds.Name;
+                    cellDetection1.Category = de.Category;
+                    cellDetection1.RecipeDefectName = de.Name;
+                    cellDetection1.Value = new List<float>();
+                    switch (modelType)
                     {
-                        CellDetection cellDetection1 = new CellDetection();
-                        cellDetection1.Type = ds.Name;
-                        cellDetection1.Category = de.Category;
-                        cellDetection1.RecipeDefectName = de.Name;
-                        cellDetection1.Value = new List<float>();
-                        switch (_ModelType)
-                        {
-                            case ModelType.YOLOv8Det:
-                                DetResult detrets = sResultInfos as DetResult;
+                        case ModelType.YOLOv8Det:
+                            DetResult detrets = sResultInfos as DetResult;
 
-                                detrets.for_each(info =>
+                            detrets.for_each(info =>
+                            {
+                                int index = int.Parse(info.lable);
+                                if (classNames[index] == de.Name)
                                 {
-                                    int index = int.Parse(info.lable);
-                                    if (Detect_names[index] == de.Name)
-                                    {
-                                        SRegion sRegion = GetDetectRegion(info);
+                                    SRegion sRegion = GetDetectRegion(info);
 
-                                        cellDetection1.regionOut.Add(sRegion);
-                                        //infos.Add(info);
-                                    }
-                                });
-                                break;
+                                    cellDetection1.regionOut.Add(sRegion);
+                                    //infos.Add(info);
+                                }
+                            });
+                            break;
 
-                            case ModelType.YOLOv8Obb:
-                                ObbResult obbrets = sResultInfos as ObbResult;
-                                obbrets.for_each(info =>
+                        case ModelType.YOLOv8Obb:
+                            ObbResult obbrets = sResultInfos as ObbResult;
+                            obbrets.for_each(info =>
+                            {
+                                int index = int.Parse(info.lable);
+                                if (classNames[index] == de.Name)
                                 {
-                                    int index = int.Parse(info.lable);
-                                    if (Detect_names[index] == de.Name)
-                                    {
-                                        SRegion sRegion = GetDetectRegion(info);
+                                    SRegion sRegion = GetDetectRegion(info);
 
-                                        cellDetection1.regionOut.Add(sRegion);
-                                        //infos.Add(info);
-                                    }
-                                });
-                                //infos.ForEach(info => sResultInfos.Remove(info));
-                                break;
+                                    cellDetection1.regionOut.Add(sRegion);
+                                    //infos.Add(info);
+                                }
+                            });
+                            //infos.ForEach(info => sResultInfos.Remove(info));
+                            break;
 
-                            default:
-                                break;
-                        }
-                        cell.AlgorithmOut.Add(cellDetection1);
-                        //infos.ForEach(info => sResultInfos.Remove(info));
+                        default:
+                            break;
                     }
+                    cell.AlgorithmOut.Add(cellDetection1);
+                    //infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }
         }
@@ -237,9 +266,8 @@ namespace GeneralMLOBBAlgorithm
         private void LoadModel(StreamingContext context)
         {
             CParam param = AlgorParams[0] as CParam;
-            string model_type_str = "YOLOv8Obb";
 
-            ModelType model_type = MyEnum.GetModelType<ModelType>(model_type_str);
+            ModelType model_type = ModelType.YOLOv8Det;
             // ModelType model_type = param.ModelType;
             // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
             EngineType engine_type = param.EngineType;
@@ -308,11 +336,11 @@ namespace GeneralMLOBBAlgorithm
             //    }
             //}
 
-            yolo.Dispose();
+            yolo_text.Dispose();
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
-                int Categ_num = Detect_names.Length;
+                int Categ_num = text_Model_Names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
                 int Input_size = param.Input_size;
@@ -321,7 +349,7 @@ namespace GeneralMLOBBAlgorithm
                     param.EngineType == EngineType.TensorRT
                         ? Model_Path + ".engine"
                         : Model_Path + ".onnx";
-                yolo = YOLO.GetYolo(
+                yolo_text = YOLO.GetYolo(
                     model_type,
                     model_path,
                     engine_type,
@@ -335,12 +363,15 @@ namespace GeneralMLOBBAlgorithm
             }
         }
 
-        public BaseResult ImageInfer(Mat img, float score, float nms)
+        public List<BaseResult> ImageInfer(Mat img, float score, float nms)
         {
-            List<IResultData> sResultInfos = new List<IResultData>();
-            BaseResult result;
-            result = yolo.predict(img, score, nms);
-
+            List<BaseResult> sResultInfos = new List<BaseResult>();
+            BaseResult textresult,
+                labelresult;
+            textresult = yolo_text.predict(img, score, nms);
+            labelresult = yolo_labeldefect.predict(img, score, nms);
+            sResultInfos.Add(textresult);
+            sResultInfos.Add(labelresult);
             //if (result != null)
             //{
             //    for (int i = 0; i < result.count; i++)
@@ -348,7 +379,7 @@ namespace GeneralMLOBBAlgorithm
             //        sResultInfos.Add(obbResult.datas[i]);
             //    }
             //}
-            return result;
+            return sResultInfos;
         }
 
         protected SRegion GetDetectRegion(DetData info)
