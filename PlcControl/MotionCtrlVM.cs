@@ -41,6 +41,7 @@ namespace PlcControl
                 new Action(() =>
                 {
                     TestControl = new MotionCtrl(this);
+                    HomePageShowControl = new HomePageShowCtrl(this);
                     UpdateInfoAlarm();
                 })
             );
@@ -140,7 +141,7 @@ namespace PlcControl
         /// 2025.3.6 李焕彬
         /// </summary>
         /// <param name="isConnect"></param>
-        void ConnectAction(bool isConnect)
+        private void ConnectAction(bool isConnect)
         {
             if (this.Connected != isConnect)
             {
@@ -331,12 +332,15 @@ namespace PlcControl
                     case EMELEMTYPE.EMELEMM:
                         modbusTcp.WriteSingleCoil(reg.Addr, reg.WriteValue == 1);
                         break;
+
                     case EMELEMTYPE.EMELEMD_REAL:
                         modbusTcp.WriteSingleRegisterReal(reg.Addr, reg.WriteValue);
                         break;
+
                     case EMELEMTYPE.EMELEMD_INT:
                         modbusTcp.WriteSingleRegisterInt16(reg.Addr, (Int16)reg.WriteValue);
                         break;
+
                     case EMELEMTYPE.EMELEMD_DINT:
                         modbusTcp.WriteSingleRegisterInt32(reg.Addr, (Int32)reg.WriteValue);
                         break;
@@ -359,15 +363,18 @@ namespace PlcControl
                 case EMELEMTYPE.EMELEMM:
                     modbusTcp.WriteSingleCoil(registerSet.Addr, registerSet.WriteValue == 1);
                     break;
+
                 case EMELEMTYPE.EMELEMD_REAL:
                     modbusTcp.WriteSingleRegisterReal(registerSet.Addr, registerSet.WriteValue);
                     break;
+
                 case EMELEMTYPE.EMELEMD_INT:
                     modbusTcp.WriteSingleRegisterInt16(
                         registerSet.Addr,
                         (Int16)registerSet.WriteValue
                     );
                     break;
+
                 case EMELEMTYPE.EMELEMD_DINT:
                     modbusTcp.WriteSingleRegisterInt32(
                         registerSet.Addr,
@@ -410,14 +417,38 @@ namespace PlcControl
                         case EMELEMTYPE.EMELEMM:
                             e.ReadValue = modbusTcp.ReadCoil(e.Addr) ? 1 : 0;
                             break;
+
                         case EMELEMTYPE.EMELEMD_REAL:
                             e.ReadValue = modbusTcp.ReadHoldingRegisterReal(e.Addr);
                             break;
+
                         case EMELEMTYPE.EMELEMD_INT:
                             e.ReadValue = modbusTcp.ReadHoldingRegisterInt16(e.Addr);
                             break;
+
                         case EMELEMTYPE.EMELEMD_DINT:
                             e.ReadValue = modbusTcp.ReadHoldingRegisterInt32(e.Addr);
+                            break;
+                    }
+                    switch (e.Addr)
+                    {
+                        case 1604:
+                            IsBinFull = e.ReadValue == 1;
+                            break;
+
+                        case 302:
+                            InBinNumber = (int)e.ReadValue;
+                            break;
+
+                        case 300:
+                            OutBinNumber = (int)e.ReadValue;
+                            break;
+
+                        case 1602:
+                            IsError = e.ReadValue == 1;
+                            break;
+
+                        default:
                             break;
                     }
                 }
@@ -469,7 +500,8 @@ namespace PlcControl
             }
             catch (Exception) { }
         }
-        #endregion
+
+        #endregion 保存参数
 
         #region 读取参数
 
@@ -496,6 +528,42 @@ namespace PlcControl
             }
         }
 
-        #endregion
+        #endregion 读取参数
+
+        [ObservableProperty]
+        private bool isBinFull;
+
+        [ObservableProperty]
+        private bool isError; //卡料
+
+        /// <summary>
+        /// 20250426 TCG
+        /// 料仓清料 入口料仓
+        /// </summary>
+        /// <param name="signalOut">输出信号</param>
+        [RelayCommand]
+        public async Task ClearInBin()
+        {
+            await Task.Run(() =>
+            {
+                modbusTcp.WriteSingleCoil((ushort)1606, true);
+                Thread.Sleep(1);
+                modbusTcp.WriteSingleCoil((ushort)1606, false);
+            });
+        }
+
+        [ObservableProperty]
+        private int inBinNumber;
+
+        [ObservableProperty]
+        private int outBinNumber;
+
+        [ObservableProperty]
+        private short binCapcity;
+
+        partial void OnBinCapcityChanged(short value)
+        {
+            modbusTcp.WriteSingleRegisterInt16((ushort)304, BinCapcity);
+        }
     }
 }

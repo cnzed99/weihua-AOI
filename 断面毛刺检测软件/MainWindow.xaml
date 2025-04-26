@@ -300,6 +300,13 @@
                     CornerRadius="10">
                     <pro:ProduceData DataContext="{Binding SelectedProcess.DefectsDataVM}" FontSize="15" />
                 </Border>
+                <Border
+                    Grid.Column="1"
+                    Margin="5"
+                    Background="{DynamicResource ThirdlyRegionBrush}"
+                    CornerRadius="10">
+                    <ContentControl Content="{Binding Source={x:Static mo:CMotionManagement.MotionCtrlVM}, Path=HomePageShowControl}" />
+                </Border>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
 
                     <!--<UniformGrid Columns="1">

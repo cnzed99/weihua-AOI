@@ -30,14 +30,21 @@ namespace Motion
         /// 显示控件
         /// </summary>
         [ObservableProperty]
-        UserControl testControl;
+        private UserControl testControl;
+
+        /// <summary>
+        /// 20250426 TCG
+        /// 显示在主界面的控件
+        /// </summary>
+        [ObservableProperty]
+        private UserControl homePageShowControl;
 
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 权限信息，启动暂停、账户登录时切换
         /// </summary>
         [ObservableProperty]
-        CLoginPerson loginPerson = new CLoginPerson() { IsNoPermission = true };
+        private CLoginPerson loginPerson = new CLoginPerson() { IsNoPermission = true };
 
         /// <summary>
         /// 2025.3.6 李焕彬
@@ -89,12 +96,13 @@ namespace Motion
         #region 保存参数
 
         public abstract void SaveConfig();
-        #endregion
+
+        #endregion 保存参数
 
         #region 读取参数
 
         public abstract void LoadConfig();
 
-        #endregion
+        #endregion 读取参数
     }
 }

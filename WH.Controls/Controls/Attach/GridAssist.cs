@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace WH.Controls.Controls.Attach
 {
-    static class GridAssist
+    public static class GridAssist
     {
         #region AutoRowColumn
 
@@ -48,14 +48,22 @@ namespace WH.Controls.Controls.Attach
         /// ]]>
         /// </code>
         /// </example>
-        public static readonly DependencyProperty AutoRowColumnProperty = DependencyProperty.RegisterAttached(
-            "AutoRowColumn",
-            typeof(string),
-            typeof(GridAssist),
-            new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.AffectsMeasure, OnAutoRowColumnChanged)
-        );
+        public static readonly DependencyProperty AutoRowColumnProperty =
+            DependencyProperty.RegisterAttached(
+                "AutoRowColumn",
+                typeof(string),
+                typeof(GridAssist),
+                new FrameworkPropertyMetadata(
+                    "",
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnAutoRowColumnChanged
+                )
+            );
 
-        private static void OnAutoRowColumnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnAutoRowColumnChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e
+        )
         {
             if (!(d is Grid grid))
                 return;
@@ -154,6 +162,6 @@ namespace WH.Controls.Controls.Attach
             }
         }
 
-        #endregion
+        #endregion AutoRowColumn
     }
 }

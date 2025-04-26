@@ -27,9 +27,37 @@ namespace PlcControl
         public CMotionConfig()
             : base()
         {
-            this.SignalIns = new ObservableCollection<CSignalIn>();
-            this.SignalOuts = new ObservableCollection<CSignalOut>();
-            this.RegisterSets = new ObservableCollection<CElement>() { };
+            this.SignalIns = new ObservableCollection<CSignalIn>()
+            {
+                new CSignalIn(token, "下位机启动状态", 1603, "启动时亮灯，关闭时熄灭"),
+                new CSignalIn(token, "料仓满料", 1604, "入料仓或出料仓计数达到料仓容量"),
+                new CSignalIn(token, "卡瓶", 1602, "卡瓶时亮灯"),
+                new CSignalIn(token, "复位中", 321, "复位时亮灯"),
+            };
+            this.SignalOuts = new ObservableCollection<CSignalOut>()
+            {
+                new CSignalOut(token, "入口料仓清零", 1606, "打开关闭一次，入口料仓清零"),
+                new CSignalOut(token, "出口料仓清零", 1605, "打开关闭一次，出口料仓清零"),
+                new CSignalOut(token, "入口手动吹料", 482),
+                new CSignalOut(token, "出口手动吹料", 483),
+                new CSignalOut(token, "启动输送带", 481),
+                new CSignalOut(token, "连续触发相机", 194, "打开时连续触发相机，不要在运行时启动！！"),
+            };
+            this.RegisterSets = new ObservableCollection<CElement>()
+            {
+                new CElement(token, "入口计数", EMELEMTYPE.EMELEMD_INT, 0, 0),
+                new CElement(token, "出口计数", EMELEMTYPE.EMELEMD_INT, 2, 0),
+                new CElement(token, "拍照计数", EMELEMTYPE.EMELEMD_INT, 308, 0),
+                new CElement(token, "入口料仓计数", EMELEMTYPE.EMELEMD_INT, 302, 0),
+                new CElement(token, "出口料仓计数", EMELEMTYPE.EMELEMD_INT, 300, 0),
+                new CElement(token, "料仓容量", EMELEMTYPE.EMELEMD_DINT, 304, 999),
+                new CElement(token, "入口吹料时长/10ms", EMELEMTYPE.EMELEMD_INT, 16, 5),
+                new CElement(token, "出口吹料时长/10ms", EMELEMTYPE.EMELEMD_INT, 18, 4),
+                new CElement(token, "卡瓶超时/100ms", EMELEMTYPE.EMELEMD_INT, 6, 100),
+                new CElement(token, "倒瓶超时", EMELEMTYPE.EMELEMD_INT, 306, 5),
+                new CElement(token, "感应器滤波/10ms", EMELEMTYPE.EMELEMD_INT, 14, 0),
+                new CElement(token, "拍照延迟", EMELEMTYPE.EMELEMD_INT, 308, 0),
+            };
         }
 
         /// <summary>
@@ -143,7 +171,7 @@ namespace PlcControl
             this.token = new Token("", "PlcControl");
         }
 
-        public CSignalIn(Token token, string name, ushort addr)
+        public CSignalIn(Token token, string name, ushort addr, string description = "null")
         {
             this.token = token;
             this.Name = name;
@@ -198,8 +226,8 @@ namespace PlcControl
         public CSignalOut()
             : base() { }
 
-        public CSignalOut(Token token, string name, ushort addr)
-            : base(token, name, addr) { }
+        public CSignalOut(Token token, string name, ushort addr, string description = "null")
+            : base(token, name, addr, description) { }
 
         /// <summary>
         /// 2025.3.6 李焕彬
@@ -225,6 +253,23 @@ namespace PlcControl
         public CElement(Token token)
         {
             this.token = token;
+        }
+
+        public CElement(
+            Token token,
+            string name,
+            EMELEMTYPE type,
+            ushort addr,
+            float writeValue,
+            string description = "null"
+        )
+        {
+            this.token = token;
+            this.Name = name;
+            this.Type = type;
+            this.Addr = addr;
+            this.Description = description;
+            this.WriteValue = writeValue;
         }
 
         /// <summary>
