@@ -119,7 +119,7 @@ namespace PlcControl
         [property: Category("1.连接信息")]
         [property: DisplayName("11.IP")]
         [property: Description("11.IP")]
-        private string iP = "192.168.1.88";
+        private string iP = "192.168.150.100";
 
         /// <summary>
         /// 2025.3.6 李焕彬
