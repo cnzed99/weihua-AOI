@@ -20,6 +20,7 @@ namespace Motion
     {
         public CMotionVMBase()
         {
+            
             LoadConfig();
             InitControl();
             loginPerson = CLoginViewModel.SloinPerson;

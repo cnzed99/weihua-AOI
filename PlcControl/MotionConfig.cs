@@ -24,7 +24,13 @@ namespace PlcControl
     /// </summary>
     public partial class CMotionConfig : CMotionConfigBase
     {
-        public CMotionConfig()
+        [JsonIgnore]
+        public IMotionCallback MontionFunc;
+        public CMotionConfig():base()
+        {
+            
+        }
+        public CMotionConfig(IMotionCallback motionCallback)
             : base()
         {
             this.SignalIns = new ObservableCollection<CSignalIn>()
@@ -50,7 +56,7 @@ namespace PlcControl
                 new CElement(token, "拍照计数", EMELEMTYPE.EMELEMD_INT, 308, 0),
                 new CElement(token, "入口料仓计数", EMELEMTYPE.EMELEMD_INT, 302, 0),
                 new CElement(token, "出口料仓计数", EMELEMTYPE.EMELEMD_INT, 300, 0),
-                new CElement(token, "料仓容量", EMELEMTYPE.EMELEMD_DINT, 304, 999),
+                //new CElement(token, "料仓容量", EMELEMTYPE.EMELEMD_DINT, 304, 999),
                 new CElement(token, "入口吹料时长/10ms", EMELEMTYPE.EMELEMD_INT, 16, 5),
                 new CElement(token, "出口吹料时长/10ms", EMELEMTYPE.EMELEMD_INT, 18, 4),
                 new CElement(token, "卡瓶超时/100ms", EMELEMTYPE.EMELEMD_INT, 6, 100),
@@ -58,6 +64,7 @@ namespace PlcControl
                 new CElement(token, "感应器滤波/10ms", EMELEMTYPE.EMELEMD_INT, 14, 0),
                 new CElement(token, "拍照延迟", EMELEMTYPE.EMELEMD_INT, 308, 0),
             };
+            MontionFunc = motionCallback;
         }
 
         /// <summary>
@@ -119,7 +126,7 @@ namespace PlcControl
         [property: Category("1.连接信息")]
         [property: DisplayName("11.IP")]
         [property: Description("11.IP")]
-        private string iP = "192.168.150.100";
+        private string iP = "192.168.250.100";
 
         /// <summary>
         /// 2025.3.6 李焕彬
@@ -130,7 +137,20 @@ namespace PlcControl
         [property: DisplayName("12.Port")]
         [property: Description("12.Port")]
         private int port = 502;
-
+        /// <summary>
+        /// 2025.3.6 李焕彬
+        /// 端口号
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("2.参数设置")]
+        [property: DisplayName("11.Capcity")]
+        [property: Description("11.Capcity")]
+        private short binCapcity = 999;
+        
+        partial void OnBinCapcityChanged(short value)
+        {
+            MontionFunc?.WriteSingleRegisterInt32(304,(Int32)value);
+        }
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 输入信号

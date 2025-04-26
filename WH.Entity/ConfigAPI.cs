@@ -85,6 +85,49 @@ namespace WH.Entity
                 return default(T);
             }
         }
+        /// <summary>
+        /// 2023.1.30 汤传刚
+        /// 加载配方配置文件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="directory"></param>
+        /// <returns>文件不存在时返回new 对象</returns>
+        public static T Load<T>(string fileName, T config)
+            where T : new()
+        {
+            if (
+                File.Exists(fileName)
+                || File.Exists(fileName = fileName.Replace(".whrecipe", ".Json"))
+            )
+            {
+                using (StreamReader reader = File.OpenText(fileName))
+                {
+                    string bt64 = reader.ReadToEnd();
+                    try
+                    {
+                        //byte[] bytes = Convert.FromBase64String(bt64);
+                        //bt64 = Encoding.UTF8.GetString(bytes);
+                        //JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+                        //{
+                        //    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                        //};
+                        //T config = new T();
+                        JsonConvert.PopulateObject(bt64, config, JsonSerializerSettings);
+                        //T config = JsonConvert.DeserializeObject<T>(bt64, serializerSettings);
+                        return config;
+                    }
+                    catch (Exception)
+                    {
+                        return default(T);
+                    }
+                }
+            }
+            else
+            {
+                //ZzMessageBox.Show(fileName+"文件不存在！");
+                return default(T);
+            }
+        }
 
         /// <summary>
         /// 2024.7.18 李焕彬

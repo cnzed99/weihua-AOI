@@ -22,6 +22,10 @@
                 FalseValue="Red"
                 TrueValue="Lime" />
             <cov:BoolToBrushConverter
+    x:Key="PLCStatusConverter"
+    FalseValue="Gray"
+    TrueValue="Lime" />
+            <cov:BoolToBrushConverter
                 x:Key="StatusReConverter"
                 FalseValue="Lime"
                 TrueValue="Red" />
@@ -41,7 +45,7 @@
             Height="30"
             Margin="2"
             HorizontalContentAlignment="Center"
-            wh:StatusDotElement.DotBrush="{Binding IsInBinFull, Converter={StaticResource StatusConverter}}"
+            wh:StatusDotElement.DotBrush="{Binding PlcIsRun, Converter={StaticResource PLCStatusConverter}}"
             Content="下位机状态"
             Style="{DynamicResource StatusDotLabel}" />
 
@@ -71,6 +75,6 @@
             hc:TitleElement.Title="出口料仓:"
             IsReadOnly="True"
             Text="{Binding OutBinNumber}" />
-        <TextBox hc:TitleElement.Title="料仓容量:" Text="{Binding BinCapcity}" />
+        <TextBox hc:TitleElement.Title="料仓容量:" Text="{Binding MotionConfig.BinCapcity}" />
     </UniformGrid>
 </UserControl>

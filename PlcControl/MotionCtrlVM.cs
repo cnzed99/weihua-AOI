@@ -32,11 +32,12 @@ namespace PlcControl
     /// 2025.3.6 李焕彬
     /// 运动控件VM
     /// </summary>
-    public partial class CMotionCtrlVM : CMotionVMBase
+    public partial class CMotionCtrlVM : CMotionVMBase, IMotionCallback
     {
-        public CMotionCtrlVM()
-            : base()
+        public CMotionCtrlVM():base()
         {
+            //MotionConfig = new CMotionConfig(this);
+            
             Application.Current.Dispatcher.Invoke(
                 new Action(() =>
                 {
@@ -169,6 +170,9 @@ namespace PlcControl
             if (modbusTcp == null)
                 return;
             WriteRegister();
+            //BinCapcity = MotionConfig.BinCapcity;
+            modbusTcp.WriteSingleRegisterInt32(304, MotionConfig.BinCapcity);
+            
             WriteSignal();
         }
 
@@ -435,6 +439,9 @@ namespace PlcControl
                         case 1604:
                             IsBinFull = e.ReadValue == 1;
                             break;
+                        case 1603:
+                            plcIsRun = e.ReadValue == 1;
+                            break;
 
                         case 302:
                             InBinNumber = (int)e.ReadValue;
@@ -511,20 +518,22 @@ namespace PlcControl
             {
                 if (File.Exists(c_configSavePath))
                 {
-                    MotionConfig = ConfigAPI.Load<CMotionConfig>(c_configSavePath);
+                    MotionConfig = new CMotionConfig(this);
+                    ConfigAPI.Load<CMotionConfig>(c_configSavePath, MotionConfig);
+                    //MotionConfig.MontionFunc = this;
                     if (MotionConfig == null)
                     {
-                        MotionConfig = new();
+                        MotionConfig = new(this);
                     }
                 }
                 else
                 {
-                    MotionConfig = new();
+                    MotionConfig = new(this);
                 }
             }
             catch (Exception)
             {
-                MotionConfig = new();
+                MotionConfig = new(this);
             }
         }
 
@@ -536,6 +545,8 @@ namespace PlcControl
         [ObservableProperty]
         private bool isError; //卡料
 
+        [ObservableProperty]
+        private bool plcIsRun;
         /// <summary>
         /// 20250426 TCG
         /// 料仓清料 入口料仓
@@ -558,12 +569,18 @@ namespace PlcControl
         [ObservableProperty]
         private int outBinNumber;
 
-        [ObservableProperty]
-        private short binCapcity;
+        //[ObservableProperty]
+        //private short binCapcity;
 
-        partial void OnBinCapcityChanged(short value)
+        //partial void OnBinCapcityChanged(short value)
+        //{
+        //    modbusTcp.WriteSingleRegisterInt32((ushort)304, BinCapcity);
+        //    MotionConfig.BinCapcity = value;
+        //}
+
+        public void WriteSingleRegisterInt32(ushort addr, int value)
         {
-            modbusTcp.WriteSingleRegisterInt16((ushort)304, BinCapcity);
+            modbusTcp?.WriteSingleRegisterInt32((ushort)304, value);
         }
     }
 }
