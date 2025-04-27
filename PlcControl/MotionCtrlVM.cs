@@ -466,6 +466,23 @@ namespace PlcControl
                 foreach (var e in signalIn)
                 {
                     e.HasSignal = modbusTcp.ReadCoil(e.Addr);
+                    switch (e.Addr)
+                    {
+                        case 1604:
+                            IsBinFull = e.HasSignal;
+                            break;
+
+                        case 1603:
+                            PlcIsRun = e.HasSignal;
+                            break;
+
+                        case 1602:
+                            IsError = e.HasSignal;
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
 
                 List<CSignalOut> signalOut = MotionConfig.SignalOuts.ToList();
