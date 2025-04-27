@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Channels;
 using System.Windows.Media;
@@ -37,7 +38,6 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using static Mysqlx.Crud.Order.Types;
-using System.Collections.ObjectModel;
 
 namespace WH.DetectSystem.Models
 {
@@ -196,30 +196,30 @@ namespace WH.DetectSystem.Models
         }
 
         [ObservableProperty]
-        BitmapSource modelImage; //= new BitmapImage(new Uri("D://铝极.png"));
+        private BitmapSource modelImage; //= new BitmapImage(new Uri("D://铝极.png"));
 
         /// <summary>
         /// 2024.7.25 李焕彬
         /// 当前图像窗口操作对象
         /// </summary>
         [ObservableProperty]
-        ImageView curView;
+        private ImageView curView;
 
         [ObservableProperty]
-        Brush modelBrush = Brushes.White;
+        private Brush modelBrush = Brushes.White;
 
         [ObservableProperty]
-        BitmapSource lastImage; //= new BitmapImage(new Uri("D://铝极.png"));
+        private BitmapSource lastImage; //= new BitmapImage(new Uri("D://铝极.png"));
 
         /// <summary>
         /// 2024.7.25 李焕彬
         /// 上一张图像窗口操作对象
         /// </summary>
         [ObservableProperty]
-        ImageView lastView;
+        private ImageView lastView;
 
         [ObservableProperty]
-        Brush lastBrush = Brushes.White;
+        private Brush lastBrush = Brushes.White;
 
         /// <summary>
         /// 新建制程
@@ -260,11 +260,12 @@ namespace WH.DetectSystem.Models
         #region 时间相关
 
         [ObservableProperty]
-        double algorithmTime = 0;
+        private double algorithmTime = 0;
 
         [ObservableProperty]
-        double filterTime = 0;
-        #endregion
+        private double filterTime = 0;
+
+        #endregion 时间相关
 
         /// <summary>
         /// 20240716 TCG
@@ -319,14 +320,14 @@ namespace WH.DetectSystem.Models
         /// 打标控制VM,初始化需要放在运动控制前面
         /// </summary>
         [ObservableProperty]
-        CMarkCtrlVM markCtrlVM;
+        private CMarkCtrlVM markCtrlVM;
 
         /// <summary>
         /// 2024.7.12 李焕彬
         /// 对焦控制VM
         /// </summary>
         [ObservableProperty]
-        CFocusCtrlVMBase focusCtrlVM;
+        private CFocusCtrlVMBase focusCtrlVM;
 
         #region 启停 状态
 
@@ -334,9 +335,9 @@ namespace WH.DetectSystem.Models
         /// 2024.9.6 李焕彬
         /// 启动时用于保存当前账户信息 停止运行时用于恢复权限
         /// </summary>
-        CLoginPerson loginPerson = new CLoginPerson() { IsNoPermission = true };
+        private CLoginPerson loginPerson = new CLoginPerson() { IsNoPermission = true };
 
-        bool isStart = false;
+        private bool isStart = false;
 
         /// <summary>
         /// 2024.9.6 李焕彬
@@ -384,7 +385,7 @@ namespace WH.DetectSystem.Models
         }
 
         [ObservableProperty]
-        bool deviceSeting = false;
+        private bool deviceSeting = false;
 
         /// <summary>
         /// 2024.9.2 李焕彬
@@ -394,15 +395,19 @@ namespace WH.DetectSystem.Models
         {
             get { return FocusCtrlVM?.IsFocusing ?? false; }
         }
-        #endregion
+
+        #endregion 启停 状态
 
         #region 线程管理
-        CancellationTokenSource m_cts = new CancellationTokenSource();
+
+        private CancellationTokenSource m_cts = new CancellationTokenSource();
 
         public static readonly BoundedChannelOptions s_NormalChannelOptions =
             new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
+
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(5) { FullMode = BoundedChannelFullMode.Wait };
+
         public static readonly BoundedChannelOptions s_SinglechannelOptions =
             new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait };
 
@@ -468,9 +473,11 @@ namespace WH.DetectSystem.Models
         {
             return filter.IsReversal;
         }
+
         private void InitTask()
         {
             #region 信息记录线程
+
             Task infoTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
@@ -500,9 +507,11 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 信息记录线程
 
             #region 取图线程
+
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -548,9 +557,11 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 取图线程
 
             #region PC算法执行线程
+
             Task waitRecipeTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -665,9 +676,11 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion PC算法执行线程
 
             #region 筛选线程 放置在算法线程
+
             //Task waitFilterTask = Task.Run(async () =>
             //{
             //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -739,9 +752,11 @@ namespace WH.DetectSystem.Models
             //        }
             //    }
             //});
-            #endregion
+
+            #endregion 筛选线程 放置在算法线程
 
             #region 显示线程
+
             Task waitShowTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -753,6 +768,7 @@ namespace WH.DetectSystem.Models
                         if (stopwatch.ElapsedMilliseconds > 1000 / SystemSettings.DisplayFrameRate)
                         {
                             #region 窗口显示
+
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image.ToBitmapSource();
@@ -786,10 +802,12 @@ namespace WH.DetectSystem.Models
                                                     drawView.SetPen(edge.BrushDraw);
                                                     drawView.ImgDrawPoints(edge.Points, false);
                                                     break;
+
                                                 case EMDRAWTYPE.EMDRAWTYPE_REGION:
                                                     drawView.SetPen(edge.BrushDraw);
                                                     drawView.ImgDrawRegion(edge.Points, false);
                                                     break;
+
                                                 case EMDRAWTYPE.EMDRAWTYPE_Text:
                                                     drawView.SetFontBrush(edge.BrushDraw);
                                                     drawView.SetFontSize(edge.FontSize);
@@ -801,6 +819,56 @@ namespace WH.DetectSystem.Models
                                                     break;
                                             }
                                         }
+
+                                        #region 画取反 OK的结果区域
+
+                                        //var value = cell.Detections.TakeWhile(de =>
+                                        //    (((DefectFilter)(de.DefectFilter)).FilterList)
+                                        //        .TakeWhile(filter => filter.IsReversal)
+                                        //        .Count() > 0
+                                        //);
+                                        var value = cell
+                                            .Detections.ToList()
+                                            .FindAll(de =>
+                                                (((DefectFilter)(de.DefectFilter)).FilterList)
+                                                    .ToList()
+                                                    .Find(filter => filter.IsReversal)
+                                                    is not null
+                                            );
+                                        foreach (var detection in value)
+                                        {
+                                            if (
+                                                detection.Category != Category.区域
+                                                || detection.regionOut.Count == 0
+                                            )
+                                                continue;
+                                            DefectFilter defectFilter = detection.DefectFilter;
+                                            drawView.SetPen(defectFilter.ShowColor.Brush);
+                                            drawView.SetFontBrush(defectFilter.ShowColor.Brush);
+                                            for (int i = 0; i < detection.regionOut.Count; i++)
+                                            {
+                                                drawView.ImgDrawRegion(
+                                                    detection.regionOut[i].points,
+                                                    false
+                                                );
+                                                drawView.ImgDrawText(
+                                                    detection.DetectLog[i].ToString(),
+                                                    detection.regionOut[i].GetCenter(),
+                                                    false
+                                                );
+                                                //if (i == detection.regionOut.Count - 1)
+                                                //{
+                                                //    drawView.ImgDrawText(
+                                                //        detection.DetectLog.ToString(),
+                                                //        detection.regionOut[i].GetCenter(),
+                                                //        false
+                                                //    );
+                                                //}
+                                            }
+                                        }
+
+                                        #endregion 画取反 OK的结果区域
+
                                         if (!cell.IsOK)
                                         {
                                             DefectFilter dstFilter = cell.Detection.DefectFilter;
@@ -902,46 +970,6 @@ namespace WH.DetectSystem.Models
                                         }
                                         else
                                         {
-                                            var value = cell.Detections.TakeWhile(de => ((ObservableCollection<FilterAndSelect>)de.DefectFilter.FilterList).TakeWhile<FilterAndSelect>(abc).Count() > 0);
-                                            foreach (var detection in value)
-                                            {
-                                                if (
-                                                    
-                                                    detection.Category != Category.区域
-                                                    || detection.regionOut.Count == 0
-                                                )
-                                                    continue;
-                                                DefectFilter defectFilter =
-                                                    detection.DefectFilter;
-                                                drawView.SetPen(defectFilter.ShowColor.Brush);
-                                                drawView.SetFontBrush(
-                                                    defectFilter.ShowColor.Brush
-                                                );
-                                                for (
-                                                    int i = 0;
-                                                    i < detection.regionOut.Count;
-                                                    i++
-                                                )
-                                                {
-                                                    drawView.ImgDrawRegion(
-                                                        detection.regionOut[i].points,
-                                                        false
-                                                    );
-                                                    drawView.ImgDrawText(
-                                                        detection.DetectLog[i].ToString(),
-                                                        detection.regionOut[i].GetCenter(),
-                                                        false
-                                                    );
-                                                    //if (i == detection.regionOut.Count - 1)
-                                                    //{
-                                                    //    drawView.ImgDrawText(
-                                                    //        detection.DetectLog.ToString(),
-                                                    //        detection.regionOut[i].GetCenter(),
-                                                    //        false
-                                                    //    );
-                                                    //}
-                                                }
-                                            }
                                             drawView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                             drawView.WinDrawText(
                                                 "OK",
@@ -965,7 +993,8 @@ namespace WH.DetectSystem.Models
                                 Growl.Error(Name + "-" + "显示线程出错: " + ex.Message + ex.StackTrace);
                             }
                             stopwatch.Restart();
-                            #endregion
+
+                            #endregion 窗口显示
                         }
                         if (
                             (SystemSettings.OfflineSave || isStart)
@@ -1010,9 +1039,11 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 显示线程
 
             #region 报警线程 放置于数据库线程
+
             //Task alarmTask = Task.Run(async () =>
             //{
             //    object objAlarmLock = new object(); //报警监控用
@@ -1040,9 +1071,11 @@ namespace WH.DetectSystem.Models
             //        }
             //    }
             //});
-            #endregion
+
+            #endregion 报警线程 放置于数据库线程
 
             #region 数据库线程
+
             //数据库写入容易出错，卡顿时间较长，容量最大10个
             Task dataBaseTask = Task.Run(async () =>
             {
@@ -1051,6 +1084,7 @@ namespace WH.DetectSystem.Models
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
                     #region 写入Access数据库
+
                     //try
                     //{
                     //    var space = DiskSpace.GetHardDiskFreeSpace("D");
@@ -1067,7 +1101,8 @@ namespace WH.DetectSystem.Models
                     //{
                     //    s_SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
                     //}
-                    #endregion
+
+                    #endregion 写入Access数据库
 
                     if (MySqlVM.MysqlExecute.SqlEnable)
                     {
@@ -1097,7 +1132,6 @@ namespace WH.DetectSystem.Models
                     //{
                     //    lock (objAlarmLock)
                     //    {
-
                     //    }
                     //}
                     //catch (Exception ex)
@@ -1117,9 +1151,11 @@ namespace WH.DetectSystem.Models
                     //cell.Dispose();
                 }
             });
-            #endregion
+
+            #endregion 数据库线程
 
             #region 存图线程
+
             Task waitSaveImgTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
@@ -1157,7 +1193,8 @@ namespace WH.DetectSystem.Models
                     }
                 }
             });
-            #endregion
+
+            #endregion 存图线程
         }
 
         public void StopTask()
@@ -1171,7 +1208,8 @@ namespace WH.DetectSystem.Models
             m_dataBaseChannel.Writer.Complete();
             m_SaveImageChannel.Writer.Complete();
         }
-        #endregion
+
+        #endregion 线程管理
 
         /// <summary>
         /// 2024.7.30 李焕彬
@@ -1211,7 +1249,7 @@ namespace WH.DetectSystem.Models
             if (AppConfig.HasFocusConfig())
             {
                 FocusCtrlVM.SetCameraSerial(CameraSerial);
-            } 
+            }
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)

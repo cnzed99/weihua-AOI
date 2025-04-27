@@ -34,10 +34,11 @@ namespace PlcControl
     /// </summary>
     public partial class CMotionCtrlVM : CMotionVMBase, IMotionCallback
     {
-        public CMotionCtrlVM():base()
+        public CMotionCtrlVM()
+            : base()
         {
             //MotionConfig = new CMotionConfig(this);
-            
+
             Application.Current.Dispatcher.Invoke(
                 new Action(() =>
                 {
@@ -172,7 +173,7 @@ namespace PlcControl
             WriteRegister();
             //BinCapcity = MotionConfig.BinCapcity;
             modbusTcp.WriteSingleRegisterInt32(304, MotionConfig.BinCapcity);
-            
+
             WriteSignal();
         }
 
@@ -439,8 +440,9 @@ namespace PlcControl
                         case 1604:
                             IsBinFull = e.ReadValue == 1;
                             break;
+
                         case 1603:
-                            plcIsRun = e.ReadValue == 1;
+                            PlcIsRun = e.ReadValue == 1;
                             break;
 
                         case 302:
@@ -547,6 +549,7 @@ namespace PlcControl
 
         [ObservableProperty]
         private bool plcIsRun;
+
         /// <summary>
         /// 20250426 TCG
         /// 料仓清料 入口料仓
@@ -559,7 +562,11 @@ namespace PlcControl
             {
                 modbusTcp.WriteSingleCoil((ushort)1606, true);
                 Thread.Sleep(1);
+                modbusTcp.WriteSingleCoil((ushort)1605, true);
+                Thread.Sleep(1);
                 modbusTcp.WriteSingleCoil((ushort)1606, false);
+                Thread.Sleep(1);
+                modbusTcp.WriteSingleCoil((ushort)1605, false);
             });
         }
 

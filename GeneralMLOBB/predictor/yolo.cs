@@ -65,7 +65,7 @@ namespace GeneralML
             if (img.Type().Channels == 4)
             {
                 Cv2.CvtColor(img, mat, ColorConversionCodes.BGR2RGB);
-                img.Dispose();
+                //img.Dispose();
             }
             else
             {
