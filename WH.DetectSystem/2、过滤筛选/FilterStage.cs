@@ -63,7 +63,7 @@ namespace WH.DetectSystem
                                     //如果过滤分选器未使能或前面的过滤分选已经判定为NG，则跳过，不用break,是要把上一次的结果置为true，filter.Result = true;
                                     if (!filter.FilterSelectEnable || !de.Result)
                                     {
-                                        continue;
+                                        //continue;
                                     }
                                     else
                                     {
@@ -75,13 +75,13 @@ namespace WH.DetectSystem
                                             switch (filter.UnionMethod)
                                             {
                                                 case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
-                                                    {
-                                                        SRegion regionUnion = detectRegion[0]
-                                                            .regionInfo.Union(detectRegion);
-                                                        detectRegion.Clear();
-                                                        detectRegion.Add(regionUnion);
-                                                        break;
-                                                    }
+                                                {
+                                                    SRegion regionUnion = detectRegion[0]
+                                                        .regionInfo.Union(detectRegion);
+                                                    detectRegion.Clear();
+                                                    detectRegion.Add(regionUnion);
+                                                    break;
+                                                }
                                             }
                                         }
 
