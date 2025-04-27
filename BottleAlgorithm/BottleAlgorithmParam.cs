@@ -99,9 +99,7 @@ namespace BottleAlgorithm
                 DefectSpecies.Add(defectSpecies);
             }
 
-            DefectSpecies.Add(
-                new("西林瓶有无类", new() { new("瓶盖", Category.区域), new("标签", Category.区域), })
-            );
+            DefectSpecies.Add(new("西林瓶有无类", new() { new("瓶盖", Category.区域) }));
 
             // DefectSpecies.Add(new("异常类", new() { new("没有产品", Category.值) }));
 
@@ -236,6 +234,7 @@ namespace BottleAlgorithm
                 //}
 
                 #endregion 铝盖定位 注释
+
                 base.DetectImage(cell);
 
                 #region 蓝盖有无
@@ -361,153 +360,151 @@ namespace BottleAlgorithm
 
                 #endregion 蓝盖有无
 
-                #region 标签有无
+                #region 标签有无 三期识别有无即可
 
-                HTuple bFlagLabel = null;
-                HTuple LabelMinRow = param.LabelMinRow;
-                HTuple LabelMinCol = 0;
-                HTuple LabelMaxRow = param.LabelMaxRow;
-                HTuple LabelMaxCol = cell.Image.ImageWidth - 1;
+                //HTuple bFlagLabel = null;
+                //HTuple LabelMinRow = param.LabelMinRow;
+                //HTuple LabelMinCol = 0;
+                //HTuple LabelMaxRow = param.LabelMaxRow;
+                //HTuple LabelMaxCol = cell.Image.ImageWidth - 1;
 
-                //int labelLeftUPX = 0;
-                //int labelLeftUPY = 0;
-                //int labelRightDownX = 0;
-                //int labelRightDownY = 0;
+                ////int labelLeftUPX = 0;
+                ////int labelLeftUPY = 0;
+                ////int labelRightDownX = 0;
+                ////int labelRightDownY = 0;
 
-                try
-                {
-                    HObject ho_LabelRegion = null;
-                    HOperatorSet.GenEmptyObj(out ho_LabelRegion);
-                    ho_LabelRegion.Dispose();
+                //try
+                //{
+                //    HObject ho_LabelRegion = null;
+                //    HOperatorSet.GenEmptyObj(out ho_LabelRegion);
+                //    ho_LabelRegion.Dispose();
 
-                    HTuple hv_Max1 = new HTuple();
-                    hv_Max1.Dispose();
+                //    HTuple hv_Max1 = new HTuple();
+                //    hv_Max1.Dispose();
 
-                    InspectionLabel(
-                        ho_ImageR,
-                        out ho_LabelRegion,
-                        param.LabelBrightnessMin,
-                        param.LabelBrightnessMax,
-                        LabelMinRow,
-                        LabelMinCol,
-                        LabelMaxRow,
-                        LabelMaxCol,
-                        param.LabelThickness,
-                        out hv_Max1
-                    );
+                //    InspectionLabel(
+                //        ho_ImageR,
+                //        out ho_LabelRegion,
+                //        param.LabelBrightnessMin,
+                //        param.LabelBrightnessMax,
+                //        LabelMinRow,
+                //        LabelMinCol,
+                //        LabelMaxRow,
+                //        LabelMaxCol,
+                //        param.LabelThickness,
+                //        out hv_Max1
+                //    );
 
-                    HTuple hv_Row1 = new HTuple(),
-                        hv_Column1 = new HTuple();
-                    HTuple hv_Row2 = new HTuple(),
-                        hv_Column2 = new HTuple();
-                    //HObject ho_Rectangle2 = null;
-                    //HOperatorSet.GenEmptyObj(out ho_Rectangle2);
+                //    HTuple hv_Row1 = new HTuple(),
+                //        hv_Column1 = new HTuple();
+                //    HTuple hv_Row2 = new HTuple(),
+                //        hv_Column2 = new HTuple();
+                //    //HObject ho_Rectangle2 = null;
+                //    //HOperatorSet.GenEmptyObj(out ho_Rectangle2);
 
-                    hv_Row1.Dispose();
-                    hv_Column1.Dispose();
-                    hv_Row2.Dispose();
-                    hv_Column2.Dispose();
-                    HOperatorSet.SmallestRectangle1(
-                        ho_LabelRegion,
-                        out hv_Row1,
-                        out hv_Column1,
-                        out hv_Row2,
-                        out hv_Column2
-                    );
-                    //ho_Rectangle2.Dispose();
-                    //HOperatorSet.GenRectangle1(out ho_Rectangle2, hv_Row1, hv_Column1, hv_Row2,
-                    //    hv_Column2);
+                //    hv_Row1.Dispose();
+                //    hv_Column1.Dispose();
+                //    hv_Row2.Dispose();
+                //    hv_Column2.Dispose();
+                //    HOperatorSet.SmallestRectangle1(
+                //        ho_LabelRegion,
+                //        out hv_Row1,
+                //        out hv_Column1,
+                //        out hv_Row2,
+                //        out hv_Column2
+                //    );
+                //    //ho_Rectangle2.Dispose();
+                //    //HOperatorSet.GenRectangle1(out ho_Rectangle2, hv_Row1, hv_Column1, hv_Row2,
+                //    //    hv_Column2);
 
-                    #region 显示结果
+                //    #region 显示结果
 
-                    // bool tempNgFlag = false;
-                    //搜索区域显示
-                    System.Windows.Point lebelp1 = new System.Windows.Point(
-                        LabelMinCol,
-                        LabelMinRow
-                    );
-                    System.Windows.Point lebelp2 = new System.Windows.Point(
-                        LabelMaxCol,
-                        LabelMinRow
-                    );
-                    System.Windows.Point lebelp3 = new System.Windows.Point(
-                        LabelMaxCol,
-                        LabelMaxRow
-                    );
-                    System.Windows.Point lebelp4 = new System.Windows.Point(
-                        LabelMinCol,
-                        LabelMaxRow
-                    );
+                //    // bool tempNgFlag = false;
+                //    //搜索区域显示
+                //    System.Windows.Point lebelp1 = new System.Windows.Point(
+                //        LabelMinCol,
+                //        LabelMinRow
+                //    );
+                //    System.Windows.Point lebelp2 = new System.Windows.Point(
+                //        LabelMaxCol,
+                //        LabelMinRow
+                //    );
+                //    System.Windows.Point lebelp3 = new System.Windows.Point(
+                //        LabelMaxCol,
+                //        LabelMaxRow
+                //    );
+                //    System.Windows.Point lebelp4 = new System.Windows.Point(
+                //        LabelMinCol,
+                //        LabelMaxRow
+                //    );
 
-                    List<System.Windows.Point> labelPoints = new List<System.Windows.Point>();
-                    labelPoints.Add(lebelp1);
-                    labelPoints.Add(lebelp2);
-                    labelPoints.Add(lebelp3);
-                    labelPoints.Add(lebelp4);
-                    labelPoints.Add(lebelp1);
-                    cell.DrawEdges.Add(new CEdgeDraw(labelPoints, Brushes.Orange));
+                //    List<System.Windows.Point> labelPoints = new List<System.Windows.Point>();
+                //    labelPoints.Add(lebelp1);
+                //    labelPoints.Add(lebelp2);
+                //    labelPoints.Add(lebelp3);
+                //    labelPoints.Add(lebelp4);
+                //    labelPoints.Add(lebelp1);
+                //    cell.DrawEdges.Add(new CEdgeDraw(labelPoints, Brushes.Orange));
 
-                    //标签缺失
-                    //if (m_LabelTestResult != 2)
-                    //{
-                    System.Windows.Point reclebelp1 = new System.Windows.Point(
-                        hv_Column1.I,
-                        hv_Row1.I
-                    );
-                    System.Windows.Point reclebelp2 = new System.Windows.Point(
-                        hv_Column2.I,
-                        hv_Row1.I
-                    );
-                    System.Windows.Point reclebelp3 = new System.Windows.Point(
-                        hv_Column2.I,
-                        hv_Row2.I
-                    );
-                    System.Windows.Point reclebelp4 = new System.Windows.Point(
-                        hv_Column1.I,
-                        hv_Row2.I
-                    );
-                    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
+                //    //标签缺失
+                //    //if (m_LabelTestResult != 2)
+                //    //{
+                //    System.Windows.Point reclebelp1 = new System.Windows.Point(
+                //        hv_Column1.I,
+                //        hv_Row1.I
+                //    );
+                //    System.Windows.Point reclebelp2 = new System.Windows.Point(
+                //        hv_Column2.I,
+                //        hv_Row1.I
+                //    );
+                //    System.Windows.Point reclebelp3 = new System.Windows.Point(
+                //        hv_Column2.I,
+                //        hv_Row2.I
+                //    );
+                //    System.Windows.Point reclebelp4 = new System.Windows.Point(
+                //        hv_Column1.I,
+                //        hv_Row2.I
+                //    );
+                //    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>();
 
-                    rec1Points.Add(reclebelp1);
-                    rec1Points.Add(reclebelp2);
-                    rec1Points.Add(reclebelp3);
-                    rec1Points.Add(reclebelp4);
+                //    rec1Points.Add(reclebelp1);
+                //    rec1Points.Add(reclebelp2);
+                //    rec1Points.Add(reclebelp3);
+                //    rec1Points.Add(reclebelp4);
 
-                    AddTestResult(cell, DefectSpecies[1].RecipeDefects[1].Name, rec1Points);
-                    System.Windows.Point pos = new System.Windows.Point(
-                        (hv_Column2.D + hv_Column1.D) / 2.0 - 100,
-                        (hv_Row2.D + hv_Row1.D) / 2.0
-                    );
-                    cell.DrawEdges.Add(new CEdgeDraw($"平均灰度:{hv_Max1.D}", pos, Brushes.Red, 15));
-                    //tempNgFlag = true;
-                    //  }
-                    //else
-                    //{
-                    //    //标签的 找到的区域显示
-                    //    System.Windows.Point Labelp1 = new System.Windows.Point(labelLeftUPX, labelLeftUPY);
-                    //    System.Windows.Point Labelp2 = new System.Windows.Point(labelRightDownX, labelLeftUPY);
-                    //    System.Windows.Point Labelp3 = new System.Windows.Point(labelRightDownX, labelRightDownY);
-                    //    System.Windows.Point Labelp4 = new System.Windows.Point(labelLeftUPX, labelRightDownY);
-                    //    List<System.Windows.Point> labelPoints2 = new List<System.Windows.Point>();
-                    //    labelPoints2.Add(Labelp1);
-                    //    labelPoints2.Add(Labelp2);
-                    //    labelPoints2.Add(Labelp3);
-                    //    labelPoints2.Add(Labelp4);
-                    //    labelPoints2.Add(Labelp1);
-                    //    cell.DrawEdges.Add(new CEdgeDraw(labelPoints2, Brushes.Cyan));
-                    //}
+                //    AddTestResult(cell, DefectSpecies[1].RecipeDefects[1].Name, rec1Points);
+                //    System.Windows.Point pos = new System.Windows.Point(
+                //        (hv_Column2.D + hv_Column1.D) / 2.0 - 100,
+                //        (hv_Row2.D + hv_Row1.D) / 2.0
+                //    );
+                //    cell.DrawEdges.Add(new CEdgeDraw($"平均灰度:{hv_Max1.D}", pos, Brushes.Red, 15));
+                //    //tempNgFlag = true;
+                //    //  }
+                //    //else
+                //    //{
+                //    //    //标签的 找到的区域显示
+                //    //    System.Windows.Point Labelp1 = new System.Windows.Point(labelLeftUPX, labelLeftUPY);
+                //    //    System.Windows.Point Labelp2 = new System.Windows.Point(labelRightDownX, labelLeftUPY);
+                //    //    System.Windows.Point Labelp3 = new System.Windows.Point(labelRightDownX, labelRightDownY);
+                //    //    System.Windows.Point Labelp4 = new System.Windows.Point(labelLeftUPX, labelRightDownY);
+                //    //    List<System.Windows.Point> labelPoints2 = new List<System.Windows.Point>();
+                //    //    labelPoints2.Add(Labelp1);
+                //    //    labelPoints2.Add(Labelp2);
+                //    //    labelPoints2.Add(Labelp3);
+                //    //    labelPoints2.Add(Labelp4);
+                //    //    labelPoints2.Add(Labelp1);
+                //    //    cell.DrawEdges.Add(new CEdgeDraw(labelPoints2, Brushes.Cyan));
+                //    //}
 
-                    #endregion 显示结果
-                }
-                catch (Exception ex)
-                {
-                    bFlagLabel?.Dispose();
-                    OperateLog.Info("BottleTest_InspectionLabel:" + ex.Message.ToString());
-                }
+                //    #endregion 显示结果
+                //}
+                //catch (Exception ex)
+                //{
+                //    bFlagLabel?.Dispose();
+                //    OperateLog.Info("BottleTest_InspectionLabel:" + ex.Message.ToString());
+                //}
 
-                #endregion 标签有无
-
-                
+                #endregion 标签有无 三期识别有无即可
 
                 #region DET 三期有无
 
@@ -1416,18 +1413,17 @@ namespace BottleAlgorithm
                     cellDetection1.Category = de.Category;
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
-                    if(de.Name == IntoDefectName)
+                    if (de.Name == IntoDefectName)
                     {
                         SRegion detectRegion = GetDetectRegion(rec1Points);
                         cellDetection1.regionOut.Add(detectRegion);
                         cell.AlgorithmOut.Add(cellDetection1);
                     }
-                    
+
                     //infos.ForEach(info => sResultInfos.Remove(info));
                 }
             }
             //var de = cell.AlgorithmOut.Find(n => n.RecipeDefectName == IntoDefectName);
-            
         }
 
         public SRegion GetDetectRegion(List<System.Windows.Point> rec1Points)
@@ -1489,45 +1485,45 @@ namespace BottleAlgorithm
         [property: Description("图像的像素尺寸mm")]
         private double pixelSizeMM = 0.058;
 
-        /// <summary>
-        /// 2025.03.20 鲍赞宝
-        /// 标签位置最上面的行位置
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("标签检测")]
-        [property: DisplayName("01.标签位置上限")]
-        [property: Description("标签位置上限")]
-        private int labelMinRow = 0;
+        ///// <summary>
+        ///// 2025.03.20 鲍赞宝
+        ///// 标签位置最上面的行位置
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("标签检测")]
+        //[property: DisplayName("01.标签位置上限")]
+        //[property: Description("标签位置上限")]
+        //private int labelMinRow = 0;
 
-        /// <summary>
-        /// 2025.03.20 鲍赞宝
-        /// 标签位置最下面的行位置
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("标签检测")]
-        [property: DisplayName("02.标签位置下限")]
-        [property: Description("标签位置下限")]
-        private int labelMaxRow = 380;
+        ///// <summary>
+        ///// 2025.03.20 鲍赞宝
+        ///// 标签位置最下面的行位置
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("标签检测")]
+        //[property: DisplayName("02.标签位置下限")]
+        //[property: Description("标签位置下限")]
+        //private int labelMaxRow = 380;
 
-        /// <summary>
-        /// 2025.03.20 鲍赞宝
-        /// 标签位置亮度下限
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("标签检测")]
-        [property: DisplayName("03.标签亮度下限")]
-        [property: Description("标签亮度下限")]
-        private int labelBrightnessMin = 60;
+        ///// <summary>
+        ///// 2025.03.20 鲍赞宝
+        ///// 标签位置亮度下限
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("标签检测")]
+        //[property: DisplayName("03.标签亮度下限")]
+        //[property: Description("标签亮度下限")]
+        //private int labelBrightnessMin = 60;
 
-        /// <summary>
-        /// 2025.03.20 鲍赞宝
-        /// 标签位置亮度上限
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("标签检测")]
-        [property: DisplayName("04.标签亮度上限")]
-        [property: Description("标签亮度上限")]
-        private int labelBrightnessMax = 255;
+        ///// <summary>
+        ///// 2025.03.20 鲍赞宝
+        ///// 标签位置亮度上限
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("标签检测")]
+        //[property: DisplayName("04.标签亮度上限")]
+        //[property: Description("标签亮度上限")]
+        //private int labelBrightnessMax = 255;
 
         ///// <summary>
         ///// 2025.03.20 鲍赞宝
@@ -1539,15 +1535,15 @@ namespace BottleAlgorithm
         //[property: Description("瓶子直径")]
         //private int bottleRadius = 100;
 
-        /// <summary>
-        /// 2025.03.20 鲍赞宝
-        /// 过滤
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("标签检测")]
-        [property: DisplayName("05.开运算(pix)")]
-        [property: Description("开运算(pix)")]
-        private float labelThickness = 3.5f;
+        ///// <summary>
+        ///// 2025.03.20 鲍赞宝
+        ///// 过滤
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("标签检测")]
+        //[property: DisplayName("05.开运算(pix)")]
+        //[property: Description("开运算(pix)")]
+        //private float labelThickness = 3.5f;
 
         ///// <summary>
         ///// 2025.01.09 鲍赞宝
