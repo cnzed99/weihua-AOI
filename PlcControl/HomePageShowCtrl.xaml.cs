@@ -25,5 +25,9 @@ namespace PlcControl
             InitializeComponent();
             this.DataContext = motionCtrlVM;
         }
+
+        private void CapcityBtn_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }

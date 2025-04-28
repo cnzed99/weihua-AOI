@@ -24,13 +24,7 @@ namespace PlcControl
     /// </summary>
     public partial class CMotionConfig : CMotionConfigBase
     {
-        [JsonIgnore]
-        public IMotionCallback MontionFunc;
-        public CMotionConfig():base()
-        {
-            
-        }
-        public CMotionConfig(IMotionCallback motionCallback)
+        public CMotionConfig()
             : base()
         {
             this.SignalIns = new ObservableCollection<CSignalIn>()
@@ -64,7 +58,6 @@ namespace PlcControl
                 new CElement(token, "感应器滤波/10ms", EMELEMTYPE.EMELEMD_INT, 14, 0),
                 new CElement(token, "拍照延迟", EMELEMTYPE.EMELEMD_INT, 308, 0),
             };
-            MontionFunc = motionCallback;
         }
 
         /// <summary>
@@ -137,6 +130,7 @@ namespace PlcControl
         [property: DisplayName("12.Port")]
         [property: Description("12.Port")]
         private int port = 502;
+
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 端口号
@@ -146,11 +140,11 @@ namespace PlcControl
         [property: DisplayName("11.Capcity")]
         [property: Description("11.Capcity")]
         private short binCapcity = 999;
-        
-        partial void OnBinCapcityChanged(short value)
-        {
-            MontionFunc?.WriteSingleRegisterInt32(304,(Int32)value);
-        }
+
+        //partial void OnBinCapcityChanged(short value)
+        //{
+        //    MontionFunc?.WriteSingleRegisterInt32(304,(Int32)value);
+        //}
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 输入信号

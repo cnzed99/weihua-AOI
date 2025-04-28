@@ -37,7 +37,6 @@
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
                         <RowDefinition Height="30" />
-
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150" />
@@ -74,7 +73,6 @@
                         Style="{StaticResource Textbox1}"
                         Text="{Binding QualitySet.Description}" />
                 </Grid>
-
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -114,7 +112,6 @@
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="30" />
-
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150" />
@@ -207,10 +204,10 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn
+                    <!--<GridViewColumn
                         Width="80"
                         DisplayMemberBinding="{Binding Signal}"
-                        Header="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}}" />
+                        Header="{Binding [QualitySignal], Source={x:Static local:CLang.s_Instance}}" />-->
                     <GridViewColumn Width="150" Header="{Binding [Description], Source={x:Static local:CLang.s_Instance}}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

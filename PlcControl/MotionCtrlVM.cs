@@ -32,7 +32,7 @@ namespace PlcControl
     /// 2025.3.6 李焕彬
     /// 运动控件VM
     /// </summary>
-    public partial class CMotionCtrlVM : CMotionVMBase, IMotionCallback
+    public partial class CMotionCtrlVM : CMotionVMBase
     {
         public CMotionCtrlVM()
             : base()
@@ -537,22 +537,22 @@ namespace PlcControl
             {
                 if (File.Exists(c_configSavePath))
                 {
-                    MotionConfig = new CMotionConfig(this);
+                    MotionConfig = new CMotionConfig();
                     ConfigAPI.Load<CMotionConfig>(c_configSavePath, MotionConfig);
                     //MotionConfig.MontionFunc = this;
                     if (MotionConfig == null)
                     {
-                        MotionConfig = new(this);
+                        MotionConfig = new();
                     }
                 }
                 else
                 {
-                    MotionConfig = new(this);
+                    MotionConfig = new();
                 }
             }
             catch (Exception)
             {
-                MotionConfig = new(this);
+                MotionConfig = new();
             }
         }
 
@@ -601,10 +601,11 @@ namespace PlcControl
         //    modbusTcp.WriteSingleRegisterInt32((ushort)304, BinCapcity);
         //    MotionConfig.BinCapcity = value;
         //}
-
-        public void WriteSingleRegisterInt32(ushort addr, int value)
+        [RelayCommand]
+        public void WriteBinCapcity()
         {
-            modbusTcp?.WriteSingleRegisterInt32((ushort)304, value);
+            modbusTcp?.WriteSingleRegisterInt32((ushort)304, MotionConfig.BinCapcity);
+            Growl.Success("料仓容量设置成功！");
         }
     }
 }

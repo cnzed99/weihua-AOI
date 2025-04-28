@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     d:DesignHeight="80"
-    d:DesignWidth="400"
+    d:DesignWidth="600"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -30,6 +30,7 @@
                 <Setter Property="hc:TitleElement.TitlePlacement" Value="Left" />
                 <Setter Property="hc:TitleElement.VerticalAlignment" Value="Center" />
                 <Setter Property="TextAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -40,9 +41,10 @@
         <Label
             Width="100"
             Height="30"
-            Margin="2"
-            HorizontalContentAlignment="Center"
+            HorizontalContentAlignment="Right"
+            
             wh:StatusDotElement.DotBrush="{Binding PlcIsRun, Converter={StaticResource PLCStatusConverter}}"
+            wh:StatusDotElement.Radius="20"
             Content="下位机状态"
             Style="{DynamicResource StatusDotLabel}" />
 
@@ -51,8 +53,10 @@
             Height="30"
             Margin="2"
             wh:StatusDotElement.DotBrush="{Binding IsBinFull, Converter={StaticResource StatusReConverter}}"
+            wh:StatusDotElement.Radius="20"
             Command="{Binding ClearInBinCommand}"
             Content="满料清料"
+            HorizontalContentAlignment="Right"
             IsEnabled="{Binding ClearInBinCommand.IsRunning, Converter={StaticResource Boolean2BooleanReConverter}}"
             Style="{DynamicResource StatusDotButtonPrimary}" />
 
@@ -60,18 +64,47 @@
             Width="100"
             Height="30"
             Margin="2"
-            HorizontalContentAlignment="Center"
+            HorizontalContentAlignment="Right"
             wh:StatusDotElement.DotBrush="{Binding IsError, Converter={StaticResource StatusReConverter}}"
+            wh:StatusDotElement.Radius="20"
             Content="卡料"
             Style="{DynamicResource StatusDotLabel}" />
         <TextBox
+            Height="30"
             hc:TitleElement.Title="入口料仓:"
             IsReadOnly="True"
             Text="{Binding InBinNumber}" />
+
         <TextBox
+            Height="30"
             hc:TitleElement.Title="出口料仓:"
             IsReadOnly="True"
             Text="{Binding OutBinNumber}" />
-        <TextBox hc:TitleElement.Title="料仓容量:" Text="{Binding MotionConfig.BinCapcity}" />
+        <hc:ElementGroup>
+            <hc:ElementGroup.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </hc:ElementGroup.ItemsPanel>
+            <TextBox
+                Height="30"
+                hc:TitleElement.Title="料仓容量:"
+                DockPanel.Dock="Left"
+                Text="{Binding MotionConfig.BinCapcity, Mode=OneWay}" />
+            <Button
+                Name="CapcityBtn"
+                Grid.Column="1"
+                Width="50"
+                HorizontalAlignment="Right"
+                Command="{Binding WriteBinCapcityCommand}"
+                Content="确认"
+                DockPanel.Dock="Right"
+                Style="{StaticResource ButtonPrimary}" />
+        </hc:ElementGroup>
     </UniformGrid>
 </UserControl>
