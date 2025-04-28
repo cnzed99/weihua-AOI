@@ -42,7 +42,6 @@
             Width="100"
             Height="30"
             HorizontalContentAlignment="Right"
-            
             wh:StatusDotElement.DotBrush="{Binding PlcIsRun, Converter={StaticResource PLCStatusConverter}}"
             wh:StatusDotElement.Radius="20"
             Content="下位机状态"
@@ -52,11 +51,11 @@
             Width="100"
             Height="30"
             Margin="2"
+            HorizontalContentAlignment="Right"
             wh:StatusDotElement.DotBrush="{Binding IsBinFull, Converter={StaticResource StatusReConverter}}"
             wh:StatusDotElement.Radius="20"
             Command="{Binding ClearInBinCommand}"
             Content="满料清料"
-            HorizontalContentAlignment="Right"
             IsEnabled="{Binding ClearInBinCommand.IsRunning, Converter={StaticResource Boolean2BooleanReConverter}}"
             Style="{DynamicResource StatusDotButtonPrimary}" />
 
