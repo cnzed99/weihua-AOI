@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,6 +11,8 @@ using HandyControl.Controls;
 using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
+using StichingFourCam;
+using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -22,7 +25,7 @@ namespace BottleAlgorithm
         /// 2025.01.09 鲍赞宝
         /// halcon Ocr句柄
         /// </summary>
-        private static HTuple m_OCRHandle;
+        //private static HTuple m_OCRHandle;
 
         /// <summary>
         /// 2025.01.09初始化算法
@@ -128,6 +131,19 @@ namespace BottleAlgorithm
         public override void AddParam(string name)
         {
             this.AlgorParams.Add(new CBottleParam(name, token));
+        }
+
+        [OnDeserialized]
+        private void LoadModel(StreamingContext context)
+        {
+            CBottleParam param =
+                AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CBottleParam;
+            HOperatorSet.ReadCameraSetupModel(
+                param.Bottle == BottleType.Small ? "small.map" : "big.map",
+                out HTuple hv_CameraSetupModelZeroDistInCylinderOrigin
+            );
+            HDevelopExportPro.hv_CameraSetupModelZeroDistInCylinderOrigin =
+                hv_CameraSetupModelZeroDistInCylinderOrigin;
         }
 
         public override void DetectImage(Cell cell)
@@ -954,233 +970,233 @@ namespace BottleAlgorithm
 
         #region halcon OCR算法
 
-        /// <summary>
-        /// 2025.01.09 鲍赞宝
-        /// 初始化halcon Ocr句柄
-        /// </summary>
-        /// <returns></returns>
-        private bool InitialHalconOcrLib()
-        {
-            try
-            {
-                string tempOCRLibPath = ".\\AlgorithmPlug\\BottleAlgorithm\\Universal_Rej.occ";
-                if (File.Exists(tempOCRLibPath))
-                {
-                    //halcon OCR库
-                    HOperatorSet.ReadOcrClassCnn(tempOCRLibPath, out m_OCRHandle);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        ///// <summary>
+        ///// 2025.01.09 鲍赞宝
+        ///// 初始化halcon Ocr句柄
+        ///// </summary>
+        ///// <returns></returns>
+        //private bool InitialHalconOcrLib()
+        //{
+        //    try
+        //    {
+        //        string tempOCRLibPath = ".\\AlgorithmPlug\\BottleAlgorithm\\Universal_Rej.occ";
+        //        if (File.Exists(tempOCRLibPath))
+        //        {
+        //            //halcon OCR库
+        //            HOperatorSet.ReadOcrClassCnn(tempOCRLibPath, out m_OCRHandle);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
-        private void OcrImageInspection(
-            HObject ho_IntoImage,
-            HObject ho_IntoCropRegion,
-            HTuple hv_OCRHandle,
-            HTuple hv_IntoCharacterW,
-            HTuple hv_IntoCharacterH,
-            HTuple hv_DeltaBrightness,
-            HTuple hv_ImageChannel,
-            out HTuple hv_OutRow1,
-            out HTuple hv_OutColumn1,
-            out HTuple hv_OutRow2,
-            out HTuple hv_OutColumn2,
-            out HTuple hv_TextClass
-        )
-        {
-            // Local iconic variables
+        //private void OcrImageInspection(
+        //    HObject ho_IntoImage,
+        //    HObject ho_IntoCropRegion,
+        //    HTuple hv_OCRHandle,
+        //    HTuple hv_IntoCharacterW,
+        //    HTuple hv_IntoCharacterH,
+        //    HTuple hv_DeltaBrightness,
+        //    HTuple hv_ImageChannel,
+        //    out HTuple hv_OutRow1,
+        //    out HTuple hv_OutColumn1,
+        //    out HTuple hv_OutRow2,
+        //    out HTuple hv_OutColumn2,
+        //    out HTuple hv_TextClass
+        //)
+        //{
+        //    // Local iconic variables
 
-            HObject ho_Image = null,
-                ho_ImageG = null,
-                ho_ImageB = null;
-            HObject ho_ImageR = null,
-                ho_ImageReduced,
-                ho_Region,
-                ho_RegionClosing;
-            HObject ho_ConnectedRegions,
-                ho_SelectedRegions,
-                ho_SortedRegions;
-            HObject ho_RegionUnion;
+        //    HObject ho_Image = null,
+        //        ho_ImageG = null,
+        //        ho_ImageB = null;
+        //    HObject ho_ImageR = null,
+        //        ho_ImageReduced,
+        //        ho_Region,
+        //        ho_RegionClosing;
+        //    HObject ho_ConnectedRegions,
+        //        ho_SelectedRegions,
+        //        ho_SortedRegions;
+        //    HObject ho_RegionUnion;
 
-            // Local control variables
+        //    // Local control variables
 
-            HTuple hv_Confidence = new HTuple(),
-                hv_TextCount = new HTuple();
-            HTuple hv_Index = new HTuple();
-            // Initialize local and output iconic variables
-            HOperatorSet.GenEmptyObj(out ho_Image);
-            HOperatorSet.GenEmptyObj(out ho_ImageG);
-            HOperatorSet.GenEmptyObj(out ho_ImageB);
-            HOperatorSet.GenEmptyObj(out ho_ImageR);
-            HOperatorSet.GenEmptyObj(out ho_ImageReduced);
-            HOperatorSet.GenEmptyObj(out ho_Region);
-            HOperatorSet.GenEmptyObj(out ho_RegionClosing);
-            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
-            HOperatorSet.GenEmptyObj(out ho_SelectedRegions);
-            HOperatorSet.GenEmptyObj(out ho_SortedRegions);
-            HOperatorSet.GenEmptyObj(out ho_RegionUnion);
-            hv_OutRow1 = new HTuple();
-            hv_OutColumn1 = new HTuple();
-            hv_OutRow2 = new HTuple();
-            hv_OutColumn2 = new HTuple();
-            hv_TextClass = new HTuple();
-            switch (hv_ImageChannel.I)
-            {
-                case 1:
-                    ho_Image.Dispose();
-                    ho_ImageG.Dispose();
-                    ho_ImageB.Dispose();
-                    HOperatorSet.Decompose3(
-                        ho_IntoImage,
-                        out ho_Image,
-                        out ho_ImageG,
-                        out ho_ImageB
-                    );
-                    break;
+        //    HTuple hv_Confidence = new HTuple(),
+        //        hv_TextCount = new HTuple();
+        //    HTuple hv_Index = new HTuple();
+        //    // Initialize local and output iconic variables
+        //    HOperatorSet.GenEmptyObj(out ho_Image);
+        //    HOperatorSet.GenEmptyObj(out ho_ImageG);
+        //    HOperatorSet.GenEmptyObj(out ho_ImageB);
+        //    HOperatorSet.GenEmptyObj(out ho_ImageR);
+        //    HOperatorSet.GenEmptyObj(out ho_ImageReduced);
+        //    HOperatorSet.GenEmptyObj(out ho_Region);
+        //    HOperatorSet.GenEmptyObj(out ho_RegionClosing);
+        //    HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
+        //    HOperatorSet.GenEmptyObj(out ho_SelectedRegions);
+        //    HOperatorSet.GenEmptyObj(out ho_SortedRegions);
+        //    HOperatorSet.GenEmptyObj(out ho_RegionUnion);
+        //    hv_OutRow1 = new HTuple();
+        //    hv_OutColumn1 = new HTuple();
+        //    hv_OutRow2 = new HTuple();
+        //    hv_OutColumn2 = new HTuple();
+        //    hv_TextClass = new HTuple();
+        //    switch (hv_ImageChannel.I)
+        //    {
+        //        case 1:
+        //            ho_Image.Dispose();
+        //            ho_ImageG.Dispose();
+        //            ho_ImageB.Dispose();
+        //            HOperatorSet.Decompose3(
+        //                ho_IntoImage,
+        //                out ho_Image,
+        //                out ho_ImageG,
+        //                out ho_ImageB
+        //            );
+        //            break;
 
-                case 2:
-                    ho_ImageR.Dispose();
-                    ho_Image.Dispose();
-                    ho_ImageB.Dispose();
-                    HOperatorSet.Decompose3(
-                        ho_IntoImage,
-                        out ho_ImageR,
-                        out ho_Image,
-                        out ho_ImageB
-                    );
-                    break;
+        //        case 2:
+        //            ho_ImageR.Dispose();
+        //            ho_Image.Dispose();
+        //            ho_ImageB.Dispose();
+        //            HOperatorSet.Decompose3(
+        //                ho_IntoImage,
+        //                out ho_ImageR,
+        //                out ho_Image,
+        //                out ho_ImageB
+        //            );
+        //            break;
 
-                case 3:
-                    ho_ImageR.Dispose();
-                    ho_ImageG.Dispose();
-                    ho_Image.Dispose();
-                    HOperatorSet.Decompose3(
-                        ho_IntoImage,
-                        out ho_ImageR,
-                        out ho_ImageG,
-                        out ho_Image
-                    );
-                    break;
-            }
+        //        case 3:
+        //            ho_ImageR.Dispose();
+        //            ho_ImageG.Dispose();
+        //            ho_Image.Dispose();
+        //            HOperatorSet.Decompose3(
+        //                ho_IntoImage,
+        //                out ho_ImageR,
+        //                out ho_ImageG,
+        //                out ho_Image
+        //            );
+        //            break;
+        //    }
 
-            ho_ImageReduced.Dispose();
-            HOperatorSet.ReduceDomain(ho_Image, ho_IntoCropRegion, out ho_ImageReduced);
-            ho_Region.Dispose();
-            HOperatorSet.VarThreshold(
-                ho_ImageReduced,
-                out ho_Region,
-                hv_IntoCharacterW,
-                hv_IntoCharacterH,
-                0.2,
-                hv_DeltaBrightness,
-                "dark"
-            );
-            ho_RegionClosing.Dispose();
-            HOperatorSet.ClosingCircle(ho_Region, out ho_RegionClosing, 1.5);
-            ho_ConnectedRegions.Dispose();
-            HOperatorSet.Connection(ho_RegionClosing, out ho_ConnectedRegions);
-            ho_SelectedRegions.Dispose();
-            HOperatorSet.SelectShape(
-                ho_ConnectedRegions,
-                out ho_SelectedRegions,
-                "area",
-                "and",
-                10,
-                99999
-            );
-            ho_SortedRegions.Dispose();
-            HOperatorSet.SortRegion(
-                ho_SelectedRegions,
-                out ho_SortedRegions,
-                "character",
-                "true",
-                "row"
-            );
-            hv_TextClass.Dispose();
-            hv_Confidence.Dispose();
-            HOperatorSet.DoOcrMultiClassCnn(
-                ho_SortedRegions,
-                ho_ImageReduced,
-                hv_OCRHandle,
-                out hv_TextClass,
-                out hv_Confidence
-            );
+        //    ho_ImageReduced.Dispose();
+        //    HOperatorSet.ReduceDomain(ho_Image, ho_IntoCropRegion, out ho_ImageReduced);
+        //    ho_Region.Dispose();
+        //    HOperatorSet.VarThreshold(
+        //        ho_ImageReduced,
+        //        out ho_Region,
+        //        hv_IntoCharacterW,
+        //        hv_IntoCharacterH,
+        //        0.2,
+        //        hv_DeltaBrightness,
+        //        "dark"
+        //    );
+        //    ho_RegionClosing.Dispose();
+        //    HOperatorSet.ClosingCircle(ho_Region, out ho_RegionClosing, 1.5);
+        //    ho_ConnectedRegions.Dispose();
+        //    HOperatorSet.Connection(ho_RegionClosing, out ho_ConnectedRegions);
+        //    ho_SelectedRegions.Dispose();
+        //    HOperatorSet.SelectShape(
+        //        ho_ConnectedRegions,
+        //        out ho_SelectedRegions,
+        //        "area",
+        //        "and",
+        //        10,
+        //        99999
+        //    );
+        //    ho_SortedRegions.Dispose();
+        //    HOperatorSet.SortRegion(
+        //        ho_SelectedRegions,
+        //        out ho_SortedRegions,
+        //        "character",
+        //        "true",
+        //        "row"
+        //    );
+        //    hv_TextClass.Dispose();
+        //    hv_Confidence.Dispose();
+        //    HOperatorSet.DoOcrMultiClassCnn(
+        //        ho_SortedRegions,
+        //        ho_ImageReduced,
+        //        hv_OCRHandle,
+        //        out hv_TextClass,
+        //        out hv_Confidence
+        //    );
 
-            hv_TextCount.Dispose();
-            HOperatorSet.TupleLength(hv_TextClass, out hv_TextCount);
-            HTuple end_val24 = hv_TextCount - 1;
-            HTuple step_val24 = 1;
-            for (
-                hv_Index = 0;
-                hv_Index.Continue(end_val24, step_val24);
-                hv_Index = hv_Index.TupleAdd(step_val24)
-            )
-            {
-                if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("o"))) != 0)
-                {
-                    if (hv_TextClass == null)
-                        hv_TextClass = new HTuple();
-                    hv_TextClass[hv_Index] = "0";
-                    continue;
-                }
+        //    hv_TextCount.Dispose();
+        //    HOperatorSet.TupleLength(hv_TextClass, out hv_TextCount);
+        //    HTuple end_val24 = hv_TextCount - 1;
+        //    HTuple step_val24 = 1;
+        //    for (
+        //        hv_Index = 0;
+        //        hv_Index.Continue(end_val24, step_val24);
+        //        hv_Index = hv_Index.TupleAdd(step_val24)
+        //    )
+        //    {
+        //        if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("o"))) != 0)
+        //        {
+        //            if (hv_TextClass == null)
+        //                hv_TextClass = new HTuple();
+        //            hv_TextClass[hv_Index] = "0";
+        //            continue;
+        //        }
 
-                if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("O"))) != 0)
-                {
-                    if (hv_TextClass == null)
-                        hv_TextClass = new HTuple();
-                    hv_TextClass[hv_Index] = "0";
-                    continue;
-                }
+        //        if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("O"))) != 0)
+        //        {
+        //            if (hv_TextClass == null)
+        //                hv_TextClass = new HTuple();
+        //            hv_TextClass[hv_Index] = "0";
+        //            continue;
+        //        }
 
-                if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("l"))) != 0)
-                {
-                    if (hv_TextClass == null)
-                        hv_TextClass = new HTuple();
-                    hv_TextClass[hv_Index] = "1";
-                    continue;
-                }
-            }
+        //        if ((int)(new HTuple(((hv_TextClass.TupleSelect(hv_Index))).TupleEqual("l"))) != 0)
+        //        {
+        //            if (hv_TextClass == null)
+        //                hv_TextClass = new HTuple();
+        //            hv_TextClass[hv_Index] = "1";
+        //            continue;
+        //        }
+        //    }
 
-            ho_RegionUnion.Dispose();
-            HOperatorSet.Union1(ho_SortedRegions, out ho_RegionUnion);
-            hv_OutRow1.Dispose();
-            hv_OutColumn1.Dispose();
-            hv_OutRow2.Dispose();
-            hv_OutColumn2.Dispose();
-            HOperatorSet.SmallestRectangle1(
-                ho_RegionUnion,
-                out hv_OutRow1,
-                out hv_OutColumn1,
-                out hv_OutRow2,
-                out hv_OutColumn2
-            );
+        //    ho_RegionUnion.Dispose();
+        //    HOperatorSet.Union1(ho_SortedRegions, out ho_RegionUnion);
+        //    hv_OutRow1.Dispose();
+        //    hv_OutColumn1.Dispose();
+        //    hv_OutRow2.Dispose();
+        //    hv_OutColumn2.Dispose();
+        //    HOperatorSet.SmallestRectangle1(
+        //        ho_RegionUnion,
+        //        out hv_OutRow1,
+        //        out hv_OutColumn1,
+        //        out hv_OutRow2,
+        //        out hv_OutColumn2
+        //    );
 
-            ho_Image.Dispose();
-            ho_ImageG.Dispose();
-            ho_ImageB.Dispose();
-            ho_ImageR.Dispose();
-            ho_ImageReduced.Dispose();
-            ho_Region.Dispose();
-            ho_RegionClosing.Dispose();
-            ho_ConnectedRegions.Dispose();
-            ho_SelectedRegions.Dispose();
-            ho_SortedRegions.Dispose();
-            ho_RegionUnion.Dispose();
+        //    ho_Image.Dispose();
+        //    ho_ImageG.Dispose();
+        //    ho_ImageB.Dispose();
+        //    ho_ImageR.Dispose();
+        //    ho_ImageReduced.Dispose();
+        //    ho_Region.Dispose();
+        //    ho_RegionClosing.Dispose();
+        //    ho_ConnectedRegions.Dispose();
+        //    ho_SelectedRegions.Dispose();
+        //    ho_SortedRegions.Dispose();
+        //    ho_RegionUnion.Dispose();
 
-            hv_Confidence.Dispose();
-            hv_TextCount.Dispose();
-            hv_Index.Dispose();
+        //    hv_Confidence.Dispose();
+        //    hv_TextCount.Dispose();
+        //    hv_Index.Dispose();
 
-            return;
-        }
+        //    return;
+        //}
 
         /// <summary>
         /// 检测字符的有无
@@ -1473,9 +1489,9 @@ namespace BottleAlgorithm
         /// </summary>
         [ObservableProperty]
         [property: Category("Algorithm")]
-        [property: DisplayName("西林瓶的半径mm")]
-        [property: Description("西林瓶的半径mm")]
-        private double cylinderRadiusMM = 11;
+        [property: DisplayName("瓶子大小")]
+        [property: Description("瓶子大小")]
+        private BottleType bottle = BottleType.Small;
 
         /// <summary>
         /// 2025.03.15 鲍赞宝
@@ -1718,4 +1734,12 @@ namespace BottleAlgorithm
     //    ROTA180 = 180,
     //    ROTA270 = 270,
     //}
+    public enum BottleType
+    {
+        [EnumString("小瓶子", "Small")]
+        Small,
+
+        [EnumString("大瓶子", "Big")]
+        Big
+    }
 }

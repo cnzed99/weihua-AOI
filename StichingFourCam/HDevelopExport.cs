@@ -26414,8 +26414,8 @@ namespace StichingFourCam
         private HTuple hv_SecondsStart = new HTuple(),
             hv_BackgroundMayContainTexture = new HTuple();
 
-        private HTuple hv_PoseCylinder = new HTuple(),
-            hv_CameraSetupModelZeroDistInCylinderOrigin = new HTuple();
+        private HTuple hv_PoseCylinder = new HTuple();
+        public static HTuple hv_CameraSetupModelZeroDistInCylinderOrigin = new HTuple();
 
         private HTuple hv_Quality = new HTuple(),
             hv_RadiusEstimated = new HTuple();
@@ -26442,7 +26442,7 @@ namespace StichingFourCam
             try
             {
                 HOperatorSet.ReadCameraSetupModel(
-                    "123.handle",
+                    "小瓶子.handle",
                     out hv_CameraSetupModelZeroDistInCylinderOrigin
                 );
                 hv_PixelSizeInMM.Dispose();

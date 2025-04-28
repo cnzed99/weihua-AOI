@@ -13,17 +13,18 @@
     <Exec Command="xcopy $(OutDir)TensorRtSharp.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
     <Exec Command="xcopy $(OutDir)SharpCompress.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
     <Exec Command="xcopy $(OutDir)GeneralMLOBBAlgorithm.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
-    <Exec Command="xcopy $(OutDir)halcondotnet.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)halcondotnetxl.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y" />
   </Target>
 
   <ItemGroup>
     <ProjectReference Include="..\GeneralMLOBBAlgorithm\GeneralMLOBBAlgorithm.csproj" />
+    <ProjectReference Include="..\StichingFourCam\StichingFourCam.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="halcondotnet">
-      <HintPath>C:\Program Files\MVTec\HALCON-18.11-Steady\bin\dotnet35\halcondotnet.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="halcondotnetxl">
+			<HintPath>halcondotnetxl.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>
