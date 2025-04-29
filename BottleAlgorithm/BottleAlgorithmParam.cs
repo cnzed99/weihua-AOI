@@ -1479,9 +1479,6 @@ namespace BottleAlgorithm
         /// 强制设定测试结果："ok"-强制设定测试结果全部为ok，"ng"-强制设定测试结果全部为ng,""-实际测试结果
         /// </summary>
         [ObservableProperty]
-        [property: Category("测试结果设定")]
-        [property: DisplayName("测试结果设定")]
-        [property: Description("测试结果设定")]
         private String inspectionResult = "";
 
         /// <summary>
@@ -1500,9 +1497,6 @@ namespace BottleAlgorithm
         /// 图像的像素实际尺寸，单位是mm
         /// </summary>
         [ObservableProperty]
-        [property: Category("Algorithm")]
-        [property: DisplayName("图像的像素尺寸mm")]
-        [property: Description("图像的像素尺寸mm")]
         private double pixelSizeMM = 0.058;
 
         /// <summary>

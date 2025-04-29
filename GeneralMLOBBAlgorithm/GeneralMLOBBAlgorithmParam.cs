@@ -534,9 +534,6 @@ namespace GeneralMLOBBAlgorithm
         /// NMScore
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("NMScore")]
-        [property: Description("NMScore")]
         private float nms = 0.5f;
 
         ///// <summary>
@@ -554,29 +551,20 @@ namespace GeneralMLOBBAlgorithm
         /// 模型尺寸
         /// </summary>
         [ObservableProperty]
-        [property: Category("尺寸参数")]
-        [property: DisplayName("模型尺寸1")]
-        [property: Description("模型尺寸1")]
-        private int input_size = 640;
+        private int input_size = 320;
 
         /// <summary>
         /// 20250331 TCG
         /// 模型尺寸
         /// </summary>
         [ObservableProperty]
-        [property: Category("尺寸参数")]
-        [property: DisplayName("模型尺寸2")]
-        [property: Description("模型尺寸2")]
-        private ImgSize output_size = ImgSize.S640;
+        private ImgSize output_size = ImgSize.S320;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 驱动设备
         /// </summary>
         [ObservableProperty]
-        [property: Category("加载参数")]
-        [property: DisplayName("驱动设备")]
-        [property: Description("驱动设备")]
         private string currentDevice = "GPU.0";
 
         /// <summary>
@@ -584,9 +572,6 @@ namespace GeneralMLOBBAlgorithm
         /// 驱动设备
         /// </summary>
         [ObservableProperty]
-        [property: Category("加载参数")]
-        [property: DisplayName("平台")]
-        [property: Description("平台")]
         private EngineType engineType = EngineType.OpenVINO;
 
         //[ObservableProperty]
