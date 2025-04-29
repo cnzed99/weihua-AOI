@@ -12,6 +12,7 @@ using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
 using StichingFourCam;
+using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
@@ -1491,6 +1492,7 @@ namespace BottleAlgorithm
         [property: Category("Algorithm")]
         [property: DisplayName("瓶子大小")]
         [property: Description("瓶子大小")]
+        [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
         private BottleType bottle = BottleType.Small;
 
         /// <summary>
