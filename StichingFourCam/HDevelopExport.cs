@@ -26442,7 +26442,7 @@ namespace StichingFourCam
             try
             {
                 HOperatorSet.ReadCameraSetupModel(
-                    "小瓶子.handle",
+                    "small.map",
                     out hv_CameraSetupModelZeroDistInCylinderOrigin
                 );
                 hv_PixelSizeInMM.Dispose();
