@@ -29,12 +29,12 @@ namespace StichingFourCam
         [ObservableProperty]
         [property: Category("结果显示")]
         [property: DisplayName("拼图耗时ms")]
-        long processTime = 0;
+        private long processTime = 0;
 
         [ObservableProperty]
         [property: Category("相机参数")]
         [property: DisplayName("拍照间隔ms")]
-        int timeLimit = 200;
+        private int timeLimit = 200;
 
         private string serialNumber1;
 
@@ -289,26 +289,34 @@ namespace StichingFourCam
             }
         }
 
-        private double cylinderRadiusInMM = 15;
+        [ObservableProperty]
+        private double cylinderRadiusInMM = 12;
 
         /// <summary>
         /// 2025.1.14 李焕彬
         ///
         /// </summary>
-        [property: Category("拼图算法参数")]
-        [property: DisplayName("CylinderRadiusInMM ")]
-        [property: Description("CylinderRadiusInMM ")]
-        public double CylinderRadiusInMM
-        {
-            get { return cylinderRadiusInMM; }
-            set
-            {
-                if (SetProperty(ref cylinderRadiusInMM, value) && Connected)
-                {
-                    ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
-                }
-            }
-        }
+        //[property: Category("拼图算法参数")]
+        //[property: DisplayName("CylinderRadiusInMM ")]
+        //[property: Description("CylinderRadiusInMM ")]
+        //public double CylinderRadiusInMM
+        //{
+        //    get { return cylinderRadiusInMM; }
+        //    set
+        //    {
+        //        if (SetProperty(ref cylinderRadiusInMM, value) && Connected)
+        //        {
+        //            ((CCamera)CCameraManagement.CameraDict[SerialNumber]).UpdateStichingParam();
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// 20250505 TCG
+        ///
+        /// </summary>
+        [ObservableProperty]
+        private string mapFile = "small.map";
 
         private double labelMinRow = 600;
 
@@ -418,9 +426,9 @@ namespace StichingFourCam
 
     public class CComboxEditorPro : PropertyEditorBase
     {
-        PropertyItem _propertyItem;
+        private PropertyItem _propertyItem;
 
-        HandyControl.Controls.ComboBox comboBox;
+        private HandyControl.Controls.ComboBox comboBox;
 
         public override FrameworkElement CreateElement(PropertyItem propertyItem)
         {

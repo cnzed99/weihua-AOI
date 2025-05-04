@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeneralMLOBBAlgorithm\GeneralMLOBBAlgorithm.csproj" />
-    <ProjectReference Include="..\StichingFourCam\StichingFourCam.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

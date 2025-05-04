@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using CameraModule;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using HalconDotNet;
 using HandyControl.Controls;
 using Newtonsoft.Json.Linq;
 using WH.Entity.LogRecord;
@@ -27,7 +29,7 @@ namespace StichingFourCam
     /// 2025.1.14 李焕彬
     /// 相机操作派生类
     /// </summary>
-    public class CCamera : CCameraBase
+    public class CCamera : CCameraBase, IRecipient<Tuple<string, double>>
     {
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -98,6 +100,11 @@ namespace StichingFourCam
 
                     this.Connected = true;
                     StartReceiveThread();
+                    // 订阅消息
+                    WeakReferenceMessenger.Default.Register<Tuple<string, double>, string>(
+                        this,
+                        "hv_CameraSetupModelZeroDistInCylinderOrigin"
+                    );
                     return true;
                 }
                 else
@@ -460,8 +467,7 @@ namespace StichingFourCam
         /// 设置曝光值
         /// </summary>
         /// <param name="value">曝光值</param>
-        public override void SetExposureTime(uint value)
-        { }
+        public override void SetExposureTime(uint value) { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -480,8 +486,7 @@ namespace StichingFourCam
         /// 设置增益
         /// </summary>
         /// <param name="value">增益</param>
-        public override void SetGain(float value)
-        { }
+        public override void SetGain(float value) { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -500,16 +505,14 @@ namespace StichingFourCam
         /// 设置Gamma值
         /// </summary>
         /// <param name="value">Gamma值</param>
-        public override void SetGamma(float value)
-        { }
+        public override void SetGamma(float value) { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 设置相机触发延时时间
         /// </summary>
         /// <param name="value">触发延时时间</param>
-        public override void SetTriggerDelay(uint value)
-        { }
+        public override void SetTriggerDelay(uint value) { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -528,8 +531,7 @@ namespace StichingFourCam
         ///设置输出脉冲宽度
         /// </summary>
         /// <param name="value">输出脉冲宽度</param>
-        public override void SetTriggerPulseWidth(uint value)
-        { }
+        public override void SetTriggerPulseWidth(uint value) { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -547,15 +549,13 @@ namespace StichingFourCam
         /// 2025.1.14 李焕彬
         /// 保存用户参数
         /// </summary>
-        public override void UserSaveParam()
-        { }
+        public override void UserSaveParam() { }
 
         /// <summary>
         /// 2025.1.14 李焕彬
         /// 加载用户参数
         /// </summary>
-        public override void UserLoadParam()
-        { }
+        public override void UserLoadParam() { }
 
         public override void SetCustomParam(uint value)
         {
@@ -610,6 +610,14 @@ namespace StichingFourCam
         public override void SetFrameCount(int count)
         {
             throw new NotImplementedException();
+        }
+
+        public void Receive(Tuple<string, double> msg)
+        {
+            paramSetting.MapFile = msg.Item1;
+            paramSetting.CylinderRadiusInMM = msg.Item2;
+            UpdateStichingParam();
+            StichingLog.Info("接收到数据：" + msg.Item2);
         }
     }
 }

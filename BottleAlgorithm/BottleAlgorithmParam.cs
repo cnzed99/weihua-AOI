@@ -5,13 +5,13 @@ using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using GeneralMLOBBAlgorithm;
 using HalconDotNet;
 using HandyControl.Controls;
 using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
-using StichingFourCam;
 using WH.Controls;
 using WH.Entity.Attribute;
 using WH.Entity.CommonLib;
@@ -139,12 +139,23 @@ namespace BottleAlgorithm
         {
             CBottleParam param =
                 AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CBottleParam;
-            HOperatorSet.ReadCameraSetupModel(
-                param.Bottle == BottleType.Small ? "small.map" : "big.map",
-                out HTuple hv_CameraSetupModelZeroDistInCylinderOrigin
+
+            bool ret = param.Bottle == BottleType.Small;
+
+            //HOperatorSet.ReadCameraSetupModel(
+            //    ret ? "small.map" : "big.map",
+            //    out HTuple hv_CameraSetupModelZeroDistInCylinderOrigin
+            //);
+            string handleFile = ret ? "small.map" : "big.map";
+            double radius = ret ? 8.9 : 12;
+            // 发送消息通知其他插件
+            WeakReferenceMessenger.Default.Send(
+                new Tuple<string, double>(handleFile, radius),
+                "hv_CameraSetupModelZeroDistInCylinderOrigin"
             );
-            HDevelopExportPro.hv_CameraSetupModelZeroDistInCylinderOrigin =
-                hv_CameraSetupModelZeroDistInCylinderOrigin;
+
+            //HDevelopExportPro.hv_CameraSetupModelZeroDistInCylinderOrigin =
+            //    hv_CameraSetupModelZeroDistInCylinderOrigin;
         }
 
         public override void DetectImage(Cell cell)
@@ -1482,8 +1493,8 @@ namespace BottleAlgorithm
         private String inspectionResult = "";
 
         /// <summary>
-        /// 2025.03.15 鲍赞宝
-        /// 柱形物体的半径，单位是mm
+        /// 20250426 TCG
+        /// 瓶子大小
         /// </summary>
         [ObservableProperty]
         [property: Category("Algorithm")]
@@ -1491,6 +1502,17 @@ namespace BottleAlgorithm
         [property: Description("瓶子大小")]
         [property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
         private BottleType bottle = BottleType.Small;
+
+        ///// <summary>
+        ///// 20250504 TCG
+        ///// 柱形物体的半径，单位是mm
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("Algorithm")]
+        //[property: DisplayName("瓶子大小")]
+        //[property: Description("瓶子大小")]
+        //[property: Editor(typeof(CEnumPropertyEditorPro), typeof(CEnumPropertyEditorPro))]
+        //private BottleType bottle = BottleType.Small;
 
         /// <summary>
         /// 2025.03.15 鲍赞宝

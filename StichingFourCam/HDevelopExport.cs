@@ -26316,7 +26316,7 @@ namespace StichingFourCam
             : base()
         {
             camSetting = _camSetting;
-            init(width, height);
+            init(width, height, camSetting.MapFile);
         }
 
         private CParameterSetting camSetting;
@@ -26363,13 +26363,13 @@ namespace StichingFourCam
         private HTuple hv_CameraSetupModel = new HTuple(),
             hv_CamPose0 = new HTuple();
 
-        private HTuple hv_CylinderRadiusInMM = new HTuple(),
+        public static HTuple hv_CylinderRadiusInMM = new HTuple(),
             hv_LabelMinRow = new HTuple();
 
         private HTuple hv_LabelMaxRow = new HTuple(),
             hv_PixelSize = new HTuple();
 
-        private HTuple hv_CylinderRadius = new HTuple(),
+        public static HTuple hv_CylinderRadius = new HTuple(),
             hv_MeasureHandles1 = new HTuple();
 
         private HTuple hv_Row = new HTuple(),
@@ -26428,7 +26428,7 @@ namespace StichingFourCam
 
         private HTuple hv_Message = new HTuple();
 
-        private void init(int width, int height)
+        private void init(int width, int height, string mapFile)
         {
             // Initialize local and output iconic variables
             HOperatorSet.GenEmptyObj(out ho_Rectangle);
@@ -26442,7 +26442,7 @@ namespace StichingFourCam
             try
             {
                 HOperatorSet.ReadCameraSetupModel(
-                    "small.map",
+                    mapFile,
                     out hv_CameraSetupModelZeroDistInCylinderOrigin
                 );
                 hv_PixelSizeInMM.Dispose();
