@@ -12,7 +12,7 @@
     Title="{Binding [SQLSetParam],Source={x:Static local:CLang.instance}}"
     Width="850"
     Height="250"
-    d:DataContext="{d:DesignInstance Type=local:SQLBase}"
+    d:DataContext="{d:DesignInstance Type=local:CMySqlVM}"
     Icon="/MySqlOperatesApi;component/Resources/数据库设置.png"
     ResizeMode="NoResize"
     SizeToContent="Height"
@@ -75,8 +75,7 @@
                             IsSafeEnabled="false"
                             PasswordChar="*"
                             ShowEyeButton="True"
-                            UnsafePassword="{Binding MysqlExecute.Password, Mode=TwoWay}" />
-
+                            UnsafePassword="{Binding MysqlExecute.PassWord, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBox
@@ -106,7 +105,6 @@
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MysqlExecute.RemotePort}" />
 
-
                         <TextBox
                             Width="160"
                             Margin="5"
@@ -123,11 +121,9 @@
                             hc:InfoElement.Title="{Binding [DBDeviceName],Source={x:Static local:CLang.instance}}"
                             hc:InfoElement.TitlePlacement="Left"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding MysqlExecute.DBDeviceName}" />
+                            Text="{Binding MysqlExecute.DbDeviceName}" />
                     </StackPanel>
-
                 </StackPanel>
-
             </GroupBox>
         </StackPanel>
         <StackPanel
@@ -143,6 +139,5 @@
                 Content="{Binding [Save],Source={x:Static local:CLang.instance}}"
                 Style="{StaticResource ButtonPrimary}" />
         </StackPanel>
-
     </Grid>
 </hc:Window>
