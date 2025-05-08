@@ -437,24 +437,12 @@ namespace PlcControl
                     }
                     switch (e.Addr)
                     {
-                        case 1604:
-                            IsBinFull = e.ReadValue == 1;
-                            break;
-
-                        case 1603:
-                            PlcIsRun = e.ReadValue == 1;
-                            break;
-
-                        case 302:
+                        case 302: //入口料仓计数
                             InBinNumber = (int)e.ReadValue;
                             break;
 
-                        case 300:
+                        case 300: //出口料仓计数
                             OutBinNumber = (int)e.ReadValue;
-                            break;
-
-                        case 1602:
-                            IsError = e.ReadValue == 1;
                             break;
 
                         default:
@@ -468,15 +456,15 @@ namespace PlcControl
                     e.HasSignal = modbusTcp.ReadCoil(e.Addr);
                     switch (e.Addr)
                     {
-                        case 1604:
+                        case 1604: //料仓满料
                             IsBinFull = e.HasSignal;
                             break;
 
-                        case 1603:
+                        case 1603: //PLC运行
                             PlcIsRun = e.HasSignal;
                             break;
 
-                        case 1602:
+                        case 1602: //卡料报警
                             IsError = e.HasSignal;
                             break;
 

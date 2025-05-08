@@ -74,7 +74,9 @@ namespace CameraModule
         /// </summary>
         public CCameraParameterBase Setting { get; set; }
 
-        public CCameraBase() { }
+        public CCameraBase()
+        {
+        }
 
         /// <summary>
         /// 李焕彬 2024.7.24
@@ -124,7 +126,7 @@ namespace CameraModule
         /// </summary>
         private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(5)
         {
-            FullMode = BoundedChannelFullMode.DropOldest
+            FullMode = BoundedChannelFullMode.Wait
         };
 
         /// <summary>
@@ -260,12 +262,15 @@ namespace CameraModule
             {
                 case EMIMAGEROTATE.EMROTATE0:
                     break;
+
                 case EMIMAGEROTATE.EMROTATE90:
                     widthNew = Setting.ImageHeight;
                     heightNew = Setting.ImageWidth;
                     break;
+
                 case EMIMAGEROTATE.EMROTATE180:
                     break;
+
                 case EMIMAGEROTATE.EMROTATE270:
                     widthNew = Setting.ImageHeight;
                     heightNew = Setting.ImageWidth;
@@ -516,8 +521,10 @@ namespace CameraModule
             {
                 case EMIMAGEROTATE.EMROTATE90:
                     return Setting.ImageHeight;
+
                 case EMIMAGEROTATE.EMROTATE270:
                     return Setting.ImageHeight;
+
                 default:
                     return Setting.ImageWidth;
             }
@@ -529,8 +536,10 @@ namespace CameraModule
             {
                 case EMIMAGEROTATE.EMROTATE90:
                     return Setting.ImageWidth;
+
                 case EMIMAGEROTATE.EMROTATE270:
                     return Setting.ImageWidth;
+
                 default:
                     return Setting.ImageHeight;
             }
@@ -543,36 +552,67 @@ namespace CameraModule
         }
 
         public abstract bool OpenCamera();
+
         public abstract void CloseCamera();
+
         public abstract bool StartGrab();
+
         public abstract bool StopGrab();
+
         public abstract bool GetImageWidth(out int value);
+
         public abstract bool GetImageHeight(out int value);
+
         public abstract bool GetCameraType(out PixelFormat cameraType);
+
         protected abstract void SetTriggerMode(EMTRIGGERMODE mode);
+
         public abstract bool GetTriggerMode(out EMTRIGGERMODE mode);
+
         public abstract bool GetExposureTime(out uint value);
+
         public abstract void SetExposureTime(uint value);
+
         public abstract bool GetGain(out float value);
+
         public abstract void SetGain(float value);
+
         public abstract bool GetGamma(out float value);
+
         public abstract void SetGamma(float value);
+
         public abstract void SetTriggerDelay(uint value);
+
         public abstract bool GetTriggerDelay(out uint value);
+
         public abstract void SetTriggerPulseWidth(uint value);
+
         public abstract bool GetTriggerPulseWidth(out uint value);
+
         public abstract void UserSaveParam();
+
         public abstract void UserLoadParam();
+
         public abstract void SetStrobeEnable(bool enable);
+
         public abstract void SetLineSelector(object line);
+
         public abstract void SetStrobeDuration(uint value);
+
         public abstract void SetLineSource(object source);
+
         public abstract void SetLineInverter(bool enable);
+
         public abstract void SetLineMode(object lineMode);
+
         public abstract void LineTriggerSoftware();
+
         public abstract void SetGammaEnable(bool enable);
+
         public abstract float GetFps();
+
         public abstract void SetFrameCount(int count);
+
         public abstract void SetCustomParam(uint value);
     }
 }

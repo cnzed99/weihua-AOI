@@ -220,7 +220,7 @@ namespace PlcControl
                         //SendXYData?.Invoke(xState, yState);
                         //触发事件，读取元件
                         ReadElemData?.Invoke();
-                        Thread.Sleep(10);
+                        Thread.Sleep(1000);
                     }
                     else
                     {
@@ -483,6 +483,47 @@ namespace PlcControl
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// 20250507 TCG
+        /// 读取多寄存器数据
+        /// </summary>
+        /// <param name="startAddress">开始地址</param>
+        /// <param name="numberofValues">连续数据个数，自动偏移，例D300,D302算两个</param>
+        /// <returns>数据列表</returns>
+        public List<Int32> ReadHoldingRegisterInt32(ushort startAddress, ushort numberofValues)
+        {
+            List<Int32> values = new(numberofValues);
+            try
+            {
+                int index = 0;
+                if (tcpClient.Connected)
+                {
+                    var value = master.ReadHoldingRegisters(
+                        slaveAddress,
+                        startAddress,
+                        (ushort)(2 * numberofValues)
+                    );
+
+                    if (value.Length == 2)
+                    {
+                        byte[] data = BitConverter.GetBytes(
+                            value[index] + (value[index + 1] << 16)
+                        );
+                        values[index] = (BitConverter.ToInt32(data, 0));
+                        index++;
+                    }
+                }
+                return values;
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message + ex.StackTrace);
+                CMotionCtrlVM.SysLog.Error(ex.Message + ex.StackTrace);
+            }
+
+            return values;
         }
 
         /// <summary>

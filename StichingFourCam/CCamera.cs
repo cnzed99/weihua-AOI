@@ -45,7 +45,28 @@ namespace StichingFourCam
         /// <summary>
         /// 取图队列
         /// </summary>
-        public Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
+        public Channel<Cell> m_WaitImgChannel1 = Channel.CreateBounded<Cell>(
+            s_SaveImgchannelOptions
+        );
+
+        /// <summary>
+        /// 取图队列
+        /// </summary>
+        public Channel<Cell> m_WaitImgChannel2 = Channel.CreateBounded<Cell>(
+            s_SaveImgchannelOptions
+        );
+
+        /// <summary>
+        /// 取图队列
+        /// </summary>
+        public Channel<Cell> m_WaitImgChannel3 = Channel.CreateBounded<Cell>(
+            s_SaveImgchannelOptions
+        );
+
+        /// <summary>
+        /// 取图队列
+        /// </summary>
+        public Channel<Cell> m_WaitImgChannel4 = Channel.CreateBounded<Cell>(
             s_SaveImgchannelOptions
         );
 
@@ -88,15 +109,18 @@ namespace StichingFourCam
                         CCameraManagement.CameraDict[paramSetting.SerialNumber1].GetImageWidth(),
                         CCameraManagement.CameraDict[paramSetting.SerialNumber1].GetImageHeight()
                     );
-                    m_WaitImgChannel = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                    m_WaitImgChannel1 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                    m_WaitImgChannel2 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                    m_WaitImgChannel3 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                    m_WaitImgChannel4 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
                     CCameraManagement.CameraDict[paramSetting.SerialNumber1].OutputImageChannel =
-                        m_WaitImgChannel;
+                        m_WaitImgChannel1;
                     CCameraManagement.CameraDict[paramSetting.SerialNumber2].OutputImageChannel =
-                        m_WaitImgChannel;
+                        m_WaitImgChannel2;
                     CCameraManagement.CameraDict[paramSetting.SerialNumber3].OutputImageChannel =
-                        m_WaitImgChannel;
+                        m_WaitImgChannel3;
                     CCameraManagement.CameraDict[paramSetting.SerialNumber4].OutputImageChannel =
-                        m_WaitImgChannel;
+                        m_WaitImgChannel4;
 
                     this.Connected = true;
                     StartReceiveThread();
@@ -141,52 +165,60 @@ namespace StichingFourCam
             taskReceive = Task.Factory.StartNew(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
-                await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
+
+                await foreach (Cell cell in m_WaitImgChannel1.Reader.ReadAllAsync())
                 {
                     try
                     {
+                        //List<Cell> cellFind = new List<Cell>() { cell };
+                        Cell cell2 = await m_WaitImgChannel2.Reader.ReadAsync();
+                        //cellFind.Add(cell2);
+                        Cell cell3 = await m_WaitImgChannel3.Reader.ReadAsync();
+                        //cellFind.Add(cell3);
+                        Cell cell4 = await m_WaitImgChannel4.Reader.ReadAsync();
+                        // cellFind.Add(cell4);
+                        bool isFindAll = true;
                         lock (objLock)
                         {
-                            var timeNow = DateTime.Now;
-                            saveCells.Add((timeNow, cell));
-                            if (saveCells.Count > 10)
-                            {
-                                saveCells[0].cell.Dispose();
-                                saveCells.RemoveAt(0);
-                            }
-                            bool isFindAll = true;
-                            foreach (var item in camSerials)
-                            {
-                                if (
-                                    saveCells.FindIndex(c =>
-                                        c.cell.CamSerial == item
-                                        && (timeNow - c.createTime)
-                                            < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
-                                    ) < 0
-                                )
-                                    isFindAll = false;
-                            }
+                            //var timeNow = DateTime.Now;
+                            //saveCells.Add((timeNow, cell));
+                            //if (saveCells.Count > 40)
+                            //{
+                            //    saveCells[0].cell.Dispose();
+                            //    saveCells.RemoveAt(0);
+                            //}
+                            //bool isFindAll = true;
+                            //foreach (var item in camSerials)
+                            //{
+                            //    if (
+                            //        saveCells.FindIndex(c =>
+                            //            c.cell.CamSerial == item
+                            //            && (timeNow - c.createTime)
+                            //                < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
+                            //        ) < 0
+                            //    )
+                            //        isFindAll = false;
+                            //}
+
                             if (isFindAll)
                             {
-                                List<Cell> cellFind = new List<Cell>();
-                                foreach (var item in camSerials)
-                                {
-                                    var result = saveCells.Find(c =>
-                                        c.cell.CamSerial == item
-                                        && (timeNow - c.createTime)
-                                            < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
-                                    );
-                                    cellFind.Add(result.cell);
-                                }
+                                //foreach (var item in camSerials)
+                                //{
+                                //    var result = saveCells.Find(c =>
+                                //        c.cell.CamSerial == item
+                                //        && (timeNow - c.createTime)
+                                //            < TimeSpan.FromMilliseconds(paramSetting.TimeLimit)
+                                //    );
+                                //    cellFind.Add(result.cell);
+                                //}
                                 Stopwatch sw = Stopwatch.StartNew();
                                 var stichingImage = hDevelopExport
-                                    .action(
-                                        cellFind[0].Image,
-                                        cellFind[1].Image,
-                                        cellFind[2].Image,
-                                        cellFind[3].Image
-                                    )
+                                    .action(cell.Image, cell2.Image, cell3.Image, cell4.Image)
                                     .Result;
+                                cell.Dispose();
+                                cell2.Dispose();
+                                cell3.Dispose();
+                                cell4.Dispose();
                                 paramSetting.ProcessTime = sw.ElapsedMilliseconds;
                                 StichingLog.Info($"执行拼图算法处理时间：{sw.ElapsedMilliseconds}ms!");
                                 paramSetting.ImageWidth = stichingImage.ImageWidth;
@@ -302,7 +334,10 @@ namespace StichingFourCam
                 CCameraManagement.CameraDict[paramSetting.SerialNumber2].OutputImageChannel = null;
                 CCameraManagement.CameraDict[paramSetting.SerialNumber3].OutputImageChannel = null;
                 CCameraManagement.CameraDict[paramSetting.SerialNumber4].OutputImageChannel = null;
-                m_WaitImgChannel.Writer.Complete();
+                m_WaitImgChannel1.Writer.Complete();
+                m_WaitImgChannel2.Writer.Complete();
+                m_WaitImgChannel3.Writer.Complete();
+                m_WaitImgChannel4.Writer.Complete();
                 taskReceive?.Wait();
                 hDevelopExport?.terminal();
             }
