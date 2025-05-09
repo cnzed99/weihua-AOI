@@ -15,7 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
 		<ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
 		<ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
 	</ItemGroup>
@@ -38,5 +37,14 @@
 	<ItemGroup>
 	  <Resource Include="Resources\外接通讯数据.png" />
 	</ItemGroup>
-
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net48\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net8\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 </Project>

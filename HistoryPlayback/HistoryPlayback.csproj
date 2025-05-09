@@ -24,7 +24,16 @@
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
   </ItemGroup>
-
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net48\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net8\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\上一张.png" />
     <Resource Include="Resources\下一张.png" />

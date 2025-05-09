@@ -381,7 +381,6 @@
     <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
     <ProjectReference Include="..\DataQuery\DataQuery.csproj" />
     <ProjectReference Include="..\HistoryPlayback\HistoryPlayback.csproj" />
-    <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\MarkControl\MarkControl.csproj" />
     <ProjectReference Include="..\Motion\Motion.csproj" />
     <ProjectReference Include="..\ProjProduceData\ProjProduceData.csproj" />
@@ -398,6 +397,16 @@
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net48\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<Reference Include="LanguageManager">
+			<HintPath>..\Thirddll\net8\LanguageManager.dll</HintPath>
+		</Reference>
+	</ItemGroup>
   <ItemGroup>
     <None Update="appConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
