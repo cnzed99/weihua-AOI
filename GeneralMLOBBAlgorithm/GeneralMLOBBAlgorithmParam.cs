@@ -347,7 +347,8 @@ namespace GeneralMLOBBAlgorithm
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
-                int Categ_num = text_Model_Names.Length;
+                int text_Categ_num = text_Model_Names.Length;
+                int label_Categ_num = LabelDetect_names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
                 int Input_size = param.Input_size;
@@ -361,7 +362,7 @@ namespace GeneralMLOBBAlgorithm
                     text_Model_Path,
                     engine_type,
                     CurrentDevice,
-                    Categ_num,
+                    text_Categ_num,
                     Score,
                     Nms,
                     Input_size,
@@ -372,7 +373,7 @@ namespace GeneralMLOBBAlgorithm
                     label_Model_Path,
                     engine_type,
                     CurrentDevice,
-                    Categ_num,
+                    label_Categ_num,
                     Score,
                     Nms,
                     Input_size,
