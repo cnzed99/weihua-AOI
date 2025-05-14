@@ -24,6 +24,9 @@ namespace PlcControl
     /// </summary>
     public partial class CMotionConfig : CMotionConfigBase
     {
+        [ObservableProperty]
+        private ushort isStartAddr = 484;
+
         public CMotionConfig()
             : base()
         {

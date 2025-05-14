@@ -8,6 +8,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -29,7 +30,10 @@ namespace StichingFourCam
     /// 2025.1.14 李焕彬
     /// 相机操作派生类
     /// </summary>
-    public class CCamera : CCameraBase, IRecipient<Tuple<string, double>>
+    public class CCamera
+        : CCameraBase,
+            IRecipient<Tuple<string, double>>,
+            IRecipient<Tuple<string, bool>>
     {
         /// <summary>
         /// 2025.1.14 李焕彬
@@ -128,6 +132,10 @@ namespace StichingFourCam
                     WeakReferenceMessenger.Default.Register<Tuple<string, double>, string>(
                         this,
                         "hv_CameraSetupModelZeroDistInCylinderOrigin"
+                    );
+                    WeakReferenceMessenger.Default.Register<Tuple<string, bool>, string>(
+                        this,
+                        "MainVMStart"
                     );
                     return true;
                 }
@@ -653,6 +661,38 @@ namespace StichingFourCam
             paramSetting.CylinderRadiusInMM = msg.Item2;
             UpdateStichingParam();
             StichingLog.Info("接收到数据：" + msg.Item2);
+        }
+
+        public void Receive(Tuple<string, bool> message)
+        {
+            if (message.Item1 == "MainVMStart" && message.Item2)
+            {
+                CCameraManagement.CameraDict[paramSetting.SerialNumber1].OutputImageChannel = null;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber2].OutputImageChannel = null;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber3].OutputImageChannel = null;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber4].OutputImageChannel = null;
+                m_WaitImgChannel1.Writer.Complete();
+                m_WaitImgChannel2.Writer.Complete();
+                m_WaitImgChannel3.Writer.Complete();
+                m_WaitImgChannel4.Writer.Complete();
+
+                m_WaitImgChannel1 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                m_WaitImgChannel2 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                m_WaitImgChannel3 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                m_WaitImgChannel4 = Channel.CreateBounded<Cell>(s_SaveImgchannelOptions);
+                CCameraManagement.CameraDict[paramSetting.SerialNumber1].OutputImageChannel =
+                    m_WaitImgChannel1;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber2].OutputImageChannel =
+                    m_WaitImgChannel2;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber3].OutputImageChannel =
+                    m_WaitImgChannel3;
+                CCameraManagement.CameraDict[paramSetting.SerialNumber4].OutputImageChannel =
+                    m_WaitImgChannel4;
+
+                this.Connected = true;
+                taskReceive?.Wait();
+                StartReceiveThread();
+            }
         }
     }
 }

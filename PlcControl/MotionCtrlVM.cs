@@ -57,7 +57,13 @@ namespace PlcControl
         public override void SetRunning(bool isRuning)
         {
             base.SetRunning(isRuning);
-            //modbusTcp?.WriteSingleCoil(MotionConfig.AddrStartMotion, isRuning);
+
+            modbusTcp?.WriteSingleCoil(MotionConfig.IsStartAddr, isRuning);
+            // 发送消息通知其他插件
+            WeakReferenceMessenger.Default.Send(
+                new Tuple<string, bool>("MainVMStart", isRuning),
+                "MainVMStart"
+            );
         }
 
         /// <summary>
