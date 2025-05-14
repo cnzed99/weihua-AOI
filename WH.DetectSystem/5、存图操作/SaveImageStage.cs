@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Mysqlx.Crud;
 using SaveImageManage;
 using SDFilter;
 using WH.DetectSystem.Models;
@@ -204,7 +205,27 @@ namespace WH.DetectSystem._5_存图操作
             foreach (var edge in cell.DrawEdges)
             {
                 Pen pen = new Pen(edge.BrushDraw, 1);
-                DrawPoints(edge.Points, pen);
+
+                switch (edge.DrawType)
+                {
+                    
+                    case EMDRAWTYPE.EMDRAWTYPE_POINTS:
+                        //drawView.SetPen(edge.BrushDraw);
+                        //drawView.ImgDrawPoints(edge.Points, false);
+                    
+                        DrawPoints(edge.Points, pen);
+                        break;
+
+                    case EMDRAWTYPE.EMDRAWTYPE_REGION:
+
+                        DrawPoints(edge.Points, pen);
+                        break;
+
+                    case EMDRAWTYPE.EMDRAWTYPE_Text:
+                        DrawText(edge.Text,edge.TextPos,edge.BrushDraw, cell.Image.ImageWidth / 20);
+                        break;
+                }
+
             }
             if (!cell.IsOK)
             {
@@ -216,7 +237,7 @@ namespace WH.DetectSystem._5_存图操作
                     textBuilder.ToString(),
                     AlignmentX.Right,
                     AlignmentY.Top,
-                    cell.Quality.ShowColor.Brush
+                    cell.Quality.ShowColor.Brush, cell.Image.ImageWidth / 20
                 );
                 //显示所有Region缺陷
                 if (showAllDefect)
@@ -237,7 +258,7 @@ namespace WH.DetectSystem._5_存图操作
                             DrawText(
                                     detection.DetectLog[i].ToString(),
                                     detection.regionOut[i].GetCenter(),
-                                    defectFilter.ShowColor.Brush
+                                    defectFilter.ShowColor.Brush,cell.Image.ImageWidth/20
                                 );
                             //if (i == detection.regionOut.Count - 1)
                             //{
@@ -268,7 +289,7 @@ namespace WH.DetectSystem._5_存图操作
                             DrawText(
                                    cell.Detection.DetectLog[i].ToString(),
                                    cell.Detection.regionOut[i].GetCenter(),
-                                   defectFilter.ShowColor.Brush
+                                   defectFilter.ShowColor.Brush, cell.Image.ImageWidth / 20
                                );
                             //if (i == cell.Detection.regionOut.Count - 1)
                             //{
@@ -288,7 +309,7 @@ namespace WH.DetectSystem._5_存图操作
                     "OK",
                     AlignmentX.Right,
                     AlignmentY.Top,
-                    cell.Quality.ShowColor.Brush
+                    cell.Quality.ShowColor.Brush, cell.Image.ImageWidth / 20
                 );
             }
             drawingContext.Close();
@@ -347,10 +368,10 @@ namespace WH.DetectSystem._5_存图操作
                 string text,
                 AlignmentX alignmentX,
                 AlignmentY alignmentY,
-                Brush fontBrush
+                Brush fontBrush,int fontSize
             )
             {
-                int fontSize = 50;
+               // int fontSize = 50;
                 FontFamily fontFamily = new FontFamily("宋体");
                 FontStyle fontStyle = FontStyles.Normal;
                 FontWeight fontWeight = FontWeights.Normal;
@@ -386,9 +407,9 @@ namespace WH.DetectSystem._5_存图操作
                 drawingContext.DrawText(formattedText, new Point(x, y));
             }
 
-            void DrawText(string text, Point origin, Brush fontBrush)
+            void DrawText(string text, Point origin, Brush fontBrush ,int fontSize)
             {
-                int fontSize = 50;
+                //int fontSize = 50;
                 FontFamily fontFamily = new FontFamily("宋体");
                 FontStyle fontStyle = FontStyles.Normal;
                 FontWeight fontWeight = FontWeights.Normal;
