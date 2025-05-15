@@ -1,40 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using System.Windows.Threading;
 using CameraModule;
-using HandyControl.Tools.Extension;
-using log4net.Core;
 using NetSDKCS;
-using Newtonsoft.Json.Linq;
 using PixelFormat = System.Windows.Media.PixelFormat;
 
 namespace DahuaThermalCam
 {
     /// <summary>
-    /// 2024.8.2 李焕彬
+    /// 2025.5.13 李焕彬
     /// 相机操作派生类
     /// </summary>
     public class CCamera : CCameraBase
     {
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 相机参数
         /// </summary>
         internal CParameterSetting paramSetting { get; set; }
-
-        private fRealDataCallBackEx2 realDataCallBackEx2;
 
         private fDisConnectCallBack disConnectCallback;
 
@@ -46,6 +30,12 @@ namespace DahuaThermalCam
 
         private NET_DEVICEINFO_Ex DeviceInfo;
 
+        const uint c_bufSize = 5024000; //未解压温度数据存放内存大小
+
+        IntPtr DataBuff = IntPtr.Zero; //未解压温度数据
+
+        IntPtr TempData = IntPtr.Zero; //解压后温度数据
+
         int nChannel = 0;
 
         public CCamera()
@@ -53,11 +43,10 @@ namespace DahuaThermalCam
         {
             disConnectCallback = new fDisConnectCallBack(DisConnectCallBack);
             haveReConnectCallBack = new fHaveReConnectCallBack(HaveReConnectCallBack);
-            realDataCallBackEx2 = new fRealDataCallBackEx2(RealDataCallBackEx2);
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 初始化打开相机
         /// </summary>
         /// <returns>true 打开成功，false失败</returns>
@@ -101,54 +90,11 @@ namespace DahuaThermalCam
             {
                 return false;
             }
-            SetPalette();
-            SetBrightAndContrast();
-            SetSharpness();
-            SetDetail();
             return true;
         }
 
-        Stopwatch swShow = Stopwatch.StartNew(); //帧率计时器
-
-        private void RealDataCallBackEx2(
-            IntPtr lRealHandle,
-            uint dwDataType,
-            IntPtr pBuffer,
-            uint dwBufSize,
-            IntPtr param,
-            IntPtr dwUser
-        )
-        {
-            //try
-            //{
-            //    if (!(paramSetting.TriggerMode != EMTRIGGERMODE.EMTRIGGERSOFTWARE || snapOne))
-            //        return;
-            //    snapOne = false;
-            //    grabCount++;
-
-            //    if (paramSetting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
-            //    {
-            //        //ImageQueueChannel.Writer.TryWrite(dataFrame.Bmp);
-            //    }
-            //    else
-            //    {
-            //        if (swShow.Elapsed.TotalMilliseconds > ((CParameterSetting)Setting).FrameTicks)
-            //        {
-            //            swShow.Restart();
-            //            //ImageQueueChannel.Writer.TryWrite(dataFrame.Bmp);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
-            //    );
-            //}
-        }
-
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取图像数据
         /// </summary>
         /// <param name="zoo">图像数据</param>
@@ -183,7 +129,7 @@ namespace DahuaThermalCam
         ) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 关闭相机
         /// </summary>
         public override void CloseCamera()
@@ -194,11 +140,21 @@ namespace DahuaThermalCam
                 NETClient.Logout(lLoginID);
                 lLoginID = IntPtr.Zero;
             }
+            if (DataBuff != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(DataBuff);
+                DataBuff = IntPtr.Zero;
+            }
+            if (TempData != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(TempData);
+                TempData = IntPtr.Zero;
+            }
             //NETClient.Cleanup();
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 开始采集
         /// </summary>
         public override bool StartGrab()
@@ -217,7 +173,7 @@ namespace DahuaThermalCam
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 停止采集
         /// </summary>
         public override bool StopGrab()
@@ -275,7 +231,7 @@ namespace DahuaThermalCam
         Bitmap bitmapSave;
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 软触发触发拍照执行
         /// </summary>
         public override void ExecuteSoftwareTrigger()
@@ -286,48 +242,58 @@ namespace DahuaThermalCam
                 {
                     base.ExecuteSoftwareTrigger();
                     grabCount++;
-                    NET_SNAP_PARAMS stu_snap_param = new NET_SNAP_PARAMS()
+
+                    NET_IN_GET_HEATMAPS_INFO pInParam = new NET_IN_GET_HEATMAPS_INFO();
+                    pInParam.nChannel = 0;
+                    pInParam.dwSize = (uint)Marshal.SizeOf(typeof(NET_IN_GET_HEATMAPS_INFO));
+                    NET_OUT_GET_HEATMAPS_INFO pOutParam = new NET_OUT_GET_HEATMAPS_INFO();
+                    pOutParam.dwSize = (uint)Marshal.SizeOf(typeof(NET_OUT_GET_HEATMAPS_INFO));
+                    pOutParam.dwMaxDataBufLen = c_bufSize;
+                    if (DataBuff == IntPtr.Zero)
                     {
-                        Channel = (uint)nChannel,
-                        Quality = 2,
-                        mode = 0
-                    };
-                    NET_IN_SNAP_PIC_TO_FILE_PARAM inParam = new NET_IN_SNAP_PIC_TO_FILE_PARAM()
-                    {
-                        dwSize = (uint)Marshal.SizeOf(typeof(NET_IN_SNAP_PIC_TO_FILE_PARAM)),
-                        stuParam = stu_snap_param,
-                    };
-                    NET_OUT_SNAP_PIC_TO_FILE_PARAM outParam = new NET_OUT_SNAP_PIC_TO_FILE_PARAM()
-                    {
-                        dwSize = (uint)Marshal.SizeOf(typeof(NET_OUT_SNAP_PIC_TO_FILE_PARAM)),
-                        dwPicBufLen = 1024000,
-                        szPicBuf = Marshal.AllocHGlobal(1024000),
-                    };
-                    if (NETClient.SnapPictureToFile(lLoginID, ref inParam, ref outParam, 1000))
-                    {
-                        byte[] bytes = new byte[outParam.dwPicBufRetLen];
-                        Marshal.Copy(outParam.szPicBuf, bytes, 0, bytes.Length);
-                        using (var ms = new MemoryStream(bytes))
-                        {
-                            using (var image = System.Drawing.Image.FromStream(ms))
-                            {
-                                paramSetting.ImageWidth = image.Width;
-                                paramSetting.ImageHeight = image.Height;
-                                bitmapSave = new Bitmap(image);
-                                paramSetting.CameraType = ConvertPixelFormat(
-                                    bitmapSave.PixelFormat
-                                );
-                                var bitmapData = bitmapSave.LockBits(
-                                    new Rectangle(0, 0, bitmapSave.Width, bitmapSave.Height),
-                                    ImageLockMode.ReadOnly,
-                                    bitmapSave.PixelFormat
-                                );
-                                imageBufferStride = bitmapData.Stride;
-                                ImageQueueChannel.Writer.TryWrite(bitmapData.Scan0);
-                            }
-                        }
+                        DataBuff = Marshal.AllocHGlobal((int)c_bufSize);
                     }
-                    Marshal.FreeHGlobal(outParam.szPicBuf);
+                    pOutParam.pbDataBuf = DataBuff;
+                    if (NETClient.GetHeatMapsDirectly(lLoginID, ref pInParam, ref pOutParam, 1000))
+                    {
+                        int size = pOutParam.stMetaData.nHeight * pOutParam.stMetaData.nWidth;
+                        if (TempData == IntPtr.Zero)
+                        {
+                            TempData = Marshal.AllocHGlobal(size * sizeof(float));
+                        }
+                        NET_RADIOMETRY_DATA data = new NET_RADIOMETRY_DATA()
+                        {
+                            stMetaData = pOutParam.stMetaData,
+                            pbDataBuf = pOutParam.pbDataBuf,
+                            dwBufSize = pOutParam.dwRetDataBufLen
+                        };
+                        NETClient.RadiometryDataParse(ref data, IntPtr.Zero, TempData);
+                        float[] temps = new float[size];
+                        Marshal.Copy(TempData, temps, 0, size);
+                        bitmapSave = TemperatureColorMap.CreateTemperatureImageOptimized(
+                            temps,
+                            pOutParam.stMetaData.nWidth,
+                            pOutParam.stMetaData.nHeight,
+                            paramSetting.EnableTempLimit ? paramSetting.TempLower : -20,
+                            paramSetting.EnableTempLimit ? paramSetting.TempHigher : 150,
+                            paramSetting.Palette
+                        );
+                        paramSetting.ImageWidth = bitmapSave.Width;
+                        paramSetting.ImageHeight = bitmapSave.Height;
+                        paramSetting.CameraType = PixelFormats.Bgra32;
+                        // 锁定位图数据
+                        BitmapData bitmapData = bitmapSave.LockBits(
+                            new Rectangle(0, 0, bitmapSave.Width, bitmapSave.Height),
+                            ImageLockMode.WriteOnly,
+                            bitmapSave.PixelFormat
+                        );
+                        imageBufferStride = bitmapData.Stride;
+                        ImageQueueChannel.Writer.TryWrite(bitmapData.Scan0);
+                    }
+                    else
+                    {
+                        throw new Exception("GetHeatMapsDirectly fail!");
+                    }
                 }
             }
             catch (Exception ex)
@@ -339,110 +305,8 @@ namespace DahuaThermalCam
             }
         }
 
-        public void SetPalette()
-        {
-            object obj = new object();
-            NETClient.GetNewDevConfig(
-                lLoginID,
-                nChannel,
-                SDK_NEWDEVCONFIG_CMD.CFG_CMD_THERMO_GRAPHY,
-                ref obj,
-                typeof(NET_CFG_THERMOGRAPHY_INFO),
-                1000
-            );
-            NET_CFG_THERMOGRAPHY_INFO info = (NET_CFG_THERMOGRAPHY_INFO)obj;
-            info.stOptions[0].nColorization = (int)paramSetting.Colorization;
-            info.stOptions[1].nColorization = (int)paramSetting.Colorization;
-            info.stOptions[2].nColorization = (int)paramSetting.Colorization;
-            NETClient.SetNewDevConfig(
-                lLoginID,
-                0,
-                SDK_NEWDEVCONFIG_CMD.CFG_CMD_THERMO_GRAPHY,
-                info,
-                typeof(NET_CFG_THERMOGRAPHY_INFO),
-                1000
-            );
-        }
-
-        public void SetBrightAndContrast()
-        {
-            NET_VIDEOIN_COLOR_INFO info = new NET_VIDEOIN_COLOR_INFO();
-            info.dwSize = (uint)Marshal.SizeOf(info);
-            info.emCfgType = EM_A_NET_EM_CONFIG_TYPE.NET_EM_CONFIG_NORMAL;
-            object obj = info;
-            NETClient.GetOperateConfig(
-                lLoginID,
-                EM_CFG_OPERATE_TYPE.VIDEOIN_COLOR,
-                nChannel,
-                ref obj,
-                typeof(NET_VIDEOIN_COLOR_INFO),
-                1000
-            );
-            info = (NET_VIDEOIN_COLOR_INFO)obj;
-            info.nBrightness = (int)paramSetting.Brightness;
-            info.nContrast = (int)paramSetting.Contrast;
-            NETClient.SetOperateConfig(
-                lLoginID,
-                EM_CFG_OPERATE_TYPE.VIDEOIN_COLOR,
-                nChannel,
-                info,
-                typeof(NET_VIDEOIN_COLOR_INFO),
-                1000
-            );
-        }
-
-        public void SetSharpness()
-        {
-            NET_VIDEOIN_SHARPNESS_INFO info = new NET_VIDEOIN_SHARPNESS_INFO();
-            info.dwSize = (uint)Marshal.SizeOf(info);
-            info.emCfgType = EM_A_NET_EM_CONFIG_TYPE.NET_EM_CONFIG_NORMAL;
-            object obj = info;
-            NETClient.GetOperateConfig(
-                lLoginID,
-                EM_CFG_OPERATE_TYPE.VIDEOIN_SHARPNESS,
-                nChannel,
-                ref obj,
-                typeof(NET_VIDEOIN_SHARPNESS_INFO),
-                1000
-            );
-            info = (NET_VIDEOIN_SHARPNESS_INFO)obj;
-            info.nSharpness = (int)paramSetting.Sharpness;
-            info.emSharpnessMode = EM_A_NET_EM_SHARPNESS_MODE.NET_EM_SHARPNESS_MANAUL;
-            NETClient.SetOperateConfig(
-                lLoginID,
-                EM_CFG_OPERATE_TYPE.VIDEOIN_SHARPNESS,
-                nChannel,
-                info,
-                typeof(NET_VIDEOIN_SHARPNESS_INFO),
-                1000
-            );
-        }
-
-        public void SetDetail()
-        {
-            object obj = new object();
-            NETClient.GetNewDevConfig(
-                lLoginID,
-                nChannel,
-                SDK_NEWDEVCONFIG_CMD.CFG_CMD_LCE_STATE,
-                ref obj,
-                typeof(NET_CFG_LCE_STATE_INFO),
-                1000
-            );
-            NET_CFG_LCE_STATE_INFO info = (NET_CFG_LCE_STATE_INFO)obj;
-            info.unLCEValue = paramSetting.DetailEnhancer;
-            NETClient.SetNewDevConfig(
-                lLoginID,
-                nChannel,
-                SDK_NEWDEVCONFIG_CMD.CFG_CMD_LCE_STATE,
-                info,
-                typeof(NET_CFG_LCE_STATE_INFO),
-                1000
-            );
-        }
-
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置参数
         /// </summary>
         public override void SetCameraParam()
@@ -451,7 +315,7 @@ namespace DahuaThermalCam
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取图像宽度
         /// </summary>
         /// <param name="value">图像宽度</param>
@@ -460,22 +324,10 @@ namespace DahuaThermalCam
         {
             value = 1000;
             return false;
-            //{
-            //    value = _cameraBasicInfo.DataWidth;
-            //    return value > 0;
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetWidth2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    value = 1000;
-            //    return false;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取图像高度
         /// </summary>
         /// <param name="value">图像高度</param>
@@ -484,23 +336,10 @@ namespace DahuaThermalCam
         {
             value = 1000;
             return false;
-            //try
-            //{
-            //    value = _cameraBasicInfo.DataHeight;
-            //    return value > 0;
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetHeight2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    value = 1000;
-            //    return false;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取图像类型
         /// </summary>
         /// <param name="cameraType">图像类型</param>
@@ -509,93 +348,29 @@ namespace DahuaThermalCam
         {
             cameraType = PixelFormats.Bgra32;
             return false;
-            //try
-            //{
-            //    cameraType = PixelFormats.Bgra32;
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetCamType2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    cameraType = PixelFormats.Bgra32;
-            //    return false;
-            //}
         }
 
-        EMTRIGGERMODE modeSet;
-
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 修改相机触发模式
         /// </summary>
         /// <param name="useTrigger">是否使用触发</param>
-        protected override void SetTriggerMode(EMTRIGGERMODE mode)
-        {
-            modeSet = mode;
-        }
+        protected override void SetTriggerMode(EMTRIGGERMODE mode) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取相机触发模式
         /// </summary>
         /// <param name="useTrigger">是否使用触发</param>
         /// <returns>true成功，false失败</returns>
         public override bool GetTriggerMode(out EMTRIGGERMODE mode)
         {
-            mode = modeSet;
+            mode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
             return true;
-            //try
-            //{
-            //    MVCC_ENUMVALUE enumValue = new();
-            //    int nRet = m_MyCamera.MV_CC_GetEnumValue_NET("TriggerMode", ref enumValue);
-            //    if (nRet == MV_OK)
-            //    {
-            //        if (enumValue.nCurValue == (uint)MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF)
-            //        {
-            //            mode = EMTRIGGERMODE.EMTRIGGERNONE;
-            //            return true;
-            //        }
-            //        else
-            //        {
-            //            nRet = m_MyCamera.MV_CC_GetEnumValue_NET("TriggerSource", ref enumValue);
-            //            if (nRet == MV_OK)
-            //            {
-            //                if (
-            //                    enumValue.nCurValue
-            //                    == (uint)MV_CAM_TRIGGER_SOURCE.MV_TRIGGER_SOURCE_SOFTWARE
-            //                )
-            //                {
-            //                    mode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
-            //                }
-            //                else
-            //                {
-            //                    mode = EMTRIGGERMODE.EMTRIGGERHARDWARE;
-            //                }
-            //                return true;
-            //            }
-            //        }
-            //    }
-            //    mode = EMTRIGGERMODE.EMTRIGGERNONE;
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetTriggerMode + nRet.ToString()
-            //    );
-            //    return false;
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetTriggerMode2
-            //            + paramSetting.SerialNumber
-            //            + ex.Message
-            //    );
-            //    throw;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取当前曝光值
         /// </summary>
         /// <param name="value">曝光值</param>
@@ -604,65 +379,17 @@ namespace DahuaThermalCam
         {
             value = 0;
             return true;
-            //try
-            //{
-            //    MVCC_FLOATVALUE pcFloatValue = new MVCC_FLOATVALUE();
-            //    int nRet = m_MyCamera.MV_CC_GetFloatValue_NET("ExposureTime", ref pcFloatValue);
-            //    if (MV_OK == nRet)
-            //    {
-            //        value = (uint)pcFloatValue.fCurValue;
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        value = 0;
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorGetExposureTime + nRet.ToString()
-            //        );
-            //        return false;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetExposureTime2
-            //            + paramSetting.SerialNumber
-            //            + ex.Message
-            //    );
-            //    throw;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置曝光值
         /// </summary>
         /// <param name="value">曝光值</param>
-        public override void SetExposureTime(uint value)
-        {
-            //try
-            //{
-            //    int nRet = m_MyCamera.MV_CC_SetFloatValue_NET("ExposureTime", (float)value);
-            //    if (MV_OK != nRet)
-            //    {
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorSetExposureTime + nRet.ToString()
-            //        );
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorSetExposureTime2
-            //            + paramSetting.SerialNumber
-            //            + ex.Message
-            //    );
-            //    throw;
-            //}
-        }
+        public override void SetExposureTime(uint value) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取增益值
         /// </summary>
         /// <param name="value">增益</param>
@@ -674,33 +401,14 @@ namespace DahuaThermalCam
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置增益
         /// </summary>
         /// <param name="value">增益</param>
-        public override void SetGain(float value)
-        {
-            //try
-            //{
-            //    int nRet = m_MyCamera.MV_CC_SetFloatValue_NET("Gain", value);
-            //    if (MV_OK != nRet)
-            //    {
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorSetGain + nRet.ToString()
-            //        );
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorSetGain2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    throw;
-            //}
-        }
+        public override void SetGain(float value) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取Gamma值
         /// </summary>
         /// <param name="value">Gamma值</param>
@@ -709,89 +417,24 @@ namespace DahuaThermalCam
         {
             value = 0;
             return true;
-            //try
-            //{
-            //    MVCC_FLOATVALUE pcFloatValue = new MVCC_FLOATVALUE();
-            //    int nRet = m_MyCamera.MV_CC_GetFloatValue_NET("Gamma", ref pcFloatValue);
-            //    if (MV_OK == nRet)
-            //    {
-            //        value = pcFloatValue.fCurValue;
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        value = 0;
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorGetGamma + nRet.ToString()
-            //        );
-            //        return false;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetGamma2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    throw;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置Gamma值
         /// </summary>
         /// <param name="value">Gamma值</param>
-        public override void SetGamma(float value)
-        {
-            //try
-            //{
-            //    int nRet = m_MyCamera.MV_CC_SetFloatValue_NET("Gamma", value);
-            //    if (MV_OK != nRet)
-            //    {
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorSetGamma + nRet.ToString()
-            //        );
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorSetGamma2 + paramSetting.SerialNumber + ex.Message
-            //    );
-            //    throw;
-            //}
-        }
+        public override void SetGamma(float value) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置相机触发延时时间
         /// </summary>
         /// <param name="value">触发延时时间</param>
-        public override void SetTriggerDelay(uint value)
-        {
-            //try
-            //{
-            //    int nRet = m_MyCamera.MV_CC_SetFloatValue_NET("TriggerDelay", value);
-            //    if (MV_OK != nRet)
-            //    {
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorSetTriggerDelay + nRet.ToString()
-            //        );
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorSetTriggerDelay2
-            //            + paramSetting.SerialNumber
-            //            + ex.Message
-            //    );
-            //    throw;
-            //}
-        }
+        public override void SetTriggerDelay(uint value) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取相机触发延时时间
         /// </summary>
         /// <param name="value">触发延时时间</param>
@@ -800,44 +443,17 @@ namespace DahuaThermalCam
         {
             value = 0;
             return true;
-            //try
-            //{
-            //    MVCC_FLOATVALUE pcFloatValue = new MVCC_FLOATVALUE();
-            //    int nRet = m_MyCamera.MV_CC_GetFloatValue_NET("TriggerDelay", ref pcFloatValue);
-            //    if (MV_OK == nRet)
-            //    {
-            //        value = (uint)pcFloatValue.fCurValue;
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        value = 0;
-            //        CCameraManagement.CamLogger.Error(
-            //            Properties.Resources.ErrorGetTriggerDelay + nRet.ToString()
-            //        );
-            //        return false;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    CCameraManagement.CamLogger.Error(
-            //        Properties.Resources.ErrorGetTriggerDelay2
-            //            + paramSetting.SerialNumber
-            //            + ex.Message
-            //    );
-            //    throw;
-            //}
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         ///设置输出脉冲宽度
         /// </summary>
         /// <param name="value">输出脉冲宽度</param>
         public override void SetTriggerPulseWidth(uint value) { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 获取输出脉冲宽度
         /// </summary>
         /// <param name="value">输出脉冲宽度</param>
@@ -849,19 +465,19 @@ namespace DahuaThermalCam
         }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 保存用户参数
         /// </summary>
         public override void UserSaveParam() { }
 
         /// <summary>
-        /// 2024.8.2 李焕彬
+        /// 2025.5.13 李焕彬
         /// 加载用户参数
         /// </summary>
         public override void UserLoadParam() { }
 
         /// <summary>
-        /// 2024.8.6 李焕彬
+        /// 2025.5.13 李焕彬
         /// 设置自定义参数
         /// </summary>
         /// <param name="value">自定义参数类别 看EMCUSTOMPARAMTYPE</param>

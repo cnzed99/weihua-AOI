@@ -2,13 +2,13 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\CamPlug\$(TargetName)\ /d /y" />
 		<Exec Command="xcopy $(SolutionDir)DahuaThermalCam\dhnetsdk.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
 		<Exec Command="xcopy $(SolutionDir)DahuaThermalCam\NetSDKCS.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
-		<Exec Command="xcopy $(SolutionDir)DahuaThermalCam\dhconfigsdk.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\ /d /y" />
 	</Target>
 
 	<ItemGroup>

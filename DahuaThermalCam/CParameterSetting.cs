@@ -15,7 +15,7 @@ using WH.Entity.CommonLib;
 namespace DahuaThermalCam
 {
     /// <summary>
-    /// 20240802 李焕彬
+    /// 2025.5.13 李焕彬
     /// 相机参数派生类
     /// </summary>
     public partial class CParameterSetting : CCameraParameterBase
@@ -66,173 +66,44 @@ namespace DahuaThermalCam
         [property: Description("Password")]
         private string password = "q123456789";
 
-        private EM_THERMO_COLORIZATION colorization = EM_THERMO_COLORIZATION.RAINBOW;
+        /// <summary>
+        /// 2025.5.13 李焕彬
+        /// 调色板
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("温宽调节")]
+        [property: DisplayName("1.调色板")]
+        [property: Description("1.调色板")]
+        private EM_PALETTE palette = EM_PALETTE.彩虹;
 
         /// <summary>
-        /// 2024.8.2 李焕彬
-        /// 伪色彩
+        /// 2025.5.13 李焕彬
+        /// 启用温宽调节
         /// </summary>
-        [Category("专用参数")]
-        [property: DisplayName("1.伪色彩")]
-        [property: Description("1.伪色彩")]
-        public EM_THERMO_COLORIZATION Colorization
-        {
-            get { return colorization; }
-            set
-            {
-                SetProperty(ref colorization, value);
-                if (Connected)
-                {
-                    try
-                    {
-                        ((CCamera)CCameraManagement.CameraDict[SerialNumber]).SetPalette();
-                    }
-                    catch (Exception ex)
-                    {
-                        Growl.Error(ex.Message);
-                    }
-                }
-                else if (CCameraManagement.s_IsLoadParam)
-                {
-                    SetProperty(ref colorization, value);
-                }
-            }
-        }
-
-        private uint brightness = 50;
+        [ObservableProperty]
+        [property: Category("温宽调节")]
+        [property: DisplayName("1.启用温宽调节")]
+        [property: Description("1.启用温宽调节")]
+        bool enableTempLimit = false;
 
         /// <summary>
-        /// 2024.8.2 李焕彬
-        /// 亮度
+        /// 2025.5.13 李焕彬
+        /// 低温
         /// </summary>
-        [Category("专用参数")]
-        [property: DisplayName("2.亮度")]
-        [property: Description("2.亮度")]
-        public uint Brightness
-        {
-            get { return brightness; }
-            set
-            {
-                SetProperty(ref brightness, value);
-                if (Connected)
-                {
-                    try
-                    {
-                        (
-                            (CCamera)CCameraManagement.CameraDict[SerialNumber]
-                        ).SetBrightAndContrast();
-                    }
-                    catch (Exception ex)
-                    {
-                        Growl.Error(ex.Message);
-                    }
-                }
-                else if (CCameraManagement.s_IsLoadParam)
-                {
-                    SetProperty(ref brightness, value);
-                }
-            }
-        }
-
-        private uint contrast = 50;
+        [ObservableProperty]
+        [property: Category("温宽调节")]
+        [property: DisplayName("2.低温")]
+        [property: Description("2.低温，单位为C")]
+        float tempLower = 20;
 
         /// <summary>
-        /// 2024.8.2 李焕彬
-        /// 对比度
+        /// 2025.5.13 李焕彬
+        /// 高温
         /// </summary>
-        [Category("专用参数")]
-        [property: DisplayName("3.对比度")]
-        [property: Description("3.对比度")]
-        public uint Contrast
-        {
-            get { return contrast; }
-            set
-            {
-                SetProperty(ref contrast, value);
-                if (Connected)
-                {
-                    try
-                    {
-                        (
-                            (CCamera)CCameraManagement.CameraDict[SerialNumber]
-                        ).SetBrightAndContrast();
-                    }
-                    catch (Exception ex)
-                    {
-                        Growl.Error(ex.Message);
-                    }
-                }
-                else if (CCameraManagement.s_IsLoadParam)
-                {
-                    SetProperty(ref contrast, value);
-                }
-            }
-        }
-
-        private uint sharpness = 60;
-
-        /// <summary>
-        /// 2024.8.2 李焕彬
-        /// 锐度
-        /// </summary>
-        [Category("专用参数")]
-        [property: DisplayName("4.锐度")]
-        [property: Description("4.锐度")]
-        public uint Sharpness
-        {
-            get { return sharpness; }
-            set
-            {
-                SetProperty(ref sharpness, value);
-                if (Connected)
-                {
-                    try
-                    {
-                        ((CCamera)CCameraManagement.CameraDict[SerialNumber]).SetSharpness();
-                    }
-                    catch (Exception ex)
-                    {
-                        Growl.Error(ex.Message);
-                    }
-                }
-                else if (CCameraManagement.s_IsLoadParam)
-                {
-                    SetProperty(ref sharpness, value);
-                }
-            }
-        }
-
-        private uint detailEnhancer = 60;
-
-        /// <summary>
-        /// 2024.8.2 李焕彬
-        /// 细节增强
-        /// </summary>
-        [Category("专用参数")]
-        [property: DisplayName("5.细节增强")]
-        [property: Description("5.细节增强")]
-        public uint DetailEnhancer
-        {
-            get { return detailEnhancer; }
-            set
-            {
-                SetProperty(ref detailEnhancer, value);
-                if (Connected)
-                {
-                    try
-                    {
-                        ((CCamera)CCameraManagement.CameraDict[SerialNumber]).SetDetail();
-                    }
-                    catch (Exception ex)
-                    {
-                        Growl.Error(ex.Message);
-                    }
-                }
-                else if (CCameraManagement.s_IsLoadParam)
-                {
-                    SetProperty(ref detailEnhancer, value);
-                }
-            }
-        }
+        [ObservableProperty]
+        [property: Category("温宽调节")]
+        [property: DisplayName("3.高温")]
+        [property: Description("3.高温，单位为C")]
+        float tempHigher = 40;
     }
 }
