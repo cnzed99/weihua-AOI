@@ -410,6 +410,10 @@ namespace PlcControl
             }
         }
 
+        private bool firstBinFull;
+        private bool firstIsError;
+        private bool firstPLCRun;
+
         /// <summary>
         /// 2025.3.6 李焕彬
         /// 读取元件数据
@@ -464,14 +468,43 @@ namespace PlcControl
                     {
                         case 1604: //料仓满料
                             IsBinFull = e.HasSignal;
+                            if (IsBinFull && !firstBinFull)
+                            {
+                                firstBinFull = true;
+                                SysLog.Error("料仓满料！");
+                            }
+                            else if (!IsBinFull && firstBinFull)
+                            {
+                                firstBinFull = false;
+                            }
                             break;
 
                         case 1603: //PLC运行
                             PlcIsRun = e.HasSignal;
+                            if (PlcIsRun && !firstPLCRun)
+                            {
+                                firstPLCRun = true;
+                                SysLog.Info("设备启动");
+                            }
+                            else if (!PlcIsRun && firstPLCRun)
+                            {
+                                firstPLCRun = false;
+                            }
+
                             break;
 
                         case 1602: //卡料报警
                             IsError = e.HasSignal;
+                            if (IsError && !firstIsError)
+                            {
+                                firstIsError = true;
+                                SysLog.Error("卡料报警！");
+                            }
+                            else if (!IsError && firstIsError)
+                            {
+                                firstIsError = false;
+                            }
+
                             break;
 
                         default:

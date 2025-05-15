@@ -94,7 +94,7 @@
                 Height="30"
                 hc:TitleElement.Title="料仓容量:"
                 DockPanel.Dock="Left"
-                Text="{Binding MotionConfig.BinCapcity, Mode=OneWay}" />
+                Text="{Binding MotionConfig.BinCapcity}" />
             <Button
                 Name="CapcityBtn"
                 Grid.Column="1"

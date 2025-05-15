@@ -843,7 +843,7 @@ namespace 断面毛刺检测软件
                             }
                         );
                     }
-                    SysLog.Error(message.alarm.RegularShow);
+                    SysLog.Info(message.alarm.RegularShow);
                 })
             );
         }
