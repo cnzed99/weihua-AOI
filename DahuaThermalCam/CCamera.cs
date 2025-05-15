@@ -46,6 +46,8 @@ namespace DahuaThermalCam
 
         private NET_DEVICEINFO_Ex DeviceInfo;
 
+        int nChannel = 0;
+
         public CCamera()
             : base()
         {
@@ -94,18 +96,15 @@ namespace DahuaThermalCam
 
         bool StartPlay()
         {
-            playHandle = NETClient.RealPlay(lLoginID, 0, IntPtr.Zero);
+            playHandle = NETClient.RealPlay(lLoginID, nChannel, IntPtr.Zero);
             if (playHandle == IntPtr.Zero)
             {
                 return false;
             }
-            //NETClient.SetRealDataCallBack(
-            //    playHandle,
-            //    realDataCallBackEx2,
-            //    IntPtr.Zero,
-            //    EM_REALDATA_FLAG.DATA_WITH_FRAME_INFO | EM_REALDATA_FLAG.RAW_DATA
-            //);
-
+            SetPalette();
+            SetBrightAndContrast();
+            SetSharpness();
+            SetDetail();
             return true;
         }
 
@@ -289,7 +288,7 @@ namespace DahuaThermalCam
                     grabCount++;
                     NET_SNAP_PARAMS stu_snap_param = new NET_SNAP_PARAMS()
                     {
-                        Channel = 0,
+                        Channel = (uint)nChannel,
                         Quality = 2,
                         mode = 0
                     };
@@ -338,6 +337,108 @@ namespace DahuaThermalCam
                 );
                 throw;
             }
+        }
+
+        public void SetPalette()
+        {
+            object obj = new object();
+            NETClient.GetNewDevConfig(
+                lLoginID,
+                nChannel,
+                SDK_NEWDEVCONFIG_CMD.CFG_CMD_THERMO_GRAPHY,
+                ref obj,
+                typeof(NET_CFG_THERMOGRAPHY_INFO),
+                1000
+            );
+            NET_CFG_THERMOGRAPHY_INFO info = (NET_CFG_THERMOGRAPHY_INFO)obj;
+            info.stOptions[0].nColorization = (int)paramSetting.Colorization;
+            info.stOptions[1].nColorization = (int)paramSetting.Colorization;
+            info.stOptions[2].nColorization = (int)paramSetting.Colorization;
+            NETClient.SetNewDevConfig(
+                lLoginID,
+                0,
+                SDK_NEWDEVCONFIG_CMD.CFG_CMD_THERMO_GRAPHY,
+                info,
+                typeof(NET_CFG_THERMOGRAPHY_INFO),
+                1000
+            );
+        }
+
+        public void SetBrightAndContrast()
+        {
+            NET_VIDEOIN_COLOR_INFO info = new NET_VIDEOIN_COLOR_INFO();
+            info.dwSize = (uint)Marshal.SizeOf(info);
+            info.emCfgType = EM_A_NET_EM_CONFIG_TYPE.NET_EM_CONFIG_NORMAL;
+            object obj = info;
+            NETClient.GetOperateConfig(
+                lLoginID,
+                EM_CFG_OPERATE_TYPE.VIDEOIN_COLOR,
+                nChannel,
+                ref obj,
+                typeof(NET_VIDEOIN_COLOR_INFO),
+                1000
+            );
+            info = (NET_VIDEOIN_COLOR_INFO)obj;
+            info.nBrightness = (int)paramSetting.Brightness;
+            info.nContrast = (int)paramSetting.Contrast;
+            NETClient.SetOperateConfig(
+                lLoginID,
+                EM_CFG_OPERATE_TYPE.VIDEOIN_COLOR,
+                nChannel,
+                info,
+                typeof(NET_VIDEOIN_COLOR_INFO),
+                1000
+            );
+        }
+
+        public void SetSharpness()
+        {
+            NET_VIDEOIN_SHARPNESS_INFO info = new NET_VIDEOIN_SHARPNESS_INFO();
+            info.dwSize = (uint)Marshal.SizeOf(info);
+            info.emCfgType = EM_A_NET_EM_CONFIG_TYPE.NET_EM_CONFIG_NORMAL;
+            object obj = info;
+            NETClient.GetOperateConfig(
+                lLoginID,
+                EM_CFG_OPERATE_TYPE.VIDEOIN_SHARPNESS,
+                nChannel,
+                ref obj,
+                typeof(NET_VIDEOIN_SHARPNESS_INFO),
+                1000
+            );
+            info = (NET_VIDEOIN_SHARPNESS_INFO)obj;
+            info.nSharpness = (int)paramSetting.Sharpness;
+            info.emSharpnessMode = EM_A_NET_EM_SHARPNESS_MODE.NET_EM_SHARPNESS_MANAUL;
+            NETClient.SetOperateConfig(
+                lLoginID,
+                EM_CFG_OPERATE_TYPE.VIDEOIN_SHARPNESS,
+                nChannel,
+                info,
+                typeof(NET_VIDEOIN_SHARPNESS_INFO),
+                1000
+            );
+        }
+
+        public void SetDetail()
+        {
+            object obj = new object();
+            NETClient.GetNewDevConfig(
+                lLoginID,
+                nChannel,
+                SDK_NEWDEVCONFIG_CMD.CFG_CMD_LCE_STATE,
+                ref obj,
+                typeof(NET_CFG_LCE_STATE_INFO),
+                1000
+            );
+            NET_CFG_LCE_STATE_INFO info = (NET_CFG_LCE_STATE_INFO)obj;
+            info.unLCEValue = paramSetting.DetailEnhancer;
+            NETClient.SetNewDevConfig(
+                lLoginID,
+                nChannel,
+                SDK_NEWDEVCONFIG_CMD.CFG_CMD_LCE_STATE,
+                info,
+                typeof(NET_CFG_LCE_STATE_INFO),
+                1000
+            );
         }
 
         /// <summary>
