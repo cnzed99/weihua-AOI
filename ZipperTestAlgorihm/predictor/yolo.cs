@@ -10,7 +10,7 @@ using OpenVinoSharp.Extensions.model;
 using OpenVinoSharp.Extensions.process;
 using OpenVinoSharp.Extensions.result;
 
-namespace GeneralMLOBBAlgorithm
+namespace ZipperTestAlgorihm
 {
     public class YOLO : IDisposable
     {

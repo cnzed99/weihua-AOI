@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,18 +9,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PlcControl
+namespace ZipperInfo
 {
     /// <summary>
-    /// HomePageShowCtrl.xaml 的交互逻辑
+    /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class HomePageShowCtrl : UserControl
+    public partial class UserControl1 : UserControl
     {
-        public HomePageShowCtrl(CMotionCtrlVM motionCtrlVM)
+        public ZipperInfoVM ZipperInfoVM { get; set; }
+        public UserControl1()
         {
             InitializeComponent();
-            this.DataContext = motionCtrlVM;
+            ZipperInfoVM = new ZipperInfoVM();
+            this.DataContext = ZipperInfoVM;
         }
-
     }
+
 }

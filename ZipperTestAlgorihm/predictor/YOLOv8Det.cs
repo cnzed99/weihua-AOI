@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using OpenVinoSharp.Extensions.result;
 
-namespace GeneralMLOBBAlgorithm
+namespace ZipperTestAlgorihm
 {
-    public class YOLOv8Obb : YOLO
+    public class YOLOv8Det : YOLO
     {
-        public YOLOv8Obb(
+        public YOLOv8Det(
             string model_path,
             EngineType engine,
             string device,
@@ -31,7 +30,7 @@ namespace GeneralMLOBBAlgorithm
                 det_nms_thresh,
                 new int[] { 1, 3, (int)input_size, (int)input_size },
                 new List<string> { "images" },
-                new List<int[]> { new int[] { 1, 5 + categ_nums, output_size } },
+                new List<int[]> { new int[] { 1, 4 + categ_nums, output_size } },
                 new List<string> { "output0" }
             )
         { }
@@ -47,19 +46,15 @@ namespace GeneralMLOBBAlgorithm
             Mat result_data = new Mat(
                 this.m_output_sizes[0][1],
                 this.m_output_sizes[0][2],
-                MatType.CV_32FC1,
+                MatType.CV_32F,
                 results[0]
             );
             result_data = result_data.T();
 
-            float[] d = new float[this.m_output_sizes[0][2]];
-            result_data.GetArray<float>(out d);
-
             // Storage results list
-            List<Rect2d> position_boxes = new List<Rect2d>();
+            List<Rect> position_boxes = new List<Rect>();
             List<int> class_ids = new List<int>();
             List<float> confidences = new List<float>();
-            List<float> rotations = new List<float>();
             // Preprocessing output results
             for (int i = 0; i < result_data.Rows; i++)
             {
@@ -84,11 +79,11 @@ namespace GeneralMLOBBAlgorithm
                     float cy = result_data.At<float>(i, 1);
                     float ow = result_data.At<float>(i, 2);
                     float oh = result_data.At<float>(i, 3);
-                    double x = (cx - 0.5 * ow) * m_factor;
-                    double y = (cy - 0.5 * oh) * m_factor;
-                    double width = ow * m_factor;
-                    double height = oh * m_factor;
-                    Rect2d box = new Rect2d();
+                    int x = (int)((cx - 0.5 * ow) * m_factor);
+                    int y = (int)((cy - 0.5 * oh) * m_factor);
+                    int width = (int)(ow * m_factor);
+                    int height = (int)(oh * m_factor);
+                    Rect box = new Rect();
                     box.X = x;
                     box.Y = y;
                     box.Width = width;
@@ -97,7 +92,6 @@ namespace GeneralMLOBBAlgorithm
                     position_boxes.Add(box);
                     class_ids.Add(max_classId_point.X);
                     confidences.Add((float)max_score);
-                    rotations.Add(result_data.At<float>(i, this.m_categ_nums + 4)); //方向解析为类别数量+4，根据output0看出实际类别会比输入多5，从0开始：即+4
                 }
             }
             // NMS non maximum suppression
@@ -109,33 +103,19 @@ namespace GeneralMLOBBAlgorithm
                 this.m_det_nms_thresh,
                 out indexes
             );
-
-            List<RotatedRect> rotated_rects = new List<RotatedRect>();
+            DetResult re = new DetResult();
+            //float[][] detections = new float[indexes.Length][];
             for (int i = 0; i < indexes.Length; i++)
             {
                 int index = indexes[i];
-
-                float w = (float)position_boxes[index].Width;
-                float h = (float)position_boxes[index].Height;
-                float x = (float)position_boxes[index].X + w / 2;
-                float y = (float)position_boxes[index].Y + h / 2;
-                float r = rotations[index];
-                float w_ = w > h ? w : h;
-                float h_ = w > h ? h : w;
-                r = (float)((w > h ? r : (float)(r + Math.PI / 2)) % Math.PI);
-                RotatedRect rotate = new RotatedRect(
-                    new Point2f(x, y),
-                    new Size2f(w_, h_),
-                    (float)(r * 180.0 / Math.PI)
-                );
-                rotated_rects.Add(rotate);
-            }
-
-            ObbResult re = new ObbResult();
-            for (int i = 0; i < indexes.Length; i++)
-            {
-                int index = indexes[i];
-                re.add(class_ids[index], confidences[index], rotated_rects[i]);
+                re.add(class_ids[index], confidences[index], position_boxes[index]);
+                //detections[index] = new float[4]
+                //{
+                //    position_boxes[index].X,
+                //    position_boxes[index].Y,
+                //    position_boxes[index].Width,
+                //    position_boxes[index].Height
+                //};
             }
             return re;
         }

@@ -283,16 +283,16 @@ namespace CameraModule
                         {
                             ImageShow = image.ToBitmapSource();
                         });
-                        if (camSelect?.FuncDistinct != null)
-                        {
-                            Distinct = camSelect.FuncDistinct(image);
-                        }
-                        else
-                        {
-                            Distinct = 0;
-                        }
-                        cellRecv?.Dispose();
-                        cellRecv = cell;
+                        //if (camSelect?.FuncDistinct != null)
+                        //{
+                        //    Distinct = camSelect.FuncDistinct(image);
+                        //}
+                        //else
+                        //{
+                        //    Distinct = 0;
+                        //}
+                        //cellRecv?.Dispose();
+                        //cellRecv = cell;
                     }
                     catch (Exception ex)
                     {

@@ -18,8 +18,8 @@ namespace GeneralMLOBBAlgorithm
             int categ_nums,
             float det_thresh,
             float det_nms_thresh,
-            int input_size,
-            ImgSize output_size
+            InputImgSize input_size,
+            int output_size
         )
             : base(
                 model_path,
@@ -28,9 +28,9 @@ namespace GeneralMLOBBAlgorithm
                 categ_nums,
                 det_thresh,
                 det_nms_thresh,
-                new int[] { 1, 3, input_size, input_size },
+                new int[] { 1, 3, (int)input_size, (int)input_size },
                 new List<string> { "images" },
-                new List<int[]> { new int[] { 1, 4 + categ_nums, (int)output_size } },
+                new List<int[]> { new int[] { 1, 4 + categ_nums, output_size } },
                 new List<string> { "output0" }
             )
         { }

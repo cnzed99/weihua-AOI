@@ -8,6 +8,9 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="HandyControl" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+		<PackageReference Include="OpenCvSharp4" />
+		<PackageReference Include="OpenCvSharp4.runtime.win" />
+		<PackageReference Include="OpenCvSharp4.Windows" />
 		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>
 

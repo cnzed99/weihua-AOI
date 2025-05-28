@@ -8,7 +8,7 @@ using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using OpenVinoSharp.Extensions.result;
 
-namespace GeneralMLOBBAlgorithm
+namespace ZipperTestAlgorihm
 {
     public class YOLOv8Obb : YOLO
     {

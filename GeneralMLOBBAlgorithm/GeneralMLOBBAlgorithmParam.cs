@@ -25,9 +25,9 @@ namespace GeneralMLOBBAlgorithm
     public class GeneralMLOBBAlgorithmParam : CAlgorithmParamBase
     {
         /// <summary>
-        /// yolo对象
+        /// 拉链识别模型
         /// </summary>
-        private YOLO yolo_text = new YOLO();
+        private YOLO yolo_zipperRecognize = new YOLO();
 
         private YOLO yolo_labeldefect = new YOLO();
         protected ModelType _ModelType = ModelType.YOLOv8Det;
@@ -50,7 +50,7 @@ namespace GeneralMLOBBAlgorithm
         /// </summary>
         private string Model_Path = ".\\AlgorithmPlug\\BottleAlgorithm\\Models\\";
 
-        private string text_Model_Path;
+        private string zipperRecognize_Model_Path;
 
         private string label_Model_Path;
 
@@ -70,7 +70,7 @@ namespace GeneralMLOBBAlgorithm
         public GeneralMLOBBAlgorithmParam()
             : base()
         {
-            text_Model_Path = Path.Combine(Model_Path, "threeDataModel.onnx");
+            zipperRecognize_Model_Path = Path.Combine(Model_Path, "threeDataModel.onnx");
             string textModelNamesPath = Path.Combine(Model_Path, "threeDataModelClasses.txt");
             text_Model_Names = File.ReadAllLines(textModelNamesPath);
             label_Model_Path = Path.Combine(Model_Path, "LabelDefectModel.onnx");
@@ -278,71 +278,7 @@ namespace GeneralMLOBBAlgorithm
             // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
             EngineType engine_type = param.EngineType;
 
-            //if ((model_type == ModelType.YOLOv8Det) || (model_type == ModelType.YOLOWorld))
-            //{
-            //    infer_type = "det";
-            //}
-            //else if (
-            //    (model_type == ModelType.YOLOv9Seg)
-            //    || (model_type == ModelType.YOLOv8Seg)
-            //    || (model_type == ModelType.YOLOv5Seg)
-            //)
-            //{
-            //    infer_type = "seg";
-            //}
-            //else if ((model_type == ModelType.YOLOv8Pose))
-            //{
-            //    infer_type = "pose";
-            //}
-            //else if ((model_type == ModelType.YOLOv8Obb))
-            //{
-            //    infer_type = "obb";
-            //}
-            //else if ((model_type == ModelType.YOLOv8Cls))
-            //{
-            //    infer_type = "cls";
-            //}
-
-            //string extension = Path.GetExtension(Model_Path);
-            //if (EngineType.TensorRT == engine_type)
-            //{
-            //    //if ((extension != ".engine") && (extension == ".onnx"))
-            //    //{
-            //    //    OnnxToEngine from = new OnnxToEngine(Model_Path);
-            //    //    from.Show();
-            //    //    string directory = Path.GetDirectoryName(Model_Path);
-            //    //    string file = Path.GetFileNameWithoutExtension(Model_Path);
-            //    //    Model_Path = Path.Combine(directory, file) + ".engine";
-
-            //    //    return;
-            //    //}
-            //    //else if (extension == ".engine") { }
-            //    //else
-            //    //{
-            //    //   // show_worn_msg_box("Please select the correct model format.");
-            //    //    return;
-            //    //}
-            //}
-            //else
-            //{
-            //    if (
-            //        (
-            //            extension == ".onnx"
-            //            && (
-            //                EngineType.ONNX == engine_type
-            //                || EngineType.OpenVINO == engine_type
-            //                || EngineType.OpenCV == engine_type
-            //            )
-            //        ) || (extension == ".xml" && EngineType.OpenVINO == engine_type)
-            //    ) { }
-            //    else
-            //    {
-            //        // show_worn_msg_box("Please select the correct model format.");
-            //        return;
-            //    }
-            //}
-
-            yolo_text.Dispose();
+            yolo_zipperRecognize.Dispose();
             yolo_labeldefect.Dispose();
             if (param != null)
             {
@@ -351,34 +287,32 @@ namespace GeneralMLOBBAlgorithm
                 int label_Categ_num = LabelDetect_names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
-                int Input_size = param.Input_size;
+                InputImgSize Input_size = param.Input_size;
                 ImgSize Output_size = param.Output_size;
                 //string model_path =
                 //    param.EngineType == EngineType.TensorRT
                 //        ? Model_Path + ".engine"
                 //        : Model_Path + ".onnx";
-                yolo_text = YOLO.GetYolo(
+                yolo_zipperRecognize = YOLO.GetYolo(
                     model_type,
-                    text_Model_Path,
+                    zipperRecognize_Model_Path,
                     engine_type,
                     CurrentDevice,
                     text_Categ_num,
                     Score,
                     Nms,
-                    Input_size,
-                    Output_size
+                    Input_size
                 );
-                yolo_labeldefect = YOLO.GetYolo(
-                    model_type,
-                    label_Model_Path,
-                    engine_type,
-                    CurrentDevice,
-                    label_Categ_num,
-                    Score,
-                    Nms,
-                    Input_size,
-                    Output_size
-                );
+                //yolo_labeldefect = YOLO.GetYolo(
+                //    model_type,
+                //    label_Model_Path,
+                //    engine_type,
+                //    CurrentDevice,
+                //    label_Categ_num,
+                //    Score,
+                //    Nms,
+                //    Input_size
+                //);
             }
         }
 
@@ -387,7 +321,7 @@ namespace GeneralMLOBBAlgorithm
             List<BaseResult> sResultInfos = new List<BaseResult>();
             BaseResult textresult,
                 labelresult;
-            textresult = yolo_text.predict(img, score, nms);
+            textresult = yolo_zipperRecognize.predict(img, score, nms);
             labelresult = yolo_labeldefect.predict(img, score, nms);
             sResultInfos.Add(textresult);
             sResultInfos.Add(labelresult);
@@ -449,26 +383,6 @@ namespace GeneralMLOBBAlgorithm
             return detectRegion;
         }
 
-        //private void GetRecLen(List<Point2f> rec2Points, out double LongLen, out double ShorLen,out double phi)
-        //{
-        //    double templen1 = 0;
-        //    double templen2 = 0;
-        //    phi = 0;
-        //    templen1 = CalculateDistance(rec2Points[0], rec2Points[1]);
-        //    templen2 = CalculateDistance(rec2Points[1], rec2Points[2]);
-
-        //    if (templen1 > templen2)
-        //    {
-        //        LongLen = templen1;
-        //        ShorLen = templen2;
-        //        phi = Math.Atan((rec2Points[1].X - rec2Points[0].X) / (rec2Points[1].Y - rec2Points[0].Y));
-        //    }
-        //    else
-        //    {
-        //        LongLen = templen2;
-        //        ShorLen = templen1;
-        //    }
-        //}
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -484,17 +398,7 @@ namespace GeneralMLOBBAlgorithm
             return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
-        /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 计算矩形面积
-        /// </summary>
-        /// <param name="len1"></param>
-        /// <param name="len2"></param>
-        /// <returns></returns>
-        private double GetRecArea(double len1, double len2)
-        {
-            return len1 * len2;
-        }
+
 
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
@@ -537,29 +441,20 @@ namespace GeneralMLOBBAlgorithm
         [ObservableProperty]
         private float nms = 0.5f;
 
-        ///// <summary>
-        ///// 2024.10.28 鲍赞宝
-        ///// 缺陷类型数量
-        ///// </summary>
-        //[ObservableProperty]
-        //[property: Category("基础参数")]
-        //[property: DisplayName("缺陷类型数量")]
-        //[property: Description("已经标注的缺陷类型数量")]
-        //private int categ_num = 3;
 
         /// <summary>
         /// 20250331 TCG
         /// 模型尺寸
         /// </summary>
         [ObservableProperty]
-        private int input_size = 320;
+        private InputImgSize input_size = InputImgSize.IN640;
 
         /// <summary>
         /// 20250331 TCG
         /// 模型尺寸
         /// </summary>
         [ObservableProperty]
-        private ImgSize output_size = ImgSize.S320;
+        private ImgSize output_size = ImgSize.S640;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝

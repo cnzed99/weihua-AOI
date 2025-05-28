@@ -449,6 +449,16 @@ namespace CameraModule
         }
 
         /// <summary>
+        /// 2025.05.26 鲍赞宝
+        /// 像素当量(mm)
+        /// </summary>
+        [property: Category("通用参数")]
+        [property: DisplayName("18.拼接图片数量")]
+        [property: Description("18.拼接图片数量")]
+        [ObservableProperty]
+        private int camCount = 3;
+
+        /// <summary>
         /// 所属制程
         /// </summary>
         public string ProjGuid { get; set; }

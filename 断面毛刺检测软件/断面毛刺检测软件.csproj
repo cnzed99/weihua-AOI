@@ -141,6 +141,7 @@
     <None Remove="Resources\图片\盾牌安全风险.png" />
     <None Remove="Resources\图片\系统设置\系统设置.png" />
     <None Remove="Resources\图片\风险盾牌安全.png" />
+    <None Remove="Resources\汇通.png" />
     <None Remove="Resources\组合-2.png" />
   </ItemGroup>
 
@@ -296,6 +297,7 @@
     <Resource Include="Resources\图片\盾牌安全风险.png" />
     <Resource Include="Resources\图片\系统设置\系统设置.png" />
     <Resource Include="Resources\图片\风险盾牌安全.png" />
+    <Resource Include="Resources\汇通.png" />
     <Resource Include="Resources\组合-2.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -396,6 +398,7 @@
     <ProjectReference Include="..\WH.Load\WH.Load.csproj" />
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+    <ProjectReference Include="..\ZipperInfo\ZipperInfo.csproj" />
   </ItemGroup>
 
   <ItemGroup>

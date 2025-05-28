@@ -172,12 +172,31 @@
 
         </Grid>
         <!--  产品图像  -->
-        <Border
-            Grid.Row="2"
-            BorderBrush="White"
-            BorderThickness="3">
-            <wh:ImageView Source="{Binding ReadImage}" />
-        </Border>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="左相机" Margin="10,5" 
+             Foreground="AliceBlue"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"/>
 
+            <Border   BorderBrush="DarkGray" Margin="1"
+             Grid.Row="0"
+             BorderThickness="1">
+                <wh:ImageView Source="{Binding ReadImage}" />
+            </Border>
+            <TextBlock Grid.Row="1" Text="右相机" Margin="10,10" 
+             Foreground="AliceBlue"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"/>
+            <Border 
+            Grid.Row="1" Margin="1"
+            BorderBrush="DarkGray"
+            BorderThickness="1">
+                <wh:ImageView Source="{Binding ReadImage}" />
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

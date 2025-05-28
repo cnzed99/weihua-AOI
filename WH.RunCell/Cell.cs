@@ -29,6 +29,11 @@ namespace WH.RunCell
         public BitmapSource DefectPartImg { get; set; }
 
         /// <summary>
+        /// 拉链头图像
+        /// </summary>
+        public BitmapSource ZipperPullPartImg { get; set; }
+
+        /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
         /// </summary>
         public BitmapSource ChangleImgae { get; set; }
@@ -331,6 +336,7 @@ namespace WH.RunCell
             cell.EncoderPos = this.EncoderPos;
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;
+            cell.ZipperPullPartImg = this.ZipperPullPartImg;
             return cell;
         }
 

@@ -135,7 +135,7 @@ namespace WH.DetectSystem.Models
             {
                 FocusCtrlVM = FocusConfig.CreateCtrlVM();
                 FocusCtrlVM.SetCameraSerial(CameraSerial);
-                this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+               // this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
                 FocusCtrlVM.InitControl();
             }
             if (AppConfig.HasMarkConfig())
@@ -166,8 +166,8 @@ namespace WH.DetectSystem.Models
                 CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
                     this.m_WaitImgChannel;
-                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
-                    MaociAlgorParamConfig.GetDistinctFunc();
+                //CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+                //    MaociAlgorParamConfig.GetDistinctFunc();
             }
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociFilterConfig,
@@ -197,6 +197,9 @@ namespace WH.DetectSystem.Models
 
         [ObservableProperty]
         private BitmapSource modelImage; //= new BitmapImage(new Uri("D://铝极.png"));
+
+        [ObservableProperty]
+        private BitmapSource zipperPullImage;
 
         /// <summary>
         /// 2024.7.25 李焕彬
@@ -772,10 +775,12 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+                                BitmapSource zipperPullimg = cell.ZipperPullPartImg;
                                 _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
                                     new Action(() =>
                                     {
                                         ModelImage = bitmapSource;
+                                        ZipperPullImage = zipperPullimg;
                                     })
                                 );
                                 for (int i = 0; i < 1; i++)
@@ -1258,8 +1263,8 @@ namespace WH.DetectSystem.Models
                 CCameraManagement.CamParamDict[CameraSerial].ProjGuid = GUID;
                 CCameraManagement.CameraDict[CameraSerial].OutputImageChannel =
                     this.m_WaitImgChannel;
-                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
-                    MaociAlgorParamConfig.GetDistinctFunc();
+                //CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+                //    MaociAlgorParamConfig.GetDistinctFunc();
             }
         }
 
@@ -1285,16 +1290,16 @@ namespace WH.DetectSystem.Models
             this.AlarmSetVM.SetFilter(new() { MaociFilterConfig });
             MaociDefectsProduce.SetFilter(new() { MaociFilterConfig });
             this.MaociHistoryModel.SetHistory(MaociFilterConfig);
-            if (FocusCtrlVM is not null)
-                this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
-            if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
-            )
-            {
-                CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
-                    MaociAlgorParamConfig.GetDistinctFunc();
-            }
+            //if (FocusCtrlVM is not null)
+            //    this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+            //if (
+            //    !string.IsNullOrEmpty(CameraSerial)
+            //    && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+            //)
+            //{
+            //    CCameraManagement.CameraDict[CameraSerial].FuncDistinct =
+            //        MaociAlgorParamConfig.GetDistinctFunc();
+            //}
 
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
                 MaociFilterConfig,
@@ -1322,7 +1327,7 @@ namespace WH.DetectSystem.Models
             this.FocusConfig = CFocusManagement.FocusHeper[Focus].CreateNewfocus();
             this.FocusCtrlVM = this.FocusConfig.CreateCtrlVM();
             this.FocusCtrlVM.SetCameraSerial(CameraSerial);
-            this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+            //this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
 
             //修改之后注册自动对焦消息
             WeakReferenceMessenger.Default.Register<OperateMessage, Token>(

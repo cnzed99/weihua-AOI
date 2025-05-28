@@ -12,7 +12,23 @@
   </Target>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.Extensions" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions.OpenCvSharp" />
+    <PackageReference Include="OpenVINO.CSharp.Windows" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TensorRtSharp">
+      <HintPath>dll\net8.0\TensorRtSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,7 @@
     <None Remove="Controls\UserLogin\Imgs\未登录.png" />
     <None Remove="Controls\UserLogin\Imgs\欢迎页.png" />
     <None Remove="Controls\UserLogin\Imgs\欢迎页标.png" />
+    <None Remove="Controls\UserLogin\Imgs\汇通.png" />
     <None Remove="Controls\UserLogin\Imgs\登录页面黑.png" />
     <None Remove="Controls\UserLogin\Imgs\管理员.png" />
     <None Remove="Controls\UserLogin\Imgs\组合-2.png" />
@@ -57,6 +58,7 @@
     <Resource Include="Controls\UserLogin\Imgs\未登录.png" />
     <Resource Include="Controls\UserLogin\Imgs\欢迎页.png" />
     <Resource Include="Controls\UserLogin\Imgs\欢迎页标.png" />
+    <Resource Include="Controls\UserLogin\Imgs\汇通.png" />
     <Resource Include="Controls\UserLogin\Imgs\登录页面黑.png" />
     <Resource Include="Controls\UserLogin\Imgs\管理员.png" />
     <Resource Include="Controls\UserLogin\Imgs\组合-2.png" />

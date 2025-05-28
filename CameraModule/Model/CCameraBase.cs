@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CameraModule.Model;
 using HandyControl.Controls;
+using OpenCvSharp;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -244,6 +245,9 @@ namespace CameraModule
         /// </summary>
         public Func<CImage, float> FuncDistinct { get; set; }
 
+        List<Mat> mats = new List<Mat>();
+        Mat result;
+
         /// <summary>
         /// 2024.7.23 李焕彬
         /// 取图
@@ -251,50 +255,71 @@ namespace CameraModule
         /// <param name="grabbedRawData">图像数据</param>
         public virtual bool GetImageFunc(IntPtr grabbedRawData)
         {
-            int widthNew = Setting.ImageWidth;
-            int heightNew = Setting.ImageHeight;
-            int bitsPerPixel = Setting.CameraType.BitsPerPixel;
-            int stride =
-                imageBufferStride > 0
-                    ? imageBufferStride
-                    : Setting.ImageWidth * ((bitsPerPixel + 7) / 8);
-            switch (Setting.ImageRotate)
+            try
             {
-                case EMIMAGEROTATE.EMROTATE0:
-                    break;
+                int widthNew = Setting.ImageWidth;
+                int heightNew = Setting.ImageHeight;
+                int bitsPerPixel = Setting.CameraType.BitsPerPixel;
+                int stride =
+                    imageBufferStride > 0
+                        ? imageBufferStride
+                        : Setting.ImageWidth * ((bitsPerPixel + 7) / 8);
+                switch (Setting.ImageRotate)
+                {
+                    case EMIMAGEROTATE.EMROTATE0:
+                        break;
 
-                case EMIMAGEROTATE.EMROTATE90:
-                    widthNew = Setting.ImageHeight;
-                    heightNew = Setting.ImageWidth;
-                    break;
+                    case EMIMAGEROTATE.EMROTATE90:
+                        widthNew = Setting.ImageHeight;
+                        heightNew = Setting.ImageWidth;
+                        break;
 
-                case EMIMAGEROTATE.EMROTATE180:
-                    break;
+                    case EMIMAGEROTATE.EMROTATE180:
+                        break;
 
-                case EMIMAGEROTATE.EMROTATE270:
-                    widthNew = Setting.ImageHeight;
-                    heightNew = Setting.ImageWidth;
-                    break;
+                    case EMIMAGEROTATE.EMROTATE270:
+                        widthNew = Setting.ImageHeight;
+                        heightNew = Setting.ImageWidth;
+                        break;
+                }
+                int strideNew = widthNew * ((bitsPerPixel + 7) / 8);
+                // int strideNew = widthNew * bitsPerPixel;
+                IntPtr ptrNew = Marshal.AllocHGlobal(strideNew * heightNew);
+                RotateImage(
+                    (int)Setting.ImageRotate,
+                    bitsPerPixel / 8,
+                    Setting.ImageWidth,
+                    Setting.ImageHeight,
+                    stride,
+                    grabbedRawData,
+                    widthNew,
+                    heightNew,
+                    strideNew,
+                    ptrNew
+                );
+                Mat img = new Mat(heightNew, widthNew, MatType.CV_8UC((bitsPerPixel + 7) / 8), ptrNew);
+                mats.Add(img);
+                if (mats.Count == Setting.CamCount)
+                {
+                    // 拼接图像
+                    result = new Mat();
+
+                    Cv2.HConcat(mats.ToArray(), result);
+                    int strideMat = result.Width * ((bitsPerPixel + 7) / 8);
+
+                    CImage image = new CImage(result.Width, result.Height, strideMat, result.Data, Setting.CameraType);
+                    ExportImage(image);
+                    mats.Clear();
+                }
+
+                return true;
             }
-            int strideNew = widthNew * ((bitsPerPixel + 7) / 8);
-            // int strideNew = widthNew * bitsPerPixel;
-            IntPtr ptrNew = Marshal.AllocHGlobal(strideNew * heightNew);
-            RotateImage(
-                (int)Setting.ImageRotate,
-                bitsPerPixel / 8,
-                Setting.ImageWidth,
-                Setting.ImageHeight,
-                stride,
-                grabbedRawData,
-                widthNew,
-                heightNew,
-                strideNew,
-                ptrNew
-            );
-            CImage image = new CImage(widthNew, heightNew, strideNew, ptrNew, Setting.CameraType);
-            ExportImage(image);
-
-            return true;
+            catch (Exception)
+            {
+                mats.Clear ();
+                return false;
+            }
+          
         }
 
         /// <summary>
