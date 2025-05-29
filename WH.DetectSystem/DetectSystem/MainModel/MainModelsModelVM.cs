@@ -43,6 +43,8 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using ZipperInfo;
+using Modbus;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -358,6 +360,7 @@ namespace WH.DetectSystem.ViewModels
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
+                    CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
                 }
                 catch (Exception ex)
                 {

@@ -38,6 +38,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using static Mysqlx.Crud.Order.Types;
+using ZipperInfo;
 
 namespace WH.DetectSystem.Models
 {
@@ -332,6 +333,11 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         private CFocusCtrlVMBase focusCtrlVM;
 
+        /// <summary>
+        /// 多个cells合并
+        /// </summary>
+        private List<Cell> MergeCells = new List<Cell>();
+
         #region 启停 状态
 
         /// <summary>
@@ -523,10 +529,22 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
+                        CZipperCommunicate.GetID(out int productID, out int photoID);
+                        int photoTotalCount= CZipperCommunicate.GetPhotoCount();
+                        if (productID != -1) 
+                        {
+                            cell.ID = productID.ToString();
+                            cell.PhotoIndex = photoID;
+                            cell.PhotoTatolCount = photoTotalCount;
+                        }
+                        else
+                        {
+                            cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                        }
+
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;                  
                         if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
@@ -598,6 +616,14 @@ namespace WH.DetectSystem.Models
                         //    cell.Dispose();
 
                         //}
+                        MergeCells.Add(cell);
+                        List<Cell> currentCells=MergeCells.FindAll(c=>c.ID == cell.ID);
+                        if (currentCells.Count >= cell.PhotoTatolCount)
+                        {
+                            Cell newCell=cell.Clone();
+                        }
+
+
                         try
                         {
                             cell.Quality = MaociQualityConfig.GetBest();
@@ -649,6 +675,7 @@ namespace WH.DetectSystem.Models
                             }
                             MaociDefectsProduce.Excute(cell);
                             MaociAlarmSetConfig.Excute(cell);
+                            
                             if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
                             {
                                 ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
@@ -1088,27 +1115,7 @@ namespace WH.DetectSystem.Models
                 // object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
-                    #region 写入Access数据库
-
-                    //try
-                    //{
-                    //    var space = DiskSpace.GetHardDiskFreeSpace("D");
-                    //    if (space > 1)
-                    //    {
-                    //        if ((!SystemStatic._isRuning && CSystemParamJson.SystemSetParam.OfflineSave) || SystemStatic._isRuning) //如果是离线检测状态 并且开启了离线存图和数据按钮  或者是正常运行状态
-                    //        {
-                    //            SQLClientAccess.AddData(cell, CSystemParamJson.SystemSetParam.NowShift);//数据库写入
-                    //        }
-
-                    //    }//空间不足1GB不存
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    s_SysLog.Error("Access数据库写入错误:" + ex.Message + ex.StackTrace);
-                    //}
-
-                    #endregion 写入Access数据库
-
+                   
                     if (MySqlVM.MysqlExecute.SqlEnable)
                     {
                         try

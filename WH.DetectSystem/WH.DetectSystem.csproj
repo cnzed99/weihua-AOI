@@ -31,6 +31,7 @@
     <ProjectReference Include="..\SDFilterCtrl\SDFilter.csproj" />
     <ProjectReference Include="..\WH.LightControl\WH.LightControl.csproj" />
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+    <ProjectReference Include="..\ZipperInfo\ZipperInfo.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Autofac" />

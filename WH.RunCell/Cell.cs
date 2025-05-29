@@ -78,9 +78,13 @@ namespace WH.RunCell
         public string WaferID { get; set; } = string.Empty;
 
         /// <summary>
-        /// 当前班次的产品序号
+        /// 图片编号
         /// </summary>
-        public int ProductIndex { get; set; }
+        public int PhotoIndex { get; set; }
+        /// <summary>
+        /// 图片总数量
+        /// </summary>
+        public int PhotoTatolCount { get; set; }
 
         /// <summary>
         /// 接收信息字典
@@ -332,7 +336,7 @@ namespace WH.RunCell
             cell.OtherInfoSend = this.OtherInfoSend;
             cell.DataBytes = this.DataBytes;
             cell.WaferID = this.WaferID;
-            cell.ProductIndex = this.ProductIndex;
+            cell.PhotoIndex = this.PhotoIndex;
             cell.EncoderPos = this.EncoderPos;
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;

@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommunicationModule\CommunicationModule.csproj" />
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
+    <ProjectReference Include="..\Modbus\Modbus.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
   </ItemGroup>
 

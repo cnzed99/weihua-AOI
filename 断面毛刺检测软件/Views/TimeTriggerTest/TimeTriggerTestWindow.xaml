@@ -40,7 +40,15 @@
                 </GroupBox.Header>
                 <hc:UniformSpacingPanel Spacing="5">
                     <DockPanel>
-
+                        <TextBlock
+                           Margin="5,0"
+                           VerticalAlignment="Center"
+                           Text="软触发" />
+                        <ToggleButton
+                           Background="{StaticResource RegionBrush}"
+                           IsChecked="{Binding SoftTriggerEnable}"
+                           Style="{StaticResource ToggleButtonSwitch}" />
+                        <Button Content="触发" Command="{Binding SoftTriggerCommand}" Background="DarkCyan"/>
                         <TextBlock
                             Margin="5,0"
                             VerticalAlignment="Center"

@@ -5,10 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Xaml.Behaviors.Core;
 using WH.DetectSystem.ViewModels;
@@ -59,6 +61,22 @@ namespace 断面毛刺检测软件.Views
         }
 
         [ObservableProperty]
+        bool softTriggerEnable;
+        partial void OnSoftTriggerEnableChanged(bool value)
+        {
+            if (value)
+            {
+                cam.Setting.TriggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
+                Cam.SetTriggerModePro(EMTRIGGERMODE.EMTRIGGERSOFTWARE);
+            }
+            else
+            {
+                cam.Setting.TriggerMode = EMTRIGGERMODE.EMTRIGGERHARDWARE;
+                Cam.SetTriggerModePro(EMTRIGGERMODE.EMTRIGGERHARDWARE);
+            }
+        }
+
+        [ObservableProperty]
         CCameraBase cam;
 
         [ObservableProperty]
@@ -67,6 +85,14 @@ namespace 断面毛刺检测软件.Views
         [ObservableProperty]
         [property: MinLength(3)]
         int interval = 50;
+        [RelayCommand]
+        void SoftTrigger()
+        {
+            if (Cam.Connected)
+            {
+                Cam.ExecuteSoftwareTrigger();
+            }
+        }
 
         partial void OnIntervalChanged(int value)
         {

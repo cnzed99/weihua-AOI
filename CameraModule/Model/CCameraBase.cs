@@ -297,20 +297,28 @@ namespace CameraModule
                     strideNew,
                     ptrNew
                 );
-                Mat img = new Mat(heightNew, widthNew, MatType.CV_8UC((bitsPerPixel + 7) / 8), ptrNew);
-                mats.Add(img);
-                if (mats.Count == Setting.CamCount)
-                {
-                    // 拼接图像
-                    result = new Mat();
 
-                    Cv2.HConcat(mats.ToArray(), result);
-                    int strideMat = result.Width * ((bitsPerPixel + 7) / 8);
+                CImage image = new CImage(widthNew, heightNew, strideNew, ptrNew, Setting.CameraType);
+                ExportImage(image);
 
-                    CImage image = new CImage(result.Width, result.Height, strideMat, result.Data, Setting.CameraType);
-                    ExportImage(image);
-                    mats.Clear();
-                }
+                //Mat img = new Mat(heightNew, widthNew, MatType.CV_8UC((bitsPerPixel + 7) / 8), ptrNew);
+                //mats.Add(img);
+                //if (mats.Count >= Setting.CamCount)
+                //{
+                //    // 拼接图像
+                //    result = new Mat();
+
+                //    Cv2.HConcat(mats.ToArray(), result);
+                //    int strideMat = result.Width * ((bitsPerPixel + 7) / 8);
+
+                //    CImage image = new CImage(result.Width, result.Height, strideMat, result.Data, Setting.CameraType);
+                //    ExportImage(image);
+                //    foreach (Mat mat in mats)
+                //    {
+                //          mat.Dispose(); 
+                //    }
+                //    mats.Clear();
+                //}
 
                 return true;
             }

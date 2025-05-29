@@ -162,7 +162,7 @@ namespace WH.DetectSystem.Models
         /// 2024.9.5 李焕彬
         /// 汇总结果lock用
         /// </summary>
-        Object objLock = new object();
+        object objLock = new object();
 
         /// <summary>
         /// 2024.9.6 李焕彬
