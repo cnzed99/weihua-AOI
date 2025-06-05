@@ -35,9 +35,9 @@ namespace WH.RunCell
         public BitmapSource ZipperPullPartImg { get; set; }
         /// <summary>
         ///  2025.6.2 鲍赞宝
-        ///  单条拉链包含的图片
+        ///  单条拉链包含的图片,存图使用
         /// </summary>
-        public List<(CImage, int)> ZipperImages { get; set; } = new List<(CImage, int)>(); 
+        public List<(CImage, int,DateTime,TimeSpan)> ZipperImages { get; set; } = new List<(CImage, int, DateTime, TimeSpan)>(); 
 
         /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
@@ -297,7 +297,7 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
-            foreach ((CImage, int) img in ZipperImages)
+            foreach ((CImage, int,DateTime,TimeSpan) img in ZipperImages)
             {
                 if (img.Item1 != null)
                 {
@@ -356,10 +356,10 @@ namespace WH.RunCell
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;
             cell.ZipperPullPartImg = this.ZipperPullPartImg;
-            cell.ZipperImages = new List<(CImage, int)>();
-            foreach ((CImage, int) img in ZipperImages)
+            cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();
+            foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {
-                cell.ZipperImages.Add(((CImage)img.Item1.Clone(),img.Item2));
+                cell.ZipperImages.Add(((CImage)img.Item1.Clone(),img.Item2, img.Item3, img.Item4));
             }
             return cell;
         }

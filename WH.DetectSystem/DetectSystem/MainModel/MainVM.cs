@@ -636,7 +636,7 @@ namespace WH.DetectSystem.Models
                                 
                                 for (int i = 0; i < currentCells.Count; i++)
                                 {
-                                    newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex));
+                                    newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                 }
                                 MergeCells.RemoveAll(c => c.ID == newCell.ID);
 

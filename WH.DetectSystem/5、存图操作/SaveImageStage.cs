@@ -481,10 +481,10 @@ namespace WH.DetectSystem._5_存图操作
                     filename = s_NameBuilder.ToString();
 
                     classPath = saveImageConfig.SaveImagePath;
-                    if (saveImageConfig.SavebyProjName)
-                    {
+                    //if (saveImageConfig.SavebyProjName)
+                    //{
                         classPath = classPath + "\\" + cell.ProjName;
-                    }
+                  //  }
                     classPath = classPath + "\\" + nowShift;
                     //if (saveImageConfig.SavebyHour)
                     //{
@@ -575,15 +575,15 @@ namespace WH.DetectSystem._5_存图操作
                 string[] filenames = filepath.Split('.');
                 if (filenames.Length >= 2)
                 {
-                    foreach ((CImage, int) img in cell.ZipperImages)
+                    foreach ((CImage, int,DateTime,TimeSpan) img in cell.ZipperImages)
                     {
                         string[] namesplits = filenames[0].Split('_');
                         if (namesplits.Length >= 2)
                         {
                             namesplits[1] = img.Item2.ToString();
                             filenames[0] = string.Join("_", namesplits);
-                            string createtime = string.Format("{0:HHmmssfff}", cell.CreateTime);
-                            string filename = $"{filenames[0]}_{createtime}_{cell.ProcessTime.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+                            string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                            string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
 
                             using (FileStream stream = new FileStream(filename, FileMode.Create))
                             {
