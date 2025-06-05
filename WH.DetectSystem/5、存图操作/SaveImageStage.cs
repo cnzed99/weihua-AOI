@@ -136,7 +136,7 @@ namespace WH.DetectSystem._5_存图操作
                                 {
                                     saveCountOk = 0;
                                     WriteImage(
-                                        cell.Image,
+                                        cell,
                                         fileName,
                                         saveImageConfig.SaveImageFormat
                                     );
@@ -144,7 +144,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             else
                             {
-                                WriteImage(cell.Image, fileName, saveImageConfig.SaveImageFormat);
+                                WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
                             }
 
                             break;
@@ -152,7 +152,7 @@ namespace WH.DetectSystem._5_存图操作
                         case "1": //只存不良图
                             if (!cell.IsOK)
                             {
-                                WriteImage(cell.Image, fileName, saveImageConfig.SaveImageFormat);
+                                WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
                             }
                             break;
 
@@ -164,7 +164,7 @@ namespace WH.DetectSystem._5_存图操作
                                 {
                                     saveCountOk = 0;
                                     WriteImage(
-                                        cell.Image,
+                                        cell,
                                         fileName,
                                         saveImageConfig.SaveImageFormat
                                     );
@@ -208,11 +208,11 @@ namespace WH.DetectSystem._5_存图操作
 
                 switch (edge.DrawType)
                 {
-                    
+
                     case EMDRAWTYPE.EMDRAWTYPE_POINTS:
                         //drawView.SetPen(edge.BrushDraw);
                         //drawView.ImgDrawPoints(edge.Points, false);
-                    
+
                         DrawPoints(edge.Points, pen);
                         break;
 
@@ -222,7 +222,7 @@ namespace WH.DetectSystem._5_存图操作
                         break;
 
                     case EMDRAWTYPE.EMDRAWTYPE_Text:
-                        DrawText(edge.Text,edge.TextPos,edge.BrushDraw, cell.Image.ImageWidth / 20);
+                        DrawText(edge.Text, edge.TextPos, edge.BrushDraw, cell.Image.ImageWidth / 20);
                         break;
                 }
 
@@ -258,7 +258,7 @@ namespace WH.DetectSystem._5_存图操作
                             DrawText(
                                     detection.DetectLog[i].ToString(),
                                     detection.regionOut[i].GetCenter(),
-                                    defectFilter.ShowColor.Brush,cell.Image.ImageWidth/20
+                                    defectFilter.ShowColor.Brush, cell.Image.ImageWidth / 20
                                 );
                             //if (i == detection.regionOut.Count - 1)
                             //{
@@ -354,7 +354,7 @@ namespace WH.DetectSystem._5_存图操作
                     )
                     {
                         DrawGeometry(region, pen);
-                       // region = new List<Point>();
+                        // region = new List<Point>();
                     }
                     region.Add(item);
                 }
@@ -368,10 +368,10 @@ namespace WH.DetectSystem._5_存图操作
                 string text,
                 AlignmentX alignmentX,
                 AlignmentY alignmentY,
-                Brush fontBrush,int fontSize
+                Brush fontBrush, int fontSize
             )
             {
-               // int fontSize = 50;
+                // int fontSize = 50;
                 FontFamily fontFamily = new FontFamily("宋体");
                 FontStyle fontStyle = FontStyles.Normal;
                 FontWeight fontWeight = FontWeights.Normal;
@@ -407,7 +407,7 @@ namespace WH.DetectSystem._5_存图操作
                 drawingContext.DrawText(formattedText, new Point(x, y));
             }
 
-            void DrawText(string text, Point origin, Brush fontBrush ,int fontSize)
+            void DrawText(string text, Point origin, Brush fontBrush, int fontSize)
             {
                 //int fontSize = 50;
                 FontFamily fontFamily = new FontFamily("宋体");
@@ -457,24 +457,26 @@ namespace WH.DetectSystem._5_存图操作
                     s_NameBuilder.Clear();
                     s_NameBuilder.Append("\\");
 
-                    s_NameBuilder.Append(string.Format("{0:HHmmssfff}", cell.CreateTime)); //时间
-                    s_NameBuilder.Append("-");
-
                     s_NameBuilder.Append(cell.ID); //ID号
-                    s_NameBuilder.Append("-");
+                    s_NameBuilder.Append("_");
+
+                    s_NameBuilder.Append(cell.PhotoIndex); //图片编号
+                    s_NameBuilder.Append("_");
 
                     cropName = s_NameBuilder.ToString();
 
+                    //s_NameBuilder.Append(string.Format("{0:HHmmssfff}", cell.CreateTime)); //时间
+                    //s_NameBuilder.Append("-");
+
                     s_NameBuilder.Append(cell.Quality?.Signal); //质量信号值
-                    s_NameBuilder.Append("-");
-
+                    s_NameBuilder.Append("_");
                     s_NameBuilder.Append(cell.Quality?.Name); //质量等级名称
-                    s_NameBuilder.Append("-");
+                    s_NameBuilder.Append("_");
 
-                    s_NameBuilder.Append(cell.Detection?.DefectFilter?.Name ?? string.Empty); //缺陷名称
-                    s_NameBuilder.Append("-");
+                    s_NameBuilder.Append(cell.Detection?.DefectFilter?.Name ?? "OK"); //缺陷名称
+                   // s_NameBuilder.Append("-");
 
-                    s_NameBuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F0")); //耗时
+                    //s_NameBuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F0")); //耗时
                     s_NameBuilder.Append(saveImageConfig.SaveImageFormat); //格式
                     filename = s_NameBuilder.ToString();
 
@@ -484,18 +486,18 @@ namespace WH.DetectSystem._5_存图操作
                         classPath = classPath + "\\" + cell.ProjName;
                     }
                     classPath = classPath + "\\" + nowShift;
-                    if (saveImageConfig.SavebyHour)
-                    {
-                        string hourNow = cell.CreateTime.Hour.ToString("D2");
-                        classPath = classPath + "\\" + hourNow;
-                    }
-                    if (saveImageConfig.SavebyCamName)
-                    {
-                        if (!string.IsNullOrEmpty(cell.CamName))
-                        {
-                            classPath = classPath + "\\" + cell.CamName;
-                        }
-                    }
+                    //if (saveImageConfig.SavebyHour)
+                    //{
+                    //    string hourNow = cell.CreateTime.Hour.ToString("D2");
+                    //    classPath = classPath + "\\" + hourNow;
+                    //}
+                    //if (saveImageConfig.SavebyCamName)
+                    //{
+                    //    if (!string.IsNullOrEmpty(cell.CamName))
+                    //    {
+                    //        classPath = classPath + "\\" + cell.CamName;
+                    //    }
+                    //}
                     if (cell.IsOK)
                     {
                         classPath = classPath + "\\OK";
@@ -520,8 +522,8 @@ namespace WH.DetectSystem._5_存图操作
                     }
                     //if (saveImageConfig.SavebyID)
                     //{
-                    //    classPath = classPath + "\\" + cell.ID;
-                    //    cropPath = classPath;
+                    classPath = classPath + "\\" + cell.ID;
+                    cropPath = classPath;
                     //}
 
                     if (!Directory.Exists(classPath))
@@ -551,10 +553,50 @@ namespace WH.DetectSystem._5_存图操作
             {
                 using (FileStream stream = new FileStream(filepath, FileMode.Create))
                 {
+
                     BitmapEncoder encoder = GetEncoder(format);
                     encoder.Frames.Add(BitmapFrame.Create(image.ToBitmapSource()));
                     encoder.Save(stream);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 2025.6.5 鲍赞宝
+        /// 保存图片
+        /// </summary>
+        /// <param name="bitImage">图片</param>
+        /// <param name="filepath">存图路径</param>
+        /// <param name="format">图片格式</param>
+        private static void WriteImage(Cell cell, string filepath, string format)
+        {
+            if (cell != null && cell.ZipperImages != null)
+            {
+                string[] filenames = filepath.Split('.');
+                if (filenames.Length >= 2)
+                {
+                    foreach ((CImage, int) img in cell.ZipperImages)
+                    {
+                        string[] namesplits = filenames[0].Split('_');
+                        if (namesplits.Length >= 2)
+                        {
+                            namesplits[1] = img.Item2.ToString();
+                            filenames[0] = string.Join("_", namesplits);
+                            string createtime = string.Format("{0:HHmmssfff}", cell.CreateTime);
+                            string filename = $"{filenames[0]}_{createtime}_{cell.ProcessTime.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                            using (FileStream stream = new FileStream(filename, FileMode.Create))
+                            {
+                                BitmapEncoder encoder = GetEncoder(format);
+                                encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                encoder.Save(stream);
+                            }
+                        }
+                    }
+
+                }
+
+
             }
         }
 
@@ -690,7 +732,7 @@ namespace WH.DetectSystem._5_存图操作
                 if (subDirs.Count > 0)
                 {
                     subDirs.Sort(
-                        delegate(string l, string r)
+                        delegate (string l, string r)
                         {
                             return File.GetCreationTime(l).CompareTo(File.GetCreationTime(r));
                         }
@@ -740,7 +782,7 @@ namespace WH.DetectSystem._5_存图操作
                 if (subDirs.Count > 0)
                 {
                     subDirs.Sort(
-                        delegate(string l, string r)
+                        delegate (string l, string r)
                         {
                             return File.GetCreationTime(l).CompareTo(File.GetCreationTime(r));
                         }

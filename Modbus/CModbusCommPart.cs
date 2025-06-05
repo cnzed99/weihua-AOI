@@ -183,7 +183,7 @@ namespace Modbus
             {
                 try
                 {
-                    if (tcpClient.Connected)
+                    if (tcpClient != null && tcpClient.Connected)
                     {
                         if (isReadTestElem)
                         {
@@ -210,7 +210,7 @@ namespace Modbus
                                 }
                             }
                         }
-                        Thread.Sleep(50);
+                        Thread.Sleep(100);
                     }
                     else
                     {
@@ -287,7 +287,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     bool[] bools = master.ReadCoils(slaveAddress, startAddress, 1);
                     if (bools.Length == 1)
@@ -315,7 +315,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
                     if (value.Length == 2)
@@ -343,7 +343,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 1);
                     if (value.Length == 1)
@@ -371,7 +371,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     var value = master.ReadHoldingRegisters(slaveAddress, startAddress, 2);
                     if (value.Length == 2)
@@ -400,7 +400,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     bool[] data = new bool[1] { value };
                     master.WriteMultipleCoils(slaveAddress, startAddress, data);
@@ -423,7 +423,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     byte[] fData = BitConverter.GetBytes(value);
                     ushort[] Data = new ushort[2];
@@ -450,7 +450,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient != null && tcpClient.Connected)
                 {
                     byte[] fData = BitConverter.GetBytes(value);
                     ushort[] Data = new ushort[1];
@@ -476,7 +476,7 @@ namespace Modbus
         {
             try
             {
-                if (tcpClient.Connected)
+                if (tcpClient!=null&&tcpClient.Connected)
                 {
                     byte[] fData = BitConverter.GetBytes(value);
                     ushort[] Data = new ushort[2];

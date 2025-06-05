@@ -39,6 +39,11 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using static Mysqlx.Crud.Order.Types;
 using ZipperInfo;
+using System.Linq;
+//using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using OpenCvSharp;
+using System.Drawing.Imaging;
 
 namespace WH.DetectSystem.Models
 {
@@ -136,7 +141,7 @@ namespace WH.DetectSystem.Models
             {
                 FocusCtrlVM = FocusConfig.CreateCtrlVM();
                 FocusCtrlVM.SetCameraSerial(CameraSerial);
-               // this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
+                // this.FocusCtrlVM.FuncDistinct = MaociAlgorParamConfig.GetDistinctFunc();
                 FocusCtrlVM.InitControl();
             }
             if (AppConfig.HasMarkConfig())
@@ -473,7 +478,7 @@ namespace WH.DetectSystem.Models
         /// 存储 图像队列
         /// </summary>
         private readonly Channel<Cell> m_SaveImageChannel = Channel.CreateBounded<Cell>(
-            s_SinglechannelOptions
+            s_NormalChannelOptions
         );
 
         public AutoResetEvent WaitSignal = new AutoResetEvent(false);
@@ -520,7 +525,7 @@ namespace WH.DetectSystem.Models
             #endregion 信息记录线程
 
             #region 取图线程
-
+            int sss = 0;
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -529,22 +534,25 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        CZipperCommunicate.GetID(out int productID, out int photoID);
-                        int photoTotalCount= CZipperCommunicate.GetPhotoCount();
-                        if (productID != -1) 
-                        {
-                            cell.ID = productID.ToString();
-                            cell.PhotoIndex = photoID;
-                            cell.PhotoTatolCount = photoTotalCount;
-                        }
-                        else
-                        {
-                            cell.ID = (MaociDefectsProduce.Total + 1).ToString();
-                        }
+                        //CZipperCommunicate.GetID(out int productID, out int photoID);
+                        //int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                        //if (productID != -1)
+                        //{
+                        //    cell.ID = productID.ToString();
+                        //    cell.PhotoIndex = photoID;
+                        //    cell.PhotoTatolCount = photoTotalCount;
+                        //}
+                        //else
+                        //{
+                        //    cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                        //}
+                        cell.ID = "123";
+                        cell.PhotoIndex = sss++;
+                        cell.PhotoTatolCount = 4;
 
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;                  
+                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
@@ -616,75 +624,94 @@ namespace WH.DetectSystem.Models
                         //    cell.Dispose();
 
                         //}
-                        MergeCells.Add(cell);
-                        List<Cell> currentCells=MergeCells.FindAll(c=>c.ID == cell.ID);
-                        if (currentCells.Count >= cell.PhotoTatolCount)
-                        {
-                            Cell newCell=cell.Clone();
-                        }
-
-
                         try
                         {
-                            cell.Quality = MaociQualityConfig.GetBest();
-                            if (!cell.Skipthis)
-                                MaociFilterConfig.FilterExute(cell);
-                            else
+                            MergeCells.Add(cell);
+                            List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
+                            if (currentCells.Count >= cell.PhotoTatolCount)
                             {
-                                SetBadCell(cell);
-                            }
-                            cell.FilterTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
-                            cell.Stopwatch.Stop();
-                            cell.ProcessTime = DateTime.Now - cell.CreateTime;
-                            StringBuilder strbuilder = new StringBuilder("[结束]     ");
-                            strbuilder.Append(cell.ID);
-                            strbuilder.Append("   检测结束,耗时:");
-                            strbuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F2"));
-                            if (cell.IsOK)
-                            {
-                                await m_InfoChannel.Writer.WriteAsync(
-                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
-                                );
-                            }
-                            else if (MarkCtrlVM is not null)
-                            {
-                                int markPos = MarkCtrlVM.AddMark(cell.EncoderPos);
-                                strbuilder.Append($",检测NG,增加打标位置{markPos}！");
-                                await m_InfoChannel.Writer.WriteAsync(
-                                    new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
-                                );
-                            }
-                            FilterTime = cell.FilterTime.TotalMilliseconds;
-                            if (!m_ShowImageChannel.Writer.TryWrite(cell))
-                            {
-                                cell.Dispose();
-                                //strbuilder = new StringBuilder("[");
-                                //strbuilder.Append("筛选线程");
-                                //strbuilder.Append("]     ");
-                                //strbuilder.Append(cell.ID);
-                                //strbuilder.Append("   cell入显示队列失败。");
-                                //await m_InfoChannel.Writer.WriteAsync(
-                                //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                                //);
-                            }
-                            ModelBrush = cell.Quality.ShowColor.Brush;
-                            if (!cell.IsOK)
-                            {
-                                LastBrush = ModelBrush;
-                                LastImage = ModelImage;
-                            }
-                            MaociDefectsProduce.Excute(cell);
-                            MaociAlarmSetConfig.Excute(cell);
-                            
-                            if (ProcessGroup.AddCellAndJudge(cell, out CCellPro cellOut))
-                            {
-                                ProcessGroup.MaociDefectsProduce.Excute(cellOut.Cell);
-                                ProcessGroup.AlarmSetConfig.Excute(cellOut.Cell);
-                                if (!m_dataBaseChannel.Writer.TryWrite(cellOut.Cell))
+                                sss = 0;
+                                List<Cell> orderCell= currentCells.OrderBy(c => c.CreateTime).ToList(); 
+                                Cell newCell = GetMergeCells(orderCell);
+                                
+                                for (int i = 0; i < currentCells.Count; i++)
                                 {
-                                    //cell.Dispose();
+                                    newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex));
+                                }
+                                MergeCells.RemoveAll(c => c.ID == newCell.ID);
+
+                                newCell.Quality = MaociQualityConfig.GetBest();
+                                if (!newCell.Skipthis)
+                                    MaociFilterConfig.FilterExute(newCell);
+                                else
+                                {
+                                    SetBadCell(newCell);
+                                }
+                                newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
+                                newCell.Stopwatch.Stop();
+                                newCell.ProcessTime = DateTime.Now - newCell.CreateTime;
+                                StringBuilder strbuilder = new StringBuilder("[结束]     ");
+                                strbuilder.Append(newCell.ID);
+                                strbuilder.Append("   检测结束,耗时:");
+                                strbuilder.Append(newCell.ProcessTime.TotalMilliseconds.ToString("F2"));
+                                if (newCell.IsOK)
+                                {
+                                    await m_InfoChannel.Writer.WriteAsync(
+                                        new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
+                                    );
+                                }
+                                else if (MarkCtrlVM is not null)
+                                {
+                                    int markPos = MarkCtrlVM.AddMark(newCell.EncoderPos);
+                                    strbuilder.Append($",检测NG,增加打标位置{markPos}！");
+                                    await m_InfoChannel.Writer.WriteAsync(
+                                        new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                                    );
+                                }
+                                FilterTime = newCell.FilterTime.TotalMilliseconds;
+                                if (!m_ShowImageChannel.Writer.TryWrite(newCell))
+                                {
+                                    newCell.Dispose();
+                                    //strbuilder = new StringBuilder("[");
+                                    //strbuilder.Append("筛选线程");
+                                    //strbuilder.Append("]     ");
+                                    //strbuilder.Append(newCell.ID);
+                                    //strbuilder.Append("   newCell入显示队列失败。");
+                                    //await m_InfoChannel.Writer.WriteAsync(
+                                    //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                    //);
+                                }
+
+                                ModelBrush = newCell.Quality.ShowColor.Brush;
+                                if (!newCell.IsOK)
+                                {
+                                    LastBrush = ModelBrush;
+                                    LastImage = ModelImage;
+                                }
+                                MaociDefectsProduce.Excute(newCell);
+                                MaociAlarmSetConfig.Excute(newCell);
+
+                                if (ProcessGroup.AddCellAndJudge(newCell, out CCellPro CellOut))
+                                {
+                                    ProcessGroup.MaociDefectsProduce.Excute(CellOut.Cell);
+                                    ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
+                                    if (CellOut.Cell.IsOK)
+                                    {
+                                        CZipperCommunicate.SendResult(ZIPPERESULT.OK);
+                                    }
+                                    else
+                                    {
+                                        CZipperCommunicate.SendResult(ZIPPERESULT.NG);
+                                    }
+                                    
+                                    if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
+                                    {
+                                        //newCell.Dispose();
+                                    }
                                 }
                             }
+
+
                         }
                         catch (Exception ex)
                         {
@@ -1115,7 +1142,7 @@ namespace WH.DetectSystem.Models
                 // object objAlarmLock = new object(); //报警监控用
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
-                   
+
                     if (MySqlVM.MysqlExecute.SqlEnable)
                     {
                         try
@@ -1195,7 +1222,7 @@ namespace WH.DetectSystem.Models
                                 })
                             );
                         }
-                        cell.Dispose(); //这个cell是复制的clone 存图后清理
+                        //cell.Dispose(); //这个cell是复制的clone 存图后清理
                     }
                     catch (Exception ex)
                     {
@@ -1208,6 +1235,106 @@ namespace WH.DetectSystem.Models
 
             #endregion 存图线程
         }
+
+        /// <summary>
+        /// 将多个Cells合并成一个新的Cell
+        /// </summary>
+        /// <param name="cells"></param>
+        /// <returns></returns>
+        Cell GetMergeCells(List<Cell> cells)
+        {
+            Cell newCell = cells[cells.Count - 1].CloneExecptImg();
+            // 合并IsOK逻辑：只要有一个为false则整体为false
+            newCell.IsOK = !cells.Any(c => !c.IsOK);
+
+            // 按RecipeDefectName合并AlgorithmOut
+            newCell.AlgorithmOut = cells
+                   .SelectMany(c => c.AlgorithmOut)  // 展平所有AlgorithmOut
+                   .GroupBy(cd => cd.RecipeDefectName) // 按名称分组
+                   .Select(g => new CellDetection
+                   {
+                       RecipeDefectName = g.Key,
+                       regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
+                       Value = g.SelectMany(cd => cd.Value).ToList(),
+                       Type = g.FirstOrDefault()?.Type ?? "",
+                       Index = g.Max(cd => cd.Index) // 取最大Index
+                   }).ToList();
+
+            newCell.Image = GetCImage(cells);
+
+            return newCell;
+
+        }
+        //  Mat matresult;
+        private CImage GetCImage(List<Cell> cells)
+        {
+            int height = cells[0].Image.ImageHeight;
+            int width = cells[0].Image.ImageWidth;
+            int[] widths = cells.Select(c => c.Image.ImageWidth).ToArray();
+            IntPtr[] imageDatas = cells.Select(c => c.Image.ImageData).ToArray();
+            unsafe
+            {
+
+                // 计算目标参数
+                int totalWidth = cells.Sum(c => c.Image.ImageWidth);
+                int bytesPerPixel = cells[0].Image.PixelFormat.BitsPerPixel / 8;
+                int srcStride = GetImageStride(width, bytesPerPixel); // 假设所有图像行跨距相同
+
+                // 分配目标内存（总字节数 = 总宽度 * 高度 * 每像素字节数）
+                int dstSize = totalWidth * height * bytesPerPixel;
+                IntPtr dstPtr = Marshal.AllocHGlobal(dstSize);
+                try
+                {
+
+                    // 预计算目标行起始地址数组
+                    IntPtr[] dstRowOffsets = new IntPtr[height];
+                    for (int y = 0; y < height; y++)
+                    {
+                        dstRowOffsets[y] = dstPtr + y * totalWidth * bytesPerPixel;
+                    }
+
+                    // 逐行复制数据
+                    for (int srcIdx = 0; srcIdx < widths.Length; srcIdx++)
+                    {
+                        int srcX = widths.Take(srcIdx).Sum(); // 当前源图像在目标中的起始X坐标
+                        byte* srcBuffer = (byte*)imageDatas[srcIdx].ToPointer();
+                        byte* dstBuffer = (byte*)dstPtr.ToPointer() + srcX * bytesPerPixel;
+
+                        // 复制所有行
+                        for (int y = 0; y < height; y++)
+                        {
+                            Buffer.MemoryCopy(
+                                srcBuffer + y * srcStride,
+                                dstBuffer + y * totalWidth * bytesPerPixel,
+                                widths[srcIdx] * bytesPerPixel,
+                                widths[srcIdx] * bytesPerPixel);
+                        }
+                    }
+
+                    CImage image = new CImage(totalWidth, height, dstPtr, cells[0].Image.PixelFormat);
+                    return image;
+                }
+                catch
+                {
+                    Marshal.FreeHGlobal(dstPtr);
+                    throw;
+                }
+
+            }
+
+        }
+
+        /// <summary>
+        /// 计算单行数据的实际跨度（含对齐填充）
+        /// </summary>
+        private int GetImageStride(int width, int format)
+        {
+            int rawStride = width * format;
+            int alignment = 4; // 假设系统按4字节对齐
+            return ((rawStride + alignment - 1) / alignment) * alignment;
+        }
+
+
 
         public void StopTask()
         {

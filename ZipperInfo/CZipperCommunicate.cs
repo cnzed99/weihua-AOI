@@ -58,16 +58,25 @@ namespace ZipperInfo
         /// <param name="photoID">图片ID</param>
         public static void GetID(out int productID, out int photoID)
         {
-            lock (lockobj)
+            try
+            {
+                lock (lockobj)
+                {
+                    productID = -1;
+                    photoID = -1;
+                    if (com != null)
+                    {
+                        productID = com.ReadHoldingRegisterInt32(41192);
+                        photoID = com.ReadHoldingRegisterInt32(41194);
+                    }
+                }
+            }
+            catch (Exception)
             {
                 productID = -1;
                 photoID = -1;
-                if (com != null)
-                {
-                    productID = com.ReadHoldingRegisterInt32(41192);
-                    photoID = com.ReadHoldingRegisterInt32(41194);
-                }
             }
+
 
         }
 
@@ -77,18 +86,27 @@ namespace ZipperInfo
         /// </summary>
         public static int GetPhotoCount()
         {
-            lock (lockobj)
+            try
             {
-                if (com != null)
+                lock (lockobj)
                 {
-                    return com.ReadHoldingRegisterInt32(41202);
+                    if (com != null)
+                    {
+                        return com.ReadHoldingRegisterInt32(41202);
 
+                    }
+                    else
+                    {
+                        return -1;
+                    }
                 }
-                else
-                {
-                    return -1;
-                }
+
             }
+            catch (Exception)
+            {
+                return -1;
+            }
+
 
         }
         /// <summary>
@@ -96,15 +114,24 @@ namespace ZipperInfo
         /// </summary>
         public static int GetZipperLenght()
         {
-            if (com != null)
+            try
             {
-                return com.ReadHoldingRegisterInt32(41204);
+                if (com != null)
+                {
+                    return com.ReadHoldingRegisterInt32(41204);
+
+                }
+                else
+                {
+                    return -1;
+                }
 
             }
-            else
+            catch (Exception)
             {
                 return -1;
             }
+
         }
         /// <summary>
         /// 向PLC写入结果
@@ -112,10 +139,17 @@ namespace ZipperInfo
         /// <param name="result">OK:1 NG:2</param>
         public static void SendResult(ZIPPERESULT result)
         {
-            if (com != null)
+            try
             {
-                com.WriteSingleRegisterInt32(41196, (int)result);
+                if (com != null)
+                {
+                    com.WriteSingleRegisterInt32(41196, (int)result);
+                }
             }
+            catch (Exception)
+            {
+            }
+         
 
         }
 

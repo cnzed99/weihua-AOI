@@ -29,14 +29,21 @@ namespace WH.RunCell
         public BitmapSource DefectPartImg { get; set; }
 
         /// <summary>
+        /// 2025.6.2 鲍赞宝
         /// 拉链头图像
         /// </summary>
         public BitmapSource ZipperPullPartImg { get; set; }
+        /// <summary>
+        ///  2025.6.2 鲍赞宝
+        ///  单条拉链包含的图片
+        /// </summary>
+        public List<(CImage, int)> ZipperImages { get; set; } = new List<(CImage, int)>(); 
 
         /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
         /// </summary>
         public BitmapSource ChangleImgae { get; set; }
+
 
         public Cell()
         {
@@ -290,6 +297,14 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
+            foreach ((CImage, int) img in ZipperImages)
+            {
+                if (img.Item1 != null)
+                {
+                    img.Item1.Dispose();
+                }
+            }
+            ZipperImages.Clear();
         }
 
         public override Cell Clone()
@@ -340,6 +355,63 @@ namespace WH.RunCell
             cell.EncoderPos = this.EncoderPos;
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;
+            cell.ZipperPullPartImg = this.ZipperPullPartImg;
+            cell.ZipperImages = new List<(CImage, int)>();
+            foreach ((CImage, int) img in ZipperImages)
+            {
+                cell.ZipperImages.Add(((CImage)img.Item1.Clone(),img.Item2));
+            }
+            return cell;
+        }
+
+        public  Cell CloneExecptImg()
+        {
+            Cell cell = new Cell();
+            cell.DefectType = this.DefectType;
+            cell.ID = this.ID;
+            cell.IsOK = this.IsOK;
+            cell.IsEmpty = this.IsEmpty;
+            //this.Image.WriteTo(cell.Image);
+            cell.DownImage = this.DownImage?.Clone();
+            // cell.QualityColorStr = this.QualityColorStr;
+            cell.SmallImage = this.SmallImage?.Clone();
+            cell.Quality = this.Quality;
+            //cell.QualityName = this.QualityName;
+            //cell.QualitySignal = this.QualitySignal;
+            //cell.QualityColor = this.QualityColor;
+            //cell.ColorSignel = this.ColorSignel;
+            //cell.ColorGrade = this.ColorGrade?.Clone();
+            //cell.ColorValue = this.ColorValue;
+            cell.GetImageTime = this.GetImageTime;
+            cell.CreateTime = this.CreateTime;
+            cell.PreTime = this.PreTime;
+            cell.FlowTimeSpan = this.FlowTimeSpan;
+            cell.RecipeTime = this.RecipeTime;
+            cell.ProcessTime = this.ProcessTime;
+            cell.FilterTime = this.FilterTime;
+            cell.ShowTime = this.ShowTime;
+            cell.Stopwatch = this.Stopwatch;
+            cell.SaveImgTime = this.SaveImgTime;
+            cell.TwoTrgTimeSpan = this.TwoTrgTimeSpan;
+            cell.Skipthis = this.Skipthis;
+            cell.IsBurstBoard = this.IsBurstBoard;
+            cell.IsMix = this.IsMix;
+            cell.ImageFile = this.ImageFile;
+            cell.LineName = this.LineName;
+            cell.ProjName = this.ProjName;
+            cell.CamSerial = this.CamSerial;
+            cell.CamName = this.CamName;
+            cell.ProjGuid = this.ProjGuid;
+            cell.ComGuid = this.ComGuid;
+            // cell.DetectionOrColorOK = this.DetectionOrColorOK;
+            cell.OtherInfoRecv = this.OtherInfoRecv;
+            cell.OtherInfoSend = this.OtherInfoSend;
+            cell.DataBytes = this.DataBytes;
+            cell.WaferID = this.WaferID;
+            cell.PhotoIndex = this.PhotoIndex;
+            cell.EncoderPos = this.EncoderPos;
+            //cell.AlgorithmOut = this.AlgorithmOut;
+            //cell.DrawEdges = this.DrawEdges;
             cell.ZipperPullPartImg = this.ZipperPullPartImg;
             return cell;
         }
