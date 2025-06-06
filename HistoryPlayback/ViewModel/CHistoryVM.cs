@@ -165,16 +165,16 @@ namespace HistoryPlayback
                 }
 
                 // 图片命名:时间-流水ID-质量信号-质量等级-缺陷名-处理时间
-                //string name = Path.GetFileNameWithoutExtension(selectedobj);
-                //DateTime fileCreateTime = File.GetCreationTime(selectedobj);
+                string name = Path.GetFileNameWithoutExtension(selectedobj);
+                DateTime fileCreateTime = File.GetCreationTime(selectedobj);
 
-                //string[] spiltName = name.Split('_');
-                //SelectedCellInfo.ID = spiltName[1];
-                //SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
+                string[] spiltName = name.Split('_');
+                SelectedCellInfo.ID = spiltName[1];
+                SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
 
-                //SelectedCellInfo.Level = spiltName[3];
-                //SelectedCellInfo.DefectName = spiltName[4];
-                //SelectedCellInfo.TakeTime = spiltName[5];
+                SelectedCellInfo.Level = spiltName[3];
+                SelectedCellInfo.DefectName = spiltName[4];
+               // SelectedCellInfo.TakeTime = spiltName[5];
             }
         }
 

@@ -76,7 +76,7 @@ namespace ZipperInfo
                 productID = -1;
                 photoID = -1;
             }
-
+    
 
         }
 
@@ -92,7 +92,7 @@ namespace ZipperInfo
                 {
                     if (com != null)
                     {
-                        return com.ReadHoldingRegisterInt32(41202);
+                        return com.ReadHoldingRegisterInt32(41200);
 
                     }
                     else
@@ -100,7 +100,6 @@ namespace ZipperInfo
                         return -1;
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -125,7 +124,6 @@ namespace ZipperInfo
                 {
                     return -1;
                 }
-
             }
             catch (Exception)
             {
@@ -139,17 +137,10 @@ namespace ZipperInfo
         /// <param name="result">OK:1 NG:2</param>
         public static void SendResult(ZIPPERESULT result)
         {
-            try
+            if (com != null)
             {
-                if (com != null)
-                {
-                    com.WriteSingleRegisterInt32(41196, (int)result);
-                }
+                com.WriteSingleRegisterInt32(41196, (int)result);
             }
-            catch (Exception)
-            {
-            }
-         
 
         }
 

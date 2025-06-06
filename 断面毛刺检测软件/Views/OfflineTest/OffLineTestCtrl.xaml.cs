@@ -167,13 +167,22 @@ namespace 断面毛刺检测软件.Views
                     imgFiles = value;
                     MMainVM.TestImgFiles = value;
                     ImgNames.Clear();
-                    string[] fileNames = Array.ConvertAll<string, string>(
-                        imgFiles.ToArray(),
-                        System.IO.Path.GetFileNameWithoutExtension
-                    );
+                    //string[] fileNames = Array.ConvertAll<string, string>(
+                    //    imgFiles.ToArray(),
+                    //    System.IO.Path.GetFileNameWithoutExtension
+                    //);
+
+                    for (int i = 0; i < imgFiles.Count; i++)
+                    {
+                        imgFiles[i] = imgFiles[i].TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        // 获取最后一个文件夹名称
+                        string lastFolder = imgFiles[i].Substring(imgFiles[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                        ImgNames.Add(lastFolder);
+                    }
+                   
 
                     imgIndex = 0;
-                    ImgNames = new List<string>(fileNames);
+                   // ImgNames = new List<string>(fileNames);
                     OnPropertyChanged();
                 }
                 else
@@ -306,37 +315,53 @@ namespace 断面毛刺检测软件.Views
         /// </summary>
         private async void PreDllExcute(bool once = false)
         {
-            if (imgFiles.Count > ImgIndex && File.Exists(imgFiles[ImgIndex]))
+            if (imgFiles.Count > ImgIndex && Directory.Exists(imgFiles[ImgIndex]))
             {
                 try
                 {
-                    Cell cell = new Cell()
+                    string[] Allfiles = Directory.GetFiles(imgFiles[ImgIndex]);
+                    for (int i = 0; i < Allfiles.Length; i++)
                     {
-                        ID = (mainVM.MaociDefectsProduce.Total + 1).ToString(),
-                        isOnce = once,
-                        Quality = mainVM.MaociQualityConfig.Qualities[0],
-                        ImageFile = ImgFiles[ImgIndex],
-                        CancelSource = this.CancelToken,
-                        ProjGuid = MMainVM.GUID,
-                        CamSerial = MMainVM.CameraSerial,
-                        ComGuid = "com"
-                    };
-                    if (
-                        !string.IsNullOrEmpty(cell.CamSerial)
-                        && CCameraManagement.CamParamDict.ContainsKey(cell.CamSerial)
-                    )
-                    {
-                        cell.CamName = CCameraManagement.CamParamDict[cell.CamSerial].Name;
-                        cell.MmPerPixel = CCameraManagement.CamParamDict[cell.CamSerial].MmPerPixel;
-                    }
-                    if (random.Next(10) > 5)
-                        cell.IsOK = true;
-                    //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
-                    // _waitTriggerImageQueue.Enqueue(cell);
-                    cell.GetImageExcute(true, 0);
+                        string filename= Path.GetFileName(Allfiles[i]);
+                        string[] strsplit = filename.Split('_');
+                        if (strsplit.Length > 2)
+                        {
+                            string pid=strsplit[0];
+                            string pindex =strsplit[1];
+                            string filepath= Allfiles[i];
+                            Cell cell = new Cell()
+                            {
+                                ID = pid,
+                                PhotoIndex = int.Parse(pindex),
+                                PhotoTatolCount= Allfiles.Length,
+                                isOnce = once,
+                                Quality = mainVM.MaociQualityConfig.Qualities[0],
+                                ImageFile = filepath,
+                                CancelSource = this.CancelToken,
+                                ProjGuid = MMainVM.GUID,
+                                CamSerial = MMainVM.CameraSerial,
+                                ComGuid = "com"
+                            };
+                            if (
+                                !string.IsNullOrEmpty(cell.CamSerial)
+                                && CCameraManagement.CamParamDict.ContainsKey(cell.CamSerial)
+                            )
+                            {
+                                cell.CamName = CCameraManagement.CamParamDict[cell.CamSerial].Name;
+                                cell.MmPerPixel = CCameraManagement.CamParamDict[cell.CamSerial].MmPerPixel;
+                            }
+                            if (random.Next(10) > 5)
+                                cell.IsOK = true;
+                            //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
+                            // _waitTriggerImageQueue.Enqueue(cell);
+                            cell.GetImageExcute(true, 0);
 
-                    //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
-                    await MMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                            //await CCameraBase.waitGetImageChannel.Writer.WriteAsync(cell);
+                            await MMainVM.m_WaitImgChannel.Writer.WriteAsync(cell);
+                        }
+
+                       
+                    }
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -425,30 +450,34 @@ namespace 断面毛刺检测软件.Views
 #if NET8_0_OR_GREATER
             if (imgFolderDialog.ShowDialog() is true)
             {
-                string[] Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
+              //  string[] Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
+                string[] Allfiles = Directory.GetDirectories(imgFolderDialog.FolderName);
 #else
             if (imgFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                string[] Allfiles = Directory.GetFiles(imgFolderDialog.SelectedPath);
+               // string[] Allfiles = Directory.GetFiles(imgFolderDialog.SelectedPath);
+
+                string[] Allfiles = Directory.GetDirectories(imgFolderDialog.SelectedPath);
 #endif
                 List<string> imgs = new List<string>();
-                foreach (var file in Allfiles)
-                {
-                    if (imgRegex.IsMatch(file))
-                    {
-                        imgs.Add(file);
-                    }
-                }
+                //foreach (var file in Allfiles)
+                //{
+                //    if (imgRegex.IsMatch(file))
+                //    {
+                //        imgs.Add(file);
+                //    }
+                //}
+                imgs= Allfiles.ToList();
                 if (imgs.Count > 0)
                 {
                     ImgFiles.Clear();
                     ImgFiles = imgs;
                     ImgFiles.TrimExcess();
-                    StringBuilder files = new StringBuilder();
-                    foreach (var file in ImgFiles)
-                    {
-                        files.AppendLine(file);
-                    }
+                    //StringBuilder files = new StringBuilder();
+                    //foreach (var file in ImgFiles)
+                    //{
+                    //    files.AppendLine(file);
+                    //}
                     //MessageBox.Show(files.ToString());
                 }
                 else
@@ -463,7 +492,7 @@ namespace 断面毛刺检测软件.Views
             DisableButtons();
             CancelToken = new CancellationTokenSource();
 
-            if (File.Exists(imgFiles[ImgIndex]))
+            if (Directory.Exists(imgFiles[ImgIndex]))
             {
                 sysLog.Info("正在预处理：" + imgFiles[ImgIndex]);
                 PreDllExcute(true);

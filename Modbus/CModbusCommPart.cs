@@ -330,7 +330,7 @@ namespace Modbus
                 Growl.Error(ex.Message + ex.StackTrace);
             }
 
-            return 0;
+            return -1;
         }
 
         /// <summary>
@@ -358,7 +358,7 @@ namespace Modbus
                 Growl.Error(ex.Message + ex.StackTrace);
             }
 
-            return 0;
+            return -1;
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace Modbus
                 Growl.Error(ex.Message + ex.StackTrace);
             }
 
-            return 0;
+            return -1;
         }
 
         /// <summary>

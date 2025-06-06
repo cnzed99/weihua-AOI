@@ -534,25 +534,40 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        //CZipperCommunicate.GetID(out int productID, out int photoID);
-                        //int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                        //if (productID != -1)
-                        //{
-                        //    cell.ID = productID.ToString();
-                        //    cell.PhotoIndex = photoID;
-                        //    cell.PhotoTatolCount = photoTotalCount;
-                        //}
-                        //else
-                        //{
-                        //    cell.ID = (MaociDefectsProduce.Total + 1).ToString();
-                        //}
-                        cell.ID = "123";
-                        cell.PhotoIndex = sss++;
-                        cell.PhotoTatolCount = 4;
+                        if (IsStart)
+                        {
+                            CZipperCommunicate.GetID(out int productID, out int photoID);
+                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                            if (productID != -1)
+                            {
+                                cell.ID = productID.ToString();
+                                cell.PhotoIndex = photoID;
+                                cell.PhotoTatolCount = photoTotalCount;
+                            }
+                            else
+                            {
+                                Growl.Error(Name +"-通讯连接异常，请检查PLC连接状态");
+                                cell.Dispose();
+                                continue;
+                            }
+                        }                
+                        else
+                        {
+                            if (cell.ImageFile=="") //手动调试
+                            {
+                                cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                                cell.PhotoIndex = 1;
+                                cell.PhotoTatolCount = 1;
+                            }
+                           
+                        }
+                        //cell.ID = "123";
+                        //cell.PhotoIndex = sss++;
+                        //cell.PhotoTatolCount = 4;
 
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-                        cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
+                       // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
@@ -627,10 +642,13 @@ namespace WH.DetectSystem.Models
                         try
                         {
                             MergeCells.Add(cell);
+                            SysLog.Info($"添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
                             List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
+                            SysLog.Info($"当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
                             if (currentCells.Count >= cell.PhotoTatolCount)
                             {
-                                sss = 0;
+                               // sss = 0;
+                                SysLog.Info($"满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
                                 List<Cell> orderCell= currentCells.OrderBy(c => c.CreateTime).ToList(); 
                                 Cell newCell = GetMergeCells(orderCell);
                                 
@@ -638,8 +656,9 @@ namespace WH.DetectSystem.Models
                                 {
                                     newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                 }
+                                SysLog.Info($"准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                 MergeCells.RemoveAll(c => c.ID == newCell.ID);
-
+                                SysLog.Info($"已移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                 newCell.Quality = MaociQualityConfig.GetBest();
                                 if (!newCell.Skipthis)
                                     MaociFilterConfig.FilterExute(newCell);
