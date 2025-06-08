@@ -15,7 +15,6 @@ using FocusControl;
 using HandyControl.Controls;
 using HandyControl.Data;
 using HistoryPlayback;
-using HistoryPlayback.Model;
 using Mapster;
 using MarkControl;
 using Motion;
@@ -27,8 +26,6 @@ using QualityGrade;
 using SaveImageManage;
 using SDFilter;
 using WH.Controls;
-using WH.DetectSystem.DetectSystem.MainModel;
-using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
@@ -37,13 +34,11 @@ using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using static Mysqlx.Crud.Order.Types;
 using ZipperInfo;
 using System.Linq;
 //using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using OpenCvSharp;
-using System.Drawing.Imaging;
+
 
 namespace WH.DetectSystem.Models
 {

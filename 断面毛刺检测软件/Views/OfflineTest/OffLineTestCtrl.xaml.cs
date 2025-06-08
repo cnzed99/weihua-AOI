@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -179,10 +180,10 @@ namespace 断面毛刺检测软件.Views
                         string lastFolder = imgFiles[i].Substring(imgFiles[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
                         ImgNames.Add(lastFolder);
                     }
-                   
 
-                    imgIndex = 0;
-                   // ImgNames = new List<string>(fileNames);
+                    // ImgNames = new List<string>(fileNames);
+                    ImgIndex = 0;
+                  
                     OnPropertyChanged();
                 }
                 else
@@ -191,8 +192,8 @@ namespace 断面毛刺检测软件.Views
                 }
             }
         }
-        private List<string> imgNames = new List<string>();
-        public List<string> ImgNames
+        private ObservableCollection<string> imgNames = new ObservableCollection<string>();
+        public ObservableCollection<string> ImgNames
         {
             get => imgNames;
             set
