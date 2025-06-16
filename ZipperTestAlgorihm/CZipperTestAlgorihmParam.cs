@@ -12,19 +12,35 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System;
+using OpenCvSharp.ML;
 
 namespace ZipperTestAlgorihm
 {
-    public class CZipperTestAlgorihmParam: CAlgorithmParamBase
+    public class CZipperTestAlgorihmParam : CAlgorithmParamBase
     {
         /// <summary>
-        /// yolo对象
+        /// 检测对象1
         /// </summary>
-        private YOLO yolo_text = new YOLO();
+        private YOLO yolo_all_det1 = new YOLO();
+        /// <summary>
+        /// 检测对象2
+        /// </summary>
+        private YOLO yolo_all_det2 = new YOLO();
+        /// <summary>
+        /// 检测对象3
+        /// </summary>
+        private YOLO yolo_all_det3 = new YOLO();
+        /// <summary>
+        /// 检测对象4
+        /// </summary>
+        private YOLO yolo_all_det4 = new YOLO();
 
-       // private YOLO yolo_labeldefect = new YOLO();
+        // private YOLO yolo_labeldefect = new YOLO();
 
-        public CZipperTestAlgorihmParam():base()
+        //定义4组矩形来裁切图片
+        Rect[] cropRec = new Rect[4];
+
+        public CZipperTestAlgorihmParam() : base()
         {
             //DefectSpecies = new()
             //{
@@ -64,6 +80,7 @@ namespace ZipperTestAlgorihm
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
             DefectFeatures.Add(new("Height", "高度", "Height", "um"));
             DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
+
         }
 
         protected ModelType _ModelType = ModelType.YOLOv8Det;
@@ -206,18 +223,163 @@ namespace ZipperTestAlgorihm
             if (paramClass != null)
             {
                 Mat img = GetMatImage(cell, paramClass);
-                List<BaseResult> sResultInfos = ImageInfer(img, paramClass.Score, paramClass.Nms);
-                ParseResult(sResultInfos[0], cell, ModelType.YOLOv8Det, Detect_names,img);
-               // ParseResult(sResultInfos[1], cell, ModelType.YOLOv8Det, LabelDetect_names);
+                int smallimgWidth = cell.Image.ImageWidth / 4;
+                int smallimgHeight = cell.Image.ImageHeight;
+                List<Mat> mats = new List<Mat>();
+                for (int i = 0; i < 4; i++)
+                {
+                    cropRec[i].X = i * smallimgWidth;
+                    cropRec[i].Y = 0;
+                    cropRec[i].Width = smallimgWidth;
+                    cropRec[i].Height = smallimgHeight;
+                    Mat cropimg = img[cropRec[i]];
+                    mats.Add(cropimg);
+
+                    //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
+                }
+
+                List<CoordRestoreData> dets = new List<CoordRestoreData>();
+                if (cell.PhotoIndex == 1) //第一张有下止的图
+                {
+                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    for (int i = 0; i < detrets.Count; i++)
+                    {
+                        for (int j = 0; j < detrets[i].datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(detrets[i].datas[j].lable);
+                            string labelname = Detect_names[labelindex];
+                            if (labelname.Contains("正面下止"))
+                            {
+                                //坐标还原           
+                                CoordRestoreData restoreData = new CoordRestoreData(smallimgWidth, smallimgHeight, i, detrets[i].datas[j]);
+                                dets.Add(restoreData);
+                                int recw = 256;
+                                int rech = 256;
+                                int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
+                                int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
+                                if ((rex + recw) > cell.Image.ImageWidth)
+                                {
+                                    rex = cell.Image.ImageWidth - recw;
+                                }
+                                if (rex < 0)
+                                {
+                                    rex = 0;
+                                }
+                                Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
+                                 Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
+                            }
+                            else
+                            {
+                                CoordRestoreData restoreData = new CoordRestoreData(smallimgWidth, smallimgHeight, i, detrets[i].datas[j]);
+                                restoreData.OrgX = restoreData.OrgX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                restoreData.OrgCenterX = restoreData.OrgCenterX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                dets.Add(restoreData);
+                            }
+                        }
+                    }
+
+
+                }
+                else if (cell.PhotoIndex == cell.PhotoTatolCount) //最后一张图片有上止图片
+                {
+                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    for (int i = 0; i < detrets.Count; i++)
+                    {
+                        for (int j = 0; j < detrets[i].datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(detrets[i].datas[j].lable);
+                            string labelname = Detect_names[labelindex];
+                            if (labelname.Contains("正面上止"))
+                            {
+                                //坐标还原           
+                                CoordRestoreData restoreData = new CoordRestoreData(smallimgWidth, smallimgHeight, i, detrets[i].datas[j]);
+
+                                int recw = 192;
+                                int rech = 96;
+                                int rex = Convert.ToInt32(restoreData.OrgCenterX - recw/2);
+                                int rey = Convert.ToInt32(restoreData.OrgCenterY - rech/2);
+                                if ((rex+ recw)> cell.Image.ImageWidth)
+                                {
+                                    rex = cell.Image.ImageWidth - recw;
+                                }
+                                if (rex <0 )
+                                {
+                                    rex = 0;
+                                }
+                                Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
+                                restoreData.OrgX = restoreData.OrgX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                restoreData.OrgCenterX = restoreData.OrgCenterX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                dets.Add(restoreData);
+                                Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面上止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropUpMat);
+                            }
+                            else
+                            {
+                                CoordRestoreData restoreData = new CoordRestoreData(smallimgWidth, smallimgHeight, i, detrets[i].datas[j]);
+                                restoreData.OrgX = restoreData.OrgX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                restoreData.OrgCenterX = restoreData.OrgCenterX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                                dets.Add(restoreData);
+                            }
+                        }
+                    }
+                }
+                else if (cell.PhotoIndex == 100) //有拉链的图片
+                {
+
+                }
+                else //中间布带，链牙缺陷
+                {
+                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    for (int i = 0; i < detrets.Count; i++)
+                    {
+                        for (int j = 0; j < detrets[i].datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(detrets[i].datas[j].lable);
+                            string labelname = Detect_names[labelindex];
+                            CoordRestoreData restoreData = new CoordRestoreData(smallimgWidth, smallimgHeight, i * cell.PhotoIndex, detrets[i].datas[j]);
+                            restoreData.OrgX = restoreData.OrgX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                            restoreData.OrgCenterX = restoreData.OrgCenterX + (cell.PhotoIndex - 1) * cell.Image.ImageWidth;
+                            dets.Add(restoreData);
+                        }
+                    }
+                }
+                ParseResult(dets, cell);
             }
         }
 
-        protected void ParseResult(
-            BaseResult sResultInfos,
-            Cell cell,
-            ModelType modelType,
-            string[] classNames,Mat img
-        )
+        private async Task<List<DetResult>> ImageInferall(List<Mat> mats, float score, float nms)
+        {
+
+
+            List<DetResult> alldetResult = new List<DetResult>();
+            Task<DetResult> task1 = Task.Run(() =>
+            {
+                DetResult sResultInfos = ImageInfer(yolo_all_det1, mats[0], score, nms);
+                return sResultInfos;
+            });
+
+            Task<DetResult> task2 = Task.Run(() =>
+            {
+                DetResult sResultInfos = ImageInfer(yolo_all_det2, mats[1], score, nms);
+                return sResultInfos;
+            });
+            Task<DetResult> task3 = Task.Run(() =>
+            {
+                DetResult sResultInfos = ImageInfer(yolo_all_det3, mats[2], score, nms);
+                return sResultInfos;
+            });
+            Task<DetResult> task4 = Task.Run(() =>
+            {
+                DetResult sResultInfos = ImageInfer(yolo_all_det4, mats[3], score, nms);
+                return sResultInfos;
+            });
+            await Task.WhenAll(task1, task2, task3, task4);
+            alldetResult.Add(task1.Result);
+            alldetResult.Add(task2.Result);
+            alldetResult.Add(task3.Result);
+            alldetResult.Add(task4.Result);
+            return alldetResult;
+        }
+        protected void ParseResult(List<CoordRestoreData> sResultInfos, Cell cell)
         {
             if (sResultInfos is null)
             {
@@ -228,69 +390,42 @@ namespace ZipperTestAlgorihm
             {
                 foreach (var de in ds.RecipeDefects)
                 {
-                    if (!classNames.Contains(de.Name))
+                    if (!Detect_names.Contains(de.Name))
                         continue;
                     CellDetection cellDetection1 = new CellDetection();
                     cellDetection1.Type = ds.Name;
                     cellDetection1.Category = de.Category;
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
-                    switch (modelType)
+
+                    //DetResult detrets = sResultInfos as DetResult;
+                    var finds = sResultInfos.FindAll(info =>
                     {
-                        case ModelType.YOLOv8Det:
-                            DetResult detrets = sResultInfos as DetResult;
-                            var finds = detrets.find_all(info =>
-                            {
-                                int index = int.Parse(info.lable);
-                                return classNames[index] == de.Name;
-                            });
-                            if (finds.Count > 0)
-                            {
-                                foreach (var item in finds)
-                                {
-                                    SRegion sRegion = GetDetectRegion(item);
-                                    if (classNames[item.index].Contains("拉头"))
-                                    {
-                                        if (!img.Empty())
-                                        {
-                                            Mat submat = img.SubMat(item.box);
-                                            cell.ZipperPullPartImg = Mat2BitmapSource(submat);
-                                        }
-                                    }
-                                    cellDetection1.regionOut.Add(sRegion);
-                                }
-                            }
-                            //cell.AlgorithmOut.Add(cellDetection1);
-
-                            break;
-
-                        case ModelType.YOLOv8Obb:
-                            ObbResult obbrets = sResultInfos as ObbResult;
-                            var findobbs = obbrets.find_all(info =>
-                            {
-                                int index = int.Parse(info.lable);
-                                return classNames[index] == de.Name;
-                            });
-                            if (findobbs.Count > 0)
-                            {
-                                foreach (var item in findobbs)
-                                {
-                                    SRegion sRegion = GetDetectRegion(item);
-
-                                    cellDetection1.regionOut.Add(sRegion);
-                                }
-                            }
-                            //infos.ForEach(info => sResultInfos.Remove(info));
-                            break;
-
-                        default:
-                            break;
+                        int index = int.Parse(info.Labelstr);
+                        return Detect_names[index] == de.Name;
+                    });
+                    if (finds.Count > 0)
+                    {
+                        foreach (var item in finds)
+                        {
+                            SRegion sRegion = GetDetectRegion(item);
+                            //if (classNames[item.index].Contains("拉头"))
+                            //{
+                            //    if (!img.Empty())
+                            //    {
+                            //        Mat submat = img.SubMat(item.box);
+                            //        cell.ZipperPullPartImg = Mat2BitmapSource(submat);
+                            //    }
+                            //}
+                            cellDetection1.regionOut.Add(sRegion);
+                        }
                     }
                     cell.AlgorithmOut.Add(cellDetection1);
+
                 }
             }
+            sResultInfos.Clear();
         }
-
         [OnDeserialized]
         private void LoadModel(StreamingContext context)
         {
@@ -301,13 +436,16 @@ namespace ZipperTestAlgorihm
             // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
             EngineType engine_type = param.EngineType;
 
-            yolo_text.Dispose();
+            yolo_all_det1.Dispose();
+            yolo_all_det2.Dispose();
+            yolo_all_det3.Dispose();
+            yolo_all_det4.Dispose();
             //yolo_labeldefect.Dispose();
             if (param != null)
             {
                 string CurrentDevice = param.CurrentDevice;
                 int text_Categ_num = Detect_names.Length;
-               // int label_Categ_num = LabelDetect_names.Length;
+                // int label_Categ_num = LabelDetect_names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
                 InputImgSize Input_size = param.Input_size;
@@ -316,7 +454,7 @@ namespace ZipperTestAlgorihm
                 //    param.EngineType == EngineType.TensorRT
                 //        ? Model_Path + ".engine"
                 //        : Model_Path + ".onnx";
-                yolo_text = YOLO.GetYolo(
+                yolo_all_det1 = YOLO.GetYolo(
                     model_type,
                     Model_Path,
                     engine_type,
@@ -326,6 +464,36 @@ namespace ZipperTestAlgorihm
                     Nms,
                     Input_size
                 );
+                yolo_all_det2 = YOLO.GetYolo(
+                model_type,
+                Model_Path,
+                engine_type,
+                CurrentDevice,
+                text_Categ_num,
+                Score,
+                Nms,
+                Input_size
+            );
+                yolo_all_det3 = YOLO.GetYolo(
+                model_type,
+                Model_Path,
+                engine_type,
+                CurrentDevice,
+                text_Categ_num,
+                Score,
+                Nms,
+                Input_size
+            );
+                yolo_all_det4 = YOLO.GetYolo(
+                model_type,
+                Model_Path,
+                engine_type,
+                CurrentDevice,
+                text_Categ_num,
+                Score,
+                Nms,
+                Input_size
+            );
                 //yolo_labeldefect = YOLO.GetYolo(
                 //    model_type,
                 //    label_Model_Path,
@@ -339,49 +507,37 @@ namespace ZipperTestAlgorihm
             }
         }
 
-        public List<BaseResult> ImageInfer(Mat img, float score, float nms)
+        public DetResult ImageInfer(YOLO yolo, Mat img, float score, float nms)
         {
-            List<BaseResult> sResultInfos = new List<BaseResult>();
-            BaseResult textresult,
-                labelresult;
-            textresult = yolo_text.predict(img, score, nms);
-          //  labelresult = yolo_labeldefect.predict(img, score, nms);
-            sResultInfos.Add(textresult);
-           // sResultInfos.Add(labelresult);
-            //if (result != null)
-            //{
-            //    for (int i = 0; i < result.count; i++)
-            //    {
-            //        sResultInfos.Add(obbResult.datas[i]);
-            //    }
-            //}
-            return sResultInfos;
+            DetResult resultDet;
+            resultDet = yolo.predict(img, score, nms) as DetResult;
+            return resultDet;
         }
 
-        protected SRegion GetDetectRegion(DetData info)
+        protected SRegion GetDetectRegion(CoordRestoreData info)
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
             //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);
-            sRegioninfo.LongLen = info.box.Size.Width;
-            sRegioninfo.ShorLen = info.box.Size.Height;
-            sRegioninfo.Phi = 0f;
+            sRegioninfo.LongLen = info.RecWidth;
+            sRegioninfo.ShorLen = info.RecHeight;
+            sRegioninfo.Phi = info.Angle;
             sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
-            sRegioninfo.Score = info.score;
+            sRegioninfo.Score = info.Score;
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
             {
-                new System.Windows.Point(info.box.X, info.box.Y),
-                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y),
-                new System.Windows.Point(info.box.X + info.box.Width, info.box.Y + info.box.Height),
-                new System.Windows.Point(info.box.X, info.box.Y + info.box.Height),
+                new System.Windows.Point(info.OrgX, info.OrgY),
+                new System.Windows.Point(info.OrgX + info.RecWidth, info.OrgY),
+                new System.Windows.Point(info.OrgX + info.RecWidth, info.OrgY + info.RecHeight),
+                new System.Windows.Point(info.OrgX, info.OrgY + info.RecHeight),
             };
-            //rec1Points.Add(new System.Windows.Point(info.box.X, info.box.Y));
+           // rec1Points.Add(new System.Windows.Point(info.box.X, info.box.Y));
 
             SRegion detectRegion = new SRegion(sRegioninfo, rec1Points);
-            var rect = info.box;
-            detectRegion.rect = new System.Windows.Rect(
-                new System.Windows.Point(rect.TopLeft.X, rect.TopLeft.Y),
-                new System.Windows.Size(rect.Width, rect.Height)
-            );
+           // var rect = info.DetDate.box;
+            //detectRegion.rect = new System.Windows.Rect(
+            //    new System.Windows.Point(info.OrgX, info.OrgY),
+            //    new System.Windows.Size(info.RecWidth, info.RecHeight)
+            //);
             return detectRegion;
         }
 
@@ -435,10 +591,11 @@ namespace ZipperTestAlgorihm
         }
 
 
+
         private BitmapSource Mat2BitmapSource(Mat img)
         {
             // 方法1：编码为 PNG 字节流
-            Cv2.ImEncode(".bmp", InputArray.Create(img), out byte[] imageBytes);
+            Cv2.ImEncode(".png", InputArray.Create(img), out byte[] imageBytes);
 
             // 方法2：通过 MemoryStream 转换
             using (MemoryStream ms = new MemoryStream(imageBytes))
@@ -539,6 +696,81 @@ namespace ZipperTestAlgorihm
         [ObservableProperty]
         private EngineType engineType = EngineType.OpenVINO;
 
+    }
+
+
+    public struct CoordRestoreData
+    {
+        /// <summary>
+        /// 坐标还原
+        /// </summary>
+        /// <param name="imgwidth">当前图宽</param>
+        /// <param name="imgheight">当前图高</param>
+        /// <param name="imgIndex">图片编号</param>
+        public CoordRestoreData(int imgwidth, int imgheight, int imgIndex, DetData det)
+        {
+            //坐标还原 
+            OrgX = det.box.X + imgwidth * imgIndex;
+            OrgY = det.box.Y;
+            RecWidth = det.box.Width;
+            RecHeight = det.box.Height;
+            OrgCenterX = OrgX + det.box.Width / 2;
+            OrgCenterY = OrgY + det.box.Height / 2;
+            Score = det.score;
+            Labelstr = det.lable;
+            Angle = 0.0f;
+
+        }
+        public CoordRestoreData(int imgwidth, int imgheight, int imgIndex, ObbData obb)
+        {
+            //坐标还原 
+            OrgX = obb.box.Points()[0].X + imgwidth * imgIndex;
+            OrgY = obb.box.Points()[0].Y;
+            RecWidth = obb.box.Size.Width;
+            RecHeight = obb.box.Size.Height;
+            OrgCenterX = obb.box.Center.X + imgwidth * imgIndex;
+            OrgCenterY = obb.box.Center.Y;
+            Score = obb.score;
+            Labelstr = obb.lable;
+            Angle = obb.box.Angle;
+        }
+        /// <summary>
+        /// 原图的左上角X
+        /// </summary>
+        public float OrgX { get; set; }
+        /// <summary>
+        /// 原图的右上角Y
+        /// </summary>
+        public float OrgY { get; set; }
+        /// <summary>
+        /// 原图的中心X
+        /// </summary>
+        public float OrgCenterX { get; set; }
+        /// <summary>
+        /// 原图的中心Y
+        /// </summary>
+        public float OrgCenterY { get; set; }
+        /// <summary>
+        /// 缺陷框宽
+        /// </summary>
+        public float RecWidth { get; set; }
+        /// <summary>
+        /// 缺陷框高
+        /// </summary>
+        public float RecHeight { get; set; }
+        // public DetData DetDate { get; set; }
+        /// <summary>
+        /// 分数
+        /// </summary>
+        public float Score { get; set; }
+        /// <summary>
+        /// 标签
+        /// </summary>
+        public string Labelstr { get; set; }
+        /// <summary>
+        /// 角度
+        /// </summary>
+        public float Angle { get; set; }
     }
 
 }

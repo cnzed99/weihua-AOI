@@ -521,6 +521,7 @@ namespace WH.DetectSystem.Models
 
             #region 取图线程
             int sss = 0;
+            int tempID = 0;
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -533,6 +534,11 @@ namespace WH.DetectSystem.Models
                         {
                             CZipperCommunicate.GetID(out int productID, out int photoID);
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                            if (productID != tempID)
+                            {
+                                tempID = productID;
+                                productID--;
+                            }
                             if (productID != -1)
                             {
                                 cell.ID = productID.ToString();
@@ -541,20 +547,20 @@ namespace WH.DetectSystem.Models
                             }
                             else
                             {
-                                Growl.Error(Name +"-通讯连接异常，请检查PLC连接状态");
+                                Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
                                 cell.Dispose();
                                 continue;
                             }
-                        }                
+                        }
                         else
                         {
-                            if (cell.ImageFile=="") //手动调试
+                            if (cell.ImageFile == "") //手动调试
                             {
                                 cell.ID = (MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
                                 cell.PhotoTatolCount = 1;
                             }
-                           
+
                         }
                         //cell.ID = "123";
                         //cell.PhotoIndex = sss++;
@@ -562,7 +568,7 @@ namespace WH.DetectSystem.Models
 
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-                       // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
+                        // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         if (IsStart || IsManualTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
@@ -615,7 +621,16 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
-                        MaociAlgorParamConfig.MaociExcute(cell);
+                        try
+                        {
+                            MaociAlgorParamConfig.MaociExcute(cell);
+                        }
+                        catch (Exception ex)
+                        {
+                              await m_InfoChannel.Writer.WriteAsync(
+                              new PrintMsg("算法执行出错：" + ex.Message, LOG.LOG_ERROR));
+                        }
+
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
                         //strbuilder = new StringBuilder("[");
@@ -642,11 +657,11 @@ namespace WH.DetectSystem.Models
                             SysLog.Info($"当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
                             if (currentCells.Count >= cell.PhotoTatolCount)
                             {
-                               // sss = 0;
+                                // sss = 0;
                                 SysLog.Info($"满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
-                                List<Cell> orderCell= currentCells.OrderBy(c => c.CreateTime).ToList(); 
+                                List<Cell> orderCell = currentCells.OrderBy(c => c.CreateTime).ToList();
                                 Cell newCell = GetMergeCells(orderCell);
-                                
+
                                 for (int i = 0; i < currentCells.Count; i++)
                                 {
                                     newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
@@ -717,7 +732,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         CZipperCommunicate.SendResult(ZIPPERESULT.NG);
                                     }
-                                    
+
                                     if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
                                     {
                                         //newCell.Dispose();
