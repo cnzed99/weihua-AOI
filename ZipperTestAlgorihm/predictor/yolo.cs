@@ -169,8 +169,20 @@ namespace ZipperTestAlgorihm
 
             switch (input_size)
             {
+                case InputImgSize.IN160:
+                    output_size = (int)ImgSize.S160;
+                    break;
+                case InputImgSize.IN192:
+                    output_size = (int)ImgSize.S192;
+                    break;
+                case InputImgSize.IN256:
+                    output_size = (int)ImgSize.S256;
+                    break;
                 case InputImgSize.IN320:
                     output_size = (int)ImgSize.S320;
+                    break;
+                case InputImgSize.IN480:
+                    output_size = (int)ImgSize.S480;
                     break;
                 case InputImgSize.IN640:
                     output_size = (int)ImgSize.S640;

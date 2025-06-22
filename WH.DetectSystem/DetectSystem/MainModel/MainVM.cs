@@ -40,6 +40,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 
+
 namespace WH.DetectSystem.Models
 {
     /// <summary>
@@ -1284,10 +1285,15 @@ namespace WH.DetectSystem.Models
                    {
                        RecipeDefectName = g.Key,
                        regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
+                       Category = g.FirstOrDefault()?.Category?? Category.区域,
                        Value = g.SelectMany(cd => cd.Value).ToList(),
                        Type = g.FirstOrDefault()?.Type ?? "",
                        Index = g.Max(cd => cd.Index) // 取最大Index
                    }).ToList();
+            for (int i = 0; i < cells.Count; i++)
+            {
+                newCell.DrawEdges.AddRange(cells[i].DrawEdges);
+            }
 
             newCell.Image = GetCImage(cells);
 

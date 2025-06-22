@@ -39,14 +39,22 @@ namespace ZipperTestAlgorihm
     }
     public enum InputImgSize
     {
+        IN160=160,
+        IN192=192,
+        IN256=256,
         IN320 = 320,
+        IN480=480,
         IN640 = 640,
         IN1024 = 1024,
         IN2048 = 2048,
     }
     public enum ImgSize
     {
+        S160=525,
+        S192=756,
+        S256=1344,
         S320 = 2100,
+        S480=4725,
         S640 = 8400,
         S1024 = 21504,
         S2048 = 86016,
