@@ -80,6 +80,13 @@ namespace ZipperTestAlgorihm
                 }
                 CDefectRecipe defectRecipe0 = new CDefectRecipe("上止压伤", Category.区域);
                 cDefectRecipes.Add(defectRecipe0);
+
+                CDefectRecipe defectRecipe5 = new CDefectRecipe("下止露牙", Category.区域);
+                cDefectRecipes.Add(defectRecipe5);
+
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("上止露牙", Category.区域);
+                cDefectRecipes.Add(defectRecipe6);
+
                 CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
                 CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
                 cDefectRecipes.Add(defectRecipe1_1);
@@ -293,6 +300,7 @@ namespace ZipperTestAlgorihm
                                 ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat, paramClass.Score, paramClass.Nms);
                                 if (downResult.datas.Count > 0)
                                 {
+                                    List<int> luyaIndex = new List<int>();
                                     List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == "0").ToList();
                                     List<ObbData> lianci = downResult.datas.FindAll(c => c.lable == "1").ToList();
                                     List<ObbData> lianya = downResult.datas.FindAll(c => c.lable == "2").ToList();
@@ -304,6 +312,10 @@ namespace ZipperTestAlgorihm
                                         {
                                             float dis = CalculateDistance(downmass[a], lianci[b]);
                                             Diss.Add((dis, b));
+                                            if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
+                                            {
+                                                luyaIndex.Add(b);
+                                            }
                                         }
                                     }
                                     if (Diss.Count > 0)
@@ -314,6 +326,13 @@ namespace ZipperTestAlgorihm
                                         disData.Value = dis.Item1;
                                         dets.Add(disData);
                                         Diss.Clear();
+                                    }
+                                    if(luyaIndex.Count > 0)
+                                    {
+                                        for(int b = 0;b < luyaIndex.Count; b++)
+                                        {
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[b]);
+                                        }
                                     }
                                     List<(float, int)> Angs = new List<(float, int)>();
                                     for (int a = 0; a < downmass.Count; a++)
@@ -382,7 +401,7 @@ namespace ZipperTestAlgorihm
                                 ObbResult upResult = ImageInferObb(yolo_UpStopMass_obb, cropUpMat, paramClass.Score, paramClass.Nms);
                                 if (upResult.datas.Count > 0)
                                 {
-                                  
+                                    List<int> luyaIndex = new List<int>();
                                     List<ObbData> upmass = upResult.datas.FindAll(c => c.lable == "0").ToList();
                                     List<ObbData> lianci = upResult.datas.FindAll(c => c.lable == "2").ToList();
                                     List<ObbData> yashang = upResult.datas.FindAll(c => c.lable == "1").ToList();
@@ -394,6 +413,10 @@ namespace ZipperTestAlgorihm
                                         {
                                             float dis = CalculateDistance(upmass[a], lianci[b]);
                                             Diss.Add((dis, b));
+                                            if (lianci[b].box.Center.X > upmass[a].box.Center.X) //链牙在下止左边 露牙
+                                            {
+                                                luyaIndex.Add(b);
+                                            }
                                         }
                                     }
                                     if (Diss.Count > 0)
@@ -406,7 +429,13 @@ namespace ZipperTestAlgorihm
                                         dets.Add(disData);
                                         Diss.Clear();
                                     }
-
+                                    if (luyaIndex.Count > 0)
+                                    {
+                                        for (int b = 0; b < luyaIndex.Count; b++)
+                                        {
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止露牙", lianci[b]);
+                                        }
+                                    }
                                     for (int k = 0;k < yashang.Count; k++)
                                     {
                                         CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止压伤", yashang[k]);
