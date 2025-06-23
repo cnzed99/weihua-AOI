@@ -360,7 +360,7 @@ namespace 断面毛刺检测软件.Views
                                 {
                                     ID = pid,
                                     PhotoIndex = int.Parse(pindex),
-                                    PhotoTatolCount = Allfiles.Length,
+                                    PhotoTatolCount = Allfiles.Length,//多1张是拉头图片 不参与拼接图片
                                     isOnce = once,
                                     Quality = mainVM.MaociQualityConfig.Qualities[0],
                                     ImageFile = filepath,

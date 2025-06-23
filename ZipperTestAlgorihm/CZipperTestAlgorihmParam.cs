@@ -15,6 +15,7 @@ using System;
 using OpenCvSharp.ML;
 using System.DirectoryServices;
 using OpenCvSharp.Dnn;
+using System.Windows.Input;
 
 namespace ZipperTestAlgorihm
 {
@@ -46,6 +47,11 @@ namespace ZipperTestAlgorihm
         /// 正面上止检测对象
         /// </summary>
         private YOLO yolo_UpStopMass_obb = new YOLO();
+
+        /// <summary>
+        /// 正面上止检测对象
+        /// </summary>
+        private YOLO yolo_pull_det = new YOLO();
 
         //定义4组矩形来裁切图片
         Rect[] cropRec = new Rect[4];
@@ -428,9 +434,48 @@ namespace ZipperTestAlgorihm
                         }
                     }
                 }
-                else if (cell.PhotoIndex == 100) //有拉链的图片
+                else if (cell.PhotoIndex == 100) //有拉头的图片
                 {
+                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    for (int i = 0; i < detrets.Count; i++)
+                    {
+                        for (int j = 0; j < detrets[i].datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(detrets[i].datas[j].lable);
+                            string labelname = pull_names[labelindex];
+                            if (labelname.Contains("拉头"))
+                            {
+                                int lx = detrets[i].datas[j].box.X + detrets[i].datas[j].box.Width / 2 - 240;
+                                int ly = detrets[i].datas[j].box.Y + detrets[i].datas[j].box.Height / 2-240;
+                               int recw = 480;
+                                int rech = 480;
 
+                                if ((lx + recw) > mats[i].Width)
+                                {
+                                    lx = mats[i].Width - recw;
+                                }
+                                if (lx < 0)
+                                {
+                                    lx = 0;
+                                }
+
+                                if ((ly + rech) > mats[i].Height)
+                                {
+                                    ly = mats[i].Height - rech;
+                                }
+                                if (ly < 0)
+                                {
+                                    ly = 0;
+                                }
+
+                                Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
+                                cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+
+                            }
+
+
+                        }
+                    }
                 }
                 else //中间布带，链牙缺陷
                 {
@@ -557,6 +602,7 @@ namespace ZipperTestAlgorihm
                 int common_Categ_num = Common_names.Length;
                 int downmass_num = downStopMass_names.Length;
                 int upmass_num = upStopMass_names.Length;
+                int pull_num = pull_names.Length;
                 // int label_Categ_num = LabelDetect_names.Length;
                 float Score = param.Score;
                 float Nms = param.Nms;
@@ -626,6 +672,16 @@ namespace ZipperTestAlgorihm
                     Nms,
                     InputImgSize.IN192
                     );
+                yolo_pull_det = YOLO.GetYolo(
+                  model_type_det,
+                  pull_Model_Path,
+                  engine_type,
+                  CurrentDevice,
+                  pull_num,
+                  Score,
+                  Nms,
+                  Input_size
+              );
             }
         }
 

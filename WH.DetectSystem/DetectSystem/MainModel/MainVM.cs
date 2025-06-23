@@ -38,6 +38,7 @@ using ZipperInfo;
 using System.Linq;
 //using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using Org.BouncyCastle.Ocsp;
 
 
 
@@ -521,8 +522,8 @@ namespace WH.DetectSystem.Models
             #endregion 信息记录线程
 
             #region 取图线程
-            int sss = 0;
-            int tempID = 0;
+            int tempphotoID = 0;
+            int tempid = 0;
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -535,15 +536,27 @@ namespace WH.DetectSystem.Models
                         {
                             CZipperCommunicate.GetID(out int productID, out int photoID);
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                            if (productID != tempID)
-                            {
-                                tempID = productID;
-                                productID--;
-                            }
+
                             if (productID != -1)
                             {
+                                if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
+                                {
+                                    tempid = productID;
+                                    tempphotoID = 1;
+                                }
+                                else
+                                {
+                                    tempphotoID++;
+                                }
+                                if (photoID != 100)
+                                {
+                                    cell.PhotoIndex = tempphotoID;
+                                }
+                                else
+                                {
+                                    cell.PhotoIndex = photoID;
+                                }
                                 cell.ID = productID.ToString();
-                                cell.PhotoIndex = photoID;
                                 cell.PhotoTatolCount = photoTotalCount;
                             }
                             else
