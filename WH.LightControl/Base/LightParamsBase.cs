@@ -34,9 +34,9 @@ namespace WH.LightControl
         /// 20240723 TCG
         /// 主通讯参数保存路径
         /// </summary>
-        public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
+       // public static string s_LightConfigPath = "../SystemConfig/LightConfig.Json";
 
-        public event Action<CLightControlBase> DataContextChangedEvent;
+       // public event Action<CLightControlBase> DataContextChangedEvent;
 
         /// <summary>
         /// 光源品牌名称

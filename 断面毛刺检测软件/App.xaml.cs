@@ -30,6 +30,8 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.Load;
 using 断面毛刺检测软件.Views;
+using ZipperInfo;
+
 #if !NET40
 using System.Runtime;
 #endif
@@ -180,7 +182,7 @@ namespace 断面毛刺检测软件
             builder.RegisterType<CMySqlVM>().SingleInstance();
             builder.RegisterType<CMainModelsModelVM>().SingleInstance();
             builder.RegisterType<MainWindow>().SingleInstance();
-
+            builder.RegisterType<CZipperAutomaticVM>().SingleInstance();
             //系统设置
             builder
                 .Register(c =>
@@ -230,8 +232,6 @@ namespace 断面毛刺检测软件
                 .Register(c => SingleInstance.Create<Lazy<CameraSetWindow>, CameraSetWindow>())
                 .InstancePerDependency();
             //光源控制
-            //var lightProcess = Invoke("./WH.LightControl.exe");
-            //builder.RegisterInstance(lightProcess).Keyed<Process>("LightControl").SingleInstance();
             builder
                 .Register(c => SingleInstance.Create<Lazy<LightSetWindow>, LightSetWindow>())
                 .InstancePerDependency();
@@ -244,6 +244,13 @@ namespace 断面毛刺检测软件
             builder
                 .Register(c =>
                     SingleInstance.Create<Lazy<TimeTriggerTestWindow>, TimeTriggerTestWindow>()
+                )
+                .InstancePerDependency();
+
+            //拉链自动识别
+            builder
+                .Register(c =>
+                    SingleInstance.Create<Lazy<ZipperAutomaticWindow>, ZipperAutomaticWindow>()
                 )
                 .InstancePerDependency();
 

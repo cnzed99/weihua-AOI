@@ -395,6 +395,21 @@ namespace WH.DetectSystem.Models
             }
         }
 
+        private bool isAutomaticTest = false;
+
+        /// <summary>
+        /// 2025.6.23 鲍赞宝
+        /// 拉链自动识别模式
+        /// </summary>
+        public bool IsAutomaticTest
+        {
+            get { return isAutomaticTest; }
+            set
+            {
+                isAutomaticTest = value;
+            }
+        }
+
         [ObservableProperty]
         private bool deviceSeting = false;
 
@@ -484,7 +499,10 @@ namespace WH.DetectSystem.Models
         {
             return filter.IsReversal;
         }
-
+        /// <summary>
+        /// 拉链自动识别算法
+        /// </summary>
+      public  CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
         private void InitTask()
         {
             #region 信息记录线程
@@ -532,7 +550,7 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        if (IsStart)
+                        if (IsStart&&!isAutomaticTest) //自动运行
                         {
                             CZipperCommunicate.GetID(out int productID, out int photoID);
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
@@ -543,19 +561,23 @@ namespace WH.DetectSystem.Models
                                 {
                                     tempid = productID;
                                     tempphotoID = 1;
-                                }
-                                else
-                                {
-                                    tempphotoID++;
-                                }
-                                if (photoID != 100)
-                                {
                                     cell.PhotoIndex = tempphotoID;
                                 }
                                 else
                                 {
-                                    cell.PhotoIndex = photoID;
+                                    if (photoID != 100)
+                                    {
+                                        tempphotoID++;
+                                        cell.PhotoIndex = tempphotoID;
+                                    }
+                                    else
+                                    {
+
+                                        cell.PhotoIndex = photoID;
+                                    }
+
                                 }
+                               //cell.PhotoIndex = photoID;
                                 cell.ID = productID.ToString();
                                 cell.PhotoTatolCount = photoTotalCount;
                             }
@@ -574,16 +596,12 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoIndex = 1;
                                 cell.PhotoTatolCount = 1;
                             }
-
                         }
-                        //cell.ID = "123";
-                        //cell.PhotoIndex = sss++;
-                        //cell.PhotoTatolCount = 4;
 
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        if (IsStart || IsManualTest)
+                        if (IsStart || IsManualTest||isAutomaticTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
@@ -599,15 +617,15 @@ namespace WH.DetectSystem.Models
                                     ModelImage = bitmapSource;
                                 })
                             );
-                            if (FocusCtrlVM?.IsFocusing ?? false)
-                            {
-                                if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
-                                    cell.Dispose();
-                            }
-                            else
-                            {
-                                cell.Dispose();
-                            }
+                            //if (FocusCtrlVM?.IsFocusing ?? false)
+                            //{
+                            //    if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
+                            //        cell.Dispose();
+                            //}
+                            //else
+                            //{
+                            //    cell.Dispose();
+                            //}
                         }
                     }
                     catch (Exception)
@@ -637,12 +655,20 @@ namespace WH.DetectSystem.Models
                         cell.Stopwatch.Restart();
                         try
                         {
-                            MaociAlgorParamConfig.MaociExcute(cell);
+                            if (!isAutomaticTest) 
+                            {
+                                MaociAlgorParamConfig.MaociExcute(cell);
+                            }
+                            else
+                            {
+                                ZipperAutomaticAlgorithm.ZipperAutomaticAlgorithmRun(cell);
+                            }
+                            
                         }
                         catch (Exception ex)
                         {
-                              await m_InfoChannel.Writer.WriteAsync(
-                              new PrintMsg("算法执行出错：" + ex.Message, LOG.LOG_ERROR));
+                            await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("算法执行出错：" + ex.Message, LOG.LOG_ERROR));
                         }
 
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
@@ -665,92 +691,102 @@ namespace WH.DetectSystem.Models
                         //}
                         try
                         {
-                            MergeCells.Add(cell);
-                            SysLog.Info($"添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
-                            List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
-                            SysLog.Info($"当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
-                            if (currentCells.Count >= cell.PhotoTatolCount)
+                            if (!isAutomaticTest) //运行
                             {
-                                // sss = 0;
-                                SysLog.Info($"满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
-                                List<Cell> orderCell = currentCells.OrderBy(c => c.CreateTime).ToList();
-                                Cell newCell = GetMergeCells(orderCell);
+                                MergeCells.Add(cell);
+                                SysLog.Info($"添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
+                                List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
+                                SysLog.Info($"当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
+                                if (currentCells.Count >= cell.PhotoTatolCount + 1)
+                                {
+                                    // sss = 0;
+                                    SysLog.Info($"满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
+                                    List<Cell> orderCell = currentCells.OrderBy(c => c.CreateTime).ToList();
+                                    Cell newCell = GetMergeCells(orderCell);
 
-                                for (int i = 0; i < currentCells.Count; i++)
-                                {
-                                    newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
-                                }
-                                SysLog.Info($"准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
-                                MergeCells.RemoveAll(c => c.ID == newCell.ID);
-                                SysLog.Info($"已移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
-                                newCell.Quality = MaociQualityConfig.GetBest();
-                                if (!newCell.Skipthis)
-                                    MaociFilterConfig.FilterExute(newCell);
-                                else
-                                {
-                                    SetBadCell(newCell);
-                                }
-                                newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
-                                newCell.Stopwatch.Stop();
-                                newCell.ProcessTime = DateTime.Now - newCell.CreateTime;
-                                StringBuilder strbuilder = new StringBuilder("[结束]     ");
-                                strbuilder.Append(newCell.ID);
-                                strbuilder.Append("   检测结束,耗时:");
-                                strbuilder.Append(newCell.ProcessTime.TotalMilliseconds.ToString("F2"));
-                                if (newCell.IsOK)
-                                {
-                                    await m_InfoChannel.Writer.WriteAsync(
-                                        new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
-                                    );
-                                }
-                                else if (MarkCtrlVM is not null)
-                                {
-                                    int markPos = MarkCtrlVM.AddMark(newCell.EncoderPos);
-                                    strbuilder.Append($",检测NG,增加打标位置{markPos}！");
-                                    await m_InfoChannel.Writer.WriteAsync(
-                                        new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
-                                    );
-                                }
-                                FilterTime = newCell.FilterTime.TotalMilliseconds;
-                                if (!m_ShowImageChannel.Writer.TryWrite(newCell))
-                                {
-                                    newCell.Dispose();
-                                    //strbuilder = new StringBuilder("[");
-                                    //strbuilder.Append("筛选线程");
-                                    //strbuilder.Append("]     ");
-                                    //strbuilder.Append(newCell.ID);
-                                    //strbuilder.Append("   newCell入显示队列失败。");
-                                    //await m_InfoChannel.Writer.WriteAsync(
-                                    //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                                    //);
-                                }
-
-                                ModelBrush = newCell.Quality.ShowColor.Brush;
-                                if (!newCell.IsOK)
-                                {
-                                    LastBrush = ModelBrush;
-                                    LastImage = ModelImage;
-                                }
-                                MaociDefectsProduce.Excute(newCell);
-                                MaociAlarmSetConfig.Excute(newCell);
-
-                                if (ProcessGroup.AddCellAndJudge(newCell, out CCellPro CellOut))
-                                {
-                                    ProcessGroup.MaociDefectsProduce.Excute(CellOut.Cell);
-                                    ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
-                                    if (CellOut.Cell.IsOK)
+                                    for (int i = 0; i < currentCells.Count; i++)
                                     {
-                                        CZipperCommunicate.SendResult(ZIPPERESULT.OK);
+                                        newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                     }
+                                    SysLog.Info($"准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
+                                    MergeCells.RemoveAll(c => c.ID == newCell.ID);
+                                    SysLog.Info($"已移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
+                                    newCell.Quality = MaociQualityConfig.GetBest();
+                                    if (!newCell.Skipthis)
+                                        MaociFilterConfig.FilterExute(newCell);
                                     else
                                     {
-                                        CZipperCommunicate.SendResult(ZIPPERESULT.NG);
+                                        SetBadCell(newCell);
+                                    }
+                                    newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
+                                    newCell.Stopwatch.Stop();
+                                    newCell.ProcessTime = DateTime.Now - newCell.CreateTime;
+                                    StringBuilder strbuilder = new StringBuilder("[结束]     ");
+                                    strbuilder.Append(newCell.ID);
+                                    strbuilder.Append("   检测结束,耗时:");
+                                    strbuilder.Append(newCell.ProcessTime.TotalMilliseconds.ToString("F2"));
+                                    if (newCell.IsOK)
+                                    {
+                                        await m_InfoChannel.Writer.WriteAsync(
+                                            new PrintMsg(strbuilder.ToString(), LOG.LOG_OK)
+                                        );
+                                    }
+                                    else if (MarkCtrlVM is not null)
+                                    {
+                                        int markPos = MarkCtrlVM.AddMark(newCell.EncoderPos);
+                                        strbuilder.Append($",检测NG,增加打标位置{markPos}！");
+                                        await m_InfoChannel.Writer.WriteAsync(
+                                            new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                                        );
+                                    }
+                                    FilterTime = newCell.FilterTime.TotalMilliseconds;
+                                    if (!m_ShowImageChannel.Writer.TryWrite(newCell))
+                                    {
+                                        newCell.Dispose();
+                                        //strbuilder = new StringBuilder("[");
+                                        //strbuilder.Append("筛选线程");
+                                        //strbuilder.Append("]     ");
+                                        //strbuilder.Append(newCell.ID);
+                                        //strbuilder.Append("   newCell入显示队列失败。");
+                                        //await m_InfoChannel.Writer.WriteAsync(
+                                        //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                        //);
                                     }
 
-                                    if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
+                                    ModelBrush = newCell.Quality.ShowColor.Brush;
+                                    if (!newCell.IsOK)
                                     {
-                                        //newCell.Dispose();
+                                        LastBrush = ModelBrush;
+                                        LastImage = ModelImage;
                                     }
+                                    MaociDefectsProduce.Excute(newCell);
+                                    MaociAlarmSetConfig.Excute(newCell);
+
+                                    if (ProcessGroup.AddCellAndJudge(newCell, out CCellPro CellOut))
+                                    {
+                                        ProcessGroup.MaociDefectsProduce.Excute(CellOut.Cell);
+                                        ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
+                                        if (CellOut.Cell.IsOK)
+                                        {
+                                            CZipperCommunicate.SendResult(ZIPPERESULT.OK);
+                                        }
+                                        else
+                                        {
+                                            CZipperCommunicate.SendResult(ZIPPERESULT.NG);
+                                        }
+
+                                        if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
+                                        {
+                                            //newCell.Dispose();
+                                        }
+                                    }
+                                }
+                            }
+                            else  //自动识别
+                            {
+                                if (!m_ShowImageChannel.Writer.TryWrite(cell))
+                                {
+                                    cell.Dispose();
                                 }
                             }
 
@@ -1298,7 +1334,7 @@ namespace WH.DetectSystem.Models
                    {
                        RecipeDefectName = g.Key,
                        regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
-                       Category = g.FirstOrDefault()?.Category?? Category.区域,
+                       Category = g.FirstOrDefault()?.Category ?? Category.区域,
                        Value = g.SelectMany(cd => cd.Value).ToList(),
                        Type = g.FirstOrDefault()?.Type ?? "",
                        Index = g.Max(cd => cd.Index) // 取最大Index
@@ -1308,7 +1344,11 @@ namespace WH.DetectSystem.Models
                 newCell.DrawEdges.AddRange(cells[i].DrawEdges);
             }
 
-            newCell.Image = GetCImage(cells);
+            CImage img = GetCImage(cells);
+            if (img != null)
+            {
+                newCell.Image = img;
+            }
 
             return newCell;
 
@@ -1316,6 +1356,11 @@ namespace WH.DetectSystem.Models
         //  Mat matresult;
         private CImage GetCImage(List<Cell> cells)
         {
+            cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
+            if (cells.Count > 0)
+            {
+                return null;
+            }
             int height = cells[0].Image.ImageHeight;
             int width = cells[0].Image.ImageWidth;
             int[] widths = cells.Select(c => c.Image.ImageWidth).ToArray();
@@ -1369,6 +1414,7 @@ namespace WH.DetectSystem.Models
                 }
 
             }
+
 
         }
 

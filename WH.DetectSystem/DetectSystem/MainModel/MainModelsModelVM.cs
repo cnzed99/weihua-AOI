@@ -218,6 +218,25 @@ namespace WH.DetectSystem.ViewModels
             }
         }
 
+        //private bool isAutomaticTest = false;
+
+        ///// <summary>
+        ///// 2025.6.23 鲍赞宝
+        ///// 拉链自动识别模式
+        ///// </summary>
+        //public bool IsAutomaticTest
+        //{
+        //    get { return isAutomaticTest; }
+        //    set
+        //    {
+        //        isAutomaticTest = value;
+        //        foreach (var mainVM in CMainVMs)
+        //        {
+        //            mainVM.IsAutomaticTest = isAutomaticTest;
+        //        }
+        //    }
+        //}
+
         /// <summary>
         /// 界面绑定变量，勿用此变量判断用户是否启动软件
         /// </summary>
@@ -305,7 +324,19 @@ namespace WH.DetectSystem.ViewModels
             try
             {
                 LightManagement = new CLinghtManagement(LightNames);
-                //CLinghtManagement.LoadLightParams();
+                CLinghtManagement.LoadLightParams();
+                foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
+                {
+                    lightCtl.Open(lightCtl.BaseConfig);
+                    Thread.Sleep(10);
+                    for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++) 
+                    {
+                        lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
+                        Thread.Sleep(10);
+                    }
+
+
+                }
             }
             catch (Exception ex)
             {

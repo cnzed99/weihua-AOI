@@ -58,9 +58,9 @@ namespace ZipperInfo
         /// <param name="photoID">图片ID</param>
         public static void GetID(out int productID, out int photoID)
         {
-            try
-            {
-                lock (lockobj)
+            //try
+            //{
+            //    lock (lockobj)
                 {
                     productID = -1;
                     photoID = -1;
@@ -70,12 +70,12 @@ namespace ZipperInfo
                         photoID = com.ReadHoldingRegisterInt32(41194);
                     }
                 }
-            }
-            catch (Exception)
-            {
-                productID = -1;
-                photoID = -1;
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
     
 
         }
@@ -86,25 +86,24 @@ namespace ZipperInfo
         /// </summary>
         public static int GetPhotoCount()
         {
-            try
-            {
+            //try
+            //{
                 lock (lockobj)
                 {
                     if (com != null)
                     {
                         return com.ReadHoldingRegisterInt32(41200);
-
                     }
                     else
                     {
                         return -1;
                     }
                 }
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
 
 
         }
@@ -113,22 +112,60 @@ namespace ZipperInfo
         /// </summary>
         public static int GetZipperLenght()
         {
-            try
-            {
+            //try
+            //{
                 if (com != null)
                 {
-                    return com.ReadHoldingRegisterInt32(41204);
+                    return com.ReadHoldingRegisterInt32(41202);
 
                 }
                 else
                 {
                     return -1;
                 }
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
+
+        }
+        /// <summary>
+        /// 写入单条拉链的长度 2025-5-29 鲍赞宝
+        /// </summary>
+        /// <param name="lenght">拉链长度 单位mm</param>
+        public static void SendZipperLenght(float lenght)
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    int tlenght = (int)lenght * 10;
+                   com.WriteSingleRegisterInt32(41202, tlenght);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
+        /// <summary>
+        /// 写入拉头触发的位置 2025-5-29 鲍赞宝
+        /// </summary>
+        public static void SendPullLocation(int location)
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    com.WriteSingleRegisterInt32(41198, location);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
 
         }
         /// <summary>
@@ -143,6 +180,152 @@ namespace ZipperInfo
             }
 
         }
+        /// <summary>
+        /// 获取当前轴的位置坐标 2025-5-29 鲍赞宝
+        /// </summary>
+        public static int GetGrippawlLocation()
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    return com.ReadHoldingRegisterInt32(41230);
+                }
+                else
+                {
+                    return -1;
+                }
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
+
+        }
+
+        /// <summary>
+        /// 写入触发的点位置,
+        /// </summary>
+        /// <param name="LocationPoints">触发的点位</param>
+        /// <param name="triggerndex">在第几张后改变ID</param>
+        public static void SendPoints(List<float> LocationPoints,int triggerndex)
+        {
+            List<ushort> address= new List<ushort>();
+            int startaddress = 41438;
+            address.Add((ushort)startaddress);
+            for (int i = 1; i < 10; i++) 
+            {
+                startaddress += 2;
+                address.Add((ushort)startaddress);
+            }
+            if (com != null)
+            {
+                for (int k = 0; k < LocationPoints.Count; k++)
+                {
+                    int pos =(int) LocationPoints[k] * 10;
+                    com.WriteSingleRegisterInt32(address[k], pos);
+                    
+                }
+                com.WriteSingleRegisterInt32(41250, triggerndex);
+            }
+
+        }
+
+        #region 自动识别拉链
+        /// <summary>
+        /// 自动识别测试开始
+        /// </summary>
+        public static void TestStart()
+        {
+            if (com != null)
+            {
+                com.WriteSingleCoil(13, true);
+            }
+        }
+
+        /// <summary>
+        /// 第一阶段位置完成
+        /// </summary>
+        public static void FirststageFinsh()
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                   com.WriteSingleCoil(20,true);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
+        /// <summary>
+        /// 第二阶段完成
+        /// </summary>
+        public static void SceondstageFinsh()
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    com.WriteSingleCoil(21, true);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
+        /// <summary>
+        /// 第三阶段完成
+        /// </summary>
+        public static void ThirdstageFinsh()
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    com.WriteSingleCoil(22, true);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
+        /// <summary>
+        /// 自动识别测试完成
+        /// </summary>
+        public static void TestFinish()
+        {
+            //try
+            //{
+                if (com != null)
+                {
+                    com.WriteSingleCoil(23, true);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
+        /// <summary>
+        /// 轴运动停止
+        /// </summary>
+        public static void AixtStop()
+        {
+            if (com != null)
+            {
+                com.WriteSingleCoil(24, true);
+            }
+        }
+        #endregion
 
     }
 

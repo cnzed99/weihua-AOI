@@ -48,7 +48,7 @@ namespace WH.LightControl
         public static List<(string, ILight)> LightHelpers = new List<(string, ILight)>();
 
         /// <summary>
-        /// 相机字典
+        /// 光源字典
         /// </summary>
         public static Dictionary<string, CLightControlBase> LightControlDict =
             new Dictionary<string, CLightControlBase>();
@@ -86,7 +86,7 @@ namespace WH.LightControl
                         string lightkey =
                             $"{lightControl.BaseConfig.LightBrandName}&{lightControl.BaseConfig.LightStationName}";
                         LightControlDict.Add(lightkey, lightControl);
-                        //LightParamDict.Add(lightkey, param);
+                
                     }
                 }
 

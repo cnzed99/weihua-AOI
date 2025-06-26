@@ -5,11 +5,19 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="HandyControl" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.Extensions" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions.OpenCvSharp" />
+    <PackageReference Include="OpenVINO.CSharp.Windows" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +25,14 @@
     <ProjectReference Include="..\LanguageManager\LanguageManager.csproj" />
     <ProjectReference Include="..\Modbus\Modbus.csproj" />
     <ProjectReference Include="..\WH.Controls\WH.Controls.csproj" />
+    <ProjectReference Include="..\WH.LightControl\WH.LightControl.csproj" />
+    <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TensorRtSharp">
+      <HintPath>..\ZipperTestAlgorihm\dll\net8.0\TensorRtSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

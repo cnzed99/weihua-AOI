@@ -108,7 +108,7 @@ namespace WH.LightControl
         /// 设置通道亮度
         /// </summary>
         /// <param name="light">-1设置四个通道，1、2、3、4设置对应通道</param>
-        protected abstract void SetChannelValue(CLight light);
+        public abstract void SetChannelValue(CLight light);
 
         /// <summary>
         /// 20240724 TCG

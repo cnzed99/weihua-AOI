@@ -27,17 +27,15 @@ namespace LSWLightControl
         public CLightParamsBase Init(string path, string indexstr, out CLightControlBase lightobj)
         {
             LSWLightControlVM LSWlight = new LSWLightControlVM();
-
             if (File.Exists(path))
             {
-                List<LSWLightConfig> templist = ConfigAPI.Load<List<LSWLightConfig>>(path);
-                if (templist != null)
+                List<LSWLightConfig> lightparambase = ConfigAPI.LoadDeserialize<List<LSWLightConfig>>(path);
+                if (lightparambase != null)
                 {
-                    IEnumerable<LSWLightConfig> selectName = templist.Where(t => t.LightStationName == indexstr);
-                    int num=selectName.Count();
-                    if (num>0)
+                     LSWLightConfig lightparam = lightparambase.Find(t => t.LightStationName == indexstr) as LSWLightConfig;
+                    if (lightparam != null)
                     {
-                        LSWlight.Config = selectName.FirstOrDefault();
+                        LSWlight.Config = lightparam;
                     }
                     else
                     {

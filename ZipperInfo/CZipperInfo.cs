@@ -65,6 +65,19 @@ namespace ZipperInfo
         [property: ReadOnly(true)]
         [ObservableProperty]
         STOPMASS zipperDownMass = STOPMASS.注塑;
+        /// <summary>
+        /// 拉链拍照触发的位置
+        /// 2025.06.24 鲍赞宝
+        /// </summary>
+        public List<float> ZipperTriggerPos {  get; set; }
+        /// <summary>
+        /// 拉头ID改变的位置序号
+        /// </summary>
+        public int PullchangeIndex {  get; set; }
+        /// <summary>
+        /// 第几张后去改变ID
+        /// </summary>
+        public int TriggerIndex { get; set; }
     }
 
 
@@ -89,8 +102,8 @@ namespace ZipperInfo
         透明=3,
         U型尼龙=4,
         融止=5,
-        隐形=6
-
+        隐形=6,
+        无=7
     }
 
 }

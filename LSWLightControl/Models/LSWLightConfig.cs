@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,16 +19,16 @@ namespace LSWLightControl
         public LSWLightConfig()
             : base()
         {
-            if (LightChannelList == null)
-            {
-                LightChannelList = new()
-                {
-                    new CLight("A"),
-                    new CLight("B"),
-                    new CLight("C"),
-                    new CLight("D")
-                }; //通道亮度
-            }
+            //if (LightChannelList == null)
+            //{
+            //    LightChannelList = new()
+            //    {
+            //        new CLight("A"),
+            //        new CLight("B"),
+            //        new CLight("C"),
+            //        new CLight("D")
+            //    }; //通道亮度
+            //}
         }
 
         /// <summary>
@@ -53,5 +54,20 @@ namespace LSWLightControl
         [property: DisplayName("工作模式")]
         [ObservableProperty]
         bool workMode = true;
+
+        [OnDeserialized]
+        void LoadDefatLight(StreamingContext context)
+        {
+            if (LightChannelList == null)
+            {
+                LightChannelList = new()
+                {
+                    new CLight("A"),
+                    new CLight("B"),
+                    new CLight("C"),
+                    new CLight("D")
+                }; //通道亮度
+            }
+        }
     }
 }

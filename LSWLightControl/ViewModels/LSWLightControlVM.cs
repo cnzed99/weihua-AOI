@@ -217,7 +217,7 @@ namespace LSWLightControl
         }
 
         [RelayCommand]
-        protected override void SetChannelValue(CLight light)
+        public override void SetChannelValue(CLight light)
         {
             light.Lightvalue = light.Value;
             if (!IsOpen())

@@ -465,6 +465,7 @@ namespace ZipperTestAlgorihm
                 }
                 else if (cell.PhotoIndex == 100) //有拉头的图片
                 {
+                   // Cv2.ImWrite(@"C:\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")+ ".png", img);
                     List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
@@ -475,7 +476,7 @@ namespace ZipperTestAlgorihm
                             if (labelname.Contains("拉头"))
                             {
                                 int lx = detrets[i].datas[j].box.X + detrets[i].datas[j].box.Width / 2 - 240;
-                                int ly = detrets[i].datas[j].box.Y + detrets[i].datas[j].box.Height / 2-240;
+                                int ly = detrets[i].datas[j].box.Y + detrets[i].datas[j].box.Height / 2 - 240;
                                int recw = 480;
                                 int rech = 480;
 
@@ -624,6 +625,9 @@ namespace ZipperTestAlgorihm
             yolo_all_det2.Dispose();
             yolo_all_det3.Dispose();
             yolo_all_det4.Dispose();
+            yolo_DownStopMass_obb.Dispose();
+            yolo_UpStopMass_obb.Dispose();
+            yolo_pull_det.Dispose();
             //yolo_labeldefect.Dispose();
             if (param != null)
             {

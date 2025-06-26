@@ -34,6 +34,7 @@ using WH.Entity.LogRecord;
 using WH.Entity.Progress;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
+using ZipperInfo;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -155,7 +156,7 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-                CLinghtManagement.LoadLightParams();
+               // CLinghtManagement.LoadLightParams();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
@@ -872,6 +873,28 @@ namespace 断面毛刺检测软件
         {
             CMotionManagement.OpenMotionWindow();
         }
+
+        #region 自动换料
+        private void AutoMatic_Click(object sender, RoutedEventArgs e)
+        {
+            ZipperAutomaticWindow AutomaticWindow = App
+            .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
+            .Value;
+            CZipperAutomaticVM automaticVM = CPublicServices.Container.Resolve<CZipperAutomaticVM>();
+            AutomaticWindow.DataContext = automaticVM;
+            automaticVM.StartAutoTestEven = (b,p,inx) => {
+                foreach (var mainVM in CMainList.CMainVMs)
+                {
+                    mainVM.IsAutomaticTest = b;
+                }
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = p;
+
+            };
+            AutomaticWindow.Show();
+            AutomaticWindow.Activate();
+            //OperateLog.Info(Properties.Resources.ImageSave);
+        }
+        #endregion
     }
 
     /// <summary>
