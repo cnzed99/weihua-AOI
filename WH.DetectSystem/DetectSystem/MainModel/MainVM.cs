@@ -502,7 +502,7 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 拉链自动识别算法
         /// </summary>
-      public  CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
+        public CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
         private void InitTask()
         {
             #region 信息记录线程
@@ -550,34 +550,36 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        if (IsStart&&!isAutomaticTest) //自动运行
+                        if (IsStart && !isAutomaticTest) //自动运行
                         {
                             CZipperCommunicate.GetID(out int productID, out int photoID);
+                            CZipperCommunicate.GetPullID(out int pullID);
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
 
                             if (productID != -1)
                             {
-                                if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
+                                if (pullID != 100) //是拉头以外的图片
                                 {
-                                    tempid = productID;
-                                    tempphotoID = 1;
-                                    cell.PhotoIndex = tempphotoID;
-                                }
-                                else
-                                {
-                                    if (photoID != 100)
+                                    if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
                                     {
-                                        tempphotoID++;
+                                        tempid = productID;
+                                        tempphotoID = 1;
                                         cell.PhotoIndex = tempphotoID;
                                     }
                                     else
                                     {
-
-                                        cell.PhotoIndex = photoID;
+                                        tempphotoID++;
+                                        cell.PhotoIndex = tempphotoID;
                                     }
 
+
                                 }
-                               //cell.PhotoIndex = photoID;
+                                else //有拉头的图片
+                                {
+                                    cell.PhotoIndex = 100;
+                                    CZipperCommunicate.SendPullID(0); //收到图片之后立马改为0
+                                }
+                                //cell.PhotoIndex = photoID;
                                 cell.ID = productID.ToString();
                                 cell.PhotoTatolCount = photoTotalCount;
                             }
@@ -601,7 +603,7 @@ namespace WH.DetectSystem.Models
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        if (IsStart || IsManualTest||isAutomaticTest)
+                        if (IsStart || IsManualTest || isAutomaticTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
@@ -655,7 +657,7 @@ namespace WH.DetectSystem.Models
                         cell.Stopwatch.Restart();
                         try
                         {
-                            if (!isAutomaticTest) 
+                            if (!isAutomaticTest)
                             {
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
@@ -663,7 +665,7 @@ namespace WH.DetectSystem.Models
                             {
                                 ZipperAutomaticAlgorithm.ZipperAutomaticAlgorithmRun(cell);
                             }
-                            
+
                         }
                         catch (Exception ex)
                         {
@@ -1357,9 +1359,17 @@ namespace WH.DetectSystem.Models
         private CImage GetCImage(List<Cell> cells)
         {
             cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
-            if (cells.Count > 0)
+            if (cells.Count <= 1)
             {
-                return null;
+                if (cells.Count == 1)
+                {
+                    return cells[0].Image;
+                }
+                else
+                {
+                    return null;
+                }
+
             }
             int height = cells[0].Image.ImageHeight;
             int width = cells[0].Image.ImageWidth;

@@ -28,16 +28,20 @@ namespace ZipperInfo
         {
             //写入拉链长度
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
-            GetTriggerPoints(out List<float> points, out int triggerIndex);
 
+            GetTriggerPoints(out List<float> points, out int cutoffIndex);
+           
             if (points != null && points.Count > 0)
             {
+                //写入拍照的总图片数量
+                CZipperCommunicate.SendPhotoCount(points.Count);
                 //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints(points,triggerIndex);
-                Thread.Sleep(500);
+                CZipperCommunicate.SendPoints(points, cutoffIndex);
+                Thread.Sleep(100);
                 startAutoTest=true;
-                StartAutoTestEven?.Invoke(startAutoTest, points, triggerIndex);
+                StartAutoTestEven?.Invoke(startAutoTest, points, cutoffIndex);
                 //将光源值先减小到较状态
+                Thread.Sleep(100);
                 CZipperCommunicate.TestStart();
 
             }
@@ -47,8 +51,8 @@ namespace ZipperInfo
         /// 获取触发点位置
         /// </summary>
         /// <param name="points">触发的点位</param>
-        /// <param name="triggetIndex">第几张后改变ID</param>
-        private void GetTriggerPoints(out List<float>points,out int triggetIndex)
+        /// <param name="triggetIndex">切断前拍到第几张改变ID</param>
+        private void GetTriggerPoints(out List<float>points,out int cutoffIndex)
         {
             points = new List<float>();
             float frontLim = AutoData.DaoDitance - AutoData.CcdWidth / 2.0f;
@@ -62,13 +66,13 @@ namespace ZipperInfo
             float netZipperhandle = AutoData.ZipperLenght * frontzippers; //下一条拉链的头位置
             float netZipperTali = AutoData.ZipperLenght * nextzippewr; // 下一条拉链的尾位置
 
-             triggetIndex = 0; //在第几张之前切换ID
+            int pullchange = 0; //在第几张之前切换ID
 
             if (netZipperhandle >= frontLim && netZipperTali > backLim)//类1 //如果下一条拉链的头位置比上视野大并且尾比下视野位置大
             {
 
                 //第一个点
-                triggetIndex = 0;
+                pullchange = 0;
                 float firstpoint = netZipperhandle - frontLim;
                 points.Add(firstpoint);
                 //后续的点
@@ -91,7 +95,7 @@ namespace ZipperInfo
             else if (netZipperhandle <= frontLim && netZipperTali < backLim) //类2 //如果下一条拉链的头位置比上视野小并且尾比下视野位置小
             {
                 //第一个点
-                triggetIndex = 0;
+                pullchange = 0;
                 float firstpoint = netZipperTali - frontLim;
                 points.Add(firstpoint);
                 //后续的点
@@ -143,7 +147,7 @@ namespace ZipperInfo
 
                         float endpoint = netZipperTali - backLim;
                         points.Add(endpoint);
-                        triggetIndex = points.Count;
+                        pullchange = points.Count;
                         break;
                     }
                     else
@@ -161,6 +165,8 @@ namespace ZipperInfo
                 }
 
             }
+
+            cutoffIndex= points.Count- pullchange;
         }
 
 

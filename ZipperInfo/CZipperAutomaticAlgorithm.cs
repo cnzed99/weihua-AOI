@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WH.Entity;
 using WH.LightControl;
 using WH.RunCell;
 
@@ -15,7 +16,7 @@ namespace ZipperInfo
 {
     public class CZipperAutomaticAlgorithm
     {
-        public static CZipperInfo ZipperInfo { get; set; }
+        public static CZipperInfo ZipperInfo { get; set; }=new CZipperInfo();
         /// <summary>
         /// 处在哪个阶段
         /// </summary>
@@ -129,9 +130,9 @@ namespace ZipperInfo
                                 {
                                    
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
-                                
+
                                     List<int> templist = new List<int>();
-                                    for (int j = ZipperInfo.TriggerIndex; j < ZipperInfo.ZipperTriggerPos.Count; j++)
+                                    for (int j = 0; j < ZipperInfo.ZipperTriggerPos.Count; j++)
                                     {
                                         int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
                                         templist.Add(temppos);
@@ -142,33 +143,33 @@ namespace ZipperInfo
                                     int pindex = templist.IndexOf(pos);
                                     if (templist.Count >= 3)
                                     {
-                                        if (Math.Abs(pos-templist[pindex - 1])>100|| Math.Abs(pos - templist[pindex + 1]) > 100) //大于10mm
+                                        if (Math.Abs(pos - templist[pindex - 1]) > 100 && Math.Abs(pos - templist[pindex + 1]) > 100) //大于10mm
                                         {
-                                            if (ZipperInfo.TriggerIndex == 0)
-                                            {
-                                                ZipperInfo.PullchangeIndex = pindex;
-                                            }
-                                            else
-                                            {
-                                                // 第一部分：从第4个元素开始的所有元素
-                                                List<int> start = templist.Skip(ZipperInfo.TriggerIndex).ToList(); // 跳过前3个，取剩余元素 
-                                                // 第二部分：前3个元素（第4个之前）
-                                                List<int> end = templist.Take(ZipperInfo.TriggerIndex).ToList(); // 取前3个元素 
+                                            //if (ZipperInfo.TriggerIndex == 0)
+                                            //{
+                                            //    ZipperInfo.PullchangeIndex = pindex;
+                                            //}
+                                            //else
+                                            //{
+                                            //    // 第一部分：从第4个元素开始的所有元素
+                                            //    List<int> start = templist.Skip(ZipperInfo.TriggerIndex).ToList(); // 跳过前3个，取剩余元素 
+                                            //    // 第二部分：前3个元素（第4个之前）
+                                            //    List<int> end = templist.Take(ZipperInfo.TriggerIndex).ToList(); // 取前3个元素 
 
-                                                start.AddRange(end);
+                                            //    start.AddRange(end);
 
-                                                int pullposindex = start.IndexOf(pos);
-                                                ZipperInfo.PullchangeIndex = pullposindex;
-                                            }
+                                            //    int pullposindex = start.IndexOf(pos);
+                                            //    ZipperInfo.PullchangeIndex = pullposindex;
+                                            //}
                                             //写轴坐标位置
                                             CZipperCommunicate.AixtStop();
                                             CZipperCommunicate.SendPullLocation(pos);
                                             onWichStage = 4;
                                         }
                                     }
-                                  
-                             
-                                    
+
+
+
                                 }
                             }
                         }
@@ -264,10 +265,6 @@ namespace ZipperInfo
                 }
             }
         }
-
-
-
-
         private void IniYolo(string modelpath)
         {
             if (!File.Exists(modelpath))
@@ -293,5 +290,49 @@ namespace ZipperInfo
                 Input_size
             );
         }
+
+
+
+        #region 保存参数
+        public static string ParameterPath = "..\\SystemConfig\\ZipperInfoData.Json";
+
+        public static void SaveParameter(CZipperInfo data)
+        {
+            try
+            {
+                ConfigAPI.Save(data, ParameterPath);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region 读取参数
+
+        public static CZipperInfo LoadParameter()
+        {
+            CZipperInfo settingsModel = new CZipperInfo();
+            try
+            {
+                if (File.Exists(ParameterPath))
+                {
+                    settingsModel = ConfigAPI.Load<CZipperInfo>(ParameterPath);
+                    if (settingsModel == null)
+                    {
+                        settingsModel = new CZipperInfo();
+                    }
+                }
+                else
+                {
+                    settingsModel = new CZipperInfo();
+                }
+            }
+            catch (Exception)
+            {
+                settingsModel = new CZipperInfo();
+            }
+            return settingsModel;
+        }
+
+        #endregion
     }
 }

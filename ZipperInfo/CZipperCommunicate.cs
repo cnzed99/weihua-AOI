@@ -60,26 +60,74 @@ namespace ZipperInfo
         {
             //try
             //{
-            //    lock (lockobj)
+            lock (lockobj)
+            {
+                productID = -1;
+                photoID = -1;
+                if (com != null)
                 {
-                    productID = -1;
-                    photoID = -1;
-                    if (com != null)
-                    {
-                        productID = com.ReadHoldingRegisterInt32(41192);
-                        photoID = com.ReadHoldingRegisterInt32(41194);
-                    }
+                    productID = com.ReadHoldingRegisterInt32(41192);
+                    photoID = com.ReadHoldingRegisterInt32(41194);
                 }
+            }
             //}
             //catch (Exception)
             //{
             //    productID = -1;
             //    photoID = -1;
             //}
-    
+
 
         }
+        /// <summary>
+        /// 获取拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// </summary>
+        /// <param name="pullID"></param>
+        public static void GetPullID(out int pullID)
+        {
+            //try
+            //{
+            lock (lockobj)
+            {
+                pullID = -1;
+                if (com != null)
+                {
+                    pullID = com.ReadHoldingRegisterInt32(41226);
+                }
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
 
+
+        }
+        /// <summary>
+        /// 获取拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// </summary>
+        /// <param name="pullID"></param>
+        public static void SendPullID(int pullID)
+        {
+            //try
+            //{
+            lock (lockobj)
+            {
+                if (com != null)
+                {
+                    com.WriteSingleRegisterInt32(41226, pullID);
+                }
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
+
+
+        }
 
         /// <summary>
         /// 获取单条拉链拍照的总张数 2025-5-29 鲍赞宝
@@ -88,24 +136,41 @@ namespace ZipperInfo
         {
             //try
             //{
-                lock (lockobj)
+            lock (lockobj)
+            {
+                if (com != null)
                 {
-                    if (com != null)
-                    {
-                        return com.ReadHoldingRegisterInt32(41200);
-                    }
-                    else
-                    {
-                        return -1;
-                    }
+                    return com.ReadHoldingRegisterInt32(41200);
                 }
+                else
+                {
+                    return -1;
+                }
+            }
             //}
             //catch (Exception)
             //{
             //    return -1;
             //}
+        }
+        /// <summary>
+        /// 写入拍照的总张数 2025-6-26 鲍赞宝
+        /// </summary>
+        public static void SendPhotoCount(int count)
+        {
+            //try
+            //{
 
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41200, count);
+            }
 
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
         }
         /// <summary>
         /// 获取单条拉链的长度 2025-5-29 鲍赞宝
@@ -114,15 +179,15 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    return com.ReadHoldingRegisterInt32(41202);
+            if (com != null)
+            {
+                return com.ReadHoldingRegisterInt32(41202);
 
-                }
-                else
-                {
-                    return -1;
-                }
+            }
+            else
+            {
+                return -1;
+            }
             //}
             //catch (Exception)
             //{
@@ -138,11 +203,11 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    int tlenght = (int)lenght * 10;
-                   com.WriteSingleRegisterInt32(41202, tlenght);
-                }
+            if (com != null)
+            {
+                int tlenght = (int)lenght * 10;
+                com.WriteSingleRegisterInt32(41202, tlenght);
+            }
 
             //}
             //catch (Exception)
@@ -157,10 +222,10 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    com.WriteSingleRegisterInt32(41198, location);
-                }
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41198, location);
+            }
 
             //}
             //catch (Exception)
@@ -187,14 +252,14 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    return com.ReadHoldingRegisterInt32(41230);
-                }
-                else
-                {
-                    return -1;
-                }
+            if (com != null)
+            {
+                return com.ReadHoldingRegisterInt32(41230);
+            }
+            else
+            {
+                return -1;
+            }
             //}
             //catch (Exception)
             //{
@@ -208,12 +273,12 @@ namespace ZipperInfo
         /// </summary>
         /// <param name="LocationPoints">触发的点位</param>
         /// <param name="triggerndex">在第几张后改变ID</param>
-        public static void SendPoints(List<float> LocationPoints,int triggerndex)
+        public static void SendPoints(List<float> LocationPoints, int cutoffIndex)
         {
-            List<ushort> address= new List<ushort>();
+            List<ushort> address = new List<ushort>();
             int startaddress = 41438;
             address.Add((ushort)startaddress);
-            for (int i = 1; i < 10; i++) 
+            for (int i = 1; i < 10; i++)
             {
                 startaddress += 2;
                 address.Add((ushort)startaddress);
@@ -222,11 +287,13 @@ namespace ZipperInfo
             {
                 for (int k = 0; k < LocationPoints.Count; k++)
                 {
-                    int pos =(int) LocationPoints[k] * 10;
-                    com.WriteSingleRegisterInt32(address[k], pos);
-                    
+                    //int pos = (int)LocationPoints[k] * 10;
+                    //转成脉冲
+                    int plus = (int)LocationPoints[k] * 40000 / 19050;
+                    com.WriteSingleRegisterInt32(address[k], plus);
+
                 }
-                com.WriteSingleRegisterInt32(41250, triggerndex);
+                com.WriteSingleRegisterInt32(41216, cutoffIndex);
             }
 
         }
@@ -250,10 +317,10 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                   com.WriteSingleCoil(20,true);
-                }
+            if (com != null)
+            {
+                com.WriteSingleCoil(20, true);
+            }
 
             //}
             //catch (Exception)
@@ -268,10 +335,10 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    com.WriteSingleCoil(21, true);
-                }
+            if (com != null)
+            {
+                com.WriteSingleCoil(21, true);
+            }
 
             //}
             //catch (Exception)
@@ -286,10 +353,10 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    com.WriteSingleCoil(22, true);
-                }
+            if (com != null)
+            {
+                com.WriteSingleCoil(22, true);
+            }
 
             //}
             //catch (Exception)
@@ -304,10 +371,10 @@ namespace ZipperInfo
         {
             //try
             //{
-                if (com != null)
-                {
-                    com.WriteSingleCoil(23, true);
-                }
+            if (com != null)
+            {
+                com.WriteSingleCoil(23, true);
+            }
 
             //}
             //catch (Exception)
@@ -337,3 +404,4 @@ namespace ZipperInfo
     }
 
 }
+

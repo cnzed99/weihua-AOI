@@ -851,6 +851,7 @@ namespace 断面毛刺检测软件
 
         #endregion 消息通道处理
 
+        #region 修改制程
         /// <summary>
         /// 2024.9.5 李焕彬
         /// 修改制程
@@ -873,6 +874,7 @@ namespace 断面毛刺检测软件
         {
             CMotionManagement.OpenMotionWindow();
         }
+        #endregion
 
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
@@ -882,13 +884,13 @@ namespace 断面毛刺检测软件
             .Value;
             CZipperAutomaticVM automaticVM = CPublicServices.Container.Resolve<CZipperAutomaticVM>();
             AutomaticWindow.DataContext = automaticVM;
-            automaticVM.StartAutoTestEven = (b,p,inx) => {
+            automaticVM.StartAutoTestEven = (b,p,cut) => {
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
                     mainVM.IsAutomaticTest = b;
                 }
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = p;
-
+                CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cut;
             };
             AutomaticWindow.Show();
             AutomaticWindow.Activate();

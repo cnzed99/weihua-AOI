@@ -69,15 +69,15 @@ namespace ZipperInfo
         /// 拉链拍照触发的位置
         /// 2025.06.24 鲍赞宝
         /// </summary>
-        public List<float> ZipperTriggerPos {  get; set; }
+        public List<float> ZipperTriggerPos { get; set; }=new List<float>();
         /// <summary>
         /// 拉头ID改变的位置序号
         /// </summary>
         public int PullchangeIndex {  get; set; }
         /// <summary>
-        /// 第几张后去改变ID
+        /// 切断前共拍了几张图片
         /// </summary>
-        public int TriggerIndex { get; set; }
+        public int CutoffIndex { get; set; }
     }
 
 

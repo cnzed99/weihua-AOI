@@ -320,29 +320,7 @@ namespace WH.DetectSystem.ViewModels
         public async Task LoadAsync(IProgress<string> progress)
         {
             IsLoading = true;
-            #region 读取所有光源dll
-            try
-            {
-                LightManagement = new CLinghtManagement(LightNames);
-                CLinghtManagement.LoadLightParams();
-                foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
-                {
-                    lightCtl.Open(lightCtl.BaseConfig);
-                    Thread.Sleep(10);
-                    for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++) 
-                    {
-                        lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
-                        Thread.Sleep(10);
-                    }
-
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(Properties.Resources.初始化光源失败 + "\r\n" + ex.Message);
-            }
-            #endregion
+           
             await Task.Run(async () =>
             {
                 #region 读取主配置文件
@@ -366,6 +344,29 @@ namespace WH.DetectSystem.ViewModels
                 //await longtimefunc(progress);
                 //}
                 //catch (Exception) { }
+                #endregion
+                #region 读取所有光源dll
+                try
+                {
+                    LightManagement = new CLinghtManagement(LightNames);
+                    CLinghtManagement.LoadLightParams();
+                    foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
+                    {
+                        lightCtl.Open(lightCtl.BaseConfig);
+                        Thread.Sleep(10);
+                        for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++)
+                        {
+                            lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
+                            Thread.Sleep(10);
+                        }
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error(Properties.Resources.初始化光源失败 + "\r\n" + ex.Message);
+                }
                 #endregion
 
                 #region 读取所有通讯参数文件并连接通讯
@@ -447,8 +448,18 @@ namespace WH.DetectSystem.ViewModels
                 #endregion
 
                 #region 读取数据库
-                CMysqlBLL cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
-                MySqlVM.MysqlExecute = cMysql;
+                try
+                {
+                    CMysqlBLL cMysql = SQLManagement.SqlLoad() as CMysqlBLL; //数据库采用统一配置
+                    MySqlVM.MysqlExecute = cMysql;
+                }
+                catch (Exception ex)
+                {
+                    Growl.Error("数据库初始化出错:" + "\r\n" + ex.Message);
+                }
+                #endregion
+                #region 读取拉链信息
+                CZipperAutomaticAlgorithm.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
                 #endregion
             });
         }
