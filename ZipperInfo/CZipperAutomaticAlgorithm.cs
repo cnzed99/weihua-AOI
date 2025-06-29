@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using HalconDotNet;
+using OpenCvSharp;
 using OpenCvSharp.ML;
 using OpenVinoSharp.Extensions.result;
 using System;
@@ -11,6 +12,7 @@ using System.Windows.Controls;
 using WH.Entity;
 using WH.LightControl;
 using WH.RunCell;
+using ZipperLightHalconDet;
 
 namespace ZipperInfo
 {
@@ -20,7 +22,7 @@ namespace ZipperInfo
         /// <summary>
         /// 处在哪个阶段
         /// </summary>
-        public int onWichStage = 0;
+        public static int onWichStage = 0;
         /// <summary>
         /// 识别模型对象
         /// </summary>
@@ -37,7 +39,7 @@ namespace ZipperInfo
         {
             string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\AutoMatic";
             string txtpath = modelDirPath + "\\classes.txt";
-            string modelpath = modelDirPath + "\\best.onnx";
+            string modelpath = modelDirPath + "\\lalianAuto.onnx";
             if (File.Exists(txtpath))
             {
                 de_names = File.ReadAllLines(txtpath);
@@ -52,24 +54,63 @@ namespace ZipperInfo
             Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
                  MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
                  cell.Image.ImageData);
+
+            //相机采集图片
+            HOperatorSet.GenImageInterleaved(
+                out HObject CameraImage,
+                cell.Image.ImageData,
+                "rgb",
+                cell.Image.ImageWidth,
+                cell.Image.ImageHeight,
+                0,
+                "byte",
+                0,
+                0,
+                0,
+                0,
+                -1,
+                0
+            );
             if (onWichStage == 1)
             {
                 if (cell.CamName == "右相机") //调光源只用一边的结果
                 {
 
-                    ZipperLightHelper.Instance.ZipperLightDetection(img, 10, 0.5, out var hv_VState, out var hv_VStride);
-                    CLightControlBase cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Name == "COM2");
+                    ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 0.5, out var hv_VState, out var hv_VStride);
+                    CameraImage.Dispose();
+                    CLightControlBase cLightControl=null;
+                    if (CLinghtManagement.LightControlDict.Count > 0)
+                    {
+                        cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port.Name == "COM2");
+                    }
+                    
                     if (hv_VState == 1)
                     {
                         Console.WriteLine($"需增加亮度");
-                        cLightControl.BaseConfig.LightChannelList[0].Value += hv_VStride;
-                        cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[0]);
+                        if (cLightControl != null)
+                        {
+                            cLightControl.BaseConfig.LightChannelList[0].Value += hv_VStride;
+                            if (cLightControl.BaseConfig.LightChannelList[0].Value>200)
+                            {
+                                cLightControl.BaseConfig.LightChannelList[0].Value = 200;
+                            }
+                            cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[0]);
+                        }
+                       
                     }
                     else if (hv_VState == 2)
                     {
                         Console.WriteLine($"需减少亮度");
-                        cLightControl.BaseConfig.LightChannelList[0].Value -= hv_VStride;
-                        cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[0]);
+                        if (cLightControl != null)
+                        {
+                            cLightControl.BaseConfig.LightChannelList[0].Value -= hv_VStride;
+                            if (cLightControl.BaseConfig.LightChannelList[0].Value < 5)
+                            {
+                                cLightControl.BaseConfig.LightChannelList[0].Value = 5;
+                            }
+                            cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[0]);
+                        }
+                     
                     }
                     else
                     {
@@ -194,29 +235,51 @@ namespace ZipperInfo
                             int w = resultDet.datas[i].box.Width;
                             int h = resultDet.datas[i].box.Height;
                             Mat cutmat = img[new Rect(bx, by, w, h)];
-                            ZipperLightHelper.Instance.ZipperLightDetection(cutmat, 10, 0.5, out var hv_VState, out var hv_VStride);
-                            CLightControlBase cLightControl;
+                            ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 0.5, out var hv_VState, out var hv_VStride);
+                            CameraImage.Dispose();
+                            CLightControlBase cLightControl=null;
                             if (cell.CamName == "右相机")
                             {
-                                cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Name == "COM2");
+                                if (CLinghtManagement.LightControlDict.Count>0)
+                                {
+                                    cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port.Name == "COM2");
+                                }
                             }
                             else
                             {
-                                cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Name == "COM1");
+
+                                if (CLinghtManagement.LightControlDict.Count > 0)
+                                {
+                                    cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port.Name == "COM1");
+                                }     
                             }
                             if (hv_VState == 1)
                             {
                                 Console.WriteLine($"需增加亮度");
-                               // CLightControlBase cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Name == "COM2");
-                                cLightControl.BaseConfig.LightChannelList[1].Value += hv_VStride;
-                                cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                               if (cLightControl != null)
+                                {
+                                    cLightControl.BaseConfig.LightChannelList[1].Value += hv_VStride;
+                                    if (cLightControl.BaseConfig.LightChannelList[1].Value > 200)
+                                    {
+                                        cLightControl.BaseConfig.LightChannelList[1].Value = 200;
+                                    }
+                                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                                }
+                               
                             }
                             else if (hv_VState == 2)
                             {
                                 Console.WriteLine($"需减少亮度");
-                               // CLightControlBase cLightControl = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Name == "COM2");
-                                cLightControl.BaseConfig.LightChannelList[1].Value -= hv_VStride;
-                                cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                                if(cLightControl != null)
+                                {
+                                    cLightControl.BaseConfig.LightChannelList[1].Value -= hv_VStride;
+                                    if (cLightControl.BaseConfig.LightChannelList[1].Value < 5)
+                                    {
+                                        cLightControl.BaseConfig.LightChannelList[1].Value = 5;
+                                    }
+                                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                                }
+                               
                             }
                             else
                             {

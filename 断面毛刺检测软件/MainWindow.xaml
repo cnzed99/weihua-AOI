@@ -574,7 +574,7 @@
                                             Background="{DynamicResource RegionBrush}"
                                             BorderBrush="{Binding ModelBrush}"
                                             BorderThickness="1">
-                                            <wh:ImageView  Source="{Binding ZipperPullImage}" />
+                                            <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}" />
                                         </Border>
                                     </Grid>
                                     <TextBlock

@@ -349,19 +349,24 @@ namespace WH.DetectSystem.ViewModels
                 try
                 {
                     LightManagement = new CLinghtManagement(LightNames);
-                    CLinghtManagement.LoadLightParams();
-                    foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
+                  
+                    Dispatcher.Invoke(() =>
                     {
-                        lightCtl.Open(lightCtl.BaseConfig);
-                        Thread.Sleep(10);
-                        for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++)
+                        CLinghtManagement.LoadLightParams();
+                        foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
                         {
-                            lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
+                            lightCtl.Open(lightCtl.BaseConfig);
                             Thread.Sleep(10);
+                            for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++)
+                            {
+                                lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
+                                Thread.Sleep(10);
+                            }
+
+
                         }
-
-
-                    }
+                    });
+                  
                 }
                 catch (Exception ex)
                 {

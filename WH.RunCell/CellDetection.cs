@@ -33,6 +33,10 @@ namespace WH.RunCell
         public string Type { get; set; }
 
         public Category Category { get; set; } = Category.区域;
+        /// <summary>
+        /// 在那个窗口显示区域
+        /// </summary>
+        public int ShowInView { get; set; } = 0;
 
         ///// <summary>
         ///// 缺陷颜色 DefectFilter里有
@@ -62,6 +66,7 @@ namespace WH.RunCell
             detection.Category = this.Category;
             detection.RecipeDefectName = this.RecipeDefectName;
             detection.DefectFilter = this.DefectFilter;
+            detection.ShowInView = this.ShowInView;
             return detection;
         }
     }

@@ -84,8 +84,11 @@ namespace ZipperTestAlgorihm
                 CDefectRecipe defectRecipe5 = new CDefectRecipe("下止露牙", Category.区域);
                 cDefectRecipes.Add(defectRecipe5);
 
-                CDefectRecipe defectRecipe6 = new CDefectRecipe("上止露牙", Category.区域);
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("拉头", Category.区域);
                 cDefectRecipes.Add(defectRecipe6);
+
+                CDefectRecipe defectRecipe7 = new CDefectRecipe("上止露牙", Category.区域);
+                cDefectRecipes.Add(defectRecipe7);
 
                 CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
                 CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
@@ -296,7 +299,7 @@ namespace ZipperTestAlgorihm
                                     rex = 0;
                                 }
                                 Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
-                               // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
+                                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
                                 ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat, paramClass.Score, paramClass.Nms);
                                 if (downResult.datas.Count > 0)
                                 {
@@ -327,9 +330,9 @@ namespace ZipperTestAlgorihm
                                         dets.Add(disData);
                                         Diss.Clear();
                                     }
-                                    if(luyaIndex.Count > 0)
+                                    if (luyaIndex.Count > 0)
                                     {
-                                        for(int b = 0;b < luyaIndex.Count; b++)
+                                        for (int b = 0; b < luyaIndex.Count; b++)
                                         {
                                             CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[b]);
                                         }
@@ -358,7 +361,7 @@ namespace ZipperTestAlgorihm
                             {
                                 int nameindex = int.Parse(detrets[i].datas[j].lable);
                                 string labelstr = Common_names[nameindex];
-                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex-1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
                                 dets.Add(restoreData);
                             }
                         }
@@ -436,20 +439,20 @@ namespace ZipperTestAlgorihm
                                             CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止露牙", lianci[b]);
                                         }
                                     }
-                                    for (int k = 0;k < yashang.Count; k++)
+                                    for (int k = 0; k < yashang.Count; k++)
                                     {
                                         CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止压伤", yashang[k]);
                                         dets.Add(disData);
                                     }
                                 }
-                                if (massPoints.Count==2)
+                                if (massPoints.Count == 2)
                                 {
-                                    float massdis =Math.Abs( massPoints[0].X - massPoints[1].X); //临时这样写
+                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); //临时这样写
                                     CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
                                     dets.Add(disData);
                                     massPoints.Clear();
                                 }
-                                    
+
                                 // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面上止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropUpMat);
 
                             }
@@ -465,47 +468,49 @@ namespace ZipperTestAlgorihm
                 }
                 else if (cell.PhotoIndex == 100) //有拉头的图片
                 {
-                   // Cv2.ImWrite(@"C:\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")+ ".png", img);
-                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
-                    for (int i = 0; i < detrets.Count; i++)
+                    // Cv2.ImWrite(@"C:\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")+ ".png", img);
+                    // List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    DetResult pullResult = ImageInferDet(yolo_pull_det, img, paramClass.Score, paramClass.Nms);
+
+                    for (int j = 0; j < pullResult.datas.Count; j++)
                     {
-                        for (int j = 0; j < detrets[i].datas.Count; j++)
+                        int labelindex = int.Parse(pullResult.datas[j].lable);
+                        string labelname = pull_names[labelindex];
+                        if (labelname.Contains("拉头"))
                         {
-                            int labelindex = int.Parse(detrets[i].datas[j].lable);
-                            string labelname = pull_names[labelindex];
-                            if (labelname.Contains("拉头"))
+                            int lx = pullResult.datas[j].box.X + pullResult.datas[j].box.Width / 2 - 240;
+                            int ly = pullResult.datas[j].box.Y + pullResult.datas[j].box.Height / 2 - 240;
+                            int recw = 480;
+                            int rech = 480;
+
+                            if ((lx + recw) > img.Width)
                             {
-                                int lx = detrets[i].datas[j].box.X + detrets[i].datas[j].box.Width / 2 - 240;
-                                int ly = detrets[i].datas[j].box.Y + detrets[i].datas[j].box.Height / 2 - 240;
-                               int recw = 480;
-                                int rech = 480;
-
-                                if ((lx + recw) > mats[i].Width)
-                                {
-                                    lx = mats[i].Width - recw;
-                                }
-                                if (lx < 0)
-                                {
-                                    lx = 0;
-                                }
-
-                                if ((ly + rech) > mats[i].Height)
-                                {
-                                    ly = mats[i].Height - rech;
-                                }
-                                if (ly < 0)
-                                {
-                                    ly = 0;
-                                }
-
-                                Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
-                                cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
-
+                                lx = img.Width - recw;
+                            }
+                            if (lx < 0)
+                            {
+                                lx = 0;
                             }
 
+                            if ((ly + rech) > img.Height)
+                            {
+                                ly = img.Height - rech;
+                            }
+                            if (ly < 0)
+                            {
+                                ly = 0;
+                            }
 
+                            Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
+                            cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+
+                            CoordRestoreData restoreData = new CoordRestoreData(0, 0, -lx, -ly, labelname, pullResult.datas[j],1);
+                            dets.Add(restoreData);
                         }
+
+
                     }
+
                 }
                 else //中间布带，链牙缺陷
                 {
@@ -576,7 +581,7 @@ namespace ZipperTestAlgorihm
                     cellDetection1.Category = de.Category;
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
-
+                    
                     //DetResult detrets = sResultInfos as DetResult;
                     var finds = sResultInfos.FindAll(info =>
                     {
@@ -590,6 +595,7 @@ namespace ZipperTestAlgorihm
                             SRegion sRegion = GetDetectRegion(item);
                             cellDetection1.regionOut.Add(sRegion);
                             cellDetection1.Value.Add(item.Value);
+                            cellDetection1.ShowInView = item.ShowInView;
                             if (de.Category == Category.值)
                             {
                                 List<System.Windows.Point> rec1MarkPoints = new List<System.Windows.Point>();
@@ -598,14 +604,16 @@ namespace ZipperTestAlgorihm
                                 rec1MarkPoints.Add(item.ShowRightDown);
                                 rec1MarkPoints.Add(item.ShowLeftDown);
                                 rec1MarkPoints.Add(item.ShowLeftUp);
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink));
+
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink,showinview: item.ShowInView));
+                                
                             }
-                         
+
                         }
-                   
+
                     }
                     cell.AlgorithmOut.Add(cellDetection1);
-                   
+
                 }
             }
             sResultInfos.Clear();
@@ -921,7 +929,7 @@ namespace ZipperTestAlgorihm
         /// <param name="imgwidth">当前图宽</param>
         /// <param name="imgheight">当前图高</param>
         /// <param name="imgIndex">图片编号</param>
-        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det)
+        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, int showinview = 0)
         {
             //坐标还原 
 
@@ -944,13 +952,14 @@ namespace ZipperTestAlgorihm
             Labelstr = labelstr;
             Angle = 0.0f;
             Value = 0.0f;
+            ShowInView = showinview;
 
         }
-        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, ObbData obb)
+        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, ObbData obb, int showinview = 0)
         {
             //坐标还原 
 
-            ShowLeftUp.X = obb.box.Points()[0].X + orgx+imgWidth * imgIndex;
+            ShowLeftUp.X = obb.box.Points()[0].X + orgx + imgWidth * imgIndex;
             ShowLeftUp.Y = obb.box.Points()[0].Y + orgy;
 
             ShowRightUp.X = obb.box.Points()[1].X + orgx + imgWidth * imgIndex;
@@ -970,15 +979,16 @@ namespace ZipperTestAlgorihm
             Labelstr = labelstr;
             Angle = obb.box.Angle;
             Value = 0.0f;
+            ShowInView = showinview;
         }
-        public CoordRestoreData(string labelstr,float value)
+        public CoordRestoreData(string labelstr, float value,int showinview=0)
         {
             //坐标还原 
 
             ShowLeftUp.X = 0;
             ShowLeftUp.Y = 0;
 
-            ShowRightUp.X =0;
+            ShowRightUp.X = 0;
             ShowRightUp.Y = 0;
 
             ShowRightDown.X = 0;
@@ -990,11 +1000,12 @@ namespace ZipperTestAlgorihm
             RecWidth = 0;
             RecHeight = 0;
             OrgCenterX = 0;
-            OrgCenterY =0;
-            Score =0;
+            OrgCenterY = 0;
+            Score = 0;
             Labelstr = labelstr;
             Angle = 0;
             Value = value;
+            ShowInView = showinview;
         }
         /// <summary>
         /// 用于显示左上角点
@@ -1044,6 +1055,10 @@ namespace ZipperTestAlgorihm
         /// 值
         /// </summary>
         public float Value { get; set; }
+        /// <summary>
+        /// 在哪个窗口显示区域
+        /// </summary>
+        public int ShowInView { get; set; }
     }
 
 }

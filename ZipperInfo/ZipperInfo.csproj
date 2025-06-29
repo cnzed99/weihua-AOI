@@ -30,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>C:\Program Files\MVTec\HALCON-18.11-Steady\bin\dotnet35\halcondotnet.dll</HintPath>
+    </Reference>
     <Reference Include="TensorRtSharp">
       <HintPath>..\ZipperTestAlgorihm\dll\net8.0\TensorRtSharp.dll</HintPath>
     </Reference>

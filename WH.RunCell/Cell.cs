@@ -550,11 +550,12 @@ namespace WH.RunCell
         /// <param name="points">点集</param>
         /// <param name="brush">画刷</param>
         /// <param name="isClosed">是否为闭合区域</param>
-        public CEdgeDraw(List<Point> points, Brush brush, bool isClosed = false)
+        public CEdgeDraw(List<Point> points, Brush brush, bool isClosed = false, int showinview = 0)
         {
             DrawType = isClosed ? EMDRAWTYPE.EMDRAWTYPE_REGION : EMDRAWTYPE.EMDRAWTYPE_POINTS;
             this.Points = points;
             this.BrushDraw = brush;
+            this.ShowInView = showinview;
         }
 
         /// <summary>
@@ -565,13 +566,14 @@ namespace WH.RunCell
         /// <param name="pos">显示位置</param>
         /// <param name="brush">画刷</param>
         /// <param name="fontSize">字体大小</param>
-        public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15)
+        public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15,int showinview=0)
         {
             DrawType = EMDRAWTYPE.EMDRAWTYPE_Text;
             this.Text = text;
             this.TextPos = pos;
             this.BrushDraw = brush;
             this.FontSize = fontSize;
+            this.ShowInView = showinview;
         }
 
         public EMDRAWTYPE DrawType { get; set; }
@@ -605,5 +607,10 @@ namespace WH.RunCell
         /// 字体大小
         /// </summary>
         public int FontSize { get; set; }
+
+        /// <summary>
+        /// 在哪个窗口显示区域
+        /// </summary>
+        public int ShowInView { get; set; }
     }
 }

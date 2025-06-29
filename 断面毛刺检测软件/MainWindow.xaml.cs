@@ -891,6 +891,7 @@ namespace 断面毛刺检测软件
                 }
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = p;
                 CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cut;
+                CZipperAutomaticAlgorithm.onWichStage = 1;
             };
             AutomaticWindow.Show();
             AutomaticWindow.Activate();

@@ -80,10 +80,10 @@ namespace ZipperInfo
 
         }
         /// <summary>
-        /// 获取拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// 获取左相机拉头图片位置ID信息 2025-5-29 鲍赞宝
         /// </summary>
         /// <param name="pullID"></param>
-        public static void GetPullID(out int pullID)
+        public static void GetZuoPullID(out int pullID)
         {
             //try
             //{
@@ -92,7 +92,7 @@ namespace ZipperInfo
                 pullID = -1;
                 if (com != null)
                 {
-                    pullID = com.ReadHoldingRegisterInt32(41226);
+                    pullID = com.ReadHoldingRegisterInt16(41226);
                 }
             }
             //}
@@ -105,10 +105,35 @@ namespace ZipperInfo
 
         }
         /// <summary>
-        /// 获取拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// 获取右相机拉头图片位置ID信息 2025-5-29 鲍赞宝
         /// </summary>
         /// <param name="pullID"></param>
-        public static void SendPullID(int pullID)
+        public static void GetYouPullID(out int pullID)
+        {
+            //try
+            //{
+            lock (lockobj)
+            {
+                pullID = -1;
+                if (com != null)
+                {
+                    pullID = com.ReadHoldingRegisterInt16(41227);
+                }
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
+
+
+        }
+        /// <summary>
+        /// 写入拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// </summary>
+        /// <param name="pullID"></param>
+        public static void SendZuoPullID(short pullID)
         {
             //try
             //{
@@ -116,7 +141,31 @@ namespace ZipperInfo
             {
                 if (com != null)
                 {
-                    com.WriteSingleRegisterInt32(41226, pullID);
+                    com.WriteSingleRegisterInt16(41226, pullID);
+                }
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
+
+
+        }
+        /// <summary>
+        /// 写入拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// </summary>
+        /// <param name="pullID"></param>
+        public static void SendYouPullID(short pullID)
+        {
+            //try
+            //{
+            lock (lockobj)
+            {
+                if (com != null)
+                {
+                    com.WriteSingleRegisterInt16(41227, pullID);
                 }
             }
             //}
@@ -215,6 +264,7 @@ namespace ZipperInfo
             //}
 
         }
+
         /// <summary>
         /// 写入拉头触发的位置 2025-5-29 鲍赞宝
         /// </summary>
@@ -273,10 +323,10 @@ namespace ZipperInfo
         /// </summary>
         /// <param name="LocationPoints">触发的点位</param>
         /// <param name="triggerndex">在第几张后改变ID</param>
-        public static void SendPoints(List<float> LocationPoints, int cutoffIndex)
+        public static void SendPoints(List<float> LocationPoints, int cutoffIndex,int cahceCount)
         {
             List<ushort> address = new List<ushort>();
-            int startaddress = 41438;
+            int startaddress = 41338;
             address.Add((ushort)startaddress);
             for (int i = 1; i < 10; i++)
             {
@@ -285,15 +335,26 @@ namespace ZipperInfo
             }
             if (com != null)
             {
-                for (int k = 0; k < LocationPoints.Count; k++)
+                for (int k = 0; k < address.Count; k++)
                 {
                     //int pos = (int)LocationPoints[k] * 10;
                     //转成脉冲
-                    int plus = (int)LocationPoints[k] * 40000 / 19050;
+                    int plus = 0;
+                    int a = 400000;
+                    int b = 19050;
+                    if (k <= LocationPoints.Count - 1)
+                    {
+                        plus = (int)LocationPoints[k] * a / b;
+                    }
+                    else
+                    {
+                        plus = 9999 * a / b;
+                    }
                     com.WriteSingleRegisterInt32(address[k], plus);
 
                 }
-                com.WriteSingleRegisterInt32(41216, cutoffIndex);
+                com.WriteSingleRegisterInt32(41216, cutoffIndex); //写拉链
+                com.WriteSingleRegisterInt32(41322, cahceCount); //写切刀到拉链之间缓存的拉链数量
             }
 
         }
