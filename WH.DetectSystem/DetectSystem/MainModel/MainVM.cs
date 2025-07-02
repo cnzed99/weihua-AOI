@@ -1154,7 +1154,8 @@ namespace WH.DetectSystem.Models
                                     }
                                     else
                                     {
-                                        CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                      
+                                        CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
                                         CurView.WinDrawText(
                                             "OK",
                                             AlignmentX.Right,
@@ -1202,7 +1203,7 @@ namespace WH.DetectSystem.Models
                             && (
                                 SaveImageVM.Param.SaveImageEnable
                                 || SaveImageVM.Param.PiantScreenEnable
-                            )
+                            )&&!isAutomaticTest
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();

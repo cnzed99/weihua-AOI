@@ -468,9 +468,9 @@ namespace WH.DetectSystem._5_存图操作
                     //s_NameBuilder.Append(string.Format("{0:HHmmssfff}", cell.CreateTime)); //时间
                     //s_NameBuilder.Append("-");
 
-                    s_NameBuilder.Append(cell.Quality?.Signal); //质量信号值
+                    s_NameBuilder.Append(cell.Quality?.Signal??"null"); //质量信号值
                     s_NameBuilder.Append("_");
-                    s_NameBuilder.Append(cell.Quality?.Name); //质量等级名称
+                    s_NameBuilder.Append(cell.Quality?.Name??"null"); //质量等级名称
                     s_NameBuilder.Append("_");
 
                     s_NameBuilder.Append(cell.Detection?.DefectFilter?.Name ?? "OK"); //缺陷名称

@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [CommSet], Source={x:Static local:CLang.s_Instance}}"
-    Width="800"
+    Width="1000"
     Height="600"
     Background="{DynamicResource SecondaryRegionBrush}"
     Icon="/CommunicationModule;component/Resources/外接通讯数据.png"

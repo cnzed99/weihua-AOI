@@ -8,20 +8,22 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using WH.Entity;
+using WH.LightControl;
 
 namespace ZipperInfo
 {
     public partial class CZipperAutomaticVM: ObservableObject
     {
         public CAutomaticModel AutoData { get; set; }
+
         public CZipperAutomaticVM()
         {
-            AutoData= LoadParameter();
+            AutoData= LoadParameter();           
         }
 
         bool startAutoTest;
 
-       public  Action<bool,List<float>,int> StartAutoTestEven;
+       public  Action<bool> StartAutoTestEven;
 
         [RelayCommand]
         void SendPoints()
@@ -29,34 +31,67 @@ namespace ZipperInfo
             //写入拉链长度
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
 
-            GetTriggerPoints(out List<float> points, out int cutoffIndex,out int zipperCacheCount);
+            GetTriggerPoints(out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount);
            
             if (points != null && points.Count > 0)
             {
                 //写入拍照的总图片数量
                 CZipperCommunicate.SendPhotoCount(points.Count);
                 //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints(points, cutoffIndex,zipperCacheCount);               
+                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex,zipperCacheCount);               
                 Thread.Sleep(100);
                 startAutoTest=true;
-                StartAutoTestEven?.Invoke(startAutoTest, points, cutoffIndex);
+                //CZipperInfo zipperInfo =new CZipperInfo();
+                //zipperInfo.ZipperLneght= AutoData.ZipperLenght;
+                //zipperInfo.ZipperTriggerPos = points;
+                //zipperInfo.CutoffIndex = cutoffIndex;
+                //zipperInfo.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cutoffIndex;
+                CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos = handandtalipoints;
+                StartAutoTestEven?.Invoke(startAutoTest);
                 //将光源值先减小到较状态
+
+                if (CLinghtManagement.LightControlDict.Count > 0)
+                {
+
+                    foreach (var item in CLinghtManagement.LightControlDict.Values)
+                    {
+                        Thread.Sleep(20);
+                        item.BaseConfig.LightChannelList[0].Value = 5;
+                        item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
+                        Thread.Sleep(20);
+                        item.BaseConfig.LightChannelList[1].Value = 20;
+                        item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
+                    }
+
+                }
                 Thread.Sleep(100);
-               // CZipperCommunicate.TestStart();
+                CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
 
             }
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="cutoffIndex"></param>
+        /// <param name="frontFinsshPos"></param>
+
+        /// <summary>
         /// 获取触发的点位置
         /// </summary>
         /// <param name="points">触发点位置</param>
+        /// <param name="headandtalipoints">一条拉链中，第一张图片的触发位置和最后一张的出发位置</param>
         /// <param name="cutoffIndex">切断时已经拍了几张照片</param>
         /// <param name="frontFinsshPos">切断时,切刀到相机已经有几条拉链完了拍照</param>
-        private void GetTriggerPoints(out List<float>points,out int cutoffIndex, out int frontFinsshPos)
+        private void GetTriggerPoints(out List<float>points,out List<float> HeadandTalipoints, out int cutoffIndex, out int frontFinsshPos)
         {
             points = new List<float>();
+            HeadandTalipoints = new List<float>();
             float frontLim = AutoData.DaoDitance - AutoData.CcdWidth / 2.0f;
             float backLim = AutoData.DaoDitance + AutoData.CcdWidth / 2.0f;
 
@@ -78,6 +113,7 @@ namespace ZipperInfo
                 frontFinsshPos = frontzippers;
                 float firstpoint = netZipperhandle - frontLim;
                 points.Add(firstpoint);
+                HeadandTalipoints.Add(firstpoint);
                 //后续的点
                 for (int i = 1; i < 20; i++)
                 {
@@ -86,6 +122,7 @@ namespace ZipperInfo
                     {
                         float endpoint = netZipperTali - backLim;
                         points.Add(endpoint);
+                        HeadandTalipoints.Add(endpoint);
                         break;
                     }
                     else
@@ -102,6 +139,7 @@ namespace ZipperInfo
                 frontFinsshPos = frontzippers + 1;
                 float firstpoint = netZipperTali - frontLim;
                 points.Add(firstpoint);
+                HeadandTalipoints.Add(firstpoint);
                 //后续的点
                 for (int i = 1; i < 20; i++)
                 {
@@ -110,6 +148,7 @@ namespace ZipperInfo
                     {
                         float endpoint = netZipperTali + AutoData.ZipperLenght - backLim;
                         points.Add(endpoint);
+                        HeadandTalipoints.Add(endpoint);
                         break;
                     }
                     else
@@ -168,6 +207,11 @@ namespace ZipperInfo
                     float point = nexts - frontLim;
                     points.Add(point);
                 }
+                float handpoint = netZipperTali - frontLim;
+                float talipoint = netZipperTali + AutoData.ZipperLenght - AutoData.CcdWidth - frontLim;
+
+                HeadandTalipoints.Add(handpoint);
+                HeadandTalipoints.Add(talipoint);
 
             }
 

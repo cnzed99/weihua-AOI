@@ -209,8 +209,7 @@ namespace Modbus
                                         break;
                                 }
                             }
-                        }
-                        Thread.Sleep(100);
+                        }                     
                     }
                     else
                     {
@@ -218,6 +217,7 @@ namespace Modbus
                         this.ConnectedEventArgs?.Invoke(false, "与服务器断开连接");
                         CCommunicationManagement.ComLogger.Error("与服务器断开连接");
                     }
+                    Thread.Sleep(100);
                 }
                 catch (Exception)
                 {

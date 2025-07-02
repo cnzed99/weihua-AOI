@@ -34,7 +34,7 @@ namespace Modbus
         public void Close()
         {
             Com.ConnectedEventArgs -= Connected;
-            Com.isReadTestElem = false;
+            //Com.isReadTestElem = false;
         }
 
         /// <summary>

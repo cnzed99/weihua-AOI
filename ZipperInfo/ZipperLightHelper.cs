@@ -25,7 +25,7 @@ namespace ZipperLightHalconDet
         /// <param name="hv_VState">亮度评估状态，0：保持亮度、1：需增加光源亮度、2：需减少亮度</param>
         /// <param name="hv_VStride">推荐调整光源步幅值（供上层应用快速调整至合适的光源值使用）</param>
         public void ZipperLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate,
-            out HTuple hv_VState, out HTuple hv_VStride)
+     out HTuple hv_VState, out HTuple hv_VStride)
         {
 
 
@@ -36,21 +36,19 @@ namespace ZipperLightHalconDet
             HObject ho_RegionClosing1, ho_RegionOpening1;
             HObject ho_SelectROI = null, ho_Edges, ho_Region, ho_RegionUnion;
             HObject ho_RegionTrans, ho_Rectangle, ho_SelectBgROI, ho_ImageReduced;
-            HObject ho_R, ho_G, ho_B, ho_H, ho_S, ho_V;
+            HObject ho_GrayImageReduced, ho_R, ho_G, ho_B, ho_H, ho_S;
+            HObject ho_V;
 
             // Local control variables 
 
-            HTuple hv_EmphaMaskValue = new HTuple(), hv_EmphaFactorValue = new HTuple();
             HTuple hv_MinBgMean = new HTuple(), hv_MaxBgMean = new HTuple();
             HTuple hv_MinMean = new HTuple(), hv_MaxMean = new HTuple();
             HTuple hv_Width = new HTuple(), hv_Height = new HTuple();
             HTuple hv_Area = new HTuple(), hv_Row = new HTuple(), hv_Column = new HTuple();
             HTuple hv_BgValue = new HTuple(), hv_HValue = new HTuple();
             HTuple hv_SValue = new HTuple(), hv_VValue = new HTuple();
-            HTuple hv_NormalizedDiff = new HTuple(), hv_BgRatio = new HTuple();
-            HTuple hv_ValueRatio = new HTuple();
-            HTuple hv_BrightnessDiff_COPY_INP_TMP = new HTuple(hv_BrightnessDiff);
-
+            HTuple hv_MValue = new HTuple(), hv_NormalizedDiff = new HTuple();
+            HTuple hv_BgRatio = new HTuple(), hv_ValueRatio = new HTuple();
             // Initialize local and output iconic variables 
             HOperatorSet.GenEmptyObj(out ho_RegionClosing1);
             HOperatorSet.GenEmptyObj(out ho_RegionOpening1);
@@ -62,6 +60,7 @@ namespace ZipperLightHalconDet
             HOperatorSet.GenEmptyObj(out ho_Rectangle);
             HOperatorSet.GenEmptyObj(out ho_SelectBgROI);
             HOperatorSet.GenEmptyObj(out ho_ImageReduced);
+            HOperatorSet.GenEmptyObj(out ho_GrayImageReduced);
             HOperatorSet.GenEmptyObj(out ho_R);
             HOperatorSet.GenEmptyObj(out ho_G);
             HOperatorSet.GenEmptyObj(out ho_B);
@@ -74,16 +73,13 @@ namespace ZipperLightHalconDet
             {
                 hv_VState.Dispose();
                 hv_VState = 0;
-                hv_BrightnessDiff_COPY_INP_TMP.Dispose();
-                hv_BrightnessDiff_COPY_INP_TMP = 10;
-                hv_EmphaMaskValue.Dispose();
-                hv_EmphaMaskValue = 7;
-                hv_EmphaFactorValue.Dispose();
-                hv_EmphaFactorValue = 0.7;
+                //BrightnessDiff := 10
+                //EmphaMaskValue := 7
+                //EmphaFactorValue := 0.7
                 hv_MinBgMean.Dispose();
                 hv_MinBgMean = 130;
                 hv_MaxBgMean.Dispose();
-                hv_MaxBgMean = 200;
+                hv_MaxBgMean = 230;
                 hv_MinMean.Dispose();
                 hv_MinMean = 100;
                 hv_MaxMean.Dispose();
@@ -149,6 +145,7 @@ namespace ZipperLightHalconDet
                     ho_Rectangle.Dispose();
                     ho_SelectBgROI.Dispose();
                     ho_ImageReduced.Dispose();
+                    ho_GrayImageReduced.Dispose();
                     ho_R.Dispose();
                     ho_G.Dispose();
                     ho_B.Dispose();
@@ -156,9 +153,6 @@ namespace ZipperLightHalconDet
                     ho_S.Dispose();
                     ho_V.Dispose();
 
-                    hv_BrightnessDiff_COPY_INP_TMP.Dispose();
-                    hv_EmphaMaskValue.Dispose();
-                    hv_EmphaFactorValue.Dispose();
                     hv_MinBgMean.Dispose();
                     hv_MaxBgMean.Dispose();
                     hv_MinMean.Dispose();
@@ -172,6 +166,7 @@ namespace ZipperLightHalconDet
                     hv_HValue.Dispose();
                     hv_SValue.Dispose();
                     hv_VValue.Dispose();
+                    hv_MValue.Dispose();
                     hv_NormalizedDiff.Dispose();
                     hv_BgRatio.Dispose();
                     hv_ValueRatio.Dispose();
@@ -210,6 +205,8 @@ namespace ZipperLightHalconDet
 
                 ho_ImageReduced.Dispose();
                 HOperatorSet.ReduceDomain(ho_Image, ho_SelectROI, out ho_ImageReduced);
+                ho_GrayImageReduced.Dispose();
+                HOperatorSet.Rgb1ToGray(ho_ImageReduced, out ho_GrayImageReduced);
 
                 //拆分RGB通道
                 ho_R.Dispose(); ho_G.Dispose(); ho_B.Dispose();
@@ -226,19 +223,32 @@ namespace ZipperLightHalconDet
                 hv_VValue.Dispose();
                 HOperatorSet.GrayFeatures(ho_SelectROI, ho_V, "mean", out hv_VValue);
 
+                //提升深色系最佳均值亮度值
+                hv_MValue.Dispose();
+                HOperatorSet.GrayFeatures(ho_SelectROI, ho_GrayImageReduced, "mean", out hv_MValue);
+                using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                {
+                    {
+                        HTuple
+                          ExpTmpLocalVar_VValue = (hv_VValue + hv_MValue) / 2.0;
+                        hv_VValue.Dispose();
+                        hv_VValue = ExpTmpLocalVar_VValue;
+                    }
+                }
+
                 //线性化参数计算
                 //标准化差异值
                 hv_NormalizedDiff.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_NormalizedDiff = (hv_BrightnessDiff_COPY_INP_TMP.TupleReal()
+                    hv_NormalizedDiff = (hv_BrightnessDiff.TupleReal()
                         ) / 100.0;
                 }
 
                 //状态1处理：低于下限的情况
                 if ((int)((new HTuple((new HTuple(hv_VValue.TupleLessEqual(hv_MaxMean))).TupleAnd(
-                    new HTuple(hv_BgValue.TupleLess(hv_MinBgMean - hv_BrightnessDiff_COPY_INP_TMP))))).TupleOr(
-                    new HTuple(hv_VValue.TupleLess(hv_MinMean - hv_BrightnessDiff_COPY_INP_TMP)))) != 0)
+                    new HTuple(hv_BgValue.TupleLess(hv_MinBgMean - hv_BrightnessDiff))))).TupleOr(
+                    new HTuple(hv_VValue.TupleLess(hv_MinMean - hv_BrightnessDiff)))) != 0)
                 {
                     hv_VState.Dispose();
                     hv_VState = 1;
@@ -265,8 +275,8 @@ namespace ZipperLightHalconDet
 
                     //状态2处理：高于上限的情况
                 }
-                else if ((int)((new HTuple(hv_BgValue.TupleGreater(hv_MaxBgMean + hv_BrightnessDiff_COPY_INP_TMP))).TupleOr(
-                    new HTuple(hv_VValue.TupleGreater(hv_MaxMean + hv_BrightnessDiff_COPY_INP_TMP)))) != 0)
+                else if ((int)((new HTuple(hv_BgValue.TupleGreater(hv_MaxBgMean + hv_BrightnessDiff))).TupleOr(
+                    new HTuple(hv_VValue.TupleGreater(hv_MaxMean + hv_BrightnessDiff)))) != 0)
                 {
                     hv_VState.Dispose();
                     hv_VState = 2;
@@ -286,7 +296,7 @@ namespace ZipperLightHalconDet
                     hv_VStride.Dispose();
                     using (HDevDisposeHelper dh = new HDevDisposeHelper())
                     {
-                        hv_VStride = ((((hv_BgRatio + hv_ValueRatio) * 10.0) * hv_StrideRate)).TupleInt()
+                        hv_VStride = ((((hv_BgRatio + hv_ValueRatio) * 20.0) * hv_StrideRate)).TupleInt()
                             ;
                     }
 
@@ -299,22 +309,20 @@ namespace ZipperLightHalconDet
                     hv_VStride.Dispose();
                     hv_VStride = 0;
                 }
-                // 调试输出
-                Console.WriteLine($"BgValue: {hv_BgValue:F2}, VValue: {hv_VValue:F2}, State: {hv_VState}, Stride: {hv_VStride}");
 
                 //predict_v_from_color (HValue, SValue, V_predicted)
 
-                //*     CValue := abs(VValue - V_predicted)
-                //*     VStride := int(CValue / 2.0 * StrideRate)
+                //CValue := abs(VValue - V_predicted)
+                //VStride := int(CValue / 2.0 * StrideRate)
 
-                //*     if(CValue <= BrightnessDiff or MaxBgMean - BgValue <= BrightnessDiff)
+                //if (CValue <= BrightnessDiff or MaxBgMean - BgValue <= BrightnessDiff)
                 //VState := 0
                 //VStride := 0.0
-                //*     elseif(VValue < V_predicted)
+                //elseif (VValue < V_predicted)
                 //VState := 1
-                //*     elseif(VValue >  V_predicted)
+                //elseif (VValue >  V_predicted)
                 //VState := 2
-                //*     endif
+                //endif
                 ho_RegionClosing1.Dispose();
                 ho_RegionOpening1.Dispose();
                 ho_SelectROI.Dispose();
@@ -325,6 +333,7 @@ namespace ZipperLightHalconDet
                 ho_Rectangle.Dispose();
                 ho_SelectBgROI.Dispose();
                 ho_ImageReduced.Dispose();
+                ho_GrayImageReduced.Dispose();
                 ho_R.Dispose();
                 ho_G.Dispose();
                 ho_B.Dispose();
@@ -332,9 +341,6 @@ namespace ZipperLightHalconDet
                 ho_S.Dispose();
                 ho_V.Dispose();
 
-                hv_BrightnessDiff_COPY_INP_TMP.Dispose();
-                hv_EmphaMaskValue.Dispose();
-                hv_EmphaFactorValue.Dispose();
                 hv_MinBgMean.Dispose();
                 hv_MaxBgMean.Dispose();
                 hv_MinMean.Dispose();
@@ -348,6 +354,7 @@ namespace ZipperLightHalconDet
                 hv_HValue.Dispose();
                 hv_SValue.Dispose();
                 hv_VValue.Dispose();
+                hv_MValue.Dispose();
                 hv_NormalizedDiff.Dispose();
                 hv_BgRatio.Dispose();
                 hv_ValueRatio.Dispose();
@@ -366,6 +373,7 @@ namespace ZipperLightHalconDet
                 ho_Rectangle.Dispose();
                 ho_SelectBgROI.Dispose();
                 ho_ImageReduced.Dispose();
+                ho_GrayImageReduced.Dispose();
                 ho_R.Dispose();
                 ho_G.Dispose();
                 ho_B.Dispose();
@@ -373,9 +381,6 @@ namespace ZipperLightHalconDet
                 ho_S.Dispose();
                 ho_V.Dispose();
 
-                hv_BrightnessDiff_COPY_INP_TMP.Dispose();
-                hv_EmphaMaskValue.Dispose();
-                hv_EmphaFactorValue.Dispose();
                 hv_MinBgMean.Dispose();
                 hv_MaxBgMean.Dispose();
                 hv_MinMean.Dispose();
@@ -389,6 +394,7 @@ namespace ZipperLightHalconDet
                 hv_HValue.Dispose();
                 hv_SValue.Dispose();
                 hv_VValue.Dispose();
+                hv_MValue.Dispose();
                 hv_NormalizedDiff.Dispose();
                 hv_BgRatio.Dispose();
                 hv_ValueRatio.Dispose();

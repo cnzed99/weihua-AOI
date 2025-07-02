@@ -15,7 +15,11 @@ using System;
 using OpenCvSharp.ML;
 using System.DirectoryServices;
 using OpenCvSharp.Dnn;
-using System.Windows.Input;
+using OpenCvSharp.Extensions;
+
+
+
+
 
 namespace ZipperTestAlgorihm
 {
@@ -503,6 +507,9 @@ namespace ZipperTestAlgorihm
 
                             Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
                             cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+                            //BitmapSource imgsrc = cell.Image.ToBitmapSource();
+                            //System.Windows.Int32Rect int32Rect=new System.Windows.Int32Rect(lx, ly, recw, rech);
+                            //cell.ZipperPullPartImg = CropBitmapSource(imgsrc, int32Rect);
 
                             CoordRestoreData restoreData = new CoordRestoreData(0, 0, -lx, -ly, labelname, pullResult.datas[j],1);
                             dets.Add(restoreData);
@@ -527,6 +534,7 @@ namespace ZipperTestAlgorihm
                     }
                 }
                 ParseResult(dets, cell);
+                img.Dispose();
             }
         }
 
@@ -813,49 +821,88 @@ namespace ZipperTestAlgorihm
 
 
 
+        //private BitmapSource Mat2BitmapSource(Mat img)
+        //{
+        //    // 方法1：编码为 PNG 字节流
+        //    Cv2.ImEncode(".png", InputArray.Create(img), out byte[] imageBytes);
+
+        //    // 方法2：通过 MemoryStream 转换
+        //    using (MemoryStream ms = new MemoryStream(imageBytes))
+        //    {
+        //        //// 方式A：直接创建 BitmapSource（需指定像素格式）
+        //        //BitmapSource bitmapSource = BitmapSource.Create(
+        //        //    img.Width,
+        //        //    img.Height,
+        //        //    96, 96, // DPI
+        //        //    PixelFormats.Pbgra32, // OpenCV 默认 BGR 格式
+        //        //null,
+        //        //imageBytes,
+        //        //    img.Width * (img.Channels() == 1 ? 1 : 4) // 每行字节数
+        //        //);
+
+        //        // 方式B：通过 PngBitmapEncoder（更通用）
+        //        //BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+        //        //encoder.Frames.Add(BitmapFrame.Create(ms));
+        //        // BitmapSource enbitmapSource = encoder.Frames[0];
+        //        BitmapSource enbitmapSource = BitmapFrame.Create(ms);
+        //        BitmapSource bitmapSource = new CachedBitmap(enbitmapSource, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+
+        //        //if (bitmapSource is BitmapFrameDecode)
+        //        //{
+        //        //    // 方案1：转换为缓存位图
+
+
+        //        //    // 方案2：克隆像素数据
+        //        //    var writable = new WriteableBitmap(source);
+        //        //    writable.Freeze();
+        //        //    return writable;
+        //        //}
+        //        bitmapSource.Freeze();
+
+        //        return bitmapSource;
+
+
+
+        //    }
+        //}
+
         private BitmapSource Mat2BitmapSource(Mat img)
         {
-            // 方法1：编码为 PNG 字节流
-            Cv2.ImEncode(".png", InputArray.Create(img), out byte[] imageBytes);
-
-            // 方法2：通过 MemoryStream 转换
-            using (MemoryStream ms = new MemoryStream(imageBytes))
+            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
             {
-                //// 方式A：直接创建 BitmapSource（需指定像素格式）
-                //BitmapSource bitmapSource = BitmapSource.Create(
-                //    img.Width,
-                //    img.Height,
-                //    96, 96, // DPI
-                //    PixelFormats.Pbgra32, // OpenCV 默认 BGR 格式
-                //null,
-                //imageBytes,
-                //    img.Width * (img.Channels() == 1 ? 1 : 4) // 每行字节数
-                //);
-
-                // 方式B：通过 PngBitmapEncoder（更通用）
-                //BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-                //encoder.Frames.Add(BitmapFrame.Create(ms));
-                // BitmapSource enbitmapSource = encoder.Frames[0];
-                BitmapSource enbitmapSource = BitmapFrame.Create(ms);
-                BitmapSource bitmapSource = new CachedBitmap(enbitmapSource, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-
-                //if (bitmapSource is BitmapFrameDecode)
-                //{
-                //    // 方案1：转换为缓存位图
-
-
-                //    // 方案2：克隆像素数据
-                //    var writable = new WriteableBitmap(source);
-                //    writable.Freeze();
-                //    return writable;
-                //}
-                bitmapSource.Freeze();
-
-                return bitmapSource;
-
-
-
+                 BitmapSource bitimg= System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                    bitmap.GetHbitmap(),
+                    IntPtr.Zero,
+                    System.Windows.Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+                bitimg.Freeze();
+                return bitimg;
             }
+        }
+
+        /// <summary>
+        /// 裁剪BitmapSource的核心方法
+        /// </summary>
+        private  BitmapSource CropBitmapSource(BitmapSource source, System.Windows.Int32Rect cropRect)
+        {
+            // 计算像素缓冲区大小
+            int stride = source.Format.BitsPerPixel * cropRect.Width / 8;
+            byte[] buffer = new byte[cropRect.Height * stride];
+
+            // 复制目标区域的像素数据（高效内存操作）
+            source.CopyPixels(cropRect, buffer, stride, 0);
+
+            // 创建新BitmapSource（保留原始DPI和色彩格式）
+            return BitmapSource.Create(
+                cropRect.Width,
+                cropRect.Height,
+                source.DpiX,
+                source.DpiY,
+                source.Format,
+                source.Palette,
+                buffer,
+                stride
+            );
         }
 
     }

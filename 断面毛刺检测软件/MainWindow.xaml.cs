@@ -879,23 +879,39 @@ namespace 断面毛刺检测软件
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
         {
+            ZipperInfoVM zipperInfoVM;
+            AutoFinshWindow autoFinshWindow;
             ZipperAutomaticWindow AutomaticWindow = App
             .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
             .Value;
             CZipperAutomaticVM automaticVM = CPublicServices.Container.Resolve<CZipperAutomaticVM>();
             AutomaticWindow.DataContext = automaticVM;
-            automaticVM.StartAutoTestEven = (b,p,cut) => {
+            automaticVM.StartAutoTestEven = (b) => {
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
                     mainVM.IsAutomaticTest = b;
-                }
-                CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = p;
-                CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cut;
+                }             
+                CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;
+                zipperInfoVM=new ZipperInfoVM();
+                autoFinshWindow = new AutoFinshWindow();
+                autoFinshWindow.DataContext = zipperInfoVM;
+                autoFinshWindow.Show();
+                autoFinshWindow.Activate();
             };
+            AutomaticWindow.Closed += AutomaticWindow_Closed;
             AutomaticWindow.Show();
             AutomaticWindow.Activate();
             //OperateLog.Info(Properties.Resources.ImageSave);
+        }
+
+        private void AutomaticWindow_Closed(object sender, EventArgs e)
+        {
+            foreach (var mainVM in CMainList.CMainVMs)
+            {
+                mainVM.IsAutomaticTest = false;
+            }
+            CZipperAutomaticAlgorithm.onWichStage = 0;
         }
         #endregion
     }
