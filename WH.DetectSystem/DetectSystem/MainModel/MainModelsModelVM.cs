@@ -164,6 +164,10 @@ namespace WH.DetectSystem.ViewModels
         /// 对焦插件管理
         /// </summary>
         public CFocusManagement FocusManagement { get; set; }
+        /// <summary>
+        /// 拉链信息
+        /// </summary>
+      //  public CZipperInfo ZipperInfo { get; set; }
 
         #region 启停 状态
         bool isStart = false;
@@ -465,6 +469,7 @@ namespace WH.DetectSystem.ViewModels
                 #endregion
                 #region 读取拉链信息
                 CZipperAutomaticAlgorithm.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
+               // ZipperInfo = CZipperAutomaticAlgorithm.ZipperInfo;
                 #endregion
             });
         }

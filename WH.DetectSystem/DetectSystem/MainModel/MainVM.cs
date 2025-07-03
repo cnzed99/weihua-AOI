@@ -554,7 +554,7 @@ namespace WH.DetectSystem.Models
                         {
                             CZipperCommunicate.GetID(out int productID, out int photoID);
                             int pullID = 0;
-                            if (cell.CamName=="左相机")
+                            if (cell.CamName == "左相机")
                             {
                                 CZipperCommunicate.GetZuoPullID(out pullID);
                                 SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
@@ -566,7 +566,7 @@ namespace WH.DetectSystem.Models
 
                             }
 
-                           
+
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
 
                             if (productID != -1)
@@ -598,7 +598,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         CZipperCommunicate.SendYouPullID(0);
                                     }
-                                   
+
                                 }
                                 //cell.PhotoIndex = photoID;
                                 cell.ID = productID.ToString();
@@ -763,18 +763,7 @@ namespace WH.DetectSystem.Models
                                         );
                                     }
                                     FilterTime = newCell.FilterTime.TotalMilliseconds;
-                                    if (!m_ShowImageChannel.Writer.TryWrite(newCell))
-                                    {
-                                        newCell.Dispose();
-                                        //strbuilder = new StringBuilder("[");
-                                        //strbuilder.Append("筛选线程");
-                                        //strbuilder.Append("]     ");
-                                        //strbuilder.Append(newCell.ID);
-                                        //strbuilder.Append("   newCell入显示队列失败。");
-                                        //await m_InfoChannel.Writer.WriteAsync(
-                                        //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
-                                        //);
-                                    }
+                   
 
                                     ModelBrush = newCell.Quality.ShowColor.Brush;
                                     if (!newCell.IsOK)
@@ -800,10 +789,24 @@ namespace WH.DetectSystem.Models
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
                                         {
-                                            //newCell.Dispose();
+                                            //CellOut.Cell.Dispose();
                                         }
                                     }
+                                    if (!m_ShowImageChannel.Writer.TryWrite(newCell))
+                                    {
+                                        newCell.Dispose();
+                                        //strbuilder = new StringBuilder("[");
+                                        //strbuilder.Append("筛选线程");
+                                        //strbuilder.Append("]     ");
+                                        //strbuilder.Append(newCell.ID);
+                                        //strbuilder.Append("   newCell入显示队列失败。");
+                                        //await m_InfoChannel.Writer.WriteAsync(
+                                        //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
+                                        //);
+                                    }
+
                                 }
+
                             }
                             else  //自动识别
                             {
@@ -944,19 +947,19 @@ namespace WH.DetectSystem.Models
                                 {
                                     CurView.Clear(false);
                                     LastView.Clear(false);
-                                     ModelImage = bitmapSource;
-                                    ZipperPullImage = zipperPullimg;                                 
+                                    ModelImage = bitmapSource;
+                                    ZipperPullImage = zipperPullimg;
                                     foreach (var edge in cell.DrawEdges)
                                     {
                                         if (edge.ShowInView == 0)
                                         {
-                                            drawView= CurView;
+                                            drawView = CurView;
                                         }
                                         else
                                         {
-                                            drawView=LastView;
+                                            drawView = LastView;
                                         }
-                               
+
                                         switch (edge.DrawType)
                                         {
                                             case EMDRAWTYPE.EMDRAWTYPE_POINTS:
@@ -1154,7 +1157,7 @@ namespace WH.DetectSystem.Models
                                     }
                                     else
                                     {
-                                      
+
                                         CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
                                         CurView.WinDrawText(
                                             "OK",
@@ -1163,8 +1166,8 @@ namespace WH.DetectSystem.Models
                                             false
                                         );
                                     }
-                                   // drawView.Invalidate();
-                                   CurView.Invalidate();
+                                    // drawView.Invalidate();
+                                    CurView.Invalidate();
                                     LastView.Invalidate();
                                 });
 
@@ -1181,7 +1184,7 @@ namespace WH.DetectSystem.Models
                                 //        //    break;
                                 //        drawView = LastView;
                                 //    }
-                                   
+
                                 //}
                             }
                             catch (Exception ex)
@@ -1203,7 +1206,7 @@ namespace WH.DetectSystem.Models
                             && (
                                 SaveImageVM.Param.SaveImageEnable
                                 || SaveImageVM.Param.PiantScreenEnable
-                            )&&!isAutomaticTest
+                            ) && !isAutomaticTest
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();
@@ -1286,29 +1289,36 @@ namespace WH.DetectSystem.Models
                 await foreach (Cell cell in m_dataBaseChannel.Reader.ReadAllAsync())
                 {
 
-                    if (MySqlVM.MysqlExecute.SqlEnable)
+
+                    try
                     {
-                        try
+                        if (MySqlVM.MysqlExecute.SqlEnable)
                         {
                             if (SystemSettings.OfflineSave || IsStart)
                                 ProcessGroup.MysqlBLL.AddData(cell, SystemSettings.NowShift);
                         }
-                        catch (Exception ex)
-                        {
-                            await m_InfoChannel.Writer.WriteAsync(
-                                new PrintMsg("Mysql数据库写入出错:" + ex.Message, LOG.LOG_ERROR)
-                            );
-                            Growl.Warning(
-                                new HandyControl.Data.GrowlInfo()
-                                {
-                                    Message = Name + "-" + "Mysql数据库写入出错!",
-                                    StaysOpen = false,
-                                    WaitTime = 2,
-                                }
-                            );
-                        }
-                    }
 
+                    }
+                    catch (Exception ex)
+                    {
+                        await m_InfoChannel.Writer.WriteAsync(
+                            new PrintMsg("Mysql数据库写入出错:" + ex.Message, LOG.LOG_ERROR)
+                        );
+                        Growl.Warning(
+                            new HandyControl.Data.GrowlInfo()
+                            {
+                                Message = Name + "-" + "Mysql数据库写入出错!",
+                                StaysOpen = false,
+                                WaitTime = 2,
+                            }
+                        );
+                    }
+                    //finally
+                    //{
+                    //    cell.Dispose();
+                    //}
+
+                   
                     //#region 报警
                     //try
                     //{
@@ -1330,7 +1340,7 @@ namespace WH.DetectSystem.Models
                     //}
                     //#endregion
 
-                    //cell.Dispose();
+
                 }
             });
 
@@ -1365,13 +1375,17 @@ namespace WH.DetectSystem.Models
                                 })
                             );
                         }
-                        //cell.Dispose(); //这个cell是复制的clone 存图后清理
+
                     }
                     catch (Exception ex)
                     {
                         await m_InfoChannel.Writer.WriteAsync(
                             new PrintMsg("存图线程出错:" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
                         );
+                    }
+                    finally
+                    {
+                        cell.Dispose(); //这个cell是复制的clone 存图后清理
                     }
                 }
             });
@@ -1402,17 +1416,17 @@ namespace WH.DetectSystem.Models
                        Value = g.SelectMany(cd => cd.Value).ToList(),
                        Type = g.FirstOrDefault()?.Type ?? "",
                        Index = g.Max(cd => cd.Index), // 取最大Index
-                       ShowInView = g.Max(cd=>cd.ShowInView)
+                       ShowInView = g.Max(cd => cd.ShowInView)
                    }).ToList();
             for (int i = 0; i < cells.Count; i++)
             {
                 newCell.DrawEdges.AddRange(cells[i].DrawEdges);
-                if (cells[i].ZipperPullPartImg!=null)
+                if (cells[i].ZipperPullPartImg != null)
                 {
-                    newCell.ZipperPullPartImg=cells[i].ZipperPullPartImg;
+                    newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
                 }
             }
-            
+
             CImage img = GetCImage(cells);
             if (img != null)
             {
@@ -1430,7 +1444,7 @@ namespace WH.DetectSystem.Models
             {
                 if (cells.Count == 1)
                 {
-                    return cells[0].Image;
+                    return (CImage)cells[0].Image.Clone();
                 }
                 else
                 {

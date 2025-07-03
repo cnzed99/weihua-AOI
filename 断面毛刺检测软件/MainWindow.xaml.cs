@@ -891,8 +891,7 @@ namespace 断面毛刺检测软件
                 {
                     mainVM.IsAutomaticTest = b;
                 }             
-                CZipperAutomaticAlgorithm.TestFinsh = false;
-                CZipperAutomaticAlgorithm.onWichStage = 1;
+           
                 zipperInfoVM=new ZipperInfoVM();
                 autoFinshWindow = new AutoFinshWindow();
                 autoFinshWindow.DataContext = zipperInfoVM;

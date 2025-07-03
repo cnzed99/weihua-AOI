@@ -1,26 +1,32 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WH.Controls;
 
 namespace ZipperInfo
 {
-    public  class ZipperInfoVM
+    public partial class ZipperInfoVM: ObservableObject
     {
-         public CZipperInfo ZipperInfo  { get; set; }
+        //  public CZipperInfo ZipperInfo  { get; set; }
 
-        //public ImageView UpMassView { get; set; }
-        //public ImageView DownMassView { get; set; }
-        //public ImageView PullMassView { get; set; }
+        [ObservableProperty]
+        CZipperInfo zipperInfo;
         public ZipperInfoVM()
         {
             ZipperInfo= CZipperAutomaticAlgorithm.ZipperInfo;
-            //UpMassView=new ImageView();
-            //DownMassView=new ImageView();
-            //PullMassView=new ImageView();   
+        }
+
+        [RelayCommand]
+        void save(object win)
+        {
+            CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
+            var window = win as Window;
+            window.Close(); 
         }
     }
 }

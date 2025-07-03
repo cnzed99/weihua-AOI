@@ -41,15 +41,15 @@ namespace ZipperInfo
                 CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex,zipperCacheCount);               
                 Thread.Sleep(100);
                 startAutoTest=true;
-                //CZipperInfo zipperInfo =new CZipperInfo();
-                //zipperInfo.ZipperLneght= AutoData.ZipperLenght;
-                //zipperInfo.ZipperTriggerPos = points;
-                //zipperInfo.CutoffIndex = cutoffIndex;
-                //zipperInfo.HandAndTaliPos = handandtalipoints;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = points;
                 CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cutoffIndex;
                 CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.TestFinsh = false;
+                CZipperAutomaticAlgorithm.onWichStage = 1;
+                CZipperAutomaticAlgorithm.findPuller = false;
+                CZipperAutomaticAlgorithm.findPulls = false;
+                CZipperAutomaticAlgorithm.findLogo = false;
                 StartAutoTestEven?.Invoke(startAutoTest);
                 //将光源值先减小到较状态
 
@@ -74,12 +74,6 @@ namespace ZipperInfo
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="points"></param>
-        /// <param name="cutoffIndex"></param>
-        /// <param name="frontFinsshPos"></param>
 
         /// <summary>
         /// 获取触发的点位置
@@ -87,7 +81,7 @@ namespace ZipperInfo
         /// <param name="points">触发点位置</param>
         /// <param name="headandtalipoints">一条拉链中，第一张图片的触发位置和最后一张的出发位置</param>
         /// <param name="cutoffIndex">切断时已经拍了几张照片</param>
-        /// <param name="frontFinsshPos">切断时,切刀到相机已经有几条拉链完了拍照</param>
+        /// <param name="frontFinsshPos">切断时,切刀到相机已经有几条拉链完了拍照,影响NG OK分料</param>
         private void GetTriggerPoints(out List<float>points,out List<float> HeadandTalipoints, out int cutoffIndex, out int frontFinsshPos)
         {
             points = new List<float>();
@@ -110,7 +104,7 @@ namespace ZipperInfo
 
                 //第一个点
                 pullchange = 0;
-                frontFinsshPos = frontzippers;
+                frontFinsshPos = frontzippers-1;
                 float firstpoint = netZipperhandle - frontLim;
                 points.Add(firstpoint);
                 HeadandTalipoints.Add(firstpoint);
@@ -136,7 +130,7 @@ namespace ZipperInfo
             {
                 //第一个点
                 pullchange = 0;
-                frontFinsshPos = frontzippers + 1;
+                frontFinsshPos = frontzippers;
                 float firstpoint = netZipperTali - frontLim;
                 points.Add(firstpoint);
                 HeadandTalipoints.Add(firstpoint);
@@ -161,7 +155,7 @@ namespace ZipperInfo
             else if (netZipperhandle <= frontLim && netZipperTali >= backLim) //类3 //如果下一条拉链的头位置比上视野小并且尾比下视野位置大
             {
                 int nextCount = 0;
-                frontFinsshPos = frontzippers;
+                frontFinsshPos = frontzippers-1;
                 float firstpoint = 0;
                 float start = 0;
                 for (int i = 1; i < 20; i++)//第一个点

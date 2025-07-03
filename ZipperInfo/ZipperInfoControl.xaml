@@ -9,6 +9,7 @@
              d:DataContext="{d:DesignInstance Type=local:ZipperInfoVM}"
              d:DesignHeight="250" d:DesignWidth="150" >
     <Grid>
-        <wh:CPropertyGridLang FontSize="14"  SelectedObject="{Binding ZipperInfo }"/>
+        <wh:CPropertyGridLang FontSize="14"  SelectedObject="{Binding ZipperInfo}"/>
+
     </Grid>
 </UserControl>

@@ -482,10 +482,10 @@ namespace ZipperTestAlgorihm
                         string labelname = pull_names[labelindex];
                         if (labelname.Contains("拉头"))
                         {
-                            int lx = pullResult.datas[j].box.X + pullResult.datas[j].box.Width / 2 - 240;
-                            int ly = pullResult.datas[j].box.Y + pullResult.datas[j].box.Height / 2 - 240;
-                            int recw = 480;
-                            int rech = 480;
+                            int lx = pullResult.datas[j].box.X + pullResult.datas[j].box.Width / 2 - 320;
+                            int ly = pullResult.datas[j].box.Y + pullResult.datas[j].box.Height / 2 - 320;
+                            int recw = 640;
+                            int rech = 640;
 
                             if ((lx + recw) > img.Width)
                             {
@@ -506,12 +506,14 @@ namespace ZipperTestAlgorihm
                             }
 
                             Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
-                            cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+                            Mat colorMat = new Mat();
+                            Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
+                            cell.ZipperPullPartImg = Mat2BitmapSource(colorMat);
                             //BitmapSource imgsrc = cell.Image.ToBitmapSource();
                             //System.Windows.Int32Rect int32Rect=new System.Windows.Int32Rect(lx, ly, recw, rech);
                             //cell.ZipperPullPartImg = CropBitmapSource(imgsrc, int32Rect);
-
-                            CoordRestoreData restoreData = new CoordRestoreData(0, 0, -lx, -ly, labelname, pullResult.datas[j],1);
+                            colorMat.Dispose();
+                            CoordRestoreData restoreData = new CoordRestoreData(0, 0, -lx, -ly, labelname, pullResult.datas[j], 1);
                             dets.Add(restoreData);
                         }
 

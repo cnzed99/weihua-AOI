@@ -305,6 +305,10 @@ namespace WH.RunCell
                 }
             }
             ZipperImages.Clear();
+            if (ZipperPullPartImg!=null&& ZipperPullPartImg.CanFreeze)
+            {
+                ZipperPullPartImg.Freeze();
+            }
         }
 
         public override Cell Clone()
@@ -412,7 +416,7 @@ namespace WH.RunCell
             cell.EncoderPos = this.EncoderPos;
             //cell.AlgorithmOut = this.AlgorithmOut;
             //cell.DrawEdges = this.DrawEdges;
-            cell.ZipperPullPartImg = this.ZipperPullPartImg;
+           // cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
             return cell;
         }
 

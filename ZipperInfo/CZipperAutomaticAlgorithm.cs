@@ -52,6 +52,10 @@ namespace ZipperInfo
 
         CLightControlBase LightCtl_Zuo = null;
         CLightControlBase LightCtl_You = null;
+
+        public static bool findPulls = false;//检测到拉片
+        public static bool findPuller=false; //检测到拉头
+        public static bool findLogo = false; //检测到Logo
         public CZipperAutomaticAlgorithm()
         {
             string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\AutoMatic";
@@ -524,21 +528,7 @@ namespace ZipperInfo
                         string labelstr = de_names[nameindex];
                         if (labelstr=="拉头")
                         {
-                            //int bx = resultDet.datas[i].box.X;
-                            //int by = resultDet.datas[i].box.Y;
-                            //int w = resultDet.datas[i].box.Width;
-                            //int h = resultDet.datas[i].box.Height;
-                            //Mat cutmat = img[new Rect(bx, by, w, h)];
-
-                            //else
-                            //{
-                            //    //进入下阶段
-                            //    onWichStage = 5;
-                            //    timeOutCount = 0;
-                            //    CLinghtManagement.SaveLightParams();
-                            //    CZipperCommunicate.SceondstageFinsh();
-                            //}
-
+                            findPuller=true;
                             Dispatcher.BeginInvoke(() =>
                             {
                                 ZipperInfo.ZipperPullerImg = cell.Image.ToBitmapSource().Clone();
@@ -547,23 +537,34 @@ namespace ZipperInfo
                         }
                         if (labelstr=="拉头拉片")
                         {
-                            ZipperInfo.ZipperPullsImg = cell.Image.ToBitmapSource().Clone();
+                            findPulls = true;
+                            Dispatcher.BeginInvoke(() =>
+                            {
+                                ZipperInfo.ZipperPullsImg = cell.Image.ToBitmapSource().Clone();
+                            });
+                           
                         }
                         if (labelstr == "SBS")
                         {
+                            findLogo = true;
                             ZipperInfo.ZipperLogoType=LOGOTYPE.SBS;
                         }
                     }
-                    timeOutCount = 0;
-                    onWichStage = 6;
-                    CZipperCommunicate.SceondstageFinsh();
+                    if (findPuller && findPulls && findLogo)
+                    {
+                        timeOutCount = 0;
+                        onWichStage = 6;
+                        CZipperCommunicate.SceondstageFinsh();
+                        return;
 
+                    }
                 }
                 if (timeOutCount>=15)
                 {
                     timeOutCount = 0;
                     onWichStage = 6;
                     CZipperCommunicate.SceondstageFinsh();
+                    return;
                 }
 
               
@@ -590,7 +591,7 @@ namespace ZipperInfo
                                 ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
                             }
 
-                            ZipperInfo.ZipperUpMassType = STOPMASS.注塑;
+                            ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
                             Dispatcher.BeginInvoke(() =>
                             {
                                 ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
@@ -622,7 +623,7 @@ namespace ZipperInfo
                 }
                 if (timeOutCount >= 15) //超过15次识别不到默认为无上止
                 {
-                    ZipperInfo.ZipperUpMassType = STOPMASS.无;
+                    ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
                     Dispatcher.BeginInvoke(() =>
                     {
                         ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
