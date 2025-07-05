@@ -36,9 +36,8 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
 using System.Linq;
-//using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using Org.BouncyCastle.Ocsp;
+
 
 
 
@@ -435,7 +434,7 @@ namespace WH.DetectSystem.Models
             new BoundedChannelOptions(5) { FullMode = BoundedChannelFullMode.Wait };
 
         public static readonly BoundedChannelOptions s_SinglechannelOptions =
-            new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait };
+            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
 
         /// <summary>
         /// 消息队列
@@ -812,7 +811,7 @@ namespace WH.DetectSystem.Models
                             {
                                 if (!m_ShowImageChannel.Writer.TryWrite(cell))
                                 {
-                                    cell.Dispose();
+                                   // cell.Dispose();
                                 }
                             }
 

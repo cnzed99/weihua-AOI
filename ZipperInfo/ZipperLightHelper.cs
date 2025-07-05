@@ -77,11 +77,11 @@ namespace ZipperLightHalconDet
                 //EmphaMaskValue := 7
                 //EmphaFactorValue := 0.7
                 hv_MinBgMean.Dispose();
-                hv_MinBgMean = 130;
+                hv_MinBgMean = 120;
                 hv_MaxBgMean.Dispose();
-                hv_MaxBgMean = 230;
+                hv_MaxBgMean = 220;
                 hv_MinMean.Dispose();
-                hv_MinMean = 100;
+                hv_MinMean = 90;
                 hv_MaxMean.Dispose();
                 hv_MaxMean = 180;
                 hv_Width.Dispose(); hv_Height.Dispose();

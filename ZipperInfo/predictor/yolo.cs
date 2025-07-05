@@ -70,6 +70,7 @@ namespace ZipperInfo
             else
             {
                 mat = img;
+               
             }
 
             // mat.SaveImage("C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\1.jpg");

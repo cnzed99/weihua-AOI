@@ -12,8 +12,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shell;
 using System.Windows.Threading;
 using WH.Entity;
+using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -30,18 +32,22 @@ namespace ZipperInfo
         public static Dispatcher Dispatcher { get; set; }
         public static CZipperInfo ZipperInfo { get; set; } = new CZipperInfo();
         /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 处在哪个阶段
         /// </summary>
         public static int onWichStage = 0;
         /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 自动识别结束
         /// </summary>
         public static bool TestFinsh = false;
         /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 识别模型对象
         /// </summary>
         YOLO yolo_search_det = new();
         /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 识别名
         /// </summary>
         string[] de_names;
@@ -50,11 +56,17 @@ namespace ZipperInfo
         /// </summary>
         int timeOutCount = 0;
 
+        /// <summary>
+        /// 2025.7.2 鲍赞宝
+        /// 自动识别模块日志
+        /// </summary>
+        public static CLogRec AutoLogger { get; set; } = CLogRec.Create("Auto", "D:/Data");
+
         CLightControlBase LightCtl_Zuo = null;
         CLightControlBase LightCtl_You = null;
 
         public static bool findPulls = false;//检测到拉片
-        public static bool findPuller=false; //检测到拉头
+        public static bool findPuller = false; //检测到拉头
         public static bool findLogo = false; //检测到Logo
         public CZipperAutomaticAlgorithm()
         {
@@ -83,40 +95,44 @@ namespace ZipperInfo
             Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
                  MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
                  cell.Image.ImageData);
-
+            //Mat img = new Mat();
+            //Cv2.CvtColor(mat, img, ColorConversionCodes.BGR2RGB);
+            // img.ImWrite($"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
             //相机采集图片
-            HOperatorSet.GenImageInterleaved(
-                out CameraImage,
-                cell.Image.ImageData,
-                "rgb",
-                cell.Image.ImageWidth,
-                cell.Image.ImageHeight,
-                0,
-                "byte",
-                0,
-                0,
-                0,
-                0,
-                -1,
-                0
-            );
-            // HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
+
+            //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
             if (onWichStage == 1)
             {
                 if (cell.CamName == "右相机") //调光源只用一边的结果
                 {
+                    HOperatorSet.GenImageInterleaved(
+                            out CameraImage,
+                            cell.Image.ImageData,
+                            "rgb",
+                            cell.Image.ImageWidth,
+                            cell.Image.ImageHeight,
+                            0,
+                            "byte",
+                            0,
+                            0,
+                            0,
+                            0,
+                            -1,
+                            0
+                        );
                     ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 2.0, out var hv_VState, out var hv_VStride);
                     CameraImage.Dispose();
-
+                    AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
                     if (hv_VState == 1)
                     {
-                        Console.WriteLine($"需增加亮度");
+                       // Console.WriteLine($"需增加亮度");
                         if (tempVState != hv_VState)
                         {
                             addOrSubCount++;
                         }
                         if (addOrSubCount > 4)
                         {
+                            AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
                             CLinghtManagement.SaveLightParams();
                             onWichStage = 2;
@@ -130,40 +146,35 @@ namespace ZipperInfo
                             int val = hv_VStride.I;
                             if (val == 0)
                             {
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{val}");
                                 val = 2;
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},修改调整值为:2");
                             }
                             LightCtl_Zuo.BaseConfig.LightChannelList[0].Value += val;
                             if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value > 200)
                             {
                                 LightCtl_Zuo.BaseConfig.LightChannelList[0].Value = 200;
                             }
-                           // LightCtl_Zuo.BaseConfig.LightChannelList[1].Value = LightCtl_Zuo.BaseConfig.LightChannelList[0].Value;
+                           
                             LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[0]);
-                            //  Thread.Sleep(20);
-                            //  LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[1]);
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前设置光源值为:{LightCtl_Zuo.BaseConfig.LightChannelList[0].Value}");
 
-                             Thread.Sleep(20);
+                            Thread.Sleep(20);
                             LightCtl_You.BaseConfig.LightChannelList[0].Value += val;
                             if (LightCtl_You.BaseConfig.LightChannelList[0].Value > 200)
                             {
                                 LightCtl_You.BaseConfig.LightChannelList[0].Value = 200;
                             }
-                            // LightCtl_You.BaseConfig.LightChannelList[1].Value = LightCtl_You.BaseConfig.LightChannelList[0].Value;
                             LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[0]);
-                            // Thread.Sleep(20);
-                            // LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[1]);
-                            if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value>=200)
+                            if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value >= 200)
                             {
                                 //进入下阶段
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值200,进入下一阶段");
                                 CLinghtManagement.SaveLightParams();
                                 onWichStage = 2;
                                 addOrSubCount = 0;
                                 return;
                             }
-                            //    //进入下阶段
-                            //    CLinghtManagement.SaveLightParams();
-                            //    onWichStage = 2;
-                            //}
 
                         }
 
@@ -179,6 +190,7 @@ namespace ZipperInfo
                             }
                             if (addOrSubCount > 4)
                             {
+                                AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                                 //进入下阶段
                                 CLinghtManagement.SaveLightParams();
                                 onWichStage = 2;
@@ -188,30 +200,29 @@ namespace ZipperInfo
                             int val = hv_VStride.I;
                             if (val == 0)
                             {
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{val}");
                                 val = 2;
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},修改调整值为:2");
                             }
                             LightCtl_Zuo.BaseConfig.LightChannelList[0].Value -= val;
                             if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value < 5)
                             {
                                 LightCtl_Zuo.BaseConfig.LightChannelList[0].Value = 5;
                             }
-                            //  LightCtl_Zuo.BaseConfig.LightChannelList[1].Value = LightCtl_Zuo.BaseConfig.LightChannelList[0].Value;
-                            LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[0]);
-                            // Thread.Sleep(20);
-                            // LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[1]);
 
-                             Thread.Sleep(20);
+                            LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[0]);
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前设置光源值为:{LightCtl_Zuo.BaseConfig.LightChannelList[0].Value}");
+
+                            Thread.Sleep(20);
                             LightCtl_You.BaseConfig.LightChannelList[0].Value -= val;
                             if (LightCtl_You.BaseConfig.LightChannelList[0].Value < 5)
                             {
                                 LightCtl_You.BaseConfig.LightChannelList[0].Value = 5;
                             }
-                            //  LightCtl_You.BaseConfig.LightChannelList[1].Value = LightCtl_You.BaseConfig.LightChannelList[0].Value;
                             LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[0]);
-                            // Thread.Sleep(20);
-                            // LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[1]);
                             if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value <= 5)
                             {
+                                AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值5,进入下一阶段");
                                 //进入下阶段
                                 CLinghtManagement.SaveLightParams();
                                 onWichStage = 2;
@@ -236,6 +247,7 @@ namespace ZipperInfo
                 timeOutCount++;
                 DetResult resultDet;
                 resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                AutoLogger.Info($"{cell.CamName}:onWichStage=2,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                 if (resultDet.datas.Count > 0)
                 {
                     for (int i = 0; i < resultDet.datas.Count; i++)
@@ -244,12 +256,14 @@ namespace ZipperInfo
                         string labelstr = de_names[nameindex];
                         if (labelstr.Contains("注塑下止"))
                         {
+                            AutoLogger.Info($"{cell.CamName}:onWichStage=2,识别到注塑下止");
                             ZipperInfo.ZipperDownMassType = STOPMASS.注塑;
-                            Dispatcher.BeginInvoke(() =>
+                            Dispatcher.Invoke(() =>
                             {
+                                AutoLogger.Info($"{cell.CamName}:onWichStage=2,更新下止图片");
                                 ZipperInfo.ZipperDownmssImg = cell.Image.ToBitmapSource().Clone();
                             });
-                           
+
                             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
                              {
                                     new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
@@ -263,9 +277,10 @@ namespace ZipperInfo
                             cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
 
                             timeOutCount = 0;
-                            //进入下阶段
-                            onWichStage = 3;
+                            AutoLogger.Info($"{cell.CamName}:onWichStage=2,准备进入第二阶段");
+                            //进入下阶段                       
                             CZipperCommunicate.FirststageFinsh(); //第一阶段完成
+                            onWichStage = 3;
                             return;
                         }
                     }
@@ -273,15 +288,16 @@ namespace ZipperInfo
                 }
                 if (timeOutCount >= 15) //超过15次识别不到默认为无下止
                 {
+                    AutoLogger.Info($"{cell.CamName}:onWichStage=2,{timeOutCount}次,没有识别到下止");
                     ZipperInfo.ZipperDownMassType = STOPMASS.无;
-                    Dispatcher.BeginInvoke(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         ZipperInfo.ZipperDownmssImg = cell.Image.ToBitmapSource().Clone();
                     });
-                    
-                    timeOutCount = 0;
-                    onWichStage = 3;
+                    AutoLogger.Info($"{cell.CamName}:onWichStage=2,设置下止类型为:无,更新下止图片,进入第二阶段");
+                    timeOutCount = 0;                   
                     CZipperCommunicate.FirststageFinsh(); //第一阶段完成
+                    onWichStage = 3;
                 }
             }
             else if (onWichStage == 3) //第二阶段 识别拉头  缓慢拉拉链移动 实时获取拉头的位置
@@ -291,6 +307,7 @@ namespace ZipperInfo
                     // timeOutCount++;
                     DetResult resultDet;
                     resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                     if (resultDet.datas.Count > 0)
                     {
                         for (int i = 0; i < resultDet.datas.Count; i++)
@@ -299,6 +316,7 @@ namespace ZipperInfo
                             string labelstr = de_names[nameindex];
                             if (labelstr.Contains("拉头"))
                             {
+                                AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}");
                                 // int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                                 // int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
                                 List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
@@ -312,13 +330,15 @@ namespace ZipperInfo
                                 System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
                                 cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
                                 cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
-
+                               
                                 if (cell.Image.ImageWidth - resultDet.datas[i].box.X > 800) //
                                 {
-
+                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}>800");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
-
-                                    List<int> templist = new List<int>();                                   
+                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
+                                    pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
+                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},获取当前机械轴-25位置:{pos}");
+                                    List<int> templist = new List<int>();
                                     for (int j = 0; j < ZipperInfo.ZipperTriggerPos.Count; j++)
                                     {
                                         int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
@@ -328,25 +348,32 @@ namespace ZipperInfo
                                     List<int> temphandP = new List<int>();
                                     for (int j = 0; j < ZipperInfo.HandAndTaliPos.Count; j++)
                                     {
-                                        int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
+                                        int temppos = (int)ZipperInfo.HandAndTaliPos[j] * 10;
                                         temphandP.Add(temppos);
-
+                                       
                                     }
+                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},起点下限位置:{temphandP[0]}");
+                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},终点上限位置:{temphandP[temphandP.Count-1]}");
                                     if (pos > temphandP[temphandP.Count - 1] || pos < temphandP[0])
                                     {
+                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},机械轴位置:{pos}>{temphandP[temphandP.Count - 1]},{pos} < {temphandP[0]},retrun");
                                         return;
                                     }
                                     if (templist.Count > 0)
                                     {
-                                        int crippoint =(int) ZipperInfo.ZipperLneght * 10;
-                                        if (pos > templist[templist.Count - 1]&&pos> crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
+                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},满足条件在限位之间的条件");
+                                        int crippoint = (int)ZipperInfo.ZipperLneght * 10;
+                                        if (pos > templist[templist.Count - 1] && pos > crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
                                         {
+                                            AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},机械轴位置:{pos}大于临界点{templist[templist.Count - 1]},{pos}大于临界点{crippoint}");
                                             pos = pos - crippoint;
+                                            AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                                         }
 
                                         templist.Add(pos);
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
+                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},排序,拉头序号是第{pindex}张图片");
                                         if (templist.Count >= 3)
                                         {
                                             if (pindex == 0)
@@ -354,16 +381,8 @@ namespace ZipperInfo
 
                                                 if (Math.Abs(pos - templist[pindex + 1]) > 100)
                                                 {
-                                                    
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>100,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    //Dispatcher.BeginInvoke(() =>
-                                                    //{
-                                                    //    ZipperInfo.ZipperPullerImg = cell.Image.ToBitmapSource().Clone();
-                                                         
-                                                    //});
-                                                   
-                                                    CZipperCommunicate.SendPullLocation(pos);
-                                                    CZipperCommunicate.SceondstageFinsh();
                                                     onWichStage = 5;
                                                     return;
                                                 }
@@ -372,14 +391,8 @@ namespace ZipperInfo
                                             {
                                                 if (Math.Abs(pos - templist[pindex - 1]) > 100)
                                                 {
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>100,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    //Dispatcher.BeginInvoke(() =>
-                                                    //{
-                                                    //    ZipperInfo.ZipperPullerImg = cell.Image.ToBitmapSource().Clone();
-                                                    //});
-                                                 
-                                                    CZipperCommunicate.SendPullLocation(pos);
-                                                    CZipperCommunicate.SceondstageFinsh();
                                                     onWichStage = 5;
                                                     return;
                                                 }
@@ -405,15 +418,8 @@ namespace ZipperInfo
                                                     //    ZipperInfo.PullchangeIndex = pullposindex;
                                                     //}
                                                     //写轴坐标位置
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{templist[pindex - 1]}<{pos}<{templist[pindex + 1]}停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    //Dispatcher.BeginInvoke(() =>
-                                                    //{
-                                                    //    ZipperInfo.ZipperPullerImg = cell.Image.ToBitmapSource().Clone();
-
-                                                    //});
-                                                    
-                                                    CZipperCommunicate.SendPullLocation(pos);
-                                                    CZipperCommunicate.SceondstageFinsh();
                                                     onWichStage = 5;
                                                     return;
                                                 }
@@ -520,85 +526,108 @@ namespace ZipperInfo
                 timeOutCount++;
                 DetResult resultDet;
                 resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                 if (resultDet.datas.Count > 0)
                 {
                     for (int i = 0; i < resultDet.datas.Count; i++)
                     {
                         int nameindex = int.Parse(resultDet.datas[i].lable);
                         string labelstr = de_names[nameindex];
-                        if (labelstr=="拉头")
+                        if (labelstr == "拉头")
                         {
-                            findPuller=true;
-                            Dispatcher.BeginInvoke(() =>
+                            int pos = CZipperCommunicate.GetGrippawlLocation();
+                            int crippoint = (int)ZipperInfo.ZipperLneght * 10;
+                            if (pos > crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
                             {
-                                ZipperInfo.ZipperPullerImg = cell.Image.ToBitmapSource().Clone();
-                            });
+                                AutoLogger.Info($"onWichStage=5,timeOutCount={timeOutCount},机械轴位置:{pos}大于临界点{crippoint}");
+                                pos = pos - crippoint;
+                                AutoLogger.Info($"onWichStage=5,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
+                            }
+                            CZipperCommunicate.SendPullLocation(pos);
+                            AutoLogger.Info($"onWichStage=5,timeOutCount={timeOutCount},想PLC写入拉头位置:{pos}");
+                            findPuller = true;
+                            Dispatcher.Invoke(() =>
+                            {
+                                ZipperInfo.ZipperPullerImg=cell.Image.ToBitmapSource().Clone();
 
+                            });
+                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到拉头,当前轴停止位置:{pos},写入位置{pos},findPuller=true,更新拉头图片");
                         }
-                        if (labelstr=="拉头拉片")
+                        if (labelstr == "拉头拉片")
                         {
                             findPulls = true;
-                            Dispatcher.BeginInvoke(() =>
+                            Dispatcher.Invoke(() =>
                             {
                                 ZipperInfo.ZipperPullsImg = cell.Image.ToBitmapSource().Clone();
                             });
-                           
+                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到拉头拉片,findPulls=true更新拉头图片");
+
                         }
                         if (labelstr == "SBS")
                         {
                             findLogo = true;
-                            ZipperInfo.ZipperLogoType=LOGOTYPE.SBS;
+                            ZipperInfo.ZipperLogoType = LOGOTYPE.SBS;
+                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:SBS,findLogo=true更新Logo图片");
                         }
                     }
                     if (findPuller && findPulls && findLogo)
                     {
+                        AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},拉头,拉头拉片,Logo全部识别到,进入第三阶段");
                         timeOutCount = 0;
-                        onWichStage = 6;
                         CZipperCommunicate.SceondstageFinsh();
+                        onWichStage = 6;
                         return;
 
                     }
                 }
-                if (timeOutCount>=15)
+                if (timeOutCount >= 15)
                 {
+                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},拉头,拉头拉片,Logo全部识别到,进入第三阶段");
                     timeOutCount = 0;
-                    onWichStage = 6;
                     CZipperCommunicate.SceondstageFinsh();
+                    onWichStage = 6;
                     return;
                 }
 
-              
+
             }
             else if (onWichStage == 6)  //第三阶段 识别上止类型
             {
-                timeOutCount++;
-                DetResult resultDet;
-                resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
-                if (resultDet.datas.Count > 0)
+                if (cell.CamName == "右相机")
                 {
-                    for (int i = 0; i < resultDet.datas.Count; i++)
+                    timeOutCount++;
+                    DetResult resultDet;
+                    resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                    AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
+                    if (resultDet.datas.Count > 0)
                     {
-                        int nameindex = int.Parse(resultDet.datas[i].lable);
-                        string labelstr = de_names[nameindex];
-                        if (labelstr.Contains("注塑上止"))
+                        for (int i = 0; i < resultDet.datas.Count; i++)
                         {
-                            if (labelstr.Contains("正面") && cell.CamName == "右相机") //这里要改成识别链牙在哪边
+                            int nameindex = int.Parse(resultDet.datas[i].lable);
+                            string labelstr = de_names[nameindex];
+                            if (labelstr.Contains("注塑上止"))
                             {
-                                ZipperInfo.ZipperSliderType = PULLTYPE.反穿;
-                            }
-                            else
-                            {
-                                ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
-                            }
+                                AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},识别到{labelstr}");
+                                if (labelstr.Contains("正面")) //这里要改成识别链牙在哪边
+                                {
+                                    ZipperInfo.ZipperSliderType = PULLTYPE.反穿;
+                                    AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链为反穿");
+                                }
+                                else
+                                {
+                                    ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
+                                    AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链为正穿");
+                                }
 
-                            ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
-                            Dispatcher.BeginInvoke(() =>
-                            {
-                                ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
+                                ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
+                                AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链上止为:{ZipperInfo.ZipperUpMassType}");
+                                Dispatcher.Invoke(() =>
+                                {
+                                    ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
+                                    AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},更新上止图片");
+                                });
 
-                            });
-                            
-                            List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
                             {
                                 new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
                                 new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
@@ -607,36 +636,43 @@ namespace ZipperInfo
                                 new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
 
                             };
-                            System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                            cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                            cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
 
-                            timeOutCount = 0;
-                            TestFinsh=true;
-                            //结束
-                            CZipperCommunicate.TestFinish();
-                            Thread.Sleep(10);
-                            CZipperCommunicate.ThirdstageFinsh();
+                                timeOutCount = 0;
+                                TestFinsh = true;
+                                //结束
+                                AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},完成识别");
+                                CZipperCommunicate.TestFinish();
+                                Thread.Sleep(10);
+                                CZipperCommunicate.ThirdstageFinsh();
+                                return;
+                            }
                         }
+
                     }
-
-                }
-                if (timeOutCount >= 15) //超过15次识别不到默认为无上止
-                {
-                    ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
-                    Dispatcher.BeginInvoke(() =>
+                    if (timeOutCount >= 15) //超过15次识别不到默认为无上止
                     {
-                        ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
-                    });
-                   
-                    timeOutCount = 0;
-                    onWichStage = 0;
-                    TestFinsh = true;
-                    //结束
-                    CZipperCommunicate.TestFinish();
-                    Thread.Sleep(10);
-                    CZipperCommunicate.ThirdstageFinsh();
+                        ZipperInfo.ZipperUpMassType = STOPMASS.无;
+                        AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链上止为:{ZipperInfo.ZipperUpMassType}");
+                        Dispatcher.Invoke(() =>
+                        {
+                            ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
+                            AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},更新上止图片");
+                        });
 
+                        timeOutCount = 0;
+                        onWichStage = 0;
+                        TestFinsh = true;
+                        //结束
+                        AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},完成识别");
+                        CZipperCommunicate.TestFinish();
+                        Thread.Sleep(10);
+                        CZipperCommunicate.ThirdstageFinsh();
+                        return;
+
+                    }
                 }
             }
         }

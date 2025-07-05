@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,11 +29,24 @@ namespace ZipperInfo
         [RelayCommand]
         void SendPoints()
         {
+            CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
 
             GetTriggerPoints(out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount);
-           
+            StringBuilder stringBuilder = new StringBuilder("计算触发点位");
+            for (int i = 0; i < points.Count; i++)
+            {
+                stringBuilder.Append($"第{i + 1}点:{points[i]},");
+            }
+            if (handandtalipoints.Count>1)
+            {
+                stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
+            }
+            stringBuilder.Append($",切断时已经拍了{cutoffIndex}张照片");
+            stringBuilder.Append($",切断时,切刀到相机有{zipperCacheCount}条拉链已经拍完照片");
+            CZipperAutomaticAlgorithm.AutoLogger.Info(stringBuilder.ToString());
+            stringBuilder.Clear();
             if (points != null && points.Count > 0)
             {
                 //写入拍照的总图片数量
