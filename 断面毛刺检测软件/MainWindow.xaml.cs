@@ -895,16 +895,18 @@ namespace 断面毛刺检测软件
                 zipperInfoVM=new ZipperInfoVM();
                 autoFinshWindow = new AutoFinshWindow();
                 autoFinshWindow.DataContext = zipperInfoVM;
-                autoFinshWindow.Show();
+                autoFinshWindow.Closed += AutoFinshWindow_Closed;
                 autoFinshWindow.Activate();
+                autoFinshWindow.ShowDialog();
+                
             };
-            AutomaticWindow.Closed += AutomaticWindow_Closed;
+           // AutomaticWindow.Closed += AutomaticWindow_Closed;
             AutomaticWindow.Show();
             AutomaticWindow.Activate();
             //OperateLog.Info(Properties.Resources.ImageSave);
         }
 
-        private void AutomaticWindow_Closed(object sender, EventArgs e)
+        private void AutoFinshWindow_Closed(object sender, EventArgs e)
         {
             foreach (var mainVM in CMainList.CMainVMs)
             {

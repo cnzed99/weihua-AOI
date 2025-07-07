@@ -68,48 +68,7 @@ namespace ZipperTestAlgorihm
             //    new("下止类",new() {  new("下止有无", Category.区域) }),
             //    new("拉头类",new() {  new("拉头有无", Category.区域) }),
             //};
-            string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\";
 
-            ReadNames(modelDirPath);
-
-            if (Common_names?.Length > 0)
-            {
-                List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
-                DefectSpecies = new List<CDefectSpecies>();
-
-                for (int i = 0; i < Common_names.Length; i++)
-                {
-                    CDefectRecipe defectRecipe = new CDefectRecipe(Common_names[i], Category.区域);
-                    cDefectRecipes.Add(defectRecipe);
-                }
-                CDefectRecipe defectRecipe0 = new CDefectRecipe("上止压伤", Category.区域);
-                cDefectRecipes.Add(defectRecipe0);
-
-                CDefectRecipe defectRecipe5 = new CDefectRecipe("下止露牙", Category.区域);
-                cDefectRecipes.Add(defectRecipe5);
-
-                CDefectRecipe defectRecipe6 = new CDefectRecipe("拉头", Category.区域);
-                cDefectRecipes.Add(defectRecipe6);
-
-                CDefectRecipe defectRecipe7 = new CDefectRecipe("上止露牙", Category.区域);
-                cDefectRecipes.Add(defectRecipe7);
-
-                CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
-                CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
-                cDefectRecipes.Add(defectRecipe1_1);
-                cDefectRecipes.Add(defectRecipe1_2);
-                CDefectRecipe defectRecipe2 = new CDefectRecipe("上止高低", Category.值);
-                cDefectRecipes.Add(defectRecipe2);
-
-                CDefectRecipe defectRecipe3 = new CDefectRecipe("下止距离", Category.值);
-                cDefectRecipes.Add(defectRecipe3);
-
-                CDefectRecipe defectRecipe4 = new CDefectRecipe("下止歪", Category.值);
-                cDefectRecipes.Add(defectRecipe4);
-
-                CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
-                DefectSpecies.Add(defectSpecies);
-            }
 
             DefectFeatures = new();
 
@@ -181,11 +140,67 @@ namespace ZipperTestAlgorihm
             };
         }
 
-        protected void ReadNames(string modelDirpath)
+        protected void SetDefectRecipe(CParam param)
         {
 
 
+            ReadNames(param);
+
+            if (Common_names?.Length > 0)
+            {
+                List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
+                DefectSpecies = new List<CDefectSpecies>();
+
+                for (int i = 0; i < Common_names.Length; i++)
+                {
+                    CDefectRecipe defectRecipe = new CDefectRecipe(Common_names[i], Category.区域);
+                    cDefectRecipes.Add(defectRecipe);
+                }
+
+                CDefectRecipe defectRecipe0 = new CDefectRecipe("上止压伤", Category.区域);
+                cDefectRecipes.Add(defectRecipe0);
+
+                CDefectRecipe defectRecipe5 = new CDefectRecipe("下止露牙", Category.区域);
+                cDefectRecipes.Add(defectRecipe5);
+
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("拉头", Category.区域);
+                cDefectRecipes.Add(defectRecipe6);
+
+                CDefectRecipe defectRecipe7 = new CDefectRecipe("上止露牙", Category.区域);
+                cDefectRecipes.Add(defectRecipe7);
+
+                CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
+                CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
+                cDefectRecipes.Add(defectRecipe1_1);
+                cDefectRecipes.Add(defectRecipe1_2);
+                CDefectRecipe defectRecipe2 = new CDefectRecipe("上止高低", Category.值);
+                cDefectRecipes.Add(defectRecipe2);
+
+                CDefectRecipe defectRecipe3 = new CDefectRecipe("下止距离", Category.值);
+                cDefectRecipes.Add(defectRecipe3);
+
+                CDefectRecipe defectRecipe4 = new CDefectRecipe("下止歪", Category.值);
+                cDefectRecipes.Add(defectRecipe4);
+
+                CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
+                DefectSpecies.Add(defectSpecies);
+            }
+        }
+
+        protected void ReadNames(CParam param)
+        {
+
+            string modelDirpath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\";
+
             string commonModelPath = modelDirpath + "CommonModel\\";
+            if (param.Zipperuser == ZIPPERUSER.正面)
+            {
+                commonModelPath = commonModelPath + "Front\\";
+            }
+            else
+            {
+                commonModelPath = commonModelPath + "Back\\";
+            }
             var commons = GetNames(commonModelPath);
             if (commons.Item1 != "")
             {
@@ -591,7 +606,7 @@ namespace ZipperTestAlgorihm
                     cellDetection1.Category = de.Category;
                     cellDetection1.RecipeDefectName = de.Name;
                     cellDetection1.Value = new List<float>();
-                    
+
                     //DetResult detrets = sResultInfos as DetResult;
                     var finds = sResultInfos.FindAll(info =>
                     {
@@ -615,8 +630,8 @@ namespace ZipperTestAlgorihm
                                 rec1MarkPoints.Add(item.ShowLeftDown);
                                 rec1MarkPoints.Add(item.ShowLeftUp);
 
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink,showinview: item.ShowInView));
-                                
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink, showinview: item.ShowInView));
+
                             }
 
                         }
@@ -631,39 +646,52 @@ namespace ZipperTestAlgorihm
         [OnDeserialized]
         private void LoadModel(StreamingContext context)
         {
-            CParam param = AlgorParams[0] as CParam;
-
-            ModelType model_type_det = ModelType.YOLOv8Det;
-            ModelType model_type_obb = ModelType.YOLOv8Obb;
-            // ModelType model_type = param.ModelType;
-            // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
-            EngineType engine_type = param.EngineType;
-
-            yolo_all_det1.Dispose();
-            yolo_all_det2.Dispose();
-            yolo_all_det3.Dispose();
-            yolo_all_det4.Dispose();
-            yolo_DownStopMass_obb.Dispose();
-            yolo_UpStopMass_obb.Dispose();
-            yolo_pull_det.Dispose();
-            //yolo_labeldefect.Dispose();
+            CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {
-                string CurrentDevice = param.CurrentDevice;
-                int common_Categ_num = Common_names.Length;
-                int downmass_num = downStopMass_names.Length;
-                int upmass_num = upStopMass_names.Length;
-                int pull_num = pull_names.Length;
-                // int label_Categ_num = LabelDetect_names.Length;
-                float Score = param.Score;
-                float Nms = param.Nms;
-                InputImgSize Input_size = param.Input_size;
-                ImgSize Output_size = param.Output_size;
-                //string model_path =
-                //    param.EngineType == EngineType.TensorRT
-                //        ? Model_Path + ".engine"
-                //        : Model_Path + ".onnx";
-                yolo_all_det1 = YOLO.GetYolo(
+                SetDefectRecipe(param);
+
+                ModelType model_type_det = ModelType.YOLOv8Det;
+                ModelType model_type_obb = ModelType.YOLOv8Obb;
+                // ModelType model_type = param.ModelType;
+                // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
+                EngineType engine_type = param.EngineType;
+
+                yolo_all_det1.Dispose();
+                yolo_all_det2.Dispose();
+                yolo_all_det3.Dispose();
+                yolo_all_det4.Dispose();
+                yolo_DownStopMass_obb.Dispose();
+                yolo_UpStopMass_obb.Dispose();
+                yolo_pull_det.Dispose();
+                //yolo_labeldefect.Dispose();
+                if (param != null)
+                {
+                    string CurrentDevice = param.CurrentDevice;
+                    int common_Categ_num = Common_names.Length;
+                    int downmass_num = downStopMass_names.Length;
+                    int upmass_num = upStopMass_names.Length;
+                    int pull_num = pull_names.Length;
+                    // int label_Categ_num = LabelDetect_names.Length;
+                    float Score = param.Score;
+                    float Nms = param.Nms;
+                    InputImgSize Input_size = param.Input_size;
+                    ImgSize Output_size = param.Output_size;
+                    //string model_path =
+                    //    param.EngineType == EngineType.TensorRT
+                    //        ? Model_Path + ".engine"
+                    //        : Model_Path + ".onnx";
+                    yolo_all_det1 = YOLO.GetYolo(
+                        model_type_det,
+                        Common_Model_Path,
+                        engine_type,
+                        CurrentDevice,
+                        common_Categ_num,
+                        Score,
+                        Nms,
+                        Input_size
+                    );
+                    yolo_all_det2 = YOLO.GetYolo(
                     model_type_det,
                     Common_Model_Path,
                     engine_type,
@@ -673,66 +701,57 @@ namespace ZipperTestAlgorihm
                     Nms,
                     Input_size
                 );
-                yolo_all_det2 = YOLO.GetYolo(
-                model_type_det,
-                Common_Model_Path,
-                engine_type,
-                CurrentDevice,
-                common_Categ_num,
-                Score,
-                Nms,
-                Input_size
-            );
-                yolo_all_det3 = YOLO.GetYolo(
-                model_type_det,
-                Common_Model_Path,
-                engine_type,
-                CurrentDevice,
-                common_Categ_num,
-                Score,
-                Nms,
-                Input_size
-            );
-                yolo_all_det4 = YOLO.GetYolo(
-                model_type_det,
-                Common_Model_Path,
-                engine_type,
-                CurrentDevice,
-                common_Categ_num,
-                Score,
-                Nms,
-                Input_size
-            );
-                yolo_DownStopMass_obb = YOLO.GetYolo(
-                    model_type_obb,
-                    downStopMass_Model_Path,
+                    yolo_all_det3 = YOLO.GetYolo(
+                    model_type_det,
+                    Common_Model_Path,
                     engine_type,
                     CurrentDevice,
-                    downmass_num,
+                    common_Categ_num,
                     Score,
                     Nms,
-                    InputImgSize.IN256
-                    );
-                yolo_UpStopMass_obb = YOLO.GetYolo(
-                    model_type_obb,
-                    upStopMass_Model_Path,
+                    Input_size
+                );
+                    yolo_all_det4 = YOLO.GetYolo(
+                    model_type_det,
+                    Common_Model_Path,
                     engine_type,
                     CurrentDevice,
-                    upmass_num,
+                    common_Categ_num,
                     Score,
                     Nms,
-                    InputImgSize.IN192
-                    );
-                yolo_pull_det = YOLO.GetYolo(
-                  model_type_det,
-                  pull_Model_Path,
-                  engine_type,
-                  CurrentDevice,
-                  pull_num,
-                  Score,
-                  Nms,
-                  Input_size
-              );
+                    Input_size
+                );
+                    yolo_DownStopMass_obb = YOLO.GetYolo(
+                        model_type_obb,
+                        downStopMass_Model_Path,
+                        engine_type,
+                        CurrentDevice,
+                        downmass_num,
+                        Score,
+                        Nms,
+                        InputImgSize.IN256
+                        );
+                    yolo_UpStopMass_obb = YOLO.GetYolo(
+                        model_type_obb,
+                        upStopMass_Model_Path,
+                        engine_type,
+                        CurrentDevice,
+                        upmass_num,
+                        Score,
+                        Nms,
+                        InputImgSize.IN192
+                        );
+                    yolo_pull_det = YOLO.GetYolo(
+                      model_type_det,
+                      pull_Model_Path,
+                      engine_type,
+                      CurrentDevice,
+                      pull_num,
+                      Score,
+                      Nms,
+                      Input_size
+                  );
+                }
             }
         }
 
@@ -872,11 +891,11 @@ namespace ZipperTestAlgorihm
         {
             using (System.Drawing.Bitmap bitmap = img.ToBitmap())
             {
-                 BitmapSource bitimg= System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    bitmap.GetHbitmap(),
-                    IntPtr.Zero,
-                    System.Windows.Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
+                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                   bitmap.GetHbitmap(),
+                   IntPtr.Zero,
+                   System.Windows.Int32Rect.Empty,
+                   BitmapSizeOptions.FromEmptyOptions());
                 bitimg.Freeze();
                 return bitimg;
             }
@@ -885,7 +904,7 @@ namespace ZipperTestAlgorihm
         /// <summary>
         /// 裁剪BitmapSource的核心方法
         /// </summary>
-        private  BitmapSource CropBitmapSource(BitmapSource source, System.Windows.Int32Rect cropRect)
+        private BitmapSource CropBitmapSource(BitmapSource source, System.Windows.Int32Rect cropRect)
         {
             // 计算像素缓冲区大小
             int stride = source.Format.BitsPerPixel * cropRect.Width / 8;
@@ -932,6 +951,16 @@ namespace ZipperTestAlgorihm
         private float score = 0.6f;
 
         /// <summary>
+        /// 2025.7.7 鲍赞宝
+        /// 拉链算法
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("拉链制程名称")]
+        [property: Description("拉链制程名称")]
+        private ZIPPERUSER zipperuser = ZIPPERUSER.正面;
+
+        /// <summary>
         /// 2024.10.28 鲍赞宝
         /// NMScore
         /// </summary>
@@ -969,6 +998,12 @@ namespace ZipperTestAlgorihm
 
     }
 
+    public enum ZIPPERUSER
+    {
+        正面 = 0,
+        反面 = 1
+    }
+
 
     public struct CoordRestoreData
     {
@@ -997,7 +1032,7 @@ namespace ZipperTestAlgorihm
             RecHeight = det.box.Height;
             OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0) + orgx;
             OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0) + orgy;
-            Score = det.score;
+            Score = det.score * 100;
             Labelstr = labelstr;
             Angle = 0.0f;
             Value = 0.0f;
@@ -1024,13 +1059,13 @@ namespace ZipperTestAlgorihm
             RecHeight = obb.box.Size.Height;
             OrgCenterX = obb.box.Center.X + orgx;
             OrgCenterY = obb.box.Center.Y + orgy;
-            Score = obb.score;
+            Score = obb.score * 100;
             Labelstr = labelstr;
             Angle = obb.box.Angle;
             Value = 0.0f;
             ShowInView = showinview;
         }
-        public CoordRestoreData(string labelstr, float value,int showinview=0)
+        public CoordRestoreData(string labelstr, float value, int showinview = 0)
         {
             //坐标还原 
 

@@ -7,6 +7,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
            WindowStartupLocation="CenterScreen"
+           Name="win"
         d:DataContext="{d:DesignInstance Type=local:CZipperAutomaticVM}"
         Title="换料识别" Height="130" Width="700">
     <Grid>
@@ -19,16 +20,16 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel  Orientation="Horizontal" >
-                <hc:NumericUpDown Value="{Binding AutoData.ZipperLenght}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="拉链长度(mm)" Style="{StaticResource NumericUpDownPlus}" />
-                <hc:NumericUpDown Value="{Binding AutoData.DaoDitance}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="中心距离(mm)" Style="{StaticResource NumericUpDownPlus}" />
-                <hc:NumericUpDown Value="{Binding AutoData.CcdWidth}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="1000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="视野范围(mm)" Style="{StaticResource NumericUpDownPlus}" />
+                <hc:NumericUpDown Value="{Binding AutoData.ZipperLenght, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="拉链长度(mm)" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.DaoDitance, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="中心距离(mm)" Style="{StaticResource NumericUpDownPlus}" />
+                <hc:NumericUpDown Value="{Binding AutoData.CcdWidth, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="1000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="视野范围(mm)" Style="{StaticResource NumericUpDownPlus}" />
 
             </StackPanel>
             <Button Grid.Column="1" 
               Width="120"
                Height="60"
               FontSize="16"
-              Command="{Binding SendPointsCommand}"
+              Command="{Binding SendPointsCommand}" CommandParameter="{Binding ElementName=win}"
               Content="开始识别" />
 
         </Grid>

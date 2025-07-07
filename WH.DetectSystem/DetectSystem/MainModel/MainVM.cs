@@ -123,9 +123,9 @@ namespace WH.DetectSystem.Models
         /// </summary>
         public void Init(CProcessGroupModel processGroup)
         {
+            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
             this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
-            this.MaociAlgorVM.Config = MaociAlgorParamConfig;
 
             this.DefectsDataVM.DefectsProduce = MaociDefectsProduce;
             this.AlarmSetVM.CAlarmSet = MaociAlarmSetConfig;
@@ -260,6 +260,41 @@ namespace WH.DetectSystem.Models
             this.UpdateToken(); //更新Token要在Init前
             this.UpdateName();
             Init(processGroup);
+            ZipperAutomaticAlgorithm.TestFinshEven = TestFinshTodo;
+        }
+
+        private void TestFinshTodo(bool finsh)
+        {
+            if (finsh)
+            {
+               
+                if (this.Name == "正面")
+                {
+                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                        UpdateCam(camDic.SerialNumber);
+                    }
+                    else
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                        UpdateCam(camDic.SerialNumber);
+                    }
+                }
+                else 
+                {
+                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                        UpdateCam(camDic.SerialNumber);
+                    }
+                    else
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                        UpdateCam(camDic.SerialNumber);
+                    }
+                }
+            }
         }
 
         #region 时间相关
@@ -762,7 +797,7 @@ namespace WH.DetectSystem.Models
                                         );
                                     }
                                     FilterTime = newCell.FilterTime.TotalMilliseconds;
-                   
+
 
                                     ModelBrush = newCell.Quality.ShowColor.Brush;
                                     if (!newCell.IsOK)
@@ -811,7 +846,7 @@ namespace WH.DetectSystem.Models
                             {
                                 if (!m_ShowImageChannel.Writer.TryWrite(cell))
                                 {
-                                   // cell.Dispose();
+                                    // cell.Dispose();
                                 }
                             }
 
@@ -1317,7 +1352,7 @@ namespace WH.DetectSystem.Models
                     //    cell.Dispose();
                     //}
 
-                   
+
                     //#region 报警
                     //try
                     //{

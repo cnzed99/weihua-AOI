@@ -58,43 +58,51 @@ namespace SDFilter
         {
             this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
-            foreach (var specie in defectSpecies)
+            if (defectSpecies!=null)
             {
-                SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
-                foreach (var recipe in specie.RecipeDefects)
+                foreach (var specie in defectSpecies)
                 {
-                    speciesFilter.RecipeDefects.Add(
-                        new RecipeDefect(recipe.Name, recipe.Category, token)
-                    );
+                    SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
+                    foreach (var recipe in specie.RecipeDefects)
+                    {
+                        speciesFilter.RecipeDefects.Add(
+                            new RecipeDefect(recipe.Name, recipe.Category, token)
+                        );
+                    }
+                    SpFilters.Add(speciesFilter);
                 }
-                SpFilters.Add(speciesFilter);
+                SpeciesFilters = SpFilters;
             }
-            SpeciesFilters = SpFilters;
+        
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)
         {
-            Synchronization(qualityConfig);
-            UpdateDefectList();
-
-            SpeciesFilters.CollectionChanged += (s, e) =>
+            if (SpeciesFilters != null)
             {
+                Synchronization(qualityConfig);
                 UpdateDefectList();
-            };
-            foreach (var sp in SpeciesFilters)
-            {
-                sp.RecipeDefects.CollectionChanged += (s, e) =>
+
+                SpeciesFilters.CollectionChanged += (s, e) =>
                 {
                     UpdateDefectList();
                 };
-                foreach (var rd in sp.RecipeDefects)
+                foreach (var sp in SpeciesFilters)
                 {
-                    rd.DefectFilters.CollectionChanged += (s, e) =>
+                    sp.RecipeDefects.CollectionChanged += (s, e) =>
                     {
                         UpdateDefectList();
                     };
+                    foreach (var rd in sp.RecipeDefects)
+                    {
+                        rd.DefectFilters.CollectionChanged += (s, e) =>
+                        {
+                            UpdateDefectList();
+                        };
+                    }
                 }
             }
+          
         }
 
         /// <summary>
@@ -105,57 +113,64 @@ namespace SDFilter
         protected void Synchronization(CQualityConfig MaociQuality)
         {
             #region 同步毛刺过滤配置
-
-            foreach (var spFilter in SpeciesFilters)
+            if (SpeciesFilters!=null)
             {
-                foreach (var reFilger in spFilter.RecipeDefects)
+                foreach (var spFilter in SpeciesFilters)
                 {
-                    foreach (var deFilter in reFilger.DefectFilters)
+                    foreach (var reFilger in spFilter.RecipeDefects)
                     {
-                        //新建配方 质量等级没有赋值时赋值最差
-                        if (deFilter.QualityLevel is null)
+                        foreach (var deFilter in reFilger.DefectFilters)
                         {
-                            deFilter.QualityLevel = MaociQuality.Qualities.Last();
-                        }
-                        else
-                        {
-                            var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
-                                o.Priority == deFilter.QualityLevel.Priority
-                            );
-                            deFilter.QualityLevel = null;
-                            deFilter.QualityLevel = findquality;
+                            //新建配方 质量等级没有赋值时赋值最差
+                            if (deFilter.QualityLevel is null)
+                            {
+                                deFilter.QualityLevel = MaociQuality.Qualities.Last();
+                            }
+                            else
+                            {
+                                var findquality = MaociQuality.Qualities.FirstOrDefault(o =>
+                                    o.Priority == deFilter.QualityLevel.Priority
+                                );
+                                deFilter.QualityLevel = null;
+                                deFilter.QualityLevel = findquality;
+                            }
                         }
                     }
                 }
             }
+           
 
             #endregion 同步毛刺过滤配置
         }
 
         protected void UpdateDefectList()
         {
-            List<string> strings = new List<string>();
-            foreach (var sp in SpeciesFilters)
+            if (SpeciesFilters!=null)
             {
-                foreach (var rp in sp.RecipeDefects)
+                List<string> strings = new List<string>();
+                foreach (var sp in SpeciesFilters)
                 {
-                    foreach (var de in rp.DefectFilters)
+                    foreach (var rp in sp.RecipeDefects)
                     {
-                        if (!DefectList.Contains(de))
+                        foreach (var de in rp.DefectFilters)
                         {
-                            DefectList.Add(de);
+                            if (!DefectList.Contains(de))
+                            {
+                                DefectList.Add(de);
+                            }
+                            strings.Add(de.Name);
                         }
-                        strings.Add(de.Name);
+                    }
+                }
+                for (int i = DefectList.Count - 1; i >= 0; i--)
+                {
+                    if (!strings.Contains(DefectList[i].Name))
+                    {
+                        DefectList.RemoveAt(i);
                     }
                 }
             }
-            for (int i = DefectList.Count - 1; i >= 0; i--)
-            {
-                if (!strings.Contains(DefectList[i].Name))
-                {
-                    DefectList.RemoveAt(i);
-                }
-            }
+          
         }
 
         /// <summary>
@@ -168,7 +183,7 @@ namespace SDFilter
         /// <returns>缺陷对象</returns>
         public DefectFilter GetDefectFilter(string sp, string rp, string de)
         {
-            var specie = SpeciesFilters.FirstOrDefault(o => o.Name == sp);
+            var specie = SpeciesFilters?.FirstOrDefault(o => o.Name == sp);
             if (specie == null)
             {
                 specie = new(sp, token);

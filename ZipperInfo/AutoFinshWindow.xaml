@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:ZipperInfo"
            xmlns:hc="https://handyorg.github.io/handycontrol"
             xmlns:wh="http://whzn.com/rjkf/2024/xaml"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d" WindowStartupLocation="Manual"
              d:DataContext="{d:DesignInstance Type=local:ZipperInfoVM}"
            x:Name="window"
-        Title="自动识别结果" Height="600" Width="900">
+        Title="自动识别结果" Height="600" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -57,7 +57,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Width="120" Height="50"  Margin="2" Content="重新识别" />
+                    <!--<Button Grid.Column="0" Width="120" Height="50"  Margin="2" Content="测试" />-->
                     <Button Grid.Column="1" Width="120" Height="50"  Margin="2" Content="确认" Command="{Binding saveCommand}" CommandParameter="{Binding ElementName=window}"/>
                 </Grid>
             </Border>

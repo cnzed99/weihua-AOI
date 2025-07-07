@@ -68,6 +68,8 @@ namespace ZipperInfo
         public static bool findPulls = false;//检测到拉片
         public static bool findPuller = false; //检测到拉头
         public static bool findLogo = false; //检测到Logo
+
+        public Action<bool> TestFinshEven;
         public CZipperAutomaticAlgorithm()
         {
             string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\AutoMatic";
@@ -135,8 +137,8 @@ namespace ZipperInfo
                             AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
                             CLinghtManagement.SaveLightParams();
-                            onWichStage = 2;
                             addOrSubCount = 0;
+                            onWichStage = 2;                        
                             return;
                         }
                         tempVState = hv_VState;
@@ -171,8 +173,8 @@ namespace ZipperInfo
                                 //进入下阶段
                                 AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值200,进入下一阶段");
                                 CLinghtManagement.SaveLightParams();
-                                onWichStage = 2;
                                 addOrSubCount = 0;
+                                onWichStage = 2;
                                 return;
                             }
 
@@ -193,6 +195,7 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                                 //进入下阶段
                                 CLinghtManagement.SaveLightParams();
+                                addOrSubCount = 0;
                                 onWichStage = 2;
                                 return;
                             }
@@ -225,8 +228,8 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值5,进入下一阶段");
                                 //进入下阶段
                                 CLinghtManagement.SaveLightParams();
-                                onWichStage = 2;
                                 addOrSubCount = 0;
+                                onWichStage = 2;
                                 return;
                             }
 
@@ -238,6 +241,7 @@ namespace ZipperInfo
                     {
                         //进入下阶段
                         CLinghtManagement.SaveLightParams();
+                        addOrSubCount = 0;
                         onWichStage = 2;
                     }
                 }
@@ -672,6 +676,11 @@ namespace ZipperInfo
                         CZipperCommunicate.ThirdstageFinsh();
                         return;
 
+                    }
+
+                    if (TestFinsh == true)
+                    {
+                        TestFinshEven?.Invoke(TestFinsh);
                     }
                 }
             }

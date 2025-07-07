@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WH.Entity;
 using WH.LightControl;
 
@@ -27,7 +28,7 @@ namespace ZipperInfo
        public  Action<bool> StartAutoTestEven;
 
         [RelayCommand]
-        void SendPoints()
+        void SendPoints(object win)
         {
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
@@ -64,7 +65,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findPuller = false;
                 CZipperAutomaticAlgorithm.findPulls = false;
                 CZipperAutomaticAlgorithm.findLogo = false;
-                StartAutoTestEven?.Invoke(startAutoTest);
+        
                 //将光源值先减小到较状态
 
                 if (CLinghtManagement.LightControlDict.Count > 0)
@@ -84,7 +85,9 @@ namespace ZipperInfo
                 Thread.Sleep(100);
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
-
+                var window = win as Window;
+                window?.Close();
+                StartAutoTestEven?.Invoke(startAutoTest);
             }
         }
 
