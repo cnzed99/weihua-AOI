@@ -185,10 +185,10 @@
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="20" />
-                                                            <ColumnDefinition Width="70" />
+                                                            <ColumnDefinition Width="120" />
                                                             <ColumnDefinition />
-                                                            <ColumnDefinition Width="70" />
-                                                            <ColumnDefinition Width="70" />
+                                                            <ColumnDefinition Width="80" />
+                                                            <ColumnDefinition Width="80" />
                                                         </Grid.ColumnDefinitions>
                                                         <Border
                                                             Width="3"

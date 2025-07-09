@@ -65,7 +65,12 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findPuller = false;
                 CZipperAutomaticAlgorithm.findPulls = false;
                 CZipperAutomaticAlgorithm.findLogo = false;
-        
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownmssImg=null;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY = 0;
                 //将光源值先减小到较状态
 
                 if (CLinghtManagement.LightControlDict.Count > 0)

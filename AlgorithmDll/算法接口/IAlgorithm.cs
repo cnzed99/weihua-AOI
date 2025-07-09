@@ -22,7 +22,7 @@ namespace AlgorithmDll
         /// 创建新算法
         /// </summary>
         /// <returns>算法参数</returns>
-        CAlgorithmParamBase CreateNewAlgorithm();
+        CAlgorithmParamBase CreateNewAlgorithm(string user);
 
         ///// <summary>
         ///// 初始化算法

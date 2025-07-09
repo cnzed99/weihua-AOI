@@ -37,7 +37,7 @@ namespace WH.RunCell
         ///  2025.6.2 鲍赞宝
         ///  单条拉链包含的图片,存图使用
         /// </summary>
-        public List<(CImage, int,DateTime,TimeSpan)> ZipperImages { get; set; } = new List<(CImage, int, DateTime, TimeSpan)>(); 
+        public List<(CImage, int, DateTime, TimeSpan)> ZipperImages { get; set; } = new List<(CImage, int, DateTime, TimeSpan)>();
 
         /// <summary>
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
@@ -92,6 +92,14 @@ namespace WH.RunCell
         /// 图片总数量
         /// </summary>
         public int PhotoTatolCount { get; set; }
+        /// <summary>
+        /// 拉头识别框的中心X
+        /// </summary>
+        public int ZipperPullerCX { get; set; }
+        /// <summary>
+        /// 拉头识别框的中心Y
+        /// </summary>
+        public int ZipperPullerCY { get; set; }
 
         /// <summary>
         /// 接收信息字典
@@ -297,7 +305,7 @@ namespace WH.RunCell
             {
                 SmallImage.Freeze();
             }
-            foreach ((CImage, int,DateTime,TimeSpan) img in ZipperImages)
+            foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {
                 if (img.Item1 != null)
                 {
@@ -305,7 +313,7 @@ namespace WH.RunCell
                 }
             }
             ZipperImages.Clear();
-            if (ZipperPullPartImg!=null&& ZipperPullPartImg.CanFreeze)
+            if (ZipperPullPartImg != null && ZipperPullPartImg.CanFreeze)
             {
                 ZipperPullPartImg.Freeze();
             }
@@ -363,12 +371,12 @@ namespace WH.RunCell
             cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();
             foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {
-                cell.ZipperImages.Add(((CImage)img.Item1.Clone(),img.Item2, img.Item3, img.Item4));
+                cell.ZipperImages.Add(((CImage)img.Item1.Clone(), img.Item2, img.Item3, img.Item4));
             }
             return cell;
         }
 
-        public  Cell CloneExecptImg()
+        public Cell CloneExecptImg()
         {
             Cell cell = new Cell();
             cell.DefectType = this.DefectType;
@@ -416,7 +424,7 @@ namespace WH.RunCell
             cell.EncoderPos = this.EncoderPos;
             //cell.AlgorithmOut = this.AlgorithmOut;
             //cell.DrawEdges = this.DrawEdges;
-           // cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
+            // cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
             return cell;
         }
 
@@ -570,7 +578,7 @@ namespace WH.RunCell
         /// <param name="pos">显示位置</param>
         /// <param name="brush">画刷</param>
         /// <param name="fontSize">字体大小</param>
-        public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15,int showinview=0)
+        public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15, int showinview = 0)
         {
             DrawType = EMDRAWTYPE.EMDRAWTYPE_Text;
             this.Text = text;

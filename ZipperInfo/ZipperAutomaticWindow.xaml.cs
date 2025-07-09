@@ -24,5 +24,6 @@ namespace ZipperInfo
             InitializeComponent();
            // this.DataContext = new CZipperAutomaticVM();
         }
+
     }
 }

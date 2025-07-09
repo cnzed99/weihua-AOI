@@ -60,7 +60,7 @@ namespace ZipperTestAlgorihm
         //定义4组矩形来裁切图片
         Rect[] cropRec = new Rect[4];
 
-        public CZipperTestAlgorihmParam() : base()
+        public CZipperTestAlgorihmParam(string user) : base()
         {
             //DefectSpecies = new()
             //{
@@ -68,7 +68,8 @@ namespace ZipperTestAlgorihm
             //    new("下止类",new() {  new("下止有无", Category.区域) }),
             //    new("拉头类",new() {  new("拉头有无", Category.区域) }),
             //};
-
+            User=user;  
+            SetDefectRecipe(User);
 
             DefectFeatures = new();
 
@@ -115,7 +116,7 @@ namespace ZipperTestAlgorihm
         //拉头拉片缺陷名称
         protected string[] pull_names;
 
-
+        public string User {  get; set; }
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 增加参数
@@ -140,11 +141,11 @@ namespace ZipperTestAlgorihm
             };
         }
 
-        protected void SetDefectRecipe(CParam param)
+        protected void SetDefectRecipe(string user)
         {
 
 
-            ReadNames(param);
+            ReadNames(user);
 
             if (Common_names?.Length > 0)
             {
@@ -187,17 +188,17 @@ namespace ZipperTestAlgorihm
             }
         }
 
-        protected void ReadNames(CParam param)
+        protected void ReadNames(string user)
         {
 
             string modelDirpath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\";
 
             string commonModelPath = modelDirpath + "CommonModel\\";
-            if (param.Zipperuser == ZIPPERUSER.正面)
+            if (user == "正面")
             {
                 commonModelPath = commonModelPath + "Front\\";
             }
-            else
+            if (user =="反面")
             {
                 commonModelPath = commonModelPath + "Back\\";
             }
@@ -441,7 +442,7 @@ namespace ZipperTestAlgorihm
                                             }
                                         }
                                     }
-                                    if (Diss.Count > 0)
+                                    if (Diss.Count > 0) //有找到链牙和上止
                                     {
                                         instr++;
                                         var min = Diss.Min(t => t.Item1);
@@ -450,6 +451,12 @@ namespace ZipperTestAlgorihm
                                         disData.Value = dis.Item1;
                                         dets.Add(disData);
                                         Diss.Clear();
+                                    }
+                                    else //没找到链牙和上止
+                                    {
+                                        instr++;
+                                        CoordRestoreData disData = new CoordRestoreData($"上止距离{instr}",0);
+                                        dets.Add(disData);                                 
                                     }
                                     if (luyaIndex.Count > 0)
                                     {
@@ -487,10 +494,43 @@ namespace ZipperTestAlgorihm
                 }
                 else if (cell.PhotoIndex == 100) //有拉头的图片
                 {
-                    // Cv2.ImWrite(@"C:\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")+ ".png", img);
-                    // List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
-                    DetResult pullResult = ImageInferDet(yolo_pull_det, img, paramClass.Score, paramClass.Nms);
+                    //// Cv2.ImWrite(@"C:\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")+ ".png", img);
+                    //// List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    //int recw = 640;
+                    //int rech = 640;
+                    //int lx = cell.ZipperPullerCX-320;
+                    //int ly = cell.ZipperPullerCY-320;
+                    //if ((lx + recw) > img.Width)
+                    //{
+                    //    lx = img.Width - recw;
+                    //}
+                    //if (lx < 0)
+                    //{
+                    //    lx = 0;
+                    //}
 
+                    //if ((ly + rech) > img.Height)
+                    //{
+                    //    ly = img.Height - rech;
+                    //}
+                    //if (ly < 0)
+                    //{
+                    //    ly = 0;
+                    //}
+                    //Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
+                    //if (cell.ImageFile != "")
+                    //{
+                    //    cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+                    //}
+                    //else
+                    //{
+                    //    Mat colorMat = new Mat();
+                    //    Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
+                    //    cell.ZipperPullPartImg = Mat2BitmapSource(colorMat);
+                    //    colorMat.Dispose();
+                    //}
+                    //  DetResult pullResult = ImageInferDet(yolo_pull_det, croppullMat, paramClass.Score, paramClass.Nms);
+                    DetResult pullResult = ImageInferDet(yolo_pull_det, img, paramClass.Score, paramClass.Nms);
                     for (int j = 0; j < pullResult.datas.Count; j++)
                     {
                         int labelindex = int.Parse(pullResult.datas[j].lable);
@@ -521,13 +561,19 @@ namespace ZipperTestAlgorihm
                             }
 
                             Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
-                            Mat colorMat = new Mat();
-                            Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
-                            cell.ZipperPullPartImg = Mat2BitmapSource(colorMat);
-                            //BitmapSource imgsrc = cell.Image.ToBitmapSource();
-                            //System.Windows.Int32Rect int32Rect=new System.Windows.Int32Rect(lx, ly, recw, rech);
-                            //cell.ZipperPullPartImg = CropBitmapSource(imgsrc, int32Rect);
-                            colorMat.Dispose();
+                            
+                            if (cell.ImageFile != "")
+                            {
+                                cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
+                            }
+                            else
+                            {
+                                Mat colorMat = new Mat();
+                                Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                cell.ZipperPullPartImg = Mat2BitmapSource(colorMat);
+                                colorMat.Dispose();
+                            }
+
                             CoordRestoreData restoreData = new CoordRestoreData(0, 0, -lx, -ly, labelname, pullResult.datas[j], 1);
                             dets.Add(restoreData);
                         }
@@ -545,6 +591,8 @@ namespace ZipperTestAlgorihm
                         {
                             int nameindex = int.Parse(detrets[i].datas[j].lable);
                             string labelstr = Common_names[nameindex];
+                            if (labelstr.Contains("正面上止")|| labelstr.Contains("反面上止"))
+                                continue;
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
                             dets.Add(restoreData);
                         }
@@ -649,7 +697,7 @@ namespace ZipperTestAlgorihm
             CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {
-                SetDefectRecipe(param);
+               // SetDefectRecipe(param);
 
                 ModelType model_type_det = ModelType.YOLOv8Det;
                 ModelType model_type_obb = ModelType.YOLOv8Obb;
@@ -950,15 +998,6 @@ namespace ZipperTestAlgorihm
         [property: Description("最小分数阈值")]
         private float score = 0.6f;
 
-        /// <summary>
-        /// 2025.7.7 鲍赞宝
-        /// 拉链算法
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("拉链制程名称")]
-        [property: Description("拉链制程名称")]
-        private ZIPPERUSER zipperuser = ZIPPERUSER.正面;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -997,13 +1036,6 @@ namespace ZipperTestAlgorihm
         private EngineType engineType = EngineType.OpenVINO;
 
     }
-
-    public enum ZIPPERUSER
-    {
-        正面 = 0,
-        反面 = 1
-    }
-
 
     public struct CoordRestoreData
     {

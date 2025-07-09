@@ -115,7 +115,16 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         public BitmapSource zipperPullerImg;
-
+        /// <summary>
+        /// 拉头识别框中心X
+        /// </summary>
+        [ObservableProperty]
+        public int zipperPullerCX;
+        /// <summary>
+        /// 拉头识别框中心Y
+        /// </summary>
+        [ObservableProperty]
+        public int zipperPullerCY;
 
     }
 

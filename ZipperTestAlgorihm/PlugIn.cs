@@ -17,9 +17,9 @@ namespace ZipperTestAlgorihm
         /// 创建新算法
         /// </summary>
         /// <returns>算法参数</returns>
-        public CAlgorithmParamBase CreateNewAlgorithm()
+        public CAlgorithmParamBase CreateNewAlgorithm(string user)
         {
-            CZipperTestAlgorihmParam cAlgorithmParam = new CZipperTestAlgorihmParam();
+            CZipperTestAlgorihmParam cAlgorithmParam = new CZipperTestAlgorihmParam(user);
             return cAlgorithmParam;
         }
 

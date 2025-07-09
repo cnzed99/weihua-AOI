@@ -897,7 +897,7 @@ namespace 断面毛刺检测软件
                 autoFinshWindow.DataContext = zipperInfoVM;
                 autoFinshWindow.Closed += AutoFinshWindow_Closed;
                 autoFinshWindow.Activate();
-                autoFinshWindow.ShowDialog();
+                autoFinshWindow.Show();
                 
             };
            // AutomaticWindow.Closed += AutomaticWindow_Closed;

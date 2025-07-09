@@ -175,9 +175,9 @@
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
-                <RowDefinition/>
+                <!--<RowDefinition/>-->
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="左相机" Margin="10,5" 
+            <TextBlock Grid.Row="0"  Margin="10,5" 
              Foreground="AliceBlue"
              HorizontalAlignment="Left"
              VerticalAlignment="Top"/>
@@ -187,16 +187,16 @@
              BorderThickness="1">
                 <wh:ImageView Source="{Binding ReadImage}" />
             </Border>
-            <TextBlock Grid.Row="1" Text="右相机" Margin="10,10" 
+            <!--<TextBlock Grid.Row="1"  Margin="10,10" 
              Foreground="AliceBlue"
              HorizontalAlignment="Left"
-             VerticalAlignment="Top"/>
-            <Border 
+             VerticalAlignment="Top"/>-->
+            <!--<Border 
             Grid.Row="1" Margin="1"
             BorderBrush="DarkGray"
             BorderThickness="1">
                 <wh:ImageView Source="{Binding ReadImage}" />
-            </Border>
+            </Border>-->
         </Grid>
     </Grid>
 </UserControl>

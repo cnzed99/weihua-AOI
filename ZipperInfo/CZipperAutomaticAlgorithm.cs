@@ -88,7 +88,8 @@ namespace ZipperInfo
         }
 
         int addOrSubCount = 0;
-
+        int maxtimeout = 0;
+        int mintimeout = 0;
         int tempVState = 0;
         HObject CameraImage = new HObject();
         public void ZipperAutomaticAlgorithmRun(Cell cell)
@@ -156,6 +157,7 @@ namespace ZipperInfo
                             if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value > 200)
                             {
                                 LightCtl_Zuo.BaseConfig.LightChannelList[0].Value = 200;
+                                maxtimeout++;
                             }
                            
                             LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[0]);
@@ -168,8 +170,9 @@ namespace ZipperInfo
                                 LightCtl_You.BaseConfig.LightChannelList[0].Value = 200;
                             }
                             LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[0]);
-                            if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value >= 200)
+                            if (maxtimeout >= 5)
                             {
+                                maxtimeout = 0;
                                 //进入下阶段
                                 AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值200,进入下一阶段");
                                 CLinghtManagement.SaveLightParams();
@@ -211,6 +214,7 @@ namespace ZipperInfo
                             if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value < 5)
                             {
                                 LightCtl_Zuo.BaseConfig.LightChannelList[0].Value = 5;
+                                mintimeout++;
                             }
 
                             LightCtl_Zuo.SetChannelValue(LightCtl_Zuo.BaseConfig.LightChannelList[0]);
@@ -223,8 +227,9 @@ namespace ZipperInfo
                                 LightCtl_You.BaseConfig.LightChannelList[0].Value = 5;
                             }
                             LightCtl_You.SetChannelValue(LightCtl_You.BaseConfig.LightChannelList[0]);
-                            if (LightCtl_Zuo.BaseConfig.LightChannelList[0].Value <= 5)
+                            if (mintimeout >= 5)
                             {
+                                mintimeout = 0;
                                 AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值5,进入下一阶段");
                                 //进入下阶段
                                 CLinghtManagement.SaveLightParams();
@@ -377,15 +382,16 @@ namespace ZipperInfo
                                         templist.Add(pos);
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
-                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},排序,拉头序号是第{pindex}张图片");
+                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex}张图片");
                                         if (templist.Count >= 3)
                                         {
                                             if (pindex == 0)
                                             {
-
-                                                if (Math.Abs(pos - templist[pindex + 1]) > 100)
+                                               int dis= Math.Abs(pos - templist[pindex + 1]);
+                                                AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},pindex={pindex},{dis}>250");
+                                                if (dis > 250)
                                                 {
-                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>100,停止轴运动,进入下一级段");
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>250,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
                                                     onWichStage = 5;
                                                     return;
@@ -393,9 +399,11 @@ namespace ZipperInfo
                                             }
                                             else if (pindex == templist.Count - 1)
                                             {
-                                                if (Math.Abs(pos - templist[pindex - 1]) > 100)
+                                                int dis = Math.Abs(pos - templist[pindex - 1]);
+                                                AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},pindex={pindex},{dis}>250");
+                                                if (dis > 250)
                                                 {
-                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>100,停止轴运动,进入下一级段");
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
                                                     onWichStage = 5;
                                                     return;
@@ -403,7 +411,10 @@ namespace ZipperInfo
                                             }
                                             else
                                             {
-                                                if (Math.Abs(pos - templist[pindex - 1]) > 100 && Math.Abs(pos - templist[pindex + 1]) > 100) //大于10mm
+                                                int dis = Math.Abs(pos - templist[pindex - 1]);
+                                                int dis2 = Math.Abs(pos - templist[pindex + 1]);
+                                                AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{dis}>250 &&{dis2}>250");
+                                                if (dis > 250 && dis2 > 250) //大于25mm
                                                 {
                                                     //if (ZipperInfo.TriggerIndex == 0)
                                                     //{
@@ -421,6 +432,7 @@ namespace ZipperInfo
                                                     //    int pullposindex = start.IndexOf(pos);
                                                     //    ZipperInfo.PullchangeIndex = pullposindex;
                                                     //}
+                                                    AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250 &&{pos} - {templist[pindex + 1]}>250");
                                                     //写轴坐标位置
                                                     AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{templist[pindex - 1]}<{pos}<{templist[pindex + 1]}停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
@@ -548,6 +560,9 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=5,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                             }
                             CZipperCommunicate.SendPullLocation(pos);
+                            ZipperInfo.ZipperPullerCX =  resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
+                            ZipperInfo.ZipperPullerCY = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
+
                             AutoLogger.Info($"onWichStage=5,timeOutCount={timeOutCount},想PLC写入拉头位置:{pos}");
                             findPuller = true;
                             Dispatcher.Invoke(() =>
@@ -623,7 +638,7 @@ namespace ZipperInfo
                                     AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链为正穿");
                                 }
 
-                                ZipperInfo.ZipperUpMassType = STOPMASS.U型尼龙;
+                                ZipperInfo.ZipperUpMassType = STOPMASS.注塑;
                                 AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},设置拉链上止为:{ZipperInfo.ZipperUpMassType}");
                                 Dispatcher.Invoke(() =>
                                 {
@@ -651,6 +666,7 @@ namespace ZipperInfo
                                 CZipperCommunicate.TestFinish();
                                 Thread.Sleep(10);
                                 CZipperCommunicate.ThirdstageFinsh();
+                                TestFinshEven?.Invoke(TestFinsh);
                                 return;
                             }
                         }
@@ -674,14 +690,13 @@ namespace ZipperInfo
                         CZipperCommunicate.TestFinish();
                         Thread.Sleep(10);
                         CZipperCommunicate.ThirdstageFinsh();
+
+                        TestFinshEven?.Invoke(TestFinsh);
                         return;
 
                     }
 
-                    if (TestFinsh == true)
-                    {
-                        TestFinshEven?.Invoke(TestFinsh);
-                    }
+                  
                 }
             }
         }
