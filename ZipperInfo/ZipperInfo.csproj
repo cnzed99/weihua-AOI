@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0-windows;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -35,6 +35,9 @@
     </Reference>
     <Reference Include="TensorRtSharp">
       <HintPath>..\ZipperTestAlgorihm\dll\net8.0\TensorRtSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WH.VisionLearning">
+      <HintPath>..\AlgorithmDll\dll\WH.VisionLearning.dll</HintPath>
     </Reference>
   </ItemGroup>
 

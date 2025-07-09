@@ -20,6 +20,7 @@ using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperLightHalconDet;
+using WH.VisionLearning;
 
 namespace ZipperInfo
 {
@@ -45,7 +46,9 @@ namespace ZipperInfo
         /// 2025.7.2 鲍赞宝
         /// 识别模型对象
         /// </summary>
-        YOLO yolo_search_det = new();
+        //YOLO yolo_search_det = new();
+        IVisionModel yolo_search_det;
+        
         /// <summary>
         /// 2025.7.2 鲍赞宝
         /// 识别名
@@ -255,7 +258,7 @@ namespace ZipperInfo
             {
                 timeOutCount++;
                 DetResult resultDet;
-                resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                resultDet = yolo_search_det.Predict(img) as DetResult;
                 AutoLogger.Info($"{cell.CamName}:onWichStage=2,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                 if (resultDet.datas.Count > 0)
                 {
@@ -315,7 +318,7 @@ namespace ZipperInfo
                 {
                     // timeOutCount++;
                     DetResult resultDet;
-                    resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                    resultDet = yolo_search_det.Predict(img) as DetResult;
                     AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                     if (resultDet.datas.Count > 0)
                     {
@@ -541,7 +544,7 @@ namespace ZipperInfo
             {
                 timeOutCount++;
                 DetResult resultDet;
-                resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                resultDet = yolo_search_det.Predict(img) as DetResult;
                 AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                 if (resultDet.datas.Count > 0)
                 {
@@ -616,7 +619,7 @@ namespace ZipperInfo
                 {
                     timeOutCount++;
                     DetResult resultDet;
-                    resultDet = yolo_search_det.predict(img, 0.6f, 0.5f) as DetResult;
+                    resultDet = yolo_search_det.Predict(img) as DetResult;
                     AutoLogger.Info($"onWichStage=6,timeOutCount={timeOutCount},识别到目标个数为:{resultDet.datas.Count}");
                     if (resultDet.datas.Count > 0)
                     {
@@ -706,24 +709,29 @@ namespace ZipperInfo
             {
                 return;
             }
+           
             yolo_search_det.Dispose();
-            ModelType model_type_det = ModelType.YOLOv8Det;
-            EngineType engine_type = EngineType.OpenVINO;
+          
+           // ModelType model_type_det = ModelType.VisionModelDet;
+           // EngineType engine_type = EngineType.OpenVINO;
             string CurrentDevice = "GPU.0";
             int common_Categ_num = de_names.Length;
             float Score = 0.6f;
             float Nms = 0.5f;
-            InputImgSize Input_size = InputImgSize.IN640;
-            yolo_search_det = YOLO.GetYolo(
-                model_type_det,
-                modelpath,
-                engine_type,
-                CurrentDevice,
-                common_Categ_num,
-                Score,
-                Nms,
-                Input_size
-            );
+            int Input_size = 640;
+
+            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, modelpath, EngineType.OpenVINO,
+                CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+            //yolo_search_det = YOLO.GetYolo(
+            //    model_type_det,
+            //    modelpath,
+            //    engine_type,
+            //    CurrentDevice,
+            //    common_Categ_num,
+            //    Score,
+            //    Nms,
+            //    Input_size
+            //);
         }
 
 
