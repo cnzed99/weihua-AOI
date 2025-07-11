@@ -194,7 +194,7 @@ namespace WH.DetectSystem.Models
                     FocusConfig,
                     FocusConfig.token
                 );
-            ZipperAutomaticAlgorithm.TestFinshEven = TestFinshTodo;
+            CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
         }
@@ -1500,6 +1500,17 @@ namespace WH.DetectSystem.Models
                 {
                     newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
                 }
+                if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count>0)
+                {
+                    for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
+                    {
+                        newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
+                    }
+                }
+                if (cells[i].DownMassMatImg!=null)
+                {
+                    newCell.DownMassMatImg = cells[i].DownMassMatImg;
+                }
             }
 
             CImage img = GetCImage(cells);
@@ -1638,11 +1649,11 @@ namespace WH.DetectSystem.Models
         public void UpdateCam(string cameraSerial)
         {
             if (
-                !string.IsNullOrEmpty(CameraSerial)
-                && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
+                !string.IsNullOrEmpty(cameraSerial)
+                && CCameraManagement.CamParamDict.ContainsKey(cameraSerial)
             )
             {
-                CCameraManagement.CameraDict[CameraSerial].OutputImageChannel = null;
+                CCameraManagement.CameraDict[cameraSerial].OutputImageChannel = null;
             }
             this.CameraSerial = cameraSerial;
             if (AppConfig.HasFocusConfig())

@@ -104,6 +104,35 @@
                         Content="{Binding [OKScreenShot], Source={x:Static local:CLang.s_SaveImageLang}}"
                         IsChecked="{Binding Param.OKScreenShot}" />
                 </hc:ElementGroup>
+                <Separator Width="15" />
+                <hc:ElementGroup>
+                    <ToggleButton          
+                HorizontalAlignment="Left"
+                hc:ToggleButtonAttach.ShowLabel="True"
+                Background="Gray"
+                Content="存上止截图"
+                IsChecked="{Binding Param.SaveUpMassEnable}" />
+                </hc:ElementGroup>
+                
+                <Separator Width="15" />
+                <hc:ElementGroup>
+                    <ToggleButton
+                       HorizontalAlignment="Left"
+                       hc:ToggleButtonAttach.ShowLabel="True"
+                       Background="Gray"
+                       Content="存下止截图"
+                       IsChecked="{Binding Param.SaveDownMassEnable}" />
+                </hc:ElementGroup>
+
+                <Separator Width="15" />
+                <hc:ElementGroup>
+                    <ToggleButton
+                   HorizontalAlignment="Left"
+                   hc:ToggleButtonAttach.ShowLabel="True"
+                   Background="Gray"
+                   Content="存拉头截图"
+                   IsChecked="{Binding Param.SavePullEnable}" />
+                </hc:ElementGroup>
             </StackPanel>
 
         </GroupBox>

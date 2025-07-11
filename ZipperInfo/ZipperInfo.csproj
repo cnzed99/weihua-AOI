@@ -31,13 +31,13 @@
 
   <ItemGroup>
     <Reference Include="halcondotnet">
-      <HintPath>dll\halcondotnet.dll</HintPath>
+      <HintPath>..\packages\ThirdLocalDll\halcondotnet.dll</HintPath>
     </Reference>
     <Reference Include="TensorRtSharp">
-      <HintPath>..\ZipperTestAlgorihm\dll\net8.0\TensorRtSharp.dll</HintPath>
+      <HintPath>..\packages\ThirdLocalDll\TensorRtSharp.dll</HintPath>
     </Reference>
     <Reference Include="WH.VisionLearning">
-      <HintPath>..\AlgorithmDll\dll\WH.VisionLearning.dll</HintPath>
+      <HintPath>..\packages\ThirdLocalDll\WH.VisionLearning.dll</HintPath>
     </Reference>
   </ItemGroup>
 

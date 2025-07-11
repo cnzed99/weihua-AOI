@@ -82,7 +82,7 @@ namespace ZipperInfo
                         item.BaseConfig.LightChannelList[0].Value = 5;
                         item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
                         Thread.Sleep(20);
-                        item.BaseConfig.LightChannelList[1].Value = 20;
+                        item.BaseConfig.LightChannelList[1].Value = 35;
                         item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
                     }
 

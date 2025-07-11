@@ -72,12 +72,13 @@ namespace ZipperInfo
         public static bool findPuller = false; //检测到拉头
         public static bool findLogo = false; //检测到Logo
 
-        public Action<bool> TestFinshEven;
+        public static Action<bool> TestFinshEven;
         public CZipperAutomaticAlgorithm()
         {
             string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\AutoMatic";
             string txtpath = modelDirPath + "\\classes.txt";
-            string modelpath = modelDirPath + "\\lalianAuto.onnx";
+            //string modelpath = modelDirPath + "\\lalianAuto.onnx";
+            string modelpath = modelDirPath + "\\lalianAuto.model";
             if (File.Exists(txtpath))
             {
                 de_names = File.ReadAllLines(txtpath);
@@ -710,7 +711,7 @@ namespace ZipperInfo
                 return;
             }
            
-            yolo_search_det.Dispose();
+            //yolo_search_det.Dispose();
           
            // ModelType model_type_det = ModelType.VisionModelDet;
            // EngineType engine_type = EngineType.OpenVINO;

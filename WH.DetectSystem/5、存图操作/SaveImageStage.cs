@@ -99,12 +99,18 @@ namespace WH.DetectSystem._5_存图操作
                 string classPath;
                 string cropPath;
                 string cropName;
+                string upMassPath;
+                string downMassPath;
+                string pullPath;
                 saveImageConfig.GetSavePath(
                     cell,
                     systemSettings.NowShift,
                     out classPath,
                     out cropPath,
-                    out cropName
+                    out cropName,
+                    out upMassPath,
+                    out downMassPath,
+                    out pullPath
                 );
                 if (!cell.IsOK || saveImageConfig.OKScreenShot)
                 {
@@ -117,6 +123,23 @@ namespace WH.DetectSystem._5_存图操作
                             systemSettings.ShowAllDefect
                         );
                     }
+                }
+                if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
+                {
+                    for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                    {
+                        int index = upMassPath.IndexOf('.');
+                        string uppath = upMassPath.Insert(index, $"_{i}");
+                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                    }               
+                }
+                if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                {
+                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                }
+                if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
+                {
+                    WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
                 }
 
                 if (saveImageConfig.SaveImageEnable) //开启存原图
@@ -442,7 +465,10 @@ namespace WH.DetectSystem._5_存图操作
             string nowShift,
             out string classPath,
             out string cropPath,
-            out string cropName
+            out string cropName,
+            out string upmassPath,
+            out string downmassPath,
+            out string pullPath
         )
         {
             lock (s_PathLock)
@@ -468,13 +494,13 @@ namespace WH.DetectSystem._5_存图操作
                     //s_NameBuilder.Append(string.Format("{0:HHmmssfff}", cell.CreateTime)); //时间
                     //s_NameBuilder.Append("-");
 
-                    s_NameBuilder.Append(cell.Quality?.Signal??"null"); //质量信号值
+                    s_NameBuilder.Append(cell.Quality?.Signal ?? "null"); //质量信号值
                     s_NameBuilder.Append("_");
-                    s_NameBuilder.Append(cell.Quality?.Name??"null"); //质量等级名称
+                    s_NameBuilder.Append(cell.Quality?.Name ?? "null"); //质量等级名称
                     s_NameBuilder.Append("_");
 
                     s_NameBuilder.Append(cell.Detection?.DefectFilter?.Name ?? "OK"); //缺陷名称
-                   // s_NameBuilder.Append("-");
+                                                                                      // s_NameBuilder.Append("-");
 
                     //s_NameBuilder.Append(cell.ProcessTime.TotalMilliseconds.ToString("F0")); //耗时
                     s_NameBuilder.Append(saveImageConfig.SaveImageFormat); //格式
@@ -483,9 +509,9 @@ namespace WH.DetectSystem._5_存图操作
                     classPath = saveImageConfig.SaveImagePath;
                     //if (saveImageConfig.SavebyProjName)
                     //{
-                        classPath = classPath + "\\" + cell.ProjName;
-                  //  }
-                    classPath = classPath + "\\" + nowShift;
+                    classPath = $"{classPath}\\{cell.ProjName}";
+                    //  }
+                    classPath = $"{classPath}\\{nowShift}";
                     //if (saveImageConfig.SavebyHour)
                     //{
                     //    string hourNow = cell.CreateTime.Hour.ToString("D2");
@@ -498,6 +524,28 @@ namespace WH.DetectSystem._5_存图操作
                     //        classPath = classPath + "\\" + cell.CamName;
                     //    }
                     //}
+             
+                    upmassPath = $"{classPath}\\UpMassImg";
+                    if (!Directory.Exists(upmassPath))
+                    {
+                        Directory.CreateDirectory(upmassPath);
+                    }
+                    upmassPath = $"{upmassPath}{filename}";
+
+                    downmassPath = $"{classPath}\\DownMassImg";
+                    if (!Directory.Exists(downmassPath))
+                    {
+                        Directory.CreateDirectory(downmassPath);
+                    }
+                    downmassPath = $"{downmassPath}{filename}";
+
+                    pullPath = $"{classPath}\\PullImg";
+                    if (!Directory.Exists(pullPath))
+                    {
+                        Directory.CreateDirectory(pullPath);
+                    }
+                    pullPath = $"{pullPath}{filename}";
+
                     if (cell.IsOK)
                     {
                         classPath = classPath + "\\OK";
@@ -575,7 +623,7 @@ namespace WH.DetectSystem._5_存图操作
                 string[] filenames = filepath.Split('.');
                 if (filenames.Length >= 2)
                 {
-                    foreach ((CImage, int,DateTime,TimeSpan) img in cell.ZipperImages)
+                    foreach ((CImage, int, DateTime, TimeSpan) img in cell.ZipperImages)
                     {
                         string[] namesplits = filenames[0].Split('_');
                         if (namesplits.Length >= 2)

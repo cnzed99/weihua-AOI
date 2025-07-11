@@ -27,7 +27,10 @@
 
   <ItemGroup>
     <Reference Include="TensorRtSharp">
-      <HintPath>dll\net8.0\TensorRtSharp.dll</HintPath>
+      <HintPath>..\packages\ThirdLocalDll\TensorRtSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WH.VisionLearning">
+      <HintPath>..\packages\ThirdLocalDll\WH.VisionLearning.dll</HintPath>
     </Reference>
   </ItemGroup>
 

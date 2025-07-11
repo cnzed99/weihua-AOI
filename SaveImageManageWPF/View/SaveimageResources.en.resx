@@ -180,4 +180,13 @@
   <data name="FreeSpaceLimit" xml:space="preserve">
     <value>Free Space Limit(GB)</value>
   </data>
+  <data name="SaveUpMassImg" xml:space="preserve">
+    <value>SaveUpMassImg</value>
+  </data>
+  <data name="SaveDownMassImg" xml:space="preserve">
+    <value>SaveDownMassImg</value>
+  </data>
+  <data name="SavePullImg" xml:space="preserve">
+    <value>SavePullImg</value>
+  </data>
 </root>

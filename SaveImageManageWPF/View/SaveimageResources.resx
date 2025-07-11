@@ -160,4 +160,13 @@
   <data name="FreeSpaceLimit" xml:space="preserve">
     <value>存图磁盘可用空间限制(GB)</value>
   </data>
+  <data name="SaveUpMassImg" xml:space="preserve">
+    <value>存上止图片</value>
+  </data>
+  <data name="SaveDownMassImg" xml:space="preserve">
+    <value>存下止图片</value>
+  </data>
+  <data name="SavePullImg" xml:space="preserve">
+    <value>存拉头图片</value>
+  </data>
 </root>

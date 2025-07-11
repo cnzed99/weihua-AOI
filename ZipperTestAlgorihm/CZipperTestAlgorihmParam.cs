@@ -11,11 +11,8 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System;
-using OpenCvSharp.ML;
-using System.DirectoryServices;
-using OpenCvSharp.Dnn;
 using OpenCvSharp.Extensions;
+using WH.VisionLearning;
 
 
 
@@ -28,35 +25,41 @@ namespace ZipperTestAlgorihm
         /// <summary>
         /// 检测对象1
         /// </summary>
-        private YOLO yolo_all_det1 = new YOLO();
+        //private YOLO yolo_all_det1 = new YOLO();
+        IVisionModel yolo_all_det1;
         /// <summary>
         /// 检测对象2
         /// </summary>
-        private YOLO yolo_all_det2 = new YOLO();
+       // private YOLO yolo_all_det2 = new YOLO();
+        IVisionModel yolo_all_det2;
         /// <summary>
         /// 检测对象3
         /// </summary>
-        private YOLO yolo_all_det3 = new YOLO();
+       // private YOLO yolo_all_det3 = new YOLO();
+        IVisionModel yolo_all_det3;
         /// <summary>
         /// 检测对象4
         /// </summary>
-        private YOLO yolo_all_det4 = new YOLO();
+       // private YOLO yolo_all_det4 = new YOLO();
+        IVisionModel yolo_all_det4;
 
         /// <summary>
-        /// 正面下止检测对象
+        /// 下止检测对象
         /// </summary>
-        private YOLO yolo_DownStopMass_obb = new YOLO();
+       // private YOLO yolo_DownStopMass_obb = new YOLO();
+        IVisionModel yolo_DownStopMass_obb;
+
+        /// <summary>
+        /// 上止检测对象
+        /// </summary>
+        // private YOLO yolo_UpStopMass_obb = new YOLO();
+        IVisionModel yolo_UpStopMass_obb;
 
         /// <summary>
         /// 正面上止检测对象
         /// </summary>
-        private YOLO yolo_UpStopMass_obb = new YOLO();
-
-        /// <summary>
-        /// 正面上止检测对象
-        /// </summary>
-        private YOLO yolo_pull_det = new YOLO();
-
+        //  private YOLO yolo_pull_det = new YOLO();
+        IVisionModel yolo_pull_det;
         //定义4组矩形来裁切图片
         Rect[] cropRec = new Rect[4];
 
@@ -68,7 +71,7 @@ namespace ZipperTestAlgorihm
             //    new("下止类",new() {  new("下止有无", Category.区域) }),
             //    new("拉头类",new() {  new("拉头有无", Category.区域) }),
             //};
-            User=user;  
+            User = user;
             SetDefectRecipe(User);
 
             DefectFeatures = new();
@@ -116,7 +119,7 @@ namespace ZipperTestAlgorihm
         //拉头拉片缺陷名称
         protected string[] pull_names;
 
-        public string User {  get; set; }
+        public string User { get; set; }
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 增加参数
@@ -198,7 +201,7 @@ namespace ZipperTestAlgorihm
             {
                 commonModelPath = commonModelPath + "Front\\";
             }
-            if (user =="反面")
+            if (user == "反面")
             {
                 commonModelPath = commonModelPath + "Back\\";
             }
@@ -206,21 +209,21 @@ namespace ZipperTestAlgorihm
             if (commons.Item1 != "")
             {
                 Common_Model_Path = commons.Item1;
-                Common_names = commons.Item2;
+                Common_names = commons.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
             string downStopMassPath = modelDirpath + "DownStopMassModel\\";
             var downstopstrs = GetNames(downStopMassPath);
             if (downstopstrs.Item1 != "")
             {
                 downStopMass_Model_Path = downstopstrs.Item1;
-                downStopMass_names = downstopstrs.Item2;
+                downStopMass_names = downstopstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
             string upStopMassModelPath = modelDirpath + "UpStopMassModel\\";
             var upstopstrs = GetNames(upStopMassModelPath);
             if (upstopstrs.Item1 != "")
             {
                 upStopMass_Model_Path = upstopstrs.Item1;
-                upStopMass_names = upstopstrs.Item2;
+                upStopMass_names = upstopstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
             string pullModelPath = modelDirpath + "PullModel\\";
@@ -228,7 +231,7 @@ namespace ZipperTestAlgorihm
             if (pulltrs.Item1 != "")
             {
                 pull_Model_Path = pulltrs.Item1;
-                pull_names = pulltrs.Item2;
+                pull_names = pulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
         }
@@ -238,7 +241,7 @@ namespace ZipperTestAlgorihm
         {
             if (Directory.Exists(Dirpath))
             {
-                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml" };
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model" };
                 var files = searchPatterns
                 .SelectMany(pattern => Directory.GetFiles(Dirpath, pattern))
                 .ToList();
@@ -319,8 +322,18 @@ namespace ZipperTestAlgorihm
                                     rex = 0;
                                 }
                                 Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
+                                if (cell.ImageFile != "")
+                                {
+                                    cell.DownMassMatImg = cropDownMat;
+                                }
+                                else
+                                {
+                                    Mat colorMat = new Mat();
+                                    Cv2.CvtColor(cropDownMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                    cell.DownMassMatImg = colorMat;
+                                }
                                 // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
-                                ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat, paramClass.Score, paramClass.Nms);
+                                ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
                                 if (downResult.datas.Count > 0)
                                 {
                                     List<int> luyaIndex = new List<int>();
@@ -379,9 +392,11 @@ namespace ZipperTestAlgorihm
                             }
                             else
                             {
-                                int nameindex = int.Parse(detrets[i].datas[j].lable);
-                                string labelstr = Common_names[nameindex];
-                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
+                                //int nameindex = int.Parse(detrets[i].datas[j].lable);
+                                //string labelstr = Common_names[nameindex];
+                                if (labelname.Contains("正面上止") || labelname.Contains("反面上止")) //第一张图片不该有上止
+                                    continue;
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
                                 dets.Add(restoreData);
                             }
                         }
@@ -421,7 +436,18 @@ namespace ZipperTestAlgorihm
                                 }
                                 dets.Add(restoreData);
                                 Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
-                                ObbResult upResult = ImageInferObb(yolo_UpStopMass_obb, cropUpMat, paramClass.Score, paramClass.Nms);
+                                if (cell.ImageFile != "")
+                                {
+                                    cell.UpMassMatImg.Add(cropUpMat);
+                                }
+                                else
+                                {
+                                    Mat colorMat = new Mat();
+                                    Cv2.CvtColor(cropUpMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                    cell.UpMassMatImg.Add(colorMat);
+                                }
+
+                                ObbResult upResult = ImageInferObb(yolo_UpStopMass_obb, cropUpMat);
                                 if (upResult.datas.Count > 0)
                                 {
                                     List<int> luyaIndex = new List<int>();
@@ -455,8 +481,8 @@ namespace ZipperTestAlgorihm
                                     else //没找到链牙和上止
                                     {
                                         instr++;
-                                        CoordRestoreData disData = new CoordRestoreData($"上止距离{instr}",0);
-                                        dets.Add(disData);                                 
+                                        CoordRestoreData disData = new CoordRestoreData($"上止距离{instr}", 0);
+                                        dets.Add(disData);
                                     }
                                     if (luyaIndex.Count > 0)
                                     {
@@ -484,9 +510,11 @@ namespace ZipperTestAlgorihm
                             }
                             else
                             {
-                                int nameindex = int.Parse(detrets[i].datas[j].lable);
-                                string labelstr = Common_names[nameindex];
-                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
+                                //int nameindex = int.Parse(detrets[i].datas[j].lable);
+                                //string labelstr = Common_names[nameindex];
+                                if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
+                                    continue;
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
                                 dets.Add(restoreData);
                             }
                         }
@@ -530,7 +558,7 @@ namespace ZipperTestAlgorihm
                     //    colorMat.Dispose();
                     //}
                     //  DetResult pullResult = ImageInferDet(yolo_pull_det, croppullMat, paramClass.Score, paramClass.Nms);
-                    DetResult pullResult = ImageInferDet(yolo_pull_det, img, paramClass.Score, paramClass.Nms);
+                    DetResult pullResult = ImageInferDet(yolo_pull_det, img);
                     for (int j = 0; j < pullResult.datas.Count; j++)
                     {
                         int labelindex = int.Parse(pullResult.datas[j].lable);
@@ -561,7 +589,7 @@ namespace ZipperTestAlgorihm
                             }
 
                             Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
-                            
+
                             if (cell.ImageFile != "")
                             {
                                 cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
@@ -589,11 +617,12 @@ namespace ZipperTestAlgorihm
                     {
                         for (int j = 0; j < detrets[i].datas.Count; j++)
                         {
-                            int nameindex = int.Parse(detrets[i].datas[j].lable);
-                            string labelstr = Common_names[nameindex];
-                            if (labelstr.Contains("正面上止")|| labelstr.Contains("反面上止"))
+                            int labelindex = int.Parse(detrets[i].datas[j].lable);
+                            string labelname = Common_names[labelindex];
+
+                            if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
                                 continue;
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
                             dets.Add(restoreData);
                         }
                     }
@@ -610,23 +639,23 @@ namespace ZipperTestAlgorihm
             List<DetResult> alldetResult = new List<DetResult>();
             Task<DetResult> task1 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det1, mats[0], score, nms);
+                DetResult sResultInfos = ImageInferDet(yolo_all_det1, mats[0]);
                 return sResultInfos;
             });
 
             Task<DetResult> task2 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det2, mats[1], score, nms);
+                DetResult sResultInfos = ImageInferDet(yolo_all_det2, mats[1]);
                 return sResultInfos;
             });
             Task<DetResult> task3 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det3, mats[2], score, nms);
+                DetResult sResultInfos = ImageInferDet(yolo_all_det3, mats[2]);
                 return sResultInfos;
             });
             Task<DetResult> task4 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det4, mats[3], score, nms);
+                DetResult sResultInfos = ImageInferDet(yolo_all_det4, mats[3]);
                 return sResultInfos;
             });
             await Task.WhenAll(task1, task2, task3, task4);
@@ -697,25 +726,24 @@ namespace ZipperTestAlgorihm
             CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {
-               // SetDefectRecipe(param);
+                // SetDefectRecipe(param);
 
-                ModelType model_type_det = ModelType.YOLOv8Det;
-                ModelType model_type_obb = ModelType.YOLOv8Obb;
+                //ModelType model_type_det = ModelType.YOLOv8Det;
+                //ModelType model_type_obb = ModelType.YOLOv8Obb;
                 // ModelType model_type = param.ModelType;
                 // EngineType engine_type = MyEnum.GetEngineType<EngineType>(engine_type_str);
-                EngineType engine_type = param.EngineType;
+                // EngineType engine_type = param.EngineType;
 
-                yolo_all_det1.Dispose();
-                yolo_all_det2.Dispose();
-                yolo_all_det3.Dispose();
-                yolo_all_det4.Dispose();
-                yolo_DownStopMass_obb.Dispose();
-                yolo_UpStopMass_obb.Dispose();
-                yolo_pull_det.Dispose();
-                //yolo_labeldefect.Dispose();
+                //yolo_all_det1.Dispose();
+                //yolo_all_det2.Dispose();
+                //yolo_all_det3.Dispose();
+                //yolo_all_det4.Dispose();
+                //yolo_DownStopMass_obb.Dispose();
+                //yolo_UpStopMass_obb.Dispose();
+                //yolo_pull_det.Dispose();
                 if (param != null)
                 {
-                    string CurrentDevice = param.CurrentDevice;
+                    string CurrentDevice = "GPU.0";
                     int common_Categ_num = Common_names.Length;
                     int downmass_num = downStopMass_names.Length;
                     int upmass_num = upStopMass_names.Length;
@@ -723,96 +751,119 @@ namespace ZipperTestAlgorihm
                     // int label_Categ_num = LabelDetect_names.Length;
                     float Score = param.Score;
                     float Nms = param.Nms;
-                    InputImgSize Input_size = param.Input_size;
-                    ImgSize Output_size = param.Output_size;
+                    int Input_size = 640;
+
                     //string model_path =
                     //    param.EngineType == EngineType.TensorRT
                     //        ? Model_Path + ".engine"
                     //        : Model_Path + ".onnx";
-                    yolo_all_det1 = YOLO.GetYolo(
-                        model_type_det,
-                        Common_Model_Path,
-                        engine_type,
-                        CurrentDevice,
-                        common_Categ_num,
-                        Score,
-                        Nms,
-                        Input_size
-                    );
-                    yolo_all_det2 = YOLO.GetYolo(
-                    model_type_det,
-                    Common_Model_Path,
-                    engine_type,
-                    CurrentDevice,
-                    common_Categ_num,
-                    Score,
-                    Nms,
-                    Input_size
-                );
-                    yolo_all_det3 = YOLO.GetYolo(
-                    model_type_det,
-                    Common_Model_Path,
-                    engine_type,
-                    CurrentDevice,
-                    common_Categ_num,
-                    Score,
-                    Nms,
-                    Input_size
-                );
-                    yolo_all_det4 = YOLO.GetYolo(
-                    model_type_det,
-                    Common_Model_Path,
-                    engine_type,
-                    CurrentDevice,
-                    common_Categ_num,
-                    Score,
-                    Nms,
-                    Input_size
-                );
-                    yolo_DownStopMass_obb = YOLO.GetYolo(
-                        model_type_obb,
-                        downStopMass_Model_Path,
-                        engine_type,
-                        CurrentDevice,
-                        downmass_num,
-                        Score,
-                        Nms,
-                        InputImgSize.IN256
-                        );
-                    yolo_UpStopMass_obb = YOLO.GetYolo(
-                        model_type_obb,
-                        upStopMass_Model_Path,
-                        engine_type,
-                        CurrentDevice,
-                        upmass_num,
-                        Score,
-                        Nms,
-                        InputImgSize.IN192
-                        );
-                    yolo_pull_det = YOLO.GetYolo(
-                      model_type_det,
-                      pull_Model_Path,
-                      engine_type,
-                      CurrentDevice,
-                      pull_num,
-                      Score,
-                      Nms,
-                      Input_size
-                  );
+                    //yolo_all_det1 = YOLO.GetYolo(
+                    //    model_type_det,
+                    //    Common_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    common_Categ_num,
+                    //    Score,
+                    //    Nms,
+                    //    Input_size
+                    //);
+                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+
+                    //yolo_all_det2 = YOLO.GetYolo(
+                    //model_type_det,
+                    //Common_Model_Path,
+                    //engine_type,
+                    //CurrentDevice,
+                    //common_Categ_num,
+                    //Score,
+                    //Nms,
+                    //Input_size);
+
+                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+
+                    //    yolo_all_det3 = YOLO.GetYolo(
+                    //    model_type_det,
+                    //    Common_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    common_Categ_num,
+                    //    Score,
+                    //    Nms,
+                    //    Input_size
+                    //);
+
+                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+                    //    yolo_all_det4 = YOLO.GetYolo(
+                    //    model_type_det,
+                    //    Common_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    common_Categ_num,
+                    //    Score,
+                    //    Nms,
+                    //    Input_size
+                    //);
+                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+
+                    //yolo_DownStopMass_obb = YOLO.GetYolo(
+                    //    model_type_obb,
+                    //    downStopMass_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    downmass_num,
+                    //    Score,
+                    //    Nms,
+                    //    InputImgSize.IN256
+                    //    );
+
+                    yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.OpenVINO,
+"GPU.0", downmass_num, Score, Nms, 256);
+
+                    //yolo_UpStopMass_obb = YOLO.GetYolo(
+                    //    model_type_obb,
+                    //    upStopMass_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    upmass_num,
+                    //    Score,
+                    //    Nms,
+                    //    InputImgSize.IN192
+                    //    );
+                    yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.OpenVINO,
+"GPU.0", upmass_num, Score, Nms, 192);
+                    //  yolo_pull_det = YOLO.GetYolo(
+                    //    model_type_det,
+                    //    pull_Model_Path,
+                    //    engine_type,
+                    //    CurrentDevice,
+                    //    pull_num,
+                    //    Score,
+                    //    Nms,
+                    //    Input_size
+                    //);
+
+                    yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.OpenVINO,
+"GPU.0", pull_num, Score, Nms, 640);
+
                 }
+
             }
         }
 
-        public DetResult ImageInferDet(YOLO yolo, Mat img, float score, float nms)
+        public DetResult ImageInferDet(IVisionModel yolo, Mat img)
         {
             DetResult resultDet;
-            resultDet = yolo.predict(img, score, nms) as DetResult;
+            resultDet = yolo.Predict(img) as DetResult;
             return resultDet;
         }
-        public ObbResult ImageInferObb(YOLO yolo, Mat img, float score, float nms)
+        public ObbResult ImageInferObb(IVisionModel yolo, Mat img)
         {
             ObbResult resultDet;
-            resultDet = yolo.predict(img, score, nms) as ObbResult;
+            resultDet = yolo.Predict(img) as ObbResult;
             return resultDet;
         }
 
@@ -1007,33 +1058,33 @@ namespace ZipperTestAlgorihm
         private float nms = 0.5f;
 
 
-        /// <summary>
-        /// 20250331 TCG
-        /// 模型尺寸
-        /// </summary>
-        [ObservableProperty]
-        private InputImgSize input_size = InputImgSize.IN640;
+        ///// <summary>
+        ///// 20250331 TCG
+        ///// 模型尺寸
+        ///// </summary>
+        //[ObservableProperty]
+        //private InputImgSize input_size = InputImgSize.IN640;
 
-        /// <summary>
-        /// 20250331 TCG
-        /// 模型尺寸
-        /// </summary>
-        [ObservableProperty]
-        private ImgSize output_size = ImgSize.S640;
-
-        /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 驱动设备
-        /// </summary>
-        [ObservableProperty]
-        private string currentDevice = "GPU.0";
+        ///// <summary>
+        ///// 20250331 TCG
+        ///// 模型尺寸
+        ///// </summary>
+        //[ObservableProperty]
+        //private ImgSize output_size = ImgSize.S640;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 驱动设备
         /// </summary>
-        [ObservableProperty]
-        private EngineType engineType = EngineType.OpenVINO;
+        //[ObservableProperty]
+        //private string currentDevice = "GPU.0";
+
+        ///// <summary>
+        ///// 2024.10.28 鲍赞宝
+        ///// 驱动设备
+        ///// </summary>
+        //[ObservableProperty]
+        //private EngineType engineType = EngineType.OpenVINO;
 
     }
 

@@ -184,6 +184,31 @@ namespace SaveImageManage
         [property: DisplayName("存图磁盘可用空间限制(GB)")]
         private int freeSpaceLimit = 5;
 
+
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 保存上止截图
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("保存上止")]
+        private bool saveUpMassEnable = false;
+
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 保存下止截图
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("保存下止")]
+        private bool saveDownMassEnable = false;
+
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 保存拉头截图
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("保存拉头")]
+        private bool savePullEnable = false;
+
         public void Receive(OperateMessage message)
         {
             //记录修改信息

@@ -1,3 +1,4 @@
+
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -43,6 +44,17 @@ namespace WH.RunCell
         /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
         /// </summary>
         public BitmapSource ChangleImgae { get; set; }
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 下止截图，用于存图
+        /// </summary>
+        public OpenCvSharp.Mat DownMassMatImg { get; set; }
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 上止截图，用于存图
+        /// </summary>
+        public List<OpenCvSharp.Mat> UpMassMatImg { get; set; }=new List<OpenCvSharp.Mat>();
+
 
 
         public Cell()
@@ -317,6 +329,17 @@ namespace WH.RunCell
             {
                 ZipperPullPartImg.Freeze();
             }
+            if (DownMassMatImg!=null)
+            {
+                DownMassMatImg.Dispose();
+            }
+            if (UpMassMatImg!=null)
+            {
+                for (int i = 0; i < UpMassMatImg.Count; i++)
+                {
+                    UpMassMatImg[i].Dispose();
+                }
+            }
         }
 
         public override Cell Clone()
@@ -368,6 +391,13 @@ namespace WH.RunCell
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;
             cell.ZipperPullPartImg = this.ZipperPullPartImg;
+            cell.DownMassMatImg=this.DownMassMatImg?.Clone();
+
+            for (int i = 0; i < this.UpMassMatImg?.Count; i++)
+            {
+                cell.UpMassMatImg.Add(this.UpMassMatImg[i].Clone());
+            }
+            
             cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();
             foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {

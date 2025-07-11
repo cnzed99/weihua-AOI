@@ -205,6 +205,15 @@ namespace SaveImageManage.View {
         }
         
         /// <summary>
+        ///   查找类似 存下止图片 的本地化字符串。
+        /// </summary>
+        public static string SaveDownMassImg {
+            get {
+                return ResourceManager.GetString("SaveDownMassImg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 存原图 的本地化字符串。
         /// </summary>
         public static string SaveImageEnable {
@@ -237,6 +246,24 @@ namespace SaveImageManage.View {
         public static string SaveOK {
             get {
                 return ResourceManager.GetString("SaveOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 存拉头图片 的本地化字符串。
+        /// </summary>
+        public static string SavePullImg {
+            get {
+                return ResourceManager.GetString("SavePullImg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 存上止图片 的本地化字符串。
+        /// </summary>
+        public static string SaveUpMassImg {
+            get {
+                return ResourceManager.GetString("SaveUpMassImg", resourceCulture);
             }
         }
         
