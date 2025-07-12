@@ -24,6 +24,7 @@ namespace ZipperInfo
         [RelayCommand]
         void save(object win)
         {
+            CZipperAutomaticAlgorithm.TestFinshEven(true);
             CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
             var window = win as Window;
             window.Close(); 

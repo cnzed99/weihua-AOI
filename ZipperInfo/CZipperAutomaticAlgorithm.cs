@@ -253,6 +253,7 @@ namespace ZipperInfo
                     else
                     {
                         //进入下阶段
+                        AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},进入下一阶段");
                         CLinghtManagement.SaveLightParams();
                         addOrSubCount = 0;
                         onWichStage = 2;
@@ -378,7 +379,7 @@ namespace ZipperInfo
                                     }
                                     if (templist.Count > 0)
                                     {
-                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},满足条件在限位之间的条件");
+                                        AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},满足条件{pos} > {temphandP[temphandP.Count - 1]} || {pos} < {temphandP[0]}");
                                         int crippoint = (int)ZipperInfo.ZipperLneght * 10;
                                         if (pos > templist[templist.Count - 1] && pos > crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
                                         {
@@ -401,7 +402,7 @@ namespace ZipperInfo
                                                 {
                                                     AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>250,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    onWichStage = 4;
+                                                    onWichStage = 5;
                                                     return;
                                                 }
                                             }
@@ -413,7 +414,7 @@ namespace ZipperInfo
                                                 {
                                                     AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250,停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    onWichStage = 4;
+                                                    onWichStage = 5;
                                                     return;
                                                 }
                                             }
@@ -444,7 +445,7 @@ namespace ZipperInfo
                                                     //写轴坐标位置
                                                     AutoLogger.Info($"onWichStage=3,timeOutCount={timeOutCount},{templist[pindex - 1]}<{pos}<{templist[pindex + 1]}停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
-                                                    onWichStage = 4;
+                                                    onWichStage = 5;
                                                     return;
                                                 }
                                             }
@@ -461,120 +462,120 @@ namespace ZipperInfo
             }
             else if (onWichStage == 4) ////第二阶段 识别拉头  计算拉头亮度,设置光源值
             {
-                DetResult resultDet;
-                resultDet = yolo_search_det.Predict(img) as DetResult;
-                if (resultDet.datas.Count > 0)
-                {
-                    for (int i = 0; i < resultDet.datas.Count; i++)
-                    {
-                        int nameindex = int.Parse(resultDet.datas[i].lable);
-                        string labelstr = de_names[nameindex];
-                        if (labelstr.Contains("拉头"))
-                        {
-                            HOperatorSet.GenImageInterleaved(
-                             out CameraImage,
-                             cell.Image.ImageData,
-                             "rgb",
-                             cell.Image.ImageWidth,
-                             cell.Image.ImageHeight,
-                             0,
-                             "byte",
-                             0,
-                             0,
-                             0,
-                             0,
-                             -1,
-                             0
-                             );
+                //DetResult resultDet;
+                //resultDet = yolo_search_det.Predict(img) as DetResult;
+                //if (resultDet.datas.Count > 0)
+                //{
+                //    for (int i = 0; i < resultDet.datas.Count; i++)
+                //    {
+                //        int nameindex = int.Parse(resultDet.datas[i].lable);
+                //        string labelstr = de_names[nameindex];
+                //        if (labelstr.Contains("拉头"))
+                //        {
+                //            HOperatorSet.GenImageInterleaved(
+                //             out CameraImage,
+                //             cell.Image.ImageData,
+                //             "rgb",
+                //             cell.Image.ImageWidth,
+                //             cell.Image.ImageHeight,
+                //             0,
+                //             "byte",
+                //             0,
+                //             0,
+                //             0,
+                //             0,
+                //             -1,
+                //             0
+                //             );
 
-                            int bx = resultDet.datas[i].box.X;
-                            int by = resultDet.datas[i].box.Y;
-                            int w = resultDet.datas[i].box.Width;
-                            int h = resultDet.datas[i].box.Height;
-                          //  Mat cutmat = img[new Rect(bx, by, w, h)];
-                            HOperatorSet.GenRectangle1(out HObject rec1, by, bx, by + h, bx + w);
-                            HOperatorSet.ReduceDomain(CameraImage, rec1, out HObject cutimg);
+                //            int bx = resultDet.datas[i].box.X;
+                //            int by = resultDet.datas[i].box.Y;
+                //            int w = resultDet.datas[i].box.Width;
+                //            int h = resultDet.datas[i].box.Height;
+                //          //  Mat cutmat = img[new Rect(bx, by, w, h)];
+                //            HOperatorSet.GenRectangle1(out HObject rec1, by, bx, by + h, bx + w);
+                //            HOperatorSet.ReduceDomain(CameraImage, rec1, out HObject cutimg);
 
-                            ZipperLightHelper.Instance.ZipperLightDetection(cutimg, 10, 2.0, out var hv_VState, out var hv_VStride);
-                            CameraImage.Dispose();
-                            cutimg.Dispose();
-                            CLightControlBase cLightControl = null;
-                            if (cell.CamName == "右相机")
-                            {
-                                cLightControl = LightCtl_You;
-                            }
-                            else
-                            {
-                                cLightControl = LightCtl_Zuo;
-                            }
-                            if (hv_VState == 1)
-                            {
-                               // Console.WriteLine($"需增加亮度");
-                                if (cLightControl != null)
-                                {
-                                    int val = hv_VStride.I;
-                                    if (val == 0)
-                                    {
-                                        val = 2;
-                                    }
-                                    cLightControl.BaseConfig.LightChannelList[1].Value += val;
-                                    if (cLightControl.BaseConfig.LightChannelList[1].Value > 200)
-                                    {
-                                        cLightControl.BaseConfig.LightChannelList[1].Value = 200;
-                                        maxtimeout++;
-                                    }
-                                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
-                                    if (maxtimeout>=5)
-                                    {
-                                        maxtimeout = 0;
-                                        //进入下阶段
-                                        onWichStage = 5;
-                                        timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
-                                    }
-                                }
+                //            ZipperLightHelper.Instance.ZipperLightDetection(cutimg, 10, 2.0, out var hv_VState, out var hv_VStride);
+                //            CameraImage.Dispose();
+                //            cutimg.Dispose();
+                //            CLightControlBase cLightControl = null;
+                //            if (cell.CamName == "右相机")
+                //            {
+                //                cLightControl = LightCtl_You;
+                //            }
+                //            else
+                //            {
+                //                cLightControl = LightCtl_Zuo;
+                //            }
+                //            if (hv_VState == 1)
+                //            {
+                //               // Console.WriteLine($"需增加亮度");
+                //                if (cLightControl != null)
+                //                {
+                //                    int val = hv_VStride.I;
+                //                    if (val == 0)
+                //                    {
+                //                        val = 2;
+                //                    }
+                //                    cLightControl.BaseConfig.LightChannelList[1].Value += val;
+                //                    if (cLightControl.BaseConfig.LightChannelList[1].Value > 200)
+                //                    {
+                //                        cLightControl.BaseConfig.LightChannelList[1].Value = 200;
+                //                        maxtimeout++;
+                //                    }
+                //                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                //                    if (maxtimeout>=5)
+                //                    {
+                //                        maxtimeout = 0;
+                //                        //进入下阶段
+                //                        onWichStage = 5;
+                //                        timeOutCount = 0;
+                //                        CLinghtManagement.SaveLightParams();
+                //                    }
+                //                }
 
-                            }
-                            else if (hv_VState == 2)
-                            {
-                                Console.WriteLine($"需减少亮度");
-                                if (cLightControl != null)
-                                {
-                                    int val = hv_VStride.I;
-                                    if (val == 0)
-                                    {
-                                        val = 2;
-                                    }
-                                    cLightControl.BaseConfig.LightChannelList[1].Value -= val;
-                                    if (cLightControl.BaseConfig.LightChannelList[1].Value < 5)
-                                    {
-                                        cLightControl.BaseConfig.LightChannelList[1].Value = 5;
-                                        mintimeout++;
-                                    }
-                                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
-                                    if (mintimeout >= 5)
-                                    {
-                                        mintimeout = 0;
-                                        //进入下阶段
-                                        onWichStage = 5;
-                                        timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
-                                    }
-                                }
+                //            }
+                //            else if (hv_VState == 2)
+                //            {
+                //                Console.WriteLine($"需减少亮度");
+                //                if (cLightControl != null)
+                //                {
+                //                    int val = hv_VStride.I;
+                //                    if (val == 0)
+                //                    {
+                //                        val = 2;
+                //                    }
+                //                    cLightControl.BaseConfig.LightChannelList[1].Value -= val;
+                //                    if (cLightControl.BaseConfig.LightChannelList[1].Value < 5)
+                //                    {
+                //                        cLightControl.BaseConfig.LightChannelList[1].Value = 5;
+                //                        mintimeout++;
+                //                    }
+                //                    cLightControl.SetChannelValue(cLightControl.BaseConfig.LightChannelList[1]);
+                //                    if (mintimeout >= 5)
+                //                    {
+                //                        mintimeout = 0;
+                //                        //进入下阶段
+                //                        onWichStage = 5;
+                //                        timeOutCount = 0;
+                //                        CLinghtManagement.SaveLightParams();
+                //                    }
+                //                }
 
-                            }
-                            else
-                            {
-                                //进入下阶段
-                                onWichStage = 5;
-                                timeOutCount = 0;
-                                CLinghtManagement.SaveLightParams();
-                                // CZipperCommunicate.SceondstageFinsh();
-                            }
-                        }
-                    }
+                //            }
+                //            else
+                //            {
+                //                //进入下阶段
+                //                onWichStage = 5;
+                //                timeOutCount = 0;
+                //                CLinghtManagement.SaveLightParams();
+                //                // CZipperCommunicate.SceondstageFinsh();
+                //            }
+                //        }
+                //    }
 
-                }
+                //}
 
 
             }
@@ -632,8 +633,8 @@ namespace ZipperInfo
                     }
                     if (findPuller && findPulls && findLogo)
                     {
-                        AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},拉头,拉头拉片,Logo全部识别到,进入第三阶段");
                         timeOutCount = 0;
+                        AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},拉头,拉头拉片,Logo全部识别到,进入第三阶段");                       
                         CZipperCommunicate.SceondstageFinsh();
                         onWichStage = 6;
                         return;
@@ -642,8 +643,8 @@ namespace ZipperInfo
                 }
                 if (timeOutCount >= 15)
                 {
-                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},拉头,拉头拉片,Logo全部识别到,进入第三阶段");
                     timeOutCount = 0;
+                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别拉头拉片，logo超时,进入第三阶段");            
                     CZipperCommunicate.SceondstageFinsh();
                     onWichStage = 6;
                     return;
@@ -707,7 +708,7 @@ namespace ZipperInfo
                                 CZipperCommunicate.TestFinish();
                                 Thread.Sleep(10);
                                 CZipperCommunicate.ThirdstageFinsh();
-                                TestFinshEven?.Invoke(TestFinsh);
+                               // TestFinshEven?.Invoke(TestFinsh);
                                 return;
                             }
                         }
@@ -732,7 +733,7 @@ namespace ZipperInfo
                         Thread.Sleep(10);
                         CZipperCommunicate.ThirdstageFinsh();
 
-                        TestFinshEven?.Invoke(TestFinsh);
+                      //  TestFinshEven?.Invoke(TestFinsh);
                         return;
 
                     }

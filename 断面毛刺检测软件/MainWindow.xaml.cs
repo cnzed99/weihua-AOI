@@ -233,23 +233,24 @@ namespace 断面毛刺检测软件
         {
             try
             {
-                var result = MessageBox.Show(
-                    "是否需要保存项目？\r\n Do you want to save it ?",
-                    "提示|Tips",
-                    MessageBoxButton.YesNoCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.OK
-                );
-                if (result == MessageBoxResult.Cancel)
-                {
-                    e.Cancel = true;
+                //var result = MessageBox.Show(
+                //    "是否需要保存项目？\r\n Do you want to save it ?",
+                //    "提示|Tips",
+                //    MessageBoxButton.YesNoCancel,
+                //    MessageBoxImage.Question,
+                //    MessageBoxResult.OK
+                //);
+                //if (result == MessageBoxResult.Cancel)
+                //{
+                //    e.Cancel = true;
 
-                    return;
-                }
-                else if (result == MessageBoxResult.Yes)
-                {
-                    CMainList.SaveCurrentProj();
-                }
+                //    return;
+                //}
+                //else if (result == MessageBoxResult.Yes)
+                //{
+                //    CMainList.SaveCurrentProj();
+                //}
+                CMainList.SaveCurrentProj();
                 CMainList.SystemSettings.SaveParameter();
                 CCommunicationManagement.SaveAllComConfig();
                 CCameraManagement.SaveAllCamConfig();

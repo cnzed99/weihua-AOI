@@ -278,34 +278,40 @@ namespace ZipperTestAlgorihm
             if (paramClass != null)
             {
                 Mat img = GetMatImage(cell, paramClass);
+                List<Mat> mats = new List<Mat>();
                 int smallimgWidth = cell.Image.ImageWidth / 4;
                 int smallimgHeight = cell.Image.ImageHeight;
-                List<Mat> mats = new List<Mat>();
-                for (int i = 0; i < 4; i++)
-                {
-                    cropRec[i].X = i * smallimgWidth;
-                    cropRec[i].Y = 0;
-                    cropRec[i].Width = smallimgWidth;
-                    cropRec[i].Height = smallimgHeight;
-                    Mat cropimg = img[cropRec[i]];
-                    mats.Add(cropimg);
-                    if (cell.ImageFile != "")
+                if (cell.PhotoIndex!=100)
+                {                  
+                    for (int i = 0; i < 4; i++)
                     {
-                        cell.FourCutMatImg.Add(cropimg);
-                    }
-                    else
-                    {
-                        Mat colorMat = new Mat();
-                        Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
-                        cell.FourCutMatImg.Add(cropimg);
-                    }
-                   
-                    //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
-                }
+                        cropRec[i].X = i * smallimgWidth;
+                        cropRec[i].Y = 0;
+                        cropRec[i].Width = smallimgWidth;
+                        cropRec[i].Height = smallimgHeight;
+                        Mat cropimg = img[cropRec[i]];
+                        mats.Add(cropimg);
+                        if (cell.ImageFile != "")
+                        {
+                            cell.FourCutMatImg.Add(cropimg);
+                        }
+                        else
+                        {
+                            Mat colorMat = new Mat();
+                            Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
+                            cell.FourCutMatImg.Add(colorMat);
+                        }
 
+                        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
+                    }
+                }
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex == 1) //第一张有下止的图
                 {
+                    if(mats.Count == 0)
+                    {
+                        return;
+                    }
                     List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
@@ -417,6 +423,10 @@ namespace ZipperTestAlgorihm
                 }
                 else if (cell.PhotoIndex == cell.PhotoTatolCount) //最后一张图片有上止图片
                 {
+                    if (mats.Count == 0)
+                    {
+                        return;
+                    }
                     int instr = 0;
                     List<Point> massPoints = new List<Point>(); //上止的位置
                     List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
@@ -623,6 +633,10 @@ namespace ZipperTestAlgorihm
                 }
                 else //中间布带，链牙缺陷
                 {
+                    if (mats.Count == 0)
+                    {
+                        return;
+                    }
                     List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
@@ -640,13 +654,12 @@ namespace ZipperTestAlgorihm
                 }
                 ParseResult(dets, cell);
                 img.Dispose();
+                mats.Clear();
             }
         }
 
         private async Task<List<DetResult>> ImageInferall(List<Mat> mats, float score, float nms)
         {
-
-
             List<DetResult> alldetResult = new List<DetResult>();
             Task<DetResult> task1 = Task.Run(() =>
             {
