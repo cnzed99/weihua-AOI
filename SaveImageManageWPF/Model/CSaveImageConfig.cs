@@ -183,7 +183,13 @@ namespace SaveImageManage
         [ObservableProperty]
         [property: DisplayName("存图磁盘可用空间限制(GB)")]
         private int freeSpaceLimit = 5;
-
+        /// <summary>
+        /// 2025.7.11 鲍赞宝
+        /// 保存四拆分截图
+        /// </summary>
+        [ObservableProperty]
+        [property: DisplayName("保存四拆分截图")]
+        private bool saveFourCutEnable = false;
 
         /// <summary>
         /// 2025.7.11 鲍赞宝

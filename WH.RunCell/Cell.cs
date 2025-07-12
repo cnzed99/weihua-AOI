@@ -55,7 +55,11 @@ namespace WH.RunCell
         /// </summary>
         public List<OpenCvSharp.Mat> UpMassMatImg { get; set; }=new List<OpenCvSharp.Mat>();
 
-
+        /// <summary>
+        /// 2025.7.11 ±«ÔÞ±¦
+        /// 4²ð·Ö½ØÍ¼£¬ÓÃÓÚ´æÍ¼
+        /// </summary>
+        public List<OpenCvSharp.Mat> FourCutMatImg { get; set; } = new List<OpenCvSharp.Mat>();
 
         public Cell()
         {
@@ -340,6 +344,13 @@ namespace WH.RunCell
                     UpMassMatImg[i].Dispose();
                 }
             }
+            if (FourCutMatImg != null)
+            {
+                for (int i = 0; i < FourCutMatImg.Count; i++)
+                {
+                    FourCutMatImg[i].Dispose();
+                }
+            }
         }
 
         public override Cell Clone()
@@ -397,7 +408,11 @@ namespace WH.RunCell
             {
                 cell.UpMassMatImg.Add(this.UpMassMatImg[i].Clone());
             }
-            
+            for (int i = 0; i < this.FourCutMatImg?.Count; i++)
+            {
+                cell.FourCutMatImg.Add(this.FourCutMatImg[i].Clone());
+            }
+
             cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();
             foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {

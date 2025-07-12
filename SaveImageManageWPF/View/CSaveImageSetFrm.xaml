@@ -107,6 +107,15 @@
                 <Separator Width="15" />
                 <hc:ElementGroup>
                     <ToggleButton          
+                    HorizontalAlignment="Left"
+                    hc:ToggleButtonAttach.ShowLabel="True"
+                    Background="Gray"
+                    Content="存四拆分图"
+                    IsChecked="{Binding Param.SaveFourCutEnable}" />
+                </hc:ElementGroup>
+                <Separator Width="15" />
+                <hc:ElementGroup>
+                    <ToggleButton          
                 HorizontalAlignment="Left"
                 hc:ToggleButtonAttach.ShowLabel="True"
                 Background="Gray"

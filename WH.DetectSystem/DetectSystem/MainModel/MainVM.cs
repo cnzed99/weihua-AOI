@@ -1507,6 +1507,14 @@ namespace WH.DetectSystem.Models
                         newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
                     }
                 }
+
+                if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
+                {
+                    for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
+                    {
+                        newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
+                    }
+                }
                 if (cells[i].DownMassMatImg!=null)
                 {
                     newCell.DownMassMatImg = cells[i].DownMassMatImg;

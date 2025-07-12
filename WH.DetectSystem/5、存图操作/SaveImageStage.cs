@@ -102,6 +102,7 @@ namespace WH.DetectSystem._5_存图操作
                 string upMassPath;
                 string downMassPath;
                 string pullPath;
+                string fourCutPath;
                 saveImageConfig.GetSavePath(
                     cell,
                     systemSettings.NowShift,
@@ -110,7 +111,8 @@ namespace WH.DetectSystem._5_存图操作
                     out cropName,
                     out upMassPath,
                     out downMassPath,
-                    out pullPath
+                    out pullPath,
+                    out fourCutPath
                 );
                 if (!cell.IsOK || saveImageConfig.OKScreenShot)
                 {
@@ -122,6 +124,16 @@ namespace WH.DetectSystem._5_存图操作
                             saveImageConfig.SaveImageFormat,
                             systemSettings.ShowAllDefect
                         );
+                    }
+                }
+
+                if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
+                {
+                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                    {
+                        int index = fourCutPath.IndexOf('.');
+                        string uppath = fourCutPath.Insert(index, $"_{i}");
+                        OpenCvSharp.Cv2.ImWrite(uppath, cell.FourCutMatImg[i]);
                     }
                 }
                 if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
@@ -468,7 +480,8 @@ namespace WH.DetectSystem._5_存图操作
             out string cropName,
             out string upmassPath,
             out string downmassPath,
-            out string pullPath
+            out string pullPath,
+             out string fourCutPath
         )
         {
             lock (s_PathLock)
@@ -524,27 +537,34 @@ namespace WH.DetectSystem._5_存图操作
                     //        classPath = classPath + "\\" + cell.CamName;
                     //    }
                     //}
-             
-                    upmassPath = $"{classPath}\\UpMassImg";
+                    string dirstr = $"{classPath}\\截图";
+                    upmassPath = $"{dirstr}\\UpMassImg";
                     if (!Directory.Exists(upmassPath))
                     {
                         Directory.CreateDirectory(upmassPath);
                     }
                     upmassPath = $"{upmassPath}{filename}";
 
-                    downmassPath = $"{classPath}\\DownMassImg";
+                    downmassPath = $"{dirstr}\\DownMassImg";
                     if (!Directory.Exists(downmassPath))
                     {
                         Directory.CreateDirectory(downmassPath);
                     }
                     downmassPath = $"{downmassPath}{filename}";
 
-                    pullPath = $"{classPath}\\PullImg";
+                    pullPath = $"{dirstr}\\PullImg";
                     if (!Directory.Exists(pullPath))
                     {
                         Directory.CreateDirectory(pullPath);
                     }
                     pullPath = $"{pullPath}{filename}";
+
+                    fourCutPath = $"{dirstr}\\FourCutImg";
+                    if (!Directory.Exists(pullPath))
+                    {
+                        Directory.CreateDirectory(fourCutPath);
+                    }
+                    fourCutPath = $"{fourCutPath}{filename}";
 
                     if (cell.IsOK)
                     {

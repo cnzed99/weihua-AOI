@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using OpenCvSharp.Extensions;
 using WH.VisionLearning;
+using System.Windows.Input;
 
 
 
@@ -288,7 +289,17 @@ namespace ZipperTestAlgorihm
                     cropRec[i].Height = smallimgHeight;
                     Mat cropimg = img[cropRec[i]];
                     mats.Add(cropimg);
-
+                    if (cell.ImageFile != "")
+                    {
+                        cell.FourCutMatImg.Add(cropimg);
+                    }
+                    else
+                    {
+                        Mat colorMat = new Mat();
+                        Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
+                        cell.FourCutMatImg.Add(cropimg);
+                    }
+                   
                     //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                 }
 
