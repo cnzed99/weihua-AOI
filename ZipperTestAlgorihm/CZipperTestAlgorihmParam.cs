@@ -64,6 +64,12 @@ namespace ZipperTestAlgorihm
         //定义4组矩形来裁切图片
         Rect[] cropRec = new Rect[4];
 
+
+        /// <summary>
+        /// 大缺陷检测对象
+        /// </summary>
+        IVisionModel yolo_BigDet_det;
+
         public CZipperTestAlgorihmParam(string user) : base()
         {
             //DefectSpecies = new()
@@ -89,7 +95,7 @@ namespace ZipperTestAlgorihm
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
-        /// 通用模型
+        /// 通用模型路径
         /// </summary>
         private string Common_Model_Path;
         /// <summary>
@@ -101,9 +107,15 @@ namespace ZipperTestAlgorihm
         /// </summary>
         private string upStopMass_Model_Path;
         /// <summary>
-        /// 拉头
+        /// 拉头模型路径
         /// </summary>
         private string pull_Model_Path;
+
+        /// <summary>
+        /// 2025.3.3 鲍赞宝
+        /// 大缺陷模型路径
+        /// </summary>
+        private string Big_Model_Path;
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
@@ -119,6 +131,9 @@ namespace ZipperTestAlgorihm
 
         //拉头拉片缺陷名称
         protected string[] pull_names;
+
+        //拉头拉片缺陷名称
+        protected string[] bigDet_names;
 
         public string User { get; set; }
         /// <summary>
@@ -154,6 +169,7 @@ namespace ZipperTestAlgorihm
             if (Common_names?.Length > 0)
             {
                 List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
+                List<CDefectRecipe> bigRecipes = new List<CDefectRecipe>();
                 DefectSpecies = new List<CDefectSpecies>();
 
                 for (int i = 0; i < Common_names.Length; i++)
@@ -161,6 +177,12 @@ namespace ZipperTestAlgorihm
                     CDefectRecipe defectRecipe = new CDefectRecipe(Common_names[i], Category.区域);
                     cDefectRecipes.Add(defectRecipe);
                 }
+                for (int i = 0; i < bigDet_names.Length; i++)
+                {
+                    CDefectRecipe defectRecipe = new CDefectRecipe(bigDet_names[i], Category.区域);
+                    bigRecipes.Add(defectRecipe);
+                }
+                CDefectSpecies bigSpecies = new CDefectSpecies("大缺陷", bigRecipes);
 
                 CDefectRecipe defectRecipe0 = new CDefectRecipe("上止压伤", Category.区域);
                 cDefectRecipes.Add(defectRecipe0);
@@ -189,6 +211,7 @@ namespace ZipperTestAlgorihm
 
                 CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
                 DefectSpecies.Add(defectSpecies);
+                DefectSpecies.Add(bigSpecies);
             }
         }
 
@@ -198,13 +221,17 @@ namespace ZipperTestAlgorihm
             string modelDirpath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\";
 
             string commonModelPath = modelDirpath + "CommonModel\\";
+            string bigModelPath = modelDirpath + "BigDetModel\\";
+
             if (user == "正面")
             {
                 commonModelPath = commonModelPath + "Front\\";
+                bigModelPath= bigModelPath + "Front\\";
             }
             if (user == "反面")
             {
                 commonModelPath = commonModelPath + "Back\\";
+                bigModelPath = bigModelPath + "Back\\";
             }
             var commons = GetNames(commonModelPath);
             if (commons.Item1 != "")
@@ -212,6 +239,13 @@ namespace ZipperTestAlgorihm
                 Common_Model_Path = commons.Item1;
                 Common_names = commons.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
+            var bigstrs = GetNames(bigModelPath);
+            if (bigstrs.Item1 != "")
+            {
+                Big_Model_Path = bigstrs.Item1;
+                bigDet_names = bigstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
+
             string downStopMassPath = modelDirpath + "DownStopMassModel\\";
             var downstopstrs = GetNames(downStopMassPath);
             if (downstopstrs.Item1 != "")
@@ -247,10 +281,13 @@ namespace ZipperTestAlgorihm
                 .SelectMany(pattern => Directory.GetFiles(Dirpath, pattern))
                 .ToList();
 
-                if (files.Count > 0)
+                var classNames = Directory.GetFiles(Dirpath, "*.txt", SearchOption.AllDirectories);
+
+                if (files.Count > 0&& classNames.Length>0)
                 {
                     string model_Path = files[0];
-                    string name_Path = Dirpath + "\\classes.txt";
+                    // string name_Path = Dirpath + "\\classes.txt";
+                    string name_Path = classNames[0];
                     string[] de_names = File.ReadAllLines(name_Path);
                     return (model_Path, de_names);
                 }
@@ -275,13 +312,34 @@ namespace ZipperTestAlgorihm
         public override void DetectImage(Cell cell)
         {
             var paramClass = AlgorParams.FirstOrDefault(o => o.Name == ParamSelect) as CParam;
+          
             if (paramClass != null)
             {
+                UpdateScore(paramClass);
                 Mat img = GetMatImage(cell, paramClass);
-                List<Mat> mats = new List<Mat>();
+                List<CoordRestoreData> dets = new List<CoordRestoreData>();
+                if (cell.PhotoIndex != 100) //除了拉头图片，其他线检大缺陷
+                {
+                    DetResult bigResult = ImageInferDet(yolo_BigDet_det, img);
+                    if (bigResult.datas.Count > 0) //如果有大缺陷直接退出
+                    {
+                        for (int j = 0; j < bigResult.datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(bigResult.datas[j].lable);
+                            string labelname = bigDet_names[labelindex];
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
+                            dets.Add(restoreData);
+                        }
+                        //ParseResult(dets, cell);
+                        //img.Dispose();
+                        //dets.Clear();
+                        //return;
+                    }
+                }
+                 List<Mat> mats = new List<Mat>();
                 int smallimgWidth = cell.Image.ImageWidth / 4;
                 int smallimgHeight = cell.Image.ImageHeight;
-                if (cell.PhotoIndex!=100)
+                if (cell.PhotoIndex!=100)  //拉头的图片不拆图
                 {                  
                     for (int i = 0; i < 4; i++)
                     {
@@ -305,14 +363,14 @@ namespace ZipperTestAlgorihm
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }
                 }
-                List<CoordRestoreData> dets = new List<CoordRestoreData>();
+          
                 if (cell.PhotoIndex == 1) //第一张有下止的图
                 {
                     if(mats.Count == 0)
                     {
                         return;
                     }
-                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    List<DetResult> detrets = ImageInferall(mats).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
                         for (int j = 0; j < detrets[i].datas.Count; j++)
@@ -421,7 +479,7 @@ namespace ZipperTestAlgorihm
 
 
                 }
-                else if (cell.PhotoIndex == cell.PhotoTatolCount) //最后一张图片有上止图片
+                else if (cell.PhotoIndex == cell.PhotoTatolCount-1) //最后一张图片有上止图片
                 {
                     if (mats.Count == 0)
                     {
@@ -429,7 +487,7 @@ namespace ZipperTestAlgorihm
                     }
                     int instr = 0;
                     List<Point> massPoints = new List<Point>(); //上止的位置
-                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    List<DetResult> detrets = ImageInferall(mats).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
                         for (int j = 0; j < detrets[i].datas.Count; j++)
@@ -586,9 +644,9 @@ namespace ZipperTestAlgorihm
                         string labelname = pull_names[labelindex];
                         if (labelname.Contains("拉头"))
                         {
-                            int lx = pullResult.datas[j].box.X + pullResult.datas[j].box.Width / 2 - 320;
+                            int lx = pullResult.datas[j].box.X + pullResult.datas[j].box.Width / 2 - 400;
                             int ly = pullResult.datas[j].box.Y + pullResult.datas[j].box.Height / 2 - 320;
-                            int recw = 640;
+                            int recw = 800;
                             int rech = 640;
 
                             if ((lx + recw) > img.Width)
@@ -637,7 +695,7 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    List<DetResult> detrets = ImageInferall(mats, paramClass.Score, paramClass.Nms).Result;
+                    List<DetResult> detrets = ImageInferall(mats).Result;
                     for (int i = 0; i < detrets.Count; i++)
                     {
                         for (int j = 0; j < detrets[i].datas.Count; j++)
@@ -658,7 +716,7 @@ namespace ZipperTestAlgorihm
             }
         }
 
-        private async Task<List<DetResult>> ImageInferall(List<Mat> mats, float score, float nms)
+        private async Task<List<DetResult>> ImageInferall(List<Mat> mats)
         {
             List<DetResult> alldetResult = new List<DetResult>();
             Task<DetResult> task1 = Task.Run(() =>
@@ -772,8 +830,9 @@ namespace ZipperTestAlgorihm
                     int downmass_num = downStopMass_names.Length;
                     int upmass_num = upStopMass_names.Length;
                     int pull_num = pull_names.Length;
+                    int big_num=bigDet_names.Length;
                     // int label_Categ_num = LabelDetect_names.Length;
-                    float Score = param.Score;
+                    float Score = param.CommonScore;
                     float Nms = param.Nms;
                     int Input_size = 640;
 
@@ -845,7 +904,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //    );
 
                     yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.OpenVINO,
-"GPU.0", downmass_num, Score, Nms, 256);
+"GPU.0", downmass_num, param.DownScore, Nms, 256);
 
                     //yolo_UpStopMass_obb = YOLO.GetYolo(
                     //    model_type_obb,
@@ -858,7 +917,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //    InputImgSize.IN192
                     //    );
                     yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.OpenVINO,
-"GPU.0", upmass_num, Score, Nms, 192);
+"GPU.0", upmass_num, param.UpScore, Nms, 192);
                     //  yolo_pull_det = YOLO.GetYolo(
                     //    model_type_det,
                     //    pull_Model_Path,
@@ -871,7 +930,10 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //);
 
                     yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.OpenVINO,
-"GPU.0", pull_num, Score, Nms, 640);
+"GPU.0", pull_num, param.PullScore, Nms, 640);
+
+                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.OpenVINO,
+"GPU.0", big_num, param.BigScore, Nms, 320);
 
                 }
 
@@ -1049,6 +1111,20 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
             );
         }
 
+        private void UpdateScore(CParam param)
+        {
+            yolo_all_det1.UpdateNMS_Score(param.CommonScore,param.Nms);
+            yolo_all_det2.UpdateNMS_Score(param.CommonScore, param.Nms);
+            yolo_all_det3.UpdateNMS_Score(param.CommonScore, param.Nms);
+            yolo_all_det4.UpdateNMS_Score(param.CommonScore, param.Nms);
+
+            yolo_UpStopMass_obb.UpdateNMS_Score(param.UpScore, param.Nms);
+            yolo_DownStopMass_obb.UpdateNMS_Score(param.DownScore, param.Nms);
+
+            yolo_pull_det.UpdateNMS_Score(param.PullScore, param.Nms);
+            yolo_BigDet_det.UpdateNMS_Score(param.BigScore, param.Nms);
+        }
+
     }
 
     /// <summary>
@@ -1064,15 +1140,54 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
             : base(name, token) { }
 
         /// <summary>
-        /// 2024.10.28 鲍赞宝
-        /// 最小分数阈值
+        /// 2024.7.21 鲍赞宝
+        /// 通用模型分数阈值
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("最小分数阈值")]
-        [property: Description("最小分数阈值")]
-        private float score = 0.6f;
+        [property: DisplayName("通用模型分数阈值")]
+        [property: Description("通用模型分数阈值")]
+        private float commonScore = 0.3f;
 
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 下止模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("下止分数阈值")]
+        [property: Description("下止分数阈值")]
+        private float downScore = 0.7f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 上止模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("上止分数阈值")]
+        [property: Description("上止分数阈值")]
+        private float upScore = 0.7f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("拉头分数阈值")]
+        [property: Description("拉头分数阈值")]
+        private float pullScore = 0.7f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("大缺陷分数阈值")]
+        [property: Description("大缺陷分数阈值")]
+        private float bigScore = 0.7f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝

@@ -156,7 +156,12 @@ namespace ZipperInfo
     public enum LOGOTYPE
     {
         SBS=0,
-        ANTA=1
+        ANTA=1,
+        单包=2,
+        无Logo=3
+
+           
+
     }
 
 }

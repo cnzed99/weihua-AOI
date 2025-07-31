@@ -79,10 +79,10 @@ namespace ZipperInfo
                     foreach (var item in CLinghtManagement.LightControlDict.Values)
                     {
                         Thread.Sleep(20);
-                        item.BaseConfig.LightChannelList[0].Value = 5;
+                        item.BaseConfig.LightChannelList[0].Value = 15;
                         item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
                         Thread.Sleep(20);
-                        item.BaseConfig.LightChannelList[1].Value = 35;
+                        item.BaseConfig.LightChannelList[1].Value = 15;
                         item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
                     }
 

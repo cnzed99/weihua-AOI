@@ -360,7 +360,7 @@ namespace 断面毛刺检测软件.Views
                                 {
                                     ID = pid,
                                     PhotoIndex = int.Parse(pindex),
-                                    PhotoTatolCount = Allfiles.Length-1,//多1张是拉头图片 不参与拼接图片
+                                    PhotoTatolCount = Allfiles.Length,
                                     isOnce = once,
                                     Quality = mainVM.MaociQualityConfig.Qualities[0],
                                     ImageFile = filepath,
@@ -516,18 +516,22 @@ namespace 断面毛刺检测软件.Views
 
         private void btn_ImgDir_Click(object sender, RoutedEventArgs e)
         {
-#if NET8_0_OR_GREATER
             if (imgFolderDialog.ShowDialog() is true)
             {
               //  string[] Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
                 string[] Allfiles = Directory.GetDirectories(imgFolderDialog.FolderName);
-#else
-            if (imgFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                // string[] Allfiles = Directory.GetFiles(imgFolderDialog.SelectedPath);
 
-                string[] Allfiles = Directory.GetDirectories(imgFolderDialog.SelectedPath);
-#endif
+                if (Allfiles.Length==0) //没有文件夹就读文件
+                {
+                    Allfiles = Directory.GetFiles(imgFolderDialog.FolderName);
+                }
+
+            //if (imgFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            //{
+            //    // string[] Allfiles = Directory.GetFiles(imgFolderDialog.SelectedPath);
+
+            //    string[] Allfiles = Directory.GetDirectories(imgFolderDialog.SelectedPath);
+
                 List<string> imgs = new List<string>();
                 //foreach (var file in Allfiles)
                 //{

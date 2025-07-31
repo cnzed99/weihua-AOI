@@ -639,7 +639,7 @@ namespace WH.DetectSystem.Models
                                 }
                                 //cell.PhotoIndex = photoID;
                                 cell.ID = productID.ToString();
-                                cell.PhotoTatolCount = photoTotalCount;
+                                cell.PhotoTatolCount = photoTotalCount+1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
                             else
                             {
@@ -757,7 +757,7 @@ namespace WH.DetectSystem.Models
                                 SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
                                 List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
                                 SysLog.Info($"{Name}-当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
-                                if (currentCells.Count >= cell.PhotoTatolCount + 1)
+                                if (currentCells.Count >= cell.PhotoTatolCount)
                                 {
                                     // sss = 0;
                                     SysLog.Info($"{Name}-满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
@@ -1533,7 +1533,7 @@ namespace WH.DetectSystem.Models
         //  Mat matresult;
         private CImage GetCImage(List<Cell> cells)
         {
-            cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
+           
             if (cells.Count <= 1)
             {
                 if (cells.Count == 1)
@@ -1546,6 +1546,7 @@ namespace WH.DetectSystem.Models
                 }
 
             }
+            cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
             int height = cells[0].Image.ImageHeight;
             int width = cells[0].Image.ImageWidth;
             int[] widths = cells.Select(c => c.Image.ImageWidth).ToArray();
