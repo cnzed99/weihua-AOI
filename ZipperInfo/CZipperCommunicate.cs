@@ -376,21 +376,21 @@ namespace ZipperInfo
         /// <summary>
         /// 第二阶段完成
         /// </summary>
-        public static void SceondstageFinsh()
-        {
-            //try
-            //{
-            if (com != null)
-            {
-                com.WriteSingleCoil(21, true);
-            }
+        //public static void SceondstageFinsh()
+        //{
+        //    //try
+        //    //{
+        //    if (com != null)
+        //    {
+        //        com.WriteSingleCoil(21, true);
+        //    }
 
-            //}
-            //catch (Exception)
-            //{
-            //}
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //}
 
-        }
+        //}
         /// <summary>
         /// 第三阶段完成
         /// </summary>
@@ -437,6 +437,50 @@ namespace ZipperInfo
                 com.WriteSingleCoil(24, true);
             }
         }
+        /// <summary>
+        /// 轴运动继续
+        /// </summary>
+        public static void AixtContinue()
+        {
+            if (com != null)
+            {
+                com.WriteSingleCoil(25, true);
+            }
+        }
+
+        /// <summary>
+        /// 停止拍照
+        ///  2025-7-30鲍赞宝
+        /// </summary>
+        public static void CamTriggerStop()
+        {
+            if (com != null)
+            {
+                com.WriteSingleCoil(21, true);
+            }
+        }
+
+        /// <summary>
+        /// 设置PLC触发相机的拍照频率 
+        /// 2025-7-30鲍赞宝
+        /// </summary>
+        public static void SendCamFPS(int time)
+        {
+            //try
+            //{
+           
+                if (com != null)
+                {
+                    com.WriteSingleRegisterInt32(41256,time);
+                }
+
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
+        }
+
         #endregion
 
     }

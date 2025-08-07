@@ -269,7 +269,11 @@ namespace WH.DetectSystem.Models
         {
             if (finsh)
             {
-
+                foreach (var cell in MergeCells)
+                {
+                    cell?.Dispose();
+                }
+                MergeCells.Clear();
                 if (this.Name == "正面")
                 {
                     if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
@@ -1088,6 +1092,7 @@ namespace WH.DetectSystem.Models
                                     if (!cell.IsOK)
                                     {
                                         CurView.SetFontSize(25);
+                                        CurView.SetFontWeight(System.Windows.FontWeights.Bold);
                                         DefectFilter dstFilter = cell.Detection.DefectFilter;
                                         StringBuilder textBuilder = new StringBuilder();
                                         textBuilder.Append(cell.Quality.Name);
@@ -1126,6 +1131,7 @@ namespace WH.DetectSystem.Models
                                                 //    defectFilter.ShowColor.Brush
                                                 //);
                                                 drawView.SetFontSize(15);
+                                                CurView.SetFontWeight(System.Windows.FontWeights.Normal);
                                                 DefectFilter defectFilter =
                                              detection.DefectFilter;
                                                 drawView.SetPen(Brushes.Red);
@@ -1187,6 +1193,7 @@ namespace WH.DetectSystem.Models
                                                     drawView = LastView;
                                                 }
                                                 drawView.SetFontSize(15);
+                                                CurView.SetFontWeight(System.Windows.FontWeights.Normal);
                                                 //drawView.SetPen(defectFilter.ShowColor.Brush);
                                                 //drawView.SetFontBrush(
                                                 //    defectFilter.ShowColor.Brush
@@ -1233,6 +1240,7 @@ namespace WH.DetectSystem.Models
                                     else
                                     {
                                         CurView.SetFontSize(25);
+                                        CurView.SetFontWeight(System.Windows.FontWeights.Bold);
                                         CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
                                         CurView.WinDrawText(
                                             "OK",

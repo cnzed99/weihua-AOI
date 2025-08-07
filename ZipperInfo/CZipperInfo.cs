@@ -12,16 +12,36 @@ namespace ZipperInfo
 {
     public partial class CZipperInfo: ObservableObject
     {
+        private float zipperLneght;
         /// <summary>
         /// 拉链长度
         /// 2025.05.24 鲍赞宝
         /// </summary>
         [property: Category("拉链信息")]
-        [property: DisplayName("01.拉链长度(cm)")]
-        [property: Description("拉链长度,单位cm")]
+        [property: DisplayName("01.拉链长度(mm)")]
+        [property: Description("拉链长度,单位mm")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        float zipperLneght = 0.0f;
+        public float ZipperLneght
+        {
+            get { return zipperLneght; }
+            set
+            { 
+                zipperLneght = value; 
+                OnPropertyChanged();
+                if (AutoData != null)
+                {
+                    AutoData.ZipperLenght = value;
+                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount);
+                    CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
+                    //写入拍照的总图片数量
+                    CZipperCommunicate.SendPhotoCount(points.Count);
+                    //计算拉链触发点位 ID改变位置
+                    CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+                }
+              
+            }
+        }
+
         /// <summary>
         /// 链牙型号(大小)
         /// 2025.05.24 鲍赞宝
@@ -125,6 +145,10 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         public int zipperPullerCY;
+        /// <summary>
+        /// 拉链外部参数
+        /// </summary>
+       public CAutomaticModel AutoData {  get; set; }
 
     }
 

@@ -22,7 +22,9 @@ namespace ZipperInfo
         public AutoFinshWindow()
         {
             InitializeComponent();
-            CZipperAutomaticAlgorithm.Dispatcher=this.Dispatcher;
+           // CZipperAutomaticAlgorithm.Dispatcher=this.Dispatcher;
+           // ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+            //this.DataContext = zipperInfoVM;
         }
     }
 }

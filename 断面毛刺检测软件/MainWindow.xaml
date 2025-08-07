@@ -693,7 +693,7 @@
                             </hc:TabControl>
                         </Border>
                         <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="2">
-                            <zipper:UserControl1/>
+                            <zipper:ZipperInfoUserControl Name="zipperInfoShow"/>
                         </Border>
 
                     </Grid>

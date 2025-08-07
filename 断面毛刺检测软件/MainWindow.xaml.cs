@@ -880,8 +880,11 @@ namespace 断面毛刺检测软件
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
         {
-            ZipperInfoVM zipperInfoVM;
-            AutoFinshWindow autoFinshWindow;
+
+            
+            CZipperAutomaticAlgorithm.Dispatcher = this.Dispatcher;
+            AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
+            ProgressBarWindow progressBarWindow = new ProgressBarWindow();
             ZipperAutomaticWindow AutomaticWindow = App
             .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
             .Value;
@@ -891,29 +894,44 @@ namespace 断面毛刺检测软件
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
                     mainVM.IsAutomaticTest = b;
-                }             
+                }
            
-                zipperInfoVM=new ZipperInfoVM();
+                ProgressBarViewModel.ProgressFinshEven=null;
+                ProgressBarViewModel.ProgressFinshEven = () =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        progressBarWindow?.Close();
+                    });
+                  
+
+                };
+               // progressBarWindow.Closed += ProgressBarWindow_Closed;
+                progressBarWindow.ShowDialog();
+
+                ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
                 autoFinshWindow = new AutoFinshWindow();
                 autoFinshWindow.DataContext = zipperInfoVM;
                 autoFinshWindow.Closed += AutoFinshWindow_Closed;
-                autoFinshWindow.Activate();
                 autoFinshWindow.Show();
-                
+                autoFinshWindow.Activate();
+                zipperInfoShow.DataContext = zipperInfoVM;
             };
-           // AutomaticWindow.Closed += AutomaticWindow_Closed;
             AutomaticWindow.Show();
             AutomaticWindow.Activate();
             //OperateLog.Info(Properties.Resources.ImageSave);
         }
-
         private void AutoFinshWindow_Closed(object sender, EventArgs e)
         {
-            foreach (var mainVM in CMainList.CMainVMs)
+            this.Dispatcher?.Invoke(() => 
             {
-                mainVM.IsAutomaticTest = false;
-            }
-            CZipperAutomaticAlgorithm.onWichStage = 0;
+                foreach (var mainVM in CMainList.CMainVMs)
+                {
+                    mainVM.IsAutomaticTest = false;
+                }
+                CZipperAutomaticAlgorithm.onWichStage = 0;
+            });
+          
         }
         #endregion
     }
