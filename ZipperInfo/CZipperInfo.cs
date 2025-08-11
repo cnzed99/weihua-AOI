@@ -182,10 +182,11 @@ namespace ZipperInfo
         SBS=0,
         ANTA=1,
         单包=2,
-        无Logo=3
-
-           
-
+        无Logo=3,
+        Kith,
+        Oneills,
+        JAKO,
+        ONLY
     }
 
 }

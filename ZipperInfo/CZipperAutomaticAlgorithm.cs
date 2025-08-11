@@ -51,9 +51,22 @@ namespace ZipperInfo
 
         /// <summary>
         /// 2025.7.2 鲍赞宝
+        /// 识别拉头对象
+        /// </summary>
+        //YOLO yolo_search_det = new();
+        IVisionModel yolo_pull_det;
+
+        /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 识别名
         /// </summary>
-        string[] de_names;
+        string[] de_search_names;
+
+        /// <summary>
+        /// 2025.8.10 鲍赞宝
+        /// 识别名
+        /// </summary>
+        string[] de_pull_names;
         /// <summary>
         /// 超时统计
         /// </summary>
@@ -91,15 +104,53 @@ namespace ZipperInfo
         public static Action<bool> TestFinshEven;
         public CZipperAutomaticAlgorithm()
         {
-            string modelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\AutoMatic";
-            string txtpath = modelDirPath + "\\classes.txt";
-            //string modelpath = modelDirPath + "\\lalianAuto.onnx";
-            string modelpath = modelDirPath + "\\lalianAuto.model";
-            if (File.Exists(txtpath))
+            string SearchmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullSearch";
+            string Searchtxtpath;
+            string Searchmodelpath="";
+
+            string pullmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullModel";
+            string pulltxtpath;
+            string pullmodelpath="";
+
+            if (Directory.Exists(SearchmodelDirPath))
             {
-                de_names = File.ReadAllLines(txtpath);
-                IniYolo(modelpath);
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                var files = searchPatterns
+                .SelectMany(pattern => Directory.GetFiles(SearchmodelDirPath, pattern))
+                .ToList();
+
+                var classNames = Directory.GetFiles(SearchmodelDirPath, "*.txt", SearchOption.AllDirectories);
+
+                if (files.Count > 0 && classNames.Length > 0)
+                {
+                     Searchmodelpath = files[0];
+                     Searchtxtpath = classNames[0];
+                    de_search_names = File.ReadAllLines(Searchtxtpath);
+                }
             }
+
+            if (Directory.Exists(pullmodelDirPath))
+            {
+                string[] pullPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                var files = pullPatterns
+                .SelectMany(pattern => Directory.GetFiles(pullmodelDirPath, pattern))
+                .ToList();
+
+                var classNames = Directory.GetFiles(pullmodelDirPath, "*.txt", SearchOption.AllDirectories);
+
+                if (files.Count > 0 && classNames.Length > 0)
+                {
+                    pullmodelpath = files[0];
+                    pulltxtpath = classNames[0];
+                    de_pull_names = File.ReadAllLines(pulltxtpath);
+                }
+            }
+            if (Searchmodelpath != "" && pullmodelpath != "")
+            {
+                IniYolo(Searchmodelpath, pullmodelpath);
+            }
+            
+
             if (CLinghtManagement.LightControlDict.Count >= 2)
             {
                 LightCtl_Zuo = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port.Name == "COM1");
@@ -986,7 +1037,7 @@ namespace ZipperInfo
                         for (int i = 0; i < resultDet.datas.Count; i++)
                         {
                             int nameindex = int.Parse(resultDet.datas[i].lable);
-                            string labelstr = de_names[nameindex];
+                            string labelstr = de_search_names[nameindex];
                             if (labelstr.Contains("注塑下止") && !findDownMass)
                             {
                                 findDownMassCount++;
@@ -1415,7 +1466,7 @@ namespace ZipperInfo
                         for (int i = 0; i < resultDet.datas.Count; i++)
                         {
                             int nameindex = int.Parse(resultDet.datas[i].lable);
-                            string labelstr = de_names[nameindex];
+                            string labelstr = de_search_names[nameindex];
                             if (labelstr.Contains("拉头"))
                             {
                                 HOperatorSet.GenImageInterleaved(
@@ -1558,7 +1609,7 @@ namespace ZipperInfo
                     for (int i = 0; i < resultDet.datas.Count; i++)
                     {
                         int nameindex = int.Parse(resultDet.datas[i].lable);
-                        string labelstr = de_names[nameindex];
+                        string labelstr = de_search_names[nameindex];
                         if (labelstr == "拉头" && !findPuller)
                         {
                             AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到拉头findPuller = true");
@@ -1593,25 +1644,82 @@ namespace ZipperInfo
                             });
                             AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到拉头拉片,findPulls=true更新拉片图片");
 
+                            int lx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2 - 400;
+                            int ly = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2 - 320;
+                            int recw = 800;
+                            int rech = 640;
+
+                            if ((lx + recw) > img.Width)
+                            {
+                                lx = img.Width - recw;
+                            }
+                            if (lx < 0)
+                            {
+                                lx = 0;
+                            }
+
+                            if ((ly + rech) > img.Height)
+                            {
+                                ly = img.Height - rech;
+                            }
+                            if (ly < 0)
+                            {
+                                ly = 0;
+                            }
+
+                            Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
+
+                            DetResult pullResult = yolo_pull_det.Predict(croppullMat) as DetResult;
+                            for (int j  = 0; j < pullResult.count; j++)
+                            {
+                                int pulllabelindex = int.Parse(pullResult[j].lable);
+                                string pullabelname = de_pull_names[pulllabelindex];
+
+                                if (pullabelname == "SBS")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.SBS;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:SBS,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "ANTA")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.ANTA;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:ANTA,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "单包")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.单包;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:单包,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "Oneills")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.Oneills;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:SBS,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "ONLY")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.ONLY;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:ANTA,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "JAKO")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.JAKO;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:单包,findLogo=true更新Logo图片");
+                                }
+                                if (pullabelname == "Kith")
+                                {
+                                    findLogo = true;
+                                    ZipperInfo.ZipperLogoType = LOGOTYPE.Kith;
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:单包,findLogo=true更新Logo图片");
+                                }
+                            }
                         }
-                        if (labelstr == "SBS")
-                        {
-                            findLogo = true;
-                            ZipperInfo.ZipperLogoType = LOGOTYPE.SBS;
-                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:SBS,findLogo=true更新Logo图片");
-                        }
-                        if (labelstr == "ANTA")
-                        {
-                            findLogo = true;
-                            ZipperInfo.ZipperLogoType = LOGOTYPE.ANTA;
-                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:ANTA,findLogo=true更新Logo图片");
-                        }
-                        if (labelstr == "单包")
-                        {
-                            findLogo = true;
-                            ZipperInfo.ZipperLogoType = LOGOTYPE.单包;
-                            AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:单包,findLogo=true更新Logo图片");
-                        }
+                      
                     }
                     if (findPuller && findPulls)
                     {
@@ -1737,35 +1845,28 @@ namespace ZipperInfo
             //}
         
         #endregion
-        private void IniYolo(string modelpath)
+        private void IniYolo(string searchmodelpath,string pullmodelpath)
         {
-            if (!File.Exists(modelpath))
+            if (!File.Exists(searchmodelpath)&& !File.Exists(pullmodelpath))
             {
                 return;
             }
-
-            //yolo_search_det.Dispose();
-
-            // ModelType model_type_det = ModelType.VisionModelDet;
-            // EngineType engine_type = EngineType.OpenVINO;
             string CurrentDevice = "GPU.0";
-            int common_Categ_num = de_names.Length;
+            int search_Categ_num = de_search_names.Length;
             float Score = 0.6f;
             float Nms = 0.5f;
             int Input_size = 640;
 
-            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, modelpath, EngineType.OpenVINO,
-                CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-            //yolo_search_det = YOLO.GetYolo(
-            //    model_type_det,
-            //    modelpath,
-            //    engine_type,
-            //    CurrentDevice,
-            //    common_Categ_num,
-            //    Score,
-            //    Nms,
-            //    Input_size
-            //);
+            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.OpenVINO,
+                CurrentDevice, search_Categ_num, Nms, Score,  Input_size);
+
+            int pull_Categ_num = de_pull_names.Length;
+             Score = 0.6f;
+             Nms = 0.75f;
+
+            yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.OpenVINO,
+                CurrentDevice, pull_Categ_num, Nms, Score,  Input_size);
+
         }
 
 

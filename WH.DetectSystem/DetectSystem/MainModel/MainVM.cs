@@ -267,40 +267,49 @@ namespace WH.DetectSystem.Models
 
         private void TestFinshTodo(bool finsh)
         {
-            if (finsh)
+            //if (finsh)
+            //{
+            foreach (var cell in MergeCells)
             {
-                foreach (var cell in MergeCells)
+                cell?.Dispose();
+            }
+            MergeCells.Clear();
+            if (this.Name == "正面")
+            {
+                if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
                 {
-                    cell?.Dispose();
-                }
-                MergeCells.Clear();
-                if (this.Name == "正面")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
-                        UpdateCam(camDic.SerialNumber);
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
-                        UpdateCam(camDic.SerialNumber);
-                    }
+                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                    UpdateCam(camDic.SerialNumber);
+                    UpdateLogo("左相机");
+                    Updatepull("左相机");
+
                 }
                 else
                 {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
-                        UpdateCam(camDic.SerialNumber);
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
-                        UpdateCam(camDic.SerialNumber);
-                    }
+                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                    UpdateCam(camDic.SerialNumber);
+                    UpdateLogo("右相机");
+                    Updatepull("右相机");
                 }
             }
+            else
+            {
+                if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                {
+                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                    UpdateCam(camDic.SerialNumber);
+                    UpdateLogo("右相机");
+                    Updatepull("右相机");
+                }
+                else
+                {
+                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                    UpdateCam(camDic.SerialNumber);
+                    UpdateLogo("左相机");
+                    Updatepull("左相机");
+                }
+            }
+            //}
         }
 
         #region 时间相关
@@ -608,7 +617,7 @@ namespace WH.DetectSystem.Models
 
 
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                            cell.ZipperPullerCX= CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
                             if (productID != -1)
                             {
@@ -643,7 +652,7 @@ namespace WH.DetectSystem.Models
                                 }
                                 //cell.PhotoIndex = photoID;
                                 cell.ID = productID.ToString();
-                                cell.PhotoTatolCount = photoTotalCount+1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
                             else
                             {
@@ -987,7 +996,7 @@ namespace WH.DetectSystem.Models
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
                                 {
                                     CurView.Clear(false);
-                                    LastView.Clear(false); 
+                                    LastView.Clear(false);
                                     ModelImage = bitmapSource;
                                     ZipperPullImage = zipperPullimg;
                                     foreach (var edge in cell.DrawEdges)
@@ -1149,7 +1158,7 @@ namespace WH.DetectSystem.Models
                                                         false
                                                     );
                                                     System.Windows.Point p1 = detection.regionOut[i].GetCenter();
-                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight-60);
+                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
                                                     string txtlog = detection.DetectLog[i].ToString().Split(':')[0];
                                                     drawView.ImgDrawText(
                                                       txtlog,
@@ -1213,7 +1222,7 @@ namespace WH.DetectSystem.Models
                                                         false
                                                     );
                                                     System.Windows.Point p1 = cell.Detection.regionOut[i].GetCenter();
-                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight-60);
+                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
                                                     string txtlog = cell.Detection.DetectLog.ToString().Split(':')[0];
                                                     drawView.ImgDrawText(
                                                       txtlog,
@@ -1508,7 +1517,7 @@ namespace WH.DetectSystem.Models
                 {
                     newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
                 }
-                if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count>0)
+                if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
                 {
                     for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
                     {
@@ -1523,7 +1532,7 @@ namespace WH.DetectSystem.Models
                         newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
                     }
                 }
-                if (cells[i].DownMassMatImg!=null)
+                if (cells[i].DownMassMatImg != null)
                 {
                     newCell.DownMassMatImg = cells[i].DownMassMatImg;
                 }
@@ -1541,7 +1550,7 @@ namespace WH.DetectSystem.Models
         //  Mat matresult;
         private CImage GetCImage(List<Cell> cells)
         {
-           
+
             if (cells.Count <= 1)
             {
                 if (cells.Count == 1)
@@ -1658,7 +1667,134 @@ namespace WH.DetectSystem.Models
             }
             else { }
         }
+        /// <summary>
+        /// 更新拉头配置
+        /// </summary>
+        /// <param name="leftorright"></param>
+        private void Updatepull(string leftorright)
+        {
+            if (leftorright == "左相机")
+            {
+                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                foreach (var pullname in pullnames.RecipeDefects)
+                {
+                    if (pullname.Name=="拉头")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = false;
+                            }
+                        }
+                    }
+                    if (pullname.Name == "拉片")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = true;
+                            }
+                        }
+                    }
 
+                }
+            }
+            else
+            {
+                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                foreach (var pullname in pullnames.RecipeDefects)
+                {
+                    if (pullname.Name == "拉头")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = true;
+                            }
+                        }
+                    }
+                    if (pullname.Name == "拉片")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = false;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        /// <summary>
+        /// 更新Logo配置
+        /// </summary>
+        private void UpdateLogo(string leftorright)
+        {
+            if (leftorright =="左相机")
+            {
+
+                SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
+                if ("无Logo" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType.ToString())
+                {
+                    foreach (var logoname in logonames.RecipeDefects)
+                    {
+                        foreach (var df in logoname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var logoname in logonames.RecipeDefects)
+                    {
+
+                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType.ToString())
+                        {
+                            foreach (var df in logoname.DefectFilters)
+                            {
+                                foreach (var fl in df.FilterList)
+                                {
+                                    fl.FilterSelectEnable = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var df in logoname.DefectFilters)
+                            {
+                                foreach (var fl in df.FilterList)
+                                {
+                                    fl.FilterSelectEnable = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
+                foreach (var logoname in logonames.RecipeDefects)
+                {
+                    foreach (var df in logoname.DefectFilters)
+                    {
+                        foreach (var fl in df.FilterList)
+                        {
+                            fl.FilterSelectEnable = false;
+                        }
+                    }
+                }
+            }
+        }
         /// <summary>
         /// 2024.9.2 李焕彬
         /// 更新相机序列号
