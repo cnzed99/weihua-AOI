@@ -52,6 +52,16 @@ namespace SDFilter
         /// VM
         /// </summary>
         public CDefectFilterSetVM VM { get; set; }
+
+        public static bool CanColse = true;
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!CanColse) 
+            { 
+                e.Cancel = true;
+            }
+        }
     }
 
     /// <summary>
@@ -82,6 +92,7 @@ namespace SDFilter
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             //CBindingProxy bindingProxy = ValidationParams.Data as CBindingProxy;
+            DefectFilterSetWin.CanColse = false;
             OneSelectParams viewModel = ValidationParams.Data as OneSelectParams;
             if (
                 double.TryParse(value.ToString(), out double result) /* && int.TryParse(textbox.Text, out int result2)*/
@@ -95,22 +106,26 @@ namespace SDFilter
                         {
                             ValidationParams.Max = result;
                             ValidationParams.IsMaxError = true;
-                            return new ValidationResult(false, "不能小于最小值！");
+                            DefectFilterSetWin.CanColse = false;
+                            return new ValidationResult(false, "不能小于最小值！");   
                         }
                         else
                         {
                             ValidationParams.IsMinError = false;
                             ValidationParams.IsMaxError = false;
+                            DefectFilterSetWin.CanColse = true;
                             viewModel.Max = result;
                             viewModel.Min = ValidationParams.Min;
                         }
                     }
                     else
                     {
+                        DefectFilterSetWin.CanColse = true;
                         if (result < viewModel.Min)
                         {
                             ValidationParams.Max = result;
                             ValidationParams.IsMaxError = true;
+                            DefectFilterSetWin.CanColse = false;
                             return new ValidationResult(false, "不能小于最小值！");
                         }
                         ValidationParams.IsMaxError = false;
@@ -124,22 +139,26 @@ namespace SDFilter
                         {
                             ValidationParams.Min = result;
                             ValidationParams.IsMinError = true;
+                            DefectFilterSetWin.CanColse = false;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
                         else
                         {
                             ValidationParams.IsMinError = false;
                             ValidationParams.IsMaxError = false;
+                            DefectFilterSetWin.CanColse = true;
                             viewModel.Min = result;
                             viewModel.Max = ValidationParams.Max;
                         }
                     }
                     else
                     {
+                        DefectFilterSetWin.CanColse = true;
                         if (result > viewModel.Max)
                         {
                             ValidationParams.Min = result;
                             ValidationParams.IsMinError = true;
+                            DefectFilterSetWin.CanColse = false;
                             return new ValidationResult(false, "不能大于最大值！");
                         }
                         ValidationParams.IsMinError = false;

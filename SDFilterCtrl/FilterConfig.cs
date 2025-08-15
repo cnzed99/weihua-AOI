@@ -65,9 +65,13 @@ namespace SDFilter
                     SpeciesFilter speciesFilter = new SpeciesFilter(specie.Name, token);
                     foreach (var recipe in specie.RecipeDefects)
                     {
-                        speciesFilter.RecipeDefects.Add(
-                            new RecipeDefect(recipe.Name, recipe.Category, token)
-                        );
+                        RecipeDefect rd = new RecipeDefect(recipe.Name, recipe.Category, token);
+                        if (recipe.Category==Category.区域)
+                        {
+                            rd.DefectFilters[0].FilterList[0].Filter[0].SelectParams[0].Character = CFeacture.FeactureArea;
+                            rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[0].Character = CFeacture.FeactureArea;
+                        }
+                        speciesFilter.RecipeDefects.Add(rd);
                     }
                     SpFilters.Add(speciesFilter);
                 }
@@ -630,7 +634,7 @@ namespace SDFilter
         public FilterAndSelect(Token token)
         {
             this.token = token;
-            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
+            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig(token)};
             SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
         }
 
@@ -753,7 +757,7 @@ namespace SDFilter
         /// </summary>
         [property: DisplayName("特征")]
         [ObservableProperty]
-        private CFeacture character = CFeacture.FeactureCount;
+        private CFeacture character = CFeacture.FeactureValue;
 
         /// <summary>
         /// 2024.7.4 李焕彬

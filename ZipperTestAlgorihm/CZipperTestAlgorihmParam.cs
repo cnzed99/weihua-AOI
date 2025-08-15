@@ -80,14 +80,14 @@ namespace ZipperTestAlgorihm
             SetDefectRecipe(User);
 
             DefectFeatures = new();
-
-            DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
-            DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
             DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
+            DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
+            DefectFeatures.Add(new("Height", "高度", "Height", "um"));
+            DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
+            DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
-            DefectFeatures.Add(new("Height", "高度", "Height", "um"));
-            DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
+
 
         }
 
@@ -434,8 +434,6 @@ namespace ZipperTestAlgorihm
                     List<DetResult> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
-
-
                         for (int i = 0; i < detrets.Count; i++)
                         {
                             for (int j = 0; j < detrets[i].datas.Count; j++)
@@ -939,40 +937,40 @@ namespace ZipperTestAlgorihm
                     float Nms = param.Nms;
                     int Input_size = 640;
 
-                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num,  Score, Nms, Input_size);
 
 
-                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num,  Score, Nms, Input_size);
 
 
-                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms,  Input_size);
 
-                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.OpenVINO,
+                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms,  Input_size);
 
                     if (downmass_num>0)
                     {
-                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.OpenVINO,
+                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
 "GPU.0", downmass_num,  param.DownScore, Nms, 256);
                     }
 
                     if (upmass_num>0)
                     {
-                        yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.OpenVINO,
+                        yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.TensorRT,
 "GPU.0", upmass_num, param.UpScore, Nms, 192);
                     }
 
 
-                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.OpenVINO,
+                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
 "GPU.0", pull_search_num, 0.6f, Nms, 640);
 
-                    yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.OpenVINO,
+                    yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.TensorRT,
 "GPU.0", pull_num,  param.PullScore, 0.8f, 640);
 
-                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.OpenVINO,
+                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
 "GPU.0", big_num, param.BigScore, Nms, 320);
 
                 }

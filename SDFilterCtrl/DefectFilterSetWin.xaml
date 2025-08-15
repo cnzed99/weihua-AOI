@@ -19,7 +19,7 @@
     ResizeMode="NoResize"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Closing="Window_Closing" >
     <Window.Resources>
         <ResourceDictionary>
             <entityproxy:CBindingProxy x:Key="scroll" Data="{Binding ElementName=scroll, Path=DataContext.FilterCharacters}" />
@@ -204,7 +204,7 @@
                                                 IsChecked="{Binding MinLimit}" />
                                             <TextBox Grid.Column="4" Margin="10,0,10,0">
                                                 <TextBox.Text>
-                                                    <Binding Path="Min" UpdateSourceTrigger="PropertyChanged">
+                                                    <Binding Path="Min" UpdateSourceTrigger="LostFocus">
                                                         <Binding.ValidationRules>
                                                             <local:MinMaxValidation IsGreater="False" ValidationParams="{StaticResource BindingProxy}" />
                                                         </Binding.ValidationRules>
@@ -218,7 +218,7 @@
                                                 IsChecked="{Binding MaxLimit}" />
                                             <TextBox Grid.Column="6" Margin="10,0,10,0">
                                                 <TextBox.Text>
-                                                    <Binding Path="Max" UpdateSourceTrigger="PropertyChanged">
+                                                    <Binding Path="Max" UpdateSourceTrigger="LostFocus">
                                                         <Binding.ValidationRules>
                                                             <local:MinMaxValidation IsGreater="True" ValidationParams="{StaticResource BindingProxy}" />
                                                         </Binding.ValidationRules>

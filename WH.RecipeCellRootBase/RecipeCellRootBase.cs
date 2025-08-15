@@ -532,6 +532,11 @@ namespace WH.RecipeCellRootBase
         /// 数值特征
         /// </summary>
         public static CFeacture FeactureValue = new("Value", "数值", "Value", "");
+        /// <summary>
+        /// 2024.8.14 鲍赞宝
+        /// 面积特征
+        /// </summary>
+        public static CFeacture FeactureArea = new("Area", "面积", "Area", "um²");
     }
 
     /// <summary>
@@ -611,6 +616,11 @@ namespace WH.RecipeCellRootBase
         public Point GetCenter()
         {
             return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+        }
+
+        public Point GetBottomRight()
+        {
+            return rect.BottomRight;
         }
     }
 }

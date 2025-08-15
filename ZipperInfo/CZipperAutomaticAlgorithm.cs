@@ -1857,15 +1857,15 @@ namespace ZipperInfo
             float Nms = 0.5f;
             int Input_size = 640;
 
-            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.OpenVINO,
-                CurrentDevice, search_Categ_num, Nms, Score,  Input_size);
+            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
+                CurrentDevice, search_Categ_num, Score, Nms, Input_size);
 
             int pull_Categ_num = de_pull_names.Length;
              Score = 0.6f;
-             Nms = 0.75f;
+             Nms = 0.8f;
 
-            yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.OpenVINO,
-                CurrentDevice, pull_Categ_num, Nms, Score,  Input_size);
+            yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
+                CurrentDevice, pull_Categ_num, Score, Nms, Input_size);
 
         }
 

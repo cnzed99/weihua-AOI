@@ -37,6 +37,7 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static Mysqlx.Crud.Order.Types;
 
 
 
@@ -1157,8 +1158,9 @@ namespace WH.DetectSystem.Models
                                                         detection.regionOut[i].points,
                                                         false
                                                     );
-                                                    System.Windows.Point p1 = detection.regionOut[i].GetCenter();
-                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                    //System.Windows.Point p1 = detection.regionOut[i].GetCenter();
+                                                    // System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                    System.Windows.Point p2=  detection.regionOut[i].GetBottomRight();
                                                     string txtlog = detection.DetectLog[i].ToString().Split(':')[0];
                                                     drawView.ImgDrawText(
                                                       txtlog,
@@ -1221,8 +1223,9 @@ namespace WH.DetectSystem.Models
                                                         cell.Detection.regionOut[i].points,
                                                         false
                                                     );
-                                                    System.Windows.Point p1 = cell.Detection.regionOut[i].GetCenter();
-                                                    System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                    // System.Windows.Point p1 = cell.Detection.regionOut[i].GetCenter();
+                                                    //  System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                    System.Windows.Point p2 = cell.Detection.regionOut[i].GetBottomRight();
                                                     string txtlog = cell.Detection.DetectLog.ToString().Split(':')[0];
                                                     drawView.ImgDrawText(
                                                       txtlog,
