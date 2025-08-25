@@ -391,10 +391,10 @@ namespace ZipperTestAlgorihm
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             dets.Add(restoreData);
                         }
-                        //ParseResult(dets, cell);
-                        //img.Dispose();
-                        //dets.Clear();
-                        //return;
+                        ParseResult(dets, cell);
+                        img.Dispose();
+                        dets.Clear();
+                        return;
                     }
                 }
                  List<Mat> mats = new List<Mat>();
@@ -517,7 +517,7 @@ namespace ZipperTestAlgorihm
                                             {
                                                 for (int b = 0; b < lianya.Count; b++)
                                                 {
-                                                    // downmass[a].box.Points()[0].X
+                                                    //downmass[a].box.Points()[0].
                                                     float an = downmass[a].box.Angle - lianya[b].box.Angle;
                                                     Angs.Add((an, b));
                                                 }
