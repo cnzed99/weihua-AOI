@@ -67,6 +67,7 @@
         <Grid Grid.Row="1">
             <Grid.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="{Binding [FitWindow], Source={x:Static prop:LangManager.instance}}" Click="btnFitWindow_Click"/>
                     <MenuItem Header="{Binding [Save], Source={x:Static prop:LangManager.instance}}" Click="btnSave_Click"/>
                 </ContextMenu>
             </Grid.ContextMenu>

@@ -133,6 +133,15 @@ namespace WH.Controls.Properties {
         }
         
         /// <summary>
+        ///   查找类似 自适应 的本地化字符串。
+        /// </summary>
+        public static string FitWindow {
+            get {
+                return ResourceManager.GetString("FitWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 密码不能为空,请正确输入密码 的本地化字符串。
         /// </summary>
         public static string InvalidPassword {

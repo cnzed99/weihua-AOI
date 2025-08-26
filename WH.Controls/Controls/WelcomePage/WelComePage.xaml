@@ -120,7 +120,7 @@
             Click="btnOpen_Click"
             Content="{Binding [OpenProj], Source={x:Static prop:LangManager.welPage}}"
             Style="{DynamicResource PageButton}" />
-        <Label
+        <!--<Label
             Width="254"
             Height="42"
             Margin="46,0,44,10"
@@ -131,7 +131,7 @@
             <Label.Background>
                 <ImageBrush ImageSource="/WH.Controls;component/Controls/UserLogin/Imgs/华盛控.png" Stretch="Uniform" />
             </Label.Background>
-        </Label>
+        </Label>-->
         <Grid
             Name="ProjContainer"
             Height="1"

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using HandyControl.Controls;
 using Microsoft.Win32;
 
@@ -437,6 +438,15 @@ namespace WH.Controls
             {
                 SaveImage(saveFileDialog.FileName);
             }
+        }
+
+        private void btnFitWindow_Click(object sender, RoutedEventArgs e)
+        {
+            this.Image.scaleTransform.ScaleX = 1;
+            this.Image.scaleTransform.ScaleY = 1;
+            this.Image.translateTransform.X = 0;
+            this.Image.translateTransform.Y = 0;
+            this.Image.OnScaleChanged();
         }
 
         ///// <summary>

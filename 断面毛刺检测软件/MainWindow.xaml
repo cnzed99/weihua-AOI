@@ -31,7 +31,7 @@
     Icon="/Resources/logo1.png"
     Loaded="Window_Loaded"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    mc:Ignorable="d" WindowState="Maximized">
     <hc:Window.Resources>
         <cov:BoolToBrushConverter
             x:Key="AlarmToBrushConverter"
@@ -724,7 +724,7 @@
                                 </hc:TabItem>
                             </hc:TabControl>
                         </Border>
-                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="2">
+                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">
                             <zipper:ZipperInfoUserControl Name="zipperInfoShow"/>
                         </Border>
 

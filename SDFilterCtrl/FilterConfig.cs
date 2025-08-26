@@ -70,6 +70,7 @@ namespace SDFilter
                         {
                             rd.DefectFilters[0].FilterList[0].Filter[0].SelectParams[0].Character = CFeacture.FeactureArea;
                             rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[0].Character = CFeacture.FeactureArea;
+                            rd.DefectFilters[0].ResultList[0].Feature = CFeacture.FeactureArea;
                         }
                         speciesFilter.RecipeDefects.Add(rd);
                     }
@@ -901,7 +902,7 @@ namespace SDFilter
         /// 特征
         /// </summary>
         [ObservableProperty]
-        private CFeacture feature = CFeacture.FeactureCount;
+        private CFeacture feature = CFeacture.FeactureValue;
 
         /// <summary>
         /// 2024.7.4 李焕彬

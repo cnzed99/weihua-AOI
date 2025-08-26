@@ -20,8 +20,8 @@ namespace ZipperInfo
         public ZipperInfoUserControl()
         {
             InitializeComponent();
-            ZipperInfoVM = new ZipperInfoVM();
-            this.DataContext = ZipperInfoVM;
+            //ZipperInfoVM = new ZipperInfoVM();
+            //this.DataContext = ZipperInfoVM;
         }
     }
 

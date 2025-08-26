@@ -203,5 +203,15 @@ namespace WH.DetectSystem.Properties {
                 return ResourceManager.GetString("通讯连接失败", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
+        internal static byte[] 黑背景 {
+            get {
+                object obj = ResourceManager.GetObject("黑背景", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

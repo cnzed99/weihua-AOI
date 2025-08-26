@@ -21,7 +21,7 @@ namespace MySqlOperatesApi
         /// 远程数据库IP
         /// </summary>
         [ObservableProperty]
-        private string remoteIP = "192.168.2.51";
+        private string remoteIP = "127.0.0.1";
 
         /// <summary>
         /// 2024.6.23 鲍赞宝

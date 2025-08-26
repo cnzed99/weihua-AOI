@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace ZipperInfo
         [RelayCommand]
         void SendPoints(object win)
         {
+
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
@@ -105,7 +107,7 @@ namespace ZipperInfo
                 CZipperCommunicate.SendCamFPS(350); //起始250ms触发一次
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
-                var window = win as Window;
+                var window = win as HandyControl.Controls.Window;
                 window?.Close();
                 ProgressBarViewModel.AutoMessage = "准备执行拉链自动识别程序...";
                 ProgressBarViewModel.ProgressBarValue = 0;

@@ -257,7 +257,7 @@ namespace WH.DetectSystem._5_存图操作
                         break;
 
                     case EMDRAWTYPE.EMDRAWTYPE_Text:
-                        DrawText(edge.Text, edge.TextPos, edge.BrushDraw, cell.Image.ImageWidth / 20);
+                        DrawText(edge.Text, edge.TextPos, edge.BrushDraw, cell.Image.ImageHeight / 20);
                         break;
                 }
 
@@ -272,7 +272,7 @@ namespace WH.DetectSystem._5_存图操作
                     textBuilder.ToString(),
                     AlignmentX.Right,
                     AlignmentY.Top,
-                    cell.Quality.ShowColor.Brush, cell.Image.ImageWidth / 20
+                    cell.Quality.ShowColor.Brush, cell.Image.ImageHeight / 20
                 );
                 //显示所有Region缺陷
                 if (showAllDefect)
@@ -293,7 +293,7 @@ namespace WH.DetectSystem._5_存图操作
                             DrawText(
                                     detection.DetectLog[i].ToString(),
                                     detection.regionOut[i].GetCenter(),
-                                    defectFilter.ShowColor.Brush, cell.Image.ImageWidth / 20
+                                    defectFilter.ShowColor.Brush, cell.Image.ImageHeight / 20
                                 );
                             //if (i == detection.regionOut.Count - 1)
                             //{
@@ -324,7 +324,7 @@ namespace WH.DetectSystem._5_存图操作
                             DrawText(
                                    cell.Detection.DetectLog[i].ToString(),
                                    cell.Detection.regionOut[i].GetCenter(),
-                                   defectFilter.ShowColor.Brush, cell.Image.ImageWidth / 20
+                                   defectFilter.ShowColor.Brush, cell.Image.ImageHeight / 20
                                );
                             //if (i == cell.Detection.regionOut.Count - 1)
                             //{
@@ -344,7 +344,7 @@ namespace WH.DetectSystem._5_存图操作
                     "OK",
                     AlignmentX.Right,
                     AlignmentY.Top,
-                    cell.Quality.ShowColor.Brush, cell.Image.ImageWidth / 20
+                    cell.Quality.ShowColor.Brush, cell.Image.ImageHeight / 20
                 );
             }
             drawingContext.Close();

@@ -222,4 +222,7 @@
   <data name="Save" xml:space="preserve">
     <value>保存图片</value>
   </data>
+  <data name="FitWindow" xml:space="preserve">
+    <value>自适应</value>
+  </data>
 </root>

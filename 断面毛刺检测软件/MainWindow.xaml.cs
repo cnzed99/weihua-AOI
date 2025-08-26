@@ -156,7 +156,8 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-               // CLinghtManagement.LoadLightParams();
+                // CLinghtManagement.LoadLightParams();
+                zipperInfoShow.DataContext = new ZipperInfoVM();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
@@ -597,6 +598,7 @@ namespace 断面毛刺检测软件
             offLine.Show();
             offLine.Activate();
             CMainList.IsManualTest = true;
+            CMainList.StartStop=false;
             switches.Add(true);
             OperateLog.Info(Properties.Resources.Offline);
         }
@@ -880,8 +882,12 @@ namespace 断面毛刺检测软件
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
         {
-
-            
+            bool state = CZipperCommunicate.GetDeviceState();
+            if (state)
+            {
+                Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
+                return;
+            }
             CZipperAutomaticAlgorithm.Dispatcher = this.Dispatcher;
             AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
             ProgressBarWindow progressBarWindow = new ProgressBarWindow();
@@ -893,6 +899,8 @@ namespace 断面毛刺检测软件
             automaticVM.StartAutoTestEven = (b) => {
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
+                    CMainList.StartStop = true;
+                    mainVM.IsStart = b;
                     mainVM.IsAutomaticTest = b;
                 }
            

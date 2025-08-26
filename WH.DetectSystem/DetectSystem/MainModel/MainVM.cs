@@ -37,7 +37,7 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Linq;
 using System.Runtime.InteropServices;
-using static Mysqlx.Crud.Order.Types;
+using System.IO;
 
 
 
@@ -198,6 +198,20 @@ namespace WH.DetectSystem.Models
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
+            //using (var ms = new MemoryStream(Properties.Resources.黑背景))
+            //{
+            //    var bitmap = new BitmapImage();
+            //    bitmap.BeginInit();
+            //    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            //    bitmap.StreamSource = ms;
+            //    bitmap.EndInit();
+            //    bitmap.Freeze();
+            //    ClearImage = bitmap;
+            //}
+            ClearImage = new BitmapImage(new Uri("pack://application:,,,/WH.DetectSystem;component/Resources/黑背景.png"));
+
+          //  BitmapSource bitmap = new BitmapImage(new Uri("C://Users//Administrator.B//Desktop//黑背景.png"));
+
         }
 
         [ObservableProperty]
@@ -228,6 +242,8 @@ namespace WH.DetectSystem.Models
 
         [ObservableProperty]
         private Brush lastBrush = Brushes.White;
+
+        private BitmapSource ClearImage;
 
         /// <summary>
         /// 新建制程
@@ -263,7 +279,6 @@ namespace WH.DetectSystem.Models
             this.UpdateToken(); //更新Token要在Init前
             this.UpdateName();
             Init(processGroup);
-
         }
 
         private void TestFinshTodo(bool finsh)
@@ -999,7 +1014,14 @@ namespace WH.DetectSystem.Models
                                     CurView.Clear(false);
                                     LastView.Clear(false);
                                     ModelImage = bitmapSource;
-                                    ZipperPullImage = zipperPullimg;
+                                    if (zipperPullimg != null)
+                                    {
+                                        ZipperPullImage = zipperPullimg;
+                                    }
+                                    else
+                                    {
+                                        ZipperPullImage = ClearImage;
+                                    }
                                     foreach (var edge in cell.DrawEdges)
                                     {
                                         if (edge.ShowInView == 0)
@@ -1160,7 +1182,7 @@ namespace WH.DetectSystem.Models
                                                     );
                                                     //System.Windows.Point p1 = detection.regionOut[i].GetCenter();
                                                     // System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
-                                                    System.Windows.Point p2=  detection.regionOut[i].GetBottomRight();
+                                                    System.Windows.Point p2 = detection.regionOut[i].GetBottomRight();
                                                     string txtlog = detection.DetectLog[i].ToString().Split(':')[0];
                                                     drawView.ImgDrawText(
                                                       txtlog,
@@ -1681,7 +1703,7 @@ namespace WH.DetectSystem.Models
                 SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
                 foreach (var pullname in pullnames.RecipeDefects)
                 {
-                    if (pullname.Name=="拉头")
+                    if (pullname.Name == "拉头")
                     {
                         foreach (var df in pullname.DefectFilters)
                         {
@@ -1738,7 +1760,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         private void UpdateLogo(string leftorright)
         {
-            if (leftorright =="左相机")
+            if (leftorright == "左相机")
             {
 
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];

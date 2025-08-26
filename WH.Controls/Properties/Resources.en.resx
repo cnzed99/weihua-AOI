@@ -222,4 +222,7 @@
   <data name="Save" xml:space="preserve">
     <value>Save Pciture</value>
   </data>
+  <data name="FitWindow" xml:space="preserve">
+    <value>Fit to Window</value>
+  </data>
 </root>

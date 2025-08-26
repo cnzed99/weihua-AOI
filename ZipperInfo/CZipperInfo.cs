@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using WH.RecipeCellRootBase;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json;
 
 namespace ZipperInfo
 {
@@ -116,24 +117,28 @@ namespace ZipperInfo
         /// 识别出来的上止的图像
         /// </summary>
         [ObservableProperty]
+        [JsonIgnore]
         public BitmapSource zipperUpmssImg;
 
         /// <summary>
         /// 识别出来的下止的图像
         /// </summary>
         [ObservableProperty]
+        [JsonIgnore]
         public BitmapSource zipperDownmssImg;
 
         /// <summary>
         /// 识别出来的正面拉片的图像
         /// </summary>
         [ObservableProperty]
+        [JsonIgnore]
         public BitmapSource zipperPullsImg;
 
         /// <summary>
         /// 识别出来的正面拉头的图像
         /// </summary>
         [ObservableProperty]
+        [JsonIgnore]
         public BitmapSource zipperPullerImg;
         /// <summary>
         /// 拉头识别框中心X

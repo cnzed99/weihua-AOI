@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <None Remove="DetectSystem\MainModel\CProcessGroupVM.cs.ldtmp" />
+    <None Remove="Resources\黑背景.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\黑背景.png" />
   </ItemGroup>
 
   <ItemGroup>

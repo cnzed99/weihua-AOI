@@ -965,7 +965,7 @@ CurrentDevice, common_Categ_num, Score, Nms,  Input_size);
 
 
                     yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
-"GPU.0", pull_search_num, 0.6f, Nms, 640);
+"GPU.0", pull_search_num, 0.6f, Nms, 480);
 
                     yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.TensorRT,
 "GPU.0", pull_num,  param.PullScore, 0.8f, 640);

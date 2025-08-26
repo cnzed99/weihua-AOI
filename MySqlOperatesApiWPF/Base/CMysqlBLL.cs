@@ -72,6 +72,7 @@ namespace MySqlOperatesApi
         {
             lock (_addLock)
             {
+                date= date.Replace('-','_');
                 string daname = this.DataBaseName;
                 if (!DataBaseNames.Contains(daname))
                 {
