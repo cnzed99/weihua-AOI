@@ -106,11 +106,11 @@ namespace ZipperInfo
         {
             string SearchmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullSearch";
             string Searchtxtpath;
-            string Searchmodelpath="";
+            string Searchmodelpath = "";
 
             string pullmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullModel";
             string pulltxtpath;
-            string pullmodelpath="";
+            string pullmodelpath = "";
 
             if (Directory.Exists(SearchmodelDirPath))
             {
@@ -123,8 +123,8 @@ namespace ZipperInfo
 
                 if (files.Count > 0 && classNames.Length > 0)
                 {
-                     Searchmodelpath = files[0];
-                     Searchtxtpath = classNames[0];
+                    Searchmodelpath = files[0];
+                    Searchtxtpath = classNames[0];
                     de_search_names = File.ReadAllLines(Searchtxtpath);
                 }
             }
@@ -149,7 +149,7 @@ namespace ZipperInfo
             {
                 IniYolo(Searchmodelpath, pullmodelpath);
             }
-            
+
 
             if (CLinghtManagement.LightControlDict.Count >= 2)
             {
@@ -1132,7 +1132,7 @@ namespace ZipperInfo
 
                             if (labelstr.Contains("拉头") && !findPuller)
                             {
-                               // ProgressBarViewModel.AutoMessage = "正在寻找拉头位置...";
+                                // ProgressBarViewModel.AutoMessage = "正在寻找拉头位置...";
                                 ProgressBarViewModel.ProgressBarValue = 50;
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}");
                                 // int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
@@ -1246,7 +1246,7 @@ namespace ZipperInfo
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
                             {
                                 TestFinsh = true;
-                               // ProgressBarViewModel.AutoMessage = "识别拉链完成...";
+                                // ProgressBarViewModel.AutoMessage = "识别拉链完成...";
                                 ProgressBarViewModel.ProgressBarValue = 100;
                                 Thread.Sleep(500);
                                 timeOutCount = 0;
@@ -1268,8 +1268,8 @@ namespace ZipperInfo
                                 CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
                                 //{
-                                    ProgressBarViewModel.ProgressFinshEven?.Invoke();
-                               // });
+                                ProgressBarViewModel.ProgressFinshEven?.Invoke();
+                                // });
                                 AutoLogger.Info($"{cell.CamName}:onWichStage=2,timeOutCount={timeOutCount},上下止,拉头,拉头拉片,Logo全部识别到,结束");
                             }
 
@@ -1462,7 +1462,7 @@ namespace ZipperInfo
                 if (cell.CamName == "右相机")
                 {
 
-                   // ProgressBarViewModel.AutoMessage = "正在调整拉头亮度...";
+                    // ProgressBarViewModel.AutoMessage = "正在调整拉头亮度...";
                     ProgressBarViewModel.ProgressBarValue = 60;
                     DetResult resultDet;
                     resultDet = yolo_search_det.Predict(img) as DetResult;
@@ -1604,7 +1604,7 @@ namespace ZipperInfo
             }
             else if (onWichStage == 4) ////第二阶段 识别拉头,拉头拉片,LOGO类型
             {
-              //  ProgressBarViewModel.AutoMessage = "正在识别拉片 LOGO...";
+                //  ProgressBarViewModel.AutoMessage = "正在识别拉片 LOGO...";
                 ProgressBarViewModel.ProgressBarValue = 80;
                 timeOutCount++;
                 DetResult resultDet;
@@ -1676,7 +1676,7 @@ namespace ZipperInfo
                             Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
 
                             DetResult pullResult = yolo_pull_det.Predict(croppullMat) as DetResult;
-                            for (int j  = 0; j < pullResult.count; j++)
+                            for (int j = 0; j < pullResult.count; j++)
                             {
                                 int pulllabelindex = int.Parse(pullResult[j].lable);
                                 string pullabelname = de_pull_names[pulllabelindex];
@@ -1725,7 +1725,7 @@ namespace ZipperInfo
                                 }
                             }
                         }
-                      
+
                     }
                     if (findPuller && findPulls)
                     {
@@ -1734,9 +1734,9 @@ namespace ZipperInfo
                             ZipperInfo.ZipperLogoType = LOGOTYPE.无Logo;
                             AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别到Logo:无Logo,findLogo=true更新Logo图片");
                         }
-                        if (!findDownMass||!findUpMass) 
+                        if (!findDownMass || !findUpMass)
                         {
-                          //  ProgressBarViewModel.AutoMessage = "正在识别上下止...";
+                            //  ProgressBarViewModel.AutoMessage = "正在识别上下止...";
                             ProgressBarViewModel.ProgressBarValue = 90;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -1773,16 +1773,16 @@ namespace ZipperInfo
                             CLinghtManagement.SaveLightParams();
                             //Dispatcher.Invoke(() =>
                             //{
-                                ProgressBarViewModel.ProgressFinshEven?.Invoke();
-                           // });
+                            ProgressBarViewModel.ProgressFinshEven?.Invoke();
+                            // });
                             AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},上下止,拉头,拉头拉片,Logo全部识别到,结束");
                         }
-                     
+
 
                     }
                     else
                     {
-                       // ProgressBarViewModel.AutoMessage = "正在识别上下止...";
+                        // ProgressBarViewModel.AutoMessage = "正在识别上下止...";
                         ProgressBarViewModel.ProgressBarValue = 90;
                         timeOutCount = 0;
                         onWichStage = 2;
@@ -1804,31 +1804,34 @@ namespace ZipperInfo
 
 
         }
- 
-        
+
+
         #endregion
-        private void IniYolo(string searchmodelpath,string pullmodelpath)
+        private void IniYolo(string searchmodelpath, string pullmodelpath)
         {
-            if (!File.Exists(searchmodelpath)&& !File.Exists(pullmodelpath))
+            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath))
             {
                 return;
             }
             string CurrentDevice = "GPU.0";
-            int search_Categ_num = de_search_names.Length;
-            float Score = 0.6f;
-            float Nms = 0.5f;
-            //int Input_size = 640;
 
-            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
-                CurrentDevice, search_Categ_num, Score, Nms, 480);
+            Task task = Task.Run(() =>
+            {
+                int search_Categ_num = de_search_names.Length;
+                float Score = 0.6f;
+                float Nms = 0.5f;
+                yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
+              CurrentDevice, search_Categ_num, Score, Nms, 480);
+            });
 
-            int pull_Categ_num = de_pull_names.Length;
-             Score = 0.6f;
-             Nms = 0.8f;
-
-            yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
-                CurrentDevice, pull_Categ_num, Score, Nms, 640);
-
+            Task task1 = Task.Run(() =>
+            {
+                int pull_Categ_num = de_pull_names.Length;
+                float pullScore = 0.6f;
+                float pullNms = 0.8f;
+                yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
+              CurrentDevice, pull_Categ_num, pullScore, pullNms, 640);
+            });
         }
 
 
