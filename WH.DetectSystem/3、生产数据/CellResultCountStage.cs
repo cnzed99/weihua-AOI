@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using Mysqlx;
 using ProjProduceData;
 using WH.RunCell;
@@ -20,7 +23,7 @@ namespace WH.DetectSystem
             if (cell.Detection != null)
             {
                 produce.Ng += 1;
-                var currentDefect = produce[cell.Detection.DefectFilter.Name];
+                DefectNumber currentDefect = produce[cell.Detection.DefectFilter.Name];
                 currentDefect.Number += 1;
                 //cell.Detection.DefectFilter.Number += 1;
                 foreach (var defect in produce.DefectNumbersList)
@@ -39,6 +42,15 @@ namespace WH.DetectSystem
             {
                 defect.PercentofAll = (double)defect.Number / produce.Total;
             }
+
+            //ObservableCollection<DefectNumber> defectNumbers =(ObservableCollection<DefectNumber>) produce.DefectNumbersList.Where(d => (d.Number != 0));
+            //produce.DefectNumbersSortList = (ObservableCollection < DefectNumber > )defectNumbers.OrderByDescending(d => d.Number);
+
+            //var viewSource = new CollectionViewSource { Source = produce.DefectNumbersList };
+            //viewSource.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
+            //var viewSource = new CollectionViewSource { Source = produce.DefectNumbersList };
+            produce.SortedView = CollectionViewSource.GetDefaultView(produce.DefectNumbersList);
+
         }
     }
 }

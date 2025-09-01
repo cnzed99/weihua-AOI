@@ -608,6 +608,10 @@
                                             BorderThickness="1">
                                             <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}" />
                                         </Border>
+                                        <TextBlock Text="拉头" FontSize="18" Grid.Column="1" 
+                                                    Margin="10,5"
+                                                   HorizontalAlignment="Left" 
+                                                   VerticalAlignment="Top"/>
                                     </Grid>
                                     <TextBlock
                                     Margin="10,5"
@@ -616,18 +620,20 @@
                                     Foreground="Red"
                                     Style="{StaticResource TextBlockDefault}"
                                     Text="{Binding FocusCtrlVM.InfoAlarm}" />
-                                    <TextBlock
+                                    <TextBlock Text="{Binding Name}" FontSize="18"
                                     Margin="10,10"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     Style="{StaticResource TextBlockDefault}">
-                                        <TextBlock.Text>
+                                        <!--<TextBlock.Text>
                                             <MultiBinding StringFormat="{}{1}-{0}">
                                                 <Binding Path="Name" />
                                                 <Binding Path="ProcessGroup.Name" />
                                             </MultiBinding>
-                                        </TextBlock.Text>
+                                        </TextBlock.Text>-->
                                     </TextBlock>
+                            
+
                                     <!--<ToggleButton
                                     Margin="0,7,170,7"
                                     HorizontalAlignment="Right"

@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Media.Effects;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -32,6 +33,59 @@ namespace ProjProduceData
         [property: JsonProperty]
         [ObservableProperty]
         private ObservableCollection<DefectNumber> defectNumbersList = new();
+
+        /// <summary>
+        /// 2025.9.1 鲍赞宝
+        /// 缺陷统计(排序和排除数量0的项，用于显示）
+        /// </summary>
+        //[property: JsonProperty]
+        //[ObservableProperty]
+        //private ObservableCollection<DefectNumber> defectNumbersSortList = new();
+
+        //public ICollectionView SortedView
+        //{
+        //    get
+        //    {
+        //       // var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
+        //        view.Filter = item =>
+        //        {
+        //            dynamic dataItem = item;
+        //            return dataItem.Number != 0;
+        //        };
+        //        view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
+        //        return view;
+        //    }
+        //}
+
+        private ICollectionView sortedView;
+        public ICollectionView SortedView
+        {
+            get 
+            {
+                var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
+                view.Filter = item =>
+                {
+                    dynamic dataItem = item;
+                    return dataItem.Number != 0;
+                };
+                view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
+                return view;
+            }
+            set 
+            {
+                sortedView = value;
+
+              //  var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
+                //view.Filter = item =>
+                //{
+                //    dynamic dataItem = item;
+                //    return dataItem.Number != 0;
+                //};
+                //view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
+                //sortedView = view;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// 2024.7.4 李焕彬
