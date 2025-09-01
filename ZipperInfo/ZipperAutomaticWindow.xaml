@@ -9,13 +9,15 @@
            WindowStartupLocation="CenterScreen"
            Name="win"
         d:DataContext="{d:DesignInstance Type=local:CZipperAutomaticVM}"
-        Title="换料识别" Height="130" Width="700" >
+        Title="换料识别" Height="300" Width="700" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="139*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.ColumnSpan="2" >
@@ -36,6 +38,22 @@
               Command="{Binding SendPointsCommand}" CommandParameter="{Binding ElementName=win}"
               Content="开始" />
 
+        </Grid>
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <hc:NumericUpDown Value="{Binding AutoData.ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.ZipperMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <hc:NumericUpDown Value="{Binding AutoData.PullMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.PullMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.PullMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                <hc:NumericUpDown Value="{Binding AutoData.PullMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="65" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
+            </StackPanel>
         </Grid>
     </Grid>
 </hc:Window>

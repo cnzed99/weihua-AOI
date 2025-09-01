@@ -24,5 +24,26 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         float ccdWidth = 114;
+
+
+        [ObservableProperty]
+        int zipperMinBgMean = 120;
+        [ObservableProperty]
+        int zipperMaxBgMean = 220;
+        [ObservableProperty]
+        int zipperMinMean = 90;
+        [ObservableProperty]
+        int zipperMaxMean = 180;
+
+        [ObservableProperty]
+        int pullMinBgMean = 120;
+        [ObservableProperty]
+        int pullMaxBgMean = 220;
+        [ObservableProperty]
+        int pullMinMean = 90;
+        [ObservableProperty]
+        int pullMaxMean = 180;
+
+
     }
 }

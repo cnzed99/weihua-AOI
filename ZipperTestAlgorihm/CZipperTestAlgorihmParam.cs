@@ -916,7 +916,7 @@ namespace ZipperTestAlgorihm
             {
                 if (param != null)
                 {
-                    string CurrentDevice = "GPU.0";
+                    string CurrentDevice = param.CurrentDevice;
                     int common_Categ_num = Common_names.Length;
 
                     int downmass_num = 0;
@@ -967,7 +967,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                         if (downmass_num > 0)
                         {
                             yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
-    "GPU.0", downmass_num, param.DownScore, Nms, 256);
+    CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                         }
                     });
 
@@ -976,26 +976,26 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                         if (upmass_num > 0)
                         {
                             yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.TensorRT,
-    "GPU.0", upmass_num, param.UpScore, Nms, 192);
+    CurrentDevice, upmass_num, param.UpScore, Nms, 192);
                         }
                     });
 
                     Task task7 = Task.Run(() =>
                     {
                         yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
-"GPU.0", pull_search_num, 0.6f, Nms, 480);
+CurrentDevice, pull_search_num, 0.6f, Nms, 480);
                     });
 
                     Task task8 = Task.Run(() =>
                     {
                         yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.TensorRT,
-"GPU.0", pull_num, param.PullScore, 0.8f, 640);
+CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
                     });
 
                     Task task9 = Task.Run(() =>
                     {
                         yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
-    "GPU.0", big_num, param.BigScore, Nms, 320);
+    CurrentDevice, big_num, param.BigScore, Nms, 320);
                     });
 
 
@@ -1227,13 +1227,24 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
         public CParam(string name, Token token)
             : base(name, token) { }
 
+
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// 驱动设备
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("1.0驱动器")]
+        [property: Description("驱动器")]
+        private string currentDevice = "GPU.0";
+
         /// <summary>
         /// 2024.7.21 鲍赞宝
         /// 通用模型分数阈值
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("通用模型分数阈值")]
+        [property: DisplayName("2.0通用模型分数阈值")]
         [property: Description("通用模型分数阈值")]
         private float commonScore = 0.3f;
 
@@ -1243,7 +1254,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("下止分数阈值")]
+        [property: DisplayName("3.0下止分数阈值")]
         [property: Description("下止分数阈值")]
         private float downScore = 0.4f;
 
@@ -1253,7 +1264,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("上止分数阈值")]
+        [property: DisplayName("4.0上止分数阈值")]
         [property: Description("上止分数阈值")]
         private float upScore = 0.4f;
 
@@ -1263,7 +1274,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("拉头分数阈值")]
+        [property: DisplayName("5.0拉头分数阈值")]
         [property: Description("拉头分数阈值")]
         private float pullScore = 0.4f;
 
@@ -1273,7 +1284,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("大缺陷分数阈值")]
+        [property: DisplayName("6.0大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 

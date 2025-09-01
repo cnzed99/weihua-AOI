@@ -24,7 +24,7 @@ namespace ZipperLightHalconDet
         /// <param name="hv_StrideRate">步幅调整灵敏度比率，默认值：0.5（根据实际光源控制器调整）</param>
         /// <param name="hv_VState">亮度评估状态，0：保持亮度、1：需增加光源亮度、2：需减少亮度</param>
         /// <param name="hv_VStride">推荐调整光源步幅值（供上层应用快速调整至合适的光源值使用）</param>
-        public void PullerLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate,
+        public void PullerLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate,int bgmin,int bgmax,int fonmin,int fonmax,
      out HTuple hv_VState, out HTuple hv_VStride)
         {
 
@@ -76,14 +76,23 @@ namespace ZipperLightHalconDet
                 //BrightnessDiff := 10
                 //EmphaMaskValue := 7
                 //EmphaFactorValue := 0.7
+
+                //hv_MinBgMean.Dispose();
+                //hv_MinBgMean = 120;
+                //hv_MaxBgMean.Dispose();
+                //hv_MaxBgMean = 220;
+                //hv_MinMean.Dispose();
+                //hv_MinMean = 90;
+                //hv_MaxMean.Dispose();
+                //hv_MaxMean = 180;
                 hv_MinBgMean.Dispose();
-                hv_MinBgMean = 120;
+                hv_MinBgMean = bgmin;
                 hv_MaxBgMean.Dispose();
-                hv_MaxBgMean = 220;
+                hv_MaxBgMean = bgmax;
                 hv_MinMean.Dispose();
-                hv_MinMean = 90;
+                hv_MinMean = fonmin;
                 hv_MaxMean.Dispose();
-                hv_MaxMean = 180;
+                hv_MaxMean = fonmax;
                 hv_Width.Dispose(); hv_Height.Dispose();
                 HOperatorSet.GetImageSize(ho_Image, out hv_Width, out hv_Height);
 
@@ -196,14 +205,14 @@ namespace ZipperLightHalconDet
                 }
                 ho_SelectBgROI.Dispose();
                 HOperatorSet.Difference(ho_Rectangle, ho_SelectROI, out ho_SelectBgROI);
-                if (HDevWindowStack.IsOpen())
-                {
-                    HOperatorSet.SetColor(HDevWindowStack.GetActive(), "green");
-                }
-                if (HDevWindowStack.IsOpen())
-                {
-                    HOperatorSet.DispObj(ho_SelectBgROI, HDevWindowStack.GetActive());
-                }
+                //if (HDevWindowStack.IsOpen())
+                //{
+                //    HOperatorSet.SetColor(HDevWindowStack.GetActive(), "green");
+                //}
+                //if (HDevWindowStack.IsOpen())
+                //{
+                //    HOperatorSet.DispObj(ho_SelectBgROI, HDevWindowStack.GetActive());
+                //}
                 hv_BgValue.Dispose();
                 HOperatorSet.GrayFeatures(ho_SelectBgROI, ho_Image, "mean", out hv_BgValue);
 
@@ -415,7 +424,7 @@ namespace ZipperLightHalconDet
         /// <param name="hv_StrideRate">步幅调整灵敏度比率，默认值：0.5（根据实际光源控制器调整）</param>
         /// <param name="hv_VState">亮度评估状态，0：保持亮度、1：需增加光源亮度、2：需减少亮度</param>
         /// <param name="hv_VStride">推荐调整光源步幅值（供上层应用快速调整至合适的光源值使用）</param>
-        public void ZipperLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate,
+        public void ZipperLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate, int bgmin, int bgmax, int fonmin, int fonmax,
      out HTuple hv_VState, out HTuple hv_VStride)
         {
 
@@ -467,14 +476,24 @@ namespace ZipperLightHalconDet
                 //BrightnessDiff := 10
                 //EmphaMaskValue := 7
                 //EmphaFactorValue := 0.7
+
+                //hv_MinBgMean.Dispose();
+                //hv_MinBgMean = 120;
+                //hv_MaxBgMean.Dispose();
+                //hv_MaxBgMean = 220;
+                //hv_MinMean.Dispose();
+                //hv_MinMean = 90;
+                //hv_MaxMean.Dispose();
+                //hv_MaxMean = 180;
+
                 hv_MinBgMean.Dispose();
-                hv_MinBgMean = 120;
+                hv_MinBgMean = bgmin;
                 hv_MaxBgMean.Dispose();
-                hv_MaxBgMean = 220;
+                hv_MaxBgMean = bgmax;
                 hv_MinMean.Dispose();
-                hv_MinMean = 90;
+                hv_MinMean = fonmin;
                 hv_MaxMean.Dispose();
-                hv_MaxMean = 180;
+                hv_MaxMean = fonmax;
                 hv_Width.Dispose(); hv_Height.Dispose();
                 HOperatorSet.GetImageSize(ho_Image, out hv_Width, out hv_Height);
 
@@ -567,14 +586,14 @@ namespace ZipperLightHalconDet
                 ho_SelectROI.Dispose();
                 ho_SelectROI = new HObject(ho_RegionTrans);
 
-                if (HDevWindowStack.IsOpen())
-                {
-                    HOperatorSet.SetColor(HDevWindowStack.GetActive(), "yellow");
-                }
-                if (HDevWindowStack.IsOpen())
-                {
-                    HOperatorSet.DispObj(ho_SelectROI, HDevWindowStack.GetActive());
-                }
+                //if (HDevWindowStack.IsOpen())
+                //{
+                //    HOperatorSet.SetColor(HDevWindowStack.GetActive(), "yellow");
+                //}
+                //if (HDevWindowStack.IsOpen())
+                //{
+                //    HOperatorSet.DispObj(ho_SelectROI, HDevWindowStack.GetActive());
+                //}
 
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
