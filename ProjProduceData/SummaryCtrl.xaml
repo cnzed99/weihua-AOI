@@ -37,41 +37,41 @@
                     DataContext="{Binding DefectsProduce}"
                     Rows="2">
                     <DockPanel>
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             DockPanel.Dock="Left"
                             Style="{StaticResource tblock}"
                             Text="{Binding [总数], Source={x:Static local:CLang.s_Instance}}" />
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             d:Text="1234567"
                             Style="{StaticResource tblock}"
                             Text="{Binding Total}" />
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             DockPanel.Dock="Left"
                             Style="{StaticResource tblock}"
                             Text="{Binding [良品], Source={x:Static local:CLang.s_Instance}}" />
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             d:Text="1234567"
                             Style="{StaticResource tblock}"
                             Text="{Binding OK}" />
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             DockPanel.Dock="Left"
                             Style="{StaticResource tblock}"
                             Text="{Binding [良率], Source={x:Static local:CLang.s_Instance}}" />
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             d:Text="99.99%"
                             Style="{StaticResource tblock}"
                             Text="{Binding OKPercent, Mode=OneWay, StringFormat=P2}" />
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             DockPanel.Dock="Left"
                             Style="{StaticResource tblock}"
                             Text="{Binding [不良], Source={x:Static local:CLang.s_Instance}}" />
-                        <TextBlock
+                        <TextBlock FontSize="20"
                             d:Text="1234567"
                             Style="{StaticResource tblock}"
                             Text="{Binding Ng}" />

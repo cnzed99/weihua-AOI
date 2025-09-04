@@ -38,54 +38,32 @@ namespace ProjProduceData
         /// 2025.9.1 鲍赞宝
         /// 缺陷统计(排序和排除数量0的项，用于显示）
         /// </summary>
-        //[property: JsonProperty]
-        //[ObservableProperty]
-        //private ObservableCollection<DefectNumber> defectNumbersSortList = new();
+        [property: JsonProperty]
+        [ObservableProperty]
+        private List<DefectNumber> defectNumbersSortList = new();
 
+        //private ICollectionView sortedView;
         //public ICollectionView SortedView
         //{
         //    get
         //    {
-        //       // var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
+        //        var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
         //        view.Filter = item =>
         //        {
         //            dynamic dataItem = item;
         //            return dataItem.Number != 0;
         //        };
+        //        view.SortDescriptions.Clear();
         //        view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
         //        return view;
+        //        //return sortedView;
+        //    }
+        //    set
+        //    {
+        //        sortedView = value;
+        //        OnPropertyChanged();
         //    }
         //}
-
-        private ICollectionView sortedView;
-        public ICollectionView SortedView
-        {
-            get 
-            {
-                var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
-                view.Filter = item =>
-                {
-                    dynamic dataItem = item;
-                    return dataItem.Number != 0;
-                };
-                view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
-                return view;
-            }
-            set 
-            {
-                sortedView = value;
-
-              //  var view = CollectionViewSource.GetDefaultView(DefectNumbersList);
-                //view.Filter = item =>
-                //{
-                //    dynamic dataItem = item;
-                //    return dataItem.Number != 0;
-                //};
-                //view.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
-                //sortedView = view;
-                OnPropertyChanged();
-            }
-        }
 
         /// <summary>
         /// 2024.7.4 李焕彬

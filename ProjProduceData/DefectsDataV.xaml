@@ -59,7 +59,7 @@
         AutoGenerateColumns="False"
         Background="{DynamicResource RegionBrush}"
         IsReadOnly="True"
-        ItemsSource="{Binding DefectsProduce.SortedView}"
+        ItemsSource="{Binding DefectsProduce.DefectNumbersSortList}"
         RowHeaderWidth="0"
         Style="{x:Null}">
         <DataGrid.Columns>

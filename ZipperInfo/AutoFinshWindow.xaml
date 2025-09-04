@@ -58,7 +58,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>-->
                     <!--<Button Grid.Column="0" Width="120" Height="50"  Margin="2" Content="测试" />-->
-                    <Button Grid.Column="1" Width="120" Height="50"  Content="确认" Command="{Binding saveCommand}" CommandParameter="{Binding ElementName=window}"/>
+                    <Button Grid.Column="1" FontSize="40" Width="180" Height="80"  Content="确认" Command="{Binding saveCommand}" CommandParameter="{Binding ElementName=window}"/>
                 </Grid>
             </Border>
         </Grid>

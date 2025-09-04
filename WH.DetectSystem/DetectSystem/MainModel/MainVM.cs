@@ -210,7 +210,9 @@ namespace WH.DetectSystem.Models
             //}
             ClearImage = new BitmapImage(new Uri("pack://application:,,,/WH.DetectSystem;component/Resources/黑背景.png"));
 
-          //  BitmapSource bitmap = new BitmapImage(new Uri("C://Users//Administrator.B//Desktop//黑背景.png"));
+            //  BitmapSource bitmap = new BitmapImage(new Uri("C://Users//Administrator.B//Desktop//黑背景.png"));
+            var defectNumbers = this.DefectsDataVM.DefectsProduce.DefectNumbersList.Where(d => d.Number != 0);
+            this.DefectsDataVM.DefectsProduce.DefectNumbersSortList = defectNumbers.OrderByDescending(d => d.Number).ToList();
 
         }
 

@@ -1215,17 +1215,18 @@ namespace ZipperInfo
                                             }
                                             else if (pindex == templist.Count - 1)
                                             {
-                                                int dis = Math.Abs(pos - templist[pindex - 1]);
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>250");
-                                                if (dis > 250)
-                                                {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250,停止轴运动,进入下一级段");
-                                                    CZipperCommunicate.AixtStop();
-                                                    CZipperCommunicate.SendCamFPS(350);
-                                                    timeOutCount = 0;
-                                                    onWichStage = 3;
-                                                    return;
-                                                }
+                                                //int dis = Math.Abs(pos - templist[pindex - 1]);
+                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},拉头位置不能是最后一个， return");
+                                                return;
+                                                //if (dis > 250)
+                                                //{
+                                                //    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250,停止轴运动,进入下一级段");
+                                                //    CZipperCommunicate.AixtStop();
+                                                //    CZipperCommunicate.SendCamFPS(350);
+                                                //    timeOutCount = 0;
+                                                //    onWichStage = 3;
+                                                //    return;
+                                                //}
                                             }
                                             else
                                             {
@@ -1254,7 +1255,7 @@ namespace ZipperInfo
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
                             {
                                 TestFinsh = true;
-                                // ProgressBarViewModel.AutoMessage = "识别拉链完成...";
+                                ProgressBarViewModel.AutoMessage = "识别拉链完成...";
                                 ProgressBarViewModel.ProgressBarValue = 100;
                                 Thread.Sleep(500);
                                 timeOutCount = 0;

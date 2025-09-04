@@ -43,13 +43,13 @@ namespace WH.DetectSystem
                 defect.PercentofAll = (double)defect.Number / produce.Total;
             }
 
-            //ObservableCollection<DefectNumber> defectNumbers =(ObservableCollection<DefectNumber>) produce.DefectNumbersList.Where(d => (d.Number != 0));
-            //produce.DefectNumbersSortList = (ObservableCollection < DefectNumber > )defectNumbers.OrderByDescending(d => d.Number);
+           var defectNumbers = produce.DefectNumbersList.Where(d => d.Number != 0);
+            produce.DefectNumbersSortList = defectNumbers.OrderByDescending(d => d.Number).ToList();
 
             //var viewSource = new CollectionViewSource { Source = produce.DefectNumbersList };
             //viewSource.SortDescriptions.Add(new SortDescription("Number", ListSortDirection.Descending));
             //var viewSource = new CollectionViewSource { Source = produce.DefectNumbersList };
-            produce.SortedView = CollectionViewSource.GetDefaultView(produce.DefectNumbersList);
+           // produce.SortedView = CollectionViewSource.GetDefaultView(produce.DefectNumbersList);
 
         }
     }

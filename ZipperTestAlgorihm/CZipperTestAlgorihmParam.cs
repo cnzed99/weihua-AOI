@@ -937,29 +937,29 @@ namespace ZipperTestAlgorihm
                     float Nms = param.Nms;
                     int Input_size = 640;
 
-                    Task task1 = Task.Run(() =>
-                    {
+                    //Task task1 = Task.Run(() =>
+                    //{
                         yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                    });
+                   // });
 
-                    Task task2 = Task.Run(() =>
-                    {
+                    //Task task2 = Task.Run(() =>
+                    //{
                         yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                    });
+                   // });
 
-                    Task task3 = Task.Run(() =>
-                    {
+                    //Task task3 = Task.Run(() =>
+                    //{
                         yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                    });
+                   // });
 
-                    Task task4 = Task.Run(() =>
-                    {
+                    //Task task4 = Task.Run(() =>
+                    //{
                         yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                    });
+                    //});
 
 
                     Task task5 = Task.Run(() =>
@@ -999,7 +999,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
                     });
 
 
-                   // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
+                    // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
 
                 }
 
