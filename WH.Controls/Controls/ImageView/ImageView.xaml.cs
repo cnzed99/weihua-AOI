@@ -449,6 +449,26 @@ namespace WH.Controls
             this.Image.OnScaleChanged();
         }
 
+        public static readonly DependencyProperty ClearButtonVisibilityProperty =
+       DependencyProperty.Register("ClearButtonVisibility", typeof(Visibility), typeof(ImageView),
+           new PropertyMetadata(Visibility.Visible));
+
+        public static readonly DependencyProperty LabelVisibilityProperty =
+            DependencyProperty.Register("LabelVisibility", typeof(Visibility), typeof(ImageView),
+                new PropertyMetadata(Visibility.Visible));
+
+        public Visibility ClearButtonVisibility
+        {
+            get { return (Visibility)GetValue(ClearButtonVisibilityProperty); }
+            set { SetValue(ClearButtonVisibilityProperty, value); }
+        }
+
+        public Visibility LabelVisibility
+        {
+            get { return (Visibility)GetValue(LabelVisibilityProperty); }
+            set { SetValue(LabelVisibilityProperty, value); }
+        }
+
         ///// <summary>
         ///// 2024.7.5 李焕彬
         ///// 获取窗口截图

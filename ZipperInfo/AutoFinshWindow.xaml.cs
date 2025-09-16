@@ -23,8 +23,8 @@ namespace ZipperInfo
         {
             InitializeComponent();
            // CZipperAutomaticAlgorithm.Dispatcher=this.Dispatcher;
-           // ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
-            //this.DataContext = zipperInfoVM;
+            ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+            this.InfoUserCol.DataContext = zipperInfoVM;
         }
     }
 }

@@ -114,6 +114,12 @@ namespace ZipperInfo
                 StartAutoTestEven?.Invoke(startAutoTest);
             }
         }
+        [RelayCommand]
+        void CloseWin(object win)
+        {
+            var window = win as HandyControl.Controls.Window;
+            window?.Close();
+        }
 
 
 

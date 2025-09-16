@@ -462,7 +462,8 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
+                CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
+              Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
             catch (Exception exception)
@@ -686,15 +687,7 @@ namespace 断面毛刺检测软件
                     {
                         if (b)
                         {
-                            foreach (var item in CMainList.CMainVMs)
-                            {
-                                item.MaociDefectsProduce?.Clear();
-                            }
-                            foreach (var item in CMainList.CMainMModel.CProcessGroups)
-                            {
-                                item.MaociDefectsProduce?.Clear();
-                                item.Cells.Clear();
-                            }
+                            ClearProduceData(true);
                             OperateLog.Info(Properties.Resources.DataClear);
                         }
                         return true;
@@ -704,6 +697,22 @@ namespace 断面毛刺检测软件
             catch (Exception ex)
             {
                 Growl.Error(Properties.Resources.DataClear + "\r\n" + ex.Message);
+            }
+        }
+
+        private void ClearProduceData(bool finsh)
+        {
+            if (CZipperAutomaticAlgorithm.TestFinsh || finsh)
+            {
+                foreach (var item in CMainList.CMainVMs)
+                {
+                    item.MaociDefectsProduce?.Clear();
+                }
+                foreach (var item in CMainList.CMainMModel.CProcessGroups)
+                {
+                    item.MaociDefectsProduce?.Clear();
+                    item.Cells.Clear();
+                }
             }
         }
 
@@ -911,19 +920,21 @@ namespace 断面毛刺检测软件
                     {
                         progressBarWindow?.Close();
                     });
-                  
-
                 };
-               // progressBarWindow.Closed += ProgressBarWindow_Closed;
-                progressBarWindow.ShowDialog();
+                // progressBarWindow.Closed += ProgressBarWindow_Closed;
+                if (b)
+                {
+                    progressBarWindow.ShowDialog();
 
-                ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
-                autoFinshWindow = new AutoFinshWindow();
-                autoFinshWindow.DataContext = zipperInfoVM;
-                autoFinshWindow.Closed += AutoFinshWindow_Closed;
-                autoFinshWindow.Show();
-                autoFinshWindow.Activate();
-                zipperInfoShow.DataContext = zipperInfoVM;
+                    ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+                    autoFinshWindow = new AutoFinshWindow();
+                    autoFinshWindow.DataContext = zipperInfoVM;
+                    autoFinshWindow.Closed += AutoFinshWindow_Closed;
+                    autoFinshWindow.Show();
+                    autoFinshWindow.Activate();
+                    zipperInfoShow.DataContext = zipperInfoVM;
+                }
+      
             };
             AutomaticWindow.Show();
             AutomaticWindow.Activate();

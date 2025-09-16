@@ -513,8 +513,7 @@ namespace WH.DetectSystem.ViewModels
                 while (SystemSettings.RecentProjs.Count > 10)
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
-                }
-
+                }             
                 await longtimefunc(progress);
             }
             catch (Exception ex)

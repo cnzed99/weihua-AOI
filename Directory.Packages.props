@@ -13,6 +13,7 @@
     <PackageVersion Include="HalconDotNet" Version="19.11.0" />
     <PackageVersion Include="HandyControl.Lang.en" Version="3.5.1" />
     <PackageVersion Include="iTextSharp" Version="5.5.13.4" />
+    <PackageVersion Include="KeyBoard.WPF" Version="2.0.2" />
     <PackageVersion Include="log4net" Version="2.0.17" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />

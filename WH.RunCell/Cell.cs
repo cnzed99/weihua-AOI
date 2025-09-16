@@ -53,7 +53,7 @@ namespace WH.RunCell
         /// 2025.7.11 ±«ÔÞ±¦
         /// ÉÏÖ¹½ØÍ¼£¬ÓÃÓÚ´æÍ¼
         /// </summary>
-        public List<OpenCvSharp.Mat> UpMassMatImg { get; set; }=new List<OpenCvSharp.Mat>();
+        public List<OpenCvSharp.Mat> UpMassMatImg { get; set; } = new List<OpenCvSharp.Mat>();
 
         /// <summary>
         /// 2025.7.11 ±«ÔÞ±¦
@@ -333,11 +333,11 @@ namespace WH.RunCell
             {
                 ZipperPullPartImg.Freeze();
             }
-            if (DownMassMatImg!=null)
+            if (DownMassMatImg != null)
             {
                 DownMassMatImg.Dispose();
             }
-            if (UpMassMatImg!=null)
+            if (UpMassMatImg != null)
             {
                 for (int i = 0; i < UpMassMatImg.Count; i++)
                 {
@@ -401,8 +401,8 @@ namespace WH.RunCell
             cell.EncoderPos = this.EncoderPos;
             cell.AlgorithmOut = this.AlgorithmOut;
             cell.DrawEdges = this.DrawEdges;
-            cell.ZipperPullPartImg = this.ZipperPullPartImg;
-            cell.DownMassMatImg=this.DownMassMatImg?.Clone();
+            cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
+            cell.DownMassMatImg = this.DownMassMatImg?.Clone();
 
             for (int i = 0; i < this.UpMassMatImg?.Count; i++)
             {

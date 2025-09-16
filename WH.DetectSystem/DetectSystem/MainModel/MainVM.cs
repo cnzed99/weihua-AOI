@@ -213,7 +213,8 @@ namespace WH.DetectSystem.Models
             //  BitmapSource bitmap = new BitmapImage(new Uri("C://Users//Administrator.B//Desktop//黑背景.png"));
             var defectNumbers = this.DefectsDataVM.DefectsProduce.DefectNumbersList.Where(d => d.Number != 0);
             this.DefectsDataVM.DefectsProduce.DefectNumbersSortList = defectNumbers.OrderByDescending(d => d.Number).ToList();
-
+            HistoryVM.HisTital = this.Name;
+            HistoryVM.ClearImage = ClearImage.Clone();
         }
 
         [ObservableProperty]
@@ -285,49 +286,50 @@ namespace WH.DetectSystem.Models
 
         private void TestFinshTodo(bool finsh)
         {
-            //if (finsh)
-            //{
-            foreach (var cell in MergeCells)
+          
+            if (CZipperAutomaticAlgorithm.TestFinsh)
             {
-                cell?.Dispose();
-            }
-            MergeCells.Clear();
-            if (this.Name == "正面")
-            {
-                if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                foreach (var cell in MergeCells)
                 {
-                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
-                    UpdateCam(camDic.SerialNumber);
-                    UpdateLogo("左相机");
-                    Updatepull("左相机");
+                    cell?.Dispose();
+                }
+                MergeCells.Clear();
+                if (this.Name == "正面")
+                {
+                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                        UpdateCam(camDic.SerialNumber);
+                        UpdateLogo("左相机");
+                        Updatepull("左相机");
 
+                    }
+                    else
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                        UpdateCam(camDic.SerialNumber);
+                        UpdateLogo("右相机");
+                        Updatepull("右相机");
+                    }
                 }
                 else
                 {
-                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
-                    UpdateCam(camDic.SerialNumber);
-                    UpdateLogo("右相机");
-                    Updatepull("右相机");
+                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
+                        UpdateCam(camDic.SerialNumber);
+                        UpdateLogo("右相机");
+                        Updatepull("右相机");
+                    }
+                    else
+                    {
+                        var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
+                        UpdateCam(camDic.SerialNumber);
+                        UpdateLogo("左相机");
+                        Updatepull("左相机");
+                    }
                 }
             }
-            else
-            {
-                if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                {
-                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "右相机");
-                    UpdateCam(camDic.SerialNumber);
-                    UpdateLogo("右相机");
-                    Updatepull("右相机");
-                }
-                else
-                {
-                    var camDic = CCameraManagement.CamParamDict.Values.First(c => c.Name == "左相机");
-                    UpdateCam(camDic.SerialNumber);
-                    UpdateLogo("左相机");
-                    Updatepull("左相机");
-                }
-            }
-            //}
         }
 
         #region 时间相关

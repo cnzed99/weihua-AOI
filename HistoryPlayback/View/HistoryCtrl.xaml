@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="clr-namespace:WH.Controls;assembly=WH.Controls"
     d:DataContext="{d:DesignInstance Type=local:CHistoryVM}"
-    d:DesignHeight="800"
-    d:DesignWidth="600"
+    d:DesignHeight="400"
+    d:DesignWidth="1000"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -23,12 +23,13 @@
             <Style BasedOn="{StaticResource TextBoxExtend.Small}" TargetType="TextBox">
                 <Setter Property="hc:TitleElement.TitlePlacement" Value="Top" />
                 <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Margin" Value="2,0" />
+                <Setter Property="Margin" Value="2,2" />
             </Style>
             <Style x:Key="ab" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemBaseStyle}">
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="FontSize" Value="16"/>
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="0">
                         <Setter Property="Background" Value="{StaticResource RegionBrush}" />
@@ -45,58 +46,33 @@
 
     </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="3*" />
-            <RowDefinition />
-            <RowDefinition Height="9*" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
 
-            <ListBox
-                AlternationCount="2"
-                Foreground="White"
-                ItemsSource="{Binding FileNames, Mode=OneWay}"
-                SelectedIndex="{Binding FileIndex}"
-                SelectedItem="{Binding SelectedItem}"
-                ItemContainerStyle="{StaticResource ab}"
-                SelectionMode="Single">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Margin="5" Text="{Binding Converter={StaticResource FileNameConverter}}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ItemSelectedCommand}" CommandParameter="{Binding SelectedItem}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-
-            </ListBox>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-
-                </Grid.RowDefinitions>
-                <DockPanel>
-                    <RadioButton
-                        Grid.Column="0"
-                        d:IsChecked="True"
-                        Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
-                        GroupName="Options"
-                        IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
-                    <RadioButton
-                        Margin="2"
+            <Border Margin="1"  Grid.Row="0" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
+                <RadioButton HorizontalAlignment="Left" FontSize="14" x:Name="selectdefrbbutton"          
+             d:IsChecked="True"
+             Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
+             GroupName="Options"
+             IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
+            </Border>
+            
+            <Border Grid.Row="1" Margin="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
+                <DockPanel   HorizontalAlignment="Left" VerticalAlignment="Center">
+                <RadioButton FontSize="14" 
                         Content="{Binding [byDefect], Source={x:Static local:CLang.instance}}"
                         GroupName="Options"
                         IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=1}" />
-                    <ComboBox
-                        Height="20"
-                        Margin="2"
+                    <ComboBox FontSize="12" Visibility="{Binding IsChecked,ElementName=selectdefrbbutton,Converter={StaticResource Boolean2VisibilityReConverter}}"
+                        Height="20" Width="120"   Background="Black"                 
                         ItemsSource="{Binding HistoryModel.DefectList}"
                         SelectedItem="{Binding SelectedDefect}">
                         <ComboBox.ItemTemplate>
@@ -105,88 +81,43 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                </DockPanel>
-                <!--  上一张 下一张  -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+              </DockPanel>
+            </Border>
+            <Border Margin="1" Grid.Row="2" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
+                <ListBox Grid.Row="2"
+                AlternationCount="2"
+                Foreground="White"
+                ItemsSource="{Binding FileNames, Mode=OneWay}"
+                SelectedIndex="{Binding FileIndex}"
+                SelectedItem="{Binding SelectedItem}"
+                ItemContainerStyle="{StaticResource ab}"
+                SelectionMode="Single">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="1" Text="{Binding Converter={StaticResource FileNameConverter}}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ItemSelectedCommand}" CommandParameter="{Binding SelectedItem}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
 
-                    <Button
-                        Grid.Column="0"
-                        Width="100"
-                        Height="40"
-                        Command="{Binding FrontImageCommand}">
-                        <Button.Content>
-                            <Image Source="/HistoryPlayback;component/Resources/上一张.png" />
-                        </Button.Content>
-                    </Button>
-
-                    <Button
-                        Grid.Column="1"
-                        Width="100"
-                        Height="40"
-                        Command="{Binding NextImageCommand}">
-                        <Button.Content>
-                            <Image Source="/HistoryPlayback;component/Resources/下一张.png" />
-                        </Button.Content>
-                    </Button>
-                </Grid>
-
-                <StackPanel
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal" />
-            </Grid>
+                </ListBox>
+            </Border>
         </Grid>
-        <!--  产品检测信息  -->
-        <Grid Grid.Row="1" DataContext="{Binding SelectedCellInfo}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="2.5*" />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <TextBox
-                Grid.Column="0"
-                hc:InfoElement.Title="{Binding [ID], Source={x:Static local:CLang.instance}}"
-                Text="{Binding ID, Mode=OneWay}" />
-            <TextBox
-                Grid.Column="1"
-                hc:InfoElement.Title="{Binding [Time], Source={x:Static local:CLang.instance}}"
-                Text="{Binding CreateTime, Mode=OneWay}" />
-            <TextBox
-                Grid.Column="2"
-                hc:InfoElement.Title="{Binding [TakeTime], Source={x:Static local:CLang.instance}}"
-                Text="{Binding TakeTime, Mode=OneWay}" />
-            <TextBox
-                Grid.Column="3"
-                hc:InfoElement.Title="{Binding [QualityLev], Source={x:Static local:CLang.instance}}"
-                Text="{Binding Level, Mode=OneWay}" />
-            <TextBox
-                Grid.Column="4"
-                hc:InfoElement.Title="{Binding [DefectName], Source={x:Static local:CLang.instance}}"
-                Text="{Binding DefectName, Mode=OneWay}" />
-
-        </Grid>
+            
         <!--  产品图像  -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
                 <RowDefinition/>
-                <!--<RowDefinition/>-->
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"  Margin="10,5" 
+            <!--<TextBlock Grid.Row="0"  Margin="10,5" 
              Foreground="AliceBlue"
              HorizontalAlignment="Left"
-             VerticalAlignment="Top"/>
+             VerticalAlignment="Top"/>-->
 
-            <Border   BorderBrush="DarkGray" Margin="1"
-             Grid.Row="0"
-             BorderThickness="1">
-                <wh:ImageView Source="{Binding ReadImage}" />
-            </Border>
             <!--<TextBlock Grid.Row="1"  Margin="10,10" 
              Foreground="AliceBlue"
              HorizontalAlignment="Left"
@@ -197,6 +128,103 @@
             BorderThickness="1">
                 <wh:ImageView Source="{Binding ReadImage}" />
             </Border>-->
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <!--  上一张 下一张  -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        Width="120"
+                        Height="60"
+                        Command="{Binding FrontImageCommand}">
+                        <Button.Content>
+                            <Image Source="/HistoryPlayback;component/Resources/上一张.png" />
+                        </Button.Content>
+                    </Button>
+
+                    <Button
+                        Grid.Column="1"
+                        Width="120"
+                        Height="60"
+                        Command="{Binding NextImageCommand}">
+                        <Button.Content>
+                            <Image Source="/HistoryPlayback;component/Resources/下一张.png" />
+                        </Button.Content>
+                    </Button>
+                </Grid>
+                <!--  产品检测信息  -->
+                <Grid Grid.Column="1" DataContext="{Binding SelectedCellInfo}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        FontSize="16"
+                    Grid.Column="0"
+                    hc:InfoElement.Title="{Binding [ID], Source={x:Static local:CLang.instance}}"
+                    Text="{Binding ID, Mode=OneWay}" />
+                    <TextBox
+                        FontSize="16"
+                    Grid.Column="1"
+                    hc:InfoElement.Title="{Binding [Time], Source={x:Static local:CLang.instance}}"
+                    Text="{Binding CreateTime, Mode=OneWay}" />
+                    <TextBox
+                        FontSize="16"
+                    Grid.Column="2"
+                    hc:InfoElement.Title="{Binding [TakeTime], Source={x:Static local:CLang.instance}}"
+                    Text="{Binding TakeTime, Mode=OneWay}" />
+                    <TextBox
+                        FontSize="16"
+                    Grid.Column="3"
+                    hc:InfoElement.Title="{Binding [QualityLev], Source={x:Static local:CLang.instance}}"
+                    Text="{Binding Level, Mode=OneWay}" />
+                    <TextBox
+                        FontSize="16"
+                    Grid.Column="4"
+                    hc:InfoElement.Title="{Binding [DefectName], Source={x:Static local:CLang.instance}}"
+                    Text="{Binding DefectName, Mode=OneWay}" />
+
+                </Grid>
+            </Grid>
+
+
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding HisTital}" Margin="10,5"  FontSize="20"
+                Foreground="AliceBlue"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"/>
+                <Border   BorderBrush="DarkGray" Margin="1" Grid.Row="0" BorderThickness="1">
+                    <wh:ImageView Source="{Binding ReadImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
+                </Border>
+
+
+                <TextBlock Grid.Column="1" Text="拉头" Margin="10,5"  FontSize="20"
+                  Foreground="AliceBlue"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"/>
+                <Border Grid.Column="1"   BorderBrush="DarkGray" Margin="1" Grid.Row="0" BorderThickness="1">
+                        <wh:ImageView Source="{Binding ReadPullImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
+                    </Border>
+        
+            </Grid>
+
         </Grid>
+
     </Grid>
 </UserControl>

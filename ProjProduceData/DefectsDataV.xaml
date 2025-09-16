@@ -64,15 +64,19 @@
         Style="{x:Null}">
         <DataGrid.Columns>
             <DataGridTextColumn
-                Width="80"
+                Width="70"
+                FontSize="14"
                 Binding="{Binding Name}"
                 Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
             <DataGridTextColumn
-                Width="50"
+                Width="45"
+                 FontSize="14"
                 Binding="{Binding Number}"
                 Header="{Binding [Num], Source={x:Static local:CLang.s_Instance}}" />
-            <DataGridTextColumn Binding="{Binding Percent, StringFormat={}{0:P2}}" Header="{Binding [Percent], Source={x:Static local:CLang.s_Instance}}" />
-            <DataGridTextColumn Binding="{Binding PercentofAll, StringFormat={}{0:P2}}" Header="{Binding [PercentOfAll], Source={x:Static local:CLang.s_Instance}}" />
+            <DataGridTextColumn Width="85"  FontSize="14" Binding="{Binding Percent, StringFormat={}{0:P2}}" 
+                                Header="{Binding [Percent], Source={x:Static local:CLang.s_Instance}}" />
+            <DataGridTextColumn Width="95"  FontSize="14" Binding="{Binding PercentofAll, StringFormat={}{0:P2}}"
+                                Header="{Binding [PercentOfAll], Source={x:Static local:CLang.s_Instance}}" />
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

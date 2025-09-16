@@ -24,13 +24,22 @@ namespace ZipperInfo
         [RelayCommand]
         void save(object win)
         {
-            CZipperCommunicate.CamTriggerStop(); //停止拍照
-            CZipperAutomaticAlgorithm.TestFinshEven(true);
-            CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
-            CZipperCommunicate.AixtContinue();
-            CZipperCommunicate.TestFinish();
-            var window = win as Window;
-            window.Close(); 
+            try
+            {
+                CZipperCommunicate.CamTriggerStop(); //停止拍照
+                CZipperAutomaticAlgorithm.TestFinshEven(true);
+                CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
+                CZipperCommunicate.AixtContinue();
+                CZipperCommunicate.TestFinish();
+                var window = win as Window;
+                window.Close();
+            }
+            catch (Exception)
+            {
+                var window = win as Window;
+                window.Close();
+            }
+  
         }
     }
 }

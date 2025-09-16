@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="HandyControl" />
+    <PackageReference Include="KeyBoard.WPF" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" />
     <PackageReference Include="OpenCvSharp4" />
     <PackageReference Include="OpenCvSharp4.Extensions" />

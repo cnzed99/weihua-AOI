@@ -8,60 +8,67 @@
             xmlns:wh="http://whzn.com/rjkf/2024/xaml"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
              d:DataContext="{d:DesignInstance Type=local:ZipperInfoVM}"
-           x:Name="window" 
+           x:Name="window" WindowStyle="None"
         Title="自动识别结果" Height="500" Width="700">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.5*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0"
-              Background="{DynamicResource RegionBrush}"
-              BorderThickness="1">
-                <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperDownmssImg}"/>
-            </Border>
+    <Border BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="8">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.3*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Margin="4,0,0,0"
+                          Background="{DynamicResource RegionBrush}"
+                          BorderThickness="1">
+                    <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperDownmssImg}"
+                                   ClearButtonVisibility="Collapsed"  LabelVisibility="Collapsed"/>
+                </Border>
 
-            <Border Grid.Row="1"
-                Background="{DynamicResource RegionBrush}"
-                BorderThickness="1">
-                <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullerImg}"/>
-            </Border>
-            <Border Grid.Row="2"
-                Background="{DynamicResource RegionBrush}"
-                BorderThickness="1">
-                <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullsImg}"/>
-            </Border>
+                <Border Grid.Row="1" Margin="4,0,0,0"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderThickness="1">
+                    <wh:ImageView   Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullerImg}"
+                                    ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
+                </Border>
+                <Border Grid.Row="2" Margin="4,0,0,0"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderThickness="1">
+                    <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullsImg}"
+                                   ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
+                </Border>
 
-            <Border Grid.Row="3"
-            Background="{DynamicResource RegionBrush}"
-            BorderThickness="1">
-                <wh:ImageView  Grid.Row="0"  Source="{Binding ZipperInfo.ZipperUpmssImg}"/>
-            </Border>
-        </Grid>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <wh:CPropertyGridLang FontSize="14" SelectedObject="{Binding ZipperInfo}"/>
-            <Border Grid.Row="1"  Background="{DynamicResource RegionBrush}" BorderThickness="1">
-                <Grid >
-                    <!--<Grid.ColumnDefinitions>
+                <Border Grid.Row="3" Margin="4,0,0,0"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderThickness="1">
+                    <wh:ImageView  Grid.Row="0"  Source="{Binding ZipperInfo.ZipperUpmssImg}"
+                                   ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
+                </Border>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <!--<wh:CPropertyGridLang FontSize="14" SelectedObject="{Binding ZipperInfo}"/>-->
+                <local:ZipperInfoUserControl x:Name="InfoUserCol"/>
+                <Border Grid.Row="1"  Background="{DynamicResource RegionBrush}" BorderThickness="1">
+                    <Grid >
+                        <!--<Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>-->
-                    <!--<Button Grid.Column="0" Width="120" Height="50"  Margin="2" Content="测试" />-->
-                    <Button Grid.Column="1" FontSize="40" Width="180" Height="80"  Content="确认" Command="{Binding saveCommand}" CommandParameter="{Binding ElementName=window}"/>
-                </Grid>
-            </Border>
+                        <!--<Button Grid.Column="0" Width="120" Height="50"  Margin="2" Content="测试" />-->
+                        <Button Grid.Column="1" FontSize="40" Width="180" Height="80"  Content="确认" Command="{Binding saveCommand}" CommandParameter="{Binding ElementName=window}"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
         </Grid>
-       
-    </Grid>
+    </Border>
 </hc:Window>

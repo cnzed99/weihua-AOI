@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
 using HistoryPlayback.Model;
 using QualityGrade;
 using SDFilter;
@@ -113,6 +115,24 @@ namespace HistoryPlayback
         /// </summary>
         [ObservableProperty]
         BitmapImage readImage;
+        /// <summary>
+        /// 2025.9.15鲍赞宝
+        /// 读取的拉头图片
+        /// </summary>
+        [ObservableProperty]
+        BitmapImage readPullImage;
+
+        /// <summary>
+        /// 2025.9.15鲍赞宝
+        /// 标题
+        /// </summary>
+        [ObservableProperty]
+        string hisTital;
+        /// <summary>
+        /// 空图像
+        /// </summary>
+        [ObservableProperty]
+        BitmapSource clearImage;
 
         /// <summary>
         /// 2024.7.6鲍赞宝
@@ -157,25 +177,39 @@ namespace HistoryPlayback
         [RelayCommand]
         void ItemSelected(object selecteditem)
         {
-            if (selecteditem is string selectedobj)
+            try
             {
-                if (File.Exists(selectedobj))
+                if (selecteditem is string selectedobj)
                 {
-                    ReadImage = new BitmapImage(new Uri(selectedobj));
+                    if (File.Exists(selectedobj))
+                    {
+                        ReadImage = new BitmapImage(new Uri(selectedobj));
+                    }
+                    string[] pullname = selectedobj.Split('.');
+                    string pullpath= pullname[0]+"_Pull"+"."+ pullname[1];
+                    if (File.Exists(pullpath))
+                    {
+                        ReadPullImage = new BitmapImage(new Uri(pullpath));
+                    }
+
+                    // 图片命名:时间-流水ID-质量信号-质量等级-缺陷名-处理时间
+                    string name = Path.GetFileNameWithoutExtension(selectedobj);
+                    DateTime fileCreateTime = File.GetCreationTime(selectedobj);
+
+                    string[] spiltName = name.Split('_');
+                    SelectedCellInfo.ID = spiltName[0];
+                    SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
+
+                    SelectedCellInfo.Level = spiltName[3];
+                    SelectedCellInfo.DefectName = spiltName[4];
+                    // SelectedCellInfo.TakeTime = spiltName[5];
                 }
-
-                // 图片命名:时间-流水ID-质量信号-质量等级-缺陷名-处理时间
-                string name = Path.GetFileNameWithoutExtension(selectedobj);
-                DateTime fileCreateTime = File.GetCreationTime(selectedobj);
-
-                string[] spiltName = name.Split('_');
-                SelectedCellInfo.ID = spiltName[1];
-                SelectedCellInfo.CreateTime = fileCreateTime.ToString("F");
-
-                SelectedCellInfo.Level = spiltName[3];
-                SelectedCellInfo.DefectName = spiltName[4];
-               // SelectedCellInfo.TakeTime = spiltName[5];
             }
+            catch (Exception ex)
+            {
+                Growl.Error("解析图片信息异常："+ex.Message);
+            }
+           
         }
 
         private void Receive(CFilterConfig filter)

@@ -31,14 +31,17 @@
                 Background="{x:Null}"
                 Click="btnClear_Click"
                 DockPanel.Dock="Right"
-                Style="{StaticResource ButtonCustom}">
+                Style="{StaticResource ButtonCustom}"
+                 Visibility="{Binding ClearButtonVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}">
                 <Image Source="/WH.Controls;component/Images/清理.png" Stretch="Uniform" />
             </Button>
             <TextBlock
+                Name="rbgLabel"
                 Margin="5,0"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right"
-                Style="{DynamicResource TextBlockDefault}">
+                Style="{DynamicResource TextBlockDefault}"
+                Visibility="{Binding LabelVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}{0} {1} {2}">
                         <Binding ElementName="Image" Path="R" />
@@ -55,7 +58,8 @@
             <TextBlock
                 Margin="5,0"
                 DockPanel.Dock="Right"
-                Style="{DynamicResource TextBlockDefault}">
+                Style="{DynamicResource TextBlockDefault}"
+                 Visibility="{Binding LabelVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}{0} | {1}">
                         <Binding ElementName="Image" Path="X" />

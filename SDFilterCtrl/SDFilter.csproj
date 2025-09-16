@@ -10,7 +10,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="HandyControl" />		
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="KeyBoard.WPF" />		
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="ValueConverters" />
 	</ItemGroup>

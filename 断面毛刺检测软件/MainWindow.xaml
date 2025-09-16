@@ -319,7 +319,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding SelectedProcess.DefectsDataVM}" FontSize="15" />
+                    <pro:ProduceData DataContext="{Binding CMainMModel.CProcessGroups[0].CDefectsDataVM}" FontSize="15" /> 
                 </Border>
                 <!--<Border
                     Grid.Column="1"
@@ -401,7 +401,7 @@
                                     Text="{Binding [CloseSum], Source={x:Static local:CLang.Instance}}" />
                             </Border>
                         </hc:StatusSwitchElement.CheckedElement>
-                        <Border Margin="-2" Background="{DynamicResource PrimaryBrush}">
+                        <Border Margin="-2,-2,-2,0" Background="{DynamicResource PrimaryBrush}" Height="30" VerticalAlignment="Top">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -490,7 +490,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.6*" />
                     <!--<ColumnDefinition Width="0.45*" />-->
-                    <ColumnDefinition Width="320" />
+                    <ColumnDefinition Width="300" />
                 </Grid.ColumnDefinitions>
                 <hc:Drawer
                     Name="DrawerRightInContainer"
@@ -545,7 +545,7 @@
 
                 <Grid>
                     <Grid.RowDefinitions >
-                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="1.2*"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <!--  图像视窗  -->
@@ -599,14 +599,16 @@
                                              Background="{DynamicResource RegionBrush}"
                                              BorderBrush="{Binding ModelBrush}"
                                              BorderThickness="1">
-                                            <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}" />
+                                            <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}"
+                                                          ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
                                         </Border>
 
                                         <Border Grid.Column="1"
                                             Background="{DynamicResource RegionBrush}"
                                             BorderBrush="{Binding ModelBrush}"
                                             BorderThickness="1">
-                                            <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}" />
+                                            <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
+                                                           ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
                                         </Border>
                                         <TextBlock Text="拉头" FontSize="18" Grid.Column="1" 
                                                     Margin="10,5"
@@ -632,7 +634,7 @@
                                             </MultiBinding>
                                         </TextBlock.Text>-->
                                     </TextBlock>
-                            
+
 
                                     <!--<ToggleButton
                                     Margin="0,7,170,7"
@@ -671,7 +673,7 @@
 
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3.5*"/>
+                            <ColumnDefinition Width="4*"/>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" BorderThickness="2" BorderBrush="LightGray" Margin="2">

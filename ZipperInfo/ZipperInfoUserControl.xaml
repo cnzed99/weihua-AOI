@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="ZipperInfo.ZipperInfoUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ZipperInfo"
+             mc:Ignorable="d" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:keyboard="clr-namespace:KeyBoard.WPF.Behavior;assembly=KeyBoard.WPF"
+             d:DataContext="{d:DesignInstance Type=local:ZipperInfoVM}"
+            d:DesignHeight="250" d:DesignWidth="200" >
+
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="ToothTypeProvider" 
+                        MethodName="GetValues" 
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:TOOTHTYPE"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="PullTypeProvider" 
+                        MethodName="GetValues" 
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:PULLTYPE"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="MassTypeProvider" 
+                       MethodName="GetValues" 
+                       ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:STOPMASS"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="LogoTypeProvider" 
+                       MethodName="GetValues" 
+                       ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:LOGOTYPE"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+
+    
+    <UniformGrid Rows="6" Columns="2">
+        <TextBlock Margin="15,0,0,0" Text="拉链长度(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:NumericUpDown Value="{Binding ZipperInfo.ZipperLneght, UpdateSourceTrigger=PropertyChanged}" 
+                    Margin="5" DecimalPlaces="1" Minimum="0" Maximum="2000" FontSize="24">
+            <i:Interaction.Behaviors>
+                <keyboard:NumericKeyboardBehavior/>
+            </i:Interaction.Behaviors>
+        </hc:NumericUpDown>
+
+        <TextBlock  Margin="15,0,0,0" Text="链牙型号" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5" SelectedItem="{Binding ZipperInfo.ZipperToothType }"
+                      ItemsSource="{Binding Source={StaticResource ToothTypeProvider}}" FontSize="24"/>
+
+        <TextBlock    Margin="15,0,0,0" Text="穿拉头方式" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5" SelectedItem="{Binding ZipperInfo.ZipperSliderType }"
+                      ItemsSource="{Binding Source={StaticResource  PullTypeProvider}}" FontSize="24"/>
+
+        <TextBlock  Margin="15,0,0,0" Text="上止类型" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5" SelectedItem="{Binding ZipperInfo.ZipperUpMassType }"
+                      ItemsSource="{Binding Source={StaticResource  MassTypeProvider}}" FontSize="24"/>
+
+        <TextBlock   Margin="15,0,0,0" Text="下止类型" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5" SelectedItem="{Binding ZipperInfo.ZipperDownMassType }"
+                      ItemsSource="{Binding Source={StaticResource  MassTypeProvider}}" FontSize="24"/>
+
+        <TextBlock   Margin="15,0,0,0" Text="Logo类型" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5"  SelectedItem="{Binding ZipperInfo.ZipperLogoType }"
+                      ItemsSource="{Binding Source={StaticResource  LogoTypeProvider}}" FontSize="24"/>
+    </UniformGrid>
+</UserControl>
