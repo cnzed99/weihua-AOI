@@ -38,6 +38,7 @@ using ZipperInfo;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.IO;
+using OpenCvSharp.Extensions;
 
 
 
@@ -286,7 +287,7 @@ namespace WH.DetectSystem.Models
 
         private void TestFinshTodo(bool finsh)
         {
-          
+
             if (CZipperAutomaticAlgorithm.TestFinsh)
             {
                 foreach (var cell in MergeCells)
@@ -1004,13 +1005,7 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image.ToBitmapSource();
-                                BitmapSource zipperPullimg = cell.ZipperPullPartImg;
-                                //_ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
-                                //    new Action(() =>
-                                //    {
-
-                                //    })
-                                //);
+                                BitmapSource zipperPullimg = Mat2BitmapSource(cell.ZipperPullPartImg);
                                 ImageView drawView;
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
@@ -1292,21 +1287,6 @@ namespace WH.DetectSystem.Models
                                     LastView.Invalidate();
                                 });
 
-                                //for (int i = 0; i < 1; i++)
-                                //{
-                                //    ImageView drawView;
-                                //    if (i == 0)
-                                //    {
-                                //        drawView = CurView;
-                                //    }
-                                //    else
-                                //    {
-                                //        //if (cell.IsOK)
-                                //        //    break;
-                                //        drawView = LastView;
-                                //    }
-
-                                //}
                             }
                             catch (Exception ex)
                             {
@@ -1659,8 +1639,30 @@ namespace WH.DetectSystem.Models
             int alignment = 4; // 假设系统按4字节对齐
             return ((rawStride + alignment - 1) / alignment) * alignment;
         }
+        /// <summary>
+        /// opencv Mat 类型转成BitmapSource
+        /// </summary>
+        /// <param name="img"></param>
+        /// <returns></returns>
+        private BitmapSource Mat2BitmapSource(OpenCvSharp.Mat img)
+        {
+            if (img == null)
+            {
+                return null;
+            }
+            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
+            {
+                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                   bitmap.GetHbitmap(),
+                   IntPtr.Zero,
+                   System.Windows.Int32Rect.Empty,
+                   BitmapSizeOptions.FromEmptyOptions());
+                bitimg.Freeze();
+                return bitimg;
+            }
 
 
+        }
 
         public void StopTask()
         {

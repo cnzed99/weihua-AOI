@@ -490,7 +490,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.6*" />
                     <!--<ColumnDefinition Width="0.45*" />-->
-                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="320" />
                 </Grid.ColumnDefinitions>
                 <hc:Drawer
                     Name="DrawerRightInContainer"

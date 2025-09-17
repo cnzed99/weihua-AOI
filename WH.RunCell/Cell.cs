@@ -33,7 +33,7 @@ namespace WH.RunCell
         /// 2025.6.2 鲍赞宝
         /// 拉链头图像
         /// </summary>
-        public BitmapSource ZipperPullPartImg { get; set; }
+        public OpenCvSharp.Mat ZipperPullPartImg { get; set; }
         /// <summary>
         ///  2025.6.2 鲍赞宝
         ///  单条拉链包含的图片,存图使用
@@ -329,9 +329,9 @@ namespace WH.RunCell
                 }
             }
             ZipperImages.Clear();
-            if (ZipperPullPartImg != null && ZipperPullPartImg.CanFreeze)
+            if (ZipperPullPartImg != null )
             {
-                ZipperPullPartImg.Freeze();
+                ZipperPullPartImg.Dispose();
             }
             if (DownMassMatImg != null)
             {

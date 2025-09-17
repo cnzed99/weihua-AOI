@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Mysqlx.Crud;
+using OpenCvSharp.Extensions;
 using SaveImageManage;
 using SDFilter;
 using WH.DetectSystem.Models;
@@ -151,7 +152,8 @@ namespace WH.DetectSystem._5_存图操作
                 }
                 if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
                 {
-                    WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
+                    // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
+                    OpenCvSharp.Cv2.ImWrite( pullPath, cell.ZipperPullPartImg);
                 }
 
                 if (saveImageConfig.SaveImageEnable) //开启存原图
@@ -241,15 +243,13 @@ namespace WH.DetectSystem._5_存图操作
             DrawingContext drawingContext2 = null;
             if (cell.ZipperPullPartImg != null)
             {
+                BitmapSource bitmapSource = Mat2BitmapSource(cell.ZipperPullPartImg);
                 drawingVisua2 = new DrawingVisual();
-                drawingContext2 = drawingVisual.RenderOpen();
-                drawingContext2.DrawImage(
-                    cell.ZipperPullPartImg,
+                drawingContext2 = drawingVisua2.RenderOpen();
+                drawingContext2.DrawImage(bitmapSource,
                     new Rect(0, 0, cell.ZipperPullPartImg.Width, cell.ZipperPullPartImg.Height)
                 );
             }
-
-
             foreach (var edge in cell.DrawEdges)
             {
                 Pen pen = new Pen(edge.BrushDraw, 1);
@@ -290,7 +290,7 @@ namespace WH.DetectSystem._5_存图操作
                     AlignmentY.Top,
                     //cell.Quality.ShowColor.Brush,
                     Brushes.Red,
-                    cell.Image.ImageHeight / 10
+                    cell.Image.ImageHeight / 5
                 );
                 //显示所有Region缺陷
                 if (showAllDefect)
@@ -317,7 +317,7 @@ namespace WH.DetectSystem._5_存图操作
                                         detection.regionOut[i].GetBottomRight(),
                                        // defectFilter.ShowColor.Brush,
                                        Brushes.Red,
-                                        cell.Image.ImageHeight / 20
+                                        cell.Image.ImageHeight / 10
                                     );
                             }
                             else
@@ -330,7 +330,7 @@ namespace WH.DetectSystem._5_存图操作
                                             detection.regionOut[i].GetBottomRight(),
                                            // defectFilter.ShowColor.Brush,
                                            Brushes.Red,
-                                            (int)(cell.ZipperPullPartImg.Height / 20.0)
+                                            (int)(cell.ZipperPullPartImg.Height / 10.0)
                                         );
                                 }
 
@@ -362,7 +362,7 @@ namespace WH.DetectSystem._5_存图操作
                                        cell.Detection.regionOut[i].GetBottomRight(),
                                       // defectFilter.ShowColor.Brush,
                                       Brushes.Red,
-                                       cell.Image.ImageHeight / 20
+                                       cell.Image.ImageHeight / 10
                                    );
                             }
                             else
@@ -375,7 +375,7 @@ namespace WH.DetectSystem._5_存图操作
                                            cell.Detection.regionOut[i].GetBottomRight(),
                                           // defectFilter.ShowColor.Brush,
                                           Brushes.Red,
-                                          (int)(cell.ZipperPullPartImg.Height / 20)
+                                          (int)(cell.ZipperPullPartImg.Height / 10)
                                        );
 
                                 }
@@ -392,7 +392,7 @@ namespace WH.DetectSystem._5_存图操作
                     "OK",
                     AlignmentX.Right,
                     AlignmentY.Top,
-                    cell.Quality.ShowColor.Brush, cell.Image.ImageHeight / 10
+                    cell.Quality.ShowColor.Brush, cell.Image.ImageHeight / 5
                 );
             }
             drawingContext.Close();
@@ -405,8 +405,8 @@ namespace WH.DetectSystem._5_存图操作
             if (cell.ZipperPullPartImg != null && drawingContext2 != null)
             {
                 drawingContext2.Close();
-                 renderTargetBitmap2 =
-                    new((int)cell.ZipperPullPartImg.Width, (int)cell.ZipperPullPartImg.Height, 96, 96, PixelFormats.Default);
+                renderTargetBitmap2 =
+                   new(cell.ZipperPullPartImg.Width, cell.ZipperPullPartImg.Height, 96, 96, PixelFormats.Default);
                 renderTargetBitmap2.Render(drawingVisua2);
                 renderTargetBitmap2.Freeze();
             }
@@ -420,7 +420,7 @@ namespace WH.DetectSystem._5_存图操作
                 Directory.CreateDirectory(dirPath);
             }
             WriteImage(renderTargetBitmap, path, ".jpg");
-            if (renderTargetBitmap2!=null)
+            if (renderTargetBitmap2 != null)
             {
                 WriteImage(renderTargetBitmap2, path2, ".jpg");
             }
@@ -524,6 +524,20 @@ namespace WH.DetectSystem._5_存图操作
                 1
             );
             drawingContext.DrawText(formattedText, origin);
+        }
+
+        static BitmapSource Mat2BitmapSource(OpenCvSharp.Mat img)
+        {
+            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
+            {
+                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                   bitmap.GetHbitmap(),
+                   IntPtr.Zero,
+                   System.Windows.Int32Rect.Empty,
+                   BitmapSizeOptions.FromEmptyOptions());
+                bitimg.Freeze();
+                return bitimg;
+            }
         }
         #endregion
 

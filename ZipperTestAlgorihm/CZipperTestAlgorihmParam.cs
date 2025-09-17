@@ -534,7 +534,7 @@ namespace ZipperTestAlgorihm
                                             for (int a = 0; a < otherobb.Count; a++)
                                             {
                                                 int obblabelindex = int.Parse(otherobb[a].lable);
-                                                string obblabelname = Common_names[obblabelindex];
+                                                string obblabelname = downStopMass_names[obblabelindex];
                                                 CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, obblabelname, otherobb[a]);
                                                 dets.Add(disData);
                                             }
@@ -761,18 +761,18 @@ namespace ZipperTestAlgorihm
                                 }
 
                                 Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
-
-                                if (cell.ImageFile != "")
-                                {
-                                    cell.ZipperPullPartImg = Mat2BitmapSource(croppullMat);
-                                }
-                                else
-                                {
-                                    Mat colorMat = new Mat();
-                                    Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                    cell.ZipperPullPartImg = Mat2BitmapSource(colorMat);
-                                    colorMat.Dispose();
-                                }
+                                cell.ZipperPullPartImg = croppullMat;
+                                //if (cell.ImageFile != "")
+                                //{
+                                //    cell.ZipperPullPartImg = croppullMat;
+                                //}
+                                //else
+                                //{
+                                //    Mat colorMat = new Mat();
+                                //    Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                //    cell.ZipperPullPartImg = colorMat;
+                                //    //colorMat.Dispose();
+                                //}
                                 //Mat colorMat111 = new Mat();
                                 //Cv2.CvtColor(croppullMat, colorMat111, ColorConversionCodes.BGR2RGB);
                                 //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);
@@ -1155,19 +1155,19 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         //    }
         //}
 
-        private BitmapSource Mat2BitmapSource(Mat img)
-        {
-            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
-            {
-                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                   bitmap.GetHbitmap(),
-                   IntPtr.Zero,
-                   System.Windows.Int32Rect.Empty,
-                   BitmapSizeOptions.FromEmptyOptions());
-                bitimg.Freeze();
-                return bitimg;
-            }
-        }
+        //private BitmapSource Mat2BitmapSource(Mat img)
+        //{
+        //    using (System.Drawing.Bitmap bitmap = img.ToBitmap())
+        //    {
+        //        BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+        //           bitmap.GetHbitmap(),
+        //           IntPtr.Zero,
+        //           System.Windows.Int32Rect.Empty,
+        //           BitmapSizeOptions.FromEmptyOptions());
+        //        bitimg.Freeze();
+        //        return bitimg;
+        //    }
+        //}
 
         /// <summary>
         /// 裁剪BitmapSource的核心方法

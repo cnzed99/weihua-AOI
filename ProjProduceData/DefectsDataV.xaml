@@ -9,7 +9,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <d:UserControl.DataContext>
+    <d:UserControl.DataContext> 
         <local:CDefectsDataVM />
     </d:UserControl.DataContext>
     <UserControl.Resources>
@@ -64,7 +64,7 @@
         Style="{x:Null}">
         <DataGrid.Columns>
             <DataGridTextColumn
-                Width="70"
+                Width="90"
                 FontSize="14"
                 Binding="{Binding Name}"
                 Header="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />

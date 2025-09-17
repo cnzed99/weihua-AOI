@@ -191,6 +191,10 @@ namespace HistoryPlayback
                     {
                         ReadPullImage = new BitmapImage(new Uri(pullpath));
                     }
+                    else
+                    {
+                        ReadPullImage = (BitmapImage)ClearImage;
+                    }
 
                     // 图片命名:时间-流水ID-质量信号-质量等级-缺陷名-处理时间
                     string name = Path.GetFileNameWithoutExtension(selectedobj);
