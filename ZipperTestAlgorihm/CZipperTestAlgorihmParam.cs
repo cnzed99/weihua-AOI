@@ -376,7 +376,20 @@ namespace ZipperTestAlgorihm
             if (paramClass != null)
             {
                 UpdateScore(paramClass);
-                Mat img = GetMatImage(cell, paramClass);
+                Mat matimg = GetMatImage(cell, paramClass);
+              //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转前.png", matimg);
+                Mat img;
+                if (cell.ImageFile != "")
+                {
+                    Mat colorMat = new Mat();
+                    Cv2.CvtColor(matimg, colorMat, ColorConversionCodes.BGR2RGB);
+                    img = colorMat;
+                }
+                else
+                {
+                    img = matimg;
+                }
+              //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
@@ -410,16 +423,16 @@ namespace ZipperTestAlgorihm
                         cropRec[i].Height = smallimgHeight;
                         Mat cropimg = img[cropRec[i]];
                         mats.Add(cropimg);
-                        if (cell.ImageFile != "")
-                        {
-                            cell.FourCutMatImg.Add(cropimg);
-                        }
-                        else
-                        {
-                            Mat colorMat = new Mat();
-                            Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
-                            cell.FourCutMatImg.Add(colorMat);
-                        }
+                        //if (cell.ImageFile != "")
+                        //{
+                        //    cell.FourCutMatImg.Add(cropimg);
+                        //}
+                        //else
+                        //{
+                        //    Mat colorMat = new Mat();
+                        //    Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
+                        //    cell.FourCutMatImg.Add(colorMat);
+                        //}
 
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }
@@ -460,16 +473,16 @@ namespace ZipperTestAlgorihm
                                         rex = 0;
                                     }
                                     Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
-                                    if (cell.ImageFile != "")
-                                    {
-                                        cell.DownMassMatImg = cropDownMat;
-                                    }
-                                    else
-                                    {
-                                        Mat colorMat = new Mat();
-                                        Cv2.CvtColor(cropDownMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                        cell.DownMassMatImg = colorMat;
-                                    }
+                                    //if (cell.ImageFile != "")
+                                    //{
+                                    //    cell.DownMassMatImg = cropDownMat;
+                                    //}
+                                    //else
+                                    //{
+                                    //    Mat colorMat = new Mat();
+                                    //    Cv2.CvtColor(cropDownMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                    //    cell.DownMassMatImg = colorMat;
+                                    //}
                                     // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
                                     ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
                                     if (downResult != null)
@@ -593,16 +606,16 @@ namespace ZipperTestAlgorihm
                                     }
                                     dets.Add(restoreData);
                                     Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
-                                    if (cell.ImageFile != "")
-                                    {
-                                        cell.UpMassMatImg.Add(cropUpMat);
-                                    }
-                                    else
-                                    {
-                                        Mat colorMat = new Mat();
-                                        Cv2.CvtColor(cropUpMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                        cell.UpMassMatImg.Add(colorMat);
-                                    }
+                                    //if (cell.ImageFile != "")
+                                    //{
+                                    //    cell.UpMassMatImg.Add(cropUpMat);
+                                    //}
+                                    //else
+                                    //{
+                                    //    Mat colorMat = new Mat();
+                                    //    Cv2.CvtColor(cropUpMat, colorMat, ColorConversionCodes.BGR2RGB);
+                                    //    cell.UpMassMatImg.Add(colorMat);
+                                    //}
 
                                     ObbResult upResult = ImageInferObb(yolo_UpStopMass_obb, cropUpMat);
                                     if (upResult != null)

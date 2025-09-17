@@ -39,6 +39,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.IO;
 using OpenCvSharp.Extensions;
+using OpenCvSharp;
 
 
 
@@ -1650,8 +1651,10 @@ namespace WH.DetectSystem.Models
             {
                 return null;
             }
-            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
+            using (Mat colorMat = new Mat())
             {
+                Cv2.CvtColor(img, colorMat, ColorConversionCodes.BGR2RGB);
+                System.Drawing.Bitmap bitmap = colorMat.ToBitmap();
                 BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                    bitmap.GetHbitmap(),
                    IntPtr.Zero,

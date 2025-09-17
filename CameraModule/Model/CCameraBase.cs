@@ -301,7 +301,8 @@ namespace CameraModule
                 CImage image = new CImage(widthNew, heightNew, strideNew, ptrNew, Setting.CameraType);
                 ExportImage(image);
 
-                //Mat img = new Mat(heightNew, widthNew, MatType.CV_8UC((bitsPerPixel + 7) / 8), ptrNew);
+                //Mat img = new Mat(heightNew, widthNew, MatType.CV_8UC((bitsPerPixel + 7) / 8), grabbedRawData);
+                //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机.png", img);
                 //mats.Add(img);
                 //if (mats.Count >= Setting.CamCount)
                 //{

@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Mysqlx.Crud;
 using OpenCvSharp.Extensions;
 using SaveImageManage;
 using SDFilter;
@@ -133,8 +133,8 @@ namespace WH.DetectSystem._5_存图操作
                     for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                     {
                         int index = fourCutPath.IndexOf('.');
-                        string uppath = fourCutPath.Insert(index, $"_{i}");
-                        OpenCvSharp.Cv2.ImWrite(uppath, cell.FourCutMatImg[i]);
+                        string fourpath = fourCutPath.Insert(index, $"_{i}");                 
+                        SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
                     }
                 }
                 if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
@@ -143,17 +143,17 @@ namespace WH.DetectSystem._5_存图操作
                     {
                         int index = upMassPath.IndexOf('.');
                         string uppath = upMassPath.Insert(index, $"_{i}");
-                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                        SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
                     }
                 }
                 if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
                 {
-                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                    SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
                 }
                 if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
                 {
                     // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
-                    OpenCvSharp.Cv2.ImWrite( pullPath, cell.ZipperPullPartImg);
+                    SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
                 }
 
                 if (saveImageConfig.SaveImageEnable) //开启存原图
@@ -215,6 +215,15 @@ namespace WH.DetectSystem._5_存图操作
             catch (Exception)
             {
                 throw;
+            }
+
+
+            void SaveMatRgb2Bgr(string path, OpenCvSharp.Mat mat)
+            {
+                OpenCvSharp.Mat colorMat = new OpenCvSharp.Mat();
+                OpenCvSharp.Cv2.CvtColor(mat, colorMat,OpenCvSharp.ColorConversionCodes.BGR2RGB);
+                OpenCvSharp.Cv2.ImWrite(path, colorMat);
+                colorMat.Dispose();
             }
         }
 
@@ -281,8 +290,8 @@ namespace WH.DetectSystem._5_存图操作
             {
                 DefectFilter dstFilter = cell.Detection.DefectFilter;
                 StringBuilder textBuilder = new StringBuilder();
-                textBuilder.AppendLine(dstFilter.Name);
-                textBuilder.Append(cell.Quality.Name);
+               // textBuilder.AppendLine(dstFilter.Name);
+                textBuilder.Append($"{cell.Quality.Name}:{dstFilter.Name}");
                 DrawTextAlignment(cell,
                     drawingContext,
                     textBuilder.ToString(),
@@ -528,8 +537,10 @@ namespace WH.DetectSystem._5_存图操作
 
         static BitmapSource Mat2BitmapSource(OpenCvSharp.Mat img)
         {
-            using (System.Drawing.Bitmap bitmap = img.ToBitmap())
+            using (OpenCvSharp.Mat colorMat = new OpenCvSharp.Mat())
             {
+                OpenCvSharp.Cv2.CvtColor(img, colorMat, OpenCvSharp.ColorConversionCodes.BGR2RGB);
+                System.Drawing.Bitmap bitmap = colorMat.ToBitmap();
                 BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                    bitmap.GetHbitmap(),
                    IntPtr.Zero,
