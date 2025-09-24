@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using OpenCvSharp.Extensions;
 using OpenCvSharp;
+using WH.Entity.MatConverter;
 
 
 
@@ -1006,7 +1007,7 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image.ToBitmapSource();
-                                BitmapSource zipperPullimg = Mat2BitmapSource(cell.ZipperPullPartImg);
+                                BitmapSource zipperPullimg = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
                                 ImageView drawView;
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
@@ -1640,32 +1641,7 @@ namespace WH.DetectSystem.Models
             int alignment = 4; // 假设系统按4字节对齐
             return ((rawStride + alignment - 1) / alignment) * alignment;
         }
-        /// <summary>
-        /// opencv Mat 类型转成BitmapSource
-        /// </summary>
-        /// <param name="img"></param>
-        /// <returns></returns>
-        private BitmapSource Mat2BitmapSource(OpenCvSharp.Mat img)
-        {
-            if (img == null)
-            {
-                return null;
-            }
-            using (Mat colorMat = new Mat())
-            {
-                Cv2.CvtColor(img, colorMat, ColorConversionCodes.BGR2RGB);
-                System.Drawing.Bitmap bitmap = colorMat.ToBitmap();
-                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                   bitmap.GetHbitmap(),
-                   IntPtr.Zero,
-                   System.Windows.Int32Rect.Empty,
-                   BitmapSizeOptions.FromEmptyOptions());
-                bitimg.Freeze();
-                return bitimg;
-            }
 
-
-        }
 
         public void StopTask()
         {

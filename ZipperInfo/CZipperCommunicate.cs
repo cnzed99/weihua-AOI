@@ -232,6 +232,9 @@ namespace ZipperInfo
                 int tlenght = (int)lenght * 10;
                 com.WriteSingleRegisterInt32(41202, tlenght);
                 com.WriteSingleRegisterInt32(41304, igoulenght);
+
+                float NGLocation = (lenght + 65.0f)*100;  //NG料的放料位置，根据拉链长度来计算
+                com.WriteSingleRegisterInt32(41306, (int)NGLocation);
             }
 
             //}
@@ -477,11 +480,11 @@ namespace ZipperInfo
         /// <summary>
         /// 轴运动继续
         /// </summary>
-        public static void AixtContinue()
+        public static void AixtContinue(bool con)
         {
             if (com != null)
             {
-                com.WriteSingleCoil(25, true);
+                com.WriteSingleCoil(25, con);
             }
         }
 
@@ -517,7 +520,26 @@ namespace ZipperInfo
             //    return -1;
             //}
         }
+        /// <summary>
+        /// 设置拉链后退的距离 1000=1cm 
+        /// 2025-9-18鲍赞宝
+        /// </summary>
+        //public static void SendWolkBack(int lenght)
+        //{
+        //    //try
+        //    //{
 
+        //    if (com != null)
+        //    {
+        //        com.WriteSingleRegisterInt32(41302, lenght);
+        //    }
+
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //    return -1;
+        //    //}
+        //}
         #endregion
 
     }

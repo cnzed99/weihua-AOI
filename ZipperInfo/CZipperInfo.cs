@@ -32,7 +32,7 @@ namespace ZipperInfo
                 if (AutoData != null)
                 {
                     AutoData.ZipperLenght = value;
-                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount);
+                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount,out _);
                     CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
                     //写入拍照的总图片数量
                     CZipperCommunicate.SendPhotoCount(points.Count);
@@ -108,6 +108,11 @@ namespace ZipperInfo
         public int CutoffIndex { get; set; }
 
         /// <summary>
+        /// 拉链触发的点累属于哪一类
+        /// </summary>
+        public int TriggerType { get; set; }
+
+        /// <summary>
         /// 拉链自动识别时的上下限位置
         /// 2025.06.30 鲍赞宝
         /// </summary>
@@ -116,30 +121,26 @@ namespace ZipperInfo
         /// <summary>
         /// 识别出来的上止的图像
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        public BitmapSource zipperUpmssImg;
+        public BitmapSource ZipperUpmssImg { get; set; }
 
         /// <summary>
         /// 识别出来的下止的图像
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        public BitmapSource zipperDownmssImg;
+        public BitmapSource ZipperDownmssImg { get; set; }
 
         /// <summary>
         /// 识别出来的正面拉片的图像
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        public BitmapSource zipperPullsImg;
+        public BitmapSource ZipperPullsImg { get; set; }
 
         /// <summary>
         /// 识别出来的正面拉头的图像
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        public BitmapSource zipperPullerImg;
+        public BitmapSource ZipperPullerImg { get; set; }
         /// <summary>
         /// 拉头识别框中心X
         /// </summary>

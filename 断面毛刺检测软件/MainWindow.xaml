@@ -74,13 +74,14 @@
             <Menu
                 x:Name="MainMenu"
                 Grid.Column="0"
+                FontSize="18"
                 hc:MenuAttach.PopupHorizontalOffset="-125"
                 hc:WindowAttach.IsDragElement="True">
                 <MenuItem Name="ProjMenu" Header="{Binding [ProjManagement], Source={x:Static local:CLang.Instance}}">
                     <MenuItem.ItemContainerStyle>
                         <Style BasedOn="{StaticResource MenuItemBaseStyle}" TargetType="MenuItem">
                             <Setter Property="HorizontalAlignment" Value="Left" />
-                            <Setter Property="Width" Value="100" />
+                            <Setter Property="Width" Value="120" />
                         </Style>
                     </MenuItem.ItemContainerStyle>
                     <MenuItem.Icon>
@@ -132,7 +133,7 @@
                         <svg1:SVGImage Source="/Resources/图标/相机通讯/相机通讯.svg" />
                     </MenuItem.Icon>
                     <MenuItem
-                        Width="100"
+                        Width="120"  HorizontalAlignment="Left" 
                         Click="CamSet_Click"
                         Header="{Binding [Camera], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -140,7 +141,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120" HorizontalAlignment="Left"
                         ItemsSource="{Binding ListCommSetParam}"
                         MenuItem.Click="CommInstance_Click">
                         <MenuItem.Icon>
@@ -156,7 +157,7 @@
                         <svg1:SVGImage Source="/Resources/图标/系统设置/系统设置.svg" />
                     </MenuItem.Icon>
                     <MenuItem
-                        Width="100"
+                        Width="120"  HorizontalAlignment="Left" 
                         Click="SystemSetting_Click"
                         Header="{Binding [SystemSettings], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -164,7 +165,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="140"  HorizontalAlignment="Left" 
                         Click="Mysql_Click"
                         Header="{Binding [Statistics], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -172,7 +173,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"  HorizontalAlignment="Left" 
                         Click="SaveImageSetting_Click"
                         Header="{Binding [ImageSave], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -185,7 +186,7 @@
                         <svg1:SVGImage Source="/Resources/图标/数据统计/数据统计.svg" />
                     </MenuItem.Icon>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="DataQuery_Click"
                         Header="{Binding [DataStatistics], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -194,7 +195,7 @@
                     </MenuItem>
 
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="DataClear_Click"
                         Header="{Binding [DataClear], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -207,7 +208,7 @@
                         <svg1:SVGImage Source="/Resources/图标/工具/工具.svg" />
                     </MenuItem.Icon>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="OffLineTest_Click"
                         Header="{Binding [Offline], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -215,7 +216,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="ManualDebug_Click"
                         Header="{Binding [手动调试], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -223,7 +224,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         ItemsSource="{Binding LightNames}"
                         MenuItem.Click="LightItem_Click">
                         <MenuItem.Icon>
@@ -234,7 +235,7 @@
                         </MenuItem.Header>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="Screenshot_Click"
                         Header="{Binding [ScreenShot], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -242,7 +243,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"  HorizontalAlignment="Left" 
                         Click="MotionPlug_Click"
                         Header="{Binding [Motion], Source={x:Static local:CLang.Instance}}"
                         Visibility="{Binding Source={x:Static mo:CMotionManagement.MotionHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
@@ -252,7 +253,7 @@
                         <svg1:SVGImage Source="/Resources/图标/帮助/帮助.svg" />
                     </MenuItem.Icon>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Command="{Binding HelpLocalHostCommand}"
                         Header="{Binding [HelpDoc], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -260,7 +261,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Header="{Binding [Lang], Source={x:Static local:CLang.Instance}}"
                         IsCheckable="True"
                         IsChecked="{Binding SystemSettings.IsEnglish}">
@@ -269,7 +270,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem
-                        Width="100"
+                        Width="120"
                         Click="About_Click"
                         Header="{Binding [About], Source={x:Static local:CLang.Instance}}">
                         <MenuItem.Icon>
@@ -293,7 +294,7 @@
     <!--  中间内容  -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80" />
+            <RowDefinition Height="90" />
             <RowDefinition />
             <RowDefinition Height="15" />
         </Grid.RowDefinitions>
@@ -678,7 +679,7 @@
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" BorderThickness="2" BorderBrush="LightGray" Margin="2">
                             <hc:TabControl 
-                  
+                             FontSize="14"
                              IsAnimationEnabled="True"
                              IsTabFillEnabled="True"
                              SelectedIndex="0"

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using WH.Controls;
 
 namespace ZipperInfo
 {
@@ -29,8 +28,9 @@ namespace ZipperInfo
                 CZipperCommunicate.CamTriggerStop(); //停止拍照
                 CZipperAutomaticAlgorithm.TestFinshEven(true);
                 CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
-                CZipperCommunicate.AixtContinue();
+                CZipperCommunicate.AixtContinue(true);
                 CZipperCommunicate.TestFinish();
+               // CZipperCommunicate.SendWolkBack(ZipperInfo.AutoData.WalkBackLenght_qiuk);
                 var window = win as Window;
                 window.Close();
             }

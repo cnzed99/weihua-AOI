@@ -58,7 +58,7 @@
             </Grid.RowDefinitions>
 
             <Border Margin="1"  Grid.Row="0" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
-                <RadioButton HorizontalAlignment="Left" FontSize="14" x:Name="selectdefrbbutton"          
+                <RadioButton HorizontalAlignment="Left" FontSize="16" x:Name="selectdefrbbutton"          
              d:IsChecked="True"
              Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
              GroupName="Options"
@@ -67,11 +67,11 @@
             
             <Border Grid.Row="1" Margin="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
                 <DockPanel   HorizontalAlignment="Left" VerticalAlignment="Center">
-                <RadioButton FontSize="14" 
+                <RadioButton FontSize="16" 
                         Content="{Binding [byDefect], Source={x:Static local:CLang.instance}}"
                         GroupName="Options"
                         IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=1}" />
-                    <ComboBox FontSize="12" Visibility="{Binding IsChecked,ElementName=selectdefrbbutton,Converter={StaticResource Boolean2VisibilityReConverter}}"
+                    <ComboBox FontSize="16" Visibility="{Binding IsChecked,ElementName=selectdefrbbutton,Converter={StaticResource Boolean2VisibilityReConverter}}"
                         Height="20" Width="120"   Background="Black"                 
                         ItemsSource="{Binding HistoryModel.DefectList}"
                         SelectedItem="{Binding SelectedDefect}">

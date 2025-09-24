@@ -14,6 +14,8 @@ using System.Windows.Media;
 using OpenCvSharp.Extensions;
 using WH.VisionLearning;
 using OpenCvSharp.ML;
+using System.Text;
+using System;
 
 
 
@@ -377,19 +379,20 @@ namespace ZipperTestAlgorihm
             {
                 UpdateScore(paramClass);
                 Mat matimg = GetMatImage(cell, paramClass);
-              //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转前.png", matimg);
+                //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转前.png", matimg);
                 Mat img;
                 if (cell.ImageFile != "")
                 {
                     Mat colorMat = new Mat();
                     Cv2.CvtColor(matimg, colorMat, ColorConversionCodes.BGR2RGB);
                     img = colorMat;
+                    matimg.Dispose();
                 }
                 else
                 {
                     img = matimg;
                 }
-              //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
+                //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
@@ -423,16 +426,7 @@ namespace ZipperTestAlgorihm
                         cropRec[i].Height = smallimgHeight;
                         Mat cropimg = img[cropRec[i]];
                         mats.Add(cropimg);
-                        //if (cell.ImageFile != "")
-                        //{
-                        //    cell.FourCutMatImg.Add(cropimg);
-                        //}
-                        //else
-                        //{
-                        //    Mat colorMat = new Mat();
-                        //    Cv2.CvtColor(cropimg, colorMat, ColorConversionCodes.BGR2RGB);
-                        //    cell.FourCutMatImg.Add(colorMat);
-                        //}
+                        cell.FourCutMatImg.Add(cropimg);
 
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }
@@ -473,16 +467,8 @@ namespace ZipperTestAlgorihm
                                         rex = 0;
                                     }
                                     Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
-                                    //if (cell.ImageFile != "")
-                                    //{
-                                    //    cell.DownMassMatImg = cropDownMat;
-                                    //}
-                                    //else
-                                    //{
-                                    //    Mat colorMat = new Mat();
-                                    //    Cv2.CvtColor(cropDownMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                    //    cell.DownMassMatImg = colorMat;
-                                    //}
+                                    cell.DownMassMatImg = cropDownMat;
+
                                     // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
                                     ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
                                     if (downResult != null)
@@ -517,6 +503,12 @@ namespace ZipperTestAlgorihm
                                                 dets.Add(disData);
                                                 Diss.Clear();
                                             }
+                                            else //没找到下止和链牙
+                                            {
+                                                CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
+                                                dets.Add(disData);
+                                            }
+
                                             if (luyaIndex.Count > 0)
                                             {
                                                 for (int b = 0; b < luyaIndex.Count; b++)
@@ -530,9 +522,51 @@ namespace ZipperTestAlgorihm
                                             {
                                                 for (int b = 0; b < lianya.Count; b++)
                                                 {
-                                                    //downmass[a].box.Points()[0].
-                                                    float an = downmass[a].box.Angle - lianya[b].box.Angle;
-                                                    Angs.Add((an, b));
+                                                    //StringBuilder stringBuilder1 = new StringBuilder();
+                                                    //StringBuilder stringBuilder2 = new StringBuilder();
+                                                    //for (int c = 0; c < 4; c++)
+                                                    //{
+                                                    //    float p1x = downmass[a].box.Points()[c].X;
+                                                    //    float p1y = downmass[a].box.Points()[c].Y;
+                                                    //    stringBuilder1.Append($"P{c}:{p1y.ToString("f1")},{p1x.ToString("f1")}  ");
+
+                                                    //    float p2x = lianya[b].box.Points()[c].X;
+                                                    //    float p2y = lianya[b].box.Points()[c].Y;
+                                                    //    stringBuilder2.Append($"P{c}:{p2y.ToString("f1")},{p2x.ToString("f1")}  ");
+                                                    //}
+                                                    //stringBuilder1.Append($"Angle:{downmass[a].box.Angle}");
+                                                    //stringBuilder2.Append($"Angle:{lianya[b].box.Angle}");
+                                                    //string filePath = @"C:\Users\Administrator.B\Desktop\新建文件夹 (3)\stream.txt";
+                                                    ////string content = "Hello, World!";
+
+                                                    //// using 语句确保资源被正确释放[2](@ref)
+                                                    //// 第二个参数 true 表示追加模式，false 表示覆盖（默认覆盖）[1,3](@ref)
+                                                    //// 可指定编码，如 Encoding.UTF8[2,3](@ref)
+                                                    //using (StreamWriter writer = new StreamWriter(filePath, false, Encoding.UTF8))
+                                                    //{
+                                                    //    writer.WriteLine(stringBuilder1.ToString());
+                                                    //    writer.WriteLine(stringBuilder2.ToString());// 写入一行并换行
+                                                    //                                                // writer.Write(content);  // 写入内容但不换行
+                                                    //}
+
+                                                    List<Point2f> downmassListsort = downmass[a].box.Points().ToList();  //先按Y从小到大排序
+                                                    downmassListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                    List<Point2f> lianyaListsort = lianya[b].box.Points().ToList();
+                                                    lianyaListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                    if (downmassListsort.Count >= 2 && lianyaListsort.Count >= 2)
+                                                    {
+                                                        List<Point2f> downmass01 = new List<Point2f>() { downmassListsort[0], downmassListsort[1] }; //再按X从小到大排序
+                                                        downmass01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+                                                        List<Point2f> lianya01 = new List<Point2f>() { lianyaListsort[0], lianyaListsort[1] };
+                                                        lianya01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+
+                                                        float A1 = CalculateLineAngle(downmass01[0], downmass01[1]);
+                                                        float A2 = CalculateLineAngle(lianya01[0], lianya01[1]);
+
+                                                        float an = A2 - A1;
+                                                        Angs.Add((Math.Abs(an), b));
+
+                                                    }
                                                 }
                                             }
                                             if (Angs.Count > 0)
@@ -544,6 +578,12 @@ namespace ZipperTestAlgorihm
                                                 dets.Add(angData);
                                                 Angs.Clear();
                                             }
+                                            else //没找到下止和链牙
+                                            {
+                                                CoordRestoreData disData = new CoordRestoreData("下止歪", 360);
+                                                dets.Add(disData);
+                                            }
+
                                             for (int a = 0; a < otherobb.Count; a++)
                                             {
                                                 int obblabelindex = int.Parse(otherobb[a].lable);
@@ -606,22 +646,10 @@ namespace ZipperTestAlgorihm
                                     }
                                     dets.Add(restoreData);
                                     Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
-                                    //if (cell.ImageFile != "")
-                                    //{
-                                    //    cell.UpMassMatImg.Add(cropUpMat);
-                                    //}
-                                    //else
-                                    //{
-                                    //    Mat colorMat = new Mat();
-                                    //    Cv2.CvtColor(cropUpMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                    //    cell.UpMassMatImg.Add(colorMat);
-                                    //}
-
+                                    cell.UpMassMatImg.Add(cropUpMat);
                                     ObbResult upResult = ImageInferObb(yolo_UpStopMass_obb, cropUpMat);
                                     if (upResult != null)
                                     {
-
-
                                         if (upResult.datas.Count > 0)
                                         {
                                             List<int> luyaIndex = new List<int>();
@@ -775,19 +803,6 @@ namespace ZipperTestAlgorihm
 
                                 Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
                                 cell.ZipperPullPartImg = croppullMat;
-                                //if (cell.ImageFile != "")
-                                //{
-                                //    cell.ZipperPullPartImg = croppullMat;
-                                //}
-                                //else
-                                //{
-                                //    Mat colorMat = new Mat();
-                                //    Cv2.CvtColor(croppullMat, colorMat, ColorConversionCodes.BGR2RGB);
-                                //    cell.ZipperPullPartImg = colorMat;
-                                //    //colorMat.Dispose();
-                                //}
-                                //Mat colorMat111 = new Mat();
-                                //Cv2.CvtColor(croppullMat, colorMat111, ColorConversionCodes.BGR2RGB);
                                 //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);
                                 DetResult pullResult = ImageInferDet(yolo_pull_det, croppullMat);
                                 if (pullResult != null)
@@ -952,25 +967,25 @@ namespace ZipperTestAlgorihm
 
                     //Task task1 = Task.Run(() =>
                     //{
-                        yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                   // });
+                    // });
 
                     //Task task2 = Task.Run(() =>
                     //{
-                        yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                   // });
+                    // });
 
                     //Task task3 = Task.Run(() =>
                     //{
-                        yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-                   // });
+                    // });
 
                     //Task task4 = Task.Run(() =>
                     //{
-                        yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //});
 
@@ -1107,6 +1122,27 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
             float deltaY = point1.box.Center.Y - point2.box.Center.Y;
             return (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
+
+        /// <summary>
+        /// 2025.9.24 鲍赞宝
+        /// 计算两点连线与X轴的夹角（度数）
+        /// </summary>
+        /// <param name="p1">第一个点</param>
+        /// <param name="p2">第二个点</param>
+        /// <returns>角度</returns>
+        private float CalculateLineAngle(Point2f p1, Point2f p2)
+        {
+            // 计算坐标差值
+            float dx = p2.X - p1.X;
+            float dy = p2.Y - p1.Y;
+            // 使用Atan2计算弧度（注意参数顺序：dy, dx）
+            // Atan2返回值范围：[-π, π]
+            double radians = Math.Atan2(dy, dx);
+            // 转换为度数
+            float degrees = (float)(radians * (180.0 / Math.PI));
+            return degrees;
+        }
+
 
 
 

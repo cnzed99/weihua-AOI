@@ -171,7 +171,7 @@ namespace 断面毛刺检测软件
                 ((IProgress<string>)progress).Report("Loaded!");
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
-                    "智能视觉检测软件"
+                    "拉链智能视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
                 welComePage.ShowDialog();

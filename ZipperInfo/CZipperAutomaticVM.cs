@@ -37,7 +37,7 @@ namespace ZipperInfo
             //写入拉链长度
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
 
-           CGetZipperTriggerPoint.GetTriggerPoints(AutoData,out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount);
+           CGetZipperTriggerPoint.GetTriggerPoints(AutoData,out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount,out int triggerType);
             StringBuilder stringBuilder = new StringBuilder("计算触发点位");
             for (int i = 0; i < points.Count; i++)
             {
@@ -59,11 +59,14 @@ namespace ZipperInfo
                 CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex,zipperCacheCount);               
                 Thread.Sleep(100);
                 startAutoTest=true;
+                CZipperCommunicate.AixtContinue(false);
+               // CZipperCommunicate.SendWolkBack(AutoData.WalkBackLenght_slow);
                 CZipperAutomaticAlgorithm.ZipperInfo.AutoData = AutoData;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = points;
                 CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cutoffIndex;
                 CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.ZipperInfo.TriggerType = triggerType;
                 CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;
                 CZipperAutomaticAlgorithm.findPuller = false;
@@ -104,7 +107,7 @@ namespace ZipperInfo
                 }
                 Thread.Sleep(100);
 
-                CZipperCommunicate.SendCamFPS(350); //起始250ms触发一次
+                CZipperCommunicate.SendCamFPS(300); //起始300ms触发一次
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
                 var window = win as HandyControl.Controls.Window;

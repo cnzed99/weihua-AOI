@@ -23,12 +23,18 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+             
                 <Border Grid.Row="0" Margin="4,0,0,0"
                           Background="{DynamicResource RegionBrush}"
                           BorderThickness="1">
                     <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperDownmssImg}"
                                    ClearButtonVisibility="Collapsed"  LabelVisibility="Collapsed"/>
+                    
                 </Border>
+                <TextBlock Grid.Row="0" Text="下止图片" Margin="10,5"  FontSize="16"
+                 Foreground="AliceBlue"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"/>
 
                 <Border Grid.Row="1" Margin="4,0,0,0"
                         Background="{DynamicResource RegionBrush}"
@@ -36,19 +42,30 @@
                     <wh:ImageView   Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullerImg}"
                                     ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
                 </Border>
+                <TextBlock Grid.Row="1"  Text="拉头图片" Margin="10,5"  FontSize="16"
+                 Foreground="AliceBlue"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"/>
                 <Border Grid.Row="2" Margin="4,0,0,0"
                         Background="{DynamicResource RegionBrush}"
                         BorderThickness="1">
                     <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.ZipperPullsImg}"
                                    ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
                 </Border>
-
+                <TextBlock Grid.Row="2"  Text="拉片图片" Margin="10,5"  FontSize="16"
+   Foreground="AliceBlue"
+   HorizontalAlignment="Left"
+   VerticalAlignment="Top"/>
                 <Border Grid.Row="3" Margin="4,0,0,0"
                         Background="{DynamicResource RegionBrush}"
                         BorderThickness="1">
                     <wh:ImageView  Grid.Row="0"  Source="{Binding ZipperInfo.ZipperUpmssImg}"
                                    ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
                 </Border>
+                <TextBlock Grid.Row="3"  Text="上止图片" Margin="10,5"  FontSize="16"
+   Foreground="AliceBlue"
+   HorizontalAlignment="Left"
+   VerticalAlignment="Top"/>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>

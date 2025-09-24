@@ -11,6 +11,8 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 		<PackageReference Include="Microsoft.Web.Administration" />
 		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="OpenCvSharp4" />
+		<PackageReference Include="OpenCvSharp4.Extensions" />
 		<PackageReference Include="System.IO.Ports" />
 		<PackageReference Include="System.Management" />
 		<PackageReference Include="ValueConverters" />

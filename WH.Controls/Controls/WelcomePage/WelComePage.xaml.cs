@@ -45,9 +45,9 @@ namespace WH.Controls
                 //
                 lbPro1Path.Style = PathStyle;
 
-                lbPro1Path.Margin = new Thickness(0, 25 + 46 * i, 0, 0);
+                lbPro1Path.Margin = new Thickness(0, 25 + 45 * i, 0, 0);
                 //lbPro1Path.Width = 305;
-                lbPro1Path.Height = 23;
+                lbPro1Path.Height = 25;
                 lbPro1Path.FontSize = 10;
                 //lbPro1Path.FontStyle = FontStyles.Italic;
                 lbPro1Path.Foreground = Brushes.LightGray;
@@ -57,24 +57,26 @@ namespace WH.Controls
                 // btnPro1
                 //
                 btnPro1.Style = buttonStyle;
-                btnPro1.Margin = new Thickness(0, 46 * i, 0, 0);
+                btnPro1.Margin = new Thickness(0, 45 * i, 0, 0);
                 Binding db = new Binding();
                 db.Source = ProjContainer;
                 db.Path = new PropertyPath("ActualWidth");
                 btnPro1.SetBinding(WidthProperty, db);
                 //btnPro1.Width = 305;
-                btnPro1.Height = 25;
+                btnPro1.Height = 40;
+                btnPro1.FontSize = 14;
                 btnPro1.HorizontalAlignment = HorizontalAlignment.Left;
                 btnPro1.VerticalAlignment = VerticalAlignment.Top;
                 btnPro1.Click += BtnPro1_Click;
 
                 btnPro1.Content = System.IO.Path.GetFileNameWithoutExtension(pro);
+                
                 btnPro1.Tag = pro;
                 lbPro1Path.Text = pro;
                 this.ProjContainer.Children.Add(btnPro1);
                 this.ProjContainer.Children.Add(lbPro1Path);
-                ProjContainer.Height += 48;
-                this.Height += 48;
+                ProjContainer.Height += 55;
+                this.Height += 55;
                 //label1.Location = new Point(label1.Location.X, label1.Location.Y + 6);
                 //label2.Location = new Point(label2.Location.X, label2.Location.Y + 6);
                 //label3.Location = new Point(label3.Location.X, label3.Location.Y + 6);

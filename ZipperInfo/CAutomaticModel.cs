@@ -43,6 +43,12 @@ namespace ZipperInfo
         int pullMinMean = 90;
         [ObservableProperty]
         int pullMaxMean = 180;
+        //[ObservableProperty]
+        //int walkBackLenght_slow = 400;
+        //[ObservableProperty]
+        //int walkBackLenght_qiuk = 1000;
+
+
 
 
     }

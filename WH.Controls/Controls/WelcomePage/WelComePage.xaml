@@ -80,12 +80,12 @@
             Margin="19.333,45.333,17.666,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            FontSize="20"
+            FontSize="25"
             Foreground="White"
             Text="标题"
             TextAlignment="Center" />
         <TextBlock
-            Margin="64.666,81.999,0,0"
+            Margin="60,100,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             FontFamily="Yu Gothic UI Semibold"
@@ -93,7 +93,7 @@
             Foreground="#43FFFFFF"
             Text="{Binding [Startup], Source={x:Static prop:LangManager.welPage}}" />
         <TextBlock
-            Margin="64.666,168.576,0,0"
+            Margin="60,150,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             FontFamily="Yu Gothic UI Semibold"
@@ -102,9 +102,10 @@
             Text="{Binding [Recent], Source={x:Static prop:LangManager.welPage}}" />
         <Button
             Name="btn_MainFrm"
-            Width="100"
-            Height="25"
-            Margin="0,112.666,0,0"
+            Width="150"
+            Height="35"
+            Margin="0,90.666,0,0"
+            FontSize="16"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Click="btn_MainFrm_Click"
@@ -112,9 +113,10 @@
             Style="{DynamicResource PageButton}" />
         <Button
             Name="btn_OpenProj"
-            Width="100"
-            Height="25"
+            Width="150"
+            Height="35"
             Margin="0,140.333,0,0"
+             FontSize="16"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Click="btnOpen_Click"

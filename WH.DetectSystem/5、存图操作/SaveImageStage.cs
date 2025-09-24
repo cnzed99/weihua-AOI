@@ -14,6 +14,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using Path = System.IO.Path;
+using WH.Entity.MatConverter;
 
 namespace WH.DetectSystem._5_存图操作
 {
@@ -252,12 +253,16 @@ namespace WH.DetectSystem._5_存图操作
             DrawingContext drawingContext2 = null;
             if (cell.ZipperPullPartImg != null)
             {
-                BitmapSource bitmapSource = Mat2BitmapSource(cell.ZipperPullPartImg);
-                drawingVisua2 = new DrawingVisual();
-                drawingContext2 = drawingVisua2.RenderOpen();
-                drawingContext2.DrawImage(bitmapSource,
-                    new Rect(0, 0, cell.ZipperPullPartImg.Width, cell.ZipperPullPartImg.Height)
-                );
+                BitmapSource bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                if (bitmapSource!=null)
+                {
+                    drawingVisua2 = new DrawingVisual();
+                    drawingContext2 = drawingVisua2.RenderOpen();
+                    drawingContext2.DrawImage(bitmapSource,
+                        new Rect(0, 0, cell.ZipperPullPartImg.Width, cell.ZipperPullPartImg.Height)
+                    );
+                }
+              
             }
             foreach (var edge in cell.DrawEdges)
             {
@@ -409,7 +414,7 @@ namespace WH.DetectSystem._5_存图操作
                 new(cell.Image.ImageWidth, cell.Image.ImageHeight, 96, 96, PixelFormats.Default);
             renderTargetBitmap.Render(drawingVisual);
             renderTargetBitmap.Freeze();
-
+            
             RenderTargetBitmap renderTargetBitmap2 = null;
             if (cell.ZipperPullPartImg != null && drawingContext2 != null)
             {
@@ -429,9 +434,11 @@ namespace WH.DetectSystem._5_存图操作
                 Directory.CreateDirectory(dirPath);
             }
             WriteImage(renderTargetBitmap, path, ".jpg");
+            renderTargetBitmap.Clear();
             if (renderTargetBitmap2 != null)
             {
                 WriteImage(renderTargetBitmap2, path2, ".jpg");
+                renderTargetBitmap2.Clear();
             }
             return path;
         }
@@ -535,21 +542,6 @@ namespace WH.DetectSystem._5_存图操作
             drawingContext.DrawText(formattedText, origin);
         }
 
-        static BitmapSource Mat2BitmapSource(OpenCvSharp.Mat img)
-        {
-            using (OpenCvSharp.Mat colorMat = new OpenCvSharp.Mat())
-            {
-                OpenCvSharp.Cv2.CvtColor(img, colorMat, OpenCvSharp.ColorConversionCodes.BGR2RGB);
-                System.Drawing.Bitmap bitmap = colorMat.ToBitmap();
-                BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                   bitmap.GetHbitmap(),
-                   IntPtr.Zero,
-                   System.Windows.Int32Rect.Empty,
-                   BitmapSizeOptions.FromEmptyOptions());
-                bitimg.Freeze();
-                return bitimg;
-            }
-        }
         #endregion
 
         /// <summary>
