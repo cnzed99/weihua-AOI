@@ -182,6 +182,18 @@
                                                         <RowDefinition />
                                                         <RowDefinition MinHeight="15" />
                                                     </Grid.RowDefinitions>
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <!-- 默认背景色，例如透明 -->
+                                                            <Setter Property="Background" Value="Transparent" />
+                                                            <Style.Triggers>
+                                                                <!-- 当 IsSelected 为 True 时，将背景色设置为 HighlightBrush -->
+                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                    <Setter Property="Background" Value='#FF1F2F4F' />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="20" />
@@ -242,7 +254,7 @@
                                                                 </TextBlock.Text>
                                                             </TextBlock>
                                                         </StackPanel>
-                                                        <Button
+                                                        <Button x:Name="Add"
                                                             Grid.Column="3"
                                                             Width="55"
                                                             Margin="5,2,0,0"
@@ -257,7 +269,7 @@
                                                                 </MultiBinding>
                                                             </Button.CommandParameter>
                                                         </Button>
-                                                        <Button
+                                                        <Button x:Name="Del"
                                                             Grid.Column="4"
                                                             Width="55"
                                                             Margin="5,2,5,0"

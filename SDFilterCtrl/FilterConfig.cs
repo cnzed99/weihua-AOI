@@ -577,6 +577,12 @@ namespace SDFilter
         [property: IgnoreModifyLog]
         [ObservableProperty]
         private bool result = true;
+        /// <summary>
+        /// 2025.9.24 鲍赞宝
+        /// 是否被选中
+        /// </summary>
+        [ObservableProperty]
+        private bool isSelected;
 
         /// <summary>
         /// 2024.7.4 李焕彬

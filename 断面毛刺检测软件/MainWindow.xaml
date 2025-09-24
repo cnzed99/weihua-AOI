@@ -40,6 +40,7 @@
         <cov:SubtractConverter x:Key="SubtractConverter" />
         <local:ColumnCountConverter x:Key="ColumnCountConverter" />
         <entity:String2VisiblityReConverter x:Key="Count2VisiblityReConverter" />
+        <wh:Bool2VisiblityConverter x:Key="Bool2VisiblityConverter" />
         <wh:CBindingProxy x:Key="CurUser" Data="{Binding LoginViewModel.LoginPerson}" />
         <wh:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter" />
         <Style x:Key="CircleButton" TargetType="Button">
@@ -685,31 +686,48 @@
                              SelectedIndex="0"
                              Style="{DynamicResource TabControlInLine}"
                              Visibility="{Binding SelectedProcess, Converter={StaticResource EmptyToVisibilityConverter}}">
+                                <!--质量信息-->
                                 <hc:TabItem Padding="0" Header="{Binding [DetectArea], Source={x:Static local:CLang.Instance}}">
                                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                                         <filter:FilterResultCtrl DataContext="{Binding SelectedProcess.SDFilterVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                                <hc:TabItem Padding="0" Header="{Binding [Quality], Source={x:Static local:CLang.Instance}}">
+                                <!--历史回看-->
+                                <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
                                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                                        <qua:QualityGradeCtrl DataContext="{Binding SelectedProcess.QualityVM}" />
+                                        <history:HistoryCtrl x:Name="histable" DataContext="{Binding SelectedProcess.HistoryVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                                <hc:TabItem Padding="0" Header="{Binding [AlgorParam], Source={x:Static local:CLang.Instance}}">
-                                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                                        <al:MaociAlgorParamCtrl DataContext="{Binding SelectedProcess.MaociAlgorVM}" />
-                                    </hc:SimplePanel>
-                                </hc:TabItem>
-                                <hc:TabItem Padding="0" Header="{Binding [DetectConfig], Source={x:Static local:CLang.Instance}}">
+                                <!--缺陷参数设置-->
+                                <hc:TabItem Padding="0" Header="{Binding [DetectConfig], Source={x:Static local:CLang.Instance}}"
+                                     Visibility="{Binding Path=IsTechnologist,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}">
                                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                                         <filter:SDFilterCtrl DataContext="{Binding SelectedProcess.SDFilterVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                                <hc:TabItem Padding="0" Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}">
+                                <!--质量信号设置-->
+                                <hc:TabItem Padding="0" Header="{Binding [Quality], Source={x:Static local:CLang.Instance}}"
+                                    Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}">
+                                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                                        <qua:QualityGradeCtrl DataContext="{Binding SelectedProcess.QualityVM}" />
+                                    </hc:SimplePanel>
+                                </hc:TabItem>
+                                <!--算法设置-->
+                                <hc:TabItem Padding="0" Header="{Binding [AlgorParam], Source={x:Static local:CLang.Instance}}"
+                                             Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}">
+                                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
+                                        <al:MaociAlgorParamCtrl DataContext="{Binding SelectedProcess.MaociAlgorVM}" />
+                                    </hc:SimplePanel>
+                                </hc:TabItem>
+                       
+                                <!--报警设置-->
+                                <hc:TabItem Padding="0" Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}"
+                                             Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}">
                                     <hc:SimplePanel Background="{DynamicResource RegionBrush}">
                                         <alarm:AlarmSetCtrl DataContext="{Binding SelectedProcess.AlarmSetVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
+                                <!--打标设置-->
                                 <hc:TabItem
                                  Padding="0"
                                  Header="{Binding [MarkConfig], Source={x:Static local:CLang.Instance}}"
@@ -718,6 +736,7 @@
                                         <mark:MarkCtrl DataContext="{Binding SelectedProcess.MarkCtrlVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
+                                <!--对焦设置-->
                                 <hc:TabItem
                                  Padding="0"
                                  Header="{Binding [FocusControl], Source={x:Static local:CLang.Instance}}"
@@ -726,11 +745,7 @@
                                         <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                                <hc:TabItem Padding="0" Header="{Binding [History], Source={x:Static local:CLang.Instance}}">
-                                    <hc:SimplePanel Background="{DynamicResource RegionBrush}">
-                                        <history:HistoryCtrl x:Name="histable" DataContext="{Binding SelectedProcess.HistoryVM}" />
-                                    </hc:SimplePanel>
-                                </hc:TabItem>
+                            
                             </hc:TabControl>
                         </Border>
                         <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">

@@ -46,6 +46,10 @@ namespace SDFilter
         /// 特征项，过滤分选Combox用
         /// </summary>
         public List<CFeacture> DefectFeactures { get; set; }
+        /// <summary>
+        /// 上一次选中的项
+        /// </summary>
+        public DefectFilter LastSelectedDefectFilter { get; set; }
 
         /// <summary>
         /// 2024.7.4 李焕彬
@@ -127,6 +131,20 @@ namespace SDFilter
                     ),
                     defectFilter.Name
                 );
+                if (defectFilter != null)
+                {
+                    // 如果上一次选中项存在，取消其选中状态
+                    if (LastSelectedDefectFilter != null)
+                    {
+                        LastSelectedDefectFilter.IsSelected = false;
+                    }
+
+                    // 设置当前项为选中状态
+                    defectFilter.IsSelected = true;
+
+                    // 更新上一次选中项为当前项
+                    LastSelectedDefectFilter = defectFilter;
+                }
                 defectFilterSetWin.Title = defectFilter.Name;
                 defectFilterSetWin.Closed += (s, e) =>
                 {

@@ -925,14 +925,17 @@ namespace 断面毛刺检测软件
                 if (b)
                 {
                     progressBarWindow.ShowDialog();
-
-                    ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
-                    autoFinshWindow = new AutoFinshWindow();
-                    autoFinshWindow.DataContext = zipperInfoVM;
-                    autoFinshWindow.Closed += AutoFinshWindow_Closed;
-                    autoFinshWindow.Show();
-                    autoFinshWindow.Activate();
-                    zipperInfoShow.DataContext = zipperInfoVM;
+                    if (CZipperAutomaticAlgorithm.TestFinsh)
+                    {
+                        ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+                        autoFinshWindow = new AutoFinshWindow();
+                        autoFinshWindow.DataContext = zipperInfoVM;
+                        autoFinshWindow.Closed += AutoFinshWindow_Closed;
+                        autoFinshWindow.Show();
+                        autoFinshWindow.Activate();
+                        zipperInfoShow.DataContext = zipperInfoVM;
+                    }
+          
                 }
       
             };
