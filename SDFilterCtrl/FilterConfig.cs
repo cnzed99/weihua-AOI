@@ -582,6 +582,7 @@ namespace SDFilter
         /// 是否被选中
         /// </summary>
         [ObservableProperty]
+        [property: JsonIgnore]
         private bool isSelected;
 
         /// <summary>
