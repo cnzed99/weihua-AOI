@@ -52,18 +52,42 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*"/>
                 <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition Height="10*"/>
+                <RowDefinition Height="9*"/>
             </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Border Margin="1"  Grid.Row="0" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
 
-            <Border Margin="1"  Grid.Row="0" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
-                <RadioButton HorizontalAlignment="Left" FontSize="16" x:Name="selectdefrbbutton"          
-             d:IsChecked="True"
-             Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
-             GroupName="Options"
-             IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
-            </Border>
+                    <RadioButton Grid.Column="0" HorizontalAlignment="Left" FontSize="16" x:Name="selectdefrbbutton"          
+                     d:IsChecked="True"
+                     Content="{Binding [byTime], Source={x:Static local:CLang.instance}}"
+                     GroupName="Options"
+                     IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
+                </Border>
+
+                <Border Margin="1"  Grid.Column="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <RadioButton Margin="2" Grid.Column="0" HorizontalAlignment="Left" FontSize="16"          
+                      d:IsChecked="True"
+                      Content="{Binding [byNG], Source={x:Static local:CLang.instance}}"
+                      GroupName="Options2"
+                      IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=3}" />
+                        <RadioButton Margin="2" Grid.Column="0" HorizontalAlignment="Left" FontSize="16"          
+                     d:IsChecked="False"
+                     Content="{Binding [byOK], Source={x:Static local:CLang.instance}}"
+                     GroupName="Options2"
+                     IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=3}" />
+                    </StackPanel>
+                  
+                </Border>
+
+            </Grid>
+
             
             <Border Grid.Row="1" Margin="1" BorderThickness="1" BorderBrush="DarkGray" CornerRadius="2">
                 <DockPanel   HorizontalAlignment="Left" VerticalAlignment="Center">

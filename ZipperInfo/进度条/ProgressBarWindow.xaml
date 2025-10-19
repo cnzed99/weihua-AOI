@@ -12,13 +12,33 @@
         <!-- 设置DataContext为单例实例 -->
         <Binding Source="{x:Static local:ProgressBarViewModel.Instance}"/>
     </Window.DataContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
 
-        <ProgressBar Style="{StaticResource ProgressBarInfo}" Value="{Binding ProgressBarValueText, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"  Height="50" Minimum="0" Maximum="100"/>
-        <TextBlock Grid.Row="1"  Text="{Binding AutoMessageText, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"  FontSize="30" Foreground="Yellow" TextAlignment="Center" VerticalAlignment="Center" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border Margin="1" BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="5">
+            
+      
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ProgressBar Style="{StaticResource ProgressBarInfo}" Value="{Binding ProgressBarValueText, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"  Height="50" Minimum="0" Maximum="100"/>
+            <TextBlock Grid.Row="1"  Text="{Binding AutoMessageText, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}"  FontSize="30" Foreground="Yellow" TextAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+        </Border>
+        <Border Margin="1" Grid.Column="1" BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="5">
+            <Button 
+          x:Name="btn_Close"
+          Background="{x:Null}"
+          Click="btn_Close_Click"
+          Content="✖"
+          FontSize="26"
+          Foreground="Cyan" Height="80" Width="auto"/>
+        </Border>
     </Grid>
 </hc:Window>

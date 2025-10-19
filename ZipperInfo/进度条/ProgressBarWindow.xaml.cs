@@ -24,5 +24,13 @@ namespace ZipperInfo
             InitializeComponent();
         }
 
+        private void btn_Close_Click(object sender, RoutedEventArgs e)
+        {
+            CZipperCommunicate.CamTriggerStop(); //停止拍照
+            CZipperAutomaticAlgorithm.TestFinshEven(false);
+            CZipperCommunicate.AixtContinue(true);
+            CZipperCommunicate.TestFinish();
+            this.Close();   
+        }
     }
 }

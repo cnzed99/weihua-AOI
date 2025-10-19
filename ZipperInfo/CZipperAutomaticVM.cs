@@ -62,7 +62,8 @@ namespace ZipperInfo
                 CZipperCommunicate.AixtContinue(false);
                // CZipperCommunicate.SendWolkBack(AutoData.WalkBackLenght_slow);
                 CZipperAutomaticAlgorithm.ZipperInfo.AutoData = AutoData;
-                CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
+                // CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
+                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData.ShowZipperLenght;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos = points;
                 CZipperAutomaticAlgorithm.ZipperInfo.CutoffIndex = cutoffIndex;
                 CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos = handandtalipoints;

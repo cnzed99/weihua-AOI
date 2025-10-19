@@ -35,6 +35,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetProjects.SVGImage" />
     <PackageReference Include="HandyControl" />
+    <PackageReference Include="KeyBoard.WPF" />
 	  <PackageReference Include="log4net" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" />
 	  <PackageReference Include="Newtonsoft.Json" />

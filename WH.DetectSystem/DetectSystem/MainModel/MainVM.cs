@@ -297,6 +297,7 @@ namespace WH.DetectSystem.Models
                     cell?.Dispose();
                 }
                 MergeCells.Clear();
+                UpdatDetSet();
                 if (this.Name == "正面")
                 {
                     if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
@@ -332,6 +333,10 @@ namespace WH.DetectSystem.Models
                         Updatepull("左相机");
                     }
                 }
+            }
+            if (!finsh)
+            {
+                IsAutomaticTest = false;
             }
         }
 
@@ -637,8 +642,6 @@ namespace WH.DetectSystem.Models
                                 SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
 
                             }
-
-
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
@@ -673,7 +676,7 @@ namespace WH.DetectSystem.Models
                                     }
 
                                 }
-                                //cell.PhotoIndex = photoID;
+
                                 cell.ID = productID.ToString();
                                 cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
@@ -1575,6 +1578,10 @@ namespace WH.DetectSystem.Models
 
             }
             cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
+            if (cells.Count == 1)
+            {
+                return (CImage)cells[0].Image.Clone();
+            }
             int height = cells[0].Image.ImageHeight;
             int width = cells[0].Image.ImageWidth;
             int[] widths = cells.Select(c => c.Image.ImageWidth).ToArray();
@@ -1676,6 +1683,58 @@ namespace WH.DetectSystem.Models
                 );
             }
             else { }
+        }
+
+        /// <summary>
+        /// 更新缺陷配置
+        /// </summary>
+        /// <param name="leftorright"></param>
+        private void UpdatDetSet()
+        {
+            SpeciesFilter zipperDetNames = this.MaociFilterConfig["拉链"];
+
+            foreach (var detname in zipperDetNames.RecipeDefects)
+            {
+                if (detname.Name.Contains("正面上止") || detname.Name.Contains("反面上止"))
+                {
+                    foreach (var df in detname.DefectFilters)
+                    {
+                        foreach (var fl in df.FilterList)
+                        {
+                            if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString())
+                            {
+                                fl.FilterSelectEnable = false;
+                            }
+                            else
+                            {
+                                fl.FilterSelectEnable = true;
+                            }
+
+                        }
+                    }
+                }
+
+                if (detname.Name.Contains("正面下止") || detname.Name.Contains("反面下止"))
+                {
+                    foreach (var df in detname.DefectFilters)
+                    {
+                        foreach (var fl in df.FilterList)
+                        {
+                            if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString())
+                            {
+                                fl.FilterSelectEnable = false;
+                            }
+                            else
+                            {
+                                fl.FilterSelectEnable = true;
+                            }
+
+                        }
+                    }
+                }
+
+            }
+
         }
         /// <summary>
         /// 更新拉头配置

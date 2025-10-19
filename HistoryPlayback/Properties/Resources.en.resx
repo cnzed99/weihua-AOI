@@ -138,4 +138,10 @@
   <data name="QualityLev" xml:space="preserve">
     <value>QualityLev</value>
   </data>
+  <data name="byNG" xml:space="preserve">
+    <value>byNG</value>
+  </data>
+  <data name="byOK" xml:space="preserve">
+    <value>byOK</value>
+  </data>
 </root>

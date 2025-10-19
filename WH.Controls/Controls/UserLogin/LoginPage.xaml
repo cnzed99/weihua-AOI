@@ -7,6 +7,8 @@
     xmlns:local="clr-namespace:WH.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prop="clr-namespace:WH.Controls.Properties"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:keyboard="clr-namespace:KeyBoard.WPF.Behavior;assembly=KeyBoard.WPF"
     x:Name="window"
     Title="{Binding [LoginTitle], Source={x:Static prop:LangManager.instance}}"
     Width="400"
@@ -101,7 +103,7 @@
                     Foreground="White"
                     Style="{StaticResource TextBlockDefault}"
                     Text="{Binding [PassWord], Source={x:Static prop:LangManager.instance}}" />
-                <hc:PasswordBox
+                <hc:PasswordBox Width="216"
                     Margin="5,0"
                     HorizontalContentAlignment="Center"
                     Background="#CC135D7F"
@@ -113,6 +115,9 @@
                     <hc:PasswordBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
                     </hc:PasswordBox.InputBindings>
+                    <i:Interaction.Behaviors>
+                        <keyboard:KeyboardBehavior/>
+                    </i:Interaction.Behaviors>
                 </hc:PasswordBox>
             </DockPanel>
             <DockPanel>
@@ -120,7 +125,7 @@
                     Foreground="White"
                     Style="{StaticResource TextBlockDefault}"
                     Text="{Binding [LoginPeriod], Source={x:Static prop:LangManager.instance}}" />
-                <hc:TextBox
+                <hc:TextBox Width="216"
                     Margin="5,0"
                     HorizontalContentAlignment="Center"
                     hc:InfoElement.ShowClearButton="True"
@@ -132,6 +137,9 @@
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding LoginButtonCommand}" />
                     </TextBox.InputBindings>
+                    <i:Interaction.Behaviors>
+                        <keyboard:NumericKeyboardBehavior/>
+                    </i:Interaction.Behaviors>
                 </hc:TextBox>
             </DockPanel>
             <UniformGrid Columns="2">

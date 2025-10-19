@@ -61,7 +61,7 @@ namespace HistoryPlayback.Properties {
         }
         
         /// <summary>
-        ///   查找类似 按缺陷分类 的本地化字符串。
+        ///   查找类似 按缺陷 的本地化字符串。
         /// </summary>
         public static string byDefect {
             get {
@@ -70,7 +70,25 @@ namespace HistoryPlayback.Properties {
         }
         
         /// <summary>
-        ///   查找类似 按时间分类 的本地化字符串。
+        ///   查找类似 只看NG 的本地化字符串。
+        /// </summary>
+        public static string byNG {
+            get {
+                return ResourceManager.GetString("byNG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 只看OK 的本地化字符串。
+        /// </summary>
+        public static string byOK {
+            get {
+                return ResourceManager.GetString("byOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 按时间 的本地化字符串。
         /// </summary>
         public static string byTime {
             get {

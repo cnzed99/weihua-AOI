@@ -9,11 +9,43 @@ namespace ZipperInfo
 {
     public partial class CAutomaticModel: ObservableObject
     {
+
         /// <summary>
-        /// 拉链长度
+        /// 刀口长度（cm)
+        /// </summary>
+        float quekoulenght=3.5f;
+        public float QuekouLenght
+        {
+            get { return quekoulenght; }
+            set
+            {
+                quekoulenght = value;
+                ZipperLenght = ShowZipperLenght * 10 + quekoulenght * 10;
+                OnPropertyChanged();
+            }
+        }
+
+        private float showZipperLenght;
+        /// <summary>
+        /// 显示界面用的拉链长度，单位（cm）
+        /// </summary>
+        public float ShowZipperLenght
+        {
+            get { return showZipperLenght; }
+            set 
+            { 
+                showZipperLenght = value;
+                ZipperLenght = showZipperLenght * 10+ QuekouLenght * 10;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// 拉链长度(单位：mm)
         /// </summary>
         [ObservableProperty]
         float zipperLenght = 0;
+
         /// <summary>
         /// 相机中心到切刀的中心距
         /// </summary>

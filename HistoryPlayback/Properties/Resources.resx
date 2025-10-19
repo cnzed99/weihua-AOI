@@ -125,10 +125,10 @@
     <value>..\Resources\下一张.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="byTime" xml:space="preserve">
-    <value>按时间分类</value>
+    <value>按时间</value>
   </data>
   <data name="byDefect" xml:space="preserve">
-    <value>按缺陷分类</value>
+    <value>按缺陷</value>
   </data>
   <data name="ID" xml:space="preserve">
     <value>流水号</value>
@@ -144,5 +144,11 @@
   </data>
   <data name="DefectName" xml:space="preserve">
     <value>缺陷名称</value>
+  </data>
+  <data name="byNG" xml:space="preserve">
+    <value>只看NG</value>
+  </data>
+  <data name="byOK" xml:space="preserve">
+    <value>只看OK</value>
   </data>
 </root>

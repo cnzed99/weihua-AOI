@@ -218,16 +218,16 @@ namespace ZipperInfo
             if (com != null)
             {
                 //根据拉链长度来判断是长拉链还是短拉链 大于180mm是长拉链，小于18cm是短拉链，长拉链使用位置钩针模式，短拉链使用缺口钩针模式
-                if (lenght>180)
-                {
-                    com.WriteSingleCoil(49418,true);
-                }
-                else
-                {
-                    com.WriteSingleCoil(49418, false);
-                }
-                //根据拉链的长度自动计算钩针勾起的位置=拉链长度-50mm
-                float fgoulenght = lenght - 50;
+                //if (lenght>180)
+                //{
+                //    com.WriteSingleCoil(49418,true);
+                //}
+                //else
+                //{
+                //    com.WriteSingleCoil(49418, false);
+                //}
+                //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
+                float fgoulenght = lenght - 30;
                 int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
                 int tlenght = (int)lenght * 10;
                 com.WriteSingleRegisterInt32(41202, tlenght);

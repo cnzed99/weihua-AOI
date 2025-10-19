@@ -145,8 +145,12 @@ namespace ZipperInfo
                 triggerType = 3;
             }
 
-            cutoffIndex = points.Count - pullchange;
             outpoints = ProcessList(points);
+            cutoffIndex = points.Count - pullchange;
+            if (cutoffIndex == points.Count || points.Count == 1)
+            {
+                cutoffIndex = 0;
+            }
         }
 
 
@@ -159,8 +163,16 @@ namespace ZipperInfo
         /// <returns></returns>
         private static List<float> ProcessList(List<float> input)
         {
-            if (input == null || input.Count <= 2)
-                return input;
+            if (input == null)
+                return null;
+            if (input.Count == 2)
+            {
+                if (input[0]> input[1]-10.0) //如果第一个点大于第二个点，说明拉链的长度小于114.那就只输出一个触发点
+                {
+                    input.RemoveAt(1);
+                    return input;
+                }
+            }
 
             List<float> output = new List<float>(input);
 

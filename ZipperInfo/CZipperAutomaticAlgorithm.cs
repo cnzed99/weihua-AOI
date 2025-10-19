@@ -1063,20 +1063,20 @@ namespace ZipperInfo
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=2,更新下止图片");
                                     ZipperInfo.ZipperDownmssImg = cell.Image.ToBitmapSource().Clone();
                                 });
-
-                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                             {
-                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                             };
-                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
-
                                 timeOutCount = 0;
+                                //   List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                //{
+                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                //       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                //       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                //};
+                                //   System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                //   cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                //   cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+
+                                // 
                                 // AutoLogger.Info($"{cell.CamName}:onWichStage=2,准备进入第二阶段");
                                 //进入下阶段                       
                                 // CZipperCommunicate.FirststageFinsh(); //第一阶段完成
@@ -1111,18 +1111,18 @@ namespace ZipperInfo
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},更新上止图片");
                                 });
 
-                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                            {
-                                new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
+                                //    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                //{
+                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                //    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                //    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
 
-                            };
-                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                //};
+                                //    System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                //    cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                //    cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
 
                                 timeOutCount = 0;
                                 //TestFinsh = true;
@@ -1142,21 +1142,22 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}");
                                 // int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                                 // int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
-                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                                 {
-                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
-                                 };
-                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                //List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                // {
+                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
+                                // };
+                                //System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                //cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                int eiddis = 700;
 
-                                if ((cell.Image.ImageWidth - resultDet.datas[i].box.X) > 950&& (cell.Image.ImageWidth - resultDet.datas[i].box.X)< cell.Image.ImageWidth-50) //
+                                if ((cell.Image.ImageWidth - resultDet.datas[i].box.X) > eiddis && (cell.Image.ImageWidth - resultDet.datas[i].box.X) < cell.Image.ImageWidth - 50) //
                                 {
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}>950");
+                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}>{eiddis}");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
                                     pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
@@ -1196,16 +1197,17 @@ namespace ZipperInfo
                                         templist.Add(pos);
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
-                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex}张图片");
+                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
                                         if (templist.Count >= 3)
                                         {
+                                            int rang = 100;
                                             if (pindex == 0)
                                             {
                                                 int dis = Math.Abs(pos - templist[pindex + 1]);
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>250");
-                                                if (dis > 250)
+                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>{rang}");
+                                                if (dis > rang)
                                                 {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>250,停止轴运动,进入下一级段");
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
                                                     CZipperCommunicate.SendCamFPS(300);
                                                     timeOutCount = 0;
@@ -1219,11 +1221,11 @@ namespace ZipperInfo
                                                 if (ZipperInfo.TriggerType == 3)
                                                 {
                                                     int dis = Math.Abs(pos - templist[pindex - 1]);
-                                                    if (dis > 250)
+                                                    if (dis > rang)
                                                     {
-                                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250,停止轴运动,进入下一级段");
+                                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>{rang},停止轴运动,进入下一级段");
                                                         CZipperCommunicate.AixtStop();
-                                                        CZipperCommunicate.SendCamFPS(350);
+                                                        CZipperCommunicate.SendCamFPS(300);
                                                         timeOutCount = 0;
                                                         onWichStage = 3;
                                                         return;
@@ -1231,22 +1233,18 @@ namespace ZipperInfo
                                                 }
                                                 else
                                                 {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},拉头位置不能是最后一个， return");
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},类型{ZipperInfo.TriggerType}拉头位置不能是最后一个， return");
                                                     return;
                                                 }
-
-                                                    
-                                               
-                                               
                                             }
                                             else
                                             {
                                                 int dis = Math.Abs(pos - templist[pindex - 1]);
                                                 int dis2 = Math.Abs(pos - templist[pindex + 1]);
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{dis}>250 &&{dis2}>250");
-                                                if (dis > 250 && dis2 > 250) //大于25mm
+                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{dis}>{rang} &&{dis2}>{rang}");
+                                                if (dis > rang && dis2 > rang) //大于15mm
                                                 {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>250 &&{pos} - {templist[pindex + 1]}>250");
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>{rang} &&{pos} - {templist[pindex + 1]}>{rang}");
                                                     //写轴坐标位置
                                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{templist[pindex - 1]}<{pos}<{templist[pindex + 1]}停止轴运动,进入下一级段");
                                                     CZipperCommunicate.AixtStop();
@@ -1258,9 +1256,18 @@ namespace ZipperInfo
                                             }
                                         }
                                     }
-
-
                                 }
+                            }
+
+                            if (timeOutCount > 500&& !findUpMass)
+                            {
+                                findUpMass=true;
+                                ZipperInfo.ZipperUpMassType = STOPMASS.无;
+                            }
+                            if (timeOutCount > 500 && !findDownMass)
+                            {
+                                findDownMass = true;
+                                ZipperInfo.ZipperDownMassType = STOPMASS.无;
                             }
 
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
@@ -1290,6 +1297,7 @@ namespace ZipperInfo
                                 //{
                                 ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                 // });
+                               // CZipperAutomaticAlgorithm.TestFinshEven(true);
                                 AutoLogger.Info($"{cell.CamName}:onWichStage=2,timeOutCount={timeOutCount},上下止,拉头,拉头拉片,Logo全部识别到,结束");
                             }
 
@@ -1483,7 +1491,7 @@ namespace ZipperInfo
                     resultDet = yolo_search_det.Predict(img) as DetResult;
                     if (resultDet.datas.Count > 0)
                     {
-                        AutoLogger.Info($"onWichStage=3,开始识别拉头亮度");  
+                        AutoLogger.Info($"onWichStage=3,开始识别拉头亮度");
                         for (int i = 0; i < resultDet.datas.Count; i++)
                         {
                             int nameindex = int.Parse(resultDet.datas[i].lable);
@@ -1645,6 +1653,17 @@ namespace ZipperInfo
                                 pos = pos - crippoint;
                                 AutoLogger.Info($"onWichStage=4,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                             }
+                            List<int> templist = new List<int>();
+                            for (int j = 0; j < ZipperInfo.ZipperTriggerPos.Count; j++)
+                            {
+                                int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
+                                templist.Add(temppos);
+
+                            }
+                            templist.Add(pos);
+                            templist.Sort(); //升序排序
+                            int pindex = templist.IndexOf(pos);
+                            ZipperInfo.PullchangeIndex=pindex;
                             CZipperCommunicate.SendPullLocation(pos);
                             ZipperInfo.ZipperPullerCX = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                             ZipperInfo.ZipperPullerCY = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;

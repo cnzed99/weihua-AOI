@@ -13,9 +13,30 @@ namespace ZipperInfo
 {
     public partial class CZipperInfo: ObservableObject
     {
+
+        private float showZipperLenght;
+        /// <summary>
+        /// 显示界面用的拉链长度，单位（cm）
+        /// </summary>
+        public float ShowZipperLenght
+        {
+            get { return showZipperLenght; }
+            set
+            {
+                showZipperLenght = value;
+                if(AutoData!= null)
+                    {
+                    ZipperLneght = value * 10 + AutoData.QuekouLenght * 10;
+                }
+                
+                OnPropertyChanged();
+            }
+        }
+
+
         private float zipperLneght;
         /// <summary>
-        /// 拉链长度
+        /// 拉链长度 单位mm
         /// 2025.05.24 鲍赞宝
         /// </summary>
         [property: Category("拉链信息")]
@@ -28,7 +49,7 @@ namespace ZipperInfo
             set
             { 
                 zipperLneght = value; 
-                OnPropertyChanged();
+              //  OnPropertyChanged();
                 if (AutoData != null)
                 {
                     AutoData.ZipperLenght = value;
@@ -99,7 +120,7 @@ namespace ZipperInfo
         /// </summary>
         public List<float> ZipperTriggerPos { get; set; }=new List<float>();
         /// <summary>
-        /// 拉头ID改变的位置序号
+        /// 拉头ID拍照位置的序号
         /// </summary>
         public int PullchangeIndex {  get; set; }
         /// <summary>
