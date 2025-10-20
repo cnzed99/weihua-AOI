@@ -199,6 +199,8 @@ namespace WH.DetectSystem.Models
                     FocusConfig.token
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
+            ZipperCommunicate = new CZipperCommunicate();
+            ZipperCommunicate.IntThread();
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -250,6 +252,10 @@ namespace WH.DetectSystem.Models
         private Brush lastBrush = Brushes.White;
 
         private BitmapSource ClearImage;
+        /// <summary>
+        /// 拉链通讯
+        /// </summary>
+        CZipperCommunicate ZipperCommunicate;
 
         /// <summary>
         /// 新建制程
@@ -629,63 +635,78 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            CZipperCommunicate.GetID(out int productID, out int photoID);
-                            int pullID = 0;
-                            if (cell.CamName == "左相机")
+                             CZipperCommunicate.GetID(out int productID);
+                            ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                            bool bnext = zipperID.ProductID < productID;
+                            while (bnext)
                             {
-                                CZipperCommunicate.GetZuoPullID(out pullID);
-                                SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
+                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out  zipperID);
+                                bnext=zipperID.ProductID < productID;
+                                if (bnext)
+                                {
+                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于{productID}，抛弃");
+                                    cell.Dispose();
+                                }   
                             }
-                            else
-                            {
-                                CZipperCommunicate.GetYouPullID(out pullID);
-                                SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
+                            //int pullID = 0;
+                            //if (cell.CamName == "左相机")
+                            //{
+                            //    CZipperCommunicate.GetZuoPullID(out pullID);
+                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
+                            //}
+                            //else
+                            //{
+                            //    CZipperCommunicate.GetYouPullID(out pullID);
+                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
 
-                            }
+                            //}
+                            SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-                            if (productID != -1)
-                            {
-                                if (pullID != 100) //是拉头以外的图片
-                                {
-                                    if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
-                                    {
-                                        tempid = productID;
-                                        tempphotoID = 1;
-                                        cell.PhotoIndex = tempphotoID;
-                                    }
-                                    else
-                                    {
-                                        tempphotoID++;
-                                        cell.PhotoIndex = tempphotoID;
-                                    }
+                            //if (zipperID.ProductID != -1)
+                            //{
+                            //    if (pullID != 100) //是拉头以外的图片
+                            //    {
+                            //        if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
+                            //        {
+                            //            tempid = productID;
+                            //            tempphotoID = 1;
+                            //            cell.PhotoIndex = tempphotoID;
+                            //        }
+                            //        else
+                            //        {
+                            //            tempphotoID++;
+                            //            cell.PhotoIndex = tempphotoID;
+                            //        }
 
 
-                                }
-                                else //有拉头的图片
-                                {
-                                    cell.PhotoIndex = 100;
-                                    if (cell.CamName == "左相机") //收到图片之后立马改为0
-                                    {
-                                        CZipperCommunicate.SendZuoPullID(0);
-                                    }
-                                    else
-                                    {
-                                        CZipperCommunicate.SendYouPullID(0);
-                                    }
+                            //    }
+                            //    else //有拉头的图片
+                            //    {
+                            //        cell.PhotoIndex = 100;
+                            //        if (cell.CamName == "左相机") //收到图片之后立马改为0
+                            //        {
+                            //            CZipperCommunicate.SendZuoPullID(0);
+                            //        }
+                            //        else
+                            //        {
+                            //            CZipperCommunicate.SendYouPullID(0);
+                            //        }
 
-                                }
+                            //    }
 
-                                cell.ID = productID.ToString();
-                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
-                            }
-                            else
-                            {
-                                Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
-                                cell.Dispose();
-                                continue;
-                            }
+                            // cell.ID = productID.ToString();
+                            cell.ID = zipperID.ProductID.ToString();
+                            cell.PhotoIndex = zipperID.PhotoID;
+                            cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            //}
+                            //else
+                            //{
+                            //    Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
+                            //    cell.Dispose();
+                            //    continue;
+                            //}
                         }
                         else
                         {

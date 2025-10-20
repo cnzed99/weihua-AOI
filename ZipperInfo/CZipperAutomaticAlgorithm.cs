@@ -1153,11 +1153,11 @@ namespace ZipperInfo
                                 //System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
                                 //cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
-                                int eiddis = 700;
+                               // int eiddis = 700;
 
-                                if ((cell.Image.ImageWidth - resultDet.datas[i].box.X) > eiddis && (cell.Image.ImageWidth - resultDet.datas[i].box.X) < cell.Image.ImageWidth - 50) //
+                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) < 400) //
                                 {
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}>{eiddis}");
+                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} < 400");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
                                     pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
@@ -1259,12 +1259,12 @@ namespace ZipperInfo
                                 }
                             }
 
-                            if (timeOutCount > 500&& !findUpMass)
+                            if (timeOutCount > 100&& !findUpMass)
                             {
                                 findUpMass=true;
                                 ZipperInfo.ZipperUpMassType = STOPMASS.无;
                             }
-                            if (timeOutCount > 500 && !findDownMass)
+                            if (timeOutCount > 100 && !findDownMass)
                             {
                                 findDownMass = true;
                                 ZipperInfo.ZipperDownMassType = STOPMASS.无;

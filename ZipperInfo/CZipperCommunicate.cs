@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using CommunicationModule;
 using Modbus;
+using WH.RunCell;
 
 namespace ZipperInfo
 {
 
     public class CZipperCommunicate
     {
-
+        #region 静态方法
         static object lockobj = new object();
         public static CModbusCommPart com;
         /// <summary>
@@ -19,18 +21,19 @@ namespace ZipperInfo
         /// </summary>
         /// <param name="productID">产品ID</param>
         /// <param name="photoID">图片ID</param>
-        public static void GetID(out int productID, out int photoID)
+        //public static void GetID(out int productID, out int photoID)
+        public static void GetID(out int productID)
         {
             //try
             //{
             lock (lockobj)
             {
                 productID = -1;
-                photoID = -1;
+               // photoID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(41192);
-                    photoID = com.ReadHoldingRegisterInt32(41194);
+                   // photoID = com.ReadHoldingRegisterInt32(41194);
                 }
             }
             //}
@@ -233,7 +236,7 @@ namespace ZipperInfo
                 com.WriteSingleRegisterInt32(41202, tlenght);
                 com.WriteSingleRegisterInt32(41304, igoulenght);
 
-                float NGLocation = (lenght + 65.0f)*100;  //NG料的放料位置，根据拉链长度来计算
+                float NGLocation = (lenght + 65.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
                 com.WriteSingleRegisterInt32(41306, (int)NGLocation);
             }
 
@@ -508,11 +511,11 @@ namespace ZipperInfo
         {
             //try
             //{
-           
-                if (com != null)
-                {
-                    com.WriteSingleRegisterInt32(41256,time);
-                }
+
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41256, time);
+            }
 
             //}
             //catch (Exception)
@@ -541,13 +544,94 @@ namespace ZipperInfo
         //    //}
         //}
         #endregion
+        #endregion
 
+        #region 实例
+
+        public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
+    new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
+        /// <summary>
+        /// 等待ID队列
+        /// </summary>
+        public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
+
+        Thread WaitIDThread = null;
+
+        bool Connend=false;
+        public void IntThread()
+        {
+            Connend=true;
+            WaitIDThread = new Thread(MonitoringID);
+            WaitIDThread.Start();   
+        }
+
+        int TempproductID = -1;
+        private void MonitoringID()
+        {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            while (Connend)
+            {
+                try
+                {
+                    GetID(out int productID);
+                    if (productID == -1)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
+
+                    if (productID != TempproductID)
+                    {
+                        TempproductID = productID;
+                        List<int> idlist = new List<int>();
+                        for (int i = 1; i <=CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++) 
+                        {
+                            idlist.Add(i);
+                        }
+                        idlist.Insert(CZipperAutomaticAlgorithm.ZipperInfo.PullchangeIndex, 100);
+                        for (int i = 0; i <idlist.Count; i++)
+                        {
+                            ZipperID zipperID=new ZipperID(productID, idlist[i]);
+                            m_WaitIDChannel.Writer.TryWrite(zipperID);
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+                }
+                Thread.Sleep(1);
+            }
+        }
+
+        #endregion
     }
 
     public enum ZIPPERESULT
     {
         OK = 1,
         NG = 2
+
+    }
+
+    public struct ZipperID
+    {
+        /// <summary>
+        /// 产品ID
+        /// 2025-10-19鲍赞宝
+        /// </summary>
+        public int ProductID { get; set; } = 0;
+        /// <summary>
+        /// 图片ID
+        /// 2025-10-19鲍赞宝
+        /// </summary>
+        public int PhotoID { get; set; } = 0;
+        public ZipperID(int productID, int photoID)
+        {
+            ProductID = productID;
+            PhotoID = photoID;
+        }
+        public ZipperID() { }
 
     }
 
