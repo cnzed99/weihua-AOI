@@ -824,6 +824,8 @@ namespace ZipperInfo
         #region 新算法
         public void ZipperAutomaticAlgorithmRun(Cell cell)
         {
+
+            if (cell.Image == null)return;
             //第一阶段: 计算光源值
             Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
                  MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
@@ -1061,7 +1063,7 @@ namespace ZipperInfo
                                 Dispatcher.Invoke(() =>
                                 {
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=2,更新下止图片");
-                                    ZipperInfo.ZipperDownmssImg = cell.Image.ToBitmapSource().Clone();
+                                    ZipperInfo.ZipperDownmssImg = cell.Image?.ToBitmapSource().Clone();
                                 });
                                 timeOutCount = 0;
                                 //   List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
@@ -1107,7 +1109,7 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链上止为:{ZipperInfo.ZipperUpMassType}");
                                 Dispatcher.Invoke(() =>
                                 {
-                                    ZipperInfo.ZipperUpmssImg = cell.Image.ToBitmapSource().Clone();
+                                    ZipperInfo.ZipperUpmssImg = cell.Image?.ToBitmapSource().Clone();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},更新上止图片");
                                 });
 
@@ -1139,7 +1141,7 @@ namespace ZipperInfo
                             {
                                 // ProgressBarViewModel.AutoMessage = "正在寻找拉头位置...";
                                 ProgressBarViewModel.ProgressBarValue = 50;
-                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image.ImageWidth - resultDet.datas[i].box.X}");
+                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image?.ImageWidth - resultDet.datas[i].box.X}");
                                 // int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                                 // int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
                                 //List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
@@ -1155,7 +1157,7 @@ namespace ZipperInfo
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
                                // int eiddis = 700;
 
-                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) < 400) //
+                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 600) //
                                 {
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} < 400");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
@@ -1653,17 +1655,17 @@ namespace ZipperInfo
                                 pos = pos - crippoint;
                                 AutoLogger.Info($"onWichStage=4,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                             }
-                            List<int> templist = new List<int>();
-                            for (int j = 0; j < ZipperInfo.ZipperTriggerPos.Count; j++)
-                            {
-                                int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
-                                templist.Add(temppos);
+                            //List<int> templist = new List<int>();
+                            //for (int j = 0; j < ZipperInfo.ZipperTriggerPos.Count; j++)
+                            //{
+                            //    int temppos = (int)ZipperInfo.ZipperTriggerPos[j] * 10;
+                            //    templist.Add(temppos);
 
-                            }
-                            templist.Add(pos);
-                            templist.Sort(); //升序排序
-                            int pindex = templist.IndexOf(pos);
-                            ZipperInfo.PullchangeIndex=pindex;
+                            //}
+                            //templist.Add(pos);
+                            //templist.Sort(); //升序排序
+                            //int pindex = templist.IndexOf(pos);
+                            //ZipperInfo.PullchangeIndex=pindex;
                             CZipperCommunicate.SendPullLocation(pos);
                             ZipperInfo.ZipperPullerCX = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                             ZipperInfo.ZipperPullerCY = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;

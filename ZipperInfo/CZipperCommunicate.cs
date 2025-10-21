@@ -29,11 +29,11 @@ namespace ZipperInfo
             lock (lockobj)
             {
                 productID = -1;
-               // photoID = -1;
+                // photoID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(41192);
-                   // photoID = com.ReadHoldingRegisterInt32(41194);
+                    // photoID = com.ReadHoldingRegisterInt32(41194);
                 }
             }
             //}
@@ -117,6 +117,30 @@ namespace ZipperInfo
             //    photoID = -1;
             //}
 
+
+        }
+
+        /// <summary>
+        /// 读取拉头触发的位置 
+        /// 2025-5-29 鲍赞宝
+        /// </summary>
+        public static int GetPullLocation()
+        {
+            //try
+            //{
+            if (com != null)
+            {
+                return com.ReadHoldingRegisterInt32(41198);
+            }
+            else
+            {
+                return -1;
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    return -1;
+            //}
 
         }
         /// <summary>
@@ -557,15 +581,18 @@ namespace ZipperInfo
 
         Thread WaitIDThread = null;
 
-        bool Connend=false;
+        bool Connend = false;
         public void IntThread()
         {
-            Connend=true;
+            Connend = true;
             WaitIDThread = new Thread(MonitoringID);
-            WaitIDThread.Start();   
+            WaitIDThread.IsBackground = true;
+            WaitIDThread.Start();
         }
 
         int TempproductID = -1;
+        int TempPullPos = -1;
+        int pullIndex=0;
         private void MonitoringID()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -574,7 +601,7 @@ namespace ZipperInfo
                 try
                 {
                     GetID(out int productID);
-                    if (productID == -1)
+                    if (productID <= 0)
                     {
                         Thread.Sleep(1);
                         continue;
@@ -583,15 +610,38 @@ namespace ZipperInfo
                     if (productID != TempproductID)
                     {
                         TempproductID = productID;
+                        List<float> copyPos = new List<float>();
+                        int ipullpos = GetPullLocation(); //为了防止中途从触摸屏改掉拉头位置，所以时刻监控它的值在进行比较
+                        if (ipullpos != TempPullPos)
+                        {
+                            TempPullPos = ipullpos;
+                            float fpullpos = ipullpos / 10.0f;
+                            for (int i = 0; i < CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
+                            {
+                                copyPos.Add(CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos[i]);
+                            }
+                            copyPos.Add(fpullpos);
+                            copyPos.Sort();
+
+                            float handpos = CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos[0];
+                            int handIndex = copyPos.IndexOf(handpos);
+
+                            List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
+                            List<float> splitpos = copyPos.Skip(handIndex).ToList(); //尾
+
+                            splitpos.AddRange(taskpos);
+                            pullIndex = copyPos.IndexOf(fpullpos);
+                        }
+
                         List<int> idlist = new List<int>();
-                        for (int i = 1; i <=CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++) 
+                        for (int i = 1; i <= CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
                         {
                             idlist.Add(i);
                         }
-                        idlist.Insert(CZipperAutomaticAlgorithm.ZipperInfo.PullchangeIndex, 100);
-                        for (int i = 0; i <idlist.Count; i++)
+                        idlist.Insert(pullIndex, 100);
+                        for (int i = 0; i < idlist.Count; i++)
                         {
-                            ZipperID zipperID=new ZipperID(productID, idlist[i]);
+                            ZipperID zipperID = new ZipperID(productID, idlist[i]);
                             m_WaitIDChannel.Writer.TryWrite(zipperID);
                         }
                     }

@@ -246,8 +246,8 @@ namespace WH.DetectSystem._5_存图操作
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawImage(
-                cell.Image.ToBitmapSource(),
-                new Rect(0, 0, cell.Image.ImageWidth, cell.Image.ImageHeight)
+                cell.Image?.ToBitmapSource(),
+                new Rect(0, 0,(int)cell.Image?.ImageWidth,(int)cell.Image?.ImageHeight)
             );
             DrawingVisual drawingVisua2 = null;
             DrawingContext drawingContext2 = null;
@@ -285,7 +285,7 @@ namespace WH.DetectSystem._5_存图操作
                         break;
 
                     case EMDRAWTYPE.EMDRAWTYPE_Text:
-                        DrawText(drawingContext, edge.Text, edge.TextPos, edge.BrushDraw, cell.Image.ImageHeight / 20);
+                        DrawText(drawingContext, edge.Text, edge.TextPos, edge.BrushDraw, (int)cell.Image?.ImageHeight / 20);
                         //DrawText(edge.Text, edge.TextPos, Brushes.Red, cell.Image.ImageHeight / 10);
                         break;
                 }
@@ -304,7 +304,7 @@ namespace WH.DetectSystem._5_存图操作
                     AlignmentY.Top,
                     //cell.Quality.ShowColor.Brush,
                     Brushes.Red,
-                    cell.Image.ImageHeight / 5
+                    (int)cell.Image?.ImageHeight / 5
                 );
                 //显示所有Region缺陷
                 if (showAllDefect)
@@ -331,7 +331,7 @@ namespace WH.DetectSystem._5_存图操作
                                         detection.regionOut[i].GetBottomRight(),
                                        // defectFilter.ShowColor.Brush,
                                        Brushes.Red,
-                                        cell.Image.ImageHeight / 10
+                                        (int)cell.Image?.ImageHeight / 10
                                     );
                             }
                             else
@@ -376,7 +376,7 @@ namespace WH.DetectSystem._5_存图操作
                                        cell.Detection.regionOut[i].GetBottomRight(),
                                       // defectFilter.ShowColor.Brush,
                                       Brushes.Red,
-                                       cell.Image.ImageHeight / 10
+                                       (int)cell.Image?.ImageHeight / 10
                                    );
                             }
                             else
@@ -411,7 +411,7 @@ namespace WH.DetectSystem._5_存图操作
             }
             drawingContext.Close();
             RenderTargetBitmap renderTargetBitmap =
-                new(cell.Image.ImageWidth, cell.Image.ImageHeight, 96, 96, PixelFormats.Default);
+                new((int)cell.Image?.ImageWidth, (int)cell.Image?.ImageHeight, 96, 96, PixelFormats.Default);
             renderTargetBitmap.Render(drawingVisual);
             renderTargetBitmap.Freeze();
             
@@ -506,19 +506,19 @@ namespace WH.DetectSystem._5_存图操作
             switch (alignmentX)
             {
                 case AlignmentX.Center:
-                    x = cell.Image.ImageWidth / 2 - formattedText.Width / 2;
+                    x = (int)cell.Image?.ImageWidth / 2 - formattedText.Width / 2;
                     break;
                 case AlignmentX.Right:
-                    x = cell.Image.ImageWidth - formattedText.Width - 20;
+                    x = (int)cell.Image?.ImageWidth - formattedText.Width - 20;
                     break;
             }
             switch (alignmentY)
             {
                 case AlignmentY.Center:
-                    y = cell.Image.ImageHeight / 2 - formattedText.Height / 2;
+                    y = (int)cell.Image?.ImageHeight / 2 - formattedText.Height / 2;
                     break;
                 case AlignmentY.Bottom:
-                    y = cell.Image.ImageHeight - formattedText.Height - 20;
+                    y = (int)cell.Image?.ImageHeight - formattedText.Height - 20;
                     break;
             }
             drawingContext.DrawText(formattedText, new Point(x, y));

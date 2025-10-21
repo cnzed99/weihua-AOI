@@ -379,6 +379,10 @@ namespace ZipperTestAlgorihm
             {
                 UpdateScore(paramClass);
                 Mat matimg = GetMatImage(cell, paramClass);
+                if (matimg == null)
+                {
+                    return;
+                }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转前.png", matimg);
                 Mat img;
                 if (cell.ImageFile != "")
@@ -695,18 +699,12 @@ namespace ZipperTestAlgorihm
                                             }
                                             for (int k = 0; k < otherdet.Count; k++)
                                             {
-                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止压伤", otherdet[k]);
+                                                int otherindex = int.Parse(otherdet[k].lable);
+                                                string otherstr = upStopMass_names[otherindex];
+                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, otherstr, otherdet[k]);
                                                 dets.Add(disData);
                                             }
                                         }
-                                        if (massPoints.Count == 2)
-                                        {
-                                            float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); //临时这样写
-                                            CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
-                                            dets.Add(disData);
-                                            massPoints.Clear();
-                                        }
-
                                         // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面上止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropUpMat);
                                     }
                                 }
@@ -719,6 +717,24 @@ namespace ZipperTestAlgorihm
                                     CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
                                     dets.Add(restoreData);
                                 }
+                            }
+                            if (massPoints.Count >= 2)
+                            {
+                                if (massPoints.Count == 2)
+                                {
+                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); //临时这样写
+                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
+                                    dets.Add(disData);
+                                    massPoints.Clear();
+                                }
+                                else
+                                {
+                                    float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X); //临时这样写
+                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
+                                    dets.Add(disData);
+                                    massPoints.Clear();
+                                }
+
                             }
                         }
                     }
@@ -1068,10 +1084,22 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
             //GetRecLen(rec2Points, out double LongLen, out double ShorLen,out double phi);
-            sRegioninfo.LongLen = info.RecWidth;
-            sRegioninfo.ShorLen = info.RecHeight;
+            sRegioninfo.WidthBound = info.RecWidth;
+            sRegioninfo.HeightBound = info.RecHeight;
+            if (info.RecWidth > info.RecWidth)
+            {
+                sRegioninfo.LongLen = info.RecWidth;
+                sRegioninfo.ShorLen = info.RecHeight;
+            }
+            else
+            {
+                sRegioninfo.LongLen = info.RecHeight;
+                sRegioninfo.ShorLen = info.RecWidth;
+            }
+
+
             sRegioninfo.Phi = info.Angle;
-            sRegioninfo.Area = sRegioninfo.LongLen * sRegioninfo.ShorLen;
+            sRegioninfo.Area = info.RecWidth * info.RecHeight;
             sRegioninfo.Score = info.Score;
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
             {
@@ -1148,13 +1176,16 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
 
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
+            if (cell.Image == null) return null;
+
             Mat img = new Mat(
-                cell.Image.ImageHeight,
-                cell.Image.ImageWidth,
-                MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
-                cell.Image.ImageData
-            );
+           cell.Image.ImageHeight,
+           cell.Image.ImageWidth,
+           MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
+           cell.Image.ImageData
+             );
             return img;
+
         }
 
 
@@ -1292,8 +1323,8 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 通用模型分数阈值
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("2.0通用模型分数阈值")]
+        [property: Category("分数设置")]
+        [property: DisplayName("1.0通用模型分数阈值")]
         [property: Description("通用模型分数阈值")]
         private float commonScore = 0.3f;
 
@@ -1302,8 +1333,8 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 下止模型分数阈值
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("3.0下止分数阈值")]
+        [property: Category("分数设置")]
+        [property: DisplayName("2.0下止分数阈值")]
         [property: Description("下止分数阈值")]
         private float downScore = 0.4f;
 
@@ -1312,8 +1343,8 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 上止模型分数阈值
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("4.0上止分数阈值")]
+        [property: Category("分数设置")]
+        [property: DisplayName("3.0上止分数阈值")]
         [property: Description("上止分数阈值")]
         private float upScore = 0.4f;
 
@@ -1322,8 +1353,8 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 拉头模型分数阈值
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("5.0拉头分数阈值")]
+        [property: Category("分数设置")]
+        [property: DisplayName("4.0拉头分数阈值")]
         [property: Description("拉头分数阈值")]
         private float pullScore = 0.4f;
 
@@ -1332,8 +1363,8 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 拉头模型分数阈值
         /// </summary>
         [ObservableProperty]
-        [property: Category("基础参数")]
-        [property: DisplayName("6.0大缺陷分数阈值")]
+        [property: Category("分数设置")]
+        [property: DisplayName("5.0大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 

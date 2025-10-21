@@ -39,6 +39,7 @@ namespace WH.RecipeCellRootBase
             if (this.Image != null)
             {
                 this.Image.Dispose();
+                this.Image = null;
             }
             //if (this.ColorImage != null)
             //{

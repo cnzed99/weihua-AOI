@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Channels;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using AlarmSetCtrl;
 using AlgorithmDll;
 using Autofac;
@@ -13,14 +12,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FocusControl;
 using HandyControl.Controls;
-using HandyControl.Data;
 using HistoryPlayback;
 using Mapster;
 using MarkControl;
-using Motion;
 using MySqlOperatesApi;
-using Mysqlx.Crud;
-using Newtonsoft.Json;
 using ProjProduceData;
 using QualityGrade;
 using SaveImageManage;
@@ -35,11 +30,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.IO;
-using OpenCvSharp.Extensions;
-using OpenCvSharp;
 using WH.Entity.MatConverter;
 
 
@@ -635,18 +626,18 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                             CZipperCommunicate.GetID(out int productID);
+                            CZipperCommunicate.GetID(out int productID);
                             ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
                             bool bnext = zipperID.ProductID < productID;
                             while (bnext)
                             {
-                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out  zipperID);
-                                bnext=zipperID.ProductID < productID;
+                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                bnext = zipperID.ProductID < productID;
                                 if (bnext)
                                 {
-                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于{productID}，抛弃");
-                                    cell.Dispose();
-                                }   
+                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                    continue;
+                                }
                             }
                             //int pullID = 0;
                             //if (cell.CamName == "左相机")
@@ -697,6 +688,7 @@ namespace WH.DetectSystem.Models
                             //    }
 
                             // cell.ID = productID.ToString();
+                          
                             cell.ID = zipperID.ProductID.ToString();
                             cell.PhotoIndex = zipperID.PhotoID;
                             cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
@@ -730,7 +722,7 @@ namespace WH.DetectSystem.Models
                         }
                         else
                         {
-                            BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+                            BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
                             _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
                                 new Action(() =>
                                 {
@@ -776,7 +768,7 @@ namespace WH.DetectSystem.Models
                         try
                         {
                             if (!isAutomaticTest)
-                            {
+                            {                   
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -1030,7 +1022,7 @@ namespace WH.DetectSystem.Models
 
                             try
                             {
-                                BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+                                BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
                                 BitmapSource zipperPullimg = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
                                 ImageView drawView;
 
@@ -1585,7 +1577,6 @@ namespace WH.DetectSystem.Models
         //  Mat matresult;
         private CImage GetCImage(List<Cell> cells)
         {
-
             if (cells.Count <= 1)
             {
                 if (cells.Count == 1)
@@ -1599,6 +1590,7 @@ namespace WH.DetectSystem.Models
 
             }
             cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
+            if(cells[0].Image==null) return null;
             if (cells.Count == 1)
             {
                 return (CImage)cells[0].Image.Clone();
