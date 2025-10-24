@@ -1157,9 +1157,9 @@ namespace ZipperInfo
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
                                // int eiddis = 700;
 
-                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 750) //
+                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
                                 {
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 750");
+                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 850");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
                                     pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
@@ -1649,6 +1649,7 @@ namespace ZipperInfo
                         if (labelstr == "拉头" && !findPuller)
                         {
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},识别到拉头findPuller = true");
+                            timeOutCount = 0;
                             findPuller = true;
                             int pos = CZipperCommunicate.GetGrippawlLocation();
                             int crippoint = (int)ZipperInfo.ZipperLneght * 10;
@@ -1684,6 +1685,7 @@ namespace ZipperInfo
                         if (labelstr == "拉头拉片" && !findPulls)
                         {
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},识别到拉头拉片findPulls = true");
+                            timeOutCount = 0;
                             findPulls = true;
                             Dispatcher.Invoke(() =>
                             {
@@ -1834,8 +1836,12 @@ namespace ZipperInfo
 
 
                     }
-                    else
+                    if (timeOutCount > 100)
                     {
+
+                        AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},超时没有找到拉头或拉片,转到阶段2");
+                        findPuller = true;
+                        findPulls = true;
                         // ProgressBarViewModel.AutoMessage = "正在识别上下止...";
                         ProgressBarViewModel.ProgressBarValue = 90;
                         LightCtl_Zuo.BaseConfig.LightChannelList[0].Value = tempLightValue_zuo_change1;
@@ -1853,23 +1859,13 @@ namespace ZipperInfo
                         CLinghtManagement.SaveLightParams();
                         timeOutCount = 0;
                         onWichStage = 2;
-                        AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},没有识别到上下止,转到阶段2");
                         CZipperCommunicate.AixtContinue(true);//继续
                         AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},轴继续拉动,转到阶段2");
+
                     }
-                    return;
+                  
                 }
             }
-            //if (timeOutCount >= 15)
-            //{
-            //    timeOutCount = 0;
-            //    AutoLogger.Info($"{cell.CamName}:onWichStage=5,timeOutCount={timeOutCount},识别拉头拉片，logo超时,进入第三阶段");
-            //    CZipperCommunicate.SceondstageFinsh();
-            //    onWichStage = 6;
-            //    return;
-            //}
-
-
         }
 
 

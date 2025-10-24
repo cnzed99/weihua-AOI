@@ -794,7 +794,15 @@ namespace ZipperTestAlgorihm
                             string labelname = pull_Search_names[labelindex];
                             if (labelname.Contains("拉头") || labelname.Contains("拉片"))
                             {
-                                int lx = pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Width / 2 - 400;
+                                int lx;
+                                if (labelname.Contains("拉头拉片"))
+                                {
+                                    lx = pullserachResult.datas[j].box.X  - 70;
+                                }
+                                else
+                                {
+                                    lx = pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Width / 2 - 400;
+                                }                                
                                 int ly = pullserachResult.datas[j].box.Y + pullserachResult.datas[j].box.Height / 2 - 320;
                                 int recw = 800;
                                 int rech = 640;

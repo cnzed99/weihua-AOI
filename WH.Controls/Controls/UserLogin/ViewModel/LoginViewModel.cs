@@ -253,6 +253,9 @@ namespace WH.Controls
 
             TimeRemainingAction?.Invoke(ILoginLeftTimeMinute, ILoginLeftTimeSecond, LoggedSuccess);
             ErrorMsg = Properties.Resources.Logout;
+            WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
+                       new CloseWindowMessage() { Sender = new WeakReference(this) }
+                   );
         }
     }
 }
