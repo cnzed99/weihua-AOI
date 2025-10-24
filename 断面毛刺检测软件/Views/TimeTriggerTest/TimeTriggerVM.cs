@@ -85,6 +85,32 @@ namespace 断面毛刺检测软件.Views
         [ObservableProperty]
         [property: MinLength(3)]
         int interval = 50;
+
+        private uint exposureValue;
+
+        public uint ExposureValue
+        {
+            get 
+            {
+                //return exposureValue; 
+                if (Cam != null && cam.Connected)
+                {
+                     cam.GetExposureTime(out uint ex);
+                    return ex;
+                }
+                else { return 0; }
+            }
+            set 
+            {
+                exposureValue = value;
+                if (Cam!=null&&cam.Connected)
+                {
+                    cam.SetExposureTime(exposureValue);
+                }
+                OnPropertyChanged();
+            }
+        }
+
         [RelayCommand]
         void SoftTrigger()
         {

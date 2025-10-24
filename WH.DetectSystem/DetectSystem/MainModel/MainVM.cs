@@ -629,7 +629,7 @@ namespace WH.DetectSystem.Models
                             CZipperCommunicate.GetID(out int productID);
                             ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
                             bool bnext = zipperID.ProductID < productID;
-                            while (bnext)
+                            while (bnext&& zipperID.ProductID>0&& productID>0)
                             {
                                 ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
                                 bnext = zipperID.ProductID < productID;

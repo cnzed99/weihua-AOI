@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [手动调试], Source={x:Static local:CLang.TimeTriggerTest}}"
-    Width="400"
+    Width="500"
     Height="450"
     Closed="Window_Closed"
     Icon="/Resources/图片/工具/手动调试.png"
@@ -57,17 +57,30 @@
                             Background="{StaticResource RegionBrush}"
                             IsChecked="{Binding IsTriggerStart}"
                             Style="{StaticResource ToggleButtonSwitch}" />
+                        <hc:NumericUpDown
+                          MinWidth="70"
+                          Margin="5,0"
+                          hc:TitleElement.Title="{Binding [触发间隔], Source={x:Static local:CLang.TimeTriggerTest}}"
+                          hc:TitleElement.TitlePlacement="Left"
+                          DecimalPlaces="0"
+                          Minimum="50"
+                          Style="{StaticResource NumericUpDownExtend}"
+                          Value="{Binding Interval, UpdateSourceTrigger=LostFocus}" />
+                        <hc:NumericUpDown
+                         MinWidth="70"
+                         Margin="5,0"
+                         hc:TitleElement.Title="曝光"
+                         hc:TitleElement.TitlePlacement="Left"
+                         DecimalPlaces="0"
+                         Minimum="1"
+                         Style="{StaticResource NumericUpDownExtend}"
+                         Value="{Binding ExposureValue, UpdateSourceTrigger=PropertyChanged}" />
+                 
                     </DockPanel>
 
-                    <hc:NumericUpDown
-                        MinWidth="200"
-                        Margin="5,0"
-                        hc:TitleElement.Title="{Binding [触发间隔], Source={x:Static local:CLang.TimeTriggerTest}}"
-                        hc:TitleElement.TitlePlacement="Left"
-                        DecimalPlaces="0"
-                        Minimum="50"
-                        Style="{StaticResource NumericUpDownExtend}"
-                        Value="{Binding Interval, UpdateSourceTrigger=LostFocus}" />
+     
+
+       
                 </hc:UniformSpacingPanel>
             </GroupBox>
         </DataTemplate>

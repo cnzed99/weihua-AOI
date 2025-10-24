@@ -813,7 +813,7 @@ namespace WH.DetectSystem._5_存图操作
             }
             catch (Exception ex)
             {
-                s_SysLog.Error("存图线程出错：" + ex.Message + ex.StackTrace);
+                s_SysLog.Error("检查磁盘空间出错：" + ex.Message + ex.StackTrace);
             }
         }
 

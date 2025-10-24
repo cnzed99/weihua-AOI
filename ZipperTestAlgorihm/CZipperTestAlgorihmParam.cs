@@ -11,11 +11,8 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using OpenCvSharp.Extensions;
 using WH.VisionLearning;
-using OpenCvSharp.ML;
-using System.Text;
-using System;
+
 
 
 
@@ -242,6 +239,9 @@ namespace ZipperTestAlgorihm
                 int sbsindex = pull_names.ToList().IndexOf("SBS");
                 string[] pullstrs = pull_names.Take(sbsindex).ToArray();
                 string[] logostrs = pull_names.Skip(sbsindex).ToArray();
+
+                //string[] pullstrs = pull_names.Where(s => s.Contains("拉")).ToArray();
+                //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
 
                 List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
                 for (int i = 0; i < pullstrs.Length; i++)

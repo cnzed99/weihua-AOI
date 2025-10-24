@@ -1157,9 +1157,9 @@ namespace ZipperInfo
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
                                // int eiddis = 700;
 
-                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 600) //
+                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 750) //
                                 {
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} < 400");
+                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 750");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
                                     pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
@@ -1260,16 +1260,19 @@ namespace ZipperInfo
                                     }
                                 }
                             }
-
+                            AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},findUpMass={findUpMass}");
                             if (timeOutCount > 100&& !findUpMass)
                             {
                                 findUpMass=true;
                                 ZipperInfo.ZipperUpMassType = STOPMASS.无;
+                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},ZipperInfo.ZipperUpMassType=STOPMASS.无");
                             }
+                            AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},findDownMass={findDownMass}");
                             if (timeOutCount > 100 && !findDownMass)
                             {
                                 findDownMass = true;
                                 ZipperInfo.ZipperDownMassType = STOPMASS.无;
+                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},ZipperInfo.ZipperDownMassType=STOPMASS.无");
                             }
 
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
@@ -1558,7 +1561,7 @@ namespace ZipperInfo
                                         AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                         if (maxtimeout >= 5)
                                         {
-                                            AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段5");
+                                            AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
                                             maxtimeout = 0;
                                             //进入下阶段
                                             onWichStage = 4;
@@ -1594,7 +1597,7 @@ namespace ZipperInfo
                                         AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                         if (mintimeout >= 5)
                                         {
-                                            AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段5");
+                                            AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
                                             mintimeout = 0;
                                             //进入下阶段
                                             onWichStage = 4;
