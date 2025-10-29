@@ -1,23 +1,11 @@
 ﻿using HalconDotNet;
 using OpenCvSharp;
-using OpenCvSharp.ML;
 using OpenVinoSharp.Extensions.result;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shell;
 using System.Windows.Threading;
 using WH.Entity;
 using WH.Entity.LogRecord;
 using WH.LightControl;
-using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperLightHalconDet;
 using WH.VisionLearning;
@@ -91,6 +79,8 @@ namespace ZipperInfo
 
         public static bool findDownMass = false;//检测到下止
         public static bool findUpMass = false; //检测到上止
+
+        public static bool findlianya = false;
 
         public static int findDownMassCount = 0;//检测到下止
         public static int findUpMassCount = 0; //检测到上止
@@ -825,7 +815,7 @@ namespace ZipperInfo
         public void ZipperAutomaticAlgorithmRun(Cell cell)
         {
 
-            if (cell.Image == null)return;
+            if (cell.Image == null) return;
             //第一阶段: 计算光源值
             Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
                  MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
@@ -1094,16 +1084,6 @@ namespace ZipperInfo
                                     findUpMass = true;
                                 }
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到{labelstr}");
-                                if (labelstr.Contains("正面")) //这里要改成识别链牙在哪边
-                                {
-                                    ZipperInfo.ZipperSliderType = PULLTYPE.反穿;
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链为反穿");
-                                }
-                                else
-                                {
-                                    ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
-                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链为正穿");
-                                }
 
                                 ZipperInfo.ZipperUpMassType = STOPMASS.注塑;
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链上止为:{ZipperInfo.ZipperUpMassType}");
@@ -1137,6 +1117,15 @@ namespace ZipperInfo
                                 //return;
                             }
 
+                            if (labelstr.Contains("链牙")&&!findlianya)
+                            {
+                                //这里要改成识别链牙在哪边
+                                findlianya = true;
+                                ZipperInfo.ZipperSliderType = PULLTYPE.反穿;
+                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链为反穿");
+
+                            }
+
                             if (labelstr.Contains("拉头") && !findPuller)
                             {
                                 // ProgressBarViewModel.AutoMessage = "正在寻找拉头位置...";
@@ -1155,9 +1144,9 @@ namespace ZipperInfo
                                 //System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
                                 //cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
-                               // int eiddis = 700;
+                                // int eiddis = 700;
 
-                                if ( resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
+                                if (resultDet.datas[i].box.X > 250 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
                                 {
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 250 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 850");
                                     int pos = CZipperCommunicate.GetGrippawlLocation();
@@ -1261,9 +1250,9 @@ namespace ZipperInfo
                                 }
                             }
                             AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},findUpMass={findUpMass}");
-                            if (timeOutCount > 100&& !findUpMass)
+                            if (timeOutCount > 100 && !findUpMass)
                             {
-                                findUpMass=true;
+                                findUpMass = true;
                                 ZipperInfo.ZipperUpMassType = STOPMASS.无;
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},ZipperInfo.ZipperUpMassType=STOPMASS.无");
                             }
@@ -1278,6 +1267,11 @@ namespace ZipperInfo
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
                             {
                                 TestFinsh = true;
+                                if (!findlianya)
+                                {
+                                    ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
+                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链为正穿");
+                                }
                                 ProgressBarViewModel.AutoMessage = "识别拉链完成...";
                                 ProgressBarViewModel.ProgressBarValue = 100;
                                 Thread.Sleep(500);
@@ -1302,7 +1296,7 @@ namespace ZipperInfo
                                 //{
                                 ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                 // });
-                               // CZipperAutomaticAlgorithm.TestFinshEven(true);
+                                // CZipperAutomaticAlgorithm.TestFinshEven(true);
                                 AutoLogger.Info($"{cell.CamName}:onWichStage=2,timeOutCount={timeOutCount},上下止,拉头,拉头拉片,Logo全部识别到,结束");
                             }
 
@@ -1863,7 +1857,7 @@ namespace ZipperInfo
                         AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},轴继续拉动,转到阶段2");
 
                     }
-                  
+
                 }
             }
         }

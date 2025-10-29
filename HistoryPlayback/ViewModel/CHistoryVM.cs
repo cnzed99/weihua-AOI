@@ -57,6 +57,10 @@ namespace HistoryPlayback
         [NotifyPropertyChangedFor(nameof(FileNames))]
         int selectClassify = 0;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(FileNames))]
+        int selectNgok = 0;
+
         /// <summary>
         /// 20240717 TCG
         /// 图片名称
@@ -68,7 +72,11 @@ namespace HistoryPlayback
                 switch (SelectClassify)
                 {
                     case 0:
-                        return HistoryModel.NgImagePaths;
+                        if (selectNgok == 0)
+                        {
+                            return HistoryModel.NgImagePaths;
+                        }
+                        else  { return HistoryModel.OkImagePaths; }
 
                     case 1:
                         if (SelectedDefect is null)
@@ -186,7 +194,7 @@ namespace HistoryPlayback
                         ReadImage = new BitmapImage(new Uri(selectedobj));
                     }
                     string[] pullname = selectedobj.Split('.');
-                    string pullpath= pullname[0]+"_Pull"+"."+ pullname[1];
+                    string pullpath = pullname[0] + "_Pull" + "." + pullname[1];
                     if (File.Exists(pullpath))
                     {
                         ReadPullImage = new BitmapImage(new Uri(pullpath));
@@ -211,9 +219,9 @@ namespace HistoryPlayback
             }
             catch (Exception ex)
             {
-                Growl.Error("解析图片信息异常："+ex.Message);
+                Growl.Error("解析图片信息异常：" + ex.Message);
             }
-           
+
         }
 
         private void Receive(CFilterConfig filter)

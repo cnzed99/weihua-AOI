@@ -24,6 +24,13 @@ namespace HistoryPlayback.Model
         ObservableCollection<string> ngImagePaths = new ObservableCollection<string>();
 
         /// <summary>
+        /// 20251026 鲍赞宝
+        /// OK截图保存图片的路径集合
+        /// </summary>
+        [ObservableProperty]
+        ObservableCollection<string> okImagePaths = new ObservableCollection<string>();
+
+        /// <summary>
         /// 20240717 TCG
         /// 缺陷列表
         /// </summary>

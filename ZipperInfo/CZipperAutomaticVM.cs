@@ -75,6 +75,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findLogo = false;
                 CZipperAutomaticAlgorithm.findUpMass= false;
                 CZipperAutomaticAlgorithm.findDownMass = false;
+                CZipperAutomaticAlgorithm.findlianya = false;
                 CZipperAutomaticAlgorithm.findUpMassCount = 0;
                 CZipperAutomaticAlgorithm.findDownMassCount = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownmssImg=null;

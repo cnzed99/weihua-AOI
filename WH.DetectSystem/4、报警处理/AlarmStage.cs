@@ -76,15 +76,15 @@ namespace WH.DetectSystem._4_报警处理
                 return ret;
             }
             else //NG数量达标即报警
-            {
+            {           
                 switch (alarm.Type)
                 {
                     case ALARMTYPE.ALARMTYPE_GRADE:
-                        if (cell.Quality == alarm.Source)
+                        if (cell?.Quality == alarm.Source)
                             alarm.TotalNG++;
                         break;
                     case ALARMTYPE.ALARMTYPE_DEFECT:
-                        if (cell.Detection.DefectFilter == alarm.Source)
+                        if (cell?.Detection?.DefectFilter == alarm.Source)
                             alarm.TotalNG++;
                         break;
                 }

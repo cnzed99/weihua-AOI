@@ -630,7 +630,7 @@ namespace ZipperInfo
                             List<float> splitpos = copyPos.Skip(handIndex).ToList(); //尾
 
                             splitpos.AddRange(taskpos);
-                            pullIndex = copyPos.IndexOf(fpullpos);
+                            pullIndex = splitpos.IndexOf(fpullpos);
                         }
 
                         List<int> idlist = new List<int>();
@@ -639,6 +639,12 @@ namespace ZipperInfo
                             idlist.Add(i);
                         }
                         idlist.Insert(pullIndex, 100);
+                        //string str="";
+                        //for (int i = 0; i < idlist.Count; i++)
+                        //{
+                        //    str = str + $"第{i}点：{idlist[i]}";
+                        //}
+
                         for (int i = 0; i < idlist.Count; i++)
                         {
                             ZipperID zipperID = new ZipperID(productID, idlist[i]);

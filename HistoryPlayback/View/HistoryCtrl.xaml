@@ -75,13 +75,13 @@
                             <RadioButton Margin="2" Grid.Column="0" HorizontalAlignment="Left" FontSize="16"          
                       d:IsChecked="True"
                       Content="{Binding [byNG], Source={x:Static local:CLang.instance}}"
-                      GroupName="Options2"
-                      IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=3}" />
+                      GroupName="Group2"
+                      IsChecked="{Binding SelectNgok, Converter={StaticResource CheckConverter}, ConverterParameter=0}" />
                         <RadioButton Margin="2" Grid.Column="0" HorizontalAlignment="Left" FontSize="16"          
                      d:IsChecked="False"
                      Content="{Binding [byOK], Source={x:Static local:CLang.instance}}"
-                     GroupName="Options2"
-                     IsChecked="{Binding SelectClassify, Converter={StaticResource CheckConverter}, ConverterParameter=3}" />
+                     GroupName="Group2"
+                     IsChecked="{Binding SelectNgok, Converter={StaticResource CheckConverter}, ConverterParameter=1}" />
                     </StackPanel>
                   
                 </Border>
