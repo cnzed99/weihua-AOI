@@ -12,6 +12,7 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
+using System;
 
 
 
@@ -460,7 +461,7 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    int instr = 0;
+                    upmassCount = 0;
                     List<Point> massPoints = new List<Point>();
                     List<DetResult> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
@@ -620,7 +621,7 @@ namespace ZipperTestAlgorihm
                                 }
                                 else if(labelname.Contains("正面上止")&&runtype)
                                 {
-                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, instr, out Point upmassPos, out List<CoordRestoreData> updets);
+                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
                                     massPoints.Add(upmassPos);
                                     if (updets?.Count > 0)
                                     {
@@ -665,7 +666,7 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    int instr = 0;
+                    upmassCount = 0;
                     List<Point> massPoints = new List<Point>(); //上止的位置
                     List<DetResult> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
@@ -679,7 +680,7 @@ namespace ZipperTestAlgorihm
                                 if (labelname.Contains("正面上止"))
                                 {
 
-                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, instr, out Point upmassPos, out List<CoordRestoreData> updets);
+                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
                                     massPoints.Add(upmassPos);
                                     if (updets?.Count > 0)
                                     {
@@ -928,8 +929,8 @@ namespace ZipperTestAlgorihm
             }
         }
 
-
-        private void RunUpMassDet(Cell cell,Mat img, DetData detData,int i,int smallimgWidth,int instr, out Point upmassPos,out List<CoordRestoreData> updets)
+        int upmassCount;
+        private void RunUpMassDet(Cell cell,Mat img, DetData detData,int i,int smallimgWidth, out Point upmassPos,out List<CoordRestoreData> updets)
         {
             updets = new List<CoordRestoreData>();
             //坐标还原
@@ -975,20 +976,21 @@ namespace ZipperTestAlgorihm
                             }
                         }
                     }
+                   
                     if (Diss.Count > 0) //有找到链牙和上止
                     {
-                        instr++;
+                        upmassCount++;
                         var min = Diss.Min(t => t.Item1);
                         var dis = Diss.First(t => t.Item1 == min);
-                        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, $"上止距离{instr}", lianci[dis.Item2]);
+                        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, $"上止距离{upmassCount}", lianci[dis.Item2]);
                         disData.Value = dis.Item1;
                         updets.Add(disData);
                         Diss.Clear();
                     }
                     else //没找到链牙和上止
                     {
-                        instr++;
-                        CoordRestoreData disData = new CoordRestoreData($"上止距离{instr}", 0);
+                        upmassCount++;
+                        CoordRestoreData disData = new CoordRestoreData($"上止距离{upmassCount}", 0);
                         updets.Add(disData);
                     }
                     if (luyaIndex.Count > 0)
