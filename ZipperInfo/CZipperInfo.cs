@@ -141,41 +141,54 @@ namespace ZipperInfo
 
         /// <summary>
         /// 识别出来的上止的图像
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [JsonIgnore]
         public BitmapSource ZipperUpmssImg { get; set; }
 
         /// <summary>
         /// 识别出来的下止的图像
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [JsonIgnore]
         public BitmapSource ZipperDownmssImg { get; set; }
 
         /// <summary>
         /// 识别出来的正面拉片的图像
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [JsonIgnore]
         public BitmapSource ZipperPullsImg { get; set; }
 
         /// <summary>
         /// 识别出来的正面拉头的图像
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [JsonIgnore]
         public BitmapSource ZipperPullerImg { get; set; }
         /// <summary>
         /// 拉头识别框中心X
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [ObservableProperty]
         public int zipperPullerCX;
         /// <summary>
         /// 拉头识别框中心Y
+        /// 2025.06.30 鲍赞宝
         /// </summary>
         [ObservableProperty]
         public int zipperPullerCY;
         /// <summary>
         /// 拉链外部参数
+        /// 2025.06.30 鲍赞宝
         /// </summary>
-       public CAutomaticModel AutoData {  get; set; }
+        public CAutomaticModel AutoData {  get; set; }
+        /// <summary>
+        /// 是否是白色拉链，是则加严参数
+        /// 2025.11.1 鲍赞宝
+        /// </summary>
+        [ObservableProperty]
+        public bool whiteZippers;
 
     }
 

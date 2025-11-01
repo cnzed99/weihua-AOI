@@ -846,9 +846,19 @@ namespace ZipperInfo
                             -1,
                             0
                         );
-                    ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 2.0, CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMinBgMean, CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMaxBgMean, CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMinMean, CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMaxMean, out var hv_VState, out var hv_VStride);
+                    ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 2.0,
+                        CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMinBgMean,
+                        CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMaxBgMean, 
+                        CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMinMean, 
+                        CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMaxMean, 
+                        out var hv_VState, out var hv_VStride,out bool isWhiteZipper);
                     //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{hv_VState}_{hv_VStride}_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
                     //ProgressBarViewModel.AutoMessage = "正在识别拉链颜色...";
+                    if (isWhiteZipper)
+                    {
+                        ZipperInfo.WhiteZippers = true;
+                    }
+
                     ProgressBarViewModel.ProgressBarValue = 20;
                     CameraImage.Dispose();
                     AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
@@ -1799,6 +1809,11 @@ namespace ZipperInfo
                         // CZipperCommunicate.SceondstageFinsh();
                         if (findDownMass && findUpMass && !TestFinsh) //如果都找到了下止 上止  拉头 拉片就结束
                         {
+                            if (!findlianya)
+                            {
+                                ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
+                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},设置拉链为正穿");
+                            }
                             TestFinsh = true;
                             ProgressBarViewModel.AutoMessage = "识别拉链完成...";
                             ProgressBarViewModel.ProgressBarValue = 100;
@@ -1861,6 +1876,8 @@ namespace ZipperInfo
                 }
             }
         }
+
+
 
 
         #endregion

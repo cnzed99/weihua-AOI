@@ -241,7 +241,7 @@ namespace ZipperTestAlgorihm
                 string[] logostrs = pull_names.Skip(sbsindex).ToArray();
 
                 //string[] pullstrs = pull_names.Where(s => s.Contains("拉")).ToArray();
-                //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
+                //string[] logostrs = pull_names.Where(s => !s.Contains("拉")).ToArray();
 
                 List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
                 for (int i = 0; i < pullstrs.Length; i++)

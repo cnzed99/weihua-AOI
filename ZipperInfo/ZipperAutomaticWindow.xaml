@@ -40,7 +40,7 @@
 
                         <TextBlock Margin="10,10,0,0" Text="拉链长度(cm)"  FontSize="22"/>
                     <hc:NumericUpDown Margin="140,0,0,0"  Value="{Binding AutoData.ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
-                                      DecimalPlaces="1" Minimum="0" Maximum="2000"
+                                      DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000"
                     Width="140" Height="45" FontSize="30">
                         <i:Interaction.Behaviors>
                             <keyboard:NumericKeyboardBehavior/>

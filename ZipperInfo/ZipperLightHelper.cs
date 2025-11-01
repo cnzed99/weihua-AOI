@@ -24,7 +24,7 @@ namespace ZipperLightHalconDet
         /// <param name="hv_StrideRate">步幅调整灵敏度比率，默认值：0.5（根据实际光源控制器调整）</param>
         /// <param name="hv_VState">亮度评估状态，0：保持亮度、1：需增加光源亮度、2：需减少亮度</param>
         /// <param name="hv_VStride">推荐调整光源步幅值（供上层应用快速调整至合适的光源值使用）</param>
-        public void PullerLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate,int bgmin,int bgmax,int fonmin,int fonmax,
+        public void PullerLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate, int bgmin, int bgmax, int fonmin, int fonmax,
      out HTuple hv_VState, out HTuple hv_VStride)
         {
 
@@ -425,11 +425,11 @@ namespace ZipperLightHalconDet
         /// <param name="hv_VState">亮度评估状态，0：保持亮度、1：需增加光源亮度、2：需减少亮度</param>
         /// <param name="hv_VStride">推荐调整光源步幅值（供上层应用快速调整至合适的光源值使用）</param>
         public void ZipperLightDetection(HObject ho_Image, HTuple hv_BrightnessDiff, HTuple hv_StrideRate, int bgmin, int bgmax, int fonmin, int fonmax,
-     out HTuple hv_VState, out HTuple hv_VStride)
+     out HTuple hv_VState, out HTuple hv_VStride,out bool isWhiteZipper)
         {
 
 
-
+            isWhiteZipper = false;
 
             // Local iconic variables 
 
@@ -621,6 +621,34 @@ namespace ZipperLightHalconDet
                 //拆分RGB通道
                 ho_R.Dispose(); ho_G.Dispose(); ho_B.Dispose();
                 HOperatorSet.Decompose3(ho_ImageReduced, out ho_R, out ho_G, out ho_B);
+                HTuple hv_ValueR = new HTuple();
+                HTuple hv_ValueG = new HTuple();
+                HTuple hv_ValueB = new HTuple();
+                //try
+                //{
+
+                //    hv_ValueR.Dispose();
+                //    HOperatorSet.GrayFeatures(ho_SelectROI, ho_R, "mean", out hv_ValueR);
+                //    hv_ValueG.Dispose();
+                //    HOperatorSet.GrayFeatures(ho_SelectROI, ho_G, "mean", out hv_ValueG);
+                //    hv_ValueB.Dispose();
+                //    HOperatorSet.GrayFeatures(ho_SelectROI, ho_B, "mean", out hv_ValueB);
+
+                //    if (hv_ValueR.I > 100 && hv_ValueG > 100 && hv_ValueB > 100)
+                //    {
+
+                //    }
+
+                //}
+                //catch (Exception)
+                //{
+                //    hv_ValueR.Dispose();
+                //    hv_ValueG.Dispose();
+                //    hv_ValueB.Dispose();
+
+                //}
+
+
 
                 //转换为HSV颜色空间
                 ho_H.Dispose(); ho_S.Dispose(); ho_V.Dispose();
@@ -632,6 +660,12 @@ namespace ZipperLightHalconDet
                 HOperatorSet.GrayFeatures(ho_SelectROI, ho_S, "mean", out hv_SValue);
                 hv_VValue.Dispose();
                 HOperatorSet.GrayFeatures(ho_SelectROI, ho_V, "mean", out hv_VValue);
+
+                if (hv_HValue.I<130&&hv_SValue.I<20&& hv_VValue.I>170) //白色拉链加严处理
+                {
+                    isWhiteZipper = true;
+                }
+
 
                 //提升深色系最佳均值亮度值
                 hv_MValue.Dispose();

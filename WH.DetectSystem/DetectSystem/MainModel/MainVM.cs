@@ -32,6 +32,7 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
+using System.Security.AccessControl;
 
 
 
@@ -295,6 +296,7 @@ namespace WH.DetectSystem.Models
                 }
                 MergeCells.Clear();
                 UpdatDetSet();
+                UpdatWhiteZipperParam(); //白色拉链加严处理
                 if (this.Name == "正面")
                 {
                     if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
@@ -1708,6 +1710,88 @@ namespace WH.DetectSystem.Models
             else { }
         }
 
+
+        private void UpdatWhiteZipperParam()
+        {
+            SpeciesFilter zipperDetNames = this.MaociFilterConfig["拉链"];
+            #region 布带脏污
+            foreach (var detname in zipperDetNames.RecipeDefects)
+            {
+                if (detname.Name.Contains("布带脏污"))
+                {
+                    foreach (var df in detname.DefectFilters)
+                    {
+                        foreach (var fl in df.FilterList)
+                        {
+                            foreach (var se in fl.SelectList)
+                            {
+                                foreach (var pa in se.SelectParams)
+                                {
+                                    if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                                    {
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                        {
+                                            pa.Min = 25;
+                                        }
+                                        else
+                                        {
+                                            pa.Min = 40;
+                                        }
+                                        
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            #endregion
+            #region 点脏污
+            foreach (var detname in zipperDetNames.RecipeDefects)
+            {
+                if (detname.Name.Contains("点脏污"))
+                {
+                    foreach (var df in detname.DefectFilters)
+                    {
+                        foreach (var fl in df.FilterList)
+                        {
+                            foreach (var se in fl.SelectList)
+                            {
+                                foreach (var pa in se.SelectParams)
+                                {
+                                    if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
+                                    {
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                        {
+                                            pa.Min = 1;
+                                        }
+                                        else
+                                        {
+                                            pa.Min = 3;
+                                        }
+                                    }
+                                    if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                                    {
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                        {
+                                            pa.Min = 25;
+                                        }
+                                        else
+                                        {
+                                            pa.Min = 40;
+                                        }
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            #endregion
+        }
         /// <summary>
         /// 更新缺陷配置
         /// </summary>
