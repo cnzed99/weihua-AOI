@@ -846,6 +846,8 @@ namespace ZipperInfo
                             -1,
                             0
                         );
+
+                    //HOperatorSet.WriteImage(CameraImage, "png", 0, "C:\\Users\\Administrator.B\\Desktop\\新建文件夹 (5)\\111.png");
                     ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 2.0,
                         CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMinBgMean,
                         CZipperAutomaticAlgorithm.ZipperInfo.AutoData.ZipperMaxBgMean, 

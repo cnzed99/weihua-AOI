@@ -111,6 +111,7 @@ namespace AlgorithmDll
         /// 2024.7.17 李焕彬
         /// 缺陷检测类
         /// </summary>
+        [JsonIgnore]
         public List<CDefectSpecies> DefectSpecies { get; set; }
 
         /// <summary>

@@ -629,7 +629,8 @@ namespace WH.DetectSystem.Models
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
                             CZipperCommunicate.GetID(out int productID);
-                            ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                          ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+
                             bool bnext = zipperID.ProductID < productID;
                             while (bnext&& zipperID.ProductID>0&& productID>0)
                             {

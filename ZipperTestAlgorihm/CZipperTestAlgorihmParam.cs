@@ -419,9 +419,9 @@ namespace ZipperTestAlgorihm
                     }
                 }
                 List<Mat> mats = new List<Mat>();
-                 int smallimgWidth = cell.Image.ImageWidth / 4;
-               // int smallimgWidth = 640;
-               // int widthstep = 480;
+                int smallimgWidth = cell.Image.ImageWidth / 4;
+                // int smallimgWidth = 640;
+                // int widthstep = 480;
                 int smallimgHeight = cell.Image.ImageHeight;
                 if (cell.PhotoIndex != 100)  //拉头的图片不拆图
                 {
@@ -439,7 +439,7 @@ namespace ZipperTestAlgorihm
                         //{
                         //    cropRec[i].X=i*widthstep;
                         //}
-                        cropRec[i].X = i*smallimgWidth;
+                        cropRec[i].X = i * smallimgWidth;
                         cropRec[i].Y = 0;
                         cropRec[i].Width = smallimgWidth;
                         cropRec[i].Height = smallimgHeight;
@@ -450,10 +450,10 @@ namespace ZipperTestAlgorihm
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }
                 }
-                bool runtype=false; //判断是只处理1张图像还是多张图像，true为1张
-                if (cell.PhotoTatolCount==2)
+                bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
+                if (cell.PhotoTatolCount == 2)
                 {
-                    runtype=true;
+                    runtype = true;
                 }
                 if (cell.PhotoIndex == 1) //第一张有下止的图
                 {
@@ -463,22 +463,26 @@ namespace ZipperTestAlgorihm
                     }
                     upmassCount = 0;
                     List<Point> massPoints = new List<Point>();
-                    List<DetResult> detrets = ImageInferall(mats).Result;
+                    List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
                         for (int i = 0; i < detrets.Count; i++)
                         {
-                            for (int j = 0; j < detrets[i].datas.Count; j++)
+                            for (int j = 0; j < detrets[i].Item1.datas.Count; j++)
                             {
-                                int labelindex = int.Parse(detrets[i].datas[j].lable);
+                                int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
                                 if (labelname.Contains("正面下止"))
                                 {
                                     //坐标还原
-                                    int nameindex = int.Parse(detrets[i].datas[j].lable);
+                                    int nameindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                     string labelstr = Common_names[nameindex];
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, 0, i * smallimgWidth, 0, labelstr, detrets[i].datas[j]);
-                                    dets.Add(restoreData);
+                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, 0, i * smallimgWidth, 0, labelstr, detrets[i].Item1.datas[j]);
+                                    if (detrets[i].Item2 == 1)//只有第一张图片才检下止
+                                    {
+                                        dets.Add(restoreData);
+                                    }
+
                                     int recw = 256;
                                     int rech = 256;
                                     int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
@@ -619,22 +623,26 @@ namespace ZipperTestAlgorihm
                                         }
                                     }
                                 }
-                                else if(labelname.Contains("正面上止")&&runtype)
+                                else if (labelname.Contains("正面上止") && runtype)
                                 {
-                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
-                                    massPoints.Add(upmassPos);
-                                    if (updets?.Count > 0)
+                                    if (detrets[i].Item2 == 4)
                                     {
-                                        dets.AddRange(updets);
+                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
+                                        massPoints.Add(upmassPos);
+                                        if (updets?.Count > 0)
+                                        {
+                                            dets.AddRange(updets);
+                                        }
                                     }
+
                                 }
                                 else
                                 {
                                     //int nameindex = int.Parse(detrets[i].datas[j].lable);
                                     //string labelstr = Common_names[nameindex];
-                                    if (labelname.Contains("正面上止") || (labelname.Contains("反面上止")&&!runtype)) //第一张图片不该有上止
+                                    if (labelname.Contains("正面上止") || (labelname.Contains("反面上止") && !runtype)) //第一张图片不该有上止
                                         continue;
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
+                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                     dets.Add(restoreData);
                                 }
                             }
@@ -660,7 +668,7 @@ namespace ZipperTestAlgorihm
 
                     }
                 }
-                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1&&!runtype) //最后一张图片有上止图片
+                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && !runtype) //最后一张图片有上止图片
                 {
                     if (mats.Count == 0)
                     {
@@ -668,24 +676,27 @@ namespace ZipperTestAlgorihm
                     }
                     upmassCount = 0;
                     List<Point> massPoints = new List<Point>(); //上止的位置
-                    List<DetResult> detrets = ImageInferall(mats).Result;
+                    List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
                         for (int i = 0; i < detrets.Count; i++)
                         {
-                            for (int j = 0; j < detrets[i].datas.Count; j++)
+                            for (int j = 0; j < detrets[i].Item1.datas.Count; j++)
                             {
-                                int labelindex = int.Parse(detrets[i].datas[j].lable);
+                                int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
                                 if (labelname.Contains("正面上止"))
                                 {
-
-                                    RunUpMassDet(cell, img, detrets[i].datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
-                                    massPoints.Add(upmassPos);
-                                    if (updets?.Count > 0)
+                                    if (detrets[i].Item2 == 4)
                                     {
-                                        dets.AddRange(updets);
+                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
+                                        massPoints.Add(upmassPos);
+                                        if (updets?.Count > 0)
+                                        {
+                                            dets.AddRange(updets);
+                                        }
                                     }
+
                                     ////坐标还原
                                     //int nameindex = int.Parse(detrets[i].datas[j].lable);
                                     //string labelstr = Common_names[nameindex];
@@ -769,7 +780,7 @@ namespace ZipperTestAlgorihm
                                     //string labelstr = Common_names[nameindex];
                                     if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
                                         continue;
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
+                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                     dets.Add(restoreData);
                                 }
                             }
@@ -852,12 +863,12 @@ namespace ZipperTestAlgorihm
                                 int lx;
                                 if (labelname.Contains("拉头拉片"))
                                 {
-                                    lx = pullserachResult.datas[j].box.X  - 120;
+                                    lx = pullserachResult.datas[j].box.X - 120;
                                 }
                                 else
                                 {
                                     lx = pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Width / 2 - 400;
-                                }                                
+                                }
                                 int ly = pullserachResult.datas[j].box.Y + pullserachResult.datas[j].box.Height / 2 - 320;
                                 int recw = 800;
                                 int rech = 640;
@@ -904,19 +915,19 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    List<DetResult> detrets = ImageInferall(mats).Result;
+                    List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
                         for (int i = 0; i < detrets.Count; i++)
                         {
-                            for (int j = 0; j < detrets[i].datas.Count; j++)
+                            for (int j = 0; j < detrets[i].Item1.datas.Count; j++)
                             {
-                                int labelindex = int.Parse(detrets[i].datas[j].lable);
+                                int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
 
                                 if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
                                     continue;
-                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].datas[j]);
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                 dets.Add(restoreData);
                             }
                         }
@@ -930,14 +941,14 @@ namespace ZipperTestAlgorihm
         }
 
         int upmassCount;
-        private void RunUpMassDet(Cell cell,Mat img, DetData detData,int i,int smallimgWidth, out Point upmassPos,out List<CoordRestoreData> updets)
+        private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets)
         {
             updets = new List<CoordRestoreData>();
             //坐标还原
             int nameindex = int.Parse(detData.lable);
             string labelstr = Common_names[nameindex];
             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detData);
-            upmassPos=new Point(restoreData.OrgCenterX, restoreData.OrgCenterY);
+            upmassPos = new Point(restoreData.OrgCenterX, restoreData.OrgCenterY);
             int recw = 192;
             int rech = 96;
             int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
@@ -976,7 +987,7 @@ namespace ZipperTestAlgorihm
                             }
                         }
                     }
-                   
+
                     if (Diss.Count > 0) //有找到链牙和上止
                     {
                         upmassCount++;
@@ -1008,13 +1019,13 @@ namespace ZipperTestAlgorihm
                         updets.Add(disData);
                     }
                 }
-                
+
             }
         }
 
-        private async Task<List<DetResult>> ImageInferall(List<Mat> mats)
+        private async Task<List<(DetResult, int)>> ImageInferall(List<Mat> mats)
         {
-            List<DetResult> alldetResult = new List<DetResult>();
+            List<(DetResult, int)> alldetResult = new List<(DetResult, int)>();
             Task<DetResult> task1 = Task.Run(() =>
             {
                 DetResult sResultInfos = ImageInferDet(yolo_all_det1, mats[0]);
@@ -1037,10 +1048,10 @@ namespace ZipperTestAlgorihm
                 return sResultInfos;
             });
             await Task.WhenAll(task1, task2, task3, task4);
-            alldetResult.Add(task1.Result);
-            alldetResult.Add(task2.Result);
-            alldetResult.Add(task3.Result);
-            alldetResult.Add(task4.Result);
+            alldetResult.Add((task1.Result, 1));
+            alldetResult.Add((task2.Result, 2));
+            alldetResult.Add((task3.Result, 3));
+            alldetResult.Add((task4.Result, 4));
             return alldetResult;
         }
         protected void ParseResult(List<CoordRestoreData> sResultInfos, Cell cell)
