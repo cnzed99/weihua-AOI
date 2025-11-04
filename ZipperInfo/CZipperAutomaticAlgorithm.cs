@@ -1206,16 +1206,24 @@ namespace ZipperInfo
                                             int rang = 100;
                                             if (pindex == 0)
                                             {
-                                                int dis = Math.Abs(pos - templist[pindex + 1]);
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>{rang}");
-                                                if (dis > rang)
+                                                if (ZipperInfo.TriggerType==3)
                                                 {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
-                                                    CZipperCommunicate.AixtStop();
-                                                    CZipperCommunicate.SendCamFPS(300);
-                                                    timeOutCount = 0;
-                                                    onWichStage = 3;
-                                                    return;
+                                                    int dis = Math.Abs(pos - templist[pindex + 1]);
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>{rang}");
+                                                    if (dis > rang)
+                                                    {
+                                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
+                                                        CZipperCommunicate.AixtStop();
+                                                        CZipperCommunicate.SendCamFPS(300);
+                                                        timeOutCount = 0;
+                                                        onWichStage = 3;
+                                                        return;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},类型{ZipperInfo.TriggerType}拉头位置不能是第一个， return");
+                                                    return; //不能在第一位
                                                 }
                                             }
                                             else if (pindex == templist.Count - 1)
