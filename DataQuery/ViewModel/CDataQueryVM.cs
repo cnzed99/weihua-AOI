@@ -108,15 +108,18 @@ namespace DataQuery
                     DateTime endStarTime = EndDate.Date + EndTime.TimeOfDay;
                     string strStartTime = newStarTime.ToString("yyyy-MM-dd HH:mm:ss");
                     string strEndTime = endStarTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    string shift;
                     switch (SelectQueryMode)
                     {
                         case 0:
-                            dates.Add(SystemSettings.NowShift);
+                            shift = SystemSettings.NowShift.Replace('-', '_');
+                            dates.Add(shift);
                             break;
                         case 1:
                             break;
                         default:
-                            dates.Add(SystemSettings.NowShift);
+                             shift = SystemSettings.NowShift.Replace('-', '_');
+                            dates.Add(shift);
                             break;
                     }
                     //dates.Add("2024年6月26日");

@@ -32,7 +32,6 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
-using System.Security.AccessControl;
 
 
 
@@ -148,13 +147,13 @@ namespace WH.DetectSystem.Models
             HistoryVM.Reset();
             QualityVM.Reset();
             // 数据清零事件
-            SystemSettings.ClearProduceEvent += () =>
-            {
-                if (SystemSettings.AutoClearEnable)
-                {
-                    this.DefectsDataVM.DefectsProduce.Clear();
-                }
-            };
+            //SystemSettings.ClearProduceEvent += () =>
+            //{
+            //    if (SystemSettings.AutoClearEnable)
+            //    {
+            //        this.DefectsDataVM.DefectsProduce.Clear();
+            //    }
+            //};
 
             this.ProcessGroup = processGroup;
             if (
@@ -618,138 +617,6 @@ namespace WH.DetectSystem.Models
             #region 取图线程
             int tempphotoID = 0;
             int tempid = 0;
-            //Task waitGetImageTask = Task.Run(async () =>
-            //{
-            //    Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-
-            //    await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
-            //    {
-            //        try
-            //        {
-            //            if (IsStart && !isAutomaticTest) //自动运行
-            //            {
-            //                CZipperCommunicate.GetID(out int productID);
-            //              ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-
-            //                bool bnext = zipperID.ProductID < productID;
-            //                while (bnext&& zipperID.ProductID>0&& productID>0)
-            //                {
-            //                    ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
-            //                    bnext = zipperID.ProductID < productID;
-            //                    if (bnext)
-            //                    {
-            //                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-            //                        continue;
-            //                    }
-            //                }
-            //                //int pullID = 0;
-            //                //if (cell.CamName == "左相机")
-            //                //{
-            //                //    CZipperCommunicate.GetZuoPullID(out pullID);
-            //                //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
-            //                //}
-            //                //else
-            //                //{
-            //                //    CZipperCommunicate.GetYouPullID(out pullID);
-            //                //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
-
-            //                //}
-            //                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-            //                int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-            //                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
-            //                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-            //                //if (zipperID.ProductID != -1)
-            //                //{
-            //                //    if (pullID != 100) //是拉头以外的图片
-            //                //    {
-            //                //        if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
-            //                //        {
-            //                //            tempid = productID;
-            //                //            tempphotoID = 1;
-            //                //            cell.PhotoIndex = tempphotoID;
-            //                //        }
-            //                //        else
-            //                //        {
-            //                //            tempphotoID++;
-            //                //            cell.PhotoIndex = tempphotoID;
-            //                //        }
-
-
-            //                //    }
-            //                //    else //有拉头的图片
-            //                //    {
-            //                //        cell.PhotoIndex = 100;
-            //                //        if (cell.CamName == "左相机") //收到图片之后立马改为0
-            //                //        {
-            //                //            CZipperCommunicate.SendZuoPullID(0);
-            //                //        }
-            //                //        else
-            //                //        {
-            //                //            CZipperCommunicate.SendYouPullID(0);
-            //                //        }
-
-            //                //    }
-
-            //                // cell.ID = productID.ToString();
-
-            //                cell.ID = zipperID.ProductID.ToString();
-            //                cell.PhotoIndex = zipperID.PhotoID;
-            //                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
-            //                //}
-            //                //else
-            //                //{
-            //                //    Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
-            //                //    cell.Dispose();
-            //                //    continue;
-            //                //}
-            //            }
-            //            else
-            //            {
-            //                if (cell.ImageFile == "") //手动调试
-            //                {
-            //                    cell.ID = (MaociDefectsProduce.Total + 1).ToString();
-            //                    cell.PhotoIndex = 1;
-            //                    cell.PhotoTatolCount = 1;
-            //                }
-            //            }
-
-            //            cell.ProjName = Name;
-            //            cell.ProjGuid = GUID;
-            //            // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-            //            if (IsStart || IsManualTest || isAutomaticTest)
-            //            {
-            //                if (!m_AlgorithmChannel.Writer.TryWrite(cell))
-            //                {
-            //                    cell.Dispose();
-            //                }
-            //            }
-            //            else
-            //            {
-            //                BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-            //                _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
-            //                    new Action(() =>
-            //                    {
-            //                        ModelImage = bitmapSource;
-            //                    })
-            //                );
-            //                //if (FocusCtrlVM?.IsFocusing ?? false)
-            //                //{
-            //                //    if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
-            //                //        cell.Dispose();
-            //                //}
-            //                //else
-            //                //{
-            //                //    cell.Dispose();
-            //                //}
-            //            }
-            //        }
-            //        catch (Exception)
-            //        {
-            //            await m_InfoChannel.Writer.WriteAsync(new PrintMsg("取图出错！", LOG.LOG_ERROR));
-            //        }
-            //    }
-            //});
-
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -758,62 +625,86 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        if (IsStart && !isAutomaticTest) // 自动运行模式
+                        if (IsStart && !isAutomaticTest) //自动运行
                         {
                             CZipperCommunicate.GetID(out int productID);
+                            ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
 
-                            // 关键修改点1：使用 WaitToReadAsync 进行异步等待
-                            // 等待 m_WaitIDChannel 中有数据可用
-                            while (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
+                            bool bnext = zipperID.ProductID < productID;
+                            while (bnext && zipperID.ProductID > 0 && productID > 0)
                             {
-                                // 关键修改点2：尝试读取一条数据。如果成功读取，则跳出等待循环。
-                                if (ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID))
+                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                bnext = zipperID.ProductID < productID;
+                                if (bnext)
                                 {
-                                    // 检查读取到的 zipperID 是否有效
-                                    bool bnext = zipperID.ProductID < productID;
-                                    while (bnext && zipperID.ProductID > 0 && productID > 0)
-                                    {
-                                        // 关键修改点3：继续异步等待并读取下一个ID，直到找到符合条件的ID
-                                        if (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
-                                        {
-                                            if (!ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID))
-                                            {
-                                                break; // 读取失败，退出内层循环
-                                            }
-                                            bnext = zipperID.ProductID < productID;
-                                            if (bnext)
-                                            {
-                                                SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            break; // 通道已关闭，退出内层循环
-                                        }
-                                    }
-
-                                    // 后续处理逻辑（您的日志记录、参数赋值等）
-                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                                    int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                                    cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
-                                    cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-
-                                    cell.ID = zipperID.ProductID.ToString();
-                                    cell.PhotoIndex = zipperID.PhotoID;
-                                    cell.PhotoTatolCount = photoTotalCount + 1;
-
-                                    // 重要：处理完一个有效的 zipperID 后，跳出外层的 WaitToReadAsync 循环
-                                    break;
+                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                    continue;
                                 }
-                                // 如果 TryRead 失败，WaitToReadAsync 循环会继续，等待下一条数据
                             }
-                            // 注意：如果通道被关闭（Complete()被调用）且无数据，则会退出循环。
-                            // 您可能需要根据业务逻辑处理通道关闭的情况。
+                            //int pullID = 0;
+                            //if (cell.CamName == "左相机")
+                            //{
+                            //    CZipperCommunicate.GetZuoPullID(out pullID);
+                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
+                            //}
+                            //else
+                            //{
+                            //    CZipperCommunicate.GetYouPullID(out pullID);
+                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
+
+                            //}
+                            SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+                            //if (zipperID.ProductID != -1)
+                            //{
+                            //    if (pullID != 100) //是拉头以外的图片
+                            //    {
+                            //        if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
+                            //        {
+                            //            tempid = productID;
+                            //            tempphotoID = 1;
+                            //            cell.PhotoIndex = tempphotoID;
+                            //        }
+                            //        else
+                            //        {
+                            //            tempphotoID++;
+                            //            cell.PhotoIndex = tempphotoID;
+                            //        }
+
+
+                            //    }
+                            //    else //有拉头的图片
+                            //    {
+                            //        cell.PhotoIndex = 100;
+                            //        if (cell.CamName == "左相机") //收到图片之后立马改为0
+                            //        {
+                            //            CZipperCommunicate.SendZuoPullID(0);
+                            //        }
+                            //        else
+                            //        {
+                            //            CZipperCommunicate.SendYouPullID(0);
+                            //        }
+
+                            //    }
+
+                            // cell.ID = productID.ToString();
+
+                            cell.ID = zipperID.ProductID.ToString();
+                            cell.PhotoIndex = zipperID.PhotoID;
+                            cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            //}
+                            //else
+                            //{
+                            //    Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
+                            //    cell.Dispose();
+                            //    continue;
+                            //}
                         }
                         else
                         {
-                            // ... 您原有的手动调试模式代码保持不变 ...
-                            if (cell.ImageFile == "")
+                            if (cell.ImageFile == "") //手动调试
                             {
                                 cell.ID = (MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
@@ -823,7 +714,7 @@ namespace WH.DetectSystem.Models
 
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
-
+                        // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         if (IsStart || IsManualTest || isAutomaticTest)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
@@ -833,23 +724,131 @@ namespace WH.DetectSystem.Models
                         }
                         else
                         {
-                            // ... 您原有的非检测模式下的显示代码 ...
                             BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-                            _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(new Action(() =>
-                            {
-                                ModelImage = bitmapSource;
-                            }));
+                            _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(
+                                new Action(() =>
+                                {
+                                    ModelImage = bitmapSource;
+                                })
+                            );
+                            //if (FocusCtrlVM?.IsFocusing ?? false)
+                            //{
+                            //    if (!FocusCtrlVM.FocusWaitGetImageChannel.Writer.TryWrite(cell))
+                            //        cell.Dispose();
+                            //}
+                            //else
+                            //{
+                            //    cell.Dispose();
+                            //}
                         }
                     }
-                    catch (Exception ex) // 建议捕获具体异常，这里使用 ex 以记录日志
+                    catch (Exception)
                     {
-                        // 改进：记录异常信息，而不仅仅是固定消息
-                        await m_InfoChannel.Writer.WriteAsync(new PrintMsg($"取图出错：{ex.Message}", LOG.LOG_ERROR));
-                        // 考虑是否需要 Dispose cell？
-                        cell?.Dispose();
+                        await m_InfoChannel.Writer.WriteAsync(new PrintMsg("取图出错！", LOG.LOG_ERROR));
                     }
                 }
             });
+
+            //Task waitGetImageTask = Task.Run(async () =>
+            //{
+            //    Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
+
+            //    await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
+            //    {
+            //        try
+            //        {
+            //            if (IsStart && !isAutomaticTest) // 自动运行模式
+            //            {
+            //                CZipperCommunicate.GetID(out int productID);
+
+            //                // 关键修改点1：使用 WaitToReadAsync 进行异步等待
+            //                // 等待 m_WaitIDChannel 中有数据可用
+            //                while (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
+            //                {
+            //                    // 关键修改点2：尝试读取一条数据。如果成功读取，则跳出等待循环。
+            //                    if (ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID))
+            //                    {
+            //                        // 检查读取到的 zipperID 是否有效
+            //                        bool bnext = zipperID.ProductID < productID;
+            //                        while (bnext && zipperID.ProductID > 0 && productID > 0)
+            //                        {
+            //                            // 关键修改点3：继续异步等待并读取下一个ID，直到找到符合条件的ID
+            //                            if (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
+            //                            {
+            //                                if (!ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID))
+            //                                {
+            //                                    break; // 读取失败，退出内层循环
+            //                                }
+            //                                bnext = zipperID.ProductID < productID;
+            //                                if (bnext)
+            //                                {
+            //                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+            //                                }
+            //                            }
+            //                            else
+            //                            {
+            //                                break; // 通道已关闭，退出内层循环
+            //                            }
+            //                        }
+
+            //                        // 后续处理逻辑（您的日志记录、参数赋值等）
+            //                        SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+            //                        int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+            //                        cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+            //                        cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+
+            //                        cell.ID = zipperID.ProductID.ToString();
+            //                        cell.PhotoIndex = zipperID.PhotoID;
+            //                        cell.PhotoTatolCount = photoTotalCount + 1;
+
+            //                        // 重要：处理完一个有效的 zipperID 后，跳出外层的 WaitToReadAsync 循环
+            //                        break;
+            //                    }
+            //                    // 如果 TryRead 失败，WaitToReadAsync 循环会继续，等待下一条数据
+            //                }
+            //                // 注意：如果通道被关闭（Complete()被调用）且无数据，则会退出循环。
+            //                // 您可能需要根据业务逻辑处理通道关闭的情况。
+            //            }
+            //            else
+            //            {
+            //                // ... 您原有的手动调试模式代码保持不变 ...
+            //                if (cell.ImageFile == "")
+            //                {
+            //                    cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+            //                    cell.PhotoIndex = 1;
+            //                    cell.PhotoTatolCount = 1;
+            //                }
+            //            }
+
+            //            cell.ProjName = Name;
+            //            cell.ProjGuid = GUID;
+
+            //            if (IsStart || IsManualTest || isAutomaticTest)
+            //            {
+            //                if (!m_AlgorithmChannel.Writer.TryWrite(cell))
+            //                {
+            //                    cell.Dispose();
+            //                }
+            //            }
+            //            else
+            //            {
+            //                // ... 您原有的非检测模式下的显示代码 ...
+            //                BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
+            //                _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(new Action(() =>
+            //                {
+            //                    ModelImage = bitmapSource;
+            //                }));
+            //            }
+            //        }
+            //        catch (Exception ex) // 建议捕获具体异常，这里使用 ex 以记录日志
+            //        {
+            //            // 改进：记录异常信息，而不仅仅是固定消息
+            //            await m_InfoChannel.Writer.WriteAsync(new PrintMsg($"取图出错：{ex.Message}", LOG.LOG_ERROR));
+            //            // 考虑是否需要 Dispose cell？
+            //            cell?.Dispose();
+            //        }
+            //    }
+            //});
 
             #endregion 取图线程
 
@@ -868,7 +867,7 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        cell.Stopwatch.Restart();
+                        cell.Stopwatch.Restart();                      
                         try
                         {
                             if (!isAutomaticTest)
@@ -1833,13 +1832,25 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 25;
+                                            pa.Min = 30;
                                         }
                                         else
                                         {
-                                            pa.Min = 40;
+                                            pa.Min = 42;
                                         }
                                         
+                                    }
+                                    if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                    {
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                        {
+                                            pa.Min = 110;
+                                        }
+                                        else
+                                        {
+                                            pa.Min = 180;
+                                        }
+
                                     }
                                 }
                             }
@@ -1877,11 +1888,23 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 25;
+                                            pa.Min = 30;
                                         }
                                         else
                                         {
-                                            pa.Min = 40;
+                                            pa.Min = 42;
+                                        }
+
+                                    }
+                                    if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                    {
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                        {
+                                            pa.Min = 110;
+                                        }
+                                        else
+                                        {
+                                            pa.Min = 180;
                                         }
 
                                     }

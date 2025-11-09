@@ -76,7 +76,7 @@
 
             <TextBlock   Margin="15,0,0,0" Text="Logo类型" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
             <hc:ComboBox  Margin="5"  SelectedItem="{Binding ZipperInfo.ZipperLogoType }"
-                   ItemsSource="{Binding Source={StaticResource  LogoTypeProvider}}" FontSize="24"/>
+                   ItemsSource="{Binding ZipperInfo.LogoTypeStrs}" FontSize="24"/>
 
             <TextBlock   Margin="15,0,0,0" Text="白色拉链" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
             <ToggleButton Margin="15,0,0,0" HorizontalAlignment="Left" Background="Gray" IsChecked="{Binding ZipperInfo.WhiteZippers}" />

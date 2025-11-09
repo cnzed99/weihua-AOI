@@ -462,8 +462,14 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
-              Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
+                // CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
+                if (CMainList.CMainMModel.CProcessGroups.Count > 0)
+                {
+                 
+                        CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
+                }
+
+                Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
             catch (Exception exception)
@@ -599,7 +605,7 @@ namespace 断面毛刺检测软件
             offLine.Show();
             offLine.Activate();
             CMainList.IsManualTest = true;
-            CMainList.StartStop=false;
+            CMainList.StartStop = false;
             switches.Add(true);
             OperateLog.Info(Properties.Resources.Offline);
         }
@@ -687,7 +693,16 @@ namespace 断面毛刺检测软件
                     {
                         if (b)
                         {
-                            ClearProduceData(true);
+                            // ClearProduceData();
+                            foreach (var item in CMainList.CMainVMs)
+                            {
+                                item.MaociDefectsProduce?.Clear();
+                            }
+                            foreach (var item in CMainList.CMainMModel.CProcessGroups)
+                            {
+                                item.MaociDefectsProduce?.Clear();
+                                item.Cells.Clear();
+                            }
                             OperateLog.Info(Properties.Resources.DataClear);
                         }
                         return true;
@@ -700,9 +715,9 @@ namespace 断面毛刺检测软件
             }
         }
 
-        private void ClearProduceData(bool finsh)
+        private void ClearProduceData()
         {
-            if (CZipperAutomaticAlgorithm.TestFinsh || finsh)
+            if (CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.AutoClearEnable)
             {
                 foreach (var item in CMainList.CMainVMs)
                 {
@@ -905,15 +920,16 @@ namespace 断面毛刺检测软件
             .Value;
             CZipperAutomaticVM automaticVM = CPublicServices.Container.Resolve<CZipperAutomaticVM>();
             AutomaticWindow.DataContext = automaticVM;
-            automaticVM.StartAutoTestEven = (b) => {
+            automaticVM.StartAutoTestEven = (b) =>
+            {
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
                     CMainList.StartStop = true;
                     mainVM.IsStart = b;
                     mainVM.IsAutomaticTest = b;
                 }
-           
-                ProgressBarViewModel.ProgressFinshEven=null;
+
+                ProgressBarViewModel.ProgressFinshEven = null;
                 ProgressBarViewModel.ProgressFinshEven = () =>
                 {
                     this.Dispatcher.Invoke(() =>
@@ -935,9 +951,9 @@ namespace 断面毛刺检测软件
                         autoFinshWindow.Activate();
                         zipperInfoShow.DataContext = zipperInfoVM;
                     }
-          
+
                 }
-      
+
             };
             AutomaticWindow.Show();
             AutomaticWindow.Activate();
@@ -945,7 +961,7 @@ namespace 断面毛刺检测软件
         }
         private void AutoFinshWindow_Closed(object sender, EventArgs e)
         {
-            this.Dispatcher?.Invoke(() => 
+            this.Dispatcher?.Invoke(() =>
             {
                 foreach (var mainVM in CMainList.CMainVMs)
                 {
@@ -953,7 +969,7 @@ namespace 断面毛刺检测软件
                 }
                 CZipperAutomaticAlgorithm.onWichStage = 0;
             });
-          
+
         }
         #endregion
     }

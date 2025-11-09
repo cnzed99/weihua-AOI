@@ -12,7 +12,6 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
-using System;
 
 
 
@@ -237,12 +236,12 @@ namespace ZipperTestAlgorihm
                 #endregion
 
                 #region 拉头 拉片 LOGO
-                int sbsindex = pull_names.ToList().IndexOf("SBS");
-                string[] pullstrs = pull_names.Take(sbsindex).ToArray();
-                string[] logostrs = pull_names.Skip(sbsindex).ToArray();
+                //int sbsindex = pull_names.ToList().IndexOf("SBS");
+                //string[] pullstrs = pull_names.Take(sbsindex).ToArray();
+                //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
 
-                //string[] pullstrs = pull_names.Where(s => s.Contains("拉")).ToArray();
-                //string[] logostrs = pull_names.Where(s => !s.Contains("拉")).ToArray();
+                string[] pullstrs = pull_names.Where(s => s.Contains("拉")).ToArray();
+                string[] logostrs = pull_names.Where(s => !s.Contains("拉")).ToArray();
 
                 List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
                 for (int i = 0; i < pullstrs.Length; i++)
@@ -412,10 +411,10 @@ namespace ZipperTestAlgorihm
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             dets.Add(restoreData);
                         }
-                        ParseResult(dets, cell);
-                        img.Dispose();
-                        dets.Clear();
-                        return;
+                       // ParseResult(dets, cell);
+                        //img.Dispose();
+                        //dets.Clear();
+                       // return;
                     }
                 }
                 List<Mat> mats = new List<Mat>();
@@ -505,10 +504,13 @@ namespace ZipperTestAlgorihm
                                         if (downResult.datas.Count > 0)
                                         {
                                             List<int> luyaIndex = new List<int>();
-                                            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == "0").ToList();
-                                            List<ObbData> lianci = downResult.datas.FindAll(c => c.lable == "1").ToList();
-                                            List<ObbData> lianya = downResult.datas.FindAll(c => c.lable == "2").ToList();
+                                            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == "0").ToList(); //下止
+                                            List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == "1").ToList(); //链齿
+                                            List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == "2").ToList(); //链牙
                                             List<ObbData> otherobb = downResult.datas.Where(s => s.lable != "0" && s.lable != "1" && s.lable != "2").ToList();
+
+                                            List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
+                                            List<ObbData> lianya= lianyaorg.Where(s => s.score>= paramClass.DownLianciScore).ToList();
                                             //计算下止到链齿的最短距离
                                             List<(float, int)> Diss = new List<(float, int)>();
                                             for (int a = 0; a < downmass.Count; a++)
@@ -627,7 +629,7 @@ namespace ZipperTestAlgorihm
                                 {
                                     if (detrets[i].Item2 == 4)
                                     {
-                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
+                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass,out Point upmassPos, out List<CoordRestoreData> updets);
                                         massPoints.Add(upmassPos);
                                         if (updets?.Count > 0)
                                         {
@@ -689,7 +691,7 @@ namespace ZipperTestAlgorihm
                                 {
                                     if (detrets[i].Item2 == 4)
                                     {
-                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets);
+                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass, out Point upmassPos, out List<CoordRestoreData> updets);
                                         massPoints.Add(upmassPos);
                                         if (updets?.Count > 0)
                                         {
@@ -941,7 +943,7 @@ namespace ZipperTestAlgorihm
         }
 
         int upmassCount;
-        private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, out Point upmassPos, out List<CoordRestoreData> updets)
+        private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, CParam param, out Point upmassPos, out List<CoordRestoreData> updets)
         {
             updets = new List<CoordRestoreData>();
             //坐标还原
@@ -970,9 +972,12 @@ namespace ZipperTestAlgorihm
                 if (upResult.datas.Count > 0)
                 {
                     List<int> luyaIndex = new List<int>();
-                    List<ObbData> upmass = upResult.datas.FindAll(c => c.lable == "0").ToList();
-                    List<ObbData> lianci = upResult.datas.FindAll(c => c.lable == "2").ToList();
+                    List<ObbData> upmass = upResult.datas.FindAll(c => c.lable == "0").ToList(); //上止
+                    List<ObbData> lianciorg = upResult.datas.FindAll(c => c.lable == "2").ToList(); //链齿
                     List<ObbData> otherdet = upResult.datas.Where(s => s.lable != "0" && s.lable != "2").ToList();
+
+                   // List<ObbData> upmass=upmassorg.Where(s=>s.score>= param.UpLianciScore).ToList();
+                    List<ObbData> lianci=lianciorg.Where(s=>s.score>=param.UpLianciScore).ToList();
                     //计算上止到链齿的最短距离
                     List<(float, int)> Diss = new List<(float, int)>();
                     for (int a = 0; a < upmass.Count; a++)
@@ -1001,7 +1006,7 @@ namespace ZipperTestAlgorihm
                     else //没找到链牙和上止
                     {
                         upmassCount++;
-                        CoordRestoreData disData = new CoordRestoreData($"上止距离{upmassCount}", 0);
+                        CoordRestoreData disData = new CoordRestoreData($"上止距离{upmassCount}", 1000);
                         updets.Add(disData);
                     }
                     if (luyaIndex.Count > 0)
@@ -1496,14 +1501,34 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         private float downScore = 0.4f;
 
         /// <summary>
+        /// 2025.11.07 鲍赞宝
+        /// 下止模型的链齿分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("3.0下止链齿分数阈值")]
+        [property: Description("下止链齿分数阈值")]
+        private float downLianciScore = 0.6f;
+
+        /// <summary>
         /// 2024.7.21 鲍赞宝
         /// 上止模型分数阈值
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("3.0上止分数阈值")]
+        [property: DisplayName("4.0上止分数阈值")]
         [property: Description("上止分数阈值")]
         private float upScore = 0.4f;
+
+        /// <summary>
+        /// 2025.11.07 鲍赞宝
+        /// 上止模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("5.0上止链齿分数阈值")]
+        [property: Description("上止链齿分数阈值")]
+        private float upLianciScore = 0.7f;
 
         /// <summary>
         /// 2024.7.21 鲍赞宝
@@ -1511,7 +1536,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("4.0拉头分数阈值")]
+        [property: DisplayName("6.0拉头分数阈值")]
         [property: Description("拉头分数阈值")]
         private float pullScore = 0.4f;
 
@@ -1521,7 +1546,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("5.0大缺陷分数阈值")]
+        [property: DisplayName("7.0大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 

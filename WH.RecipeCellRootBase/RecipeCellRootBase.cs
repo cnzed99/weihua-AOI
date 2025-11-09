@@ -538,6 +538,11 @@ namespace WH.RecipeCellRootBase
         /// 面积特征
         /// </summary>
         public static CFeacture FeactureArea = new("Area", "面积", "Area", "um²");
+        /// <summary>
+        /// 2024.11.5 鲍赞宝
+        /// 分数特征
+        /// </summary>
+        public static CFeacture FeactureScore = new("Score", "分数", "Score", "");
     }
 
     /// <summary>

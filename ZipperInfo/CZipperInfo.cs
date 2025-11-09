@@ -54,6 +54,8 @@ namespace ZipperInfo
                 {
                     AutoData.ZipperLenght = value;
                     CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount,out _);
+                    ZipperTriggerPos = points;
+                    HandAndTaliPos = handandtalipoints;
                     CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
                     //写入拍照的总图片数量
                     CZipperCommunicate.SendPhotoCount(points.Count);
@@ -113,7 +115,7 @@ namespace ZipperInfo
         [property: Description("logo类型")]
         [property: Browsable(true)]
         [ObservableProperty]
-        LOGOTYPE zipperLogoType = LOGOTYPE.SBS;
+        string zipperLogoType = "SBS";
         /// <summary>
         /// 拉链拍照触发的位置
         /// 2025.06.24 鲍赞宝
@@ -189,6 +191,12 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         public bool whiteZippers;
+        /// <summary>
+        /// Logo文字集合
+        /// 2025.11.04 鲍赞宝
+        /// </summary>
+        [ObservableProperty]
+        public string[] logoTypeStrs;
 
     }
 
@@ -217,16 +225,16 @@ namespace ZipperInfo
         隐形=6,
         无=7
     }
-    public enum LOGOTYPE
-    {
-        SBS=0,
-        ANTA=1,
-        单包=2,
-        无Logo=3,
-        Kith,
-        Oneills,
-        JAKO,
-        ONLY
-    }
+    //public enum LOGOTYPE
+    //{
+    //    SBS=0,
+    //    ANTA=1,
+    //    单包=2,
+    //    无Logo=3,
+    //    Kith,
+    //    Oneills,
+    //    JAKO,
+    //    ONLY
+    //}
 
 }

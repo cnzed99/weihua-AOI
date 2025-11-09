@@ -50,7 +50,7 @@ namespace ZipperInfo
         /// 相机中心到切刀的中心距
         /// </summary>
         [ObservableProperty]
-        float daoDitance = 782;
+        float daoDitance = 782;  //12mm 对应805
         /// <summary>
         /// 相机视野
         /// </summary>

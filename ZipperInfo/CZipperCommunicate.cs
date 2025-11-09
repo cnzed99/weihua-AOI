@@ -261,6 +261,10 @@ namespace ZipperInfo
                 com.WriteSingleRegisterInt32(41304, igoulenght);
 
                 float NGLocation = (lenght + 65.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
+                if (NGLocation > 48000) //限制最大后退距离
+                {
+                    NGLocation = 48000; 
+                }
                 com.WriteSingleRegisterInt32(41306, (int)NGLocation);
             }
 
@@ -622,15 +626,22 @@ namespace ZipperInfo
                             }
                             copyPos.Add(fpullpos);
                             copyPos.Sort();
+                            if (CZipperAutomaticAlgorithm.ZipperInfo.TriggerType == 3)
+                            {
+                                float handpos = CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos[0];
+                                int handIndex = copyPos.IndexOf(handpos);
 
-                            float handpos = CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos[0];
-                            int handIndex = copyPos.IndexOf(handpos);
+                                List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
+                                List<float> splitpos = copyPos.Skip(handIndex).ToList(); //尾
 
-                            List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
-                            List<float> splitpos = copyPos.Skip(handIndex).ToList(); //尾
-
-                            splitpos.AddRange(taskpos);
-                            pullIndex = splitpos.IndexOf(fpullpos);
+                                splitpos.AddRange(taskpos);
+                                pullIndex = splitpos.IndexOf(fpullpos);
+                            }
+                            else 
+                            {
+                                pullIndex = copyPos.IndexOf(fpullpos);
+                            }
+                       
                         }
 
                         List<int> idlist = new List<int>();

@@ -70,7 +70,13 @@ namespace SDFilter
                         {
                             rd.DefectFilters[0].FilterList[0].Filter[0].SelectParams[0].Character = CFeacture.FeactureArea;
                             rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[0].Character = CFeacture.FeactureArea;
+
+                            rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams.Add(new OneSelectParams(token));
+                            rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[1].Character = CFeacture.FeactureScore;
+                            rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[1].Min = 35;
+                            rd.DefectFilters[0].ResultList.Add(new FilterResult());
                             rd.DefectFilters[0].ResultList[0].Feature = CFeacture.FeactureArea;
+                            rd.DefectFilters[0].ResultList[1].Feature = CFeacture.FeactureScore;
                         }
                         speciesFilter.RecipeDefects.Add(rd);
                     }
@@ -722,6 +728,7 @@ namespace SDFilter
             SelectParams = new ObservableCollection<OneSelectParams>()
             {
                 new OneSelectParams(token)
+               // new OneSelectParams(token)
             };
         }
 

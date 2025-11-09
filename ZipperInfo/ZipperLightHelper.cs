@@ -661,11 +661,10 @@ namespace ZipperLightHalconDet
                 hv_VValue.Dispose();
                 HOperatorSet.GrayFeatures(ho_SelectROI, ho_V, "mean", out hv_VValue);
 
-                if (hv_HValue.D<140&&hv_SValue.D<25&& hv_VValue.D>170) //白色拉链加严处理
+                if (hv_HValue.D<130&&hv_SValue.D<45&& hv_VValue.D>185) //白色拉链加严处理
                 {
                     isWhiteZipper = true;
                 }
-
 
                 //提升深色系最佳均值亮度值
                 hv_MValue.Dispose();

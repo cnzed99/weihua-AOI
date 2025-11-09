@@ -15,11 +15,17 @@ namespace ZipperInfo
         /// <param name="headandtalipoints">一条拉链中，第一张图片的触发位置和最后一张的出发位置</param>
         /// <param name="cutoffIndex">切断时已经拍了几张照片</param>
         /// <param name="frontFinsshPos">切断时,切刀到相机已经有几条拉链完了拍照,影响NG OK分料</param>
-        internal static void GetTriggerPoints(CAutomaticModel AutoData, out List<float> outpoints, out List<float> HeadandTalipoints, out int cutoffIndex, out int frontFinsshPos,out int triggerType)
+        internal static void GetTriggerPoints(CAutomaticModel AutoData, out List<float> outpoints, out List<float> HeadandTalipoints,
+            out int cutoffIndex, out int frontFinsshPos, out int triggerType)
         {
             triggerType = 1;
             List<float> points = new List<float>();
             HeadandTalipoints = new List<float>();
+            //***************测试
+            float tempdis = AutoData.ZipperLenght - AutoData.CcdWidth;
+            int discount = (int)(tempdis / 18.0f);
+            AutoData.DaoDitance = 815 - discount;
+           // ************
             float frontLim = AutoData.DaoDitance - AutoData.CcdWidth / 2.0f;
             float backLim = AutoData.DaoDitance + AutoData.CcdWidth / 2.0f;
 
@@ -40,6 +46,10 @@ namespace ZipperInfo
                 pullchange = 0;
                 frontFinsshPos = frontzippers - 1;
                 float firstpoint = netZipperhandle - frontLim;
+                if (firstpoint == 0) //触发点不能为零，为零启动后不触发相机
+                {
+                    firstpoint = 1;
+                }
                 points.Add(firstpoint);
                 HeadandTalipoints.Add(firstpoint);
                 //后续的点
@@ -49,6 +59,10 @@ namespace ZipperInfo
                     if (nextpoint + AutoData.CcdWidth >= netZipperTali)
                     {
                         float endpoint = netZipperTali - backLim;
+                        if (endpoint == 0)
+                        {
+                            endpoint = 1;
+                        }
                         points.Add(endpoint);
                         HeadandTalipoints.Add(endpoint);
                         break;
@@ -56,6 +70,10 @@ namespace ZipperInfo
                     else
                     {
                         float point = nextpoint - frontLim;
+                        if (point == 0)
+                        {
+                            point = 1;
+                        }
                         points.Add(point);
                     }
                 }
@@ -67,6 +85,10 @@ namespace ZipperInfo
                 pullchange = 0;
                 frontFinsshPos = frontzippers;
                 float firstpoint = netZipperTali - frontLim;
+                if (firstpoint == 0) //触发点不能为零，为零启动后不触发相机
+                {
+                    firstpoint = 1;
+                }
                 points.Add(firstpoint);
                 HeadandTalipoints.Add(firstpoint);
                 //后续的点
@@ -76,6 +98,10 @@ namespace ZipperInfo
                     if (nextpoint + AutoData.CcdWidth >= netZipperTali + AutoData.ZipperLenght)
                     {
                         float endpoint = netZipperTali + AutoData.ZipperLenght - backLim;
+                        if (endpoint == 0)
+                        {
+                            endpoint = 1;
+                        }
                         points.Add(endpoint);
                         HeadandTalipoints.Add(endpoint);
                         break;
@@ -83,6 +109,10 @@ namespace ZipperInfo
                     else
                     {
                         float point = nextpoint - frontLim;
+                        if (point == 0)
+                        {
+                            point = 1;
+                        }
                         points.Add(point);
                     }
                 }
@@ -107,6 +137,10 @@ namespace ZipperInfo
                         else
                         {
                             firstpoint = start - frontLim;
+                            if (firstpoint == 0)
+                            {
+                                firstpoint = 1;
+                            }
                             points.Add(firstpoint);
                             break;
                         }
@@ -120,6 +154,10 @@ namespace ZipperInfo
                     {
 
                         float endpoint = netZipperTali - backLim;
+                        if (endpoint == 0)
+                        {
+                            endpoint = 1;
+                        }
                         points.Add(endpoint);
                         pullchange = points.Count;
                         break;
@@ -127,6 +165,10 @@ namespace ZipperInfo
                     else
                     {
                         float point = nextpoint - frontLim;
+                        if (point == 0)
+                        {
+                            point = 1;
+                        }
                         points.Add(point);
                     }
                 }
@@ -135,6 +177,10 @@ namespace ZipperInfo
                 {
                     float nexts = netZipperTali + AutoData.CcdWidth * i;
                     float point = nexts - frontLim;
+                    if (point == 0)
+                    {
+                        point = 1;
+                    }
                     points.Add(point);
                 }
                 float handpoint = netZipperTali - frontLim;
@@ -144,7 +190,6 @@ namespace ZipperInfo
                 HeadandTalipoints.Add(talipoint);
                 triggerType = 3;
             }
-
             outpoints = ProcessList(points);
             cutoffIndex = points.Count - pullchange;
             if (cutoffIndex == points.Count || points.Count == 1)
@@ -152,7 +197,6 @@ namespace ZipperInfo
                 cutoffIndex = 0;
             }
         }
-
 
 
 
