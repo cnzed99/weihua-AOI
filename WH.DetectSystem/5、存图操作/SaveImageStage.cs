@@ -296,7 +296,23 @@ namespace WH.DetectSystem._5_存图操作
                 DefectFilter dstFilter = cell.Detection.DefectFilter;
                 StringBuilder textBuilder = new StringBuilder();
                // textBuilder.AppendLine(dstFilter.Name);
-                textBuilder.Append($"{cell.Quality.Name}:{dstFilter.Name}");
+                textBuilder.Append($"{cell.Quality.Name}:");
+                if (cell.Detection.Category != Category.区域)
+                {
+                    if (cell.Detection.Value.Count > 0)
+                    {
+                        textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value[0].ToString("f1")}");
+                    }
+                    else
+                    {
+                        textBuilder.Append(dstFilter.Name);
+                    }
+                }
+                else
+                {
+                    textBuilder.Append(dstFilter.Name);
+                }
+
                 DrawTextAlignment(cell,
                     drawingContext,
                     textBuilder.ToString(),

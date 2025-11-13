@@ -972,11 +972,11 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                         if (CellOut.Cell.IsOK)
                                         {
-                                            CZipperCommunicate.SendResult(ZIPPERESULT.OK);
+                                            CZipperCommunicate.SendResult(CellOut.Cell.ID,ZIPPERESULT.OK);
                                         }
                                         else
                                         {
-                                            CZipperCommunicate.SendResult(ZIPPERESULT.NG);
+                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
                                         }
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
@@ -1249,7 +1249,22 @@ namespace WH.DetectSystem.Models
                                         StringBuilder textBuilder = new StringBuilder();
                                         textBuilder.Append(cell.Quality.Name);
                                         textBuilder.Append(":");
-                                        textBuilder.Append(dstFilter.Name);
+                                        if (cell.Detection.Category != Category.区域)
+                                        {
+                                            if (cell.Detection.Value.Count>0)
+                                            {
+                                                textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value[0].ToString("f1")}");
+                                            }
+                                            else
+                                            {
+                                                textBuilder.Append(dstFilter.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            textBuilder.Append(dstFilter.Name);
+                                        }
+                                        
                                         CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                         CurView.WinDrawText(
                                             textBuilder.ToString(),
@@ -2038,17 +2053,18 @@ namespace WH.DetectSystem.Models
         {
             if (leftorright == "左相机")
             {
-
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
-                if ("无Logo" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType.ToString())
+                if ("无LOGO" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                 {
                     foreach (var logoname in logonames.RecipeDefects)
                     {
                         foreach (var df in logoname.DefectFilters)
                         {
+                           
                             foreach (var fl in df.FilterList)
                             {
-                                fl.FilterSelectEnable = false;
+                                fl.FilterSelectEnable = true;
+                                fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
                             }
                         }
                     }
@@ -2057,14 +2073,14 @@ namespace WH.DetectSystem.Models
                 {
                     foreach (var logoname in logonames.RecipeDefects)
                     {
-
-                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType.ToString())
+                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                         {
                             foreach (var df in logoname.DefectFilters)
                             {
                                 foreach (var fl in df.FilterList)
                                 {
                                     fl.FilterSelectEnable = true;
+                                    fl.IsReversal = true;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
                                 }
                             }
                         }
@@ -2074,7 +2090,8 @@ namespace WH.DetectSystem.Models
                             {
                                 foreach (var fl in df.FilterList)
                                 {
-                                    fl.FilterSelectEnable = false;
+                                    fl.FilterSelectEnable = true;
+                                    fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
                                 }
                             }
                         }

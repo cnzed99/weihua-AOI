@@ -22,9 +22,9 @@ namespace ZipperInfo
             List<float> points = new List<float>();
             HeadandTalipoints = new List<float>();
             //***************测试
-            float tempdis = AutoData.ZipperLenght - AutoData.CcdWidth;
-            int discount = (int)(tempdis / 18.0f);
-            AutoData.DaoDitance = 815 - discount;
+            //float tempdis = AutoData.ZipperLenght - AutoData.CcdWidth;
+            //int discount = (int)(tempdis / 18.0f);
+            //AutoData.DaoDitance = 815 - discount;
            // ************
             float frontLim = AutoData.DaoDitance - AutoData.CcdWidth / 2.0f;
             float backLim = AutoData.DaoDitance + AutoData.CcdWidth / 2.0f;

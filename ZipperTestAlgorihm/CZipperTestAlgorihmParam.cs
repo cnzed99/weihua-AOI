@@ -14,10 +14,6 @@ using System.Windows.Media;
 using WH.VisionLearning;
 
 
-
-
-
-
 namespace ZipperTestAlgorihm
 {
     public class CZipperTestAlgorihmParam : CAlgorithmParamBase
@@ -504,10 +500,16 @@ namespace ZipperTestAlgorihm
                                         if (downResult.datas.Count > 0)
                                         {
                                             List<int> luyaIndex = new List<int>();
-                                            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == "0").ToList(); //下止
-                                            List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == "1").ToList(); //链齿
-                                            List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == "2").ToList(); //链牙
-                                            List<ObbData> otherobb = downResult.datas.Where(s => s.lable != "0" && s.lable != "1" && s.lable != "2").ToList();
+                                            string downmassIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("正面下止")).ToString();
+                                            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == downmassIndexstr).ToList(); //下止
+
+                                            string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
+                                            List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+
+                                            string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
+                                            List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
+
+                                            List<ObbData> otherobb = downResult.datas.Where(s => s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr).ToList();
 
                                             List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
                                             List<ObbData> lianya= lianyaorg.Where(s => s.score>= paramClass.DownLianciScore).ToList();
@@ -972,9 +974,13 @@ namespace ZipperTestAlgorihm
                 if (upResult.datas.Count > 0)
                 {
                     List<int> luyaIndex = new List<int>();
-                    List<ObbData> upmass = upResult.datas.FindAll(c => c.lable == "0").ToList(); //上止
-                    List<ObbData> lianciorg = upResult.datas.FindAll(c => c.lable == "2").ToList(); //链齿
-                    List<ObbData> otherdet = upResult.datas.Where(s => s.lable != "0" && s.lable != "2").ToList();
+                    string upmassIndexstr = Array.FindIndex(upStopMass_names, s => s.Contains("正面上止")).ToString();
+                    List <ObbData> upmass = upResult.datas.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
+
+                    string lianciIndexstr = Array.FindIndex(upStopMass_names, s => s.Contains("链齿")).ToString();
+                    List<ObbData> lianciorg = upResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+
+                    List<ObbData> otherdet = upResult.datas.Where(s => s.lable != upmassIndexstr && s.lable != lianciIndexstr).ToList();
 
                    // List<ObbData> upmass=upmassorg.Where(s=>s.score>= param.UpLianciScore).ToList();
                     List<ObbData> lianci=lianciorg.Where(s=>s.score>=param.UpLianciScore).ToList();
@@ -1309,8 +1315,9 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         private float CalculateDistance(ObbData point1, ObbData point2)
         {
             float deltaX = point1.box.Center.X - point2.box.Center.X;
-            float deltaY = point1.box.Center.Y - point2.box.Center.Y;
-            return (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            return Math.Abs(deltaX);
+            //float deltaY = point1.box.Center.Y - point2.box.Center.Y;
+            //return (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
         /// <summary>

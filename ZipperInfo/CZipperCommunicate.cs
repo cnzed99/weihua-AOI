@@ -6,6 +6,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using CommunicationModule;
 using Modbus;
+using WH.Entity.LogRecord;
 using WH.RunCell;
 
 namespace ZipperInfo
@@ -14,6 +15,8 @@ namespace ZipperInfo
     public class CZipperCommunicate
     {
         #region 静态方法
+
+        public static CLogRec ZipperSetResultLogger { get; set; } = CLogRec.Create("SetResult", "D:/Data");
         static object lockobj = new object();
         public static CModbusCommPart com;
         /// <summary>
@@ -297,11 +300,12 @@ namespace ZipperInfo
         /// 向PLC写入结果
         /// </summary>
         /// <param name="result">OK:1 NG:2</param>
-        public static void SendResult(ZIPPERESULT result)
+        public static void SendResult(string id, ZIPPERESULT result)
         {
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41196, (int)result);
+                ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
             }
 
         }

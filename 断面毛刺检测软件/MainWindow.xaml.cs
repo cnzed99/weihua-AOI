@@ -463,10 +463,9 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
                 // CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
-                if (CMainList.CMainMModel.CProcessGroups.Count > 0)
+                if (CMainList.CMainMModel.CProcessGroups.Count > 0&& CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count>0)
                 {
-                 
-                        CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
+                    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
                 }
 
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);

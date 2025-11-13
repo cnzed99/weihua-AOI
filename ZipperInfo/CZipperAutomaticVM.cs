@@ -90,6 +90,9 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.tempLightValue_you_change2 = 0;
                 CZipperAutomaticAlgorithm.zuo_lightOK=false;
                 CZipperAutomaticAlgorithm.you_lightOK = false;
+                CZipperAutomaticAlgorithm.findLogosidertype[0]=false;
+                CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
+                CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;
 
                 //将光源值先减小到较状态
 

@@ -197,6 +197,11 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         public string[] logoTypeStrs;
+        /// <summary>
+        /// 在那一面找到Logo 0:两面都没找到， 1:在拉片面找到 ，2：在两面都找到， 3：在拉头面找到
+        /// 2025.11.13 鲍赞宝
+        /// </summary>
+        public int FindLogoSider {  get; set; }
 
     }
 
