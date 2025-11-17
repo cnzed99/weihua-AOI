@@ -263,10 +263,10 @@ namespace ZipperInfo
                 com.WriteSingleRegisterInt32(41202, tlenght);
                 com.WriteSingleRegisterInt32(41304, igoulenght);
 
-                float NGLocation = (lenght + 65.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
-                if (NGLocation > 48000) //限制最大后退距离
+                float NGLocation = (lenght + 115.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
+                if (NGLocation > 40000) //限制最大后退距离
                 {
-                    NGLocation = 48000; 
+                    NGLocation = 40000; 
                 }
                 com.WriteSingleRegisterInt32(41306, (int)NGLocation);
             }

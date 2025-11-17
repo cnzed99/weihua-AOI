@@ -1304,14 +1304,16 @@ namespace ZipperInfo
                                 }
                             }
                             AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},findUpMass={findUpMass}");
-                            if (timeOutCount > 100 && !findUpMass)
+                            // 40ms拍一张照片，轴移动1mm  超时次数可以用拉链长度来替代
+                            if (timeOutCount > ZipperInfo.ZipperLneght && !findUpMass)
                             {
                                 findUpMass = true;
                                 ZipperInfo.ZipperUpMassType = STOPMASS.无;
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},ZipperInfo.ZipperUpMassType=STOPMASS.无");
                             }
                             AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},findDownMass={findDownMass}");
-                            if (timeOutCount > 100 && !findDownMass)
+                            // 40ms拍一张照片，轴移动1mm  超时次数可以用拉链长度来替代
+                            if (timeOutCount > ZipperInfo.ZipperLneght && !findDownMass)
                             {
                                 findDownMass = true;
                                 ZipperInfo.ZipperDownMassType = STOPMASS.无;
@@ -1799,7 +1801,7 @@ namespace ZipperInfo
             Task task = Task.Run(() =>
             {
                 int search_Categ_num = de_search_names.Length;
-                float Score = 0.6f;
+                float Score = 0.45f;
                 float Nms = 0.5f;
                 yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
               CurrentDevice, search_Categ_num, Score, Nms, 480);

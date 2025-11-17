@@ -867,11 +867,11 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        cell.Stopwatch.Restart();                      
+                        cell.Stopwatch.Restart();
                         try
                         {
                             if (!isAutomaticTest)
-                            {                   
+                            {
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -972,7 +972,7 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                         if (CellOut.Cell.IsOK)
                                         {
-                                            CZipperCommunicate.SendResult(CellOut.Cell.ID,ZIPPERESULT.OK);
+                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
                                         }
                                         else
                                         {
@@ -1251,9 +1251,9 @@ namespace WH.DetectSystem.Models
                                         textBuilder.Append(":");
                                         if (cell.Detection.Category != Category.区域)
                                         {
-                                            if (cell.Detection.Value.Count>0)
+                                            if (cell.Detection.Value.Count > 0)
                                             {
-                                                textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value[0].ToString("f1")}");
+                                                textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
                                             }
                                             else
                                             {
@@ -1264,7 +1264,7 @@ namespace WH.DetectSystem.Models
                                         {
                                             textBuilder.Append(dstFilter.Name);
                                         }
-                                        
+
                                         CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
                                         CurView.WinDrawText(
                                             textBuilder.ToString(),
@@ -1617,7 +1617,7 @@ namespace WH.DetectSystem.Models
                                                 HistoryVM.HistoryModel.OkImagePaths.RemoveAt(1000);
                                             HistoryVM.HistoryModel.OkImagePaths.Insert(0, savePath);
                                         }
-                                        
+
                                     }
                                 })
                             );
@@ -1718,7 +1718,7 @@ namespace WH.DetectSystem.Models
 
             }
             cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
-            if(cells[0].Image==null) return null;
+            if (cells[0].Image == null) return null;
             if (cells.Count == 1)
             {
                 return (CImage)cells[0].Image.Clone();
@@ -1853,7 +1853,7 @@ namespace WH.DetectSystem.Models
                                         {
                                             pa.Min = 42;
                                         }
-                                        
+
                                     }
                                     if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
                                     {
@@ -2051,7 +2051,7 @@ namespace WH.DetectSystem.Models
         /// </summary>
         private void UpdateLogo(string leftorright)
         {
-            if (leftorright == "左相机")
+            if (leftorright == "左相机") //拍拉片
             {
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
                 if ("无LOGO" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
@@ -2060,7 +2060,7 @@ namespace WH.DetectSystem.Models
                     {
                         foreach (var df in logoname.DefectFilters)
                         {
-                           
+
                             foreach (var fl in df.FilterList)
                             {
                                 fl.FilterSelectEnable = true;
@@ -2080,7 +2080,15 @@ namespace WH.DetectSystem.Models
                                 foreach (var fl in df.FilterList)
                                 {
                                     fl.FilterSelectEnable = true;
-                                    fl.IsReversal = true;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+                                    {
+                                        fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                    }
+                                    else
+                                    {
+                                        fl.IsReversal = true;
+                                    }
+                                   
                                 }
                             }
                         }
@@ -2098,16 +2106,59 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-            else
+            else  //拍拉头
             {
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
-                foreach (var logoname in logonames.RecipeDefects)
+                if ("无LOGO" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                 {
-                    foreach (var df in logoname.DefectFilters)
+                    foreach (var logoname in logonames.RecipeDefects)
                     {
-                        foreach (var fl in df.FilterList)
+                        foreach (var df in logoname.DefectFilters)
                         {
-                            fl.FilterSelectEnable = false;
+
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = true;
+                                fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var logoname in logonames.RecipeDefects)
+                    {
+                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
+                        {
+                            foreach (var df in logoname.DefectFilters)
+                            {
+                                foreach (var fl in df.FilterList)
+                                {
+                                    
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+                                    {
+                                        fl.FilterSelectEnable = true;
+                                        fl.IsReversal = true;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                    }
+                                    else
+                                    {
+                                        fl.FilterSelectEnable = false;
+                                        fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                    }
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var df in logoname.DefectFilters)
+                            {
+                                foreach (var fl in df.FilterList)
+                                {
+                                    fl.FilterSelectEnable = true;
+                                    fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
+                                }
+                            }
                         }
                     }
                 }

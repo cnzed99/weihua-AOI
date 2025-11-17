@@ -97,7 +97,10 @@ namespace 断面毛刺检测软件.Views
             }
             else
             {
-                ImgFiles = MMainVM.TestImgFiles;
+                if (File.Exists(MMainVM.TestImgFiles[0]))
+                {
+                    ImgFiles = MMainVM.TestImgFiles;
+                }
             }
             //
             // ImgFileDialog

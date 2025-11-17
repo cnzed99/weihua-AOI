@@ -301,7 +301,7 @@ namespace WH.DetectSystem._5_存图操作
                 {
                     if (cell.Detection.Value.Count > 0)
                     {
-                        textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value[0].ToString("f1")}");
+                        textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
                     }
                     else
                     {

@@ -1195,7 +1195,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     Task task7 = Task.Run(() =>
                     {
                         yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
-CurrentDevice, pull_search_num, 0.6f, Nms, 480);
+CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
                     });
 
                     Task task8 = Task.Run(() =>
@@ -1460,6 +1460,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
             //yolo_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
             yolo_pull_det.UpdateNMS_Score(0.8f, param.PullScore);
             yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
+            yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
         }
 
     }
@@ -1556,6 +1557,16 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         [property: DisplayName("7.0大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("8.0自动识别分数阈值")]
+        [property: Description("自动识别分数阈值")]
+        private float autoScore = 0.45f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
