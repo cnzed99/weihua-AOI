@@ -93,6 +93,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findLogosidertype[0]=false;
                 CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
                 CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.findPullerCount = 0;
+                CZipperAutomaticAlgorithm.findPullsCount = 0;
 
                 //将光源值先减小到较状态
 

@@ -21,34 +21,28 @@ namespace ZipperTestAlgorihm
         /// <summary>
         /// 检测对象1
         /// </summary>
-        //private YOLO yolo_all_det1 = new YOLO();
         IVisionModel yolo_all_det1;
         /// <summary>
         /// 检测对象2
         /// </summary>
-       // private YOLO yolo_all_det2 = new YOLO();
         IVisionModel yolo_all_det2;
         /// <summary>
         /// 检测对象3
         /// </summary>
-       // private YOLO yolo_all_det3 = new YOLO();
         IVisionModel yolo_all_det3;
         /// <summary>
         /// 检测对象4
         /// </summary>
-       // private YOLO yolo_all_det4 = new YOLO();
         IVisionModel yolo_all_det4;
 
         /// <summary>
         /// 下止检测对象
         /// </summary>
-       // private YOLO yolo_DownStopMass_obb = new YOLO();
         IVisionModel yolo_DownStopMass_obb;
 
         /// <summary>
         /// 上止检测对象
         /// </summary>
-        // private YOLO yolo_UpStopMass_obb = new YOLO();
         IVisionModel yolo_UpStopMass_obb;
 
         /// <summary>
@@ -68,6 +62,10 @@ namespace ZipperTestAlgorihm
         /// 大缺陷检测对象
         /// </summary>
         IVisionModel yolo_BigDet_det;
+        /// <summary>
+        /// 拉片分割模型
+        /// </summary>
+        IVisionModel yolo_PullShape_Seg;
 
         public CZipperTestAlgorihmParam(string user) : base()
         {
@@ -116,6 +114,12 @@ namespace ZipperTestAlgorihm
         private string Big_Model_Path;
 
         /// <summary>
+        /// 2025.11.17 鲍赞宝
+        /// 拉片分割模型路径
+        /// </summary>
+        private string pullSharp_Model_Path;
+
+        /// <summary>
         /// 2025.3.3 鲍赞宝
         /// 缺陷名称路径
         /// </summary>
@@ -135,6 +139,9 @@ namespace ZipperTestAlgorihm
 
         //拉头拉片缺陷名称
         protected string[] bigDet_names;
+
+        //拉片分割缺陷名称
+        protected string[] pullSharp_names;
 
         public string User { get; set; }
         /// <summary>
@@ -231,7 +238,7 @@ namespace ZipperTestAlgorihm
 
                 #endregion
 
-                #region 拉头 拉片 LOGO
+                #region 拉头 拉片 LOGO 拉片外形
                 //int sbsindex = pull_names.ToList().IndexOf("SBS");
                 //string[] pullstrs = pull_names.Take(sbsindex).ToArray();
                 //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
@@ -245,6 +252,14 @@ namespace ZipperTestAlgorihm
                     CDefectRecipe defectRecipe = new CDefectRecipe(pullstrs[i], Category.区域);
                     pullRecipes.Add(defectRecipe);
                 }
+                for (int i = 0; i < pullSharp_names.Length; i++)
+                {
+                    CDefectRecipe defectRecipe2 = new CDefectRecipe(pullSharp_names[i], Category.值);
+                    // CDefectRecipe defectRecipe3 = new CDefectRecipe("拉片面积", Category.值);
+                    pullRecipes.Add(defectRecipe2);
+                    // pullRecipes.Add(defectRecipe3);
+                }
+
                 CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
 
                 List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
@@ -254,6 +269,7 @@ namespace ZipperTestAlgorihm
                     logoRecipes.Add(defectRecipe);
                 }
                 CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
+
                 #endregion
 
                 DefectSpecies.Add(defectSpecies);
@@ -326,6 +342,14 @@ namespace ZipperTestAlgorihm
             {
                 pull_Model_Path = pulltrs.Item1;
                 pull_names = pulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
+
+            string pullSegModelpath = modelDirpath + "Pull\\PullSegModel\\";
+            var pullSegtrs = GetNames(pullSegModelpath);
+            if (pullSegtrs.Item1 != "")
+            {
+                pullSharp_Model_Path = pullSegtrs.Item1;
+                pullSharp_names = pullSegtrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
         }
@@ -407,10 +431,10 @@ namespace ZipperTestAlgorihm
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             dets.Add(restoreData);
                         }
-                       // ParseResult(dets, cell);
+                        // ParseResult(dets, cell);
                         //img.Dispose();
                         //dets.Clear();
-                       // return;
+                        // return;
                     }
                 }
                 List<Mat> mats = new List<Mat>();
@@ -512,7 +536,7 @@ namespace ZipperTestAlgorihm
                                             List<ObbData> otherobb = downResult.datas.Where(s => s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr).ToList();
 
                                             List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                                            List<ObbData> lianya= lianyaorg.Where(s => s.score>= paramClass.DownLianciScore).ToList();
+                                            List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
                                             //计算下止到链齿的最短距离
                                             List<(float, int)> Diss = new List<(float, int)>();
                                             for (int a = 0; a < downmass.Count; a++)
@@ -631,7 +655,7 @@ namespace ZipperTestAlgorihm
                                 {
                                     if (detrets[i].Item2 == 4)
                                     {
-                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass,out Point upmassPos, out List<CoordRestoreData> updets);
+                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass, out Point upmassPos, out List<CoordRestoreData> updets);
                                         massPoints.Add(upmassPos);
                                         if (updets?.Count > 0)
                                         {
@@ -909,6 +933,47 @@ namespace ZipperTestAlgorihm
                                         dets.Add(restoreData);
                                     }
                                 }
+                                double allperimeter = 0; //周长总长
+                                double allarea = 0; //总面积
+                                List<List<Point>> allcontourpoints = new List<List<Point>>();
+                                if (labelname.Contains("拉片"))
+                                {
+                                    SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
+
+                                    if (pullsegResult == null) return;
+
+                                    foreach (var seg in pullsegResult.datas)
+                                    {
+                                        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                                        Mat maskgray = new Mat();
+                                        Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                                        Mat binary = new Mat();
+                                        Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                                        Point[][] contours;
+                                        HierarchyIndex[] hierarchy;
+                                        Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+                                        List<Point> p = new List<Point>();
+                                        for (int i = 0; i < contours.Length; i++)
+                                        {
+                                            double area = Cv2.ContourArea(contours[i]);
+                                            allarea += area;
+                                            Point[] contourPoints = contours[i];
+                                            p = contourPoints.ToList();
+                                            p.Add(p[0]); //首尾相连
+                                            double perimeter = Cv2.ArcLength(contours[i], true); //
+                                            allperimeter += perimeter;
+                                            allcontourpoints.Add(p);
+                                        }
+                                        maskgray.Dispose();
+                                        binary.Dispose();
+                                        //Cv2.AddWeighted(croppullMat, 0.5, seg.mask, 0.5, 0.0, maskmat);
+                                        // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "Gray.png", cor);
+                                    }
+                                    CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)allarea, allcontourpoints, 1);
+                                    dets.Add(restoreData);
+
+                                }
                             }
                         }
                     }
@@ -975,15 +1040,15 @@ namespace ZipperTestAlgorihm
                 {
                     List<int> luyaIndex = new List<int>();
                     string upmassIndexstr = Array.FindIndex(upStopMass_names, s => s.Contains("正面上止")).ToString();
-                    List <ObbData> upmass = upResult.datas.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
+                    List<ObbData> upmass = upResult.datas.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
 
                     string lianciIndexstr = Array.FindIndex(upStopMass_names, s => s.Contains("链齿")).ToString();
                     List<ObbData> lianciorg = upResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
 
                     List<ObbData> otherdet = upResult.datas.Where(s => s.lable != upmassIndexstr && s.lable != lianciIndexstr).ToList();
 
-                   // List<ObbData> upmass=upmassorg.Where(s=>s.score>= param.UpLianciScore).ToList();
-                    List<ObbData> lianci=lianciorg.Where(s=>s.score>=param.UpLianciScore).ToList();
+                    // List<ObbData> upmass=upmassorg.Where(s=>s.score>= param.UpLianciScore).ToList();
+                    List<ObbData> lianci = lianciorg.Where(s => s.score >= param.UpLianciScore).ToList();
                     //计算上止到链齿的最短距离
                     List<(float, int)> Diss = new List<(float, int)>();
                     for (int a = 0; a < upmass.Count; a++)
@@ -1100,14 +1165,24 @@ namespace ZipperTestAlgorihm
                             cellDetection1.ShowInView = item.ShowInView;
                             if (de.Category == Category.值)
                             {
-                                List<System.Windows.Point> rec1MarkPoints = new List<System.Windows.Point>();
-                                rec1MarkPoints.Add(item.ShowLeftUp);
-                                rec1MarkPoints.Add(item.ShowRightUp);
-                                rec1MarkPoints.Add(item.ShowRightDown);
-                                rec1MarkPoints.Add(item.ShowLeftDown);
-                                rec1MarkPoints.Add(item.ShowLeftUp);
+                                if (item.Contours.Count > 0)
+                                {
+                                    for (int i = 0; i < item.Contours.Count; i++)
+                                    {
+                                        cell.DrawEdges.Add(new CEdgeDraw(item.Contours[i], Brushes.Pink, showinview: item.ShowInView));
+                                    }
+                                }
+                                else
+                                {
+                                    List<System.Windows.Point> rec1MarkPoints = new List<System.Windows.Point>();
+                                    rec1MarkPoints.Add(item.ShowLeftUp);
+                                    rec1MarkPoints.Add(item.ShowRightUp);
+                                    rec1MarkPoints.Add(item.ShowRightDown);
+                                    rec1MarkPoints.Add(item.ShowLeftDown);
+                                    rec1MarkPoints.Add(item.ShowLeftUp);
+                                    cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink, showinview: item.ShowInView));
+                                }
 
-                                cell.DrawEdges.Add(new CEdgeDraw(rec1MarkPoints, Brushes.Pink, showinview: item.ShowInView));
 
                             }
 
@@ -1145,6 +1220,7 @@ namespace ZipperTestAlgorihm
                     int pull_search_num = pull_Search_names.Length;
                     int pull_num = pull_names.Length;
                     int big_num = bigDet_names.Length;
+                    int pullsharp_num = pullSharp_names.Length;
                     float Score = param.CommonScore;
                     float Nms = param.Nms;
                     int Input_size = 640;
@@ -1209,7 +1285,11 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
                         yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
     CurrentDevice, big_num, param.BigScore, Nms, 480);
                     });
-
+                    Task task10 = Task.Run(() =>
+                    {
+                        yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, EngineType.TensorRT,
+    CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
+                    });
 
                     // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
 
@@ -1461,6 +1541,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
             yolo_pull_det.UpdateNMS_Score(0.8f, param.PullScore);
             yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
             yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
+            yolo_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
         }
 
     }
@@ -1567,6 +1648,16 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         [property: DisplayName("8.0自动识别分数阈值")]
         [property: Description("自动识别分数阈值")]
         private float autoScore = 0.45f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("9.0拉片分割分数阈值")]
+        [property: Description("拉片分割分数阈值")]
+        private float pullSharpScore = 0.5f;
 
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -1692,6 +1783,45 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
             Value = value;
             ShowInView = showinview;
         }
+
+        public CoordRestoreData(string labelstr, float value, List<List<Point>> contours, int showinview = 0)
+        {
+            //坐标还原 
+
+            ShowLeftUp.X = 0;
+            ShowLeftUp.Y = 0;
+
+            ShowRightUp.X = 0;
+            ShowRightUp.Y = 0;
+
+            ShowRightDown.X = 0;
+            ShowRightDown.Y = 0;
+
+            ShowLeftDown.X = 0;
+            ShowLeftDown.Y = 0;
+
+            RecWidth = 0;
+            RecHeight = 0;
+            OrgCenterX = 0;
+            OrgCenterY = 0;
+            Score = 0;
+            Labelstr = labelstr;
+            Angle = 0;
+            Value = value;
+            ShowInView = showinview;
+
+            for (int i = 0; i < contours.Count; i++)
+            {
+                List<System.Windows.Point> Points = new List<System.Windows.Point>();
+                for (int j = 0; j < contours[i].Count; j++)
+                {
+                    System.Windows.Point point = new System.Windows.Point() { X = contours[i][j].X, Y = contours[i][j].Y };
+                    Points.Add(point);
+                }
+
+                Contours.Add(Points);
+            }
+        }
         /// <summary>
         /// 用于显示左上角点
         /// </summary>
@@ -1744,6 +1874,10 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// 在哪个窗口显示区域
         /// </summary>
         public int ShowInView { get; set; }
+        /// <summary>
+        /// 分割区域轮廓点集
+        /// </summary>
+        public List<List<System.Windows.Point>> Contours = new List<List<System.Windows.Point>>();
     }
 
 }

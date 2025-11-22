@@ -2099,7 +2099,7 @@ namespace WH.DetectSystem.Models
                                 foreach (var fl in df.FilterList)
                                 {
                                     fl.FilterSelectEnable = true;
-                                    fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
+                                    fl.IsReversal = false; //
                                 }
                             }
                         }
@@ -2138,12 +2138,12 @@ namespace WH.DetectSystem.Models
                                     if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
                                     {
                                         fl.FilterSelectEnable = true;
-                                        fl.IsReversal = true;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                        fl.IsReversal = true;//
                                     }
                                     else
                                     {
                                         fl.FilterSelectEnable = false;
-                                        fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                        fl.IsReversal = false;//
                                     }
 
                                 }
