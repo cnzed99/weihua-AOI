@@ -162,4 +162,7 @@
   <data name="DisplayFrameRate" xml:space="preserve">
     <value>显示帧率</value>
   </data>
+  <data name="ShowDrawEdges" xml:space="preserve">
+    <value>显示标记图形</value>
+  </data>
 </root>

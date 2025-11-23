@@ -162,4 +162,7 @@
   <data name="DisplayFrameRate" xml:space="preserve">
     <value>Display FrameRate</value>
   </data>
+  <data name="ShowDrawEdges" xml:space="preserve">
+    <value>ShowOther</value>
+  </data>
 </root>

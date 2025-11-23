@@ -82,6 +82,14 @@ namespace WH.DetectSystem.Models
         bool showAllDefect = false;
 
         /// <summary>
+        /// 2024.7.26 李焕彬
+        /// 是否显示额外的区域
+        /// </summary>
+        [ObservableProperty]
+        bool showDrawEdges = false;
+        
+
+        /// <summary>
         /// 2025.1.14 李焕彬
         /// 显示帧率
         /// </summary>

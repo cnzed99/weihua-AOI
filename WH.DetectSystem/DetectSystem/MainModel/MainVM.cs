@@ -1144,36 +1144,39 @@ namespace WH.DetectSystem.Models
                                     }
                                     foreach (var edge in cell.DrawEdges)
                                     {
-                                        if (edge.ShowInView == 0)
+                                        if (SystemSettings.ShowDrawEdges)
                                         {
-                                            drawView = CurView;
-                                        }
-                                        else
-                                        {
-                                            drawView = LastView;
-                                        }
+                                            if (edge.ShowInView == 0)
+                                            {
+                                                drawView = CurView;
+                                            }
+                                            else
+                                            {
+                                                drawView = LastView;
+                                            }
 
-                                        switch (edge.DrawType)
-                                        {
-                                            case EMDRAWTYPE.EMDRAWTYPE_POINTS:
-                                                drawView.SetPen(edge.BrushDraw);
-                                                drawView.ImgDrawPoints(edge.Points, false);
-                                                break;
+                                            switch (edge.DrawType)
+                                            {
+                                                case EMDRAWTYPE.EMDRAWTYPE_POINTS:
+                                                    drawView.SetPen(edge.BrushDraw);
+                                                    drawView.ImgDrawPoints(edge.Points, false);
+                                                    break;
 
-                                            case EMDRAWTYPE.EMDRAWTYPE_REGION:
-                                                drawView.SetPen(edge.BrushDraw);
-                                                drawView.ImgDrawRegion(edge.Points, false);
-                                                break;
+                                                case EMDRAWTYPE.EMDRAWTYPE_REGION:
+                                                    drawView.SetPen(edge.BrushDraw);
+                                                    drawView.ImgDrawRegion(edge.Points, false);
+                                                    break;
 
-                                            case EMDRAWTYPE.EMDRAWTYPE_Text:
-                                                drawView.SetFontBrush(edge.BrushDraw);
-                                                drawView.SetFontSize(edge.FontSize);
-                                                drawView.ImgDrawText(
-                                                    edge.Text,
-                                                    edge.TextPos,
-                                                    false
-                                                );
-                                                break;
+                                                case EMDRAWTYPE.EMDRAWTYPE_Text:
+                                                    drawView.SetFontBrush(edge.BrushDraw);
+                                                    drawView.SetFontSize(edge.FontSize);
+                                                    drawView.ImgDrawText(
+                                                        edge.Text,
+                                                        edge.TextPos,
+                                                        false
+                                                    );
+                                                    break;
+                                            }
                                         }
                                     }
 
