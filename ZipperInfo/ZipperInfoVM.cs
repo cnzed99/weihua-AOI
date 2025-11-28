@@ -26,6 +26,7 @@ namespace ZipperInfo
             try
             {
                 CZipperCommunicate.CamTriggerStop(); //停止拍照
+                CZipperCommunicate.SendHelianStastPos(80);
                 CZipperAutomaticAlgorithm.TestFinshEven(true);
                 CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
                 CZipperCommunicate.AixtContinue(true);

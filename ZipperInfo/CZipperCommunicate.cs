@@ -17,6 +17,7 @@ namespace ZipperInfo
         #region 静态方法
 
         public static CLogRec ZipperSetResultLogger { get; set; } = CLogRec.Create("SetResult", "D:/Data");
+        public static CLogRec ZipperIDsORTLogger { get; set; } = CLogRec.Create("IDSort", "D:/Data");
         static object lockobj = new object();
         public static CModbusCommPart com;
         /// <summary>
@@ -257,7 +258,7 @@ namespace ZipperInfo
                 //    com.WriteSingleCoil(49418, false);
                 //}
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
-                float fgoulenght = lenght - 30;
+                float fgoulenght = lenght - 36;
                 int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
                 int tlenght = (int)lenght * 10;
                 com.WriteSingleRegisterInt32(41202, tlenght);
@@ -269,6 +270,8 @@ namespace ZipperInfo
                     NGLocation = 40000; 
                 }
                 com.WriteSingleRegisterInt32(41306, (int)NGLocation);
+
+               // SendHelianEndPos(tlenght);
             }
 
             //}
@@ -416,6 +419,30 @@ namespace ZipperInfo
 
             }
 
+        }
+
+        /// <summary>
+        /// 写入合链起始位
+        /// </summary>
+        public static void SendHelianStastPos(int pos)
+        {
+            
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41258, pos);
+            }
+        }
+
+        /// <summary>
+        /// 写入合链终点位
+        /// </summary>
+        public static void SendHelianEndPos(int pos)
+        {
+
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41260, pos);
+            }
         }
 
         #region 自动识别拉链
@@ -601,6 +628,7 @@ namespace ZipperInfo
         int TempproductID = -1;
         int TempPullPos = -1;
         int pullIndex=0;
+      public  List<int> Idlist = new List<int>();
         private void MonitoringID()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -620,7 +648,7 @@ namespace ZipperInfo
                         TempproductID = productID;
                         List<float> copyPos = new List<float>();
                         int ipullpos = GetPullLocation(); //为了防止中途从触摸屏改掉拉头位置，所以时刻监控它的值在进行比较
-                        if (ipullpos != TempPullPos)
+                        if (ipullpos != TempPullPos|| Idlist.Count==0)
                         {
                             TempPullPos = ipullpos;
                             float fpullpos = ipullpos / 10.0f;
@@ -645,26 +673,25 @@ namespace ZipperInfo
                             {
                                 pullIndex = copyPos.IndexOf(fpullpos);
                             }
-                       
+                            for (int i = 1; i <= CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
+                            {
+                                Idlist.Add(i);
+                            }
+                            Idlist.Insert(pullIndex, 100);
+                            string str = "";
+                            for (int i = 0; i < Idlist.Count; i++)
+                            {
+                                str = str + $"第{i + 1}点;{Idlist[i]} ";
+                            }
+                            ZipperIDsORTLogger.Info(str);
                         }
 
-                        List<int> idlist = new List<int>();
-                        for (int i = 1; i <= CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
+                        for (int i = 0; i < Idlist.Count; i++)
                         {
-                            idlist.Add(i);
-                        }
-                        idlist.Insert(pullIndex, 100);
-                        //string str="";
-                        //for (int i = 0; i < idlist.Count; i++)
-                        //{
-                        //    str = str + $"第{i}点：{idlist[i]}";
-                        //}
-
-                        for (int i = 0; i < idlist.Count; i++)
-                        {
-                            ZipperID zipperID = new ZipperID(productID, idlist[i]);
+                            ZipperID zipperID = new ZipperID(productID, Idlist[i]);
                             m_WaitIDChannel.Writer.TryWrite(zipperID);
                         }
+                    
                     }
 
                 }

@@ -251,9 +251,10 @@ namespace WH.DetectSystem._5_存图操作
             );
             DrawingVisual drawingVisua2 = null;
             DrawingContext drawingContext2 = null;
+            BitmapSource bitmapSource= null;
             if (cell.ZipperPullPartImg != null)
             {
-                BitmapSource bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                 bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
                 if (bitmapSource!=null)
                 {
                     drawingVisua2 = new DrawingVisual();
@@ -261,35 +262,43 @@ namespace WH.DetectSystem._5_存图操作
                     drawingContext2.DrawImage(bitmapSource,
                         new Rect(0, 0, cell.ZipperPullPartImg.Width, cell.ZipperPullPartImg.Height)
                     );
+                    foreach (var edge in cell.DrawEdges)
+                    {
+                        if (edge.ShowInView == 1)
+                        {
+                            Pen pen = new Pen(edge.BrushDraw, 1);
+                            DrawPoints(drawingContext2, edge.Points, pen);
+                        }
+                    }
                 }
               
             }
             foreach (var edge in cell.DrawEdges)
             {
-                Pen pen = new Pen(edge.BrushDraw, 1);
-                // Pen pen = new Pen(Brushes.Red, 1);
-
-                switch (edge.DrawType)
+                if (edge.ShowInView == 0)
                 {
+                    Pen pen = new Pen(edge.BrushDraw, 1);
+                    switch (edge.DrawType)
+                    {
 
-                    case EMDRAWTYPE.EMDRAWTYPE_POINTS:
-                        //drawView.SetPen(edge.BrushDraw);
-                        //drawView.ImgDrawPoints(edge.Points, false);
+                        case EMDRAWTYPE.EMDRAWTYPE_POINTS:
+                            //drawView.SetPen(edge.BrushDraw);
+                            //drawView.ImgDrawPoints(edge.Points, false);
 
-                        DrawPoints(drawingContext, edge.Points, pen);
-                        break;
+                            DrawPoints(drawingContext, edge.Points, pen);
+                            break;
 
-                    case EMDRAWTYPE.EMDRAWTYPE_REGION:
+                        case EMDRAWTYPE.EMDRAWTYPE_REGION:
 
-                        DrawPoints(drawingContext, edge.Points, pen);
-                        break;
+                            DrawPoints(drawingContext, edge.Points, pen);
+                            break;
 
-                    case EMDRAWTYPE.EMDRAWTYPE_Text:
-                        DrawText(drawingContext, edge.Text, edge.TextPos, edge.BrushDraw, (int)cell.Image?.ImageHeight / 20);
-                        //DrawText(edge.Text, edge.TextPos, Brushes.Red, cell.Image.ImageHeight / 10);
-                        break;
+                        case EMDRAWTYPE.EMDRAWTYPE_Text:
+                            DrawText(drawingContext, edge.Text, edge.TextPos, edge.BrushDraw, (int)cell.Image?.ImageHeight / 20);
+                            //DrawText(edge.Text, edge.TextPos, Brushes.Red, cell.Image.ImageHeight / 10);
+                            break;
+                    }
                 }
-
             }
             if (!cell.IsOK)
             {

@@ -291,9 +291,11 @@ namespace WH.DetectSystem.Models
             {
                 foreach (var cell in MergeCells)
                 {
+
                     cell?.Dispose();
                 }
                 MergeCells.Clear();
+                ZipperCommunicate.Idlist.Clear();
                 UpdatDetSet();
                 UpdatWhiteZipperParam(); //白色拉链加严处理
                 if (this.Name == "正面")
@@ -1850,11 +1852,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 30;
+                                            pa.Min = 28;
                                         }
                                         else
                                         {
-                                            pa.Min = 42;
+                                            pa.Min = 30;
                                         }
 
                                     }
@@ -1906,11 +1908,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 30;
+                                            pa.Min = 28;
                                         }
                                         else
                                         {
-                                            pa.Min = 42;
+                                            pa.Min = 30;
                                         }
 
                                     }

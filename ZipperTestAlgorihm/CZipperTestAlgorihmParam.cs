@@ -1250,46 +1250,46 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //});
 
 
-                    Task task5 = Task.Run(() =>
-                    {
+                    //Task task5 = Task.Run(() =>
+                    //{
                         if (downmass_num > 0)
                         {
                             yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
     CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                         }
-                    });
+                  //  });
 
-                    Task task6 = Task.Run(() =>
-                    {
+                    //Task task6 = Task.Run(() =>
+                    //{
                         if (upmass_num > 0)
                         {
                             yolo_UpStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMass_Model_Path, EngineType.TensorRT,
     CurrentDevice, upmass_num, param.UpScore, Nms, 192);
                         }
-                    });
+                  //  });
 
-                    Task task7 = Task.Run(() =>
-                    {
+                    //Task task7 = Task.Run(() =>
+                    //{
                         yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
 CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
-                    });
+                   // });
 
-                    Task task8 = Task.Run(() =>
-                    {
+                   // Task task8 = Task.Run(() =>
+                   // {
                         yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.TensorRT,
 CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
-                    });
+                    //});
 
-                    Task task9 = Task.Run(() =>
-                    {
+                    //Task task9 = Task.Run(() =>
+                    //{
                         yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
     CurrentDevice, big_num, param.BigScore, Nms, 480);
-                    });
-                    Task task10 = Task.Run(() =>
-                    {
+                    //});
+                   // Task task10 = Task.Run(() =>
+                   // {
                         yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, EngineType.TensorRT,
     CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
-                    });
+                   // });
 
                     // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
 

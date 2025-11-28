@@ -95,7 +95,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.findPullerCount = 0;
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
-
+                CZipperCommunicate.SendHelianStastPos((int)(AutoData.ZipperLenght-36) * 10);
+                CZipperCommunicate.SendHelianEndPos((int)(AutoData.ZipperLenght - 36) * 10);
                 //将光源值先减小到较状态
 
                 if (CLinghtManagement.LightControlDict.Count > 0)
