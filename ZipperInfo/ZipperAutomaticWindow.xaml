@@ -47,9 +47,13 @@
                         </i:Interaction.Behaviors>
                     </hc:NumericUpDown>
 
-                <TextBlock  Grid.Row="1"  Margin="10,10,0,0" Text="刀口长度(cm)"  FontSize="22"/>
-                <hc:NumericUpDown  Grid.Row="1" Margin="140,0,0,0"  Value="{Binding AutoData.QuekouLenght, UpdateSourceTrigger=PropertyChanged}"
-                         DecimalPlaces="1" Minimum="0" Maximum="2000"
+                <TextBlock  Grid.Row="1"  
+                             Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
+                            Text="刀口长度(cm)"  FontSize="22" />
+                <hc:NumericUpDown  Grid.Row="1" Margin="140,0,0,0" 
+                                   Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
+                                   Value="{Binding AutoData.QuekouLenght, UpdateSourceTrigger=PropertyChanged}"
+                         DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000"
                       Width="140" Height="45" FontSize="30">
                     <i:Interaction.Behaviors>
                         <keyboard:NumericKeyboardBehavior/>

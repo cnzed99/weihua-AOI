@@ -257,6 +257,8 @@ namespace ZipperInfo
                 //{
                 //    com.WriteSingleCoil(49418, false);
                 //}
+
+             
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
                 float fgoulenght = lenght - 36;
                 int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
@@ -270,7 +272,7 @@ namespace ZipperInfo
                     NGLocation = 40000; 
                 }
                 com.WriteSingleRegisterInt32(41306, (int)NGLocation);
-
+                
                // SendHelianEndPos(tlenght);
             }
 
@@ -280,7 +282,12 @@ namespace ZipperInfo
             //}
 
         }
-
+        public static void ClearWarn()
+        {
+            com.WriteSingleCoil(43, true);  //先清除报警
+            Thread.Sleep(100);
+            com.WriteSingleCoil(43, false);  //先清除报警
+        }
         /// <summary>
         /// 写入拉头触发的位置 2025-5-29 鲍赞宝
         /// </summary>

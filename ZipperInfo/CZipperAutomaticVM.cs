@@ -35,6 +35,7 @@ namespace ZipperInfo
 
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
+            CZipperCommunicate.ClearWarn();
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
 
            CGetZipperTriggerPoint.GetTriggerPoints(AutoData,out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount,out int triggerType);

@@ -83,7 +83,7 @@ namespace WH.RunCell
         /// <summary>
         /// 是否是OK产品
         /// </summary>
-        public bool IsOK { get; set; } = true;
+        public bool IsOK { get; set; } = false;
 
         /// <summary>
         /// 用来存储是质量OK还是颜色OK [0]=质量 [1]=颜色;

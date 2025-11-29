@@ -35,6 +35,7 @@ namespace WH.DetectSystem
             {
                 sp.Result = true; //检测类重置为OK
             }
+            cell.IsOK = true; //先假设都为OK
             foreach (var algorithmOut in cell.AlgorithmOut)
             {
                 foreach (

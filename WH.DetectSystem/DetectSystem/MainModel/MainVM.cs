@@ -32,10 +32,7 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
-
-
-
-
+using System.IO;
 
 namespace WH.DetectSystem.Models
 {
@@ -291,8 +288,7 @@ namespace WH.DetectSystem.Models
             {
                 foreach (var cell in MergeCells)
                 {
-
-                    cell?.Dispose();
+                    SaveOtherOldImage(cell);
                 }
                 MergeCells.Clear();
                 ZipperCommunicate.Idlist.Clear();
@@ -998,6 +994,15 @@ namespace WH.DetectSystem.Models
                                         //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
                                         //);
                                     }
+                                    List<Cell> otheroldcell = MergeCells.Where(c => (DateTime.Now - c.CreateTime).TotalSeconds > 600).ToList(); //把超过10分钟没有进行组合的图片保存起来
+                                    if (otheroldcell?.Count > 0)
+                                    {
+                                        for (int i = 0; i < otheroldcell.Count; i++)
+                                        {
+                                            SaveOtherOldImage(otheroldcell[i]);
+                                        }
+                                       
+                                    }
 
                                 }
 
@@ -1245,183 +1250,185 @@ namespace WH.DetectSystem.Models
                                     //}
 
                                     #endregion 画取反 OK的结果区域
-
-                                    if (!cell.IsOK)
+                                    if (!isAutomaticTest)
                                     {
-                                        CurView.SetFontSize(25);
-                                        CurView.SetFontWeight(System.Windows.FontWeights.Bold);
-                                        DefectFilter dstFilter = cell.Detection.DefectFilter;
-                                        StringBuilder textBuilder = new StringBuilder();
-                                        textBuilder.Append(cell.Quality.Name);
-                                        textBuilder.Append(":");
-                                        if (cell.Detection.Category != Category.区域)
+                                        if (!cell.IsOK)
                                         {
-                                            if (cell.Detection.Value.Count > 0)
+                                            CurView.SetFontSize(25);
+                                            CurView.SetFontWeight(System.Windows.FontWeights.Bold);
+                                            DefectFilter dstFilter = cell.Detection?.DefectFilter;
+                                            StringBuilder textBuilder = new StringBuilder();
+                                            textBuilder.Append(cell.Quality.Name);
+                                            textBuilder.Append(":");
+                                            if (cell.Detection.Category != Category.区域)
                                             {
-                                                textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
+                                                if (cell.Detection.Value.Count > 0)
+                                                {
+                                                    textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
+                                                }
+                                                else
+                                                {
+                                                    textBuilder.Append(dstFilter.Name);
+                                                }
                                             }
                                             else
                                             {
                                                 textBuilder.Append(dstFilter.Name);
                                             }
-                                        }
-                                        else
-                                        {
-                                            textBuilder.Append(dstFilter.Name);
-                                        }
 
-                                        CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
-                                        CurView.WinDrawText(
-                                            textBuilder.ToString(),
-                                            AlignmentX.Right,
-                                            AlignmentY.Top,
-                                            false
-                                        );
-                                        //显示所有Region缺陷
-                                        if (SystemSettings.ShowAllDefect)
-                                        {
-                                            foreach (var detection in cell.Detections)
+                                            CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                            CurView.WinDrawText(
+                                                textBuilder.ToString(),
+                                                AlignmentX.Right,
+                                                AlignmentY.Top,
+                                                false
+                                            );
+                                            //显示所有Region缺陷
+                                            if (SystemSettings.ShowAllDefect)
                                             {
-                                                if (
-                                                    detection.Result
-                                                    || detection.Category != Category.区域
-                                                    || detection.regionOut.Count == 0
-                                                )
-                                                    continue;
-                                                if (detection.ShowInView == 0)
+                                                foreach (var detection in cell.Detections)
                                                 {
-                                                    drawView = CurView;
-                                                }
-                                                else
-                                                {
-                                                    drawView = LastView;
-                                                }
-                                                //DefectFilter defectFilter =
-                                                //    detection.DefectFilter;
-                                                // drawView.SetPen(defectFilter.ShowColor.Brush);
-                                                //drawView.SetFontBrush(
-                                                //    defectFilter.ShowColor.Brush
-                                                //);
-                                                drawView.SetFontSize(15);
-                                                CurView.SetFontWeight(System.Windows.FontWeights.Normal);
-                                                DefectFilter defectFilter =
-                                             detection.DefectFilter;
-                                                drawView.SetPen(Brushes.Red);
-                                                drawView.SetFontBrush(
-                                                    Brushes.Red
-                                                );
-                                                for (
-                                                    int i = 0;
-                                                    i < detection.regionOut.Count;
-                                                    i++
-                                                )
-                                                {
-                                                    drawView.ImgDrawRegion(
-                                                        detection.regionOut[i].points,
-                                                        false
-                                                    );
-                                                    //System.Windows.Point p1 = detection.regionOut[i].GetCenter();
-                                                    // System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
-                                                    System.Windows.Point p2 = detection.regionOut[i].GetBottomRight();
-                                                    string txtlog = detection.DetectLog[i].ToString().Split(':')[0];
-                                                    drawView.ImgDrawText(
-                                                      txtlog,
-                                                      p2,
-                                                      false
-                                                      );
-                                                    //drawView.ImgDrawText(
-                                                    //    detection.DetectLog[i].ToString(),
-                                                    //    detection.regionOut[i].GetCenter(),
-                                                    //    false
+                                                    if (
+                                                        detection.Result
+                                                        || detection.Category != Category.区域
+                                                        || detection.regionOut.Count == 0
+                                                    )
+                                                        continue;
+                                                    if (detection.ShowInView == 0)
+                                                    {
+                                                        drawView = CurView;
+                                                    }
+                                                    else
+                                                    {
+                                                        drawView = LastView;
+                                                    }
+                                                    //DefectFilter defectFilter =
+                                                    //    detection.DefectFilter;
+                                                    // drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                    //drawView.SetFontBrush(
+                                                    //    defectFilter.ShowColor.Brush
                                                     //);
-                                                    //if (i == detection.regionOut.Count - 1)
-                                                    //{
-                                                    //    drawView.ImgDrawText(
-                                                    //        detection.DetectLog.ToString(),
-                                                    //        detection.regionOut[i].GetCenter(),
-                                                    //        false
-                                                    //    );
-                                                    //}
+                                                    drawView.SetFontSize(15);
+                                                    CurView.SetFontWeight(System.Windows.FontWeights.Normal);
+                                                    DefectFilter defectFilter =
+                                                 detection.DefectFilter;
+                                                    drawView.SetPen(Brushes.Red);
+                                                    drawView.SetFontBrush(
+                                                        Brushes.Red
+                                                    );
+                                                    for (
+                                                        int i = 0;
+                                                        i < detection.regionOut.Count;
+                                                        i++
+                                                    )
+                                                    {
+                                                        drawView.ImgDrawRegion(
+                                                            detection.regionOut[i].points,
+                                                            false
+                                                        );
+                                                        //System.Windows.Point p1 = detection.regionOut[i].GetCenter();
+                                                        // System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                        System.Windows.Point p2 = detection.regionOut[i].GetBottomRight();
+                                                        string txtlog = detection.DetectLog[i].ToString().Split(':')[0];
+                                                        drawView.ImgDrawText(
+                                                          txtlog,
+                                                          p2,
+                                                          false
+                                                          );
+                                                        //drawView.ImgDrawText(
+                                                        //    detection.DetectLog[i].ToString(),
+                                                        //    detection.regionOut[i].GetCenter(),
+                                                        //    false
+                                                        //);
+                                                        //if (i == detection.regionOut.Count - 1)
+                                                        //{
+                                                        //    drawView.ImgDrawText(
+                                                        //        detection.DetectLog.ToString(),
+                                                        //        detection.regionOut[i].GetCenter(),
+                                                        //        false
+                                                        //    );
+                                                        //}
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                DefectFilter defectFilter =
+                                                    cell.Detection.DefectFilter;
+                                                if (
+                                                    !(
+                                                        cell.Detection.Result
+                                                        || cell.Detection.Category != Category.区域
+                                                        || cell.Detection.regionOut.Count == 0
+                                                    )
+                                                )
+                                                {
+                                                    if (cell.Detection.ShowInView == 0)
+                                                    {
+                                                        drawView = CurView;
+                                                    }
+                                                    else
+                                                    {
+                                                        drawView = LastView;
+                                                    }
+                                                    drawView.SetFontSize(15);
+                                                    CurView.SetFontWeight(System.Windows.FontWeights.Normal);
+                                                    //drawView.SetPen(defectFilter.ShowColor.Brush);
+                                                    //drawView.SetFontBrush(
+                                                    //    defectFilter.ShowColor.Brush
+                                                    //);
+                                                    drawView.SetPen(Brushes.Red);
+                                                    drawView.SetFontBrush(
+                                                        Brushes.Red
+                                                    );
+                                                    for (
+                                                        int i = 0;
+                                                        i < cell.Detection.regionOut.Count;
+                                                        i++
+                                                    )
+                                                    {
+                                                        drawView.ImgDrawRegion(
+                                                            cell.Detection.regionOut[i].points,
+                                                            false
+                                                        );
+                                                        // System.Windows.Point p1 = cell.Detection.regionOut[i].GetCenter();
+                                                        //  System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
+                                                        System.Windows.Point p2 = cell.Detection.regionOut[i].GetBottomRight();
+                                                        string txtlog = cell.Detection.DetectLog.ToString().Split(':')[0];
+                                                        drawView.ImgDrawText(
+                                                          txtlog,
+                                                          p2,
+                                                          false
+                                                          );
+                                                        //drawView.ImgDrawText(
+                                                        //    cell.Detection.DetectLog[i].ToString(),
+                                                        //    cell.Detection.regionOut[i].GetCenter(),
+                                                        //    false
+                                                        //);
+                                                        //if (i == cell.Detection.regionOut.Count - 1)
+                                                        //{
+                                                        //    drawView.ImgDrawText(
+                                                        //        cell.Detection.DetectLog.ToString(),
+                                                        //        cell.Detection.regionOut[i].GetCenter(),
+                                                        //        false
+                                                        //    );
+                                                        //}
+                                                    }
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            DefectFilter defectFilter =
-                                                cell.Detection.DefectFilter;
-                                            if (
-                                                !(
-                                                    cell.Detection.Result
-                                                    || cell.Detection.Category != Category.区域
-                                                    || cell.Detection.regionOut.Count == 0
-                                                )
-                                            )
-                                            {
-                                                if (cell.Detection.ShowInView == 0)
-                                                {
-                                                    drawView = CurView;
-                                                }
-                                                else
-                                                {
-                                                    drawView = LastView;
-                                                }
-                                                drawView.SetFontSize(15);
-                                                CurView.SetFontWeight(System.Windows.FontWeights.Normal);
-                                                //drawView.SetPen(defectFilter.ShowColor.Brush);
-                                                //drawView.SetFontBrush(
-                                                //    defectFilter.ShowColor.Brush
-                                                //);
-                                                drawView.SetPen(Brushes.Red);
-                                                drawView.SetFontBrush(
-                                                    Brushes.Red
-                                                );
-                                                for (
-                                                    int i = 0;
-                                                    i < cell.Detection.regionOut.Count;
-                                                    i++
-                                                )
-                                                {
-                                                    drawView.ImgDrawRegion(
-                                                        cell.Detection.regionOut[i].points,
-                                                        false
-                                                    );
-                                                    // System.Windows.Point p1 = cell.Detection.regionOut[i].GetCenter();
-                                                    //  System.Windows.Point p2 = new System.Windows.Point(p1.X, cell.Image.ImageHeight - 60);
-                                                    System.Windows.Point p2 = cell.Detection.regionOut[i].GetBottomRight();
-                                                    string txtlog = cell.Detection.DetectLog.ToString().Split(':')[0];
-                                                    drawView.ImgDrawText(
-                                                      txtlog,
-                                                      p2,
-                                                      false
-                                                      );
-                                                    //drawView.ImgDrawText(
-                                                    //    cell.Detection.DetectLog[i].ToString(),
-                                                    //    cell.Detection.regionOut[i].GetCenter(),
-                                                    //    false
-                                                    //);
-                                                    //if (i == cell.Detection.regionOut.Count - 1)
-                                                    //{
-                                                    //    drawView.ImgDrawText(
-                                                    //        cell.Detection.DetectLog.ToString(),
-                                                    //        cell.Detection.regionOut[i].GetCenter(),
-                                                    //        false
-                                                    //    );
-                                                    //}
-                                                }
-                                            }
+                                            CurView.SetFontSize(25);
+                                            CurView.SetFontWeight(System.Windows.FontWeights.Bold);
+                                            CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
+                                            CurView.WinDrawText(
+                                                "OK",
+                                                AlignmentX.Right,
+                                                AlignmentY.Top,
+                                                false
+                                            );
                                         }
-                                    }
-                                    else
-                                    {
-                                        CurView.SetFontSize(25);
-                                        CurView.SetFontWeight(System.Windows.FontWeights.Bold);
-                                        CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
-                                        CurView.WinDrawText(
-                                            "OK",
-                                            AlignmentX.Right,
-                                            AlignmentY.Top,
-                                            false
-                                        );
                                     }
                                     // drawView.Invalidate();
                                     CurView.Invalidate();
@@ -2093,7 +2100,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         fl.IsReversal = true;
                                     }
-                                   
+
                                 }
                             }
                         }
@@ -2139,7 +2146,7 @@ namespace WH.DetectSystem.Models
                             {
                                 foreach (var fl in df.FilterList)
                                 {
-                                    
+
                                     if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
                                     {
                                         fl.FilterSelectEnable = true;
@@ -2326,6 +2333,49 @@ namespace WH.DetectSystem.Models
             if (FocusCtrlVM is not null)
                 this.FocusCtrlVM.LoginPerson = loginPerson;
             this.HistoryVM.LoginPerson = loginPerson;
+        }
+
+
+        private void SaveOtherOldImage(Cell cell)
+        {
+            if (cell == null) return;
+            try
+            {
+                string na = DateTime.Now.ToString("D") + $"\\{this.Name}";
+                string savepathDir = "D:\\DiscardedImages\\" + na;
+                if (!Directory.Exists(savepathDir))
+                {
+                    Directory.CreateDirectory(savepathDir);
+                }
+                string okng = cell.IsOK ? "OK" : "NG";
+                string imagename = $"{cell.ID}_{cell.PhotoIndex}_{okng}_{cell.PhotoTatolCount}_{cell.CreateTime.ToString("HHmmssfff")}";
+                string filepath = $"{savepathDir}\\{imagename}.png";
+                WriteImage(cell?.Image.ToBitmapSource(), filepath, "png");
+                cell?.Dispose();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        /// <summary>
+        /// 2024.7.29 李焕彬
+        /// 保存图片
+        /// </summary>
+        /// <param name="bitImage">图片</param>
+        /// <param name="filepath">存图路径</param>
+        /// <param name="format">图片格式</param>
+        private void WriteImage(BitmapSource bitmap, string filepath, string format)
+        {
+            if (bitmap != null)
+            {
+                using (FileStream stream = new FileStream(filepath, FileMode.Create))
+                {
+                    BitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    encoder.Save(stream);
+                }
+            }
         }
     }
 
