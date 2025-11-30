@@ -322,7 +322,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainMModel.CProcessGroups[0].CDefectsDataVM}" FontSize="15" /> 
+                    <pro:ProduceData DataContext="{Binding CMainMModel.CProcessGroups[0].CDefectsOneFlowDataVM}" FontSize="15" /> 
                 </Border>
 
                 <!--  系统时间  -->

@@ -51,6 +51,13 @@ namespace WH.DetectSystem.Models
         CDefectsDataVM cDefectsDataVM = new CDefectsDataVM();
 
         /// <summary>
+        /// 2025.11.29 鲍赞宝
+        /// 单个料号的缺陷数据
+        /// </summary>
+        [ObservableProperty]
+        CDefectsDataVM cDefectsOneFlowDataVM = new CDefectsDataVM();
+
+        /// <summary>
         /// 报警设置
         /// </summary>
         [AdaptIgnore]
@@ -86,7 +93,11 @@ namespace WH.DetectSystem.Models
             CDefectsDataVM.DefectsProduce.SetFilter(
                 this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
             );
-
+            CDefectsOneFlowDataVM.DefectsProduce = MaociDefectsOneFlowProduce;
+            CDefectsOneFlowDataVM.DefectsProduce.SetQuality(MaociQualityConfig);
+            CDefectsOneFlowDataVM.DefectsProduce.SetFilter(
+                this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
+            );
             AlarmSetVM.CAlarmSet = AlarmSetConfig;
             AlarmSetVM.Reset();
             AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());

@@ -967,8 +967,9 @@ namespace WH.DetectSystem.Models
                                     if (ProcessGroup.AddCellAndJudge(newCell, out CCellPro CellOut))
                                     {
                                         ProcessGroup.MaociDefectsProduce.Excute(CellOut.Cell);
+                                        ProcessGroup.MaociDefectsOneFlowProduce.Excute(CellOut.Cell);
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
-                                        if (CellOut.Cell.IsOK)
+                                        if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
                                         {
                                             CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
                                         }
@@ -994,14 +995,15 @@ namespace WH.DetectSystem.Models
                                         //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
                                         //);
                                     }
-                                    List<Cell> otheroldcell = MergeCells.Where(c => (DateTime.Now - c.CreateTime).TotalSeconds > 600).ToList(); //把超过10分钟没有进行组合的图片保存起来
+                                    List<Cell> otheroldcell = MergeCells.Where(c => (DateTime.Now - c.CreateTime).TotalSeconds > 300).ToList(); //把超过5分钟没有进行组合的图片保存起来
                                     if (otheroldcell?.Count > 0)
                                     {
                                         for (int i = 0; i < otheroldcell.Count; i++)
                                         {
                                             SaveOtherOldImage(otheroldcell[i]);
+                                            MergeCells.Remove(otheroldcell[i]);
                                         }
-                                       
+
                                     }
 
                                 }

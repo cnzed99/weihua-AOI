@@ -67,6 +67,13 @@ namespace WH.DetectSystem.Models
         public CDefectsProduce MaociDefectsProduce { get; set; } = new CDefectsProduce();
 
         /// <summary>
+        /// 2025.11.29 鲍赞宝
+        /// 单个产品流程的数据汇总
+        /// </summary>
+        [JsonProperty]
+        public CDefectsProduce MaociDefectsOneFlowProduce { get; set; } = new CDefectsProduce();
+
+        /// <summary>
         /// 20240706 TCG
         /// 报警设置
         /// </summary>

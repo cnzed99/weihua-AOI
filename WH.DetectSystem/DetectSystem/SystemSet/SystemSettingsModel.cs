@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Properties.Langs;
 using HandyControl.Tools;
 using WH.Entity.Attribute;
+using Newtonsoft.Json;
 
 namespace WH.DetectSystem.Models
 {
@@ -293,10 +294,10 @@ namespace WH.DetectSystem.Models
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (DateTime.Now > NextClearTime)
+            if (DateTime.Now > NextClearTime&& Loaded)
             {
                 //oldtime = NextClearTime;
-                ClearProduceEvent?.Invoke();
+                ClearProduceEvent?.Invoke(); 
                 GetNextClearTime();
             }
         }
@@ -309,6 +310,11 @@ namespace WH.DetectSystem.Models
         /// 数据清零事件
         /// </summary>
         public event Action ClearProduceEvent;
+        /// <summary>
+        /// 软件初始化完成
+        /// </summary>
+        [JsonIgnore]
+        public bool Loaded=false;
 
         //static DateTime oldtime;
 

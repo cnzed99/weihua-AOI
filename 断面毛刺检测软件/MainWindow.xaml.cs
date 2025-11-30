@@ -462,11 +462,12 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                 CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
-                //if (CMainList.CMainMModel.CProcessGroups.Count > 0&& CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count>0)
-                //{
-                //    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
-                //}
+                CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
+                if (CMainList.CMainMModel.CProcessGroups.Count > 0 && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0)
+                {
+                    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
+                    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.Loaded=true;
+                }
 
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
@@ -700,7 +701,7 @@ namespace 断面毛刺检测软件
                     {
                         if (b)
                         {
-                             ClearProduceData(b);
+                            ClearProduceData(b);
                             //foreach (var item in CMainList.CMainVMs)
                             //{
                             //    item.MaociDefectsProduce?.Clear();
@@ -726,16 +727,29 @@ namespace 断面毛刺检测软件
         {
             //if (CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.AutoClearEnable)
             //{
-                foreach (var item in CMainList.CMainVMs)
-                {
-                    item.MaociDefectsProduce?.Clear();
-                }
-                foreach (var item in CMainList.CMainMModel.CProcessGroups)
-                {
-                    item.MaociDefectsProduce?.Clear();
-                    item.Cells.Clear();
-                }
-          //  }
+            foreach (var item in CMainList.CMainVMs)
+            {
+                item.MaociDefectsProduce?.Clear();
+            }
+            foreach (var item in CMainList.CMainMModel.CProcessGroups)
+            {
+               // item.MaociDefectsProduce?.Clear();
+                item.MaociDefectsOneFlowProduce?.Clear();
+                item.Cells.Clear();
+            }
+        }
+        private void ClearProduceData()
+        {
+
+            //foreach (var item in CMainList.CMainVMs)
+            //{
+            //    item.MaociDefectsProduce?.Clear();
+            //}
+            foreach (var item in CMainList.CMainMModel.CProcessGroups)
+            {
+                 item.MaociDefectsProduce?.Clear();
+                item.Cells.Clear();
+            }
         }
 
         #endregion 数据清空
