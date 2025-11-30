@@ -45,6 +45,11 @@ namespace ZipperInfo
         IVisionModel yolo_pull_det;
 
         /// <summary>
+        /// 拉片分割模型
+        /// </summary>
+        IVisionModel yolo_PullShape_Seg;
+
+        /// <summary>
         /// 2025.7.2 鲍赞宝
         /// 识别名
         /// </summary>
@@ -55,6 +60,11 @@ namespace ZipperInfo
         /// 识别名
         /// </summary>
         string[] de_pull_names;
+        /// <summary>
+        /// 拉片分割缺陷名称
+        /// </summary>
+        protected string[] pullSharp_names;
+
         /// <summary>
         /// 超时统计
         /// </summary>
@@ -107,6 +117,10 @@ namespace ZipperInfo
             string pulltxtpath;
             string pullmodelpath = "";
 
+            string pullSegmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullSegModel";
+            string pullSegtxtpath;
+            string pullSegmodelpath = "";
+
             if (Directory.Exists(SearchmodelDirPath))
             {
                 string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
@@ -143,9 +157,25 @@ namespace ZipperInfo
                     ZipperInfo.LogoTypeStrs = logostrs.ToArray();
                 }
             }
-            if (Searchmodelpath != "" && pullmodelpath != "")
+            if (Directory.Exists(pullSegmodelDirPath))
             {
-                IniYolo(Searchmodelpath, pullmodelpath);
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                var files = searchPatterns
+                .SelectMany(pattern => Directory.GetFiles(pullSegmodelDirPath, pattern))
+                .ToList();
+
+                var classNames = Directory.GetFiles(pullSegmodelDirPath, "*.txt", SearchOption.AllDirectories);
+
+                if (files.Count > 0 && classNames.Length > 0)
+                {
+                    pullSegmodelpath = files[0];
+                    pullSegtxtpath = classNames[0];
+                    pullSharp_names = File.ReadAllLines(pullSegtxtpath);
+                }
+            }
+            if (Searchmodelpath != "" && pullmodelpath != "" && pullSegmodelpath != "")
+            {
+                IniYolo(Searchmodelpath, pullmodelpath,pullSegmodelpath);
             }
 
 
@@ -1600,7 +1630,7 @@ namespace ZipperInfo
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},识别到拉头findPuller = true");
                             timeOutCount = 0;
                             findPullerCount++;
-                           
+
                             int pos = CZipperCommunicate.GetGrippawlLocation();
                             int crippoint = (int)ZipperInfo.ZipperLneght * 10;
                             if (pos > crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
@@ -1715,6 +1745,39 @@ namespace ZipperInfo
 
                                 }
                             }
+
+                            SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
+
+                            if (pullsegResult == null) return;
+                            double allperimeter = 0; //周长总长
+                            double allarea = 0; //总面积
+                            foreach (var seg in pullsegResult.datas)
+                            {
+                                //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                                Mat maskgray = new Mat();
+                                Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                                Mat binary = new Mat();
+                                Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                                Point[][] contours;
+                                HierarchyIndex[] hierarchy;
+                                Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+                               // List<Point> p = new List<Point>();
+                                for (int a = 0; a < contours.Length; a++)
+                                {
+                                    double area = Cv2.ContourArea(contours[a]);
+                                    allarea += area;
+                                   // Point[] contourPoints = contours[a];
+                                    //p = contourPoints.ToList();
+                                    //p.Add(p[0]); //首尾相连
+                                    double perimeter = Cv2.ArcLength(contours[a], true); //
+                                    allperimeter += perimeter;
+                                }
+                                maskgray.Dispose();
+                                binary.Dispose();
+                              
+                            }
+                            ZipperInfo.PullSegOrgArea = allarea;
                             if (findPullsCount >= 3)
                             {
                                 findPulls = true;
@@ -1846,35 +1909,38 @@ namespace ZipperInfo
             }
         }
 
-
-
-
         #endregion
-        private void IniYolo(string searchmodelpath, string pullmodelpath)
+        private void IniYolo(string searchmodelpath, string pullmodelpath, string pullSegmodelpath)
         {
-            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath))
+            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath) && !File.Exists(pullSegmodelpath))
             {
                 return;
             }
             string CurrentDevice = "GPU.1";
 
-            Task task = Task.Run(() =>
-            {
-                int search_Categ_num = de_search_names.Length;
-                float Score = 0.45f;
-                float Nms = 0.5f;
-                yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
-              CurrentDevice, search_Categ_num, Score, Nms, 480);
-            });
+            //Task task = Task.Run(() =>
+            //{
+            int search_Categ_num = de_search_names.Length;
+            float Score = 0.45f;
+            float Nms = 0.5f;
+            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
+          CurrentDevice, search_Categ_num, Score, Nms, 480);
+            //  });
 
-            Task task1 = Task.Run(() =>
-            {
-                int pull_Categ_num = de_pull_names.Length;
-                float pullScore = 0.6f;
-                float pullNms = 0.8f;
-                yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
-              CurrentDevice, pull_Categ_num, pullScore, pullNms, 640);
-            });
+            //Task task1 = Task.Run(() =>
+            //{
+            int pull_Categ_num = de_pull_names.Length;
+            float pullScore = 0.6f;
+            float pullNms = 0.8f;
+            yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
+          CurrentDevice, pull_Categ_num, pullScore, pullNms, 640);
+            // });
+
+            int pullSeg_Categ_num = pullSharp_names.Length;
+            float segScore = 0.6f;
+            float segNms = 0.5f;
+            yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSegmodelpath, EngineType.TensorRT,
+          CurrentDevice, pullSeg_Categ_num, segScore, segNms, 640);
         }
 
 

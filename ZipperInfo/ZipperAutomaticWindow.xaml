@@ -12,7 +12,7 @@
            WindowStartupLocation="CenterScreen"
            Name="win" WindowStyle="None"
         d:DataContext="{d:DesignInstance Type=local:CZipperAutomaticVM}"
-        Title="换料识别" Height="170" Width="480" >
+        Title="换料识别" Height="200" Width="480" >
 
     <hc:Window.Resources>
         <wh:Bool2VisiblityConverter x:Key="Bool2VisiblityConverter" />
@@ -32,11 +32,11 @@
 
                  <Grid>
                     <Grid.RowDefinitions>
-                    <RowDefinition Height="1.5*"/>
-                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition/>
                     <RowDefinition/>
-                    </Grid.RowDefinitions>
+                </Grid.RowDefinitions>
 
                         <TextBlock Margin="10,10,0,0" Text="拉链长度(cm)"  FontSize="22"/>
                     <hc:NumericUpDown Margin="140,0,0,0"  Value="{Binding AutoData.ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
@@ -47,7 +47,7 @@
                         </i:Interaction.Behaviors>
                     </hc:NumericUpDown>
 
-                <TextBlock  Grid.Row="1"  
+                <TextBlock  Grid.Row="1"   Margin="10,5,0,0"
                              Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
                             Text="刀口长度(cm)"  FontSize="22" />
                 <hc:NumericUpDown  Grid.Row="1" Margin="140,0,0,0" 
@@ -72,7 +72,7 @@
                         <keyboard:NumericKeyboardBehavior/>
                     </i:Interaction.Behaviors>
                 </hc:NumericUpDown>
-                <TextBlock Margin="10,5,0,0"  Grid.Row="3"
+                <!--<TextBlock Margin="10,5,0,0"  Grid.Row="3"
                                Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
                                Text="相机视野(mm)"  FontSize="22"/>
                     <hc:NumericUpDown Margin="140,0,0,0" Grid.Row="3"
@@ -83,9 +83,22 @@
                         <i:Interaction.Behaviors>
                             <keyboard:NumericKeyboardBehavior/>
                         </i:Interaction.Behaviors>
-                    </hc:NumericUpDown>
+                    </hc:NumericUpDown>-->
 
-                </Grid>
+                <TextBlock Margin="10,5,0,0"  Grid.Row="4"
+                   Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
+                   Text="差值范围"  FontSize="22"/>
+                <hc:NumericUpDown Margin="140,0,0,0" Grid.Row="4"
+                      Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"   
+                          Value="{Binding AutoData.PullSegRange, UpdateSourceTrigger=PropertyChanged}" 
+                      DecimalPlaces="1" Minimum="0" Maximum="10000" hc:InfoElement.ShowClearButton="True" 
+                      Width="140" Height="30" FontSize="22" >
+                    <i:Interaction.Behaviors>
+                        <keyboard:NumericKeyboardBehavior/>
+                    </i:Interaction.Behaviors>
+                </hc:NumericUpDown>
+
+            </Grid>
 
                 <Grid Grid.Column="1" >
                     <Grid.RowDefinitions>

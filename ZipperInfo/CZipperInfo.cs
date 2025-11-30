@@ -202,6 +202,10 @@ namespace ZipperInfo
         /// 2025.11.13 鲍赞宝
         /// </summary>
         public  int FindLogoSider {  get; set; }
+        /// <summary>
+        /// 拉片分割出来的标准面积
+        /// </summary>
+        public double PullSegOrgArea {  get; set; }
 
     }
 

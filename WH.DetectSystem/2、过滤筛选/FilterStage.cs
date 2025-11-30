@@ -322,9 +322,11 @@ namespace WH.DetectSystem
                                             // break; //有一个分选不合格就跳出，不执行剩下的分选（||）
                                         }
                                     }
-                                   // detection.Value = selValueALL;
+                                    // detection.Value = selValueALL;
 
                                     //有一个过滤分选器不合格就跳出，不执行剩下的过滤分选器（||）
+                                    if (filter.IsReversal && filter.FilterSelectEnable) //值类型反转结果
+                                        detection.Result = !detection.Result;
                                     if (!detection.Result)
                                     {
                                         filter.Result = false;

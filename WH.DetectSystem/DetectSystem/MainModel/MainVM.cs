@@ -302,6 +302,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
+                        UpdatepullSegArea("左相机");
 
                     }
                     else
@@ -310,6 +311,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
+                        UpdatepullSegArea("右相机");
                     }
                 }
                 else
@@ -320,6 +322,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
+                        UpdatepullSegArea("右相机");
                     }
                     else
                     {
@@ -327,6 +330,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
+                        UpdatepullSegArea("左相机");
                     }
                 }
             }
@@ -2060,6 +2064,57 @@ namespace WH.DetectSystem.Models
                 }
             }
         }
+
+        private void UpdatepullSegArea(string leftorright)
+        {
+            if (leftorright == "左相机")
+            {
+                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                foreach (var pullname in pullnames.RecipeDefects)
+                {
+                    if (pullname.Name == "拉片外形")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = true;
+                                fl.IsReversal = true;
+                                foreach (var se in fl.SelectList)
+                                {
+                                    foreach (var pa in se.SelectParams)
+                                    {
+                                        pa.Min = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea + CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                foreach (var pullname in pullnames.RecipeDefects)
+                {
+                    if (pullname.Name == "拉片外形")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = false;
+                                fl.IsReversal = false;
+                            }
+                        }
+                    }
+                }
+            }
+           
+            
+        }
+
         /// <summary>
         /// 更新Logo配置
         /// </summary>

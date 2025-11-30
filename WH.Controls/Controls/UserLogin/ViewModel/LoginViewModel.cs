@@ -61,7 +61,7 @@ namespace WH.Controls
         /// </summary>
         public bool LoggedSuccess = false;
 
-        private int leftTimeMinute = 720;
+        private int leftTimeMinute = 10;
 
         /// <summary>
         /// 从界面获取的剩余时间设置

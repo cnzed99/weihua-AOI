@@ -284,9 +284,13 @@ namespace ZipperInfo
         }
         public static void ClearWarn()
         {
-            com.WriteSingleCoil(43, true);  //先清除报警
-            Thread.Sleep(100);
-            com.WriteSingleCoil(43, false);  //先清除报警
+            if (com!=null)
+            {
+                com.WriteSingleCoil(43, true);  //先清除报警
+                Thread.Sleep(100);
+                com.WriteSingleCoil(43, false);  //先清除报警
+            }
+         
         }
         /// <summary>
         /// 写入拉头触发的位置 2025-5-29 鲍赞宝

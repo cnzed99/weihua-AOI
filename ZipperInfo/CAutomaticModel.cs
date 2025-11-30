@@ -57,6 +57,12 @@ namespace ZipperInfo
         [ObservableProperty]
         float ccdWidth = 114;
 
+        /// <summary>
+        /// 相机视野
+        /// </summary>
+        [ObservableProperty]
+        float pullSegRange = 1500;
+
 
         [ObservableProperty]
         int zipperMinBgMean = 120;
