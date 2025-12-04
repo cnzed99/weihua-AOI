@@ -291,7 +291,7 @@ namespace WH.DetectSystem.Models
                     SaveOtherOldImage(cell);
                 }
                 MergeCells.Clear();
-                ZipperCommunicate.Idlist.Clear();
+              //  ZipperCommunicate.Idlist.Clear();
                 UpdatDetSet();
                 UpdatWhiteZipperParam(); //白色拉链加严处理
                 if (this.Name == "正面")
@@ -302,7 +302,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
-                        UpdatepullSegArea("左相机");
+                       // UpdatepullSegArea("左相机"); //不好用
 
                     }
                     else
@@ -311,7 +311,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
-                        UpdatepullSegArea("右相机");
+                       // UpdatepullSegArea("右相机");
                     }
                 }
                 else
@@ -322,7 +322,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
-                        UpdatepullSegArea("右相机");
+                       // UpdatepullSegArea("右相机");
                     }
                     else
                     {
@@ -330,7 +330,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
-                        UpdatepullSegArea("左相机");
+                      //  UpdatepullSegArea("左相机");
                     }
                 }
             }
@@ -874,6 +874,10 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
+                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh) //自动调整拉链位置
+                                {
+                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                }
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -1887,7 +1891,6 @@ namespace WH.DetectSystem.Models
                                     }
                                 }
                             }
-
                         }
                     }
                 }
@@ -1943,7 +1946,6 @@ namespace WH.DetectSystem.Models
                                     }
                                 }
                             }
-
                         }
                     }
                 }
@@ -2078,13 +2080,18 @@ namespace WH.DetectSystem.Models
                         {
                             foreach (var fl in df.FilterList)
                             {
-                                fl.FilterSelectEnable = true;
+                                fl.FilterSelectEnable = true; //
                                 fl.IsReversal = true;
                                 foreach (var se in fl.SelectList)
                                 {
                                     foreach (var pa in se.SelectParams)
                                     {
-                                        pa.Min = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                        double minrang = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                        if (minrang<1)
+                                        {
+                                            minrang = 1;
+                                        }
+                                        pa.Min = minrang;
                                         pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea + CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
                                     }
                                 }

@@ -184,8 +184,6 @@ namespace ZipperTestAlgorihm
 
         protected void SetDefectRecipe(string user)
         {
-
-
             ReadNames(user);
 
             if (Common_names?.Length > 0)
@@ -1018,6 +1016,8 @@ namespace ZipperTestAlgorihm
 
                                 if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
                                     continue;
+                                //if (labelname.Contains("毛丝"))
+                                //    continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                 dets.Add(restoreData);
                             }

@@ -98,6 +98,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
                 CZipperCommunicate.SendHelianStastPos((int)(AutoData.ZipperLenght-36) * 10);
                 CZipperCommunicate.SendHelianEndPos((int)(AutoData.ZipperLenght - 36) * 10);
+                CZipperAutomaticAlgorithm.AutoSettingPosFinsh=false;
                 //将光源值先减小到较状态
 
                 if (CLinghtManagement.LightControlDict.Count > 0)

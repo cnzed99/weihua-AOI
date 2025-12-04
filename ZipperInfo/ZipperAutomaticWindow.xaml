@@ -91,7 +91,7 @@
                 <hc:NumericUpDown Margin="140,0,0,0" Grid.Row="4"
                       Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"   
                           Value="{Binding AutoData.PullSegRange, UpdateSourceTrigger=PropertyChanged}" 
-                      DecimalPlaces="1" Minimum="0" Maximum="10000" hc:InfoElement.ShowClearButton="True" 
+                      DecimalPlaces="1" Minimum="0" Maximum="100000" hc:InfoElement.ShowClearButton="True" 
                       Width="140" Height="30" FontSize="22" >
                     <i:Interaction.Behaviors>
                         <keyboard:NumericKeyboardBehavior/>

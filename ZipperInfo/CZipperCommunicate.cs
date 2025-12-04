@@ -266,7 +266,7 @@ namespace ZipperInfo
                 com.WriteSingleRegisterInt32(41202, tlenght);
                 com.WriteSingleRegisterInt32(41304, igoulenght);
 
-                float NGLocation = (lenght + 115.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
+                float NGLocation = (lenght + 100.0f) * 100;  //NG料的放料位置，根据拉链长度来计算
                 if (NGLocation > 40000) //限制最大后退距离
                 {
                     NGLocation = 40000; 
@@ -659,8 +659,9 @@ namespace ZipperInfo
                         TempproductID = productID;
                         List<float> copyPos = new List<float>();
                         int ipullpos = GetPullLocation(); //为了防止中途从触摸屏改掉拉头位置，所以时刻监控它的值在进行比较
-                        if (ipullpos != TempPullPos|| Idlist.Count==0)
+                        if (ipullpos != TempPullPos)
                         {
+                            Idlist.Clear();
                             TempPullPos = ipullpos;
                             float fpullpos = ipullpos / 10.0f;
                             for (int i = 0; i < CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)

@@ -251,19 +251,19 @@ namespace 断面毛刺检测软件
                 //{
                 //    CMainList.SaveCurrentProj();
                 //}
-                CMainList.SaveCurrentProj();
-                CMainList.SystemSettings.SaveParameter();
-                CCommunicationManagement.SaveAllComConfig();
-                CCameraManagement.SaveAllCamConfig();
+              //  CMainList.SaveCurrentProj();
+              //  CMainList.SystemSettings.SaveParameter();
+              //  CCommunicationManagement.SaveAllComConfig();
+              //  CCameraManagement.SaveAllCamConfig();
                 CCommunicationManagement.CloseAllComm();
                 CCameraManagement.CloseAllCameras();
-                CMotionManagement.SaveMotionConfig();
+               // CMotionManagement.SaveMotionConfig();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Application.Current.Shutdown();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Console.WriteLine(exception);
+               // Console.WriteLine(exception);
                 //CLogRec.Error(exception.Message);
             }
             finally
