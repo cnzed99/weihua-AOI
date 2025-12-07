@@ -349,7 +349,11 @@ namespace 断面毛刺检测软件.Views
                     if (Directory.Exists(imgFiles[ImgIndex]))//读文件夹
                     {
                         #region 读文件夹
-                        string[] Allfiles = Directory.GetFiles(imgFiles[ImgIndex]);
+                        string[] searchPatterns = { "*.jpg", "*.jpeg", "*.bmp", "*.png", "*.tiff"};
+                        string[] Allfiles = searchPatterns
+                        .SelectMany(pattern => Directory.GetFiles(imgFiles[ImgIndex], pattern))
+                        .ToArray();
+                      //  string[] Allfiles = Directory.GetFiles(imgFiles[ImgIndex], "*.png");
                         for (int i = 0; i < Allfiles.Length; i++)
                         {
                             string filename = Path.GetFileName(Allfiles[i]);

@@ -46,7 +46,8 @@ namespace ZipperInfo
             }
             if (handandtalipoints.Count>1)
             {
-                stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
+                CZipperAutomaticAlgorithm.FirstPosTemp = handandtalipoints[0];
+               stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
             }
             stringBuilder.Append($",切断时已经拍了{cutoffIndex}张照片");
             stringBuilder.Append($",切断时,切刀到相机有{zipperCacheCount}条拉链已经拍完照片");
@@ -99,6 +100,8 @@ namespace ZipperInfo
                 CZipperCommunicate.SendHelianStastPos((int)(AutoData.ZipperLenght-36) * 10);
                 CZipperCommunicate.SendHelianEndPos((int)(AutoData.ZipperLenght - 36) * 10);
                 CZipperAutomaticAlgorithm.AutoSettingPosFinsh=false;
+                CZipperAutomaticAlgorithm.onWichStage2 = 1;
+               
                 //将光源值先减小到较状态
 
                 if (CLinghtManagement.LightControlDict.Count > 0)

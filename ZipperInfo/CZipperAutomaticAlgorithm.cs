@@ -10,6 +10,7 @@ using WH.RunCell;
 using ZipperLightHalconDet;
 using WH.VisionLearning;
 using System.Windows.Media.Animation;
+using HandyControl.Controls;
 
 namespace ZipperInfo
 {
@@ -1913,81 +1914,147 @@ namespace ZipperInfo
         #endregion
 
         #region 自动调整拉链位置算法
-
+        public static int onWichStage2 = 0;
         public static int DownmassAutoCount = 0;
         public static int UpmassAutoCount = 0;
         List<double> downmassPoints = new List<double>();
         List<double> upmassPoints = new List<double>();
 
         public static bool AutoSettingPosFinsh = false;
+        public static int UpmassAutoOK = 0;
         public static int DownmassAutoOK = 0;
+        public static float FirstPosTemp=0;
         public void AutoSettingTriggerPos(Cell cell)
         {
             if (cell == null) return;
             Mat img = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
           MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
           cell.Image.ImageData);
-
-            if (cell.PhotoIndex == cell.PhotoTatolCount - 1) //拉链下止
+            if (onWichStage2 == 1)
             {
-                if (cell.CamName == "右相机")
+                if (cell.PhotoIndex == cell.PhotoTatolCount - 1) //拉链下止
                 {
-                    DetResult resultDet;
-                    resultDet = yolo_search_det.Predict(img) as DetResult;
-                    if (resultDet.datas.Count > 0)
+                    if (cell.CamName == "右相机")
                     {
-                        for (int i = 0; i < resultDet.datas.Count; i++)
+                        DetResult resultDet;
+                        resultDet = yolo_search_det.Predict(img) as DetResult;
+                        if (resultDet.datas.Count > 0)
                         {
-                            int nameindex = int.Parse(resultDet.datas[i].lable);
-                            string labelstr = de_search_names[nameindex];
-                           
-                            if (labelstr.Contains("上止"))
+                            for (int i = 0; i < resultDet.datas.Count; i++)
                             {
-                                AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到上止");
-                                DownmassAutoCount++;
-                                double cenx = resultDet.datas[i].box.Left + resultDet.datas[i].box.Width / 2;
-                                AutoLogger.Info($"{cell.CamName}:自动调整位置：上止中心位置{cenx.ToString("f1")}");
-                                upmassPoints.Add(cenx);
-                                if (DownmassAutoCount >= 4)
-                                {
-                                    double ave = upmassPoints.Average();
-                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：平均中心位置{ave.ToString("f1")}");
-                                    DownmassAutoCount = 0;
-                                    upmassPoints.Clear();
-                                    if (ave > cell.Image.ImageWidth - 280)
-                                    {
-                                        float zipperlenght = ZipperInfo.AutoData.ZipperLenght;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
-                                        zipperlenght = zipperlenght + 0.5f;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
-                                        ChangePoints(zipperlenght);
+                                int nameindex = int.Parse(resultDet.datas[i].lable);
+                                string labelstr = de_search_names[nameindex];
 
-                                    }
-                                    else if (ave < cell.Image.ImageWidth - 380)
+                                if (labelstr.Contains("上止"))
+                                {
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到上止");
+                                    UpmassAutoCount++;
+                                    double cenx = resultDet.datas[i].box.Left + resultDet.datas[i].box.Width / 2;
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：上止中心位置{cenx.ToString("f1")}");
+                                    upmassPoints.Add(cenx);
+                                    if (UpmassAutoCount >= 4)
                                     {
-                                        float zipperlenght = ZipperInfo.AutoData.ZipperLenght;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
-                                        zipperlenght = zipperlenght - 0.5f;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
-                                        ChangePoints(zipperlenght);
-                                    }
-                                    else
-                                    {
-                                        DownmassAutoOK++;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：在范围内{DownmassAutoOK}次");
-                                        if (DownmassAutoOK >= 2) 
+                                        double ave = upmassPoints.Average();
+                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：上止平均中心位置{ave.ToString("f1")}");
+                                        UpmassAutoCount = 0;
+                                        upmassPoints.Clear();
+                                        if (ave > cell.Image.ImageWidth - 240)
                                         {
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：调整完毕");
-                                            AutoSettingPosFinsh = true;
+                                            float zipperlenght = ZipperInfo.AutoData.ZipperLenght;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
+                                            zipperlenght = zipperlenght + 0.5f;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
+                                            ChangePoints(zipperlenght);
+
+                                        }
+                                        else if (ave < cell.Image.ImageWidth - 400)
+                                        {
+                                            float zipperlenght = ZipperInfo.AutoData.ZipperLenght;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
+                                            zipperlenght = zipperlenght - 0.5f;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
+                                            ChangePoints(zipperlenght);
+                                        }
+                                        else
+                                        {
+                                            UpmassAutoOK++;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：上止在范围内{UpmassAutoOK}次");
+                                            if (UpmassAutoOK >= 2)
+                                            {
+                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：上止位置调整完毕，进入阶段2，调下止");
+                                                onWichStage2 = 2;
+                                               // AutoSettingPosFinsh = true;
+                                            }
                                         }
                                     }
-                                }
 
+                                }
                             }
                         }
                     }
                 }
             }
+            if (onWichStage2 == 2)
+            {
+                if (cell.PhotoIndex == 1) //拉链下止
+                {
+                    if (cell.CamName == "右相机")
+                    {
+                        DetResult resultDet;
+                        resultDet = yolo_search_det.Predict(img) as DetResult;
+                        if (resultDet.datas.Count > 0)
+                        {
+                            for (int i = 0; i < resultDet.datas.Count; i++)
+                            {
+                                int nameindex = int.Parse(resultDet.datas[i].lable);
+                                string labelstr = de_search_names[nameindex];
+
+                                if (labelstr.Contains("下止"))
+                                {
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到下止");
+                                    DownmassAutoCount++;
+                                    double cenx = resultDet.datas[i].box.Left + resultDet.datas[i].box.Width / 2;
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：下止中心位置{cenx.ToString("f1")}");
+                                    downmassPoints.Add(cenx);
+                                    if (DownmassAutoCount >= 2)
+                                    {
+                                        double ave = downmassPoints.Average();
+                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：下止平均中心位置{ave.ToString("f1")}");
+                                        DownmassAutoCount = 0;
+                                        downmassPoints.Clear();
+                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：原下止触发点位为：{FirstPosTemp}");
+                                        if (ave <  200)
+                                        {
+                                            FirstPosTemp--;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：第一个点位设置为：{FirstPosTemp}");
+                                            ChangePoints2(ZipperInfo.AutoData.ZipperLenght, FirstPosTemp);
+
+                                        }
+                                        else if (ave >  360)
+                                        {
+                                            FirstPosTemp++;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：第一个点位设置为：{FirstPosTemp}");
+                                            ChangePoints2(ZipperInfo.AutoData.ZipperLenght,FirstPosTemp);
+                                        }
+                                        else
+                                        {
+                                            DownmassAutoOK++;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：下止在范围内{DownmassAutoOK}次");
+                                            if (DownmassAutoOK >= 2)
+                                            {
+                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：下止位置调节完成，结束");
+                                                AutoSettingPosFinsh = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+         
         }
 
         private void ChangePoints(float zipperlenght)
@@ -1999,6 +2066,22 @@ namespace ZipperInfo
             CZipperCommunicate.SendPhotoCount(points.Count);
             //计算拉链触发点位 ID改变位置
             CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+        }
+
+        private void ChangePoints2(float zipperlenght,float downchangevalue)
+        {
+            ZipperInfo.AutoData.ZipperLenght = zipperlenght;
+            CGetZipperTriggerPoint.GetTriggerPoints(ZipperInfo.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
+            CZipperCommunicate.SendZipperLenght(zipperlenght);
+            float firstpos = handandtalipoints[0];
+            int firstIndex = points.IndexOf(firstpos);
+            points[firstIndex] = downchangevalue;
+            //写入拍照的总图片数量
+            CZipperCommunicate.SendPhotoCount(points.Count);
+            //计算拉链触发点位 ID改变位置
+            CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+
+          
         }
 
         #endregion

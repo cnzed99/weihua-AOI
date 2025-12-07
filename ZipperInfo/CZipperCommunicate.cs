@@ -413,7 +413,7 @@ namespace ZipperInfo
                     com.WriteSingleRegisterInt32(address[k], plus);
 
                 }
-                com.WriteSingleRegisterInt32(41216, cutoffIndex); //写拉链
+                com.WriteSingleRegisterInt32(41216, cutoffIndex); //写拉链缓存数量（切断时切刀到相机位之间缓存的拉链数量）
                 com.WriteSingleRegisterInt32(41322, cahceCount); //写切刀到拉链之间缓存的拉链数量
 
 

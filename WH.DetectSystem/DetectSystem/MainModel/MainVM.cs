@@ -874,7 +874,7 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh) //自动调整拉链位置
+                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh&& IsStart) //自动调整拉链位置
                                 {
                                     ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
                                 }
