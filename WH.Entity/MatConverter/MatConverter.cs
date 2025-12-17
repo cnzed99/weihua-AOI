@@ -45,23 +45,23 @@ namespace WH.Entity.MatConverter
                 }
 
                 // 3. 颜色空间转换：OpenCV 默认 BGR，WPF 需要 RGB
-                Mat colorMat = new Mat();
-                if (convertedMat.Channels() == 3)
-                {
-                    Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.BGR2RGB);
-                }
-                else if (convertedMat.Channels() == 1)
-                {
-                  Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.GRAY2RGB);
-                }
-                else
-                {
-                    // 处理其他通道数的情况，例如转换为3通道
-                    Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.BGRA2RGB); // 假设是4通道
-                }
+                //Mat colorMat = new Mat();
+                //if (convertedMat.Channels() == 3)
+                //{
+                //    Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.BGR2RGB);
+                //}
+                //else if (convertedMat.Channels() == 1)
+                //{
+                //  Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.GRAY2RGB);
+                //}
+                //else
+                //{
+                //    // 处理其他通道数的情况，例如转换为3通道
+                //    Cv2.CvtColor(convertedMat, colorMat, ColorConversionCodes.BGRA2RGB); // 假设是4通道
+                //}
 
                 // 4. 转换为 System.Drawing.Bitmap
-                bitmap = colorMat.ToBitmap();
+                bitmap = convertedMat.ToBitmap();
 
                 // 5. 获取位图的句柄 (这是一个非托管资源)
                 hBitmap = bitmap.GetHbitmap();

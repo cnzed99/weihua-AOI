@@ -291,7 +291,7 @@ namespace WH.DetectSystem.Models
                     SaveOtherOldImage(cell);
                 }
                 MergeCells.Clear();
-              //  ZipperCommunicate.Idlist.Clear();
+                //  ZipperCommunicate.Idlist.Clear();
                 UpdatDetSet();
                 UpdatWhiteZipperParam(); //白色拉链加严处理
                 if (this.Name == "正面")
@@ -302,7 +302,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
-                       // UpdatepullSegArea("左相机"); //不好用
+                        UpdatepullSegArea("左相机"); //不好用
 
                     }
                     else
@@ -311,7 +311,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
-                       // UpdatepullSegArea("右相机");
+                        UpdatepullSegArea("右相机");
                     }
                 }
                 else
@@ -322,7 +322,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("右相机");
                         Updatepull("右相机");
-                       // UpdatepullSegArea("右相机");
+                        UpdatepullSegArea("右相机");
                     }
                     else
                     {
@@ -330,7 +330,7 @@ namespace WH.DetectSystem.Models
                         UpdateCam(camDic.SerialNumber);
                         UpdateLogo("左相机");
                         Updatepull("左相机");
-                      //  UpdatepullSegArea("左相机");
+                        UpdatepullSegArea("左相机");
                     }
                 }
             }
@@ -436,11 +436,11 @@ namespace WH.DetectSystem.Models
             get => isStart;
             set
             {
-                if (this.IsManualTest)
-                {
-                    Growl.Warning("请退出设置或离线手动模式！");
-                    return;
-                }
+                //if (this.IsManualTest)
+                //{
+                //    Growl.Warning("请退出设置或离线手动模式！");
+                //    return;
+                //}
                 SetProperty(ref isStart, value);
                 //if (value)
                 //{
@@ -659,6 +659,7 @@ namespace WH.DetectSystem.Models
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+
                             //if (zipperID.ProductID != -1)
                             //{
                             //    if (pullID != 100) //是拉头以外的图片
@@ -713,7 +714,7 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -751,107 +752,6 @@ namespace WH.DetectSystem.Models
                 }
             });
 
-            //Task waitGetImageTask = Task.Run(async () =>
-            //{
-            //    Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-
-            //    await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
-            //    {
-            //        try
-            //        {
-            //            if (IsStart && !isAutomaticTest) // 自动运行模式
-            //            {
-            //                CZipperCommunicate.GetID(out int productID);
-
-            //                // 关键修改点1：使用 WaitToReadAsync 进行异步等待
-            //                // 等待 m_WaitIDChannel 中有数据可用
-            //                while (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
-            //                {
-            //                    // 关键修改点2：尝试读取一条数据。如果成功读取，则跳出等待循环。
-            //                    if (ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID))
-            //                    {
-            //                        // 检查读取到的 zipperID 是否有效
-            //                        bool bnext = zipperID.ProductID < productID;
-            //                        while (bnext && zipperID.ProductID > 0 && productID > 0)
-            //                        {
-            //                            // 关键修改点3：继续异步等待并读取下一个ID，直到找到符合条件的ID
-            //                            if (await ZipperCommunicate.m_WaitIDChannel.Reader.WaitToReadAsync().ConfigureAwait(false))
-            //                            {
-            //                                if (!ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID))
-            //                                {
-            //                                    break; // 读取失败，退出内层循环
-            //                                }
-            //                                bnext = zipperID.ProductID < productID;
-            //                                if (bnext)
-            //                                {
-            //                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-            //                                }
-            //                            }
-            //                            else
-            //                            {
-            //                                break; // 通道已关闭，退出内层循环
-            //                            }
-            //                        }
-
-            //                        // 后续处理逻辑（您的日志记录、参数赋值等）
-            //                        SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-            //                        int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-            //                        cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
-            //                        cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-
-            //                        cell.ID = zipperID.ProductID.ToString();
-            //                        cell.PhotoIndex = zipperID.PhotoID;
-            //                        cell.PhotoTatolCount = photoTotalCount + 1;
-
-            //                        // 重要：处理完一个有效的 zipperID 后，跳出外层的 WaitToReadAsync 循环
-            //                        break;
-            //                    }
-            //                    // 如果 TryRead 失败，WaitToReadAsync 循环会继续，等待下一条数据
-            //                }
-            //                // 注意：如果通道被关闭（Complete()被调用）且无数据，则会退出循环。
-            //                // 您可能需要根据业务逻辑处理通道关闭的情况。
-            //            }
-            //            else
-            //            {
-            //                // ... 您原有的手动调试模式代码保持不变 ...
-            //                if (cell.ImageFile == "")
-            //                {
-            //                    cell.ID = (MaociDefectsProduce.Total + 1).ToString();
-            //                    cell.PhotoIndex = 1;
-            //                    cell.PhotoTatolCount = 1;
-            //                }
-            //            }
-
-            //            cell.ProjName = Name;
-            //            cell.ProjGuid = GUID;
-
-            //            if (IsStart || IsManualTest || isAutomaticTest)
-            //            {
-            //                if (!m_AlgorithmChannel.Writer.TryWrite(cell))
-            //                {
-            //                    cell.Dispose();
-            //                }
-            //            }
-            //            else
-            //            {
-            //                // ... 您原有的非检测模式下的显示代码 ...
-            //                BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-            //                _ = CMainModelsModelVM.Dispatcher?.BeginInvoke(new Action(() =>
-            //                {
-            //                    ModelImage = bitmapSource;
-            //                }));
-            //            }
-            //        }
-            //        catch (Exception ex) // 建议捕获具体异常，这里使用 ex 以记录日志
-            //        {
-            //            // 改进：记录异常信息，而不仅仅是固定消息
-            //            await m_InfoChannel.Writer.WriteAsync(new PrintMsg($"取图出错：{ex.Message}", LOG.LOG_ERROR));
-            //            // 考虑是否需要 Dispose cell？
-            //            cell?.Dispose();
-            //        }
-            //    }
-            //});
-
             #endregion 取图线程
 
             #region PC算法执行线程
@@ -874,7 +774,7 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh&& IsStart) //自动调整拉链位置
+                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
                                 {
                                     ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
                                 }
@@ -1274,7 +1174,7 @@ namespace WH.DetectSystem.Models
                                             {
                                                 if (cell.Detection.Value.Count > 0)
                                                 {
-                                                    textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
+                                                    textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f2")}");
                                                 }
                                                 else
                                                 {
@@ -2011,7 +1911,8 @@ namespace WH.DetectSystem.Models
         {
             if (leftorright == "左相机")
             {
-                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+               // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
                 foreach (var pullname in pullnames.RecipeDefects)
                 {
                     if (pullname.Name == "拉头")
@@ -2039,7 +1940,8 @@ namespace WH.DetectSystem.Models
             }
             else
             {
-                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
                 foreach (var pullname in pullnames.RecipeDefects)
                 {
                     if (pullname.Name == "拉头")
@@ -2087,7 +1989,7 @@ namespace WH.DetectSystem.Models
                                     foreach (var pa in se.SelectParams)
                                     {
                                         double minrang = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
-                                        if (minrang<1)
+                                        if (minrang < 1)
                                         {
                                             minrang = 1;
                                         }
@@ -2118,8 +2020,8 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-           
-            
+
+
         }
 
         /// <summary>
@@ -2134,13 +2036,15 @@ namespace WH.DetectSystem.Models
                 {
                     foreach (var logoname in logonames.RecipeDefects)
                     {
-                        foreach (var df in logoname.DefectFilters)
+                        if (!logoname.Name.Contains("拉"))
                         {
-
-                            foreach (var fl in df.FilterList)
+                            foreach (var df in logoname.DefectFilters)
                             {
-                                fl.FilterSelectEnable = true;
-                                fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                                foreach (var fl in df.FilterList)
+                                {
+                                    fl.FilterSelectEnable = true;
+                                    fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                                }
                             }
                         }
                     }
@@ -2149,33 +2053,41 @@ namespace WH.DetectSystem.Models
                 {
                     foreach (var logoname in logonames.RecipeDefects)
                     {
-                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
+                        if (!logoname.Name.Contains("拉"))
                         {
-                            foreach (var df in logoname.DefectFilters)
+                            if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                             {
-                                foreach (var fl in df.FilterList)
+                                foreach (var df in logoname.DefectFilters)
                                 {
-                                    fl.FilterSelectEnable = true;
-                                    if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+
+                                    foreach (var fl in df.FilterList)
                                     {
-                                        fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
-                                    }
-                                    else
-                                    {
-                                        fl.IsReversal = true;
+                                        fl.FilterSelectEnable = true;
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+                                        {
+                                            fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
+                                        }
+                                        else
+                                        {
+                                            fl.IsReversal = true;
+                                        }
+
                                     }
 
+
                                 }
+
                             }
-                        }
-                        else
-                        {
-                            foreach (var df in logoname.DefectFilters)
+                            else
                             {
-                                foreach (var fl in df.FilterList)
+                                foreach (var df in logoname.DefectFilters)
                                 {
-                                    fl.FilterSelectEnable = true;
-                                    fl.IsReversal = false; //
+
+                                    foreach (var fl in df.FilterList)
+                                    {
+                                        fl.FilterSelectEnable = true;
+                                        fl.IsReversal = false; //
+                                    }
                                 }
                             }
                         }
@@ -2187,15 +2099,18 @@ namespace WH.DetectSystem.Models
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
                 if ("无LOGO" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                 {
+
                     foreach (var logoname in logonames.RecipeDefects)
                     {
-                        foreach (var df in logoname.DefectFilters)
+                        if (!logoname.Name.Contains("拉"))
                         {
-
-                            foreach (var fl in df.FilterList)
+                            foreach (var df in logoname.DefectFilters)
                             {
-                                fl.FilterSelectEnable = true;
-                                fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                                foreach (var fl in df.FilterList)
+                                {
+                                    fl.FilterSelectEnable = true;
+                                    fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                                }
                             }
                         }
                     }
@@ -2204,35 +2119,38 @@ namespace WH.DetectSystem.Models
                 {
                     foreach (var logoname in logonames.RecipeDefects)
                     {
-                        if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
+                        if (!logoname.Name.Contains("拉"))
                         {
-                            foreach (var df in logoname.DefectFilters)
+                            if (logoname.Name == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                             {
-                                foreach (var fl in df.FilterList)
+                                foreach (var df in logoname.DefectFilters)
                                 {
-
-                                    if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+                                    foreach (var fl in df.FilterList)
                                     {
-                                        fl.FilterSelectEnable = true;
-                                        fl.IsReversal = true;//
-                                    }
-                                    else
-                                    {
-                                        fl.FilterSelectEnable = false;
-                                        fl.IsReversal = false;//
-                                    }
 
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider == 3)
+                                        {
+                                            fl.FilterSelectEnable = true;
+                                            fl.IsReversal = true;//
+                                        }
+                                        else
+                                        {
+                                            fl.FilterSelectEnable = false;
+                                            fl.IsReversal = false;//
+                                        }
+
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            foreach (var df in logoname.DefectFilters)
+                            else
                             {
-                                foreach (var fl in df.FilterList)
+                                foreach (var df in logoname.DefectFilters)
                                 {
-                                    fl.FilterSelectEnable = true;
-                                    fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
+                                    foreach (var fl in df.FilterList)
+                                    {
+                                        fl.FilterSelectEnable = true;
+                                        fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
+                                    }
                                 }
                             }
                         }

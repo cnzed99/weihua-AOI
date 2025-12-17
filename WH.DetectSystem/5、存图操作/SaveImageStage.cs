@@ -15,6 +15,7 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using Path = System.IO.Path;
 using WH.Entity.MatConverter;
+using System.Windows.Shapes;
 
 namespace WH.DetectSystem._5_存图操作
 {
@@ -134,8 +135,9 @@ namespace WH.DetectSystem._5_存图操作
                     for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                     {
                         int index = fourCutPath.IndexOf('.');
-                        string fourpath = fourCutPath.Insert(index, $"_{i}");                 
-                        SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
+                        string fourpath = fourCutPath.Insert(index, $"_{i}");
+                        // SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
+                        OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i]);
                     }
                 }
                 if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
@@ -144,17 +146,20 @@ namespace WH.DetectSystem._5_存图操作
                     {
                         int index = upMassPath.IndexOf('.');
                         string uppath = upMassPath.Insert(index, $"_{i}");
-                        SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
+                        // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
+                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
                     }
                 }
                 if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
                 {
-                    SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
+                    // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
+                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
                 }
                 if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
                 {
                     // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
-                    SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
+                    // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
+                    OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
                 }
 
                 if (saveImageConfig.SaveImageEnable) //开启存原图
@@ -310,7 +315,7 @@ namespace WH.DetectSystem._5_存图操作
                 {
                     if (cell.Detection.Value.Count > 0)
                     {
-                        textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f1")}");
+                        textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f2")}");
                     }
                     else
                     {

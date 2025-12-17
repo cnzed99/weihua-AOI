@@ -127,6 +127,12 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
 
+                    <ListBox.ContextMenu>
+                        <ContextMenu Width="120">
+                            <MenuItem Header="保存图片" Command="{Binding SaveNGImgaesCommand}"/>
+                        </ContextMenu>
+                   
+                    </ListBox.ContextMenu>
                 </ListBox>
             </Border>
         </Grid>

@@ -51,9 +51,19 @@ namespace ZipperTestAlgorihm
         IVisionModel yolo_UpStopMassMeas_obb;
 
         /// <summary>
-        /// 拉头检测对象
+        /// 金属拉头检测对象
         /// </summary>
-        IVisionModel yolo_pull_det;
+        IVisionModel yolo_Meta_pull_det;
+
+        /// <summary>
+        /// 烤漆拉头检测对象
+        /// </summary>
+        IVisionModel yolo_Paint_pull_det;
+
+        /// <summary>
+        /// Logo检测对象
+        /// </summary>
+        IVisionModel yolo_Logo_pull_det;
 
         /// <summary>
         /// 拉头查找对象
@@ -113,9 +123,19 @@ namespace ZipperTestAlgorihm
         private string pull_Search_Model_Path;
 
         /// <summary>
-        /// 拉头模型路径
+        /// 金属拉头模型路径
         /// </summary>
-        private string pull_Model_Path;
+        private string pull_Meta_Model_Path;
+
+        /// <summary>
+        /// 烤漆拉头模型路径
+        /// </summary>
+        private string pull_Paint_Model_Path;
+
+        /// <summary>
+        /// Logo模型路径
+        /// </summary>
+        private string pull_Logo_Model_Path;
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
@@ -148,8 +168,13 @@ namespace ZipperTestAlgorihm
         //拉头匹配对对象名称
         protected string[] pull_Search_names;
 
-        //拉头匹配对对象名称
-        protected string[] pull_names;
+        //金属拉头匹配对对象名称
+        protected string[] pull_Meta_names;
+
+        //烤漆拉头匹配对对象名称
+        protected string[] pull_Paint_names;
+        //Logo匹配对对象名称
+        protected string[] pull_Logo_names;
 
         //拉头拉片缺陷名称
         protected string[] bigDet_names;
@@ -225,7 +250,7 @@ namespace ZipperTestAlgorihm
                 #region 上止
                 if (upStopMassDefe_names?.Length > 0)
                 {
-                   //string[] upstrs = upStopMassDefe_names.Where(s => s != "注塑正面上止" && s != "链齿").ToArray();
+                    //string[] upstrs = upStopMassDefe_names.Where(s => s != "注塑正面上止" && s != "链齿").ToArray();
                     for (int i = 0; i < upStopMassDefe_names.Length; i++)
                     {
                         CDefectRecipe defectRecipe = new CDefectRecipe(upStopMassDefe_names[i], Category.区域);
@@ -234,7 +259,6 @@ namespace ZipperTestAlgorihm
                 }
 
                 #endregion
-
                 #region 下止
                 if (downStopMass_names?.Length > 0)
                 {
@@ -251,33 +275,36 @@ namespace ZipperTestAlgorihm
                 #endregion
 
                 #region 拉头 拉片 LOGO 拉片外形
+
                 //int sbsindex = pull_names.ToList().IndexOf("SBS");
                 //string[] pullstrs = pull_names.Take(sbsindex).ToArray();
                 //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
 
-                string[] pullstrs = pull_names.Where(s => s.Contains("拉")).ToArray();
-                string[] logostrs = pull_names.Where(s => !s.Contains("拉")).ToArray();
+               // string[] pullstrs = pull_Meta_names.Where(s => s.Contains("拉")).ToArray();
+         
 
                 List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
-                for (int i = 0; i < pullstrs.Length; i++)
+                for (int i = 0; i < pull_Meta_names.Length; i++)
                 {
-                    CDefectRecipe defectRecipe = new CDefectRecipe(pullstrs[i], Category.区域);
+                    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Meta_names[i], Category.区域);
+                    pullRecipes.Add(defectRecipe);
+                }
+                for (int i = 0; i < pull_Paint_names.Length; i++)
+                {
+                    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Paint_names[i], Category.区域);
                     pullRecipes.Add(defectRecipe);
                 }
                 for (int i = 0; i < pullSharp_names.Length; i++)
                 {
                     CDefectRecipe defectRecipe2 = new CDefectRecipe(pullSharp_names[i], Category.值);
-                    // CDefectRecipe defectRecipe3 = new CDefectRecipe("拉片面积", Category.值);
                     pullRecipes.Add(defectRecipe2);
-                    // pullRecipes.Add(defectRecipe3);
                 }
-
                 CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
 
                 List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
-                for (int i = 0; i < logostrs.Length; i++)
+                for (int i = 0; i < pull_Logo_names.Length; i++)
                 {
-                    CDefectRecipe defectRecipe = new CDefectRecipe(logostrs[i], Category.区域);
+                    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Logo_names[i], Category.区域);
                     logoRecipes.Add(defectRecipe);
                 }
                 CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
@@ -356,12 +383,28 @@ namespace ZipperTestAlgorihm
                 pull_Search_names = pullsearchtrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
-            string pullModel = modelDirpath + "Pull\\PullModel\\";
-            var pulltrs = GetNames(pullModel);
-            if (pulltrs.Item1 != "")
+            string pullMetaModel = modelDirpath + "Pull\\PullMetaModel\\";
+            var metapulltrs = GetNames(pullMetaModel);
+            if (metapulltrs.Item1 != "")
             {
-                pull_Model_Path = pulltrs.Item1;
-                pull_names = pulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                pull_Meta_Model_Path = metapulltrs.Item1;
+                pull_Meta_names = metapulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
+
+            string pullPaintModel = modelDirpath + "Pull\\PullPaintModel\\";
+            var paintpulltrs = GetNames(pullPaintModel);
+            if (paintpulltrs.Item1 != "")
+            {
+                pull_Paint_Model_Path = paintpulltrs.Item1;
+                pull_Paint_names = paintpulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
+
+            string pullLogoModel = modelDirpath + "Pull\\PullLogoModel\\";
+            var logopulltrs = GetNames(pullLogoModel);
+            if (logopulltrs.Item1 != "")
+            {
+                pull_Logo_Model_Path = logopulltrs.Item1;
+                pull_Logo_names = logopulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
             string pullSegModelpath = modelDirpath + "Pull\\PullSegModel\\";
@@ -425,19 +468,20 @@ namespace ZipperTestAlgorihm
                 }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转前.png", matimg);
                 Mat img;
-                if (cell.ImageFile != "")
+                if (cell.ImageFile == "")  //相机图 在线检测
                 {
-                   // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "离线读图转前.png", matimg);
+                    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "离线读图转前.png", matimg);
                     Mat colorMat = new Mat();
                     Cv2.CvtColor(matimg, colorMat, ColorConversionCodes.BGR2RGB);
                     img = colorMat;
-                    //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "离线兔兔转后.png", img);
+                    //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "离线兔兔转后.png", img);
                     matimg.Dispose();
+
                 }
-                else
+                else //离线图 离线检测
                 {
                     img = matimg;
-                   // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
+                    // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
@@ -593,7 +637,7 @@ namespace ZipperTestAlgorihm
                                             {
                                                 for (int b = 0; b < luyaIndex.Count; b++)
                                                 {
-                                                    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[b]);
+                                                    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
                                                     dets.Add(disData);
                                                 }
                                             }
@@ -748,7 +792,7 @@ namespace ZipperTestAlgorihm
                                         {
                                             dets.AddRange(updets);
                                         }
-                                    }                                   
+                                    }
                                 }
                                 else
                                 {
@@ -766,14 +810,14 @@ namespace ZipperTestAlgorihm
                             {
                                 if (massPoints.Count == 2)
                                 {
-                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); 
+                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X);
                                     CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
                                     dets.Add(disData);
                                     massPoints.Clear();
                                 }
                                 else
                                 {
-                                    float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X); 
+                                    float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X);
                                     CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
                                     dets.Add(disData);
                                     massPoints.Clear();
@@ -827,18 +871,52 @@ namespace ZipperTestAlgorihm
 
                                 Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
                                 cell.ZipperPullPartImg = croppullMat;
-                                //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);
-                                DetResult pullResult = ImageInferDet(yolo_pull_det, croppullMat);
-                                if (pullResult != null)
+                                #region Logo识别
+                                DetResult logoResult = ImageInferDet(yolo_Logo_pull_det, croppullMat);
+                                if (logoResult != null)
                                 {
-                                    for (int i = 0; i < pullResult.count; i++)
+                                    for (int i = 0; i < logoResult.count; i++)
                                     {
-                                        int pulllabelindex = int.Parse(pullResult[i].lable);
-                                        string pullabelname = pull_names[pulllabelindex];
-                                        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, pullResult.datas[i], 1);
+                                        int pulllabelindex = int.Parse(logoResult[i].lable);
+                                        string pullabelname = pull_Logo_names[pulllabelindex];
+                                        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, logoResult.datas[i], 1);
                                         dets.Add(restoreData);
                                     }
                                 }
+                                #endregion
+                                #region 金属 烤漆拉头
+                                if (cell.PullMaterlsType == "烤漆")
+                                {
+                                    //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);                        
+                                    DetResult paintpullResult = ImageInferDet(yolo_Paint_pull_det, croppullMat);
+                                    if (paintpullResult != null)
+                                    {
+                                        for (int i = 0; i < paintpullResult.count; i++)
+                                        {
+                                            int pulllabelindex = int.Parse(paintpullResult[i].lable);
+                                            string pullabelname = pull_Paint_names[pulllabelindex];
+                                            CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, paintpullResult.datas[i], 1);
+                                            dets.Add(restoreData);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    DetResult metapullResult = ImageInferDet(yolo_Meta_pull_det, croppullMat);
+                                    if (metapullResult != null)
+                                    {
+                                        for (int i = 0; i < metapullResult.count; i++)
+                                        {
+                                            int pulllabelindex = int.Parse(metapullResult[i].lable);
+                                            string pullabelname = pull_Meta_names[pulllabelindex];
+                                            CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, metapullResult.datas[i], 1);
+                                            dets.Add(restoreData);
+                                        }
+                                    }
+                                }
+                       
+                                #endregion
+                                #region 拉片外形
                                 double allperimeter = 0; //周长总长
                                 double allarea = 0; //总面积
                                 List<List<Point>> allcontourpoints = new List<List<Point>>();
@@ -848,14 +926,18 @@ namespace ZipperTestAlgorihm
 
                                     if (pullsegResult == null) return;
 
-                                    foreach (var seg in pullsegResult.datas)
+                                    //foreach (var seg in pullsegResult.datas)
+                                    //{
+                                    if (pullsegResult.datas.Count > 0)
                                     {
-                                        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                                       // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", pullsegResult.datas[0].mask);
                                         Mat maskgray = new Mat();
-                                        Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+
+                                        Cv2.CvtColor(pullsegResult.datas[0].mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                                        // Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
                                         Mat binary = new Mat();
                                         Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
-
+                                       //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "阈值后.png", binary);
                                         Point[][] contours;
                                         HierarchyIndex[] hierarchy;
                                         Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
@@ -875,11 +957,13 @@ namespace ZipperTestAlgorihm
                                         binary.Dispose();
                                         //Cv2.AddWeighted(croppullMat, 0.5, seg.mask, 0.5, 0.0, maskmat);
                                         // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "Gray.png", cor);
+                                        CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)allarea, allcontourpoints, 1);
+                                        dets.Add(restoreData);
                                     }
-                                    CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)allarea, allcontourpoints, 1);
-                                    dets.Add(restoreData);
+                                    // }
 
                                 }
+                                #endregion
                             }
                         }
                     }
@@ -941,7 +1025,7 @@ namespace ZipperTestAlgorihm
             updets.Add(restoreData);
             Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
             cell.UpMassMatImg.Add(cropUpMat);
-       
+
             DetResult otherdet = ImageInferDet(yolo_UpStopMassDefe_det, cropUpMat);
             if (otherdet != null)
             {
@@ -954,7 +1038,7 @@ namespace ZipperTestAlgorihm
                         CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, otherstr, otherdet[k]);
                         updets.Add(disData);
                     }
-                   
+
 
                     //List<ObbData> otherdet = upResult.datas.Where(s => s.lable != upmassIndexstr && s.lable != lianciIndexstr).ToList();
 
@@ -966,7 +1050,7 @@ namespace ZipperTestAlgorihm
             }
 
             ObbResult upmeasobbResult = ImageInferObb(yolo_UpStopMassMeas_obb, cropUpMat);
-            if (upmeasobbResult!=null&& upmeasobbResult.datas.Count>0)
+            if (upmeasobbResult != null && upmeasobbResult.datas.Count > 0)
             {
                 List<int> luyaIndex = new List<int>();
                 string upmassIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("正面上止")).ToString();
@@ -1141,7 +1225,9 @@ namespace ZipperTestAlgorihm
                     }
 
                     int pull_search_num = pull_Search_names.Length;
-                    int pull_num = pull_names.Length;
+                    int metapull_num = pull_Meta_names.Length;
+                    int paintpull_num = pull_Paint_names.Length;
+                    int logopull_num = pull_Logo_names.Length;
                     int big_num = bigDet_names.Length;
                     int pullsharp_num = pullSharp_names.Length;
                     float Score = param.CommonScore;
@@ -1175,20 +1261,20 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
 
                     //Task task5 = Task.Run(() =>
                     //{
-                        if (downmass_num > 0)
-                        {
-                            yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
-    CurrentDevice, downmass_num, param.DownScore, Nms, 256);
-                        }
-                  //  });
+                    if (downmass_num > 0)
+                    {
+                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
+CurrentDevice, downmass_num, param.DownScore, Nms, 256);
+                    }
+                    //  });
 
                     //Task task6 = Task.Run(() =>
                     //{
-                        if (upmass_num > 0)
-                        {
+                    if (upmass_num > 0)
+                    {
                         yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, EngineType.TensorRT,
     CurrentDevice, upmass_num, param.UpScore, Nms, 192);
-                        }
+                    }
                     //  });
 
                     if (upmassmeas_num > 0)
@@ -1201,24 +1287,30 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //{
                     yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
 CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
-                   // });
+                    // });
 
-                   // Task task8 = Task.Run(() =>
-                   // {
-                        yolo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Model_Path, EngineType.TensorRT,
-CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
+                    // Task task8 = Task.Run(() =>
+                    // {
+                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, EngineType.TensorRT,
+CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
                     //});
+
+                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, EngineType.TensorRT,
+CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
+
+                    yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, EngineType.TensorRT,
+CurrentDevice, logopull_num, param.LogoPullScore, 0.8f,640);
 
                     //Task task9 = Task.Run(() =>
                     //{
-                        yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
-    CurrentDevice, big_num, param.BigScore, Nms, 480);
+                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
+CurrentDevice, big_num, param.BigScore, Nms, 480);
                     //});
-                   // Task task10 = Task.Run(() =>
-                   // {
-                        yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, EngineType.TensorRT,
-    CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
-                   // });
+                    // Task task10 = Task.Run(() =>
+                    // {
+                    yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, EngineType.TensorRT,
+CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
+                    // });
 
                     // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
 
@@ -1471,7 +1563,10 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
                 yolo_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
             }
             //yolo_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
-            yolo_pull_det.UpdateNMS_Score(0.8f, param.PullScore);
+            yolo_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
+            yolo_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
+           // yolo_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
+
             yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
             yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
             yolo_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
@@ -1558,9 +1653,9 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("6.0拉头分数阈值")]
-        [property: Description("拉头分数阈值")]
-        private float pullScore = 0.4f;
+        [property: DisplayName("6.0金属拉头分数阈值")]
+        [property: Description("金属拉头分数阈值")]
+        private float metaPullScore = 0.4f;
 
         /// <summary>
         /// 2024.7.21 鲍赞宝
@@ -1568,7 +1663,27 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("7.0大缺陷分数阈值")]
+        [property: DisplayName("7.0金属拉头分数阈值")]
+        [property: Description("金属拉头分数阈值")]
+        private float paintPullScore = 0.4f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("8.0Logo分数阈值")]
+        [property: Description("Logo分数阈值")]
+        private float logoPullScore = 0.4f;
+
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("9.0大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 
@@ -1578,7 +1693,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("8.0自动识别分数阈值")]
+        [property: DisplayName("10.0自动识别分数阈值")]
         [property: Description("自动识别分数阈值")]
         private float autoScore = 0.45f;
 
@@ -1588,7 +1703,7 @@ CurrentDevice, pull_num, param.PullScore, 0.8f, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("9.0拉片分割分数阈值")]
+        [property: DisplayName("11.0拉片分割分数阈值")]
         [property: Description("拉片分割分数阈值")]
         private float pullSharpScore = 0.5f;
 

@@ -72,11 +72,11 @@ namespace HistoryPlayback
                 switch (SelectClassify)
                 {
                     case 0:
-                        if (selectNgok == 0)
+                        if (SelectNgok == 0)
                         {
                             return HistoryModel.NgImagePaths;
                         }
-                        else  { return HistoryModel.OkImagePaths; }
+                        else { return HistoryModel.OkImagePaths; }
 
                     case 1:
                         if (SelectedDefect is null)
@@ -222,6 +222,73 @@ namespace HistoryPlayback
                 Growl.Error("解析图片信息异常：" + ex.Message);
             }
 
+        }
+        [RelayCommand]
+        void SaveNGImgaes()
+        {
+            try
+            {
+                if (SelectedItem != null)
+                {
+                    //"E:\\WH-Image\\正面\\2025年12月7日-晚班\\NG\\623972\\Jpg\\623972_3_0_NG_上止少料_143.jpg"
+                    string[] dirspilt = SelectedItem.Split("Jpg");
+                    string dirpath = dirspilt[0];
+                    string[] pathsplit = dirpath.Split("\\");
+                    if (pathsplit.Length > 1)
+                    {
+                        string dirname = "漏检";
+                        if (SelectNgok == 0)
+                        {
+                            dirname = "过检";
+                        }
+                        List<string> strs = pathsplit.ToList();
+                        strs.Insert(2, dirname);
+
+                        string newPath= string.Join("\\", strs);
+
+                        CopyDirectoryWithRoot(dirpath, newPath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+
+
+        public void CopyDirectoryWithRoot(string sourceDir, string destinationDir)
+        {
+            try
+            {
+                string folderName = Path.GetFileName(sourceDir);
+                string destPath = Path.Combine(destinationDir, folderName);
+
+                // 确保目标路径存在
+                Directory.CreateDirectory(destPath);
+
+                // 复制所有文件
+                string[] files = Directory.GetFiles(sourceDir);
+                foreach (string file in files)
+                {
+                    string name = Path.GetFileName(file);
+                    string dest = Path.Combine(destPath, name);
+                    File.Copy(file, dest, true); // 覆盖已存在文件
+                }
+
+                // 递归复制子目录
+                string[] dirs = Directory.GetDirectories(sourceDir);
+                foreach (string dir in dirs)
+                {
+                    string dirName = Path.GetFileName(dir);
+                    string newDest = Path.Combine(destPath, dirName);
+                    CopyDirectoryWithRoot(dir, destinationDir); // 注意此处参数
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"复制过程中出错: {ex.Message}");
+            }
         }
 
         private void Receive(CFilterConfig filter)

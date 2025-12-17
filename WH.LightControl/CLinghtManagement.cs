@@ -90,7 +90,7 @@ namespace WH.LightControl
                     }
                 }
 
-                SaveLightParams();
+               // SaveLightParams();
             }
             catch (Exception ex)
             {

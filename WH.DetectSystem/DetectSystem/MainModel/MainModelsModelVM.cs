@@ -538,6 +538,8 @@ namespace WH.DetectSystem.ViewModels
         {
             if (string.IsNullOrEmpty(ProjPath))
                 return;
+            if (CMainMModel.CProcessGroups.Count == 0)
+                return;
             SystemSettings.RecentProjs.Remove(ProjPath);
             SystemSettings.RecentProjs.Insert(0, ProjPath);
             ConfigAPI.Save(CMainMModel, ProjPath);

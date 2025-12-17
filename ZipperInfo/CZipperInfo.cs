@@ -56,6 +56,7 @@ namespace ZipperInfo
                     CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount,out _);
                     ZipperTriggerPos = points;
                     HandAndTaliPos = handandtalipoints;
+                    CGetZipperTriggerPoint.CheckPullPos(points);
                     CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
                     //写入拍照的总图片数量
                     CZipperCommunicate.SendPhotoCount(points.Count);
@@ -131,7 +132,7 @@ namespace ZipperInfo
         public int CutoffIndex { get; set; }
 
         /// <summary>
-        /// 拉链触发的点累属于哪一类
+        /// 拉链触发的点位属于哪一类
         /// </summary>
         public int TriggerType { get; set; }
 
@@ -206,6 +207,14 @@ namespace ZipperInfo
         /// 拉片分割出来的标准面积
         /// </summary>
         public double PullSegOrgArea {  get; set; }
+        /// <summary>
+        /// 拉头的材质类型
+        /// </summary>
+        public PULLMATERIALSTYPE PullMaterlsType { get; set; }
+        /// <summary>
+        /// 拉片外形轮廓
+        /// </summary>
+        public OpenCvSharp.Point[][] OrgContours {  get; set; } 
 
     }
 
@@ -245,5 +254,11 @@ namespace ZipperInfo
     //    JAKO,
     //    ONLY
     //}
+
+    public enum PULLMATERIALSTYPE
+    {
+        烤漆=0,
+        金属=1
+    }
 
 }

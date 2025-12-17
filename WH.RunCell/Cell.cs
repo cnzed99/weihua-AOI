@@ -116,6 +116,10 @@ namespace WH.RunCell
         /// 拉头识别框的中心Y
         /// </summary>
         public int ZipperPullerCY { get; set; }
+        /// <summary>
+        /// 拉头的材质类型
+        /// </summary>
+        public string PullMaterlsType {  get; set; }
 
         /// <summary>
         /// 接收信息字典

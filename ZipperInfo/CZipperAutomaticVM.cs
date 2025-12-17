@@ -46,7 +46,22 @@ namespace ZipperInfo
             }
             if (handandtalipoints.Count>1)
             {
-                CZipperAutomaticAlgorithm.FirstPosTemp = handandtalipoints[0];
+                if (triggerType == 3)
+                {
+
+                    int firstIndex = points.IndexOf(handandtalipoints[0]);
+                    int endposIndex = firstIndex - 1;
+                    if (endposIndex >= 0)
+                    {
+                        CZipperAutomaticAlgorithm.EndPosTemp = points[endposIndex];
+                    }
+                }
+                else
+                { 
+                     CZipperAutomaticAlgorithm.EndPosTemp =points.Last();
+                }
+
+               
                stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
             }
             stringBuilder.Append($",切断时已经拍了{cutoffIndex}张照片");

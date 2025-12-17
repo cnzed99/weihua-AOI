@@ -10,7 +10,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:keyboard="clr-namespace:KeyBoard.WPF.Behavior;assembly=KeyBoard.WPF"
              d:DataContext="{d:DesignInstance Type=local:ZipperInfoVM}"
-            d:DesignHeight="350" d:DesignWidth="200" >
+            d:DesignHeight="380" d:DesignWidth="200" >
 
     <UserControl.Resources>
         <ObjectDataProvider x:Key="ToothTypeProvider" 
@@ -37,19 +37,27 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
-        <ObjectDataProvider x:Key="LogoTypeProvider" 
+        <ObjectDataProvider x:Key="PullMaterlsTypeProvider" 
+                        MethodName="GetValues" 
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:PULLMATERIALSTYPE"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <!--<ObjectDataProvider x:Key="LogoTypeProvider" 
                        MethodName="GetValues" 
                        ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="local:LOGOTYPE"/>
             </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        </ObjectDataProvider>-->
         <Style BasedOn="{StaticResource ToggleButtonSwitch}" TargetType="ToggleButton" />
     </UserControl.Resources>
 
 
 
-        <UniformGrid Grid.Row="0"  Rows="7" Columns="2">
+        <UniformGrid Grid.Row="0"  Rows="8" Columns="2">
             <TextBlock Margin="15,0,0,0" Text="拉链长度(cm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
             <hc:NumericUpDown Value="{Binding ZipperInfo.ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}" 
                  Margin="5" DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000" FontSize="24">
@@ -78,7 +86,11 @@
             <hc:ComboBox  Margin="5"  SelectedItem="{Binding ZipperInfo.ZipperLogoType }"
                    ItemsSource="{Binding ZipperInfo.LogoTypeStrs}" FontSize="24"/>
 
-            <TextBlock   Margin="15,0,0,0" Text="白色拉链" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <TextBlock   Margin="15,0,0,0" Text="拉头类型" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox  Margin="5" SelectedItem="{Binding ZipperInfo.PullMaterlsType }"
+           ItemsSource="{Binding Source={StaticResource  PullMaterlsTypeProvider}}" FontSize="24"/>
+
+        <TextBlock   Margin="15,0,0,0" Text="白色拉链" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
             <ToggleButton Margin="15,0,0,0" HorizontalAlignment="Left" Background="Gray" IsChecked="{Binding ZipperInfo.WhiteZippers}" />
         </UniformGrid>
 

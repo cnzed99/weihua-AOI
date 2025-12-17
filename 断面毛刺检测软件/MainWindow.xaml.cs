@@ -257,13 +257,13 @@ namespace 断面毛刺检测软件
                 CCameraManagement.SaveAllCamConfig();
                 CCommunicationManagement.CloseAllComm();
                 CCameraManagement.CloseAllCameras();
-               // CMotionManagement.SaveMotionConfig();
+                // CMotionManagement.SaveMotionConfig();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Application.Current.Shutdown();
             }
             catch (Exception)
             {
-               // Console.WriteLine(exception);
+                // Console.WriteLine(exception);
                 //CLogRec.Error(exception.Message);
             }
             finally
@@ -466,9 +466,10 @@ namespace 断面毛刺检测软件
                 if (CMainList.CMainMModel.CProcessGroups.Count > 0 && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0)
                 {
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
-                    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.Loaded=true;
+                    CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.Loaded = true;
                 }
-
+                CMainList.IsStart = true;
+                CMainList.StartStop = CMainList.IsStart;
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
             }
@@ -606,8 +607,10 @@ namespace 断面毛刺检测软件
                 offLine.Closed += ManualWindowClosed;
                 offLine.Show();
                 offLine.Activate();
+                CMainList.IsStart = false;
                 CMainList.IsManualTest = true;
                 CMainList.StartStop = false;
+
                 switches.Add(true);
                 OperateLog.Info(Properties.Resources.Offline);
             }
@@ -733,7 +736,7 @@ namespace 断面毛刺检测软件
             }
             foreach (var item in CMainList.CMainMModel.CProcessGroups)
             {
-               // item.MaociDefectsProduce?.Clear();
+                // item.MaociDefectsProduce?.Clear();
                 item.MaociDefectsOneFlowProduce?.Clear();
                 item.Cells.Clear();
             }
@@ -747,7 +750,7 @@ namespace 断面毛刺检测软件
             //}
             foreach (var item in CMainList.CMainMModel.CProcessGroups)
             {
-                 item.MaociDefectsProduce?.Clear();
+                item.MaociDefectsProduce?.Clear();
                 item.Cells.Clear();
             }
         }
