@@ -182,6 +182,12 @@ namespace ZipperTestAlgorihm
         //拉片分割缺陷名称
         protected string[] pullSharp_names;
 
+        /// <summary>
+        /// 离线测试的拉片外形模板
+        /// </summary>
+
+        protected OpenCvSharp.Point[] offlineContours;
+
         public string User { get; set; }
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -280,8 +286,8 @@ namespace ZipperTestAlgorihm
                 //string[] pullstrs = pull_names.Take(sbsindex).ToArray();
                 //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
 
-               // string[] pullstrs = pull_Meta_names.Where(s => s.Contains("拉")).ToArray();
-         
+                // string[] pullstrs = pull_Meta_names.Where(s => s.Contains("拉")).ToArray();
+
 
                 List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
                 for (int i = 0; i < pull_Meta_names.Length; i++)
@@ -914,11 +920,10 @@ namespace ZipperTestAlgorihm
                                         }
                                     }
                                 }
-                       
+
                                 #endregion
                                 #region 拉片外形
-                                double allperimeter = 0; //周长总长
-                                double allarea = 0; //总面积
+                                List<double> dsimilaritys = new List<double>();
                                 List<List<Point>> allcontourpoints = new List<List<Point>>();
                                 if (labelname.Contains("拉片"))
                                 {
@@ -926,41 +931,82 @@ namespace ZipperTestAlgorihm
 
                                     if (pullsegResult == null) return;
 
-                                    //foreach (var seg in pullsegResult.datas)
-                                    //{
-                                    if (pullsegResult.datas.Count > 0)
+                                    List<Point[]> contoursList = new List<Point[]>();
+                                    //double allperimeter = 0; //周长总长
+                                    //double allarea = 0; //总面积
+                                    foreach (var seg in pullsegResult.datas)
+                                    // if (pullsegResult.count > 0)
                                     {
-                                       // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", pullsegResult.datas[0].mask);
+                                        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
                                         Mat maskgray = new Mat();
-
-                                        Cv2.CvtColor(pullsegResult.datas[0].mask, maskgray, ColorConversionCodes.BGR2GRAY);
-                                        // Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                                        Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
                                         Mat binary = new Mat();
                                         Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
-                                       //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "阈值后.png", binary);
+
                                         Point[][] contours;
                                         HierarchyIndex[] hierarchy;
                                         Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-                                        List<Point> p = new List<Point>();
-                                        for (int i = 0; i < contours.Length; i++)
-                                        {
-                                            double area = Cv2.ContourArea(contours[i]);
-                                            allarea += area;
-                                            Point[] contourPoints = contours[i];
-                                            p = contourPoints.ToList();
-                                            p.Add(p[0]); //首尾相连
-                                            double perimeter = Cv2.ArcLength(contours[i], true); //
-                                            allperimeter += perimeter;
-                                            allcontourpoints.Add(p);
-                                        }
                                         maskgray.Dispose();
                                         binary.Dispose();
-                                        //Cv2.AddWeighted(croppullMat, 0.5, seg.mask, 0.5, 0.0, maskmat);
-                                        // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "Gray.png", cor);
-                                        CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)allarea, allcontourpoints, 1);
-                                        dets.Add(restoreData);
+                                        if (contours != null && contours.Length == 1)
+                                        {
+                                            contoursList.Add(contours[0]);
+                                        }
+
                                     }
-                                    // }
+                                    if (paramClass.OffLinePullerTemplateEnabel)
+                                    {
+                                        paramClass.OffLinePullerTemplateEnabel = false;
+                                        offlineContours = contoursList.OrderByDescending(contour => contour.Length).First();
+                                    }
+
+                                    if (cell.ImageFile == "")//在线
+                                    {
+                                        if (cell.OrgContours != null && cell.OrgContours.Length > 0 && contoursList.Count > 0)
+                                        {
+                                            for (int i = 0; i < contoursList.Count; i++)
+                                            {
+                                                double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
+                                                dsimilaritys.Add(simiValue);
+                                            }
+                                            double minvalue = dsimilaritys.Min();
+                                            int minindex = dsimilaritys.IndexOf(minvalue);
+                                            List<Point> p = contoursList[minindex].ToList();
+                                            p.Add(p[0]);
+                                            allcontourpoints.Add(p);
+                                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
+                                            dets.Add(restoreData);
+                                        }
+                                        else
+                                        {
+                                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
+                                            dets.Add(restoreData);
+                                        }
+                                    }
+                                    else //离线
+                                    {
+                                        if (offlineContours != null && contoursList.Count > 0)
+                                        {
+                                            for (int i = 0; i < contoursList.Count; i++)
+                                            {
+                                                double simiValue = MatchShapesUsingHuMoments(offlineContours, contoursList[i]);
+                                                dsimilaritys.Add(simiValue);
+                                            }
+                                            double minvalue = dsimilaritys.Min();
+                                            int minindex = dsimilaritys.IndexOf(minvalue);
+                                            List<Point> p = contoursList[minindex].ToList();
+                                            p.Add(p[0]);
+                                            allcontourpoints.Add(p);
+
+                                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
+                                            dets.Add(restoreData);
+                                        }
+                                        else
+                                        {
+                                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
+                                            dets.Add(restoreData);
+                                        }
+                                    }
 
                                 }
                                 #endregion
@@ -1299,7 +1345,7 @@ CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
 CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
 
                     yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, EngineType.TensorRT,
-CurrentDevice, logopull_num, param.LogoPullScore, 0.8f,640);
+CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
                     //Task task9 = Task.Run(() =>
                     //{
@@ -1457,6 +1503,33 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             return img;
 
         }
+        /// <summary>
+        /// 计算两轮廓相识度，越接近0越相似
+        /// </summary>
+        /// <returns></returns>
+        double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
+        {
+            Moments moments1 = Cv2.Moments(contours1);
+            Moments moments2 = Cv2.Moments(contours2);
+
+            double[] hu1 = moments1.HuMoments();
+            double[] hu2 = moments2.HuMoments();
+
+            //计算相似度（值越小越相似）
+            double similarity = 0;
+            for (int i = 0; i < 7; i++)
+            {
+                double a = Math.Abs(hu1[i]);
+                double b = Math.Abs(hu2[i]);
+
+                if (a + b > 0)
+                {
+                    similarity += Math.Abs(a - b) / Math.Abs(a + b);
+                }
+            }
+
+            return similarity;
+        }
 
 
 
@@ -1565,7 +1638,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             //yolo_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
             yolo_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
             yolo_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
-           // yolo_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
+            // yolo_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
 
             yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
             yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
@@ -1613,8 +1686,8 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("2.0下止分数阈值")]
-        [property: Description("下止分数阈值")]
+        [property: DisplayName("2.0下止缺陷分数阈值")]
+        [property: Description("下止缺陷分数阈值")]
         private float downScore = 0.4f;
 
         /// <summary>
@@ -1633,8 +1706,8 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("4.0上止分数阈值")]
-        [property: Description("上止分数阈值")]
+        [property: DisplayName("4.0上止缺陷分数阈值")]
+        [property: Description("上止缺陷分数阈值")]
         private float upScore = 0.4f;
 
         /// <summary>
@@ -1707,12 +1780,19 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         [property: Description("拉片分割分数阈值")]
         private float pullSharpScore = 0.5f;
 
+        [ObservableProperty]
+        [property: Category("离线设置模板")]
+        [property: DisplayName("1.0离线设置拉片外形模版开关")]
+        [property: Description("离线设置拉片模版开关")]
+        bool offLinePullerTemplateEnabel;
+
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// NMScore
         /// </summary>
         [ObservableProperty]
         private float nms = 0.5f;
+
 
 
         ///// <summary>

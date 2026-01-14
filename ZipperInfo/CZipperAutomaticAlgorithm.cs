@@ -9,9 +9,6 @@ using WH.LightControl;
 using WH.RunCell;
 using ZipperLightHalconDet;
 using WH.VisionLearning;
-using System.Windows.Media.Animation;
-using HandyControl.Controls;
-using System.Text;
 
 namespace ZipperInfo
 {
@@ -108,8 +105,14 @@ namespace ZipperInfo
 
         public static bool[] findLogosidertype = new bool[2];  //0拉头  1拉片
 
-
+        /// <summary>
+        /// 自动识别完成事件
+        /// </summary>
         public static Action<bool> TestFinshEven;
+        /// <summary>
+        /// 拉链信息改变事件
+        /// </summary>
+       // public static Action ZipperInfoChangeEven;
         public CZipperAutomaticAlgorithm()
         {
             string SearchmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullSearch";
@@ -715,7 +718,7 @@ namespace ZipperInfo
 
                             if (findDownMass && findUpMass && findPulls && findPuller && !TestFinsh)
                             {
-                                TestFinsh = true;
+
                                 if (!findlianya)
                                 {
                                     ZipperInfo.ZipperSliderType = PULLTYPE.正穿;
@@ -763,6 +766,7 @@ namespace ZipperInfo
                                 CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
                                 //{
+                                TestFinsh = true;
                                 ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                 // });
                                 // CZipperAutomaticAlgorithm.TestFinshEven(true);
@@ -1050,14 +1054,14 @@ namespace ZipperInfo
                             {
                                 int pulllabelindex = int.Parse(pullResult[j].lable);
                                 string pullabelname = de_Logo_pull_names[pulllabelindex];
-                                //if (!pullabelname.Contains("拉"))
-                                //{
+                                if (!pullabelname.Contains("拉"))
+                                {
                                     findLogo = true;
                                     findLogosidertype[0] = true; //找到拉头上的logo
                                     ZipperInfo.ZipperLogoType = pullabelname;
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},在拉头侧识别到Logo:{ZipperInfo.ZipperLogoType},findLogo=true更新Logo图片");
 
-                              //  }
+                                }
                             }
 
                             if (findPullerCount >= 3)
@@ -1067,7 +1071,7 @@ namespace ZipperInfo
                         }
                         if (labelstr.Contains("拉片") && !findPulls)
                         {
-                       
+
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},识别到拉头拉片findPulls = true");
                             timeOutCount = 0;
                             findPullsCount++;
@@ -1107,51 +1111,48 @@ namespace ZipperInfo
                             {
                                 int pulllabelindex = int.Parse(pullResult[j].lable);
                                 string pullabelname = de_Logo_pull_names[pulllabelindex];
-                                //if (!pullabelname.Contains("拉"))
-                                //{
+                                if (!pullabelname.Contains("拉"))
+                                {
                                     findLogo = true;
                                     findLogosidertype[1] = true; //找到拉片上的logo
                                     ZipperInfo.ZipperLogoType = pullabelname;
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},在拉片侧识别到Logo:{ZipperInfo.ZipperLogoType},findLogo=true更新Logo图片");
 
-                               // }
-                            }
-
-                            SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
-
-                            if (pullsegResult == null) return;
-                            double allperimeter = 0; //周长总长
-                            double allarea = 0; //总面积
-                                                // foreach (var seg in pullsegResult.datas)
-                            if (pullsegResult.count > 0)
-                            {
-                                //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
-                                Mat maskgray = new Mat();
-                                Cv2.CvtColor(pullsegResult.datas[0].mask, maskgray, ColorConversionCodes.BGR2GRAY);
-                                Mat binary = new Mat();
-                                Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
-
-                                Point[][] contours;
-                                HierarchyIndex[] hierarchy;
-                                Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-                                // List<Point> p = new List<Point>();
-                                for (int a = 0; a < contours.Length; a++)
-                                {
-                                    double area = Cv2.ContourArea(contours[a]);
-                                    allarea += area;
-                                    // Point[] contourPoints = contours[a];
-                                    //p = contourPoints.ToList();
-                                    //p.Add(p[0]); //首尾相连
-                                    double perimeter = Cv2.ArcLength(contours[a], true); //
-                                    allperimeter += perimeter;
                                 }
-                                maskgray.Dispose();
-                                binary.Dispose();
-
                             }
-                            ZipperInfo.PullSegOrgArea = allarea;
                             if (findPullsCount >= 3)
                             {
+                                SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
+
+                                if (pullsegResult == null) return;
+
+                                List<Point[]> contoursList = new List<Point[]>();
+                                //double allperimeter = 0; //周长总长
+                                //double allarea = 0; //总面积
+                                foreach (var seg in pullsegResult.datas)
+                                // if (pullsegResult.count > 0)
+                                {
+                                    //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                                    Mat maskgray = new Mat();
+                                    Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                                    Mat binary = new Mat();
+                                    Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                                    Point[][] contours;
+                                    HierarchyIndex[] hierarchy;
+                                    Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+                                    maskgray.Dispose();
+                                    binary.Dispose();
+                                    if (contours != null && contours.Length == 1)
+                                    {
+                                        contoursList.Add(contours[0]);
+                                    }
+
+                                }
+                                // ZipperInfo.PullSegOrgArea = allarea;
+
+                                Point[] maxPointsContour = contoursList.OrderByDescending(contour => contour.Length).First();
+                                ZipperInfo.OrgContours = maxPointsContour;
                                 findPulls = true;
                             }
                         }
@@ -1218,7 +1219,7 @@ namespace ZipperInfo
                                 AutoLogger.Info($"onWichStage=4,ZipperInfo.FindLogoSider={ZipperInfo.FindLogoSider},两面都没有logo");
                             }
 
-                            TestFinsh = true;
+
                             ProgressBarViewModel.AutoMessage = "识别拉链完成...";
                             ProgressBarViewModel.ProgressBarValue = 100;
                             Thread.Sleep(500);
@@ -1242,6 +1243,7 @@ namespace ZipperInfo
                             CLinghtManagement.SaveLightParams();
                             //Dispatcher.Invoke(() =>
                             //{
+                            TestFinsh = true;
                             ProgressBarViewModel.ProgressFinshEven?.Invoke();
                             // });
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},上下止,拉头,拉头拉片,Logo全部识别到,结束");

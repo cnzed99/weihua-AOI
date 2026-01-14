@@ -187,6 +187,7 @@ namespace WH.DetectSystem.Models
                     FocusConfig.token
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
+           // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
             ZipperCommunicate = new CZipperCommunicate();
             ZipperCommunicate.IntThread();
             InitTask();
@@ -339,6 +340,11 @@ namespace WH.DetectSystem.Models
                 IsAutomaticTest = false;
             }
         }
+
+        //private void InfoChangeFunc()
+        //{
+        //    TestFinshTodo(true);
+        //}
 
         #region 时间相关
 
@@ -643,67 +649,15 @@ namespace WH.DetectSystem.Models
                                     continue;
                                 }
                             }
-                            //int pullID = 0;
-                            //if (cell.CamName == "左相机")
-                            //{
-                            //    CZipperCommunicate.GetZuoPullID(out pullID);
-                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
-                            //}
-                            //else
-                            //{
-                            //    CZipperCommunicate.GetYouPullID(out pullID);
-                            //    SysLog.Info($"{Name}-接收到拉头ID:{pullID}");
-
-                            //}
                             SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
                             int photoTotalCount = CZipperCommunicate.GetPhotoCount();
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-
-                            //if (zipperID.ProductID != -1)
-                            //{
-                            //    if (pullID != 100) //是拉头以外的图片
-                            //    {
-                            //        if (productID != tempid) //这一步是因为PLC不好变换图片ID 需要上位机来转换
-                            //        {
-                            //            tempid = productID;
-                            //            tempphotoID = 1;
-                            //            cell.PhotoIndex = tempphotoID;
-                            //        }
-                            //        else
-                            //        {
-                            //            tempphotoID++;
-                            //            cell.PhotoIndex = tempphotoID;
-                            //        }
-
-
-                            //    }
-                            //    else //有拉头的图片
-                            //    {
-                            //        cell.PhotoIndex = 100;
-                            //        if (cell.CamName == "左相机") //收到图片之后立马改为0
-                            //        {
-                            //            CZipperCommunicate.SendZuoPullID(0);
-                            //        }
-                            //        else
-                            //        {
-                            //            CZipperCommunicate.SendYouPullID(0);
-                            //        }
-
-                            //    }
-
-                            // cell.ID = productID.ToString();
-
+                            cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
                             cell.ID = zipperID.ProductID.ToString();
                             cell.PhotoIndex = zipperID.PhotoID;
                             cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
-                            //}
-                            //else
-                            //{
-                            //    Growl.Error(Name + "-通讯连接异常，请检查PLC连接状态");
-                            //    cell.Dispose();
-                            //    continue;
-                            //}
+
                         }
                         else
                         {
@@ -714,7 +668,7 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();                      
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -1983,20 +1937,20 @@ namespace WH.DetectSystem.Models
                             foreach (var fl in df.FilterList)
                             {
                                 fl.FilterSelectEnable = true; //
-                                fl.IsReversal = true;
-                                foreach (var se in fl.SelectList)
-                                {
-                                    foreach (var pa in se.SelectParams)
-                                    {
-                                        double minrang = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
-                                        if (minrang < 1)
-                                        {
-                                            minrang = 1;
-                                        }
-                                        pa.Min = minrang;
-                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea + CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
-                                    }
-                                }
+                                //fl.IsReversal = true;
+                                //foreach (var se in fl.SelectList)
+                                //{
+                                //    foreach (var pa in se.SelectParams)
+                                //    {
+                                //        double minrang = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                //        if (minrang < 1)
+                                //        {
+                                //            minrang = 1;
+                                //        }
+                                //        pa.Min = minrang;
+                                //        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea + CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
+                                //    }
+                                //}
                             }
                         }
                     }
@@ -2014,7 +1968,7 @@ namespace WH.DetectSystem.Models
                             foreach (var fl in df.FilterList)
                             {
                                 fl.FilterSelectEnable = false;
-                                fl.IsReversal = false;
+                               // fl.IsReversal = false;
                             }
                         }
                     }

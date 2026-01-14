@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace ZipperInfo
 {
-    public partial class CZipperInfo: ObservableObject
+    public partial class CZipperInfo : ObservableObject
     {
 
         private float showZipperLenght;
@@ -24,11 +24,11 @@ namespace ZipperInfo
             set
             {
                 showZipperLenght = value;
-                if(AutoData!= null)
-                    {
+                if (AutoData != null)
+                {
                     ZipperLneght = value * 10 + AutoData.QuekouLenght * 10;
                 }
-                
+
                 OnPropertyChanged();
             }
         }
@@ -47,13 +47,13 @@ namespace ZipperInfo
         {
             get { return zipperLneght; }
             set
-            { 
-                zipperLneght = value; 
-              //  OnPropertyChanged();
+            {
+                zipperLneght = value;
+                //  OnPropertyChanged();
                 if (AutoData != null)
                 {
                     AutoData.ZipperLenght = value;
-                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount,out _);
+                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
                     ZipperTriggerPos = points;
                     HandAndTaliPos = handandtalipoints;
                     CGetZipperTriggerPoint.CheckPullPos(points);
@@ -63,10 +63,10 @@ namespace ZipperInfo
                     //计算拉链触发点位 ID改变位置
                     CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
                 }
-              
+
             }
         }
-
+        TOOTHTYPE zipperToothType = TOOTHTYPE._3号;
         /// <summary>
         /// 链牙型号(大小)
         /// 2025.05.24 鲍赞宝
@@ -75,8 +75,22 @@ namespace ZipperInfo
         [property: DisplayName("02.链牙型号")]
         [property: Description("链牙型号(大小)")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        TOOTHTYPE zipperToothType = TOOTHTYPE._3号;
+        public TOOTHTYPE ZipperToothType
+        {
+            get { return zipperToothType; }
+            set
+            {
+                zipperToothType = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+               
+            }
+        }
+
+
+        PULLTYPE zipperSliderType = PULLTYPE.正穿;
         /// <summary>
         /// 穿拉头方式
         /// 2025.05.24 鲍赞宝
@@ -85,8 +99,20 @@ namespace ZipperInfo
         [property: DisplayName("03.穿拉头方式")]
         [property: Description("穿拉头方式")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        PULLTYPE zipperSliderType=PULLTYPE.正穿;
+        public PULLTYPE ZipperSliderType
+        {
+            get { return zipperSliderType; }
+            set
+            {
+                zipperSliderType = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+            }
+        }
+
+        STOPMASS zipperUpMassType = STOPMASS.注塑;
         /// <summary>
         /// 穿拉头方式
         /// 2025.05.24 鲍赞宝
@@ -95,8 +121,21 @@ namespace ZipperInfo
         [property: DisplayName("04.上止类型")]
         [property: Description("上止类型")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        STOPMASS zipperUpMassType = STOPMASS.注塑;
+        public STOPMASS ZipperUpMassType
+        {
+            get { return zipperUpMassType; }
+            set
+            {
+                zipperUpMassType = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+            }
+        }
+
+
+        STOPMASS zipperDownMassType = STOPMASS.注塑;
         /// <summary>
         /// 穿拉头方式
         /// 2025.05.24 鲍赞宝
@@ -105,8 +144,21 @@ namespace ZipperInfo
         [property: DisplayName("05.下止类型")]
         [property: Description("下止类型")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        STOPMASS zipperDownMassType = STOPMASS.注塑;
+
+        public STOPMASS ZipperDownMassType
+        {
+            get { return zipperDownMassType; }
+            set
+            {
+                zipperDownMassType = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+            }
+        }
+
+        string zipperLogoType = "SBS";
         /// <summary>
         /// logo类型
         /// 2025.05.24 鲍赞宝
@@ -115,17 +167,46 @@ namespace ZipperInfo
         [property: DisplayName("06.logo类型")]
         [property: Description("logo类型")]
         [property: Browsable(true)]
-        [ObservableProperty]
-        string zipperLogoType = "SBS";
+        public string ZipperLogoType
+        {
+            get { return zipperLogoType; }
+            set 
+            {
+                zipperLogoType = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+            }
+        }
+        private bool whiteZippers;
+        /// <summary>
+        /// 是否是白色拉链，是则加严参数
+        /// 2025.11.1 鲍赞宝
+        /// </summary>
+        public bool WhiteZippers
+        {
+            get { return whiteZippers; }
+            set
+            {
+                whiteZippers = value;
+                if (CZipperAutomaticAlgorithm.TestFinsh)
+                {
+                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                }
+            }
+        }
+
+
         /// <summary>
         /// 拉链拍照触发的位置
         /// 2025.06.24 鲍赞宝
         /// </summary>
-        public List<float> ZipperTriggerPos { get; set; }=new List<float>();
+        public List<float> ZipperTriggerPos { get; set; } = new List<float>();
         /// <summary>
         /// 拉头ID拍照位置的序号
         /// </summary>
-        public int PullchangeIndex {  get; set; }
+        public int PullchangeIndex { get; set; }
         /// <summary>
         /// 切断前共拍了几张图片
         /// </summary>
@@ -185,13 +266,8 @@ namespace ZipperInfo
         /// 拉链外部参数
         /// 2025.06.30 鲍赞宝
         /// </summary>
-        public CAutomaticModel AutoData {  get; set; }
-        /// <summary>
-        /// 是否是白色拉链，是则加严参数
-        /// 2025.11.1 鲍赞宝
-        /// </summary>
-        [ObservableProperty]
-        public bool whiteZippers;
+        public CAutomaticModel AutoData { get; set; }
+
         /// <summary>
         /// Logo文字集合
         /// 2025.11.04 鲍赞宝
@@ -202,46 +278,46 @@ namespace ZipperInfo
         /// 在那一面找到Logo 0:两面都没找到， 1:在拉片面找到 ，2：在两面都找到， 3：在拉头面找到
         /// 2025.11.13 鲍赞宝
         /// </summary>
-        public  int FindLogoSider {  get; set; }
+        public int FindLogoSider { get; set; }
         /// <summary>
         /// 拉片分割出来的标准面积
         /// </summary>
-        public double PullSegOrgArea {  get; set; }
+        public double PullSegOrgArea { get; set; }
         /// <summary>
         /// 拉头的材质类型
         /// </summary>
         public PULLMATERIALSTYPE PullMaterlsType { get; set; }
         /// <summary>
-        /// 拉片外形轮廓
+        /// 拉片外形轮廓点集合
         /// </summary>
-        public OpenCvSharp.Point[][] OrgContours {  get; set; } 
+        public OpenCvSharp.Point[] OrgContours { get; set; }
 
     }
 
 
     public enum TOOTHTYPE
     {
-        _3号=0,
+        _3号 = 0,
         _5号 = 1,
         _7号 = 2,
         _8号 = 3
     }
     public enum PULLTYPE
     {
-        正穿=0,
-        反穿= 1
+        正穿 = 0,
+        反穿 = 1
     }
 
     public enum STOPMASS
-    { 
-        注塑=0,
-        白铝=1,
-        烤漆=2,
-        透明=3,
-        U型尼龙=4,
-        融止=5,
-        隐形=6,
-        无=7
+    {
+        注塑 = 0,
+        白铝 = 1,
+        烤漆 = 2,
+        透明 = 3,
+        U型尼龙 = 4,
+        融止 = 5,
+        隐形 = 6,
+        无 = 7
     }
     //public enum LOGOTYPE
     //{
@@ -257,8 +333,8 @@ namespace ZipperInfo
 
     public enum PULLMATERIALSTYPE
     {
-        烤漆=0,
-        金属=1
+        烤漆 = 0,
+        金属 = 1
     }
 
 }

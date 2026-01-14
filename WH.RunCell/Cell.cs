@@ -120,6 +120,10 @@ namespace WH.RunCell
         /// 拉头的材质类型
         /// </summary>
         public string PullMaterlsType {  get; set; }
+        /// <summary>
+        /// 拉片轮廓点集合
+        /// </summary>
+        public OpenCvSharp.Point[] OrgContours {  get; set; }   
 
         /// <summary>
         /// 接收信息字典
