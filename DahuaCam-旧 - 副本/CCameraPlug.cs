@@ -63,6 +63,7 @@ namespace DaHuaCam
                         info.SerialNumber = deviceInfo.serialNumber;
                         info.CamType = "网口相机";
                         //info.CamIp = GetIP(deviceInfo.interfaceName);
+
                         IMVDefine.IMV_GigEDeviceInfo gigEDeviceInfo =
                             (IMVDefine.IMV_GigEDeviceInfo)
                             ByteToStruct(deviceInfo.deviceSpecificInfo.gigeDeviceInfo,
@@ -85,7 +86,6 @@ namespace DaHuaCam
                         if (deviceInfo.manufactureInfo == "Huaray Technology" || deviceInfo.manufactureInfo == "Machine Vision")
                         {
                             isDaHuacamera = true;
-
                         }
                     }
 

@@ -29,11 +29,18 @@ namespace DaHuaCam
         public CDaHuaCamera()
             : base() { }
 
+
+
         /// <summary>
         /// 相机对象
         /// </summary>
         MyCamera cam = new MyCamera();
-        List<IMVDefine.IMV_Frame> m_frameList = new List<IMVDefine.IMV_Frame>(); // 图像缓存列
+
+
+        List<IMVDefine.IMV_Frame> m_frameList = new List<IMVDefine.IMV_Frame>(); // 图像缓存列表
+        private IntPtr m_BufForDriver = IntPtr.Zero;
+        private UInt32 m_nBufSizeForDriver = 0;
+
         private IntPtr m_pDstData;
         private int m_nDataLenth = 0;
 
@@ -41,7 +48,24 @@ namespace DaHuaCam
         /// 2024.8.2 李焕彬
         /// 相机回调
         /// </summary>
-        private IMVDefine.IMV_FrameCallBack frameCallBack;
+        private static IMVDefine.IMV_FrameCallBack frameCallBack;
+
+
+        /// <summary>
+        /// 相机对象
+        /// </summary>
+        //protected uint CamHandle = 0; //相机句柄
+
+        ///// <summary>
+        ///// 相机设备列表
+        ///// </summary>
+        ////储存设备信息
+        //List<IDeviceInfo> deviceList = new List<IDeviceInfo>();
+
+        //List<IGrabbedRawData> m_frameList = new List<IGrabbedRawData>();        // 图像缓存列表 | frame data list 
+
+
+
 
 
         public override bool OpenCamera()
@@ -49,19 +73,27 @@ namespace DaHuaCam
             try
             {
 
+                ////初始化结果+设备枚举
+                //bool result = false;
+
+                ////枚举设备
+                //// Discover device
+                //int res = IMVDefine.IMV_OK;
+
                 //创建对象deviceList，用于存储设备列表。
+               
                 IMVDefine.IMV_DeviceList deviceList = new IMVDefine.IMV_DeviceList();
                 //interfaceTypeAll表示搜索所有类型的接口设备。
                 IMVDefine.IMV_EInterfaceType interfaceTp = IMVDefine.IMV_EInterfaceType.interfaceTypeAll;
                 int res = MyCamera.IMV_EnumDevices(ref deviceList, (uint)interfaceTp);
 
                 //判断枚举设备是否为0
-                if (res != IMVDefine.IMV_OK || deviceList.nDevNum == 0)
+                if (res!=IMVDefine.IMV_OK)
                 {
                     throw new Exception(Properties.Resources.ErrorEnumCam1);
                 }
 
-                // 遍历设备寻找匹配序列号的相机
+             
                 for (int i = 0; i < deviceList.nDevNum; i++)
                 {
                     IMVDefine.IMV_DeviceInfo deviceInfo =
@@ -70,12 +102,6 @@ namespace DaHuaCam
                                 deviceList.pDevInfo + Marshal.SizeOf(typeof(IMVDefine.IMV_DeviceInfo)) * i,
                                 typeof(IMVDefine.IMV_DeviceInfo));
 
-
-                    // 检查厂商和序列号
-                    if ( deviceInfo.serialNumber != paramSetting.SerialNumber)
-                    {
-                        continue;
-                    }
 
                     // 创建设备句柄
                     res = cam.IMV_CreateHandle(IMVDefine.IMV_ECreateHandleMode.modeByIndex, i);
@@ -104,6 +130,7 @@ namespace DaHuaCam
                     // 注册数据帧回调函数
                     // Register data frame callback function
                     frameCallBack = new IMVDefine.IMV_FrameCallBack(ImageCallbackFunc);
+
                     res = cam.IMV_AttachGrabbing(frameCallBack, IntPtr.Zero);
                     if (res != IMVDefine.IMV_OK)
                     {
@@ -111,15 +138,25 @@ namespace DaHuaCam
                               Properties.Resources.ErrorInitCam1 + paramSetting.SerialNumber + ""
                         );
                     }
+
                     this.Connected = true;
+
+                    //获取当前相机的触发源
+                    IMVDefine.IMV_String triggerSourcce = new IMVDefine.IMV_String();
+                    res = cam.IMV_GetEnumFeatureSymbol("TriggerSource", ref triggerSourcce);
+                    if (res != IMVDefine.IMV_OK)
+                    {
+                        CCameraManagement.CamLogger.Error(
+                        Properties.Resources.ErrorSoftWare + res.ToString()
+                         );
+
+                    }
                     return StartGrab();
                 }
 
-                // 没有找到匹配的相机
-                CCameraManagement.CamLogger.Error(
-                    $"未找到匹配序列号{paramSetting.SerialNumber}的大华相机");
+
+
                 return false;
-                //return false;
             }
             catch (Exception ex)
             {
@@ -132,10 +169,12 @@ namespace DaHuaCam
         }
 
 
+
         // 相机打开回调 
         // camera open event callback 
         public void OnCameraOpen(object sender, EventArgs e)
         {
+
         }
 
 
@@ -143,6 +182,7 @@ namespace DaHuaCam
         // camera close event callback 
         public void OnCameraClose(object sender, EventArgs e)
         {
+
         }
 
 
@@ -166,7 +206,7 @@ namespace DaHuaCam
         /// <param name="pData">图像数据</param>
         /// <param name="pFrameInfo">图像信息</param>
         /// <param name="pUser">上下文信息</param>
-        public void ImageCallbackFunc(ref IMVDefine.IMV_Frame frame, IntPtr pUser)
+        public  void ImageCallbackFunc(ref IMVDefine.IMV_Frame frame, IntPtr pUser)
         {
 
             try
@@ -191,18 +231,12 @@ namespace DaHuaCam
                 //    ? PixelFormats.Rgb24
                 //    : PixelFormats.Gray8;
 
-                //paramSetting.CameraType =
-                //     frame.frameInfo.pixelFormat == IMVDefine.IMV_EPixelType.gvspPixelBayRG8
-                //     ? PixelFormats.Rgb24
-                //     : PixelFormats.Gray8;
-
-                //2025.10.11修改
                 switch (frame.frameInfo.pixelFormat)
                 {
 
                     case IMVDefine.IMV_EPixelType.gvspPixelMono8:
                     case IMVDefine.IMV_EPixelType.gvspPixelMono8S:
-                        //case IMVDefine.IMV_EPixelType.gvspPixelMono10:
+                    case IMVDefine.IMV_EPixelType.gvspPixelMono10:
                         paramSetting.CameraType = PixelFormats.Gray8;
                         break;
                     case IMVDefine.IMV_EPixelType.gvspPixelBayGR8:
@@ -219,7 +253,6 @@ namespace DaHuaCam
                         paramSetting.CameraType = PixelFormats.Rgb24;
                         break;
                 }
-
                 //图片转化
 
 
@@ -412,33 +445,19 @@ namespace DaHuaCam
 
         public override void CloseCamera()
         {
-            try
-            {
-                if (this.Connected && cam != null)
-                {
-                    cam.IMV_StopGrabbing();
-                    frameCallBack -= ImageCallbackFunc;
-                    cam.IMV_ClearFrameBuffer();
-                    cam.IMV_Close();
-                    cam.IMV_DestroyHandle();
-                    //cam = null;
-                    this.Connected = false;
-                }
-            }
-            catch(Exception ex)
-            {
-                CCameraManagement.CamLogger.Error(
-            $"关闭大华相机序列号:{paramSetting.SerialNumber}出现异常:" + ex.Message);
-                throw;
-            }   
+            cam.IMV_StopGrabbing();
+            cam.IMV_ClearFrameBuffer();
+            cam.IMV_Close();
+            cam.IMV_DestroyHandle();
+        
         }
 
         public override bool StartGrab()
         {
             try
             {
-                bool result = false;
-                if (this.Connected)
+                bool result =false;
+                if(this.Connected)
                 {
                     int nRet = cam.IMV_StartGrabbing();
                     if (nRet != IMVDefine.IMV_OK)
@@ -452,13 +471,13 @@ namespace DaHuaCam
                     {
                         result = true;
                     }
-
-
+                        
+                    
                 }
                 return result;
 
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 CCameraManagement.CamLogger.Error(
                     Properties.Resources.ErrorStart2 + paramSetting.SerialNumber + ex.Message
@@ -517,7 +536,7 @@ namespace DaHuaCam
                         nRet = cam.IMV_SetEnumFeatureSymbol("TriggerMode", "Off");
                         break;
                     case EMTRIGGERMODE.EMTRIGGERSOFTWARE:
-
+                       
                         nRet = cam.IMV_SetEnumFeatureSymbol("TriggerMode", "On");
                         if (nRet == IMVDefine.IMV_OK)
                         {
@@ -610,7 +629,7 @@ namespace DaHuaCam
         {
             try
             {
-
+                
                 double exposureTime = 0;
                 int res = cam.IMV_GetDoubleFeatureValue("ExposureTime", ref exposureTime);
                 if (IMVDefine.IMV_OK == res)
@@ -713,7 +732,7 @@ namespace DaHuaCam
         {
             try
             {
-
+                
                 int res = cam.IMV_SetDoubleFeatureValue("GainRaw", Value);
                 if (res != IMVDefine.IMV_OK)
                 {
@@ -730,7 +749,7 @@ namespace DaHuaCam
                 throw;
             }
         }
-
+        
 
         /// <summary>
         /// 设置相机触发延时时间
@@ -765,7 +784,7 @@ namespace DaHuaCam
 
 
 
-
+        
 
 
         /// <summary>
@@ -891,7 +910,7 @@ namespace DaHuaCam
 
                     Thread.Sleep(50);
 
-                    if (IMVDefine.IMV_OK != res)
+                     if (IMVDefine.IMV_OK != res)
                     {
                         CCameraManagement.CamLogger.Error(
                             Properties.Resources.ErrorUserSaveParam + res.ToString()
@@ -949,7 +968,7 @@ namespace DaHuaCam
                 value = 1000;
                 return false;
             }
-
+            
 
         }
 
@@ -988,16 +1007,43 @@ namespace DaHuaCam
                 return false;
             }
 
-
+       
         }
 
 
         public void GetPixelFormat()
         {
-         
+            //try
+            //{
+            //    using (IEnumParameter p = m_MyCamera?.ParameterCollection[new EnumName("PixelFormat")])
+            //    {
+
+            //        string format = p.GetValue();
+            //        switch (format)
+            //        {
+            //            case "Mono8":
+            //                paramSetting.CameraType = PixelFormats.Gray8;
+            //                break;
+            //            case "BayerRG8":
+            //                paramSetting.CameraType = PixelFormats.Rgb24;
+            //                break;
+
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    CCameraManagement.CamLogger.Error(
+            //        Properties.Resources.CameraSerialNumber
+            //            + paramSetting.SerialNumber
+            //            + Properties.Resources.GetPixelFormatError
+            //            + ex.Message
+            //    );
+            //    throw;
+            //}
         }
 
-
+      
 
         public override void SetFrameCount(int count)
         {
@@ -1025,12 +1071,40 @@ namespace DaHuaCam
         /// </summary>
         /// <param name="cameraType">图像类型</param>
         /// <returns>true成功，false失败</returns>
-
+        
 
         public override bool GetCameraType(out PixelFormat cameraType)
         {
             try
             {
+                //// 获取所有可以设置的像素格式 
+                //// get all Image Pixel Format
+                //uint nEntryNum = 0;
+                //IMVDefine.IMV_EnumEntryList pixelTypeList = new IMVDefine.IMV_EnumEntryList();
+                //res = cam.IMV_GetEnumFeatureEntryNum("PixelFormat", ref nEntryNum);
+                //if (res != IMVDefine.IMV_OK)
+                //{
+                //    return false;
+                //}
+                ////分配内存并获取像素格式枚举项
+                ////根据枚举项数量nEntryNum，计算所需内存大小，并分配内存。
+                ////调用cam.IMV_GetEnumFeatureEntrys方法，获取像素格式的枚举项。
+                ////如果返回值res不等于IMVDefine.IMV_OK，表示获取失败，弹出错误消息框并返回。
+                //pixelTypeList.nEnumEntryBufferSize = (uint)Marshal.SizeOf(typeof(IMVDefine.IMV_EnumEntryInfo)) *
+                //                                     nEntryNum;
+                //pixelTypeList.pEnumEntryInfo = Marshal.AllocHGlobal((int)pixelTypeList.nEnumEntryBufferSize);
+                //if (pixelTypeList.pEnumEntryInfo == IntPtr.Zero)
+                //{
+                //    return false;
+                //}
+
+                //res = cam.IMV_GetEnumFeatureEntrys("PixelFormat", ref pixelTypeList);
+                //if (res != IMVDefine.IMV_OK)
+                //{
+                //    return false;
+
+
+
                 // 获取所有可以设置的像素格式 
                 // get all Image Pixel Format
                 uint nEntryNum = 0;
@@ -1046,7 +1120,7 @@ namespace DaHuaCam
                 }
                 else
                 {
-                    cameraType = nEntryNum == 0x01080001 ? PixelFormats.Gray8 : PixelFormats.Rgb24;
+                    cameraType= nEntryNum == 0x01080001 ? PixelFormats.Gray8 : PixelFormats.Rgb24;
                     return true;
                 }
 
@@ -1077,7 +1151,7 @@ namespace DaHuaCam
                 int res = cam.IMV_GetEnumFeatureSymbol("TriggerMode", ref triggerMode);
                 if (res == IMVDefine.IMV_OK)
                 {
-                    if (triggerMode.str == "Off")
+                    if (triggerMode.str=="Off")
                     {
                         mode = EMTRIGGERMODE.EMTRIGGERNONE;
                         return true;
@@ -1085,9 +1159,9 @@ namespace DaHuaCam
                     else
                     {
                         res = cam.IMV_GetEnumFeatureSymbol("TriggerSource", ref triggerMode);
-                        if (res == IMVDefine.IMV_OK)
+                        if(res == IMVDefine.IMV_OK)
                         {
-                            if (triggerMode.str == "Software")
+                            if(triggerMode.str=="Software")
                             {
                                 mode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
                             }
@@ -1122,7 +1196,7 @@ namespace DaHuaCam
         {
             try
             {
-
+                
                 int nRet = cam.IMV_SetDoubleFeatureValue("Gamma", (float)value);
                 if (IMVDefine.IMV_OK != nRet)
                 {
