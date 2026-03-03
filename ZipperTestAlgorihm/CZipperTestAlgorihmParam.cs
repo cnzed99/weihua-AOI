@@ -490,6 +490,11 @@ namespace ZipperTestAlgorihm
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
+               // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
+                //if (cell.PhotoTatolCount == 2)
+                //{
+                //    runtype = true;
+                //}
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
@@ -497,17 +502,167 @@ namespace ZipperTestAlgorihm
 
                     if (bigResult != null && bigResult.datas.Count > 0) //如果有大缺陷直接退出
                     {
+                        List<Point> massPoints = new List<Point>(); //上止的位置
                         for (int j = 0; j < bigResult.datas.Count; j++)
                         {
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             dets.Add(restoreData);
+                            if (cell.PhotoIndex == 1 && labelname.Contains("正面下止")) //检测下止
+                            {
+                                int recw = 256;
+                                int rech = 256;
+                                int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
+                                int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
+                                if ((rex + recw) > cell.Image.ImageWidth)
+                                {
+                                    rex = cell.Image.ImageWidth - recw;
+                                }
+                                if (rex < 0)
+                                {
+                                    rex = 0;
+                                }
+                                Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
+                                cell.DownMassMatImg = cropDownMat;
+
+                                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
+                                ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
+                                if (downResult != null)
+                                {
+                                    if (downResult.datas.Count > 0)
+                                    {
+                                        List<int> luyaIndex = new List<int>();
+                                        string downmassIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("正面下止")).ToString();
+                                        List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == downmassIndexstr).ToList(); //下止
+
+                                        string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
+                                        List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+
+                                        string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
+                                        List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
+
+                                        List<ObbData> otherobb = downResult.datas.Where(s => s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr).ToList();
+
+                                        List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
+                                        List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
+                                        //计算下止到链齿的最短距离
+                                        List<(float, int)> Diss = new List<(float, int)>();
+                                        for (int a = 0; a < downmass.Count; a++)
+                                        {
+                                            for (int b = 0; b < lianci.Count; b++)
+                                            {
+                                                float dis = CalculateDistance(downmass[a], lianci[b]);
+                                                Diss.Add((dis, b));
+                                                if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
+                                                {
+                                                    luyaIndex.Add(b);
+                                                }
+                                            }
+                                        }
+                                        if (Diss.Count > 0)
+                                        {
+                                            var min = Diss.Min(t => t.Item1);
+                                            var dis = Diss.First(t => t.Item1 == min);
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止距离", lianci[dis.Item2]);
+                                            disData.Value = dis.Item1;
+                                            dets.Add(disData);
+                                            Diss.Clear();
+                                        }
+                                        else //没找到下止和链牙
+                                        {
+                                            CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
+                                            dets.Add(disData);
+                                        }
+
+                                        if (luyaIndex.Count > 0)
+                                        {
+                                            for (int b = 0; b < luyaIndex.Count; b++)
+                                            {
+                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
+                                                dets.Add(disData);
+                                            }
+                                        }
+                                        List<(float, int)> Angs = new List<(float, int)>();
+                                        for (int a = 0; a < downmass.Count; a++)
+                                        {
+                                            for (int b = 0; b < lianya.Count; b++)
+                                            {
+                                                List<Point2f> downmassListsort = downmass[a].box.Points().ToList();  //先按Y从小到大排序
+                                                downmassListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                List<Point2f> lianyaListsort = lianya[b].box.Points().ToList();
+                                                lianyaListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                if (downmassListsort.Count >= 2 && lianyaListsort.Count >= 2)
+                                                {
+                                                    List<Point2f> downmass01 = new List<Point2f>() { downmassListsort[0], downmassListsort[1] }; //再按X从小到大排序
+                                                    downmass01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+                                                    List<Point2f> lianya01 = new List<Point2f>() { lianyaListsort[0], lianyaListsort[1] };
+                                                    lianya01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+
+                                                    float A1 = CalculateLineAngle(downmass01[0], downmass01[1]);
+                                                    float A2 = CalculateLineAngle(lianya01[0], lianya01[1]);
+
+                                                    float an = A2 - A1;
+                                                    Angs.Add((Math.Abs(an), b));
+
+                                                }
+                                            }
+                                        }
+                                        if (Angs.Count > 0)
+                                        {
+                                            var max = Angs.Max(t => t.Item1);
+                                            var ang = Angs.First(t => t.Item1 == max);
+                                            CoordRestoreData angData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止歪", lianya[ang.Item2]);
+                                            angData.Value = ang.Item1;
+                                            dets.Add(angData);
+                                            Angs.Clear();
+                                        }
+                                        else //没找到下止和链牙
+                                        {
+                                            CoordRestoreData disData = new CoordRestoreData("下止歪", 360);
+                                            dets.Add(disData);
+                                        }
+
+                                        for (int a = 0; a < otherobb.Count; a++)
+                                        {
+                                            int obblabelindex = int.Parse(otherobb[a].lable);
+                                            string obblabelname = downStopMass_names[obblabelindex];
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, obblabelname, otherobb[a]);
+                                            dets.Add(disData);
+                                        }
+                                    }
+                                }
+
+                            }
+                            if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && labelname.Contains("正面上止"))// && !runtype) //最后一张图片有上止图片
+                            {
+                                RunUpMassDet(cell, img, bigResult.datas[j], out Point upmassPos, out List<CoordRestoreData> updets);
+                                massPoints.Add(upmassPos);
+                                if (updets?.Count > 0)
+                                {
+                                    dets.AddRange(updets);
+                                }
+                            }
+
                         }
-                        // ParseResult(dets, cell);
-                        //img.Dispose();
-                        //dets.Clear();
-                        // return;
+                        if (massPoints.Count >= 2)
+                        {
+                            if (massPoints.Count == 2)
+                            {
+                                float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); //临时这样写
+                                CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
+                                dets.Add(disData);
+                                massPoints.Clear();
+                            }
+                            else
+                            {
+                                float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X); //临时这样写
+                                CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
+                                dets.Add(disData);
+                                massPoints.Clear();
+                            }
+
+                        }
                     }
                 }
                 List<Mat> mats = new List<Mat>();
@@ -519,18 +674,7 @@ namespace ZipperTestAlgorihm
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        //if (i == 0)
-                        //{
-                        //    cropRec[i].X = smallimgWidth;
-                        //}
-                        //else if(i==3)
-                        //{
-                        //    cropRec[i].X=cell.Image.ImageWidth - smallimgWidth;
-                        //}
-                        //else
-                        //{
-                        //    cropRec[i].X=i*widthstep;
-                        //}
+
                         cropRec[i].X = i * smallimgWidth;
                         cropRec[i].Y = 0;
                         cropRec[i].Width = smallimgWidth;
@@ -542,11 +686,7 @@ namespace ZipperTestAlgorihm
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }
                 }
-                bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
-                if (cell.PhotoTatolCount == 2)
-                {
-                    runtype = true;
-                }
+
                 if (cell.PhotoIndex == 1) //第一张有下止的图
                 {
                     if (mats.Count == 0)
@@ -564,214 +704,22 @@ namespace ZipperTestAlgorihm
                             {
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
-                                if (labelname.Contains("正面下止"))
-                                {
-                                    //坐标还原
-                                    int nameindex = int.Parse(detrets[i].Item1.datas[j].lable);
-                                    string labelstr = Common_names[nameindex];
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, 0, i * smallimgWidth, 0, labelstr, detrets[i].Item1.datas[j]);
-                                    if (detrets[i].Item2 == 1)//只有第一张图片才检下止
-                                    {
-                                        dets.Add(restoreData);
-                                    }
 
-                                    int recw = 256;
-                                    int rech = 256;
-                                    int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
-                                    int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
-                                    if ((rex + recw) > cell.Image.ImageWidth)
-                                    {
-                                        rex = cell.Image.ImageWidth - recw;
-                                    }
-                                    if (rex < 0)
-                                    {
-                                        rex = 0;
-                                    }
-                                    Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
-                                    cell.DownMassMatImg = cropDownMat;
 
-                                    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
-                                    ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
-                                    if (downResult != null)
-                                    {
-                                        if (downResult.datas.Count > 0)
-                                        {
-                                            List<int> luyaIndex = new List<int>();
-                                            string downmassIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("正面下止")).ToString();
-                                            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == downmassIndexstr).ToList(); //下止
-
-                                            string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
-                                            List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
-
-                                            string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
-                                            List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
-
-                                            List<ObbData> otherobb = downResult.datas.Where(s => s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr).ToList();
-
-                                            List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                                            List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                                            //计算下止到链齿的最短距离
-                                            List<(float, int)> Diss = new List<(float, int)>();
-                                            for (int a = 0; a < downmass.Count; a++)
-                                            {
-                                                for (int b = 0; b < lianci.Count; b++)
-                                                {
-                                                    float dis = CalculateDistance(downmass[a], lianci[b]);
-                                                    Diss.Add((dis, b));
-                                                    if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
-                                                    {
-                                                        luyaIndex.Add(b);
-                                                    }
-                                                }
-                                            }
-                                            if (Diss.Count > 0)
-                                            {
-                                                var min = Diss.Min(t => t.Item1);
-                                                var dis = Diss.First(t => t.Item1 == min);
-                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止距离", lianci[dis.Item2]);
-                                                disData.Value = dis.Item1;
-                                                dets.Add(disData);
-                                                Diss.Clear();
-                                            }
-                                            else //没找到下止和链牙
-                                            {
-                                                CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
-                                                dets.Add(disData);
-                                            }
-
-                                            if (luyaIndex.Count > 0)
-                                            {
-                                                for (int b = 0; b < luyaIndex.Count; b++)
-                                                {
-                                                    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
-                                                    dets.Add(disData);
-                                                }
-                                            }
-                                            List<(float, int)> Angs = new List<(float, int)>();
-                                            for (int a = 0; a < downmass.Count; a++)
-                                            {
-                                                for (int b = 0; b < lianya.Count; b++)
-                                                {
-                                                    //StringBuilder stringBuilder1 = new StringBuilder();
-                                                    //StringBuilder stringBuilder2 = new StringBuilder();
-                                                    //for (int c = 0; c < 4; c++)
-                                                    //{
-                                                    //    float p1x = downmass[a].box.Points()[c].X;
-                                                    //    float p1y = downmass[a].box.Points()[c].Y;
-                                                    //    stringBuilder1.Append($"P{c}:{p1y.ToString("f1")},{p1x.ToString("f1")}  ");
-
-                                                    //    float p2x = lianya[b].box.Points()[c].X;
-                                                    //    float p2y = lianya[b].box.Points()[c].Y;
-                                                    //    stringBuilder2.Append($"P{c}:{p2y.ToString("f1")},{p2x.ToString("f1")}  ");
-                                                    //}
-                                                    //stringBuilder1.Append($"Angle:{downmass[a].box.Angle}");
-                                                    //stringBuilder2.Append($"Angle:{lianya[b].box.Angle}");
-                                                    //string filePath = @"C:\Users\Administrator.B\Desktop\新建文件夹 (3)\stream.txt";
-                                                    ////string content = "Hello, World!";
-
-                                                    //// using 语句确保资源被正确释放[2](@ref)
-                                                    //// 第二个参数 true 表示追加模式，false 表示覆盖（默认覆盖）[1,3](@ref)
-                                                    //// 可指定编码，如 Encoding.UTF8[2,3](@ref)
-                                                    //using (StreamWriter writer = new StreamWriter(filePath, false, Encoding.UTF8))
-                                                    //{
-                                                    //    writer.WriteLine(stringBuilder1.ToString());
-                                                    //    writer.WriteLine(stringBuilder2.ToString());// 写入一行并换行
-                                                    //                                                // writer.Write(content);  // 写入内容但不换行
-                                                    //}
-
-                                                    List<Point2f> downmassListsort = downmass[a].box.Points().ToList();  //先按Y从小到大排序
-                                                    downmassListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
-                                                    List<Point2f> lianyaListsort = lianya[b].box.Points().ToList();
-                                                    lianyaListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
-                                                    if (downmassListsort.Count >= 2 && lianyaListsort.Count >= 2)
-                                                    {
-                                                        List<Point2f> downmass01 = new List<Point2f>() { downmassListsort[0], downmassListsort[1] }; //再按X从小到大排序
-                                                        downmass01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
-                                                        List<Point2f> lianya01 = new List<Point2f>() { lianyaListsort[0], lianyaListsort[1] };
-                                                        lianya01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
-
-                                                        float A1 = CalculateLineAngle(downmass01[0], downmass01[1]);
-                                                        float A2 = CalculateLineAngle(lianya01[0], lianya01[1]);
-
-                                                        float an = A2 - A1;
-                                                        Angs.Add((Math.Abs(an), b));
-
-                                                    }
-                                                }
-                                            }
-                                            if (Angs.Count > 0)
-                                            {
-                                                var max = Angs.Max(t => t.Item1);
-                                                var ang = Angs.First(t => t.Item1 == max);
-                                                CoordRestoreData angData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止歪", lianya[ang.Item2]);
-                                                angData.Value = ang.Item1;
-                                                dets.Add(angData);
-                                                Angs.Clear();
-                                            }
-                                            else //没找到下止和链牙
-                                            {
-                                                CoordRestoreData disData = new CoordRestoreData("下止歪", 360);
-                                                dets.Add(disData);
-                                            }
-
-                                            for (int a = 0; a < otherobb.Count; a++)
-                                            {
-                                                int obblabelindex = int.Parse(otherobb[a].lable);
-                                                string obblabelname = downStopMass_names[obblabelindex];
-                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, obblabelname, otherobb[a]);
-                                                dets.Add(disData);
-                                            }
-                                        }
-                                    }
-                                }
-                                else if (labelname.Contains("正面上止") && runtype)
-                                {
-                                    if (detrets[i].Item2 == 4)
-                                    {
-                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass, out Point upmassPos, out List<CoordRestoreData> updets);
-                                        massPoints.Add(upmassPos);
-                                        if (updets?.Count > 0)
-                                        {
-                                            dets.AddRange(updets);
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    //int nameindex = int.Parse(detrets[i].datas[j].lable);
-                                    //string labelstr = Common_names[nameindex];
-                                    if (labelname.Contains("正面上止") || (labelname.Contains("反面上止") && !runtype)) //第一张图片不该有上止
-                                        continue;
-                                    if (labelname.Contains("毛丝") && (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
-                                        continue;
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
-                                    dets.Add(restoreData);
-                                }
-                            }
-                            if (massPoints.Count >= 2)
-                            {
-                                if (massPoints.Count == 2)
-                                {
-                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X); //临时这样写
-                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
-                                    dets.Add(disData);
-                                    massPoints.Clear();
-                                }
-                                else
-                                {
-                                    float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X); //临时这样写
-                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
-                                    dets.Add(disData);
-                                    massPoints.Clear();
-                                }
+                                //if (labelname.Contains("正面上止") || (labelname.Contains("反面上止") && !runtype)) //第一张图片不该有上止
+                                //    continue;
+                                if (labelname.Contains("毛丝") && (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
+                                    continue;
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
+                                dets.Add(restoreData);
 
                             }
+
                         }
 
                     }
                 }
-                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && !runtype) //最后一张图片有上止图片
+                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1 )//&& !runtype) //最后一张图片有上止图片
                 {
                     if (mats.Count == 0)
                     {
@@ -788,48 +736,16 @@ namespace ZipperTestAlgorihm
                             {
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
-                                if (labelname.Contains("正面上止"))
-                                {
-                                    if (detrets[i].Item2 == 4)
-                                    {
-                                        RunUpMassDet(cell, img, detrets[i].Item1.datas[j], i, smallimgWidth, paramClass, out Point upmassPos, out List<CoordRestoreData> updets);
-                                        massPoints.Add(upmassPos);
-                                        if (updets?.Count > 0)
-                                        {
-                                            dets.AddRange(updets);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    //int nameindex = int.Parse(detrets[i].datas[j].lable);
-                                    //string labelstr = Common_names[nameindex];
-                                    if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
-                                        continue;
-                                    if (labelname.Contains("毛丝") && (detrets[i].Item2 == 1 || detrets[i].Item2 == 2))
-                                        continue;
-                                    CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
-                                    dets.Add(restoreData);
-                                }
-                            }
-                            if (massPoints.Count >= 2)
-                            {
-                                if (massPoints.Count == 2)
-                                {
-                                    float massdis = Math.Abs(massPoints[0].X - massPoints[1].X);
-                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
-                                    dets.Add(disData);
-                                    massPoints.Clear();
-                                }
-                                else
-                                {
-                                    float massdis = Math.Abs(massPoints[massPoints.Count - 1].X - massPoints[massPoints.Count - 2].X);
-                                    CoordRestoreData disData = new CoordRestoreData("上止高低", massdis);
-                                    dets.Add(disData);
-                                    massPoints.Clear();
-                                }
+
+                                //if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
+                                //    continue;
+                                if (labelname.Contains("毛丝") && (detrets[i].Item2 == 1 || detrets[i].Item2 == 2))
+                                    continue;
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
+                                dets.Add(restoreData);
 
                             }
+
                         }
                     }
                 }
@@ -1048,13 +964,14 @@ namespace ZipperTestAlgorihm
         }
 
         int upmassCount;
-        private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, CParam param, out Point upmassPos, out List<CoordRestoreData> updets)
+        //private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, CParam param, out Point upmassPos, out List<CoordRestoreData> updets)
+        private void RunUpMassDet(Cell cell, Mat img, DetData detData, out Point upmassPos, out List<CoordRestoreData> updets)
         {
             updets = new List<CoordRestoreData>();
             //坐标还原
             int nameindex = int.Parse(detData.lable);
-            string labelstr = Common_names[nameindex];
-            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelstr, detData);
+            string labelstr = bigDet_names[nameindex];
+            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelstr, detData);
             upmassPos = new Point(restoreData.OrgCenterX, restoreData.OrgCenterY);
             int recw = 192;
             int rech = 96;
