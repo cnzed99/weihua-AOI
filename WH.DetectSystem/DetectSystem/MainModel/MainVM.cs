@@ -1116,7 +1116,7 @@ namespace WH.DetectSystem.Models
                                     #endregion 画取反 OK的结果区域
                                     if (!isAutomaticTest)
                                     {
-                                        if (!cell.IsOK)
+                                        if (!cell.IsOK&&cell.Quality!=null)
                                         {
                                             CurView.SetFontSize(25);
                                             CurView.SetFontWeight(System.Windows.FontWeights.Bold);
@@ -1140,7 +1140,7 @@ namespace WH.DetectSystem.Models
                                                 textBuilder.Append(dstFilter.Name);
                                             }
 
-                                            CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
+                                            CurView.SetFontBrush(cell.Quality?.ShowColor.Brush);
                                             CurView.WinDrawText(
                                                 textBuilder.ToString(),
                                                 AlignmentX.Right,
@@ -1937,20 +1937,86 @@ namespace WH.DetectSystem.Models
                             foreach (var fl in df.FilterList)
                             {
                                 fl.FilterSelectEnable = true; //
-                                //fl.IsReversal = true;
-                                //foreach (var se in fl.SelectList)
-                                //{
-                                //    foreach (var pa in se.SelectParams)
-                                //    {
-                                //        double minrang = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea - CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
-                                //        if (minrang < 1)
-                                //        {
-                                //            minrang = 1;
-                                //        }
-                                //        pa.Min = minrang;
-                                //        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullSegOrgArea + CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullSegRange;
-                                //    }
-                                //}
+                            }
+                        }
+
+                    }
+                    if (pullname.Name == "H")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                foreach (var se in fl.SelectList)
+                                {
+                                    foreach (var pa in se.SelectParams)
+                                    {
+                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        {
+                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                            {
+
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 18; //烤漆拉片H
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 18;
+                                            }
+                                            else
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 20; //包胶拉片H
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 20;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (pullname.Name == "S")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                foreach (var se in fl.SelectList)
+                                {
+                                    foreach (var pa in se.SelectParams)
+                                    {
+                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        {
+                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 8; //烤漆拉片S
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 8;
+                                            }
+                                            else
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 10; //包胶拉片S
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 10;
+                                            }
+
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1968,7 +2034,83 @@ namespace WH.DetectSystem.Models
                             foreach (var fl in df.FilterList)
                             {
                                 fl.FilterSelectEnable = false;
-                               // fl.IsReversal = false;
+                                // fl.IsReversal = false;
+                            }
+                        }
+                    }
+                    if (pullname.Name == "H")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                foreach (var se in fl.SelectList)
+                                {
+                                    foreach (var pa in se.SelectParams)
+                                    {
+                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        {
+                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 15; //烤漆拉头H
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 15;
+                                            }
+                                            else
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 20; //金属拉头H
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 25;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (pullname.Name == "S")
+                    {
+                        foreach (var df in pullname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                foreach (var se in fl.SelectList)
+                                {
+                                    foreach (var pa in se.SelectParams)
+                                    {
+                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        {
+                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 10; //烤漆拉头S
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 10;
+                                            }
+                                            else
+                                            {
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 15; //金属拉头S
+                                                if (diff <= 0)
+                                                {
+                                                    diff = 0;
+                                                }
+                                                pa.Min = diff;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 20;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -30,7 +30,7 @@ namespace OPTLightControl
 
             if (File.Exists(path))
             {
-                List<OPTLightConfig> templist = ConfigAPI.Load<List<OPTLightConfig>>(path);
+                List<OPTLightConfig> templist = ConfigAPI.LoadDeserialize<List<OPTLightConfig>>(path);
                 if (templist != null)
                 {
                     IEnumerable<OPTLightConfig> selectName = templist.Where(t => t.LightStationName == indexstr);

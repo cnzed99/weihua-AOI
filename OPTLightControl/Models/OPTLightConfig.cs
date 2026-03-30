@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,20 +19,20 @@ namespace OPTLightControl
         public OPTLightConfig()
             : base()
         {
-            if (LightChannelList == null)
-            {
-                LightChannelList = new()
-                {
-                    new CLight("A"),
-                    new CLight("B"),
-                    new CLight("C"),
-                    new CLight("D"),
-                    new CLight("E"),
-                    new CLight("F"),
-                    new CLight("G"),
-                    new CLight("H")
-                }; //通道亮度
-            }
+            //if (LightChannelList == null)
+            //{
+            //    LightChannelList = new()
+            //    {
+            //        new CLight("A"),
+            //        new CLight("B"),
+            //        new CLight("C"),
+            //        new CLight("D"),
+            //        new CLight("E"),
+            //        new CLight("F"),
+            //        new CLight("G"),
+            //        new CLight("H")
+            //    }; //通道亮度
+            //}
         }
 
         /// <summary>
@@ -57,6 +58,26 @@ namespace OPTLightControl
         /// </summary>
         [property: DisplayName("工作模式")]
         [ObservableProperty]
+
         bool workMode = true;
+
+        [OnDeserialized]
+        void LoadDefatLight(StreamingContext context)
+        {
+            if (LightChannelList == null)
+            {
+                LightChannelList = new()
+                {
+                    new CLight("A"),
+                    new CLight("B"),
+                    new CLight("C"),
+                    new CLight("D"),
+                    new CLight("E"),
+                    new CLight("F"),
+                    new CLight("G"),
+                    new CLight("H")
+                }; //通道亮度
+            }
+        }
     }
 }

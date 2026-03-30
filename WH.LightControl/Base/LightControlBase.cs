@@ -21,8 +21,19 @@ namespace WH.LightControl
     /// </summary>
     public abstract partial class CLightControlBase : ObservableObject
     {
+        /// <summary>
+        /// 20260129 龚伟东
+        /// 串口是否打开
+        /// </summary>
+        [ObservableProperty]
+        bool isSerialPortOpen;
 
-
+        /// <summary>
+        /// 20260307 鲍赞宝
+        /// 错误消息提示
+        /// </summary>
+        [ObservableProperty]
+        string errorMessage;
         /// <summary>
         /// 20240825 鲍赞宝
         /// 光源主配置
@@ -42,7 +53,7 @@ namespace WH.LightControl
         {
             SerialPort.ReadBufferSize = 1024;
             SerialPort.WriteBufferSize = 1024;
-            serialPort.WriteTimeout = 2000;
+            SerialPort.WriteTimeout = 2000;
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler); // 接收到数据时的事件
         }
         /// <summary>
@@ -70,25 +81,34 @@ namespace WH.LightControl
         /// <returns></returns>
         public virtual bool Open(CLightParamsBase lightParams)
         {
-            if (this.SerialPort.IsOpen)
+            try
             {
-                this.SerialPort.Close();
-            }
-            if (string.IsNullOrEmpty(lightParams.Port?.Name))
+                if (this.SerialPort.IsOpen)
+                {
+                    this.SerialPort.Close();
+                }
+                if (string.IsNullOrEmpty(lightParams.Port?.Name))
+                    return false;
+                this.SerialPort.PortName = lightParams.Port.Name; //lightParams.Port;
+                this.SerialPort.BaudRate = (int)lightParams.BaudRate;
+                this.SerialPort.Parity = lightParams.Parity;
+                this.SerialPort.DataBits = (int)lightParams.DataBits;
+                this.SerialPort.StopBits = lightParams.StopBits;
+                this.SerialPort.Handshake = lightParams.HandShake;
+                string[] ports = SerialPort.GetPortNames();
+                if (ports.Contains(this.SerialPort.PortName))
+                {
+                    this.SerialPort.Open();
+                    return true;
+                }
                 return false;
-            this.SerialPort.PortName = lightParams.Port.Name; //lightParams.Port;
-            this.SerialPort.BaudRate = (int)lightParams.BaudRate;
-            this.SerialPort.Parity = lightParams.Parity;
-            this.SerialPort.DataBits = (int)lightParams.DataBits;
-            this.SerialPort.StopBits = lightParams.StopBits;
-            this.SerialPort.Handshake = lightParams.HandShake;
-            string[] ports = SerialPort.GetPortNames();
-            if (ports.Contains(this.SerialPort.PortName))
-            {
-                this.SerialPort.Open();
-                return true;
             }
-            return false;
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.ToString();
+                return false;
+            }
+
         }
 
         /// <summary>

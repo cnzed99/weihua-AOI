@@ -84,12 +84,12 @@ namespace LSWLightControl
             }
         }
 
-        /// <summary>
-        /// 20240724 TCG
-        /// 串口是否打开
-        /// </summary>
-        [ObservableProperty]
-        bool isSerialPortOpen;
+        ///// <summary>
+        ///// 20240724 TCG
+        ///// 串口是否打开
+        ///// </summary>
+        //[ObservableProperty]
+        //bool isSerialPortOpen;
 
         /// <summary>
         /// 20240724 TCG
@@ -122,8 +122,7 @@ namespace LSWLightControl
         /// </summary>
         SemaphoreSlim slim = new SemaphoreSlim(1);
 
-        [ObservableProperty]
-        string errorMessage;
+
 
         public LSWLightControlVM()
             : base()
@@ -144,6 +143,7 @@ namespace LSWLightControl
             if (this.SerialPort.IsOpen)
             {
                 this.SerialPort.Close();
+                IsSerialPortOpen = false;
             }
             return true;
         }

@@ -359,15 +359,16 @@ namespace WH.DetectSystem.ViewModels
                         CLinghtManagement.LoadLightParams();
                         foreach (var lightCtl in CLinghtManagement.LightControlDict.Values)
                         {
-                            lightCtl.Open(lightCtl.BaseConfig);
-                            Thread.Sleep(10);
-                            for (int i = 0; i < lightCtl.BaseConfig.LightChannelList.Count; i++)
+                          bool re=  lightCtl.Open(lightCtl.BaseConfig);
+                            if (re)
                             {
-                                lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
                                 Thread.Sleep(10);
+                                for (int i = 0; i < lightCtl.BaseConfig.LightChannelList?.Count; i++)
+                                {
+                                    lightCtl.SetChannelValue(lightCtl.BaseConfig.LightChannelList[i]);
+                                    Thread.Sleep(10);
+                                }
                             }
-
-
                         }
                     });
                   
@@ -538,7 +539,7 @@ namespace WH.DetectSystem.ViewModels
         {
             if (string.IsNullOrEmpty(ProjPath))
                 return;
-            if (CMainMModel.CProcessGroups.Count == 0)
+            if (CMainMModel?.CProcessGroups?.Count == 0)
                 return;
             SystemSettings.RecentProjs.Remove(ProjPath);
             SystemSettings.RecentProjs.Insert(0, ProjPath);

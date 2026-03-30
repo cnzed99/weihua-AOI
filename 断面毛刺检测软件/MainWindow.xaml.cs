@@ -257,6 +257,7 @@ namespace 断面毛刺检测软件
                 CCameraManagement.SaveAllCamConfig();
                 CCommunicationManagement.CloseAllComm();
                 CCameraManagement.CloseAllCameras();
+                CLinghtManagement.CloseAllLinghtConnect();
                 // CMotionManagement.SaveMotionConfig();
                 OperateLog.Info(Properties.Resources.EnvironmentExit);
                 Application.Current.Shutdown();

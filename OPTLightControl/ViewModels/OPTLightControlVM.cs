@@ -16,8 +16,6 @@ using HandyControl.Controls;
 using WH.Entity;
 using WH.LightControl;
 using CSharp_OPTControllerAPI;
-using Microsoft.Win32.SafeHandles;
-using System.Security.Cryptography.X509Certificates;
 
 namespace OPTLightControl
 {
@@ -29,16 +27,8 @@ namespace OPTLightControl
     {
         private OPTControllerAPI OPTController;
 
-        private bool isConnected = false;  // 添加私有字段记录连接状态
+        //private bool isConnected = false;  // 添加私有字段记录连接状态
 
-
-
-        /// <summary>
-        /// 20260129 龚伟东
-        /// 串口是否打开
-        /// </summary>
-        [ObservableProperty]
-        bool isSerialPortOpen;
 
         /// <summary>
         /// 20260129 龚伟东
@@ -71,47 +61,37 @@ namespace OPTLightControl
         /// </summary>
         SemaphoreSlim slim = new SemaphoreSlim(1);
 
-        [ObservableProperty]
-        string errorMessage;
+        //[ObservableProperty]
+        //string errorMessage;
 
         public OPTLightControlVM()
             : base()
         {
-            //if (File.Exists(LightParamsBase.s_LightConfigPath))
-            //{
-            //    this.Config = ConfigAPI.Load<LSWLightConfig>(LightParamsBase.s_LightConfigPath);
-            //}
-            //else
-            //{
-            //    this.Config = new LSWLightConfig();
-            //}
-            //_ = this.Open();
             OPTController = new OPTControllerAPI();
-
         }
 
         public override bool Close()
         {
             try
             {
-                if(isConnected)
+                //if (IsSerialPortOpen)
+                //{
+                int result = OPTController.ReleaseSerialPort();
+                if (result == 0)
                 {
-                    int result = OPTController.ReleaseSerialPort();
-                    if (result == 0)
-                    {
-                        isConnected = false;
-                        IsSerialPortOpen = false;
-                        ErrorMessage = string.Empty;
-                        Growl.Info("光源已断开");
-                        return true;
-                    }
-                    else
-                    {
-                        ErrorMessage = $"断开连接失败，错误码: {result}";
-                        return false;
-                    }
+                    // isConnected = false;
+                    IsSerialPortOpen = false;
+                    ErrorMessage = string.Empty;
+                    Growl.Info("光源已断开");
+                    return true;
                 }
-                return true;
+                else
+                {
+                    ErrorMessage = $"断开连接失败，错误码: {result}";
+                    return false;
+                }
+                //}
+               // return true;
             }
             catch (Exception ex)
             {
@@ -138,15 +118,18 @@ namespace OPTLightControl
                 if (slim.Wait(2000))
                 {
                     message.Clear();
-                    var lightList = Config.LightChannelList.ToList();
+                    var lightList = Config.LightChannelList?.ToList();
                     // 调用奥普特SDK读取亮度
-                    int intensity = 0;
-                    foreach (var light in lightList)
+                    if (lightList != null)
                     {
-                        //long result = OPTController.ReadIntensity(channel, ref intensity);
-                        int channel = ConvertToOptChannelNumber(light.Channel);
-                        long result = OPTController.ReadTriggerWidth(channel, ref intensity);
-                        light.Value = intensity;
+                        foreach (var light in lightList)
+                        {
+                            int intensity = 0;
+                            //long result = OPTController.ReadIntensity(channel, ref intensity);
+                            int channel = ConvertToOptChannelNumber(light.Channel);
+                            long result = OPTController.ReadTriggerWidth(channel, ref intensity);
+                            light.Value = intensity;
+                        }
                     }
                     slim.Release();
                 }
@@ -165,8 +148,29 @@ namespace OPTLightControl
         /// </summary>
         public override bool IsOpen()
         {
-            return isConnected;
-            // 或者 return IsSerialPortOpen; // 使用属性
+            // return isConnected;
+            // return IsSerialPortOpen; // 使用属性
+            return OPTController.IsConnect() == 0 ? true : false;
+        }
+
+
+        public override bool Open(CLightParamsBase lightParams)
+        {
+            //if (this.SerialPort.IsOpen)
+            //{
+            //    this.SerialPort.Close();
+            //}
+            //if (string.IsNullOrEmpty(lightParams.Port?.Name))
+            //    return false;
+            //this.SerialPort.PortName = lightParams.Port.Name; //lightParams.Port;
+            //this.SerialPort.BaudRate = (int)lightParams.BaudRate;
+            //this.SerialPort.Parity = lightParams.Parity;
+            //this.SerialPort.DataBits = (int)lightParams.DataBits;
+            //this.SerialPort.StopBits = lightParams.StopBits;
+            //this.SerialPort.Handshake = lightParams.HandShake;
+            //string[] ports = SerialPort.GetPortNames();
+            _ = Open();
+            return true;
         }
 
         /// <summary>
@@ -179,50 +183,38 @@ namespace OPTLightControl
             try
             {
                 // 如果已经连接，先断开
-                if (isConnected)
+                int re = OPTController.IsConnect();
+                if (re == 0)
                 {
                     Close();
-                    //OPTController.ReleaseSerialPort();
-                    //isConnected = false;
-                    //IsSerialPortOpen = false;
                 }
-
                 // 检查配置
-                if (Config == null || Config.Port == null || string.IsNullOrEmpty(Config.Port.Name))
-                {
-                    ErrorMessage = "请选择串口号";
-                    Growl.Warning("请选择串口号");
-                    return;
-                }
-
-                //获取系统中所有可用的串口号,例如：返回 ["COM1", "COM2", "COM3"]
-                string[] ports = SerialPort.GetPortNames();
-                bool result;
-                //检查要打开的串口是否在可用串口列表中
-                //比如 this.SerialPort.PortName = "COM3"
-                // 检查 "COM3" 是否在 ["COM1", "COM2", "COM3"] 中
-
+                //if (Config == null || Config.Port == null || string.IsNullOrEmpty(Config.Port.Name))
+                //{
+                //    ErrorMessage = "请选择串口号";
+                //    Growl.Warning("请选择串口号");
+                //    return;
+                //}
 
                 long lRet;
-                if (ports.Contains(this.SerialPort.PortName))
+                lRet = OPTController.InitSerialPort(Config.Port.Name);
+                if (lRet == 0)
                 {
-                    lRet = OPTController.InitSerialPort(SerialPort.PortName);
-                    if (lRet == 0)
-                    {
-                        isConnected = true; // 设置连接状态为已连接
-                        IsSerialPortOpen = true;
-                        GetLightValues();
-                    }
-                    else
-                    {
-                        isConnected = false; // 设置连接状态为未连接
-                        IsSerialPortOpen = false;
-                    }
+                    // isConnected = true; // 设置连接状态为已连接
+                    IsSerialPortOpen = true;
+                    ErrorMessage = string.Empty;
+                    GetLightValues();
                 }
+                else
+                {
+                    // isConnected = false; // 设置连接状态为未连接
+                    IsSerialPortOpen = false;
+                }
+
             }
             catch (Exception ex)
             {
-                isConnected = false;
+                // isConnected = false;
                 IsSerialPortOpen = false;
                 ErrorMessage = $"连接异常: {ex.Message}";
                 Growl.Error($"连接异常: {ex.Message}");
@@ -250,7 +242,7 @@ namespace OPTLightControl
 
                 //OPTController.SetIntensity(ConvertToOptChannelNumber(light.Channel), light.Lightvalue);
                 int channel = ConvertToOptChannelNumber(light.Channel);
-                OPTController.TurnOnChannel(channel);
+               // OPTController.TurnOnChannel(channel);
                 OPTController.SetTriggerWidth(channel, light.Lightvalue);
 
             }
@@ -259,11 +251,11 @@ namespace OPTLightControl
                 ErrorMessage = $"设置亮度异常: {ex.Message}";
                 Growl.Error($"设置异常: {ex.Message}");
             }
-            
+
 
         }
 
-        public static int ConvertToOptChannelNumber(string channel)
+        public int ConvertToOptChannelNumber(string channel)
         {
             if (string.IsNullOrEmpty(channel))
                 return 0;
@@ -290,7 +282,7 @@ namespace OPTLightControl
                 return;
         }
 
-        
+
 
         protected override void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
@@ -302,6 +294,6 @@ namespace OPTLightControl
             action?.Invoke(message.ToString());
         }
 
-       
+
     }
 }

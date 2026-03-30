@@ -217,6 +217,7 @@ namespace ZipperTestAlgorihm
         {
             ReadNames(user);
 
+
             if (Common_names?.Length > 0)
             {
                 #region 大缺陷
@@ -305,6 +306,12 @@ namespace ZipperTestAlgorihm
                     CDefectRecipe defectRecipe2 = new CDefectRecipe(pullSharp_names[i], Category.值);
                     pullRecipes.Add(defectRecipe2);
                 }
+                //颜色
+                CDefectRecipe defectRecipe1_H = new CDefectRecipe("H", Category.值);
+                CDefectRecipe defectRecipe1_S = new CDefectRecipe("S", Category.值);
+                pullRecipes.Add(defectRecipe1_H);
+                pullRecipes.Add(defectRecipe1_S);
+
                 CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
 
                 List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
@@ -314,6 +321,8 @@ namespace ZipperTestAlgorihm
                     logoRecipes.Add(defectRecipe);
                 }
                 CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
+
+
 
                 #endregion
 
@@ -882,7 +891,9 @@ namespace ZipperTestAlgorihm
                                         {
                                             for (int i = 0; i < contoursList.Count; i++)
                                             {
-                                                double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
+                                                //double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
+                                                double simiValue = MatchShapesWithCv2(cell.OrgContours, contoursList[i]);
+                                                
                                                 dsimilaritys.Add(simiValue);
                                             }
                                             double minvalue = dsimilaritys.Min();
@@ -905,7 +916,8 @@ namespace ZipperTestAlgorihm
                                         {
                                             for (int i = 0; i < contoursList.Count; i++)
                                             {
-                                                double simiValue = MatchShapesUsingHuMoments(offlineContours, contoursList[i]);
+                                                // double simiValue = MatchShapesUsingHuMoments(offlineContours, contoursList[i]);
+                                                double simiValue = MatchShapesWithCv2(offlineContours, contoursList[i]);
                                                 dsimilaritys.Add(simiValue);
                                             }
                                             double minvalue = dsimilaritys.Min();
@@ -924,6 +936,69 @@ namespace ZipperTestAlgorihm
                                         }
                                     }
 
+                                }
+                                #endregion
+                                #region 拉头拉片颜色
+                                if (labelname.Contains("拉头"))
+                                {
+                                    int px= pullserachResult.datas[j].box.X+20;
+                                    int py = pullserachResult.datas[j].box.Y + 30;
+
+                                    int rew = 120;
+                                    int reh = 70;
+                                    Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
+                                   // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                                    Mat hsvImage=new Mat();
+                                    Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                                    Scalar hsvMean = Cv2.Mean(hsvImage);
+
+                                    // HSV通道说明：
+                                    // H: 0-179 (色调)
+                                    // S: 0-255 (饱和度)
+                                    // V: 0-255 (明度)
+                                    double hMean = hsvMean.Val0;
+                                    double sMean = hsvMean.Val1;
+                                    // double vMean = hsvMean.Val2;
+                                    CoordRestoreData disDataH = new CoordRestoreData("H", (float)hMean);
+                                    CoordRestoreData disDataS = new CoordRestoreData("S", (float)sMean);
+                                    dets.Add(disDataH);
+                                    dets.Add(disDataS);
+                                    hsvImage.Dispose();
+
+                                }
+                                if (labelname.Contains("拉片"))
+                                {
+                                    //int px = pullserachResult.datas[j].box.X + 30;
+                                    //int py = pullserachResult.datas[j].box.Y + 80;
+
+                                    //int rew = 140;
+                                    //int reh = 35;
+
+                                    int cx = (pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Right) / 2;
+                                    int cy = (pullserachResult.datas[j].box.Y + pullserachResult.datas[j].box.Bottom) / 2;
+
+                                    int rew = 80;
+                                    int reh = 30;
+                                    int px = cx + 30;
+                                    int py= cy - reh/2;
+                                    Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
+                                   // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (22)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                                    Mat hsvImage = new Mat();
+                                    Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                                    Scalar hsvMean = Cv2.Mean(hsvImage);
+                                    // HSV通道说明：
+                                    // H: 0-179 (色调)
+                                    // S: 0-255 (饱和度)
+                                    // V: 0-255 (明度)
+                                    double hMean = hsvMean.Val0;
+                                    double sMean = hsvMean.Val1;
+
+                                    // double vMean = hsvMean.Val2;
+                                    CoordRestoreData disDataH = new CoordRestoreData("H", (float)hMean);
+                                    CoordRestoreData disDataS = new CoordRestoreData("S", (float)sMean);
+                                    dets.Add(disDataH);
+                                    dets.Add(disDataS);
+                                    hsvImage.Dispose();
                                 }
                                 #endregion
                             }
@@ -1424,30 +1499,113 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// 计算两轮廓相识度，越接近0越相似
         /// </summary>
         /// <returns></returns>
-        double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
+        //double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
+        //{
+        //    Moments moments1 = Cv2.Moments(contours1);
+        //    Moments moments2 = Cv2.Moments(contours2);
+
+        //    double[] hu1 = moments1.HuMoments();
+        //    double[] hu2 = moments2.HuMoments();
+
+        //    //计算相似度（值越小越相似）
+        //    double similarity = 0;
+        //    for (int i = 0; i < 7; i++)
+        //    {
+        //        double a = Math.Abs(hu1[i]);
+        //        double b = Math.Abs(hu2[i]);
+
+        //        if (a + b > 0)
+        //        {
+        //            similarity += Math.Abs(a - b) / Math.Abs(a + b);
+        //        }
+        //    }
+
+        //    return similarity;
+        //}
+        // 容差值，用于判断Hu矩是否接近零
+        private const double Epsilon = 1e-10;
+
+        // 各阶Hu矩的权重（可根据需求调整）
+        private static readonly double[] Weights = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+
+        public  double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
         {
+            // ========== 输入验证 ==========
+            if (contours1 == null || contours2 == null)
+            {
+                throw new ArgumentNullException("轮廓点集不能为null");
+            }
+
+            if (contours1.Length < 3 || contours2.Length < 3)
+            {
+                throw new ArgumentException("轮廓至少需要3个点才能构成有效形状");
+            }
+
+            // ========== 计算几何矩 ==========
             Moments moments1 = Cv2.Moments(contours1);
             Moments moments2 = Cv2.Moments(contours2);
 
+            // ========== 计算Hu不变矩 ==========
             double[] hu1 = moments1.HuMoments();
             double[] hu2 = moments2.HuMoments();
 
-            //计算相似度（值越小越相似）
-            double similarity = 0;
+            // ========== 计算加权相似度 ==========
+            double totalSimilarity = 0.0;
+
             for (int i = 0; i < 7; i++)
             {
-                double a = Math.Abs(hu1[i]);
-                double b = Math.Abs(hu2[i]);
+                double h1 = Math.Abs(hu1[i]);
+                double h2 = Math.Abs(hu2[i]);
 
-                if (a + b > 0)
+                // 处理两个值都接近零的情况
+                if (h1 < Epsilon && h2 < Epsilon)
                 {
-                    similarity += Math.Abs(a - b) / Math.Abs(a + b);
+                    // 两者都接近零，认为此维度完全相似
+                    continue;
+                }
+                else if (h1 < Epsilon || h2 < Epsilon)
+                {
+                    // 只有一个接近零，完全不相似
+                    totalSimilarity += Weights[i] * 1.0;
+                }
+                else
+                {
+                    // 使用对数距离（更稳定的度量方式）
+                    // 将相对差异转换为对数域计算
+                    double logDiff = Math.Abs(Math.Log(h1) - Math.Log(h2));
+
+                    // 使用tanh函数将结果压缩到[0,1]范围
+                    // tanh(x) 在x较小时近似为x，x较大时趋近于1
+                    totalSimilarity += Weights[i] * Math.Tanh(logDiff);
                 }
             }
 
-            return similarity;
+            return totalSimilarity;
         }
+        /// <summary>
+        /// 使用OpenCV内置方法计算相似度（作为对比参考）
+        /// </summary>
+        public  double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
+                                                ShapeMatchModes mode = ShapeMatchModes.I2)
+        {
+            using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
+            using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
+            {
+                
+                    // 填充点数据
+                    for (int i = 0; i < contours1.Length; i++)
+                    {
+                        contour1Mat.Set(i, 0, new Point( contours1[i].X, contours1[i].Y ));
+                    }
+                    for (int i = 0; i < contours2.Length; i++)
+                    {
+                        contour2Mat.Set(i, 0, new Point ( contours2[i].X, contours2[i].Y ));
+                    }
+                
+                return Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
 
+            }
+        }
 
 
         //private BitmapSource Mat2BitmapSource(Mat img)
@@ -1583,7 +1741,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("基础参数")]
-        [property: DisplayName("1.0驱动器")]
+        [property: DisplayName("01驱动器")]
         [property: Description("驱动器")]
         private string currentDevice = "GPU.0";
 
@@ -1593,7 +1751,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("1.0通用模型分数阈值")]
+        [property: DisplayName("01 通用模型分数阈值")]
         [property: Description("通用模型分数阈值")]
         private float commonScore = 0.3f;
 
@@ -1603,7 +1761,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("2.0下止缺陷分数阈值")]
+        [property: DisplayName("02 下止缺陷分数阈值")]
         [property: Description("下止缺陷分数阈值")]
         private float downScore = 0.4f;
 
@@ -1613,7 +1771,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("3.0下止链齿分数阈值")]
+        [property: DisplayName("03 下止链齿分数阈值")]
         [property: Description("下止链齿分数阈值")]
         private float downLianciScore = 0.6f;
 
@@ -1623,7 +1781,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("4.0上止缺陷分数阈值")]
+        [property: DisplayName("04 上止缺陷分数阈值")]
         [property: Description("上止缺陷分数阈值")]
         private float upScore = 0.4f;
 
@@ -1633,7 +1791,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("5.0上止链齿分数阈值")]
+        [property: DisplayName("05 上止链齿分数阈值")]
         [property: Description("上止链齿分数阈值")]
         private float upLianciScore = 0.7f;
 
@@ -1643,7 +1801,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("6.0金属拉头分数阈值")]
+        [property: DisplayName("06 金属拉头分数阈值")]
         [property: Description("金属拉头分数阈值")]
         private float metaPullScore = 0.4f;
 
@@ -1653,8 +1811,8 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("7.0金属拉头分数阈值")]
-        [property: Description("金属拉头分数阈值")]
+        [property: DisplayName("07 烤漆拉头分数阈值")]
+        [property: Description("烤漆拉头分数阈值")]
         private float paintPullScore = 0.4f;
 
         /// <summary>
@@ -1663,7 +1821,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("8.0Logo分数阈值")]
+        [property: DisplayName("08 Logo分数阈值")]
         [property: Description("Logo分数阈值")]
         private float logoPullScore = 0.4f;
 
@@ -1673,7 +1831,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("9.0大缺陷分数阈值")]
+        [property: DisplayName("09 大缺陷分数阈值")]
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 
@@ -1683,7 +1841,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("10.0自动识别分数阈值")]
+        [property: DisplayName("10 自动识别分数阈值")]
         [property: Description("自动识别分数阈值")]
         private float autoScore = 0.45f;
 
@@ -1693,13 +1851,13 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("11.0拉片分割分数阈值")]
+        [property: DisplayName("11 拉片分割分数阈值")]
         [property: Description("拉片分割分数阈值")]
         private float pullSharpScore = 0.5f;
 
         [ObservableProperty]
         [property: Category("离线设置模板")]
-        [property: DisplayName("1.0离线设置拉片外形模版开关")]
+        [property: DisplayName("01 离线设置拉片外形模版开关")]
         [property: Description("离线设置拉片模版开关")]
         bool offLinePullerTemplateEnabel;
 

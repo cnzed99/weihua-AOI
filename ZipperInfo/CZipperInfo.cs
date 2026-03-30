@@ -291,6 +291,22 @@ namespace ZipperInfo
         /// 拉片外形轮廓点集合
         /// </summary>
         public OpenCvSharp.Point[] OrgContours { get; set; }
+        /// <summary>
+        /// 拉头的H值
+        /// </summary>
+        public double PullerMeanH { get; set; }
+        /// <summary>
+        /// 拉头的S值
+        /// </summary>
+        public double PullerMeanS { get; set; }
+        /// <summary>
+        /// 拉片的H值
+        /// </summary>
+        public double PullsMeanH { get; set; }
+        /// <summary>
+        /// 拉片的S值
+        /// </summary>
+        public double PullsMeanS { get; set; }
 
     }
 

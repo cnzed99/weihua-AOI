@@ -148,5 +148,26 @@ namespace WH.LightControl
                 }
             }
         }
+
+        /// <summary>
+        /// 20260306 鲍赞宝
+        /// 关闭所有光源连接
+        /// </summary>
+        public static void CloseAllLinghtConnect()
+        {
+            if (LightControlDict.Count > 0)
+            {
+                if (LightControlDict != null)
+                {
+                    foreach (var lightCotl in LightControlDict)
+                    {
+                        if (lightCotl.Value.IsOpen())
+                        {
+                            lightCotl.Value.Close();
+                        }
+                    }
+                }
+            }
+        }
     }
 }

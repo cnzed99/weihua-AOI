@@ -15,19 +15,19 @@ using WH.LightControl;
 
 namespace ZipperInfo
 {
-    public partial class CZipperAutomaticVM: ObservableObject
+    public partial class CZipperAutomaticVM : ObservableObject
     {
         public CAutomaticModel AutoData { get; set; }
 
         public CZipperAutomaticVM()
         {
-            AutoData= LoadParameter();
+            AutoData = LoadParameter();
             CZipperAutomaticAlgorithm.ZipperInfo.AutoData = AutoData;
         }
 
         bool startAutoTest;
 
-       public  Action<bool> StartAutoTestEven;
+        public Action<bool> StartAutoTestEven;
 
         [RelayCommand]
         void SendPoints(object win)
@@ -38,13 +38,13 @@ namespace ZipperInfo
             CZipperCommunicate.ClearWarn();
             CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
 
-           CGetZipperTriggerPoint.GetTriggerPoints(AutoData,out List<float> points,out List<float> handandtalipoints, out int cutoffIndex,out int zipperCacheCount,out int triggerType);
+            CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out int triggerType);
             StringBuilder stringBuilder = new StringBuilder("计算触发点位");
             for (int i = 0; i < points.Count; i++)
             {
                 stringBuilder.Append($"第{i + 1}点:{points[i]},");
             }
-            if (handandtalipoints.Count>1)
+            if (handandtalipoints.Count > 1)
             {
                 if (triggerType == 3)
                 {
@@ -57,12 +57,12 @@ namespace ZipperInfo
                     }
                 }
                 else
-                { 
-                     CZipperAutomaticAlgorithm.EndPosTemp =points.Last();
+                {
+                    CZipperAutomaticAlgorithm.EndPosTemp = points.Last();
                 }
 
-               
-               stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
+
+                stringBuilder.Append($"起点:{handandtalipoints[0]},终点:{handandtalipoints[handandtalipoints.Count - 1]}");
             }
             stringBuilder.Append($",切断时已经拍了{cutoffIndex}张照片");
             stringBuilder.Append($",切断时,切刀到相机有{zipperCacheCount}条拉链已经拍完照片");
@@ -73,11 +73,11 @@ namespace ZipperInfo
                 //写入拍照的总图片数量
                 CZipperCommunicate.SendPhotoCount(points.Count);
                 //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex,zipperCacheCount);               
+                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
                 Thread.Sleep(100);
-                startAutoTest=true;
+                startAutoTest = true;
                 CZipperCommunicate.AixtContinue(false);
-               // CZipperCommunicate.SendWolkBack(AutoData.WalkBackLenght_slow);
+                // CZipperCommunicate.SendWolkBack(AutoData.WalkBackLenght_slow);
                 CZipperAutomaticAlgorithm.ZipperInfo.AutoData = AutoData;
                 // CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
                 CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData.ShowZipperLenght;
@@ -90,12 +90,12 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findPuller = false;
                 CZipperAutomaticAlgorithm.findPulls = false;
                 CZipperAutomaticAlgorithm.findLogo = false;
-                CZipperAutomaticAlgorithm.findUpMass= false;
+                CZipperAutomaticAlgorithm.findUpMass = false;
                 CZipperAutomaticAlgorithm.findDownMass = false;
                 CZipperAutomaticAlgorithm.findlianya = false;
                 CZipperAutomaticAlgorithm.findUpMassCount = 0;
                 CZipperAutomaticAlgorithm.findDownMassCount = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownmssImg=null;
+                CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownmssImg = null;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpmssImg = null;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerImg = null;
                 CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullsImg = null;
@@ -105,34 +105,43 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.tempLightValue_zuo_change2 = 0;
                 CZipperAutomaticAlgorithm.tempLightValue_you_change1 = 0;
                 CZipperAutomaticAlgorithm.tempLightValue_you_change2 = 0;
-                CZipperAutomaticAlgorithm.zuo_lightOK=false;
+                CZipperAutomaticAlgorithm.zuo_lightOK = false;
                 CZipperAutomaticAlgorithm.you_lightOK = false;
-                CZipperAutomaticAlgorithm.findLogosidertype[0]=false;
+                CZipperAutomaticAlgorithm.findLogosidertype[0] = false;
                 CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
                 CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.findPullerCount = 0;
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
-                CZipperCommunicate.SendHelianStastPos((int)(AutoData.ZipperLenght-36) * 10);
-                CZipperCommunicate.SendHelianEndPos((int)(AutoData.ZipperLenght - 36) * 10);
-                CZipperAutomaticAlgorithm.AutoSettingPosFinsh=false;
+                CZipperCommunicate.SendHelianStastPos(AutoData.ZipperLenght - 36);
+                CZipperCommunicate.SendHelianEndPos(AutoData.ZipperLenght - 36);
+                CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage2 = 1;
-               
+
                 //将光源值先减小到较状态
-
-                if (CLinghtManagement.LightControlDict.Count > 0)
+                try
                 {
-
-                    foreach (var item in CLinghtManagement.LightControlDict.Values)
+                    if (CLinghtManagement.LightControlDict.Count > 0)
                     {
-                        Thread.Sleep(20);
-                        item.BaseConfig.LightChannelList[0].Value = 20;
-                        item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
-                        Thread.Sleep(20);
-                        item.BaseConfig.LightChannelList[1].Value = 20;
-                        item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
-                    }
 
+                        foreach (var item in CLinghtManagement.LightControlDict.Values)
+                        {
+                            if (item.IsOpen())
+                            {
+                                Thread.Sleep(20);
+                                item.BaseConfig.LightChannelList[0].Value = 30;
+                                item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
+                                Thread.Sleep(20);
+                                item.BaseConfig.LightChannelList[4].Value = 30;
+                                item.SetChannelValue(item.BaseConfig.LightChannelList[4]);
+                            }
+                        }
+
+                    }
                 }
+                catch (Exception)
+                {
+                }
+
                 Thread.Sleep(100);
 
                 CZipperCommunicate.SendCamFPS(300); //起始300ms触发一次
