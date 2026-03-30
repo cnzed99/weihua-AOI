@@ -251,6 +251,8 @@ namespace ZipperTestAlgorihm
                     cDefectRecipes.Add(defectRecipe3);
                     CDefectRecipe defectRecipe4 = new CDefectRecipe("下止歪", Category.值);
                     cDefectRecipes.Add(defectRecipe4);
+                    CDefectRecipe defectRecipe5 = new CDefectRecipe("下止偏", Category.值);
+                    cDefectRecipes.Add(defectRecipe5);
                 }
                 CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
                 #endregion
@@ -507,6 +509,7 @@ namespace ZipperTestAlgorihm
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
+                    upmassCount = 0;
                     DetResult bigResult = ImageInferDet(yolo_BigDet_det, img);
 
                     if (bigResult != null && bigResult.datas.Count > 0) //如果有大缺陷直接退出
@@ -517,6 +520,10 @@ namespace ZipperTestAlgorihm
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
+                            if ((labelname.Contains("正面上止") || labelname.Contains("反面上止"))&& cell.PhotoIndex != cell.PhotoTatolCount - 1)
+                                continue;
+                            //if ((labelname.Contains("正面下止") || labelname.Contains("反面下止")) && cell.PhotoIndex != 1)
+                            //    continue;
                             dets.Add(restoreData);
                             if (cell.PhotoIndex == 1 && labelname.Contains("正面下止")) //检测下止
                             {
@@ -614,6 +621,9 @@ namespace ZipperTestAlgorihm
                                                     float an = A2 - A1;
                                                     Angs.Add((Math.Abs(an), b));
 
+                                                    float downmassCenterPos = Math.Abs(downmass[a].box.Center.Y - lianya[b].box.Center.Y);
+                                                    CoordRestoreData disData = new CoordRestoreData("下止偏", downmassCenterPos);
+                                                    dets.Add(disData);
                                                 }
                                             }
                                         }
@@ -702,7 +712,7 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    upmassCount = 0;
+                   // upmassCount = 0;
                     List<Point> massPoints = new List<Point>();
                     List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
@@ -734,8 +744,8 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                    upmassCount = 0;
-                    List<Point> massPoints = new List<Point>(); //上止的位置
+                   // upmassCount = 0;
+                   // List<Point> massPoints = new List<Point>(); //上止的位置
                     List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
@@ -1021,8 +1031,8 @@ namespace ZipperTestAlgorihm
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
 
-                                if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
-                                    continue;
+                                //if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
+                                //    continue;
                                 if (labelname.Contains("毛丝"))
                                     continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
@@ -1044,14 +1054,14 @@ namespace ZipperTestAlgorihm
         {
             updets = new List<CoordRestoreData>();
             //坐标还原
-            int nameindex = int.Parse(detData.lable);
-            string labelstr = bigDet_names[nameindex];
-            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelstr, detData);
-            upmassPos = new Point(restoreData.OrgCenterX, restoreData.OrgCenterY);
+            //int nameindex = int.Parse(detData.lable);
+            //string labelstr = bigDet_names[nameindex];
+            //CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelstr, detData);
+            upmassPos = new Point(detData.box.X, detData.box.Y);
             int recw = 192;
             int rech = 96;
-            int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
-            int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
+            int rex = Convert.ToInt32((detData.box.X+ detData.box.Width/2) - recw / 2);
+            int rey = Convert.ToInt32((detData.box.Y+detData.box.Height/2) - rech / 2);
             if ((rex + recw) > cell.Image.ImageWidth)
             {
                 rex = cell.Image.ImageWidth - recw;
@@ -1060,7 +1070,7 @@ namespace ZipperTestAlgorihm
             {
                 rex = 0;
             }
-            updets.Add(restoreData);
+           // updets.Add(restoreData);
             Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
             cell.UpMassMatImg.Add(cropUpMat);
 
@@ -1097,7 +1107,7 @@ namespace ZipperTestAlgorihm
                 string lianciIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("链齿")).ToString();
                 List<ObbData> lianciorg = upmeasobbResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
 
-                // Cv2.ImWrite(@"D:\测试存图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + "上止.png", cropUpMat);
+                // Cv2.ImWrite(@"D:\测试存图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上止.png", cropUpMat);
                 List<(float, int)> Diss = new List<(float, int)>();
                 for (int a = 0; a < upmass.Count; a++)
                 {
