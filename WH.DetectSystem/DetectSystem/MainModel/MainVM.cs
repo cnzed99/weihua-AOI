@@ -188,7 +188,7 @@ namespace WH.DetectSystem.Models
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
-            ZipperCommunicate = new CZipperCommunicate();
+            ZipperCommunicate = new CZipperCommunicateBase();
             ZipperCommunicate.IntThread();
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
@@ -244,7 +244,7 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 拉链通讯
         /// </summary>
-        CZipperCommunicate ZipperCommunicate;
+        CZipperCommunicateBase ZipperCommunicate;
 
         /// <summary>
         /// 新建制程
@@ -635,7 +635,7 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            CZipperCommunicate.GetID(out int productID);
+                            CZipperCommunicateBase.GetID(out int productID);
                             ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
 
                             bool bnext = zipperID.ProductID < productID;
@@ -650,7 +650,7 @@ namespace WH.DetectSystem.Models
                                 }
                             }
                             SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                            int photoTotalCount = CZipperCommunicateBase.GetPhotoCount();
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
                             cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
@@ -833,11 +833,11 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                         if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
                                         {
-                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            CZipperCommunicateBase.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
                                         }
                                         else
                                         {
-                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            CZipperCommunicateBase.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
                                         }
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))

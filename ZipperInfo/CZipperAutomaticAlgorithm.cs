@@ -280,8 +280,8 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
-                            CZipperCommunicate.FirststageFinsh();
-                            CZipperCommunicate.SendCamFPS(60);
+                            CZipperCommunicateBase.FirststageFinsh();
+                            CZipperCommunicateBase.SendCamFPS(60);
                             img.Dispose();
                             return;
                         }
@@ -305,8 +305,8 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
-                            CZipperCommunicate.FirststageFinsh();
-                            CZipperCommunicate.SendCamFPS(60);
+                            CZipperCommunicateBase.FirststageFinsh();
+                            CZipperCommunicateBase.SendCamFPS(60);
                             img.Dispose();
                             return;
                         }
@@ -331,8 +331,8 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
-                            CZipperCommunicate.FirststageFinsh();
-                            CZipperCommunicate.SendCamFPS(60);
+                            CZipperCommunicateBase.FirststageFinsh();
+                            CZipperCommunicateBase.SendCamFPS(60);
                             img.Dispose();
                             return;
                         }
@@ -355,8 +355,8 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
-                            CZipperCommunicate.FirststageFinsh();
-                            CZipperCommunicate.SendCamFPS(60);
+                            CZipperCommunicateBase.FirststageFinsh();
+                            CZipperCommunicateBase.SendCamFPS(60);
                             img.Dispose();
                             return;
                         }
@@ -377,8 +377,8 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
-                            CZipperCommunicate.FirststageFinsh();
-                            CZipperCommunicate.SendCamFPS(60);
+                            CZipperCommunicateBase.FirststageFinsh();
+                            CZipperCommunicateBase.SendCamFPS(60);
                             img.Dispose();
                             return;
                         }
@@ -509,7 +509,7 @@ namespace ZipperInfo
                                 if (resultDet.datas[i].box.X > 150 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
                                 {
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 150 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 850");
-                                    float pos = CZipperCommunicate.GetGrippawlLocation();
+                                    float pos = CZipperCommunicateBase.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
                                     // pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
                                     //AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴-25位置:{pos}");
@@ -562,8 +562,8 @@ namespace ZipperInfo
                                                 if (dis > rang)
                                                 {
                                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
-                                                    CZipperCommunicate.AixtStop();
-                                                    CZipperCommunicate.SendCamFPS(300);
+                                                    CZipperCommunicateBase.AixtStop();
+                                                    CZipperCommunicateBase.SendCamFPS(300);
                                                     timeOutCount = 0;
                                                     onWichStage = 3;
                                                     img.Dispose();
@@ -585,8 +585,8 @@ namespace ZipperInfo
                                                     if (dis > rang)
                                                     {
                                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>{rang},停止轴运动,进入下一级段");
-                                                        CZipperCommunicate.AixtStop();
-                                                        CZipperCommunicate.SendCamFPS(300);
+                                                        CZipperCommunicateBase.AixtStop();
+                                                        CZipperCommunicateBase.SendCamFPS(300);
                                                         timeOutCount = 0;
                                                         onWichStage = 3;
                                                         img.Dispose();
@@ -610,8 +610,8 @@ namespace ZipperInfo
                                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex - 1]}>{rang} &&{pos} - {templist[pindex + 1]}>{rang}");
                                                     //写轴坐标位置
                                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{templist[pindex - 1]}<{pos}<{templist[pindex + 1]}停止轴运动,进入下一级段");
-                                                    CZipperCommunicate.AixtStop();
-                                                    CZipperCommunicate.SendCamFPS(300);
+                                                    CZipperCommunicateBase.AixtStop();
+                                                    CZipperCommunicateBase.SendCamFPS(300);
                                                     timeOutCount = 0;
                                                     onWichStage = 3;
                                                     img.Dispose();
@@ -635,8 +635,8 @@ namespace ZipperInfo
 
                                                 //写轴坐标位置
                                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},templist.Count == 2,{templist[0]}<{templist[1]},停止轴运动,进入下一级段");
-                                                CZipperCommunicate.AixtStop();
-                                                CZipperCommunicate.SendCamFPS(300);
+                                                CZipperCommunicateBase.AixtStop();
+                                                CZipperCommunicateBase.SendCamFPS(300);
                                                 timeOutCount = 0;
                                                 onWichStage = 3;
                                                 img.Dispose();
@@ -697,8 +697,8 @@ namespace ZipperInfo
                                 Thread.Sleep(500);
                                 timeOutCount = 0;
                                 onWichStage = 0;
-                                CZipperCommunicate.AixtStop();//停止轴
-                                CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                CZipperCommunicateBase.AixtStop();//停止轴
+                                CZipperCommunicateBase.CamTriggerStop(); //停止拍照
                                 LightChange.LineValueReset();
                                 CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
@@ -726,8 +726,8 @@ namespace ZipperInfo
                     if (timeOutCount >= 10)
                     {
                         onWichStage = 2;
-                        CZipperCommunicate.AixtStop();
-                        CZipperCommunicate.SendCamFPS(60);
+                        CZipperCommunicateBase.AixtStop();
+                        CZipperCommunicateBase.SendCamFPS(60);
                         AutoLogger.Info($"onWichStage=3,超过10次没有找到拉头，重新跳转到阶段2");
                         img.Dispose();
                         return;
@@ -795,7 +795,7 @@ namespace ZipperInfo
                                         maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
-                                        CZipperCommunicate.SendCamFPS(60);
+                                        CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
                                         img.Dispose();
@@ -816,7 +816,7 @@ namespace ZipperInfo
                                         maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
-                                        CZipperCommunicate.SendCamFPS(60);
+                                        CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
                                     }
@@ -837,7 +837,7 @@ namespace ZipperInfo
                                         maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
-                                        CZipperCommunicate.SendCamFPS(60);
+                                        CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
                                         img.Dispose();
@@ -858,7 +858,7 @@ namespace ZipperInfo
                                         mintimeout = 0;
                                         //进入下阶段                                         
                                         onWichStage = 4;
-                                        CZipperCommunicate.SendCamFPS(60);
+                                        CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
                                     }
@@ -873,7 +873,7 @@ namespace ZipperInfo
                                     // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     AutoLogger.Info($"onWichStage=3,进入阶段4");
                                     onWichStage = 4;
-                                    CZipperCommunicate.SendCamFPS(60);
+                                    CZipperCommunicateBase.SendCamFPS(60);
                                     timeOutCount = 0;
                                     CLinghtManagement.SaveLightParams();
                                     // CZipperCommunicate.SceondstageFinsh();
@@ -915,7 +915,7 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             findPullerCount++;
 
-                            float pos = CZipperCommunicate.GetGrippawlLocation();
+                            float pos = CZipperCommunicateBase.GetGrippawlLocation();
                             int crippoint = (int)ZipperInfo.ZipperLneght;
                             if (pos > crippoint) //如果超过了这个临界点,说明拉头在下一次拉取的图片中
                             {
@@ -923,7 +923,7 @@ namespace ZipperInfo
                                 pos = pos - crippoint;
                                 AutoLogger.Info($"onWichStage=4,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                             }
-                            CZipperCommunicate.SendPullLocation(pos);
+                            CZipperCommunicateBase.SendPullLocation(pos);
                             ZipperInfo.ZipperPullerCX = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
                             ZipperInfo.ZipperPullerCY = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
 
@@ -1128,7 +1128,7 @@ namespace ZipperInfo
                             timeOutCount = 0;
                             onWichStage = 2;
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},没有识别到上下止,转到阶段2");
-                            CZipperCommunicate.AixtContinue(true);//继续
+                            CZipperCommunicateBase.AixtContinue(true);//继续
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},轴继续拉动,转到阶段2");
                         }
 
@@ -1164,8 +1164,8 @@ namespace ZipperInfo
                             Thread.Sleep(500);
                             timeOutCount = 0;
                             onWichStage = 0;
-                            CZipperCommunicate.AixtStop();//停止轴
-                            CZipperCommunicate.CamTriggerStop();
+                            CZipperCommunicateBase.AixtStop();//停止轴
+                            CZipperCommunicateBase.CamTriggerStop();
                             LightChange.LineValueReset();
                             CLinghtManagement.SaveLightParams();
                             //Dispatcher.Invoke(() =>
@@ -1190,7 +1190,7 @@ namespace ZipperInfo
                         CLinghtManagement.SaveLightParams();
                         timeOutCount = 0;
                         onWichStage = 2;
-                        CZipperCommunicate.AixtContinue(true);//继续
+                        CZipperCommunicateBase.AixtContinue(true);//继续
                         AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},轴继续拉动,转到阶段2");
 
                     }
@@ -1356,18 +1356,18 @@ namespace ZipperInfo
             ZipperInfo.AutoData.ZipperLenght = zipperlenght;
             CGetZipperTriggerPoint.GetTriggerPoints(ZipperInfo.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
             CGetZipperTriggerPoint.CheckPullPos(points);
-            CZipperCommunicate.SendZipperLenght(zipperlenght);
+            CZipperCommunicateBase.SendZipperLenght(zipperlenght);
             //写入拍照的总图片数量
-            CZipperCommunicate.SendPhotoCount(points.Count);
+            CZipperCommunicateBase.SendPhotoCount(points.Count);
             //计算拉链触发点位 ID改变位置
-            CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+            CZipperCommunicateBase.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
         }
 
         private void ChangePoints2(float zipperlenght, float upchangevalue)
         {
             ZipperInfo.AutoData.ZipperLenght = zipperlenght;
             CGetZipperTriggerPoint.GetTriggerPoints(ZipperInfo.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out int triggerType);
-            CZipperCommunicate.SendZipperLenght(zipperlenght);
+            CZipperCommunicateBase.SendZipperLenght(zipperlenght);
             if (handandtalipoints.Count > 1)
             {
                 if (triggerType == 3)
@@ -1387,9 +1387,9 @@ namespace ZipperInfo
             }
             CGetZipperTriggerPoint.CheckPullPos(points);
             //写入拍照的总图片数量
-            CZipperCommunicate.SendPhotoCount(points.Count);
+            CZipperCommunicateBase.SendPhotoCount(points.Count);
             //计算拉链触发点位 ID改变位置
-            CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+            CZipperCommunicateBase.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
         }
 
 

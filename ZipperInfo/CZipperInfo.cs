@@ -57,11 +57,11 @@ namespace ZipperInfo
                     ZipperTriggerPos = points;
                     HandAndTaliPos = handandtalipoints;
                     CGetZipperTriggerPoint.CheckPullPos(points);
-                    CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
+                    CZipperCommunicateBase.SendZipperLenght(AutoData.ZipperLenght);
                     //写入拍照的总图片数量
-                    CZipperCommunicate.SendPhotoCount(points.Count);
+                    CZipperCommunicateBase.SendPhotoCount(points.Count);
                     //计算拉链触发点位 ID改变位置
-                    CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+                    CZipperCommunicateBase.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
                 }
 
             }

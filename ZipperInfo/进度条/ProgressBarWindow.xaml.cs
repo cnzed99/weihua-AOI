@@ -26,10 +26,10 @@ namespace ZipperInfo
 
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
-            CZipperCommunicate.CamTriggerStop(); //停止拍照
+            CZipperCommunicateBase.CamTriggerStop(); //停止拍照
             CZipperAutomaticAlgorithm.TestFinshEven(false);
-            CZipperCommunicate.AixtContinue(true);
-            CZipperCommunicate.TestFinish();
+            CZipperCommunicateBase.AixtContinue(true);
+            CZipperCommunicateBase.TestFinish();
             this.Close();   
         }
     }

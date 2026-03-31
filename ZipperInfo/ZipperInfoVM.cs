@@ -25,12 +25,12 @@ namespace ZipperInfo
         {
             try
             {
-                CZipperCommunicate.CamTriggerStop(); //停止拍照
-                CZipperCommunicate.SendHelianStastPos(80);
+                CZipperCommunicateBase.CamTriggerStop(); //停止拍照
+                CZipperCommunicateBase.SendHelianStastPos(80);
                 CZipperAutomaticAlgorithm.TestFinshEven(true);
                 CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
-                CZipperCommunicate.AixtContinue(true);
-                CZipperCommunicate.TestFinish();
+                CZipperCommunicateBase.AixtContinue(true);
+                CZipperCommunicateBase.TestFinish();
                // CZipperCommunicate.SendWolkBack(ZipperInfo.AutoData.WalkBackLenght_qiuk);
                 var window = win as Window;
                 window.Close();

@@ -35,8 +35,8 @@ namespace ZipperInfo
 
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
-            CZipperCommunicate.ClearWarn();
-            CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
+            CZipperCommunicateBase.ClearWarn();
+            CZipperCommunicateBase.SendZipperLenght(AutoData.ZipperLenght);
 
             CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out int triggerType);
             StringBuilder stringBuilder = new StringBuilder("计算触发点位");
@@ -71,12 +71,12 @@ namespace ZipperInfo
             if (points != null && points.Count > 0)
             {
                 //写入拍照的总图片数量
-                CZipperCommunicate.SendPhotoCount(points.Count);
+                CZipperCommunicateBase.SendPhotoCount(points.Count);
                 //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+                CZipperCommunicateBase.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
                 Thread.Sleep(100);
                 startAutoTest = true;
-                CZipperCommunicate.AixtContinue(false);
+                CZipperCommunicateBase.AixtContinue(false);
                 // CZipperCommunicate.SendWolkBack(AutoData.WalkBackLenght_slow);
                 CZipperAutomaticAlgorithm.ZipperInfo.AutoData = AutoData;
                 // CZipperAutomaticAlgorithm.ZipperInfo.ZipperLneght = AutoData.ZipperLenght;
@@ -112,8 +112,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.findPullerCount = 0;
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
-                CZipperCommunicate.SendHelianStastPos(AutoData.ZipperLenght - 36);
-                CZipperCommunicate.SendHelianEndPos(AutoData.ZipperLenght - 36);
+                CZipperCommunicateBase.SendHelianStastPos(AutoData.ZipperLenght - 36);
+                CZipperCommunicateBase.SendHelianEndPos(AutoData.ZipperLenght - 36);
                 CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage2 = 1;
 
@@ -144,8 +144,8 @@ namespace ZipperInfo
 
                 Thread.Sleep(100);
 
-                CZipperCommunicate.SendCamFPS(300); //起始300ms触发一次
-                CZipperCommunicate.TestStart();
+                CZipperCommunicateBase.SendCamFPS(300); //起始300ms触发一次
+                CZipperCommunicateBase.TestStart();
                 SaveParameter(AutoData);
                 var window = win as HandyControl.Controls.Window;
                 window?.Close();

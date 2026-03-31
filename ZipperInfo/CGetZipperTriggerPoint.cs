@@ -210,7 +210,7 @@ namespace ZipperInfo
                 {
                     copyPoints.Add(points[i]);
                 }
-                float fpullpos = CZipperCommunicate.GetPullLocation() / 10.0f; //拉头位置 单位mm
+                float fpullpos = CZipperCommunicateBase.GetPullLocation() / 10.0f; //拉头位置 单位mm
                 copyPoints.Add(fpullpos);
                 copyPoints.Sort();
                 int pullindex = copyPoints.IndexOf(fpullpos);
@@ -224,7 +224,7 @@ namespace ZipperInfo
                         {
                             pos = 1;
                         }
-                        CZipperCommunicate.SendPullLocation(pos);
+                        CZipperCommunicateBase.SendPullLocation(pos);
                     }
                 }
                 else if (pullindex == copyPoints.Count - 1) //最后一个
@@ -233,7 +233,7 @@ namespace ZipperInfo
                     if (absvalue < 8)
                     {
                         int pos = (int)(copyPoints[pullindex - 1] + 8.0f) * 10;
-                        CZipperCommunicate.SendPullLocation(pos);
+                        CZipperCommunicateBase.SendPullLocation(pos);
                     }
                 }
                 else //中间
@@ -242,13 +242,13 @@ namespace ZipperInfo
                     if (absvalue < 8)
                     {
                         int pos = (int)(copyPoints[pullindex - 1] + 8.0f) * 10;
-                        CZipperCommunicate.SendPullLocation(pos);
+                        CZipperCommunicateBase.SendPullLocation(pos);
                     }
                     float absvalue1 = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex + 1]);
                     if (absvalue1 < 8)
                     {
                         int pos = (int)(copyPoints[pullindex + 1] - 8.0f) * 10;
-                        CZipperCommunicate.SendPullLocation(pos);
+                        CZipperCommunicateBase.SendPullLocation(pos);
                     }
                 }
             }
