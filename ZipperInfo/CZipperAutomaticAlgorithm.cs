@@ -279,6 +279,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicateBase.FirststageFinsh();
                             CZipperCommunicateBase.SendCamFPS(60);
@@ -330,6 +332,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicateBase.FirststageFinsh();
                             CZipperCommunicateBase.SendCamFPS(60);
@@ -354,6 +358,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                           // LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicateBase.FirststageFinsh();
                             CZipperCommunicateBase.SendCamFPS(60);
@@ -376,6 +382,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicateBase.FirststageFinsh();
                             CZipperCommunicateBase.SendCamFPS(60);
@@ -795,6 +803,8 @@ namespace ZipperInfo
                                         maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        LightChange.MaxTimeOutCount = 0;
+                                        LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -810,12 +820,14 @@ namespace ZipperInfo
                                     }
                                     LightChange.ChangeLineValue1(false, val);
                                    // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
-                                    if (maxtimeout >= 5)
+                                    if (LightChange.MaxTimeOutCount >= 5)
                                     {
                                         AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
-                                        maxtimeout = 0;
+                                      //  maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        LightChange.MaxTimeOutCount = 0;
+                                       // LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -834,9 +846,11 @@ namespace ZipperInfo
                                     {
                                         AutoLogger.Info($"onWichStage=3,超过4次没变化,进入阶段4");
                                         addOrSubCount = 0;
-                                        maxtimeout = 0;
+                                       // maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        LightChange.MaxTimeOutCount = 0;
+                                        LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -855,9 +869,11 @@ namespace ZipperInfo
                                     if (LightChange.MinTimeOutCount >= 5)
                                     {
                                         AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
-                                        mintimeout = 0;
+                                       // mintimeout = 0;
                                         //进入下阶段                                         
                                         onWichStage = 4;
+                                       // LightChange.MaxTimeOutCount = 0;
+                                        LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicateBase.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -873,6 +889,8 @@ namespace ZipperInfo
                                     // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     AutoLogger.Info($"onWichStage=3,进入阶段4");
                                     onWichStage = 4;
+                                    LightChange.MaxTimeOutCount = 0;
+                                    LightChange.MinTimeOutCount = 0;
                                     CZipperCommunicateBase.SendCamFPS(60);
                                     timeOutCount = 0;
                                     CLinghtManagement.SaveLightParams();
