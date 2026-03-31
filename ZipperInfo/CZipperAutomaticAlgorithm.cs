@@ -279,6 +279,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -287,7 +289,7 @@ namespace ZipperInfo
                         }
                         tempVState = hv_VState;
                         int val = hv_VStride.I;
-                  
+
                         if (val == 0)
                         {
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{val}");
@@ -299,11 +301,13 @@ namespace ZipperInfo
                         {
                             LightChange.MaxTimeOutCount = 0;
                             //进入下阶段
-                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值200,进入下一阶段");
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值130,进入下一阶段");
                             CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -330,6 +334,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -354,6 +360,8 @@ namespace ZipperInfo
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -372,11 +380,13 @@ namespace ZipperInfo
                             nochangeCount = 0;
                             //进入下阶段
                             // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},进入下一阶段");
-                            CLinghtManagement.SaveLightParams();
+                            // CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
                             ProgressBarViewModel.ProgressBarValue = 40;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
                             img.Dispose();
@@ -390,7 +400,6 @@ namespace ZipperInfo
             {
                 if (cell.CamName == "右相机")
                 {
-
                     timeOutCount++;
                     DetResult resultDet;
                     resultDet = yolo_search_det.Predict(img) as DetResult;
@@ -772,7 +781,7 @@ namespace ZipperInfo
                                 ZipperLightHelper.Instance.PullerLightDetection(cutimg, 10, 0.7,
                                     CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullMinBgMean,
                                     CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullMaxBgMean,
-                                    CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullMinMean, 
+                                    CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullMinMean,
                                     CZipperAutomaticAlgorithm.ZipperInfo.AutoData.PullMaxMean,
                                     out var hv_VState, out var hv_VStride);
                                 AutoLogger.Info($"onWichStage=3,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
@@ -795,6 +804,7 @@ namespace ZipperInfo
                                         maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        LightChange.MaxTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -809,13 +819,15 @@ namespace ZipperInfo
                                         val = 2;
                                     }
                                     LightChange.ChangeLineValue1(false, val);
-                                   // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
-                                    if (maxtimeout >= 5)
+                                    // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
+                                    if (LightChange.MaxTimeOutCount >= 5)
                                     {
                                         AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
-                                        maxtimeout = 0;
+                                        //maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        LightChange.MaxTimeOutCount = 0;
+                                        //LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -834,9 +846,11 @@ namespace ZipperInfo
                                     {
                                         AutoLogger.Info($"onWichStage=3,超过4次没变化,进入阶段4");
                                         addOrSubCount = 0;
-                                        maxtimeout = 0;
+                                        //maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
+                                        //LightChange.MaxTimeOutCount = 0;
+                                        LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -851,13 +865,15 @@ namespace ZipperInfo
                                         val = 2;
                                     }
                                     LightChange.ChangeLineValue1(false, -val);
-                                   // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
+                                    // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     if (LightChange.MinTimeOutCount >= 5)
                                     {
                                         AutoLogger.Info($"onWichStage=3,maxtimeout超过5次，进入阶段4");
-                                        mintimeout = 0;
+                                        //mintimeout = 0;
                                         //进入下阶段                                         
                                         onWichStage = 4;
+                                       // LightChange.MaxTimeOutCount = 0;
+                                        LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
                                         CLinghtManagement.SaveLightParams();
@@ -869,10 +885,12 @@ namespace ZipperInfo
                                 {
                                     AutoLogger.Info($"onWichStage=3,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
                                     //进入下阶段
-                                   // LightChange.LineValueReset();
+                                    // LightChange.LineValueReset();
                                     // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     AutoLogger.Info($"onWichStage=3,进入阶段4");
                                     onWichStage = 4;
+                                    LightChange.MaxTimeOutCount = 0;
+                                    LightChange.MinTimeOutCount = 0;
                                     CZipperCommunicate.SendCamFPS(60);
                                     timeOutCount = 0;
                                     CLinghtManagement.SaveLightParams();
@@ -1077,7 +1095,7 @@ namespace ZipperInfo
                             {
                                 SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
 
-                                if (pullsegResult == null|| pullsegResult.datas.Count==0) return;
+                                if (pullsegResult == null || pullsegResult.datas.Count == 0) return;
 
                                 List<Point[]> contoursList = new List<Point[]>();
                                 //double allperimeter = 0; //周长总长

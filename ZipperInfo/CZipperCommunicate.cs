@@ -260,7 +260,7 @@ namespace ZipperInfo
 
 
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
-                float fgoulenght = lenght - 36;
+                float fgoulenght = lenght - 50;
                 //int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
                // int tlenght = (int)lenght * 10;
                 com.WriteSingleRegisterReal(41202, lenght);
