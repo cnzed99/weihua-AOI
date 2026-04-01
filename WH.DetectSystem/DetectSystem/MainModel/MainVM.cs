@@ -187,9 +187,16 @@ namespace WH.DetectSystem.Models
                     FocusConfig.token
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
-           // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
-            ZipperCommunicate = new CZipperCommunicate();
-            ZipperCommunicate.IntThread();
+            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
+            if (Name == "正面" || Name == "反面")
+            {
+                IDCreate = new CCreateIDBase();
+            }
+            else
+            {
+                IDCreate = new CCreateIDStation2();
+            }
+            IDCreate.IntThread();
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -242,9 +249,9 @@ namespace WH.DetectSystem.Models
 
         private BitmapSource ClearImage;
         /// <summary>
-        /// 拉链通讯
+        /// ID生成1
         /// </summary>
-        CZipperCommunicate ZipperCommunicate;
+        CCreateIDBase IDCreate;
 
         /// <summary>
         /// 新建制程
@@ -636,12 +643,12 @@ namespace WH.DetectSystem.Models
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
                             CZipperCommunicate.GetID(out int productID);
-                            ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                            IDCreate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
 
                             bool bnext = zipperID.ProductID < productID;
                             while (bnext && zipperID.ProductID > 0 && productID > 0)
                             {
-                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                IDCreate.m_WaitIDChannel.Reader.TryRead(out zipperID);
                                 bnext = zipperID.ProductID < productID;
                                 if (bnext)
                                 {
@@ -668,7 +675,7 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();                      
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -728,10 +735,10 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                {
-                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                }
+                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
+                                //{
+                                //    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                //}
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -1116,7 +1123,7 @@ namespace WH.DetectSystem.Models
                                     #endregion 画取反 OK的结果区域
                                     if (!isAutomaticTest)
                                     {
-                                        if (!cell.IsOK&&cell.Quality!=null)
+                                        if (!cell.IsOK && cell.Quality != null)
                                         {
                                             CurView.SetFontSize(25);
                                             CurView.SetFontWeight(System.Windows.FontWeights.Bold);
@@ -1865,7 +1872,7 @@ namespace WH.DetectSystem.Models
         {
             if (leftorright == "左相机")
             {
-               // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
                 SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
                 foreach (var pullname in pullnames.RecipeDefects)
                 {

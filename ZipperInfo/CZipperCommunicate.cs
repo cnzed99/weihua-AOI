@@ -17,7 +17,7 @@ namespace ZipperInfo
         #region 静态方法
 
         public static CLogRec ZipperSetResultLogger { get; set; } = CLogRec.Create("SetResult", "D:/Data");
-        public static CLogRec ZipperIDsORTLogger { get; set; } = CLogRec.Create("IDSort", "D:/Data");
+
         static object lockobj = new object();
         public static CModbusCommPart com;
         /// <summary>
@@ -49,20 +49,17 @@ namespace ZipperInfo
 
 
         }
-        /// <summary>
-        /// 获取左相机拉头图片位置ID信息 2025-5-29 鲍赞宝
-        /// </summary>
-        /// <param name="pullID"></param>
-        public static void GetZuoPullID(out int pullID)
+        public static void GetID2(out int productID)
         {
             //try
             //{
             lock (lockobj)
             {
-                pullID = -1;
+                productID = -1;
+                // photoID = -1;
                 if (com != null)
                 {
-                    pullID = com.ReadHoldingRegisterInt16(41226);
+                    productID = com.ReadHoldingRegisterInt32(41412);
                 }
             }
             //}
@@ -74,55 +71,7 @@ namespace ZipperInfo
 
 
         }
-        /// <summary>
-        /// 获取右相机拉头图片位置ID信息 2025-5-29 鲍赞宝
-        /// </summary>
-        /// <param name="pullID"></param>
-        public static void GetYouPullID(out int pullID)
-        {
-            //try
-            //{
-            lock (lockobj)
-            {
-                pullID = -1;
-                if (com != null)
-                {
-                    pullID = com.ReadHoldingRegisterInt16(41227);
-                }
-            }
-            //}
-            //catch (Exception)
-            //{
-            //    productID = -1;
-            //    photoID = -1;
-            //}
-
-
-        }
-        /// <summary>
-        /// 写入拉头图片位置ID信息 2025-5-29 鲍赞宝
-        /// </summary>
-        /// <param name="pullID"></param>
-        public static void SendZuoPullID(short pullID)
-        {
-            //try
-            //{
-            lock (lockobj)
-            {
-                if (com != null)
-                {
-                    com.WriteSingleRegisterInt16(41226, pullID);
-                }
-            }
-            //}
-            //catch (Exception)
-            //{
-            //    productID = -1;
-            //    photoID = -1;
-            //}
-
-
-        }
+       
 
         /// <summary>
         /// 读取拉头触发的位置 
@@ -148,29 +97,29 @@ namespace ZipperInfo
 
         }
         /// <summary>
-        /// 写入拉头图片位置ID信息 2025-5-29 鲍赞宝
+        /// 读取拉头触发的位置 
+        /// 2025-5-29 鲍赞宝
         /// </summary>
-        /// <param name="pullID"></param>
-        public static void SendYouPullID(short pullID)
+        public static float GetPullLocation2()
         {
             //try
             //{
-            lock (lockobj)
+            if (com != null)
             {
-                if (com != null)
-                {
-                    com.WriteSingleRegisterInt16(41227, pullID);
-                }
+                return com.ReadHoldingRegisterReal(41418);
+            }
+            else
+            {
+                return -1;
             }
             //}
             //catch (Exception)
             //{
-            //    productID = -1;
-            //    photoID = -1;
+            //    return -1;
             //}
 
-
         }
+
 
         /// <summary>
         /// 获取单条拉链拍照的总张数 2025-5-29 鲍赞宝
@@ -207,6 +156,7 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41200, count);
+                com.WriteSingleRegisterInt32(41424, count);
             }
 
             //}
@@ -248,23 +198,10 @@ namespace ZipperInfo
             //{
             if (com != null)
             {
-                //根据拉链长度来判断是长拉链还是短拉链 大于180mm是长拉链，小于18cm是短拉链，长拉链使用位置钩针模式，短拉链使用缺口钩针模式
-                //if (lenght>180)
-                //{
-                //    com.WriteSingleCoil(49418,true);
-                //}
-                //else
-                //{
-                //    com.WriteSingleCoil(49418, false);
-                //}
-
-
-                //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
+                //根据拉链的长度自动计算钩针勾起的位置=拉链长度-50mm
                 float fgoulenght = lenght - 50;
-                //int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
-               // int tlenght = (int)lenght * 10;
-                com.WriteSingleRegisterReal(41202, lenght);
                 com.WriteSingleRegisterReal(41304, fgoulenght);
+                com.WriteSingleRegisterReal(41202, lenght); //工位1
 
                 //float NGLocation = lenght + 100.0f;  //NG料的放料位置，根据拉链长度来计算
                 //if (NGLocation > 4000) //限制最大后退距离
@@ -310,6 +247,21 @@ namespace ZipperInfo
             //}
 
         }
+        public static void SendPullLocation2(float location)
+        {
+            //try
+            //{
+            if (com != null)
+            {
+                com.WriteSingleRegisterReal(41418, location);
+            }
+
+            //}
+            //catch (Exception)
+            //{
+            //}
+
+        }
         /// <summary>
         /// 向PLC写入结果
         /// </summary>
@@ -319,6 +271,16 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41196, (int)result);
+                ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
+            }
+
+        }
+
+        public static void SendResult2(string id, ZIPPERESULT result)
+        {
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41416, (int)result);
                 ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
             }
 
@@ -409,19 +371,70 @@ namespace ZipperInfo
                     com.WriteSingleRegisterReal(address[k], plus);
 
                 }
-                com.WriteSingleRegisterInt32(41216, cutoffIndex); //写拉链缓存数量（切断时切刀到相机位之间缓存的拉链数量）
+                com.WriteSingleRegisterInt32(41216, cutoffIndex); //切断时已经拍了几张照片
                 com.WriteSingleRegisterInt32(41322, cahceCount); //写切刀到拉链之间缓存的拉链数量
 
 
-                int handpos = 0;
-                //int a = 400000;
-                //int b = 19050;
-                //plus = (int)LocationPoints[k] * a / b;
+                //int handpos = 0;
+                ////int a = 400000;
+                ////int b = 19050;
+                ////plus = (int)LocationPoints[k] * a / b;
 
-                handpos = (int)HandandtaliPoints[0];
-                com.WriteSingleRegisterInt32(41248, handpos); //写拉链拍照下止的触发位 自动识别的时候用
-                handpos = (int)HandandtaliPoints[1];
-                com.WriteSingleRegisterInt32(41250, handpos); //写拉链拍照上止的触发位 自动识别的时候用
+                //handpos = (int)HandandtaliPoints[0];
+                //com.WriteSingleRegisterInt32(41248, handpos); //写拉链拍照下止的触发位 自动识别的时候用
+                //handpos = (int)HandandtaliPoints[1];
+                //com.WriteSingleRegisterInt32(41250, handpos); //写拉链拍照上止的触发位 自动识别的时候用
+
+
+            }
+
+        }
+
+        public static void SendPoints2(List<float> LocationPoints, List<float> HandandtaliPoints, int cutoffIndex, int cahceCount)
+        {
+            List<ushort> address = new List<ushort>();
+            int startaddress = 41438;
+            address.Add((ushort)startaddress);
+            for (int i = 1; i < 10; i++)
+            {
+                startaddress += 2;
+                address.Add((ushort)startaddress);
+            }
+            if (com != null)
+            {
+                for (int k = 0; k < address.Count; k++)
+                {
+                    //int pos = (int)LocationPoints[k] * 10;
+                    //转成脉冲
+                    //int plus = 0;
+                    //int a = 400000;
+                    //int b = 19050;
+
+                    float plus = 0;
+                    if (k <= LocationPoints.Count - 1)
+                    {
+                        plus = (int)LocationPoints[k];// * a / b;
+                    }
+                    else
+                    {
+                        plus = 99999; //* a / b;
+                    }
+                    com.WriteSingleRegisterReal(address[k], plus);
+
+                }
+                com.WriteSingleRegisterInt32(41434, cutoffIndex); //切断时已经拍了几张照片
+                com.WriteSingleRegisterInt32(41436, cahceCount); //写切刀到拉链之间缓存的拉链数量
+
+
+                //int handpos = 0;
+                ////int a = 400000;
+                ////int b = 19050;
+                ////plus = (int)LocationPoints[k] * a / b;
+
+                //handpos = (int)HandandtaliPoints[0];
+                //com.WriteSingleRegisterInt32(41248, handpos); //写拉链拍照下止的触发位 自动识别的时候用
+                //handpos = (int)HandandtaliPoints[1];
+                //com.WriteSingleRegisterInt32(41250, handpos); //写拉链拍照上止的触发位 自动识别的时候用
 
 
             }
@@ -612,105 +625,7 @@ namespace ZipperInfo
         #endregion
         #endregion
 
-        #region 实例
-
-        public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
-    new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
-        /// <summary>
-        /// 等待ID队列
-        /// </summary>
-        public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
-
-        Thread WaitIDThread = null;
-
-        bool Connend = false;
-        public void IntThread()
-        {
-            Connend = true;
-            WaitIDThread = new Thread(MonitoringID);
-            WaitIDThread.IsBackground = true;
-            WaitIDThread.Start();
-        }
-
-        int TempproductID = -1;
-        float TempPullPos = -1.0f;
-        int pullIndex = 0;
-        public List<int> Idlist = new List<int>();
-        private void MonitoringID()
-        {
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            while (Connend)
-            {
-                try
-                {
-                    GetID(out int productID);
-                    if (productID <= 0)
-                    {
-                        Thread.Sleep(1);
-                        continue;
-                    }
-
-                    if (productID != TempproductID)
-                    {
-                        TempproductID = productID;
-                        List<float> copyPos = new List<float>();
-                        float ipullpos = GetPullLocation(); //为了防止中途从触摸屏改掉拉头位置，所以时刻监控它的值在进行比较
-                        if (ipullpos != TempPullPos)
-                        {
-                            Idlist.Clear();
-                            TempPullPos = ipullpos;
-                            float fpullpos = ipullpos;
-                            for (int i = 0; i < CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
-                            {
-                                copyPos.Add(CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos[i]);
-                            }
-                            copyPos.Add(fpullpos);
-                            copyPos.Sort();
-                            if (CZipperAutomaticAlgorithm.ZipperInfo.TriggerType == 3)
-                            {
-                                float handpos = CZipperAutomaticAlgorithm.ZipperInfo.HandAndTaliPos[0];
-                                int handIndex = copyPos.IndexOf(handpos);
-
-                                List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
-                                List<float> splitpos = copyPos.Skip(handIndex).ToList(); //尾
-
-                                splitpos.AddRange(taskpos);
-                                pullIndex = splitpos.IndexOf(fpullpos);
-                            }
-                            else
-                            {
-                                pullIndex = copyPos.IndexOf(fpullpos);
-                            }
-                            for (int i = 1; i <= CZipperAutomaticAlgorithm.ZipperInfo.ZipperTriggerPos.Count; i++)
-                            {
-                                Idlist.Add(i);
-                            }
-                            Idlist.Insert(pullIndex, 100);
-                            string str = "";
-                            for (int i = 0; i < Idlist.Count; i++)
-                            {
-                                str = str + $"第{i + 1}点;{Idlist[i]} ";
-                            }
-                            ZipperIDsORTLogger.Info(str);
-                        }
-
-                        for (int i = 0; i < Idlist.Count; i++)
-                        {
-                            ZipperID zipperID = new ZipperID(productID, Idlist[i]);
-                            m_WaitIDChannel.Writer.TryWrite(zipperID);
-                        }
-
-                    }
-
-                }
-                catch (Exception)
-                {
-                }
-                Thread.Sleep(1);
-            }
-        }
-
-        #endregion
+    
     }
 
     public enum ZIPPERESULT
