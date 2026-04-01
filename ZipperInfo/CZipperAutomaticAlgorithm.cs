@@ -109,8 +109,6 @@ namespace ZipperInfo
         public static bool[] findLogosidertype = new bool[2];  //0拉头  1拉片
 
         LightChangeBase LightChange;
-        CHTCommunicateStation1 HTcom1;
-        CHTCommunicateStation2 HTcom2;
 
         /// <summary>
         /// 自动识别完成事件
@@ -191,19 +189,7 @@ namespace ZipperInfo
                 IniYolo(Searchmodelpath, pullmodelpath, pullSegmodelpath);
             }
 
-            //if (CLinghtManagement.LightControlDict.Count >= 2)
-            //{
-            //    LightCtl_Zuo = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port?.Name == "COM1");
-            //    LightCtl_You = CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port?.Name == "COM2");
-            //}
-
             LightChange = new COPTLinghtChange("COM1");
-            var com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
-            if (com != null)
-            {
-                HTcom1= new CHTCommunicateStation1(com);
-                HTcom2 = new CHTCommunicateStation2(com);
-            }
 
         }
 
@@ -216,7 +202,7 @@ namespace ZipperInfo
         HObject CameraImage = new HObject();
 
         #region 新算法
-        public void ZipperAutomaticAlgorithmRun(Cell cell)
+        public void ZipperAutomaticAlgorithmRun(Cell cell,CHTCommunicateStation1 HTcom1)
         {
 
             if (cell.Image == null) return;
@@ -1226,6 +1212,27 @@ namespace ZipperInfo
 
                 }
             }
+        }
+
+        public void ZipperAutomaticAlgorithmRun2(Cell cell, CHTCommunicateStation2 HTcom2)
+        {
+
+            if (cell.Image == null) return;
+            //第一阶段: 计算光源值
+            Mat orgimg = new Mat(cell.Image.ImageHeight, cell.Image.ImageWidth,
+                 MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
+                 cell.Image.ImageData);
+            //Mat img = new Mat();
+            //Cv2.CvtColor(mat, img, ColorConversionCodes.BGR2RGB);
+            // img.ImWrite($"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
+            //相机采集图片
+
+            Mat img = new Mat();
+            Cv2.CvtColor(orgimg, img, ColorConversionCodes.BGR2RGB);
+            orgimg.Dispose();
+            //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
+
+       
         }
 
         #endregion

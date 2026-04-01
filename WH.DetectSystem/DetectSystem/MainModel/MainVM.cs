@@ -33,6 +33,8 @@ using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
 using System.IO;
+using CommunicationModule;
+using Modbus;
 
 namespace WH.DetectSystem.Models
 {
@@ -187,9 +189,18 @@ namespace WH.DetectSystem.Models
                     FocusConfig.token
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
-           // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
-            ZipperCommunicate = new CZipperCommunicateBase();
-            ZipperCommunicate.IntThread();
+            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
+
+            var com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+            if (com != null)
+            {
+                HTCom1 = new CHTCommunicateStation1(com);
+                HTCom1.IntThread();
+
+                HTCom2 = new CHTCommunicateStation1(com);
+                HTCom2.IntThread();
+            }
+
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -242,9 +253,14 @@ namespace WH.DetectSystem.Models
 
         private BitmapSource ClearImage;
         /// <summary>
-        /// 拉链通讯
+        /// 拉链工位1通讯
         /// </summary>
-        CZipperCommunicateBase ZipperCommunicate;
+        CZipperCommunicateBase HTCom1;
+
+        /// <summary>
+        /// 拉链工位2通讯
+        /// </summary>
+        CZipperCommunicateBase HTCom2;
 
         /// <summary>
         /// 新建制程
@@ -668,7 +684,7 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();                      
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -1116,7 +1132,7 @@ namespace WH.DetectSystem.Models
                                     #endregion 画取反 OK的结果区域
                                     if (!isAutomaticTest)
                                     {
-                                        if (!cell.IsOK&&cell.Quality!=null)
+                                        if (!cell.IsOK && cell.Quality != null)
                                         {
                                             CurView.SetFontSize(25);
                                             CurView.SetFontWeight(System.Windows.FontWeights.Bold);
@@ -1865,7 +1881,7 @@ namespace WH.DetectSystem.Models
         {
             if (leftorright == "左相机")
             {
-               // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
+                // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
                 SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
                 foreach (var pullname in pullnames.RecipeDefects)
                 {
