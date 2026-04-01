@@ -35,7 +35,7 @@ namespace ZipperInfo
 
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData.ZipperLenght}");
             //写入拉链长度
-            CZipperCommunicateBase.ClearWarn();
+           // CZipperCommunicateBase.ClearWarn();
             CZipperCommunicateBase.SendZipperLenght(AutoData.ZipperLenght);
 
             CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out int triggerType);
@@ -48,7 +48,6 @@ namespace ZipperInfo
             {
                 if (triggerType == 3)
                 {
-
                     int firstIndex = points.IndexOf(handandtalipoints[0]);
                     int endposIndex = firstIndex - 1;
                     if (endposIndex >= 0)
@@ -105,8 +104,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.tempLightValue_zuo_change2 = 0;
                 CZipperAutomaticAlgorithm.tempLightValue_you_change1 = 0;
                 CZipperAutomaticAlgorithm.tempLightValue_you_change2 = 0;
-                CZipperAutomaticAlgorithm.zuo_lightOK = false;
-                CZipperAutomaticAlgorithm.you_lightOK = false;
+                //CZipperAutomaticAlgorithm.zuo_lightOK = false;
+                //CZipperAutomaticAlgorithm.you_lightOK = false;
                 CZipperAutomaticAlgorithm.findLogosidertype[0] = false;
                 CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
                 CZipperAutomaticAlgorithm.ZipperInfo.FindLogoSider = 0;

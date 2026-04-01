@@ -14,7 +14,10 @@ namespace ZipperInfo
 
     public class CZipperCommunicateBase
     {
-        #region 静态方法
+        /// <summary>
+        /// Modbus 通讯
+        /// </summary>
+        public CModbusCommPart Com;
 
         public static CLogRec ZipperSetResultLogger { get; set; } = CLogRec.Create("SetResult", "D:/Data");
         public static CLogRec ZipperIDsORTLogger { get; set; } = CLogRec.Create("IDSort", "D:/Data");
@@ -101,10 +104,7 @@ namespace ZipperInfo
         /// <param name="HandandtaliPoints">第一张图片和最后一张图片的点位</param>
         /// <param name="cutoffIndex">切断时已经拍了几张照片</param>
         /// <param name="cahceCount">切断时,切刀到相机已经有几条拉链完了拍照</param>
-        public virtual void SendPoints(List<float> LocationPoints, List<float> HandandtaliPoints, int cutoffIndex, int cahceCount)
-        {
-
-        }
+        public virtual void SendPoints(List<float> LocationPoints, List<float> HandandtaliPoints, int cutoffIndex, int cahceCount) { }
 
         /// <summary>
         /// 写入合链起始位
@@ -118,7 +118,6 @@ namespace ZipperInfo
         public virtual void SendHelianEndPos(float pos) { }
 
 
-        #region 自动识别拉链
         /// <summary>
         /// 自动识别测试开始
         /// </summary>
@@ -194,10 +193,8 @@ namespace ZipperInfo
         /// </summary>
         public virtual void SendCamFPS(int time) { }
 
-        #endregion
-        #endregion
 
-        #region 实例
+
 
         public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
     new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
@@ -295,7 +292,7 @@ namespace ZipperInfo
             }
         }
 
-        #endregion
+
     }
 
     public enum ZIPPERESULT

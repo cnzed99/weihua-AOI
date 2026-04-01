@@ -10,18 +10,14 @@ using WH.Entity.LogRecord;
 
 namespace ZipperInfo
 {
-    public class CHTCommunicateStation1 : CZipperCommunicateBase
+    public class CHTCommunicateStation2 : CZipperCommunicateBase
     {
 
-        public CHTCommunicateStation1(CModbusCommPart com)
+        public CHTCommunicateStation2(CModbusCommPart com)
         {
             Com=com;
         }
-
-        /// <summary>
-        /// Modbus 通讯
-        /// </summary>
-        public CModbusCommPart Com;
+  
 
         /// <summary>
         /// 获取拉链的ID信息 2025-5-29 鲍赞宝
@@ -394,6 +390,7 @@ namespace ZipperInfo
                 Com.WriteSingleRegisterInt32(41256, time);
             }
         }
+
 
         #endregion
 

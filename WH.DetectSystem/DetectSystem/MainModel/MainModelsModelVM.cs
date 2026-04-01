@@ -402,7 +402,7 @@ namespace WH.DetectSystem.ViewModels
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
-                    CZipperCommunicateBase.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    
                 }
                 catch (Exception ex)
                 {
