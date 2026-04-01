@@ -197,7 +197,7 @@ namespace WH.DetectSystem.Models
                 HTCom1 = new CHTCommunicateStation1(com);
                 HTCom1.IntThread();
 
-                HTCom2 = new CHTCommunicateStation1(com);
+                HTCom2 = new CHTCommunicateStation2(com);
                 HTCom2.IntThread();
             }
 
@@ -651,28 +651,57 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            CZipperCommunicateBase.GetID(out int productID);
-                            ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-
-                            bool bnext = zipperID.ProductID < productID;
-                            while (bnext && zipperID.ProductID > 0 && productID > 0)
+                            if (Name == "正面" || Name == "反面")
                             {
-                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                bnext = zipperID.ProductID < productID;
-                                if (bnext)
+                                HTCom1.GetID(out int productID);
+                                int photoTotalCount = HTCom1.GetPhotoCount();
+                                HTCom1.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+
+                                bool bnext = zipperID.ProductID < productID;
+                                while (bnext && zipperID.ProductID > 0 && productID > 0)
                                 {
-                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                    continue;
+                                    HTCom1.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                    bnext = zipperID.ProductID < productID;
+                                    if (bnext)
+                                    {
+                                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                        continue;
+                                    }
                                 }
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+                                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+                                cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
+                                cell.ID = zipperID.ProductID.ToString();
+                                cell.PhotoIndex = zipperID.PhotoID;
+                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
-                            SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                            int photoTotalCount = CZipperCommunicateBase.GetPhotoCount();
-                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
-                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-                            cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
-                            cell.ID = zipperID.ProductID.ToString();
-                            cell.PhotoIndex = zipperID.PhotoID;
-                            cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            else
+                            {
+                                HTCom2.GetID(out int productID);
+                                int photoTotalCount = HTCom2.GetPhotoCount();
+                                HTCom2.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+
+                                bool bnext = zipperID.ProductID < productID;
+                                while (bnext && zipperID.ProductID > 0 && productID > 0)
+                                {
+                                    HTCom2.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                    bnext = zipperID.ProductID < productID;
+                                    if (bnext)
+                                    {
+                                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                        continue;
+                                    }
+                                }
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+                                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+                                cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
+                                cell.ID = zipperID.ProductID.ToString();
+                                cell.PhotoIndex = zipperID.PhotoID;
+                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            }
+                          
 
                         }
                         else
