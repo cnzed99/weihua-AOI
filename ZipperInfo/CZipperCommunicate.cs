@@ -503,21 +503,21 @@ namespace ZipperInfo
         /// <summary>
         /// 第三阶段完成
         /// </summary>
-        public static void ThirdstageFinsh()
-        {
-            //try
-            //{
-            if (com != null)
-            {
-                com.WriteSingleCoil(22, true);
-            }
+        //public static void ThirdstageFinsh()
+        //{
+        //    //try
+        //    //{
+        //    if (com != null)
+        //    {
+        //        com.WriteSingleCoil(22, true);
+        //    }
 
-            //}
-            //catch (Exception)
-            //{
-            //}
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //}
 
-        }
+        //}
         /// <summary>
         /// 自动识别测试完成
         /// </summary>
