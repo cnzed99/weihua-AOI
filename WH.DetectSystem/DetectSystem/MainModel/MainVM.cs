@@ -642,7 +642,15 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            CZipperCommunicate.GetID(out int productID);
+                            int productID = -1;
+                            if (Name == "正面" || Name == "反面")
+                            {
+                                CZipperCommunicate.GetID(out productID);
+                            }
+                            else
+                            {
+                                CZipperCommunicate.GetID2(out  productID);
+                            }
                             IDCreate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
 
                             bool bnext = zipperID.ProductID < productID;
@@ -657,12 +665,13 @@ namespace WH.DetectSystem.Models
                                 }
                             }
                             SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                            
                             cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
                             cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
                             cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
                             cell.ID = zipperID.ProductID.ToString();
                             cell.PhotoIndex = zipperID.PhotoID;
+                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
                             cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
 
                         }

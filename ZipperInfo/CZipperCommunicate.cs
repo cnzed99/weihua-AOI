@@ -56,7 +56,6 @@ namespace ZipperInfo
             lock (lockobj)
             {
                 productID = -1;
-                // photoID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(41412);
