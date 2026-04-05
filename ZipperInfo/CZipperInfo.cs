@@ -57,7 +57,7 @@ namespace ZipperInfo
                     ZipperTriggerPos = points;
                     HandAndTaliPos = handandtalipoints;
                     CGetZipperTriggerPoint.CheckPullPos(points);
-                    CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
+                    CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght, AutoData.QuekouLenght);
                     //写入拍照的总图片数量
                     CZipperCommunicate.SendPhotoCount(points.Count);
                     //计算拉链触发点位 ID改变位置

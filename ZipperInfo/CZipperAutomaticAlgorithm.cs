@@ -9,6 +9,7 @@ using WH.LightControl;
 using WH.RunCell;
 using ZipperLightHalconDet;
 using WH.VisionLearning;
+using System.Windows.Media;
 
 namespace ZipperInfo
 {
@@ -425,17 +426,17 @@ namespace ZipperInfo
                                     ZipperInfo.ZipperDownmssImg = cell.Image?.ToBitmapSource().Clone();
                                 });
                                 timeOutCount = 0;
-                                //   List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                                //{
-                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                //       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                //       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                //};
-                                //   System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                //   cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                //   cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                {
+                                       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                       new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                       new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                };
+                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
 
                                 // 
                                 // AutoLogger.Info($"{cell.CamName}:onWichStage=2,准备进入第二阶段");
@@ -462,18 +463,18 @@ namespace ZipperInfo
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},更新上止图片");
                                 });
 
-                                //    List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                                //{
-                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                //    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                //    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
+                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                {
+                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                    new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                    new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
 
-                                //};
-                                //    System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                //    cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                //    cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                };
+                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
 
                                 timeOutCount = 0;
                                 //TestFinsh = true;
@@ -500,19 +501,19 @@ namespace ZipperInfo
                                 // ProgressBarViewModel.AutoMessage = "正在寻找拉头位置...";
                                 ProgressBarViewModel.ProgressBarValue = 50;
                                 AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头图像位置X:{resultDet.datas[i].box.X},拉头离图像边缘距离:{cell.Image?.ImageWidth - resultDet.datas[i].box.X}");
-                                // int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
-                                // int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
-                                //List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
-                                // {
-                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
-                                // };
-                                //System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
-                                //cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
-                                //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
+                                int centerx = resultDet.datas[i].box.X + resultDet.datas[i].box.Width / 2;
+                                int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
+                                List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
+                                 {
+                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
+                                 };
+                                System.Windows.Point txtpoint = new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height);
+                                cell.DrawEdges.Add(new CEdgeDraw(rec1Points, Brushes.Pink));
+                                cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
                                 // int eiddis = 700;
 
                                 if (resultDet.datas[i].box.X > 150 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
@@ -520,6 +521,12 @@ namespace ZipperInfo
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},识别到拉头,拉头离图像边缘距离:{resultDet.datas[i].box.X} > 150 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 850");
                                     float pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
+                                    if (pos < 1)
+                                    {
+                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴位置:{pos},小于1.return");
+                                        return;
+                                    }
+
                                     // pos = pos - 25; //因为有延迟,实际位置比读取的位置有偏差,顾减去25 经验值
                                     //AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},获取当前机械轴-25位置:{pos}");
                                     List<float> templist = new List<float>();
@@ -554,7 +561,7 @@ namespace ZipperInfo
                                         //    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                                         //}
 
-                                        templist.Add(pos);
+                                        templist.Add(pos);  
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
@@ -709,7 +716,7 @@ namespace ZipperInfo
                                 CZipperCommunicate.AixtStop();//停止轴
                                 CZipperCommunicate.CamTriggerStop(); //停止拍照
                                 LightChange.LineValueReset();
-                                CLinghtManagement.SaveLightParams();
+                               // CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
                                 //{
                                 TestFinsh = true;
@@ -734,8 +741,9 @@ namespace ZipperInfo
                     timeOutCount++;
                     if (timeOutCount >= 10)
                     {
+                        findPuller=false;
                         onWichStage = 2;
-                        CZipperCommunicate.AixtStop();
+                        CZipperCommunicate.AixtContinue(true);
                         CZipperCommunicate.SendCamFPS(60);
                         AutoLogger.Info($"onWichStage=3,超过10次没有找到拉头，重新跳转到阶段2");
                         img.Dispose();
@@ -745,7 +753,7 @@ namespace ZipperInfo
                     resultDet = yolo_search_det.Predict(img) as DetResult;
                     if (resultDet.datas.Count > 0)
                     {
-                        AutoLogger.Info($"onWichStage=3,开始识别拉头亮度");
+                        AutoLogger.Info($"onWichStage=3,开始识别拉头");
                         for (int i = 0; i < resultDet.datas.Count; i++)
                         {
                             int nameindex = int.Parse(resultDet.datas[i].lable);
@@ -1198,7 +1206,6 @@ namespace ZipperInfo
                     }
                     if (timeOutCount > 100)
                     {
-
                         AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},超时没有找到拉头或拉片,转到阶段2");
                         findPuller = true;
                         findPulls = true;
@@ -1374,7 +1381,7 @@ namespace ZipperInfo
             ZipperInfo.AutoData.ZipperLenght = zipperlenght;
             CGetZipperTriggerPoint.GetTriggerPoints(ZipperInfo.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
             CGetZipperTriggerPoint.CheckPullPos(points);
-            CZipperCommunicate.SendZipperLenght(zipperlenght);
+            CZipperCommunicate.SendZipperLenght(zipperlenght, ZipperInfo.AutoData.QuekouLenght);
             //写入拍照的总图片数量
             CZipperCommunicate.SendPhotoCount(points.Count);
             //计算拉链触发点位 ID改变位置
@@ -1385,7 +1392,7 @@ namespace ZipperInfo
         {
             ZipperInfo.AutoData.ZipperLenght = zipperlenght;
             CGetZipperTriggerPoint.GetTriggerPoints(ZipperInfo.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out int triggerType);
-            CZipperCommunicate.SendZipperLenght(zipperlenght);
+            CZipperCommunicate.SendZipperLenght(zipperlenght, ZipperInfo.AutoData.QuekouLenght);
             if (handandtalipoints.Count > 1)
             {
                 if (triggerType == 3)

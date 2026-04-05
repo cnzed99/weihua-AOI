@@ -242,7 +242,7 @@ namespace ZipperInfo
         /// 写入单条拉链的长度 2025-5-29 鲍赞宝
         /// </summary>
         /// <param name="lenght">拉链长度 单位mm</param>
-        public static void SendZipperLenght(float lenght)
+        public static void SendZipperLenght(float lenght,float quekoulenght)
         {
             //try
             //{
@@ -260,7 +260,7 @@ namespace ZipperInfo
 
 
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-30mm
-                float fgoulenght = lenght - 50;
+                float fgoulenght = lenght - quekoulenght*10;
                 //int igoulenght = (int)fgoulenght * 100; //plc的单位转换问题
                // int tlenght = (int)lenght * 10;
                 com.WriteSingleRegisterReal(41202, lenght);
