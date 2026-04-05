@@ -116,6 +116,18 @@ namespace WH.DetectSystem.Models
         /// </summary>
         public void Init(CProcessGroupModel processGroup)
         {
+            foreach (var sp in MaociAlgorParamConfig.DefectSpecies)
+            {
+                foreach (var re in sp.RecipeDefects)
+                {
+                    var newsp = MaociFilterConfig[sp.Name][re.Name];
+                    if (newsp == null)
+                    {
+                        RecipeDefect rd = new RecipeDefect(re.Name, re.Category, MaociFilterConfig[sp.Name].RecipeDefects[0].token);
+                        MaociFilterConfig[sp.Name].RecipeDefects.Add(rd);
+                    }
+                }
+            }
             this.MaociAlgorVM.Config = MaociAlgorParamConfig;
             this.SDFilterVM.FilterConfig = MaociFilterConfig;
             this.SDFilterVM.DefectFeactures = MaociAlgorParamConfig.DefectFeatures;
