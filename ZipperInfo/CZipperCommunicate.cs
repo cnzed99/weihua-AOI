@@ -319,6 +319,7 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41196, (int)result);
+                com.WriteSingleCoil(9555, true);
                 ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
             }
 

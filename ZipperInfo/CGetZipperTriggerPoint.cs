@@ -46,7 +46,7 @@ namespace ZipperInfo
                 pullchange = 0;
                 frontFinsshPos = frontzippers - 1;
                 float firstpoint = netZipperhandle - frontLim;
-                if (firstpoint == 0) //触发点不能为零，为零启动后不触发相机
+                if (firstpoint < 1) //触发点不能为零，为零启动后不触发相机
                 {
                     firstpoint = 1;
                 }
@@ -59,7 +59,7 @@ namespace ZipperInfo
                     if (nextpoint + AutoData.CcdWidth >= netZipperTali)
                     {
                         float endpoint = netZipperTali - backLim;
-                        if (endpoint == 0)
+                        if (endpoint < 1)
                         {
                             endpoint = 1;
                         }
@@ -70,7 +70,7 @@ namespace ZipperInfo
                     else
                     {
                         float point = nextpoint - frontLim;
-                        if (point == 0)
+                        if (point < 1)
                         {
                             point = 1;
                         }
@@ -85,7 +85,7 @@ namespace ZipperInfo
                 pullchange = 0;
                 frontFinsshPos = frontzippers;
                 float firstpoint = netZipperTali - frontLim;
-                if (firstpoint == 0) //触发点不能为零，为零启动后不触发相机
+                if (firstpoint < 1) //触发点不能为零，为零启动后不触发相机
                 {
                     firstpoint = 1;
                 }
@@ -98,7 +98,7 @@ namespace ZipperInfo
                     if (nextpoint + AutoData.CcdWidth >= netZipperTali + AutoData.ZipperLenght)
                     {
                         float endpoint = netZipperTali + AutoData.ZipperLenght - backLim;
-                        if (endpoint == 0)
+                        if (endpoint < 1)
                         {
                             endpoint = 1;
                         }
@@ -109,7 +109,7 @@ namespace ZipperInfo
                     else
                     {
                         float point = nextpoint - frontLim;
-                        if (point == 0)
+                        if (point < 1)
                         {
                             point = 1;
                         }
@@ -137,7 +137,7 @@ namespace ZipperInfo
                         else
                         {
                             firstpoint = start - frontLim;
-                            if (firstpoint == 0)
+                            if (firstpoint < 1)
                             {
                                 firstpoint = 1;
                             }
@@ -154,18 +154,26 @@ namespace ZipperInfo
                     {
 
                         float endpoint = netZipperTali - backLim;
-                        if (endpoint == 0)
+                        if (endpoint < 1)
                         {
                             endpoint = 1;
                         }
-                        points.Add(endpoint);
-                        pullchange = points.Count;
-                        break;
+                        bool havefind = points.Contains(endpoint);
+                        if (havefind)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            points.Add(endpoint);
+                            pullchange = points.Count;
+                            break;
+                        }
                     }
                     else
                     {
                         float point = nextpoint - frontLim;
-                        if (point == 0)
+                        if (point < 1)
                         {
                             point = 1;
                         }
@@ -177,7 +185,7 @@ namespace ZipperInfo
                 {
                     float nexts = netZipperTali + AutoData.CcdWidth * i;
                     float point = nexts - frontLim;
-                    if (point == 0)
+                    if (point < 1)
                     {
                         point = 1;
                     }
@@ -210,7 +218,7 @@ namespace ZipperInfo
                 {
                     copyPoints.Add(points[i]);
                 }
-                float fpullpos = CZipperCommunicate.GetPullLocation() / 10.0f; //拉头位置 单位mm
+                float fpullpos = CZipperCommunicate.GetPullLocation(); //拉头位置 单位mm
                 copyPoints.Add(fpullpos);
                 copyPoints.Sort();
                 int pullindex = copyPoints.IndexOf(fpullpos);
@@ -219,7 +227,7 @@ namespace ZipperInfo
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[1]);
                     if (absvalue < 8)
                     {
-                        int pos = (int)(copyPoints[1] - 8.0f) * 10;
+                        int pos = (int)(copyPoints[1] - 8.0f);
                         if (pos < 0)
                         {
                             pos = 1;
@@ -232,7 +240,7 @@ namespace ZipperInfo
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex - 1]);
                     if (absvalue < 8)
                     {
-                        int pos = (int)(copyPoints[pullindex - 1] + 8.0f) * 10;
+                        int pos = (int)(copyPoints[pullindex - 1] + 8.0f);
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                 }
@@ -241,13 +249,13 @@ namespace ZipperInfo
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex - 1]);
                     if (absvalue < 8)
                     {
-                        int pos = (int)(copyPoints[pullindex - 1] + 8.0f) * 10;
+                        int pos = (int)(copyPoints[pullindex - 1] + 8.0f) ;
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                     float absvalue1 = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex + 1]);
                     if (absvalue1 < 8)
                     {
-                        int pos = (int)(copyPoints[pullindex + 1] - 8.0f) * 10;
+                        int pos = (int)(copyPoints[pullindex + 1] - 8.0f);
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                 }
@@ -283,9 +291,9 @@ namespace ZipperInfo
             for (int i = 1; i < output.Count; i++)
             {
                 float diff = output[i] - output[i - 1];
-                if (diff < 10 && diff > 0)
+                if (diff < 20 && diff > 0)
                 {
-                    output[i - 1] -= 10;
+                    output[i - 1] -= 20;
                 }
             }
 
