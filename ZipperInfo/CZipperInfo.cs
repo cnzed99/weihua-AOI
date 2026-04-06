@@ -266,7 +266,7 @@ namespace ZipperInfo
         /// 拉链外部参数
         /// 2025.06.30 鲍赞宝
         /// </summary>
-        public CAutomaticModel AutoData { get; set; }
+        public List< CAutomaticModel> AutoData { get; set; }
 
         /// <summary>
         /// Logo文字集合

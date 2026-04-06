@@ -9,6 +9,11 @@ namespace ZipperInfo
 {
     public partial class CAutomaticModel: ObservableObject
     {
+        /// <summary>
+        /// 工位名称
+        /// </summary>
+        [ObservableProperty]
+        string stationName;
 
         /// <summary>
         /// 刀口长度（cm)
@@ -50,18 +55,12 @@ namespace ZipperInfo
         /// 相机中心到切刀的中心距
         /// </summary>
         [ObservableProperty]
-        float daoDitance = 782;  //12mm 对应805
+        float daoDitance = 782;  
         /// <summary>
         /// 相机视野
         /// </summary>
         [ObservableProperty]
         float ccdWidth = 114;
-
-        /// <summary>
-        /// 相机视野
-        /// </summary>
-        [ObservableProperty]
-        float pullSegRange = 1500;
 
 
         [ObservableProperty]

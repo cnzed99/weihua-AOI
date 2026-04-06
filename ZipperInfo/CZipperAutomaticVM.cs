@@ -17,7 +17,7 @@ namespace ZipperInfo
 {
     public partial class CZipperAutomaticVM : ObservableObject
     {
-        public CAutomaticModel AutoData { get; set; }
+        public List< CAutomaticModel> AutoData { get; set; }
 
         public CZipperAutomaticVM()
         {
@@ -179,7 +179,7 @@ namespace ZipperInfo
 
         #region 读取参数
 
-        public static CAutomaticModel LoadParameter()
+        public static List< CAutomaticModel> LoadParameter()
         {
             CAutomaticModel settingsModel = new CAutomaticModel();
             try
