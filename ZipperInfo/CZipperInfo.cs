@@ -24,9 +24,9 @@ namespace ZipperInfo
             set
             {
                 showZipperLenght = value;
-                if (AutoData != null)
+                if (TempData1.AutoData != null)
                 {
-                    ZipperLneght = value * 10 + AutoData.QuekouLenght * 10;
+                    ZipperLneght = value * 10 + TempData1.AutoData.QuekouLenght * 10;
                 }
 
                 OnPropertyChanged();
@@ -50,14 +50,14 @@ namespace ZipperInfo
             {
                 zipperLneght = value;
                 //  OnPropertyChanged();
-                if (AutoData != null)
+                if (TempData1 != null)
                 {
-                    AutoData.ZipperLenght = value;
-                    CGetZipperTriggerPoint.GetTriggerPoints(AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
-                    ZipperTriggerPos = points;
-                    HandAndTaliPos = handandtalipoints;
+                    TempData1.AutoData.ZipperLenght = value;
+                    CGetZipperTriggerPoint.GetTriggerPoints(TempData1.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
+                    TempData1.ZipperTriggerPos = points;
+                    TempData1.HandAndTaliPos = handandtalipoints;
                     CGetZipperTriggerPoint.CheckPullPos(points);
-                    CZipperCommunicate.SendZipperLenght(AutoData.ZipperLenght);
+                    CZipperCommunicate.SendZipperLenght(TempData1.AutoData.ZipperLenght);
                     //写入拍照的总图片数量
                     CZipperCommunicate.SendPhotoCount(points.Count);
                     //计算拉链触发点位 ID改变位置
@@ -85,7 +85,7 @@ namespace ZipperInfo
                 {
                     CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
                 }
-               
+
             }
         }
 
@@ -170,7 +170,7 @@ namespace ZipperInfo
         public string ZipperLogoType
         {
             get { return zipperLogoType; }
-            set 
+            set
             {
                 zipperLogoType = value;
                 if (CZipperAutomaticAlgorithm.TestFinsh)
@@ -197,7 +197,26 @@ namespace ZipperInfo
             }
         }
 
+        /// <summary>
+        /// 拉头的材质类型
+        /// </summary>
+        public PULLMATERIALSTYPE PullMaterlsType { get; set; }
+        /// <summary>
+        /// 左右相机工位临时参数
+        /// 2026.4.6 鲍赞宝
+        /// </summary>
+        public CZipperTempData TempData1 { get; set; }
+        /// <summary>
+        /// 上下相机工位临时参数
+        /// 2026.4.6 鲍赞宝
+        /// </summary>
+        public CZipperTempData TempData2 { get; set; }
 
+    }
+
+
+    public partial class CZipperTempData : ObservableObject
+    {
         /// <summary>
         /// 拉链拍照触发的位置
         /// 2025.06.24 鲍赞宝
@@ -266,7 +285,7 @@ namespace ZipperInfo
         /// 拉链外部参数
         /// 2025.06.30 鲍赞宝
         /// </summary>
-        public List< CAutomaticModel> AutoData { get; set; }
+        public CAutomaticModel AutoData { get; set; }
 
         /// <summary>
         /// Logo文字集合
@@ -283,10 +302,7 @@ namespace ZipperInfo
         /// 拉片分割出来的标准面积
         /// </summary>
         public double PullSegOrgArea { get; set; }
-        /// <summary>
-        /// 拉头的材质类型
-        /// </summary>
-        public PULLMATERIALSTYPE PullMaterlsType { get; set; }
+
         /// <summary>
         /// 拉片外形轮廓点集合
         /// </summary>
@@ -307,7 +323,6 @@ namespace ZipperInfo
         /// 拉片的S值
         /// </summary>
         public double PullsMeanS { get; set; }
-
     }
 
 
@@ -335,17 +350,6 @@ namespace ZipperInfo
         隐形 = 6,
         无 = 7
     }
-    //public enum LOGOTYPE
-    //{
-    //    SBS=0,
-    //    ANTA=1,
-    //    单包=2,
-    //    无Logo=3,
-    //    Kith,
-    //    Oneills,
-    //    JAKO,
-    //    ONLY
-    //}
 
     public enum PULLMATERIALSTYPE
     {

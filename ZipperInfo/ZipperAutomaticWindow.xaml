@@ -36,47 +36,76 @@
                     <RowDefinition />
                     <RowDefinition/>
                     <RowDefinition Height="1.5*"/>
-                        <RowDefinition Height="1.5*"/>
+                    <RowDefinition Height="1.5*"/>
              
                     </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
 
-                        <TextBlock Margin="10,10,0,0" Text="拉链长度(cm)"  FontSize="22"/>
-                    <hc:NumericUpDown Margin="140,0,0,0"  Value="{Binding AutoData.ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
-                                      DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000"
-                    Width="140" Height="45" FontSize="30">
-                        <i:Interaction.Behaviors>
-                            <keyboard:NumericKeyboardBehavior/>
-                        </i:Interaction.Behaviors>
-                    </hc:NumericUpDown>
+                        <TextBlock Margin="10"  Text="拉链长度(cm)"  FontSize="22"/>
+                        <hc:NumericUpDown  
+                           Margin="10,0" Value="{Binding AutoData[0].ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
+                            DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000" Width="140" Height="45" FontSize="30">
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+                        
+                        <hc:NumericUpDown 
+                            Margin="20,0" Value="{Binding AutoData[1].ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
+                        DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000" Width="140" Height="45" FontSize="30">
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+                    </StackPanel>
 
-                <!--<TextBlock  Grid.Row="1"   Margin="10,5,0,0"
+
+                    <!--<TextBlock  Grid.Row="1"   Margin="10,5,0,0"
                              Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
                             Text="刀口长度(cm)"  FontSize="22" />-->
-                    <TextBlock  Grid.Row="1"   Margin="10,5,0,0"
-               Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-              Text="刀口长度(cm)"  FontSize="22" />
-                    <hc:NumericUpDown  Grid.Row="1" Margin="140,0,0,0" 
-                                   Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-                                   Value="{Binding AutoData.QuekouLenght, UpdateSourceTrigger=PropertyChanged}"
-                         DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000"
-                      Width="140" Height="45" FontSize="30">
-                    <i:Interaction.Behaviors>
-                        <keyboard:NumericKeyboardBehavior/>
-                    </i:Interaction.Behaviors>
-                </hc:NumericUpDown>
-                <!--Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"-->
-                    <TextBlock Margin="10,5,0,0"  Grid.Row="2" 
-                               Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-                               Text="中心距离(mm)"  FontSize="22" />
-                <hc:NumericUpDown   Grid.Row="2"
-                                Value="{Binding AutoData.DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
-                       Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-                            Margin="140,0,0,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
-                            Width="140" Height="45" FontSize="30" >
-                    <i:Interaction.Behaviors>
-                        <keyboard:NumericKeyboardBehavior/>
-                    </i:Interaction.Behaviors>
-                </hc:NumericUpDown>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock  Grid.Row="1" Margin="10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" Text="刀口长度(cm)"  FontSize="22" />
+                        <hc:NumericUpDown  Grid.Row="1" Margin="10,0" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" 
+                                       Value="{Binding AutoData[0].QuekouLenght, UpdateSourceTrigger=PropertyChanged}" DecimalPlaces="2" Increment="0.05" 
+                                       Minimum="0" Maximum="2000" Width="140" Height="45" FontSize="30">
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+                        
+                        <hc:NumericUpDown  Grid.Row="1" Margin="20,0" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" 
+                       Value="{Binding AutoData[1].QuekouLenght, UpdateSourceTrigger=PropertyChanged}" DecimalPlaces="2" Increment="0.05" 
+                       Minimum="0" Maximum="2000" Width="140" Height="45" FontSize="30">
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <!--Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"-->
+                        <TextBlock 
+                            Margin="10"  Grid.Row="2" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" Text="中心距离(mm)"  FontSize="22" />
+                        <hc:NumericUpDown   
+                            Value="{Binding AutoData[0].DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
+                            Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            Margin="1,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
+                             Width="140" Height="45" FontSize="30" >
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+
+                        <hc:NumericUpDown  
+                         Value="{Binding AutoData[1].DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
+                         Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                         Margin="30,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
+                          Width="140" Height="45" FontSize="30" >
+                            <i:Interaction.Behaviors>
+                                <keyboard:NumericKeyboardBehavior/>
+                            </i:Interaction.Behaviors>
+                        </hc:NumericUpDown>
+                    </StackPanel>
+               
                 <!--<TextBlock Margin="10,5,0,0"  Grid.Row="3"
                                Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"
                                Text="相机视野(mm)"  FontSize="22"/>
@@ -92,18 +121,18 @@
 
                     <Grid Grid.Row="3">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <hc:NumericUpDown Value="{Binding AutoData.ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.ZipperMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Row="4">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <hc:NumericUpDown Value="{Binding AutoData.PullMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.PullMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.PullMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData.PullMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].PullMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].PullMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].PullMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].PullMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
                     </Grid>
 
