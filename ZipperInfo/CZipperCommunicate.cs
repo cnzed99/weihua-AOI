@@ -270,7 +270,8 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41196, (int)result);
-                ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
+                com.WriteSingleCoil(9555, true);
+                ZipperSetResultLogger.Info($"工位1发送ID:{id}->结果:{result}");
             }
 
         }
@@ -280,7 +281,7 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41416, (int)result);
-                ZipperSetResultLogger.Info($"发送ID:{id}->结果:{result}");
+                ZipperSetResultLogger.Info($"工位2发送ID:{id}->结果:{result}");
             }
 
         }

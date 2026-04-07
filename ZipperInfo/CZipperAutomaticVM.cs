@@ -208,6 +208,7 @@ namespace ZipperInfo
                     settingsModel = ConfigAPI.LoadDeserialize< List<CAutomaticModel>>(ParameterPath);
                     if (settingsModel == null)
                     {
+                       settingsModel = new List<CAutomaticModel>();
                         CAutomaticModel st1 = new CAutomaticModel();
                         CAutomaticModel st2 = new CAutomaticModel();
                         settingsModel.Add(st1);

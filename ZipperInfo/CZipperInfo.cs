@@ -24,7 +24,7 @@ namespace ZipperInfo
             set
             {
                 showZipperLenght = value;
-                if (TempData1.AutoData != null)
+                if (TempData1?.AutoData != null)
                 {
                     ZipperLneght = value * 10 + TempData1.AutoData.QuekouLenght * 10;
                 }
@@ -50,7 +50,7 @@ namespace ZipperInfo
             {
                 zipperLneght = value;
                 //  OnPropertyChanged();
-                if (TempData1 != null)
+                if (TempData1 != null&& TempData1.AutoData!=null)
                 {
                     TempData1.AutoData.ZipperLenght = value;
                     CGetZipperTriggerPoint.GetTriggerPoints(TempData1.AutoData, out List<float> points, out List<float> handandtalipoints, out int cutoffIndex, out int zipperCacheCount, out _);
@@ -205,12 +205,12 @@ namespace ZipperInfo
         /// 左右相机工位临时参数
         /// 2026.4.6 鲍赞宝
         /// </summary>
-        public CZipperTempData TempData1 { get; set; }
+        public CZipperTempData TempData1 { get; set; } = new CZipperTempData();
         /// <summary>
         /// 上下相机工位临时参数
         /// 2026.4.6 鲍赞宝
         /// </summary>
-        public CZipperTempData TempData2 { get; set; }
+        public CZipperTempData TempData2 { get; set; }=new CZipperTempData();
 
     }
 

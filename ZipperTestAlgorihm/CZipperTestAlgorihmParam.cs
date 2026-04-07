@@ -348,11 +348,16 @@ namespace ZipperTestAlgorihm
                 commonModelPath = commonModelPath + "Front\\";
                 bigModelPath = bigModelPath + "Front\\";
             }
-            if (user == "反面")
+            else
             {
                 commonModelPath = commonModelPath + "Back\\";
                 bigModelPath = bigModelPath + "Back\\";
             }
+            //if (user == "反面")
+            //{
+            //    commonModelPath = commonModelPath + "Back\\";
+            //    bigModelPath = bigModelPath + "Back\\";
+            //}
             var commons = GetNames(commonModelPath);
             if (commons.Item1 != "")
             {
