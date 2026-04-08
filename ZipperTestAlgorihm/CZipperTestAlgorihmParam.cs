@@ -872,7 +872,7 @@ namespace ZipperTestAlgorihm
                                     foreach (var seg in pullsegResult.datas)
                                     // if (pullsegResult.count > 0)
                                     {
-                                        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                                        Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
                                         Mat maskgray = new Mat();
                                         Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
                                         Mat binary = new Mat();
@@ -883,9 +883,11 @@ namespace ZipperTestAlgorihm
                                         Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                                         maskgray.Dispose();
                                         binary.Dispose();
-                                        if (contours != null && contours.Length == 1)
+
+                                        Point[] maxps = contours?.MaxBy(p => p.Length);
+                                        if (maxps != null )
                                         {
-                                            contoursList.Add(contours[0]);
+                                            contoursList.Add(maxps);
                                         }
 
                                     }
