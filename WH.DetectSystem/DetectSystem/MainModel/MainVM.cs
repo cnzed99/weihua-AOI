@@ -2014,7 +2014,7 @@ namespace WH.DetectSystem.Models
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 8;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 12;
                                             }
                                             else
                                             {
@@ -2024,7 +2024,7 @@ namespace WH.DetectSystem.Models
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 10;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 15;
                                             }
 
                                         }
@@ -2065,13 +2065,13 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 15; //烤漆拉头H
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 12; //烤漆拉头H
                                                 if (diff <= 0)
                                                 {
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 15;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 12;
                                             }
                                             else
                                             {
@@ -2109,7 +2109,7 @@ namespace WH.DetectSystem.Models
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 10;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 12;
                                             }
                                             else
                                             {
@@ -2119,7 +2119,7 @@ namespace WH.DetectSystem.Models
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 20;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 25;
                                             }
                                         }
                                     }

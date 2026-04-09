@@ -1000,10 +1000,11 @@ namespace ZipperInfo
 
                                 }
                             }
-                            int px = resultDet.datas[i].box.X + 20;
+
+                            int px = resultDet.datas[i].box.X + 123;
                             int py = resultDet.datas[i].box.Y + 30;
-                            int rew = 120;
-                            int reh = 70;
+                            int rew = 20;
+                            int reh = 20;
                             Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
                             // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
                             Mat hsvImage = new Mat();
