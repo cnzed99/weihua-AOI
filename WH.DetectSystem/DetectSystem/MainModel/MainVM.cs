@@ -2008,23 +2008,23 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 8; //烤漆拉片S
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 12; //烤漆拉片S
                                                 if (diff <= 0)
                                                 {
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 12;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 18;
                                             }
                                             else
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 10; //包胶拉片S
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 20; //包胶拉片S
                                                 if (diff <= 0)
                                                 {
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 15;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 25;
                                             }
 
                                         }
@@ -2065,13 +2065,13 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 12; //烤漆拉头H
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 15; //烤漆拉头H
                                                 if (diff <= 0)
                                                 {
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 12;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 18;
                                             }
                                             else
                                             {
@@ -2103,13 +2103,13 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 10; //烤漆拉头S
+                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 12; //烤漆拉头S
                                                 if (diff <= 0)
                                                 {
                                                     diff = 0;
                                                 }
                                                 pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 12;
+                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 15;
                                             }
                                             else
                                             {
