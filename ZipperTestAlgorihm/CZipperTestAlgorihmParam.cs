@@ -12,6 +12,7 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
+using HandyControl.Controls;
 
 
 namespace ZipperTestAlgorihm
@@ -501,7 +502,7 @@ namespace ZipperTestAlgorihm
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
-               // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
+                // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
                 //if (cell.PhotoTatolCount == 2)
                 //{
                 //    runtype = true;
@@ -520,7 +521,7 @@ namespace ZipperTestAlgorihm
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
-                            if ((labelname.Contains("正面上止") || labelname.Contains("反面上止"))&& cell.PhotoIndex != cell.PhotoTatolCount - 1)
+                            if ((labelname.Contains("正面上止") || labelname.Contains("反面上止")) && cell.PhotoIndex != cell.PhotoTatolCount - 1)
                                 continue;
                             //if ((labelname.Contains("正面下止") || labelname.Contains("反面下止")) && cell.PhotoIndex != 1)
                             //    continue;
@@ -712,7 +713,7 @@ namespace ZipperTestAlgorihm
                     {
                         return;
                     }
-                   // upmassCount = 0;
+                    // upmassCount = 0;
                     List<Point> massPoints = new List<Point>();
                     List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
@@ -738,14 +739,14 @@ namespace ZipperTestAlgorihm
 
                     }
                 }
-                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1 )//&& !runtype) //最后一张图片有上止图片
+                else if (cell.PhotoIndex == cell.PhotoTatolCount - 1)//&& !runtype) //最后一张图片有上止图片
                 {
                     if (mats.Count == 0)
                     {
                         return;
                     }
-                   // upmassCount = 0;
-                   // List<Point> massPoints = new List<Point>(); //上止的位置
+                    // upmassCount = 0;
+                    // List<Point> massPoints = new List<Point>(); //上止的位置
                     List<(DetResult, int)> detrets = ImageInferall(mats).Result;
                     if (detrets != null)
                     {
@@ -885,7 +886,7 @@ namespace ZipperTestAlgorihm
                                         binary.Dispose();
 
                                         Point[] maxps = contours?.MaxBy(p => p.Length);
-                                        if (maxps != null )
+                                        if (maxps != null)
                                         {
                                             contoursList.Add(maxps);
                                         }
@@ -905,7 +906,7 @@ namespace ZipperTestAlgorihm
                                             {
                                                 //double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
                                                 double simiValue = MatchShapesWithCv2(cell.OrgContours, contoursList[i]);
-                                                
+
                                                 dsimilaritys.Add(simiValue);
                                             }
                                             double minvalue = dsimilaritys.Min();
@@ -953,14 +954,23 @@ namespace ZipperTestAlgorihm
                                 #region 拉头拉片颜色
                                 if (labelname.Contains("拉头"))
                                 {
-                                    int px= pullserachResult.datas[j].box.X+123;
-                                    int py = pullserachResult.datas[j].box.Y + 30;
+                                    int px = 0, py = 0;
+                                    if (cell.PullMaterlsType == "烤漆")
+                                    {
+                                        px = pullserachResult.datas[j].box.X + 180;
+                                        py = pullserachResult.datas[j].box.Y + 60;
+                                    }
+                                    else
+                                    {
+                                        px = pullserachResult.datas[j].box.X + 123;
+                                        py = pullserachResult.datas[j].box.Y + 30;
 
-                                    int rew = 20;
+                                    }
+                                    int rew = 15;
                                     int reh = 20;
                                     Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
                                     Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (33)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
-                                    Mat hsvImage=new Mat();
+                                    Mat hsvImage = new Mat();
                                     Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
                                     Scalar hsvMean = Cv2.Mean(hsvImage);
 
@@ -992,9 +1002,9 @@ namespace ZipperTestAlgorihm
                                     int rew = 80;
                                     int reh = 30;
                                     int px = cx + 30;
-                                    int py= cy - reh/2;
+                                    int py = cy - reh / 2;
                                     Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
-                                   // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (22)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                                    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (22)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
                                     Mat hsvImage = new Mat();
                                     Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
                                     Scalar hsvMean = Cv2.Mean(hsvImage);
@@ -1062,8 +1072,8 @@ namespace ZipperTestAlgorihm
             upmassPos = new Point(detData.box.X, detData.box.Y);
             int recw = 192;
             int rech = 96;
-            int rex = Convert.ToInt32((detData.box.X+ detData.box.Width/2) - recw / 2);
-            int rey = Convert.ToInt32((detData.box.Y+detData.box.Height/2) - rech / 2);
+            int rex = Convert.ToInt32((detData.box.X + detData.box.Width / 2) - recw / 2);
+            int rey = Convert.ToInt32((detData.box.Y + detData.box.Height / 2) - rech / 2);
             if ((rex + recw) > cell.Image.ImageWidth)
             {
                 rex = cell.Image.ImageWidth - recw;
@@ -1072,7 +1082,7 @@ namespace ZipperTestAlgorihm
             {
                 rex = 0;
             }
-           // updets.Add(restoreData);
+            // updets.Add(restoreData);
             Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
             cell.UpMassMatImg.Add(cropUpMat);
 
@@ -1540,7 +1550,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         // 各阶Hu矩的权重（可根据需求调整）
         private static readonly double[] Weights = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
 
-        public  double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
+        public double MatchShapesUsingHuMoments(Point[] contours1, Point[] contours2)
         {
             // ========== 输入验证 ==========
             if (contours1 == null || contours2 == null)
@@ -1597,23 +1607,23 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// <summary>
         /// 使用OpenCV内置方法计算相似度（作为对比参考）
         /// </summary>
-        public  double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
+        public double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
                                                 ShapeMatchModes mode = ShapeMatchModes.I2)
         {
             using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
             using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
             {
-                
-                    // 填充点数据
-                    for (int i = 0; i < contours1.Length; i++)
-                    {
-                        contour1Mat.Set(i, 0, new Point( contours1[i].X, contours1[i].Y ));
-                    }
-                    for (int i = 0; i < contours2.Length; i++)
-                    {
-                        contour2Mat.Set(i, 0, new Point ( contours2[i].X, contours2[i].Y ));
-                    }
-                
+
+                // 填充点数据
+                for (int i = 0; i < contours1.Length; i++)
+                {
+                    contour1Mat.Set(i, 0, new Point(contours1[i].X, contours1[i].Y));
+                }
+                for (int i = 0; i < contours2.Length; i++)
+                {
+                    contour2Mat.Set(i, 0, new Point(contours2[i].X, contours2[i].Y));
+                }
+
                 return Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
 
             }

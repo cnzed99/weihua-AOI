@@ -561,7 +561,7 @@ namespace ZipperInfo
                                         //    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},机械轴位置:减去一个拉链长度,轴坐标为:{pos}");
                                         //}
 
-                                        templist.Add(pos);  
+                                        templist.Add(pos);
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
@@ -716,7 +716,7 @@ namespace ZipperInfo
                                 CZipperCommunicate.AixtStop();//停止轴
                                 CZipperCommunicate.CamTriggerStop(); //停止拍照
                                 LightChange.LineValueReset();
-                               // CLinghtManagement.SaveLightParams();
+                                // CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
                                 //{
                                 TestFinsh = true;
@@ -741,7 +741,7 @@ namespace ZipperInfo
                     timeOutCount++;
                     if (timeOutCount >= 10)
                     {
-                        findPuller=false;
+                        findPuller = false;
                         onWichStage = 2;
                         CZipperCommunicate.AixtContinue(true);
                         CZipperCommunicate.SendCamFPS(60);
@@ -880,7 +880,7 @@ namespace ZipperInfo
                                         //mintimeout = 0;
                                         //进入下阶段                                         
                                         onWichStage = 4;
-                                       // LightChange.MaxTimeOutCount = 0;
+                                        // LightChange.MaxTimeOutCount = 0;
                                         LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
@@ -1000,10 +1000,19 @@ namespace ZipperInfo
 
                                 }
                             }
+                            int px = 0, py = 0;
+                            if (ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                            {
+                                px = resultDet.datas[i].box.X + 180;
+                                py = resultDet.datas[i].box.Y + 60;
+                            }
+                            else
+                            {
+                                px = resultDet.datas[i].box.X + 123;
+                                py = resultDet.datas[i].box.Y + 30;
 
-                            int px = resultDet.datas[i].box.X + 123;
-                            int py = resultDet.datas[i].box.Y + 30;
-                            int rew = 20;
+                            }
+                            int rew = 15;
                             int reh = 20;
                             Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
                             // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
