@@ -956,10 +956,19 @@ namespace ZipperTestAlgorihm
                                 #region 拉头拉片颜色
                                 if (labelname.Contains("拉头"))
                                 {
-                                    int px = pullserachResult.datas[j].box.X + 123;
-                                    int py = pullserachResult.datas[j].box.Y + 30;
+                                    int px = 0, py = 0;
+                                    if (cell.PullMaterlsType == "烤漆")
+                                    {
+                                        px = pullserachResult.datas[j].box.X + 180;
+                                        py = pullserachResult.datas[j].box.Y + 60;
+                                    }
+                                    else
+                                    {
+                                        px = pullserachResult.datas[j].box.X + 123;
+                                        py = pullserachResult.datas[j].box.Y + 30;
 
-                                    int rew = 20;
+                                    }
+                                    int rew = 15;
                                     int reh = 20;
                                     Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
                                    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);

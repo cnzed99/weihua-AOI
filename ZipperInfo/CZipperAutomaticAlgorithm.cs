@@ -992,9 +992,19 @@ namespace ZipperInfo
 
                                 }
                             }
-                            int px = resultDet.datas[i].box.X + 123;
-                            int py = resultDet.datas[i].box.Y + 30;
-                            int rew = 20;
+                            int px = 0, py = 0;
+                            if (ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                            {
+                                px = resultDet.datas[i].box.X + 180;
+                                py = resultDet.datas[i].box.Y + 60;
+                            }
+                            else
+                            {
+                                px = resultDet.datas[i].box.X + 123;
+                                py = resultDet.datas[i].box.Y + 30;
+
+                            }
+                            int rew = 15;
                             int reh = 20;
                             Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
                             // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
