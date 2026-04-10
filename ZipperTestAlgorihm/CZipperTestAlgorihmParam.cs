@@ -1293,7 +1293,7 @@ namespace ZipperTestAlgorihm
                     else
                     {
                         engineType = EngineType.OpenVINO;
-                        CurrentDevice = "GPU.0";
+                        CurrentDevice = "CPU";
                     }
 
                     int pull_search_num = pull_Search_names.Length;
