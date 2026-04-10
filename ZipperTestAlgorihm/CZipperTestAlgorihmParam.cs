@@ -12,6 +12,7 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
+using System.Management;
 
 
 namespace ZipperTestAlgorihm
@@ -527,8 +528,8 @@ namespace ZipperTestAlgorihm
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             if ((labelname.Contains("正面上止") || labelname.Contains("反面上止"))&& cell.PhotoIndex != cell.PhotoTatolCount - 1)
                                 continue;
-                            //if ((labelname.Contains("正面下止") || labelname.Contains("反面下止")) && cell.PhotoIndex != 1)
-                            //    continue;
+                            if ((labelname.Contains("正面下止") || labelname.Contains("反面下止")) && cell.PhotoIndex != 1)
+                                continue;
                             dets.Add(restoreData);
                             if (cell.PhotoIndex == 1 && labelname.Contains("正面下止")) //检测下止
                             {
@@ -1286,6 +1287,17 @@ namespace ZipperTestAlgorihm
                         upmassmeas_num = upStopMassMeas_names.Length;
                     }
 
+                    EngineType engineType;
+                    if (HasDedicatedGraphicsCard()) //有显卡
+                    {
+                        engineType = EngineType.TensorRT;
+                    }
+                    else
+                    {
+                        engineType = EngineType.OpenVINO;
+                        CurrentDevice = "CPU";
+                    }
+
                     int pull_search_num = pull_Search_names.Length;
                     int metapull_num = pull_Meta_names.Length;
                     int paintpull_num = pull_Paint_names.Length;
@@ -1298,25 +1310,25 @@ namespace ZipperTestAlgorihm
 
                     //Task task1 = Task.Run(() =>
                     //{
-                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task2 = Task.Run(() =>
                     //{
-                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task3 = Task.Run(() =>
                     //{
-                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task4 = Task.Run(() =>
                     //{
-                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, EngineType.TensorRT,
+                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //});
 
@@ -1325,7 +1337,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //{
                     if (downmass_num > 0)
                     {
-                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
+                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
 CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                     }
                     //  });
@@ -1334,43 +1346,43 @@ CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                     //{
                     if (upmass_num > 0)
                     {
-                        yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, EngineType.TensorRT,
+                        yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
     CurrentDevice, upmass_num, param.UpScore, Nms, 192);
                     }
                     //  });
 
                     if (upmassmeas_num > 0)
                     {
-                        yolo_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, EngineType.TensorRT,
+                        yolo_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
     CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
                     }
 
                     //Task task7 = Task.Run(() =>
                     //{
-                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
+                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
 CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
                     // });
 
                     // Task task8 = Task.Run(() =>
                     // {
-                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, EngineType.TensorRT,
+                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
 CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
                     //});
 
-                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, EngineType.TensorRT,
+                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
 CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
 
-                    yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, EngineType.TensorRT,
+                    yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
 CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
                     //Task task9 = Task.Run(() =>
                     //{
-                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, EngineType.TensorRT,
+                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
 CurrentDevice, big_num, param.BigScore, Nms, 480);
                     //});
                     // Task task10 = Task.Run(() =>
                     // {
-                    yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, EngineType.TensorRT,
+                    yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
 CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                     // });
 
@@ -1380,6 +1392,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
             }
         }
+
 
         public DetResult ImageInferDet(IVisionModel yolo, Mat img)
         {
@@ -1743,6 +1756,33 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
             yolo_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
         }
+
+        public static bool HasDedicatedGraphicsCard()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_VideoController");
+
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    string name = obj["Name"]?.ToString() ?? "";
+                    // 常见独立显卡关键词
+                    if (name.Contains("NVIDIA") ||
+                        name.Contains("AMD") ||
+                        name.Contains("Radeon"))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                return false; // 如果查询失败，返回false
+            }
+        }
+
 
     }
 

@@ -9,6 +9,7 @@ using WH.LightControl;
 using WH.RunCell;
 using ZipperLightHalconDet;
 using WH.VisionLearning;
+using System.Management;
 
 namespace ZipperInfo
 {
@@ -1430,14 +1431,24 @@ namespace ZipperInfo
             {
                 return;
             }
-            string CurrentDevice = "GPU.1";
-
+            EngineType engineType;
+            string CurrentDevice;
+            if (HasDedicatedGraphicsCard()) //有显卡
+            {
+                CurrentDevice = "GPU.0";
+                engineType = EngineType.TensorRT;
+            }
+            else
+            {
+                CurrentDevice = "CPU";
+                engineType = EngineType.OpenVINO;
+            }
             //Task task = Task.Run(() =>
             //{
             int search_Categ_num = de_search_names.Length;
             float Score = 0.45f;
             float Nms = 0.5f;
-            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, EngineType.TensorRT,
+            yolo_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, engineType,
           CurrentDevice, search_Categ_num, Score, Nms, 480);
             //  });
 
@@ -1446,15 +1457,41 @@ namespace ZipperInfo
             int pull_Categ_num = de_Logo_pull_names.Length;
             float pullScore = 0.6f;
             float pullNms = 0.8f;
-            yolo_Logo_Pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, EngineType.TensorRT,
+            yolo_Logo_Pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pullmodelpath, engineType,
           CurrentDevice, pull_Categ_num, pullScore, pullNms, 640);
             // });
 
             int pullSeg_Categ_num = pullSharp_names.Length;
             float segScore = 0.6f;
             float segNms = 0.5f;
-            yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSegmodelpath, EngineType.TensorRT,
+            yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSegmodelpath, engineType,
           CurrentDevice, pullSeg_Categ_num, segScore, segNms, 640);
+        }
+
+        public static bool HasDedicatedGraphicsCard()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_VideoController");
+
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    string name = obj["Name"]?.ToString() ?? "";
+                    // 常见独立显卡关键词
+                    if (name.Contains("NVIDIA") ||
+                        name.Contains("AMD") ||
+                        name.Contains("Radeon"))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                return false; // 如果查询失败，返回false
+            }
         }
 
 
