@@ -970,7 +970,7 @@ namespace ZipperTestAlgorihm
                                     int rew = 15;
                                     int reh = 20;
                                     Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
-                                    Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (33)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                                   // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (33)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
                                     Mat hsvImage = new Mat();
                                     Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
                                     Scalar hsvMean = Cv2.Mean(hsvImage);
