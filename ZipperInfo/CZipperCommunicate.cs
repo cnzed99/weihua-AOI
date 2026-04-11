@@ -198,7 +198,7 @@ namespace ZipperInfo
             if (com != null)
             {
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-50mm
-                float fgoulenght = lenght - 50;
+                float fgoulenght = lenght - 36;
                 com.WriteSingleRegisterReal(41304, fgoulenght);
                 com.WriteSingleRegisterReal(41202, lenght); //工位1
 

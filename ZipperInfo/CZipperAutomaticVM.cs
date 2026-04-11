@@ -79,6 +79,9 @@ namespace ZipperInfo
                 CZipperCommunicate.SendPhotoCount(points.Count);
                 //计算拉链触发点位 ID改变位置
                 CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+
+                //计算拉链触发点位 ID改变位置
+                CZipperCommunicate.SendPoints2(points_2, handandtalipoints_2, cutoffIndex_2, zipperCacheCount_2);
                 Thread.Sleep(100);
                 startAutoTest = true;
                 CZipperCommunicate.AixtContinue(false);
@@ -98,11 +101,11 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
 
 
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[0];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.CutoffIndex = cutoffIndex;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType = triggerType;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.CutoffIndex = cutoffIndex_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType = triggerType_2;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperDownmssImg = null;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperUpmssImg = null;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerImg = null;
@@ -171,6 +174,63 @@ namespace ZipperInfo
                 ProgressBarViewModel.AutoMessage = "准备执行拉链自动识别程序...";
                 ProgressBarViewModel.ProgressBarValue = 0;
                 StartAutoTestEven?.Invoke(startAutoTest);
+            }
+        }
+
+        [RelayCommand]
+        void SendPoints2(object win)
+        {
+
+            CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData[0].ZipperLenght}");
+            //写入拉链长度
+            // CZipperCommunicate.ClearWarn();
+            CZipperCommunicate.SendZipperLenght(AutoData[0].ZipperLenght);
+            CGetZipperTriggerPoint.GetTriggerPoints(AutoData[0], out List<float> points, out List<float> handandtalipoints,
+                out int cutoffIndex, out int zipperCacheCount, out int triggerType);
+
+            CGetZipperTriggerPoint.GetTriggerPoints(AutoData[1], out List<float> points_2, out List<float> handandtalipoints_2,
+           out int cutoffIndex_2, out int zipperCacheCount_2, out int triggerType_2);
+
+           
+            if (points != null && points.Count > 0)
+            {
+                //写入拍照的总图片数量
+                CZipperCommunicate.SendPhotoCount(points.Count);
+                //计算拉链触发点位 ID改变位置
+                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
+
+                //计算拉链触发点位 ID改变位置
+                CZipperCommunicate.SendPoints2(points_2, handandtalipoints_2, cutoffIndex_2, zipperCacheCount_2);
+
+                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
+
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
+
+
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.CutoffIndex = cutoffIndex_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType = triggerType_2;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
+
             }
         }
         [RelayCommand]

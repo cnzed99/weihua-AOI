@@ -1972,7 +1972,7 @@ namespace WH.DetectSystem.Models
                         }
 
                     }
-                    if (pullname.Name == "H")
+                    if (pullname.Name == "拉头色差1")
                     {
                         foreach (var df in pullname.DefectFilters)
                         {
@@ -2012,7 +2012,7 @@ namespace WH.DetectSystem.Models
                             }
                         }
                     }
-                    if (pullname.Name == "S")
+                    if (pullname.Name == "拉头色差2")
                     {
                         foreach (var df in pullname.DefectFilters)
                         {
@@ -2069,7 +2069,7 @@ namespace WH.DetectSystem.Models
                             }
                         }
                     }
-                    if (pullname.Name == "H")
+                    if (pullname.Name == "拉头色差1")
                     {
                         foreach (var df in pullname.DefectFilters)
                         {
@@ -2107,7 +2107,7 @@ namespace WH.DetectSystem.Models
                             }
                         }
                     }
-                    if (pullname.Name == "S")
+                    if (pullname.Name == "拉头色差2")
                     {
                         foreach (var df in pullname.DefectFilters)
                         {

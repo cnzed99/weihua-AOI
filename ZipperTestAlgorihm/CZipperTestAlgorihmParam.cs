@@ -310,8 +310,8 @@ namespace ZipperTestAlgorihm
                     pullRecipes.Add(defectRecipe2);
                 }
                 //颜色
-                CDefectRecipe defectRecipe1_H = new CDefectRecipe("H", Category.值);
-                CDefectRecipe defectRecipe1_S = new CDefectRecipe("S", Category.值);
+                CDefectRecipe defectRecipe1_H = new CDefectRecipe("拉头色差1", Category.值);
+                CDefectRecipe defectRecipe1_S = new CDefectRecipe("拉头色差2", Category.值);
                 pullRecipes.Add(defectRecipe1_H);
                 pullRecipes.Add(defectRecipe1_S);
 
@@ -984,8 +984,8 @@ namespace ZipperTestAlgorihm
                                     double hMean = hsvMean.Val0;
                                     double sMean = hsvMean.Val1;
                                     // double vMean = hsvMean.Val2;
-                                    CoordRestoreData disDataH = new CoordRestoreData("H", (float)hMean);
-                                    CoordRestoreData disDataS = new CoordRestoreData("S", (float)sMean);
+                                    CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
+                                    CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
                                     dets.Add(disDataH);
                                     dets.Add(disDataS);
                                     hsvImage.Dispose();
@@ -1019,8 +1019,8 @@ namespace ZipperTestAlgorihm
                                     double sMean = hsvMean.Val1;
 
                                     // double vMean = hsvMean.Val2;
-                                    CoordRestoreData disDataH = new CoordRestoreData("H", (float)hMean);
-                                    CoordRestoreData disDataS = new CoordRestoreData("S", (float)sMean);
+                                    CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
+                                    CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
                                     dets.Add(disDataH);
                                     dets.Add(disDataS);
                                     hsvImage.Dispose();
