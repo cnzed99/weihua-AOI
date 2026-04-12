@@ -566,7 +566,7 @@ namespace ZipperInfo
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
-                                        int rang = 8;
+                                        int rang = 11;
                                         if (templist.Count >= 3)
                                         {
 
