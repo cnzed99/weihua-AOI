@@ -223,7 +223,7 @@ namespace ZipperInfo
                 }
             }
 
-            if (Searchmodelpath != "" && pullmodelpath != "" && pullSegmodelpath != ""&& Searchmodelpath2 != "")
+            if (Searchmodelpath != "" && pullmodelpath != "" && pullSegmodelpath != "" && Searchmodelpath2 != "")
             {
                 IniYolo(Searchmodelpath, pullmodelpath, pullSegmodelpath, Searchmodelpath2);
             }
@@ -443,7 +443,7 @@ namespace ZipperInfo
 
                     }
                 }
-                if(cell.CamName=="下外相机")
+                if (cell.CamName == "下外相机")
                 {
                     HOperatorSet.GenImageInterleaved(
                           out CameraImage,
@@ -485,7 +485,7 @@ namespace ZipperInfo
                         {
                             AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
-                           // CLinghtManagement.SaveLightParams();
+                            // CLinghtManagement.SaveLightParams();
                             addOrSubCount2 = 0;
                             timeOutCount = 0;
                             LightChange2.MaxTimeOutCount = 0;
@@ -766,32 +766,32 @@ namespace ZipperInfo
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
-                                        int rang = 11;
+                                        int rang = 10;
                                         if (templist.Count >= 3)
                                         {
 
                                             if (pindex == 0)
                                             {
-                                                //if (ZipperInfo.TriggerType==3)
-                                                //{
-                                                float dis = Math.Abs(pos - templist[pindex + 1]);
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>{rang}");
-                                                if (dis > rang)
+                                                if (ZipperInfo.TempData1.TriggerType == 3)
                                                 {
-                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
-                                                    CZipperCommunicate.AixtStop();
-                                                    CZipperCommunicate.SendCamFPS(300);
-                                                    timeOutCount = 0;
-                                                    onWichStage = 3;
-                                                    img.Dispose();
-                                                    return;
+                                                    float dis = Math.Abs(pos - templist[pindex + 1]);
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},{dis}>{rang}");
+                                                    if (dis > rang)
+                                                    {
+                                                        AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{pos} - {templist[pindex + 1]}>{rang},停止轴运动,进入下一级段");
+                                                        CZipperCommunicate.AixtStop();
+                                                        CZipperCommunicate.SendCamFPS(300);
+                                                        timeOutCount = 0;
+                                                        onWichStage = 3;
+                                                        img.Dispose();
+                                                        return;
+                                                    }
                                                 }
-                                                //}
-                                                //else
-                                                //{
-                                                //    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},类型{ZipperInfo.TriggerType}拉头位置不能是第一个， return");
-                                                //    return; //不能在第一位
-                                                //}
+                                                else
+                                                {
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},类型{ZipperInfo.TriggerType}拉头位置不能是第一个， return");
+                                                    return; //不能在第一位
+                                                }
                                             }
                                             else if (pindex == templist.Count - 1)
                                             {
@@ -838,28 +838,28 @@ namespace ZipperInfo
                                         }
                                         else if (templist.Count == 2)
                                         {
-                                            //if (pindex == 0)
-                                            //{
-                                            //    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},templist.Count==2，类型{ZipperInfo.TriggerType}拉头位置不能是第一个， return");
-                                            //    return; //不能排在第一位
-                                            //}
-                                            //else
-                                            //{
-                                            float dis = Math.Abs(templist[1] - templist[0]);
-                                            AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{dis}>{rang}");
-                                            if (dis > rang) //大于7.5mm
+                                            if (pindex == 0)
                                             {
-
-                                                //写轴坐标位置
-                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},templist.Count == 2,{templist[0]}<{templist[1]},停止轴运动,进入下一级段");
-                                                CZipperCommunicate.AixtStop();
-                                                CZipperCommunicate.SendCamFPS(300);
-                                                timeOutCount = 0;
-                                                onWichStage = 3;
-                                                img.Dispose();
-                                                return;
+                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},pindex={pindex},templist.Count==2，类型{ZipperInfo.TriggerType}拉头位置不能是第一个， return");
+                                                return; //不能排在第一位
                                             }
-                                            //}
+                                            else
+                                            {
+                                                float dis = Math.Abs(templist[1] - templist[0]);
+                                                AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},{dis}>{rang}");
+                                                if (dis > rang) //大于7.5mm
+                                                {
+
+                                                    //写轴坐标位置
+                                                    AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},templist.Count == 2,{templist[0]}<{templist[1]},停止轴运动,进入下一级段");
+                                                    CZipperCommunicate.AixtStop();
+                                                    CZipperCommunicate.SendCamFPS(300);
+                                                    timeOutCount = 0;
+                                                    onWichStage = 3;
+                                                    img.Dispose();
+                                                    return;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1079,7 +1079,7 @@ namespace ZipperInfo
                                         //mintimeout = 0;
                                         //进入下阶段                                         
                                         onWichStage = 4;
-                                       // LightChange.MaxTimeOutCount = 0;
+                                        // LightChange.MaxTimeOutCount = 0;
                                         LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(60);
                                         timeOutCount = 0;
@@ -1633,7 +1633,7 @@ namespace ZipperInfo
         #endregion
         private void IniYolo(string searchmodelpath, string pullmodelpath, string pullSegmodelpath, string searchmodelpath2)
         {
-            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath) && !File.Exists(pullSegmodelpath)&&!File.Exists(searchmodelpath))
+            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath) && !File.Exists(pullSegmodelpath) && !File.Exists(searchmodelpath))
             {
                 return;
             }

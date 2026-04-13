@@ -225,9 +225,9 @@ namespace ZipperInfo
                 if (pullindex == 0) //第一个
                 {
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[1]);
-                    if (absvalue < 11)
+                    if (absvalue < 10)
                     {
-                        int pos = (int)(copyPoints[1] - 11.0f);
+                        int pos = (int)(copyPoints[1] - 10.0f);
                         if (pos < 0)
                         {
                             pos = 1;
@@ -238,24 +238,24 @@ namespace ZipperInfo
                 else if (pullindex == copyPoints.Count - 1) //最后一个
                 {
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex - 1]);
-                    if (absvalue < 11)
+                    if (absvalue < 10)
                     {
-                        int pos = (int)(copyPoints[pullindex - 1] + 11.0f);
+                        int pos = (int)(copyPoints[pullindex - 1] + 10.0f);
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                 }
                 else //中间
                 {
                     float absvalue = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex - 1]);
-                    if (absvalue < 11)
+                    if (absvalue < 10)
                     {
-                        int pos = (int)(copyPoints[pullindex - 1] + 11.0f);
+                        int pos = (int)(copyPoints[pullindex - 1] + 10.0f);
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                     float absvalue1 = Math.Abs(copyPoints[pullindex] - copyPoints[pullindex + 1]);
-                    if (absvalue1 < 11)
+                    if (absvalue1 < 10)
                     {
-                        int pos = (int)(copyPoints[pullindex + 1] - 11.0f);
+                        int pos = (int)(copyPoints[pullindex + 1] - 10.0f);
                         CZipperCommunicate.SendPullLocation(pos);
                     }
                 }
