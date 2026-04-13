@@ -52,6 +52,13 @@ namespace ZipperInfo
 
         /// <summary>
         /// 2025.7.2 鲍赞宝
+        /// 工位2自动识别模型对象
+        /// </summary>
+        //YOLO yolo_search_det = new();
+        IVisionModel yolo_search_det2;
+
+        /// <summary>
+        /// 2025.7.2 鲍赞宝
         /// 识别名
         /// </summary>
         string[] de_search_names;
@@ -65,6 +72,12 @@ namespace ZipperInfo
         /// 拉片分割缺陷名称
         /// </summary>
         protected string[] pullSharp_names;
+
+        /// <summary>
+        /// 2026.4.12 鲍赞宝
+        /// 识别名
+        /// </summary>
+        string[] de_search_names2;
 
         /// <summary>
         /// 超时统计
@@ -105,8 +118,14 @@ namespace ZipperInfo
         public static int tempLightValue_you_change2 = 0;
 
         public static bool[] findLogosidertype = new bool[2];  //0拉头  1拉片
-
+        /// <summary>
+        /// 工位1光源控制
+        /// </summary>
         LightChangeBase LightChange;
+        /// <summary>
+        /// 工位2光源控制
+        /// </summary>
+        LightChangeBase LightChange2;
 
         /// <summary>
         /// 自动识别完成事件
@@ -129,6 +148,10 @@ namespace ZipperInfo
             string pullSegmodelDirPath = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models\\Pull\\PullSegModel";
             string pullSegtxtpath;
             string pullSegmodelpath = "";
+
+            string SearchmodelDirPath2 = ".\\AlgorithmPlug\\ZipperTestAlgorihm\\Models2\\Pull\\PullSearch";
+            string Searchtxtpath2;
+            string Searchmodelpath2 = "";
 
             if (Directory.Exists(SearchmodelDirPath))
             {
@@ -182,9 +205,27 @@ namespace ZipperInfo
                     pullSharp_names = File.ReadAllLines(pullSegtxtpath);
                 }
             }
-            if (Searchmodelpath != "" && pullmodelpath != "" && pullSegmodelpath != "")
+
+            if (Directory.Exists(SearchmodelDirPath2))
             {
-                IniYolo(Searchmodelpath, pullmodelpath, pullSegmodelpath);
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                var files = searchPatterns
+                .SelectMany(pattern => Directory.GetFiles(SearchmodelDirPath2, pattern))
+                .ToList();
+
+                var classNames = Directory.GetFiles(SearchmodelDirPath2, "*.txt", SearchOption.AllDirectories);
+
+                if (files.Count > 0 && classNames.Length > 0)
+                {
+                    Searchmodelpath2 = files[0];
+                    Searchtxtpath2 = classNames[0];
+                    de_search_names2 = File.ReadAllLines(Searchtxtpath2);
+                }
+            }
+
+            if (Searchmodelpath != "" && pullmodelpath != "" && pullSegmodelpath != ""&& Searchmodelpath2 != "")
+            {
+                IniYolo(Searchmodelpath, pullmodelpath, pullSegmodelpath, Searchmodelpath2);
             }
 
             //if (CLinghtManagement.LightControlDict.Count >= 2)
@@ -194,6 +235,7 @@ namespace ZipperInfo
             //}
 
             LightChange = new COPTLinghtChange("COM1");
+            LightChange2 = new CXRLinghtChange("COM2");
 
         }
 
@@ -202,6 +244,12 @@ namespace ZipperInfo
         int maxtimeout = 0;
         int mintimeout = 0;
         int tempVState = 0;
+
+        int addOrSubCount2 = 0;
+        int nochangeCount2 = 0;
+        int maxtimeout2 = 0;
+        int mintimeout2 = 0;
+        int tempVState2 = 0;
 
         HObject CameraImage = new HObject();
 
@@ -354,7 +402,166 @@ namespace ZipperInfo
                         LightChange.ChangeLineValue1(true, -val);
                         if (LightChange.MinTimeOutCount >= 5)
                         {
-                            mintimeout = 0;
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值20,进入下一阶段");
+                            //进入下阶段
+                            CLinghtManagement.SaveLightParams();
+                            addOrSubCount = 0;
+                            timeOutCount = 0;
+                            onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
+                            ProgressBarViewModel.ProgressBarValue = 40;
+                            CZipperCommunicate.FirststageFinsh();
+                            CZipperCommunicate.SendCamFPS(60);
+                            img.Dispose();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        nochangeCount++;
+                        // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},无需调整次数{nochangeCount}");
+
+                        // HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
+                        if (nochangeCount >= 3)
+                        {
+                            nochangeCount = 0;
+                            //进入下阶段
+                            // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},进入下一阶段");
+                            // CLinghtManagement.SaveLightParams();
+                            addOrSubCount = 0;
+                            timeOutCount = 0;
+                            onWichStage = 2;
+                            ProgressBarViewModel.ProgressBarValue = 40;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
+                            CZipperCommunicate.FirststageFinsh();
+                            CZipperCommunicate.SendCamFPS(60);
+                            img.Dispose();
+                            return;
+                        }
+
+                    }
+                }
+                if(cell.CamName=="下外相机")
+                {
+                    HOperatorSet.GenImageInterleaved(
+                          out CameraImage,
+                          cell.Image.ImageData,
+                          "rgb",
+                          cell.Image.ImageWidth,
+                          cell.Image.ImageHeight,
+                          0,
+                          "byte",
+                          0,
+                          0,
+                          0,
+                          0,
+                          -1,
+                          0
+                      );
+
+                    // HOperatorSet.ReadImage(out CameraImage,"C:\\Users\\Administrator.B\\Desktop\\新建文件夹\\124032_1_0_OK_OK_163858938_102.png");
+                    ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 0.7,
+                        CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData.ZipperMinBgMean,
+                        CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData.ZipperMaxBgMean,
+                        CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData.ZipperMinMean,
+                        CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData.ZipperMaxMean,
+                        out var hv_VState, out var hv_VStride, out bool isWhiteZipper);
+                    //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{hv_VState}_{hv_VStride}_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
+                    //ProgressBarViewModel.AutoMessage = "正在识别拉链颜色...";
+
+                    ProgressBarViewModel.ProgressBarValue = 25;
+                    CameraImage.Dispose();
+                    AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
+                    if (hv_VState == 1)
+                    {
+                        // Console.WriteLine($"需增加亮度");
+                        if (tempVState != hv_VState)
+                        {
+                            addOrSubCount2++;
+                        }
+                        if (addOrSubCount2 > 4)
+                        {
+                            AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
+                            //进入下阶段
+                           // CLinghtManagement.SaveLightParams();
+                            addOrSubCount2 = 0;
+                            timeOutCount = 0;
+                            LightChange2.MaxTimeOutCount = 0;
+                            LightChange2.MinTimeOutCount = 0;
+                            //ProgressBarViewModel.ProgressBarValue = 40;
+                            //CZipperCommunicate.FirststageFinsh();
+                            //CZipperCommunicate.SendCamFPS(60);
+                            img.Dispose();
+                            return;
+                        }
+                        tempVState = hv_VState;
+                        int val = hv_VStride.I;
+
+                        if (val == 0)
+                        {
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{val}");
+                            val = 2;
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},修改调整值为:2");
+                        }
+                        LightChange2.ChangeLineValue1(true, val);
+                        if (LightChange2.MaxTimeOutCount >= 5)
+                        {
+                            LightChange2.MaxTimeOutCount = 0;
+                            //进入下阶段
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值130,进入下一阶段");
+                            CLinghtManagement.SaveLightParams();
+                            addOrSubCount2 = 0;
+                            //timeOutCount = 0;
+                            //onWichStage = 2;
+                            LightChange2.MaxTimeOutCount = 0;
+                            LightChange2.MinTimeOutCount = 0;
+                            //ProgressBarViewModel.ProgressBarValue = 40;
+                            //CZipperCommunicate.FirststageFinsh();
+                            //CZipperCommunicate.SendCamFPS(60);
+                            img.Dispose();
+                            return;
+                        }
+
+
+
+                    }
+                    else if (hv_VState == 2)
+                    {
+                        // Console.WriteLine($"需减少亮度");
+
+                        if (tempVState != hv_VState)
+                        {
+                            addOrSubCount++;
+                        }
+                        if (addOrSubCount > 4)
+                        {
+                            AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
+                            //进入下阶段
+                            CLinghtManagement.SaveLightParams();
+                            addOrSubCount = 0;
+                            timeOutCount = 0;
+                            onWichStage = 2;
+                            LightChange.MaxTimeOutCount = 0;
+                            LightChange.MinTimeOutCount = 0;
+                            ProgressBarViewModel.ProgressBarValue = 40;
+                            CZipperCommunicate.FirststageFinsh();
+                            CZipperCommunicate.SendCamFPS(60);
+                            img.Dispose();
+                            return;
+                        }
+                        tempVState = hv_VState;
+                        int val = hv_VStride.I;
+                        if (val == 0)
+                        {
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},推荐调整值:{val}");
+                            val = 2;
+                            AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},修改调整值为:2");
+                        }
+                        LightChange.ChangeLineValue1(true, -val);
+                        if (LightChange.MinTimeOutCount >= 5)
+                        {
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值20,进入下一阶段");
                             //进入下阶段
                             CLinghtManagement.SaveLightParams();
@@ -559,7 +766,7 @@ namespace ZipperInfo
                                         templist.Sort(); //升序排序
                                         int pindex = templist.IndexOf(pos);
                                         AutoLogger.Info($"onWichStage=2,timeOutCount={timeOutCount},排序,总拍照次数为:{templist.Count},拉头序号是第{pindex + 1}张图片");
-                                        int rang = 8;
+                                        int rang = 11;
                                         if (templist.Count >= 3)
                                         {
 
@@ -802,7 +1009,6 @@ namespace ZipperInfo
                                     {
                                         AutoLogger.Info($"onWichStage=3,超过4次没变化,进入阶段4");
                                         addOrSubCount = 0;
-                                        maxtimeout = 0;
                                         //进入下阶段
                                         onWichStage = 4;
                                         LightChange.MaxTimeOutCount = 0;
@@ -1425,9 +1631,9 @@ namespace ZipperInfo
 
 
         #endregion
-        private void IniYolo(string searchmodelpath, string pullmodelpath, string pullSegmodelpath)
+        private void IniYolo(string searchmodelpath, string pullmodelpath, string pullSegmodelpath, string searchmodelpath2)
         {
-            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath) && !File.Exists(pullSegmodelpath))
+            if (!File.Exists(searchmodelpath) && !File.Exists(pullmodelpath) && !File.Exists(pullSegmodelpath)&&!File.Exists(searchmodelpath))
             {
                 return;
             }
@@ -1466,6 +1672,12 @@ namespace ZipperInfo
             float segNms = 0.5f;
             yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSegmodelpath, engineType,
           CurrentDevice, pullSeg_Categ_num, segScore, segNms, 640);
+
+            int search_Categ_num2 = de_search_names2.Length;
+            float Score2 = 0.45f;
+            float Nms2 = 0.5f;
+            yolo_search_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, engineType,
+          CurrentDevice, search_Categ_num2, Score2, Nms2, 480);
         }
 
         public static bool HasDedicatedGraphicsCard()
