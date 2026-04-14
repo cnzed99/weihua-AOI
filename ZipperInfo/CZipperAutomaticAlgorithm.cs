@@ -533,18 +533,18 @@ namespace ZipperInfo
 
                         if (tempVState != hv_VState)
                         {
-                            addOrSubCount++;
+                            addOrSubCount2++;
                         }
-                        if (addOrSubCount > 4)
+                        if (addOrSubCount2 > 4)
                         {
                             AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
                             CLinghtManagement.SaveLightParams();
-                            addOrSubCount = 0;
+                            addOrSubCount2 = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
-                            LightChange.MaxTimeOutCount = 0;
-                            LightChange.MinTimeOutCount = 0;
+                            LightChange2.MaxTimeOutCount = 0;
+                            LightChange2.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -559,17 +559,17 @@ namespace ZipperInfo
                             val = 2;
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},修改调整值为:2");
                         }
-                        LightChange.ChangeLineValue1(true, -val);
-                        if (LightChange.MinTimeOutCount >= 5)
+                        LightChange2.ChangeLineValue1(true, -val);
+                        if (LightChange2.MinTimeOutCount >= 5)
                         {
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值20,进入下一阶段");
                             //进入下阶段
                             CLinghtManagement.SaveLightParams();
-                            addOrSubCount = 0;
+                            addOrSubCount2 = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
-                            LightChange.MaxTimeOutCount = 0;
-                            LightChange.MinTimeOutCount = 0;
+                            LightChange2.MaxTimeOutCount = 0;
+                            LightChange2.MinTimeOutCount = 0;
                             ProgressBarViewModel.ProgressBarValue = 40;
                             CZipperCommunicate.FirststageFinsh();
                             CZipperCommunicate.SendCamFPS(60);
@@ -579,13 +579,13 @@ namespace ZipperInfo
                     }
                     else
                     {
-                        nochangeCount++;
+                        nochangeCount2++;
                         // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},无需调整次数{nochangeCount}");
 
                         // HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
-                        if (nochangeCount >= 3)
+                        if (nochangeCount2 >= 3)
                         {
-                            nochangeCount = 0;
+                            nochangeCount2 = 0;
                             //进入下阶段
                             // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},进入下一阶段");
                             // CLinghtManagement.SaveLightParams();
