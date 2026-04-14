@@ -12,7 +12,6 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
-using HandyControl.Controls;
 using System.Management;
 
 
