@@ -864,11 +864,28 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                         if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
                                         {
-                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            if (Name == "正面" || Name == "反面")
+                                            {
+                                                CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            }
+                                            else
+                                            {
+                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            }
+                                            
+
                                         }
                                         else
                                         {
-                                            CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            if (Name == "正面" || Name == "反面")
+                                            {
+                                                CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            }
+                                            else
+                                            {
+                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            }
+                                                
                                         }
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))

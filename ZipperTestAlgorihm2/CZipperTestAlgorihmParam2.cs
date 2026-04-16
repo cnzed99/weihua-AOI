@@ -12,6 +12,7 @@ using WH.RunCell;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using WH.VisionLearning;
+using System.Management;
 
 
 namespace ZipperTestAlgorihm2
@@ -124,7 +125,7 @@ namespace ZipperTestAlgorihm2
         /// 2025.11.17 鲍赞宝
         /// 拉片分割模型路径
         /// </summary>
-      //  private string pullSharp_Model_Path;
+        private string pullSharp_Model_Path;
 
 
         /// <summary>
@@ -157,7 +158,7 @@ namespace ZipperTestAlgorihm2
         protected string[] bigDet_names;
 
         //拉片分割缺陷名称
-      //  protected string[] pullSharp_names;
+        protected string[] pullSharp_names;
 
         /// <summary>
         /// 离线测试的拉片外形模板
@@ -403,13 +404,13 @@ namespace ZipperTestAlgorihm2
             //    pull_Logo_names = logopulltrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             //}
 
-            //string pullSegModelpath = modelDirpath + "Pull\\PullSegModel\\";
-            //var pullSegtrs = GetNames(pullSegModelpath);
-            //if (pullSegtrs.Item1 != "")
-            //{
-            //    pullSharp_Model_Path = pullSegtrs.Item1;
-            //    pullSharp_names = pullSegtrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-            //}
+            string pullSegModelpath = modelDirpath + "Pull\\PullSegModel\\";
+            var pullSegtrs = GetNames(pullSegModelpath);
+            if (pullSegtrs.Item1 != "")
+            {
+                pullSharp_Model_Path = pullSegtrs.Item1;
+                pullSharp_names = pullSegtrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
 
         }
 
@@ -444,6 +445,8 @@ namespace ZipperTestAlgorihm2
             }
         }
 
+
+        int upmassCount;
         /// <summary>
         /// 2024.10.28 鲍赞宝
         /// 执行算法
@@ -479,9 +482,411 @@ namespace ZipperTestAlgorihm2
                     img = matimg;
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
+                List<CoordRestoreData> dets = new List<CoordRestoreData>();
+                if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
+                {
+                    upmassCount = 0;
+                    DetResult bigResult = ImageInferDet(yolo_BigDet_det, img);
 
+                    if (bigResult != null && bigResult.datas.Count > 0) //如果有大缺陷直接退出
+                    {
+                       // List<Point> massPoints = new List<Point>(); //上止的位置
+                        for (int j = 0; j < bigResult.datas.Count; j++)
+                        {
+                            int labelindex = int.Parse(bigResult.datas[j].lable);
+                            string labelname = bigDet_names[labelindex];
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
+                            if ((labelname.Contains("正面上止") || labelname.Contains("反面上止")) && cell.PhotoIndex != cell.PhotoTatolCount - 1)
+                                continue;
+                            if ((labelname.Contains("正面下止") || labelname.Contains("反面下止")) && cell.PhotoIndex != 1)
+                                continue;
+                            dets.Add(restoreData);
+                            if (cell.PhotoIndex == 1 && labelname.Contains("正面下止")) //检测下止
+                            {
+                                int recw = 256;
+                                int rech = 256;
+                                int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
+                                int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
+                                if ((rex + recw) > cell.Image.ImageWidth)
+                                {
+                                    rex = cell.Image.ImageWidth - recw;
+                                }
+                                if (rex < 0)
+                                {
+                                    rex = 0;
+                                }
+                                Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
+                                cell.DownMassMatImg = cropDownMat;
+
+                                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
+                                ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
+                                if (downResult != null)
+                                {
+                                    if (downResult.datas.Count > 0)
+                                    {
+                                        for (int a = 0; a < downResult.datas.Count; a++)
+                                        {
+                                            int downlabelindex = int.Parse(downResult.datas[a].lable);
+                                            string downlabelname = downStopMass_names[downlabelindex];
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, downlabelname, downResult.datas[a]);
+                                            dets.Add(disData);
+                                        }
+                                    }
+                                }
+
+                            }
+                            if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && labelname.Contains("正面上止"))// && !runtype) //最后一张图片有上止图片
+                            {
+                                RunUpMassDet(cell, img, bigResult.datas[j], out Point upmassPos, out List<CoordRestoreData> updets);
+                               // massPoints.Add(upmassPos);
+                                if (updets?.Count > 0)
+                                {
+                                    dets.AddRange(updets);
+                                }
+                            }
+
+                        }
+                    }
+                }
+                if (cell.PhotoIndex == 100) //有拉头的图片
+                {
+                    //DetResult pullserachResult = ImageInferDet(yolo_pull_Serach_det, img);
+                    //if (pullserachResult != null)
+                    //{
+                    //    for (int j = 0; j < pullserachResult.datas.Count; j++)
+                    //    {
+                    //        int labelindex = int.Parse(pullserachResult.datas[j].lable);
+                    //        string labelname = pull_Search_names[labelindex];
+                    //        if (labelname.Contains("拉头") || labelname.Contains("拉片"))
+                    //        {
+                    //            int lx;
+                    //            if (labelname.Contains("拉头拉片"))
+                    //            {
+                    //                lx = pullserachResult.datas[j].box.X - 120;
+                    //            }
+                    //            else
+                    //            {
+                    //                lx = pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Width / 2 - 400;
+                    //            }
+                    //            int ly = pullserachResult.datas[j].box.Y + pullserachResult.datas[j].box.Height / 2 - 320;
+                    //            int recw = 800;
+                    //            int rech = 640;
+
+                    //            if ((lx + recw) > img.Width)
+                    //            {
+                    //                lx = img.Width - recw;
+                    //            }
+                    //            if (lx < 0)
+                    //            {
+                    //                lx = 0;
+                    //            }
+
+                    //            if ((ly + rech) > img.Height)
+                    //            {
+                    //                ly = img.Height - rech;
+                    //            }
+                    //            if (ly < 0)
+                    //            {
+                    //                ly = 0;
+                    //            }
+
+                    //            Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
+                    //            cell.ZipperPullPartImg = croppullMat;
+                    //            #region 金属 烤漆拉头
+                    //            //if (cell.PullMaterlsType == "烤漆")
+                    //            //{
+                    //            //    //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);                        
+                    //            //    DetResult paintpullResult = ImageInferDet(yolo_Paint_pull_det, croppullMat);
+                    //            //    if (paintpullResult != null)
+                    //            //    {
+                    //            //        for (int i = 0; i < paintpullResult.count; i++)
+                    //            //        {
+                    //            //            int pulllabelindex = int.Parse(paintpullResult[i].lable);
+                    //            //            string pullabelname = pull_Paint_names[pulllabelindex];
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, paintpullResult.datas[i], 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //    }
+                    //            //}
+                    //            //else
+                    //            //{
+                    //            //    DetResult metapullResult = ImageInferDet(yolo_Meta_pull_det, croppullMat);
+                    //            //    if (metapullResult != null)
+                    //            //    {
+                    //            //        for (int i = 0; i < metapullResult.count; i++)
+                    //            //        {
+                    //            //            int pulllabelindex = int.Parse(metapullResult[i].lable);
+                    //            //            string pullabelname = pull_Meta_names[pulllabelindex];
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, metapullResult.datas[i], 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //    }
+                    //            //}
+
+                    //            #endregion
+                    //            #region 拉片外形
+                    //            //List<double> dsimilaritys = new List<double>();
+                    //            //List<List<Point>> allcontourpoints = new List<List<Point>>();
+                    //            //if (labelname.Contains("拉片"))
+                    //            //{
+                    //            //    SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
+
+                    //            //    if (pullsegResult == null) return;
+
+                    //            //    List<Point[]> contoursList = new List<Point[]>();
+                    //            //    //double allperimeter = 0; //周长总长
+                    //            //    //double allarea = 0; //总面积
+                    //            //    foreach (var seg in pullsegResult.datas)
+                    //            //    // if (pullsegResult.count > 0)
+                    //            //    {
+                    //            //        //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", seg.mask);
+                    //            //        Mat maskgray = new Mat();
+                    //            //        Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
+                    //            //        Mat binary = new Mat();
+                    //            //        Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+
+                    //            //        Point[][] contours;
+                    //            //        HierarchyIndex[] hierarchy;
+                    //            //        Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+                    //            //        maskgray.Dispose();
+                    //            //        binary.Dispose();
+                    //            //        if (contours != null && contours.Length == 1)
+                    //            //        {
+                    //            //            contoursList.Add(contours[0]);
+                    //            //        }
+
+                    //            //    }
+                    //            //    if (paramClass.OffLinePullerTemplateEnabel)
+                    //            //    {
+                    //            //        paramClass.OffLinePullerTemplateEnabel = false;
+                    //            //        offlineContours = contoursList.OrderByDescending(contour => contour.Length).First();
+                    //            //    }
+
+                    //            //    if (cell.ImageFile == "")//在线
+                    //            //    {
+                    //            //        if (cell.OrgContours != null && cell.OrgContours.Length > 0 && contoursList.Count > 0)
+                    //            //        {
+                    //            //            for (int i = 0; i < contoursList.Count; i++)
+                    //            //            {
+                    //            //                //double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
+                    //            //                double simiValue = MatchShapesWithCv2(cell.OrgContours, contoursList[i]);
+
+                    //            //                dsimilaritys.Add(simiValue);
+                    //            //            }
+                    //            //            double minvalue = dsimilaritys.Min();
+                    //            //            int minindex = dsimilaritys.IndexOf(minvalue);
+                    //            //            List<Point> p = contoursList[minindex].ToList();
+                    //            //            p.Add(p[0]);
+                    //            //            allcontourpoints.Add(p);
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //        else
+                    //            //        {
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //    }
+                    //            //    else //离线
+                    //            //    {
+                    //            //        if (offlineContours != null && contoursList.Count > 0)
+                    //            //        {
+                    //            //            for (int i = 0; i < contoursList.Count; i++)
+                    //            //            {
+                    //            //                // double simiValue = MatchShapesUsingHuMoments(offlineContours, contoursList[i]);
+                    //            //                double simiValue = MatchShapesWithCv2(offlineContours, contoursList[i]);
+                    //            //                dsimilaritys.Add(simiValue);
+                    //            //            }
+                    //            //            double minvalue = dsimilaritys.Min();
+                    //            //            int minindex = dsimilaritys.IndexOf(minvalue);
+                    //            //            List<Point> p = contoursList[minindex].ToList();
+                    //            //            p.Add(p[0]);
+                    //            //            allcontourpoints.Add(p);
+
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //        else
+                    //            //        {
+                    //            //            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
+                    //            //            dets.Add(restoreData);
+                    //            //        }
+                    //            //    }
+
+                    //            //}
+                    //            #endregion
+                    //            #region 拉头拉片颜色
+                    //            if (labelname.Contains("拉头"))
+                    //            {
+                    //                int px = 0, py = 0;
+                    //                if (cell.PullMaterlsType == "烤漆")
+                    //                {
+                    //                    px = pullserachResult.datas[j].box.X + 180;
+                    //                    py = pullserachResult.datas[j].box.Y + 60;
+                    //                }
+                    //                else
+                    //                {
+                    //                    px = pullserachResult.datas[j].box.X + 123;
+                    //                    py = pullserachResult.datas[j].box.Y + 30;
+
+                    //                }
+                    //                int rew = 15;
+                    //                int reh = 20;
+                    //                Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
+                    //                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                    //                Mat hsvImage = new Mat();
+                    //                Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                    //                Scalar hsvMean = Cv2.Mean(hsvImage);
+
+                    //                // HSV通道说明：
+                    //                // H: 0-179 (色调)
+                    //                // S: 0-255 (饱和度)
+                    //                // V: 0-255 (明度)
+                    //                double hMean = hsvMean.Val0;
+                    //                double sMean = hsvMean.Val1;
+                    //                // double vMean = hsvMean.Val2;
+                    //                CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
+                    //                CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
+                    //                dets.Add(disDataH);
+                    //                dets.Add(disDataS);
+                    //                hsvImage.Dispose();
+
+                    //            }
+                    //            if (labelname.Contains("拉片"))
+                    //            {
+                    //                //int px = pullserachResult.datas[j].box.X + 30;
+                    //                //int py = pullserachResult.datas[j].box.Y + 80;
+
+                    //                //int rew = 140;
+                    //                //int reh = 35;
+
+                    //                int cx = (pullserachResult.datas[j].box.X + pullserachResult.datas[j].box.Right) / 2;
+                    //                int cy = (pullserachResult.datas[j].box.Y + pullserachResult.datas[j].box.Bottom) / 2;
+
+                    //                int rew = 80;
+                    //                int reh = 30;
+                    //                int px = cx + 30;
+                    //                int py = cy - reh / 2;
+                    //                Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
+                    //                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (22)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                    //                Mat hsvImage = new Mat();
+                    //                Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                    //                Scalar hsvMean = Cv2.Mean(hsvImage);
+                    //                // HSV通道说明：
+                    //                // H: 0-179 (色调)
+                    //                // S: 0-255 (饱和度)
+                    //                // V: 0-255 (明度)
+                    //                double hMean = hsvMean.Val0;
+                    //                double sMean = hsvMean.Val1;
+
+                    //                // double vMean = hsvMean.Val2;
+                    //                CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
+                    //                CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
+                    //                dets.Add(disDataH);
+                    //                dets.Add(disDataS);
+                    //                hsvImage.Dispose();
+                    //            }
+                    //            #endregion
+                    //        }
+                    //    }
+                    //}
+
+                    int recw = 800;
+                    int rech = 640;
+                    Mat croppullMat = img[new Rect(624, 0, recw, rech)];
+                    cell.ZipperPullPartImg = croppullMat;
+                }
+                ParseResult(dets, cell);
                 img.Dispose();
 
+            }
+        }
+
+        private void RunUpMassDet(Cell cell, Mat img, DetData detData, out Point upmassPos, out List<CoordRestoreData> updets)
+        {
+            updets = new List<CoordRestoreData>();
+            //坐标还原
+            upmassPos = new Point(detData.box.X, detData.box.Y);
+            int recw = 192;
+            int rech = 96;
+            int rex = Convert.ToInt32((detData.box.X + detData.box.Width / 2) - recw / 2);
+            int rey = Convert.ToInt32((detData.box.Y + detData.box.Height / 2) - rech / 2);
+            if ((rex + recw) > cell.Image.ImageWidth)
+            {
+                rex = cell.Image.ImageWidth - recw;
+            }
+            if (rex < 0)
+            {
+                rex = 0;
+            }
+            // updets.Add(restoreData);
+            Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
+            cell.UpMassMatImg.Add(cropUpMat);
+
+            DetResult otherdet = ImageInferDet(yolo_UpStopMassDefe_det, cropUpMat);
+            if (otherdet != null)
+            {
+                if (otherdet.datas.Count > 0)
+                {
+                    for (int k = 0; k < otherdet.datas.Count; k++)
+                    {
+                        int otherindex = int.Parse(otherdet[k].lable);
+                        string otherstr = upStopMassDefe_names[otherindex];
+                        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, otherstr, otherdet[k]);
+                        updets.Add(disData);
+                    }
+                }
+
+            }
+
+            ObbResult upmeasobbResult = ImageInferObb(yolo_UpStopMassMeas_obb, cropUpMat);
+            if (upmeasobbResult != null && upmeasobbResult.datas.Count > 0)
+            {
+                List<int> luyaIndex = new List<int>();
+                string upmassIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("正面上止")).ToString();
+                List<ObbData> upmass = upmeasobbResult.datas.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
+
+                string lianciIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("链齿")).ToString();
+                List<ObbData> lianciorg = upmeasobbResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+
+                // Cv2.ImWrite(@"D:\测试存图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上止.png", cropUpMat);
+                List<(float, int)> Diss = new List<(float, int)>();
+                for (int a = 0; a < upmass.Count; a++)
+                {
+                    for (int b = 0; b < lianciorg.Count; b++)
+                    {
+                        float dis = CalculateDistance(upmass[a], lianciorg[b]);
+                        Diss.Add((dis, b));
+                        if (lianciorg[b].box.Center.X > upmass[a].box.Center.X) //链牙在下止左边 露牙
+                        {
+                            luyaIndex.Add(b);
+                        }
+                    }
+                }
+
+                if (Diss.Count > 0) //有找到链牙和上止
+                {
+                    upmassCount++;
+                    var min = Diss.Min(t => t.Item1);
+                    var dis = Diss.First(t => t.Item1 == min);
+                    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, $"上止距离{upmassCount}", lianciorg[dis.Item2]);
+                    disData.Value = dis.Item1;
+                    updets.Add(disData);
+                    Diss.Clear();
+                }
+                else //没找到链牙和上止
+                {
+                    upmassCount++;
+                    CoordRestoreData disData = new CoordRestoreData($"上止距离{upmassCount}", 1000);
+                    updets.Add(disData);
+                }
+                if (luyaIndex.Count > 0)
+                {
+                    for (int b = 0; b < luyaIndex.Count; b++)
+                    {
+                        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止露牙", lianciorg[b]);
+                    }
+                }
             }
         }
 
@@ -554,81 +959,135 @@ namespace ZipperTestAlgorihm2
         [OnDeserialized]
         private async void LoadModel(StreamingContext context)
         {
-//            CParam param = AlgorParams.FirstOrDefault() as CParam;
-//            if (param != null)
-//            {
-//                if (param != null)
-//                {
-//                    string CurrentDevice = param.CurrentDevice;
-//                    int common_Categ_num = Common_names.Length;
+            CParam param = AlgorParams.FirstOrDefault() as CParam;
+            if (param != null)
+            {
+                if (param != null)
+                {
+                    string CurrentDevice = param.CurrentDevice;
+                    //int common_Categ_num = Common_names.Length;
 
-//                    int downmass_num = 0;
-//                    if (downStopMass_names?.Length > 0)
-//                    {
-//                        downmass_num = downStopMass_names.Length;
-//                    }
-//                    int upmass_num = 0;
-//                    if (upStopMassDefe_names?.Length > 0)
-//                    {
-//                        upmass_num = upStopMassDefe_names.Length;
-//                    }
+                    int downmass_num = 0;
+                    if (downStopMass_names?.Length > 0)
+                    {
+                        downmass_num = downStopMass_names.Length;
+                    }
+                    int upmass_num = 0;
+                    if (upStopMassDefe_names?.Length > 0)
+                    {
+                        upmass_num = upStopMassDefe_names.Length;
+                    }
 
-//                    int upmassmeas_num = 0;
-//                    if (upStopMassMeas_names?.Length > 0)
-//                    {
-//                        upmassmeas_num = upStopMassMeas_names.Length;
-//                    }
+                    int upmassmeas_num = 0;
+                    if (upStopMassMeas_names?.Length > 0)
+                    {
+                        upmassmeas_num = upStopMassMeas_names.Length;
+                    }
 
-//                    int pull_search_num = pull_Search_names.Length;
-//                    int metapull_num = pull_Meta_names.Length;
-//                    int paintpull_num = pull_Paint_names.Length;
-//                    int logopull_num = pull_Logo_names.Length;
-//                    int big_num = bigDet_names.Length;
-//                    int pullsharp_num = pullSharp_names.Length;
-//                    float Score = param.CommonScore;
-//                    float Nms = param.Nms;
-//                    int Input_size = 640;
+                    EngineType engineType;
+                    if (HasDedicatedGraphicsCard()) //有显卡
+                    {
+                        engineType = EngineType.TensorRT;
+                    }
+                    else
+                    {
+                        engineType = EngineType.OpenVINO;
+                        CurrentDevice = "CPU";
+                    }
 
+                    int pull_search_num = pull_Search_names.Length;
+                    int metapull_num = pull_Meta_names.Length;
+                    int paintpull_num = pull_Paint_names.Length;
+                    //int logopull_num = pull_Logo_names.Length;
+                    int big_num = bigDet_names.Length;
+                   // int pullsharp_num = pullSharp_names.Length;
+                    float Score = param.CommonScore;
+                    float Nms = param.Nms;
+                    int Input_size = 640;
+
+//                    //Task task1 = Task.Run(() =>
+//                    //{
+//                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+//                    // });
+
+//                    //Task task2 = Task.Run(() =>
+//                    //{
+//                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+//                    // });
+
+//                    //Task task3 = Task.Run(() =>
+//                    //{
+//                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+//                    // });
+
+//                    //Task task4 = Task.Run(() =>
+//                    //{
+//                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+//                    //});
+
+
+//                    //Task task5 = Task.Run(() =>
+//                    //{
 //                    if (downmass_num > 0)
 //                    {
-//                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, EngineType.TensorRT,
+//                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
 //CurrentDevice, downmass_num, param.DownScore, Nms, 256);
 //                    }
 //                    //  });
 
-//                    //Task task6 = Task.Run(() =>
-//                    //{
-//                    if (upmass_num > 0)
-//                    {
-//                        yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, EngineType.TensorRT,
-//    CurrentDevice, upmass_num, param.UpScore, Nms, 192);
-//                    }
-//                    //  });
+    //                //Task task6 = Task.Run(() =>
+    //                //{
+    //                if (upmass_num > 0)
+    //                {
+    //                    yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
+    //CurrentDevice, upmass_num, param.UpScore, Nms, 192);
+    //                }
+    //                //  });
 
-//                    if (upmassmeas_num > 0)
-//                    {
-//                        yolo_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, EngineType.TensorRT,
-//    CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
-//                    }
+    //                if (upmassmeas_num > 0)
+    //                {
+    //                    yolo_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
+    //CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
+    //                }
 
-//                    //Task task7 = Task.Run(() =>
-//                    //{
-//                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, EngineType.TensorRT,
-//CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
-//                    // });
+                    //Task task7 = Task.Run(() =>
+                    //{
+                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
+CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
+                    // });
 
 //                    // Task task8 = Task.Run(() =>
 //                    // {
-//                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, EngineType.TensorRT,
+//                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
 //CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
 //                    //});
 
-//                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, EngineType.TensorRT,
+//                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
 //CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
 
-//                }
+//                    yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
+//CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
-//            }
+                    //Task task9 = Task.Run(() =>
+                    //{
+                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
+CurrentDevice, big_num, param.BigScore, Nms, 480);
+                    //});
+                    // Task task10 = Task.Run(() =>
+                    // {
+//                    yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
+//CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
+                    // });
+
+                    // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
+
+                }
+
+            }
         }
 
         public DetResult ImageInferDet(IVisionModel yolo, Mat img)
@@ -989,6 +1448,31 @@ namespace ZipperTestAlgorihm2
             yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
             yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
 
+        }
+        public static bool HasDedicatedGraphicsCard()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher(
+                    "SELECT * FROM Win32_VideoController");
+
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    string name = obj["Name"]?.ToString() ?? "";
+                    // 常见独立显卡关键词
+                    if (name.Contains("NVIDIA") ||
+                        name.Contains("AMD") ||
+                        name.Contains("Radeon"))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                return false; // 如果查询失败，返回false
+            }
         }
 
     }

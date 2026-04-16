@@ -14,7 +14,9 @@ namespace ZipperInfo
         public CXRLinghtChange(string portname)
         {
             PortName = portname;
-            LightControl= CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port?.Name == PortName);
+
+            var li = CLinghtManagement.LightControlDict.Values.FirstOrDefault(c => c.BaseConfig.Port?.Name == PortName);
+            if (li != null) { LightControl = li; }
         }
 
         public override void ChangeLineValue1(bool tempsave, int val)
@@ -50,12 +52,12 @@ namespace ZipperInfo
                 {
                     TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
                 }
-                
+
             }
             catch (Exception)
             {
             }
-           
+
         }
         //public override void ChangeLineValue2(int val)
         //{
@@ -81,9 +83,9 @@ namespace ZipperInfo
         //    catch (Exception)
         //    {
         //    }
-          
+
         //}
-        public override void LineValueReset() 
+        public override void LineValueReset()
         {
             try
             {
@@ -104,5 +106,5 @@ namespace ZipperInfo
             {
             }
         }
-    }   
+    }
 }

@@ -203,7 +203,7 @@ namespace ZipperInfo
                 CZipperCommunicate.SendPoints2(points_2, handandtalipoints_2, cutoffIndex_2, zipperCacheCount_2);
 
                 CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
-
+                CZipperAutomaticAlgorithm.onWichStage = 1;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
