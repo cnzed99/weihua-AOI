@@ -14,7 +14,7 @@ namespace ZipperInfo
         public COPTLinghtChange(string portname)
         {
             PortName = portname;
-            LightControl= CLinghtManagement.LightControlDict.Values.First(c => c.BaseConfig.Port?.Name == PortName);
+            LightControl= CLinghtManagement.LightControlDict.Values.FirstOrDefault(c => c.BaseConfig.Port?.Name == PortName);
         }
 
         public override void ChangeLineValue1(bool tempsave, int val)
@@ -93,7 +93,7 @@ namespace ZipperInfo
             {
                 LightControl.BaseConfig.LightChannelList[0].Value = TempLightValue_Change1;
                 LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
-
+                Thread.Sleep(10);
                 LightControl.BaseConfig.LightChannelList[4].Value = TempLightValue_Change1;
                 LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[4]);
 

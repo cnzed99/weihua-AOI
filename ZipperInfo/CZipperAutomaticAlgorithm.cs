@@ -277,7 +277,7 @@ namespace ZipperInfo
                         {
                             AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -304,7 +304,7 @@ namespace ZipperInfo
                             LightChange.MaxTimeOutCount = 0;
                             //进入下阶段
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最大值130,进入下一阶段");
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -332,7 +332,7 @@ namespace ZipperInfo
                         {
                             AutoLogger.Info($"onWichStage=1,超过4次没变化,进入下一阶段");
                             //进入下阶段
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -358,7 +358,7 @@ namespace ZipperInfo
                             mintimeout = 0;
                             AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:最小值20,进入下一阶段");
                             //进入下阶段
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -382,7 +382,7 @@ namespace ZipperInfo
                             nochangeCount = 0;
                             //进入下阶段
                             // AutoLogger.Info($"onWichStage=1,光源调整hv_VState={hv_VState.I},当前光源值为:{LightCtl_You.BaseConfig.LightChannelList[0].Value},进入下一阶段");
-                            // CLinghtManagement.SaveLightParams();
+                            // //CLinghtManagement.SaveLightParams();
                             addOrSubCount = 0;
                             timeOutCount = 0;
                             onWichStage = 2;
@@ -717,7 +717,7 @@ namespace ZipperInfo
                                 CZipperCommunicate.AixtStop();//停止轴
                                 CZipperCommunicate.CamTriggerStop(); //停止拍照
                                 LightChange.LineValueReset();
-                                // CLinghtManagement.SaveLightParams();
+                                // //CLinghtManagement.SaveLightParams();
                                 //Dispatcher.Invoke(() =>
                                 //{
                                 TestFinsh = true;
@@ -816,7 +816,7 @@ namespace ZipperInfo
                                         LightChange.MaxTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(40);
                                         timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
+                                        //CLinghtManagement.SaveLightParams();
                                         img.Dispose();
                                         return;
                                     }
@@ -839,7 +839,7 @@ namespace ZipperInfo
                                         //LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(40);
                                         timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
+                                        //CLinghtManagement.SaveLightParams();
                                     }
 
 
@@ -862,7 +862,7 @@ namespace ZipperInfo
                                         LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(40);
                                         timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
+                                        //CLinghtManagement.SaveLightParams();
                                         img.Dispose();
                                         return;
                                     }
@@ -885,7 +885,7 @@ namespace ZipperInfo
                                         LightChange.MinTimeOutCount = 0;
                                         CZipperCommunicate.SendCamFPS(40);
                                         timeOutCount = 0;
-                                        CLinghtManagement.SaveLightParams();
+                                        //CLinghtManagement.SaveLightParams();
                                     }
 
 
@@ -902,7 +902,7 @@ namespace ZipperInfo
                                     LightChange.MinTimeOutCount = 0;
                                     CZipperCommunicate.SendCamFPS(40);
                                     timeOutCount = 0;
-                                    CLinghtManagement.SaveLightParams();
+                                    //CLinghtManagement.SaveLightParams();
                                     // CZipperCommunicate.SceondstageFinsh();
                                 }
                             }
@@ -1163,7 +1163,7 @@ namespace ZipperInfo
                             //  ProgressBarViewModel.AutoMessage = "正在识别上下止...";
                             ProgressBarViewModel.ProgressBarValue = 90;
                             LightChange.LineValueReset();
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             timeOutCount = 0;
                             onWichStage = 2;
                             AutoLogger.Info($"{cell.CamName}:onWichStage=4,timeOutCount={timeOutCount},没有识别到上下止,转到阶段2");
@@ -1206,7 +1206,7 @@ namespace ZipperInfo
                             CZipperCommunicate.AixtStop();//停止轴
                             CZipperCommunicate.CamTriggerStop();
                             LightChange.LineValueReset();
-                            CLinghtManagement.SaveLightParams();
+                            //CLinghtManagement.SaveLightParams();
                             //Dispatcher.Invoke(() =>
                             //{
                             TestFinsh = true;
@@ -1224,8 +1224,8 @@ namespace ZipperInfo
                         findPulls = true;
                         // ProgressBarViewModel.AutoMessage = "正在识别上下止...";
                         ProgressBarViewModel.ProgressBarValue = 85;
-                        LightChange.LineValueReset();
-                        CLinghtManagement.SaveLightParams();
+                        //LightChange.LineValueReset();
+                        //CLinghtManagement.SaveLightParams();
                         timeOutCount = 0;
                         onWichStage = 2;
                         CZipperCommunicate.AixtContinue(true);//继续

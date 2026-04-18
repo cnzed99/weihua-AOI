@@ -638,6 +638,7 @@ namespace WH.DetectSystem.Models
             #region 取图线程
             int tempphotoID = 0;
             int tempid = 0;
+            bool IDisRight=false;//ID无异常
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -648,28 +649,37 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
+                            IDisRight = true;
                             CZipperCommunicate.GetID(out int productID);
                             ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-
-                            bool bnext = zipperID.ProductID < productID;
-                            while (bnext && zipperID.ProductID > 0 && productID > 0)
+                            if (zipperID.ProductID > 0)
                             {
-                                ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                bnext = zipperID.ProductID < productID;
-                                if (bnext)
+                                bool bnext = zipperID.ProductID < productID;
+                                while (bnext && zipperID.ProductID > 0 && productID > 0)
                                 {
-                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                    continue;
+                                    ZipperCommunicate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                    bnext = zipperID.ProductID < productID;
+                                    if (bnext)
+                                    {
+                                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                        continue;
+                                    }
                                 }
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                                int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
+                                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
+                                cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
+                                cell.ID = zipperID.ProductID.ToString();
+                                cell.PhotoIndex = zipperID.PhotoID;
+                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
-                            SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCX;
-                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.ZipperPullerCY;
-                            cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.OrgContours;
-                            cell.ID = zipperID.ProductID.ToString();
-                            cell.PhotoIndex = zipperID.PhotoID;
-                            cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            else
+                            {
+                                IDisRight = false;
+                                SysLog.Info($"{Name}-产品ID:{zipperID.ProductID}等于0，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                cell?.Dispose();
+                            }
 
                         }
                         else
@@ -685,7 +695,7 @@ namespace WH.DetectSystem.Models
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        if (IsStart || IsManualTest || isAutomaticTest)
+                        if ((IsStart || IsManualTest || isAutomaticTest)&&IDisRight)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {

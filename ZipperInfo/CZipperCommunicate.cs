@@ -687,25 +687,27 @@ namespace ZipperInfo
                                 Idlist.Add(i);
                             }
                             Idlist.Insert(pullIndex, 100);
-                            string str = "";
-                            for (int i = 0; i < Idlist.Count; i++)
-                            {
-                                str = str + $"第{i + 1}点;{Idlist[i]} ";
-                            }
-                            ZipperIDsORTLogger.Info(str);
+                            //string str = "";
+                            //for (int i = 0; i < Idlist.Count; i++)
+                            //{
+                            //    str = str + $"第{i + 1}点;{Idlist[i]} ";
+                            //}
+                            //ZipperIDsORTLogger.Info(str);
                         }
-
+                        string str = "";
                         for (int i = 0; i < Idlist.Count; i++)
                         {
+                            str = str + $"第{i + 1}点;{Idlist[i]} ";
                             ZipperID zipperID = new ZipperID(productID, Idlist[i]);
                             m_WaitIDChannel.Writer.TryWrite(zipperID);
                         }
-
+                        ZipperIDsORTLogger.Info(str);
                     }
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    ZipperIDsORTLogger.Error("生成ID出错:" + ex.Message);
                 }
                 Thread.Sleep(1);
             }
