@@ -647,6 +647,7 @@ namespace WH.DetectSystem.Models
             #region 取图线程
             int tempphotoID = 0;
             int tempid = 0;
+            bool IDisOK = false;
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -657,6 +658,7 @@ namespace WH.DetectSystem.Models
                     {
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
+                            IDisOK = true;
                             int productID = -1;
                             if (Name == "正面" || Name == "反面")
                             {
@@ -664,36 +666,45 @@ namespace WH.DetectSystem.Models
                             }
                             else
                             {
-                                CZipperCommunicate.GetID2(out  productID);
+                                CZipperCommunicate.GetID2(out productID);
                             }
                             IDCreate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-
-                            bool bnext = zipperID.ProductID < productID;
-                            while (bnext && zipperID.ProductID > 0 && productID > 0)
+                            if (zipperID.ProductID > 0)
                             {
-                                IDCreate.m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                bnext = zipperID.ProductID < productID;
-                                if (bnext)
+                                bool bnext = zipperID.ProductID < productID;
+                                while (bnext && zipperID.ProductID > 0)
                                 {
-                                    SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                    continue;
+                                    IDCreate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                    bnext = zipperID.ProductID < productID;
+                                    if (bnext)
+                                    {
+                                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                        continue;
+                                    }
                                 }
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+
+                                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
+                                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
+                                cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
+                                cell.ID = zipperID.ProductID.ToString();
+                                cell.PhotoIndex = zipperID.PhotoID;
+                                int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
-                            SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                            
-                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
-                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
-                            cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
-                            cell.ID = zipperID.ProductID.ToString();
-                            cell.PhotoIndex = zipperID.PhotoID;
-                            int photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                            cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                            else
+                            {
+                                IDisOK=false;
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
+                                cell.Dispose();
+                            }
 
                         }
                         else
                         {
                             if (cell.ImageFile == "") //手动调试
                             {
+                                IDisOK = true;
                                 cell.ID = (MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
                                 cell.PhotoTatolCount = 1;
@@ -703,7 +714,7 @@ namespace WH.DetectSystem.Models
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        if (IsStart || IsManualTest || isAutomaticTest)
+                        if ((IsStart || IsManualTest || isAutomaticTest)&&IDisOK)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
@@ -872,7 +883,7 @@ namespace WH.DetectSystem.Models
                                             {
                                                 CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
-                                            
+
 
                                         }
                                         else
@@ -885,7 +896,7 @@ namespace WH.DetectSystem.Models
                                             {
                                                 CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.NG);
                                             }
-                                                
+
                                         }
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))

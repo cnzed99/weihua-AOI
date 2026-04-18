@@ -99,6 +99,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Station1_Stage1_OK=false;
+                CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
 
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
@@ -113,6 +115,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Station2_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Station2_Stage2_OK = false;
 
                 CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;

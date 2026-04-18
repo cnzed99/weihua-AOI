@@ -42,7 +42,16 @@
                     Width="50"
                     hc:TitleElement.Title="{Binding Channel, StringFormat={}{0}:}"
                     hc:TitleElement.TitlePlacement="Left"
-                    Text="{Binding ElementName=slider, Path=Value}" />
+                    Text="{Binding ElementName=slider, Path=Value}" >
+                    <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="LostFocus">
+                        <hc:InvokeCommandAction 
+                                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
+                                                  Path=DataContext.SetChannelValueCommand}" 
+                                CommandParameter="{Binding}" />
+                    </hc:EventTrigger>
+                    </hc:Interaction.Triggers>
+                </TextBox>
                 <Slider
                     Name="slider"
                     AutoToolTipPlacement="TopLeft"
