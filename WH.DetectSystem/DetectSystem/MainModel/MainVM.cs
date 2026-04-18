@@ -684,6 +684,7 @@ namespace WH.DetectSystem.Models
                         }
                         else
                         {
+                            IDisRight = true;
                             if (cell.ImageFile == "") //手动调试
                             {
                                 cell.ID = (MaociDefectsProduce.Total + 1).ToString();
