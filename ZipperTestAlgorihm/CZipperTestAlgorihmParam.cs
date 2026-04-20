@@ -22,54 +22,54 @@ namespace ZipperTestAlgorihm
         /// <summary>
         /// 检测对象1
         /// </summary>
-        IVisionModel yolo_all_det1;
+        IVisionModel WH_all_det1;
         /// <summary>
         /// 检测对象2
         /// </summary>
-        IVisionModel yolo_all_det2;
+        IVisionModel WH_all_det2;
         /// <summary>
         /// 检测对象3
         /// </summary>
-        IVisionModel yolo_all_det3;
+        IVisionModel WH_all_det3;
         /// <summary>
         /// 检测对象4
         /// </summary>
-        IVisionModel yolo_all_det4;
+        IVisionModel WH_all_det4;
 
         /// <summary>
         /// 下止检测对象
         /// </summary>
-        IVisionModel yolo_DownStopMass_obb;
+        IVisionModel WH_DownStopMass_obb;
 
         /// <summary>
         /// 上止检测对象
         /// </summary>
-        IVisionModel yolo_UpStopMassDefe_det;
+        IVisionModel WH_UpStopMassDefe_det;
 
         /// <summary>
         /// 上止测量对象
         /// </summary>
-        IVisionModel yolo_UpStopMassMeas_obb;
+        IVisionModel WH_UpStopMassMeas_obb;
 
         /// <summary>
         /// 金属拉头检测对象
         /// </summary>
-        IVisionModel yolo_Meta_pull_det;
+        IVisionModel WH_Meta_pull_det;
 
         /// <summary>
         /// 烤漆拉头检测对象
         /// </summary>
-        IVisionModel yolo_Paint_pull_det;
+        IVisionModel WH_Paint_pull_det;
 
         /// <summary>
         /// Logo检测对象
         /// </summary>
-        IVisionModel yolo_Logo_pull_det;
+        IVisionModel WH_Logo_pull_det;
 
         /// <summary>
         /// 拉头查找对象
         /// </summary>
-        IVisionModel yolo_pull_Serach_det;
+        IVisionModel WH_pull_Serach_det;
         //定义4组矩形来裁切图片
         Rect[] cropRec = new Rect[4];
 
@@ -77,11 +77,11 @@ namespace ZipperTestAlgorihm
         /// <summary>
         /// 大缺陷检测对象
         /// </summary>
-        IVisionModel yolo_BigDet_det;
+        IVisionModel WH_BigDet_det;
         /// <summary>
         /// 拉片分割模型
         /// </summary>
-        IVisionModel yolo_PullShape_Seg;
+        IVisionModel WH_PullShape_Seg;
 
         public CZipperTestAlgorihmParam(string user) : base()
         {
@@ -516,7 +516,7 @@ namespace ZipperTestAlgorihm
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
                     upmassCount = 0;
-                    DetResult bigResult = ImageInferDet(yolo_BigDet_det, img);
+                    DetResult bigResult = ImageInferDet(WH_BigDet_det, img);
 
                     if (bigResult != null && bigResult.datas.Count > 0) //如果有大缺陷直接退出
                     {
@@ -549,7 +549,7 @@ namespace ZipperTestAlgorihm
                                 cell.DownMassMatImg = cropDownMat;
 
                                 // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
-                                ObbResult downResult = ImageInferObb(yolo_DownStopMass_obb, cropDownMat);
+                                ObbResult downResult = ImageInferObb(WH_DownStopMass_obb, cropDownMat);
                                 if (downResult != null)
                                 {
                                     if (downResult.datas.Count > 0)
@@ -776,7 +776,7 @@ namespace ZipperTestAlgorihm
                 }
                 else if (cell.PhotoIndex == 100) //有拉头的图片
                 {
-                    DetResult pullserachResult = ImageInferDet(yolo_pull_Serach_det, img);
+                    DetResult pullserachResult = ImageInferDet(WH_pull_Serach_det, img);
                     if (pullserachResult != null)
                     {
                         for (int j = 0; j < pullserachResult.datas.Count; j++)
@@ -819,7 +819,7 @@ namespace ZipperTestAlgorihm
                                 Mat croppullMat = img[new Rect(lx, ly, recw, rech)];
                                 cell.ZipperPullPartImg = croppullMat;
                                 #region Logo识别
-                                DetResult logoResult = ImageInferDet(yolo_Logo_pull_det, croppullMat);
+                                DetResult logoResult = ImageInferDet(WH_Logo_pull_det, croppullMat);
                                 if (logoResult != null)
                                 {
                                     for (int i = 0; i < logoResult.count; i++)
@@ -835,7 +835,7 @@ namespace ZipperTestAlgorihm
                                 if (cell.PullMaterlsType == "烤漆")
                                 {
                                     //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (2)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", colorMat111);                        
-                                    DetResult paintpullResult = ImageInferDet(yolo_Paint_pull_det, croppullMat);
+                                    DetResult paintpullResult = ImageInferDet(WH_Paint_pull_det, croppullMat);
                                     if (paintpullResult != null)
                                     {
                                         for (int i = 0; i < paintpullResult.count; i++)
@@ -849,7 +849,7 @@ namespace ZipperTestAlgorihm
                                 }
                                 else
                                 {
-                                    DetResult metapullResult = ImageInferDet(yolo_Meta_pull_det, croppullMat);
+                                    DetResult metapullResult = ImageInferDet(WH_Meta_pull_det, croppullMat);
                                     if (metapullResult != null)
                                     {
                                         for (int i = 0; i < metapullResult.count; i++)
@@ -868,7 +868,7 @@ namespace ZipperTestAlgorihm
                                 List<List<Point>> allcontourpoints = new List<List<Point>>();
                                 if (labelname.Contains("拉片"))
                                 {
-                                    SegResult pullsegResult = yolo_PullShape_Seg.Predict(croppullMat) as SegResult;
+                                    SegResult pullsegResult = WH_PullShape_Seg.Predict(croppullMat) as SegResult;
 
                                     if (pullsegResult == null) return;
 
@@ -1089,7 +1089,7 @@ namespace ZipperTestAlgorihm
             Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
             cell.UpMassMatImg.Add(cropUpMat);
 
-            DetResult otherdet = ImageInferDet(yolo_UpStopMassDefe_det, cropUpMat);
+            DetResult otherdet = ImageInferDet(WH_UpStopMassDefe_det, cropUpMat);
             if (otherdet != null)
             {
                 if (otherdet.datas.Count > 0)
@@ -1112,7 +1112,7 @@ namespace ZipperTestAlgorihm
 
             }
 
-            ObbResult upmeasobbResult = ImageInferObb(yolo_UpStopMassMeas_obb, cropUpMat);
+            ObbResult upmeasobbResult = ImageInferObb(WH_UpStopMassMeas_obb, cropUpMat);
             if (upmeasobbResult != null && upmeasobbResult.datas.Count > 0)
             {
                 List<int> luyaIndex = new List<int>();
@@ -1168,23 +1168,23 @@ namespace ZipperTestAlgorihm
             List<(DetResult, int)> alldetResult = new List<(DetResult, int)>();
             Task<DetResult> task1 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det1, mats[0]);
+                DetResult sResultInfos = ImageInferDet(WH_all_det1, mats[0]);
                 return sResultInfos;
             });
 
             Task<DetResult> task2 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det2, mats[1]);
+                DetResult sResultInfos = ImageInferDet(WH_all_det2, mats[1]);
                 return sResultInfos;
             });
             Task<DetResult> task3 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det3, mats[2]);
+                DetResult sResultInfos = ImageInferDet(WH_all_det3, mats[2]);
                 return sResultInfos;
             });
             Task<DetResult> task4 = Task.Run(() =>
             {
-                DetResult sResultInfos = ImageInferDet(yolo_all_det4, mats[3]);
+                DetResult sResultInfos = ImageInferDet(WH_all_det4, mats[3]);
                 return sResultInfos;
             });
             await Task.WhenAll(task1, task2, task3, task4);
@@ -1310,25 +1310,25 @@ namespace ZipperTestAlgorihm
 
                     //Task task1 = Task.Run(() =>
                     //{
-                    yolo_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    WH_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task2 = Task.Run(() =>
                     //{
-                    yolo_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    WH_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task3 = Task.Run(() =>
                     //{
-                    yolo_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    WH_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     // });
 
                     //Task task4 = Task.Run(() =>
                     //{
-                    yolo_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    WH_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
 CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //});
 
@@ -1337,7 +1337,7 @@ CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                     //{
                     if (downmass_num > 0)
                     {
-                        yolo_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
+                        WH_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
 CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                     }
                     //  });
@@ -1346,43 +1346,43 @@ CurrentDevice, downmass_num, param.DownScore, Nms, 256);
                     //{
                     if (upmass_num > 0)
                     {
-                        yolo_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
+                        WH_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
     CurrentDevice, upmass_num, param.UpScore, Nms, 192);
                     }
                     //  });
 
                     if (upmassmeas_num > 0)
                     {
-                        yolo_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
+                        WH_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
     CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
                     }
 
                     //Task task7 = Task.Run(() =>
                     //{
-                    yolo_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
+                    WH_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
 CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
                     // });
 
                     // Task task8 = Task.Run(() =>
                     // {
-                    yolo_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
+                    WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
 CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
                     //});
 
-                    yolo_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
+                    WH_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
 CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
 
-                    yolo_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
+                    WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
 CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
                     //Task task9 = Task.Run(() =>
                     //{
-                    yolo_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
+                    WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
 CurrentDevice, big_num, param.BigScore, Nms, 480);
                     //});
                     // Task task10 = Task.Run(() =>
                     // {
-                    yolo_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
+                    WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
 CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                     // });
 
@@ -1394,12 +1394,12 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         }
 
 
-        public DetResult ImageInferDet(IVisionModel yolo, Mat img)
+        public DetResult ImageInferDet(IVisionModel WH, Mat img)
         {
-            if (yolo != null)
+            if (WH != null)
             {
                 DetResult resultDet;
-                resultDet = yolo.Predict(img) as DetResult;
+                resultDet = WH.Predict(img) as DetResult;
                 return resultDet;
             }
             else
@@ -1409,12 +1409,12 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
 
         }
-        public ObbResult ImageInferObb(IVisionModel yolo, Mat img)
+        public ObbResult ImageInferObb(IVisionModel WH, Mat img)
         {
-            if (yolo != null)
+            if (WH != null)
             {
                 ObbResult resultDet;
-                resultDet = yolo.Predict(img) as ObbResult;
+                resultDet = WH.Predict(img) as ObbResult;
                 return resultDet;
             }
             else
@@ -1731,30 +1731,30 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
         private void UpdateScore(CParam param)
         {
-            yolo_all_det1.UpdateNMS_Score(param.Nms, param.CommonScore);
-            yolo_all_det2.UpdateNMS_Score(param.Nms, param.CommonScore);
-            yolo_all_det3.UpdateNMS_Score(param.Nms, param.CommonScore);
-            yolo_all_det4.UpdateNMS_Score(param.Nms, param.CommonScore);
-            if (yolo_UpStopMassDefe_det != null)
+            WH_all_det1.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det2.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det3.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det4.UpdateNMS_Score(param.Nms, param.CommonScore);
+            if (WH_UpStopMassDefe_det != null)
             {
-                yolo_UpStopMassDefe_det.UpdateNMS_Score(param.Nms, param.UpScore);
+                WH_UpStopMassDefe_det.UpdateNMS_Score(param.Nms, param.UpScore);
             }
-            if (yolo_UpStopMassMeas_obb != null)
+            if (WH_UpStopMassMeas_obb != null)
             {
-                yolo_UpStopMassMeas_obb.UpdateNMS_Score(param.Nms, param.UpLianciScore);
+                WH_UpStopMassMeas_obb.UpdateNMS_Score(param.Nms, param.UpLianciScore);
             }
-            if (yolo_DownStopMass_obb != null)
+            if (WH_DownStopMass_obb != null)
             {
-                yolo_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
+                WH_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
             }
-            //yolo_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
-            yolo_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
-            yolo_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
-            // yolo_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
+            //WH_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
+            WH_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
+            WH_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
+            // WH_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
 
-            yolo_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
-            yolo_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
-            yolo_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
+            WH_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
+            WH_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
+            WH_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
         }
 
         public static bool HasDedicatedGraphicsCard()

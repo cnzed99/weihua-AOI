@@ -89,6 +89,7 @@ namespace ZipperInfo
         {
             try
             {
+                Thread.Sleep(30);
                 LightControl.BaseConfig.LightChannelList[0].Value = TempLightValue_Change1;
                 LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
                 Thread.Sleep(30);
