@@ -200,7 +200,7 @@ namespace WH.DetectSystem.Models
                     FocusConfig.token
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
-           // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
+            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
             ZipperCommunicate = new CZipperCommunicate();
             ZipperCommunicate.IntThread();
             InitTask();
@@ -638,7 +638,7 @@ namespace WH.DetectSystem.Models
             #region 取图线程
             int tempphotoID = 0;
             int tempid = 0;
-            bool IDisRight=false;//ID无异常
+            bool IDisRight = false;//ID无异常
             Task waitGetImageTask = Task.Run(async () =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
@@ -692,11 +692,11 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();                      
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
-                        if ((IsStart || IsManualTest || isAutomaticTest)&&IDisRight)
+                        if ((IsStart || IsManualTest || isAutomaticTest) && IDisRight)
                         {
                             if (!m_AlgorithmChannel.Writer.TryWrite(cell))
                             {
@@ -748,6 +748,7 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
+                        UpdatepullSegArea("左相机");
                         try
                         {
                             if (!isAutomaticTest)
@@ -1140,7 +1141,7 @@ namespace WH.DetectSystem.Models
                                     #endregion 画取反 OK的结果区域
                                     if (!isAutomaticTest)
                                     {
-                                        if (!cell.IsOK&&cell.Quality!=null)
+                                        if (!cell.IsOK && cell.Quality != null)
                                         {
                                             CurView.SetFontSize(25);
                                             CurView.SetFontWeight(System.Windows.FontWeights.Bold);
@@ -1729,105 +1730,104 @@ namespace WH.DetectSystem.Models
 
         private void UpdatWhiteZipperParam()
         {
-            SpeciesFilter zipperDetNames = this.MaociFilterConfig["拉链"];
             #region 布带脏污
-            foreach (var detname in zipperDetNames.RecipeDefects)
+            RecipeDefect dirtyDetNames = this.MaociFilterConfig["拉链"]["布带脏污"];
+            if (dirtyDetNames != null)
             {
-                if (detname.Name.Contains("布带脏污"))
+                foreach (var df in dirtyDetNames.DefectFilters)
                 {
-                    foreach (var df in detname.DefectFilters)
+                    foreach (var fl in df.FilterList)
                     {
-                        foreach (var fl in df.FilterList)
+                        foreach (var se in fl.SelectList)
                         {
-                            foreach (var se in fl.SelectList)
+                            foreach (var pa in se.SelectParams)
                             {
-                                foreach (var pa in se.SelectParams)
+                                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
                                 {
-                                    if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                     {
-                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                        {
-                                            pa.Min = 30;
-                                        }
-                                        else
-                                        {
-                                            pa.Min = 35;
-                                        }
-
+                                        pa.Min = 30;
                                     }
-                                    if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                    else
                                     {
-                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                        {
-                                            pa.Min = 180;
-                                        }
-                                        else
-                                        {
-                                            pa.Min = 280;
-                                        }
-
+                                        pa.Min = 35;
                                     }
+
+                                }
+                                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                {
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                    {
+                                        pa.Min = 180;
+                                    }
+                                    else
+                                    {
+                                        pa.Min = 280;
+                                    }
+
                                 }
                             }
                         }
                     }
+
                 }
             }
+
             #endregion
             #region 点脏污
-            foreach (var detname in zipperDetNames.RecipeDefects)
+            RecipeDefect pointDetNames = this.MaociFilterConfig["拉链"]["点脏污"];
+            if (pointDetNames != null)
             {
-                if (detname.Name.Contains("点脏污"))
+                foreach (var df in pointDetNames.DefectFilters)
                 {
-                    foreach (var df in detname.DefectFilters)
+                    foreach (var fl in df.FilterList)
                     {
-                        foreach (var fl in df.FilterList)
+                        foreach (var se in fl.SelectList)
                         {
-                            foreach (var se in fl.SelectList)
+                            foreach (var pa in se.SelectParams)
                             {
-                                foreach (var pa in se.SelectParams)
+                                if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
                                 {
-                                    if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                     {
-                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                        {
-                                            pa.Min = 2;
-                                        }
-                                        else
-                                        {
-                                            pa.Min = 3;
-                                        }
+                                        pa.Min = 2;
                                     }
-                                    if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                                    else
                                     {
-                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                        {
-                                            pa.Min = 30;
-                                        }
-                                        else
-                                        {
-                                            pa.Min = 35;
-                                        }
+                                        pa.Min = 3;
+                                    }
+                                }
+                                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                                {
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                                    {
+                                        pa.Min = 30;
+                                    }
+                                    else
+                                    {
+                                        pa.Min = 35;
+                                    }
 
-                                    }
-                                    if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                }
+                                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                                {
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                     {
-                                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                        {
-                                            pa.Min = 130;
-                                        }
-                                        else
-                                        {
-                                            pa.Min = 280;
-                                        }
-
+                                        pa.Min = 130;
                                     }
+                                    else
+                                    {
+                                        pa.Min = 280;
+                                    }
+
                                 }
                             }
                         }
                     }
+
                 }
             }
+
             #endregion
         }
         /// <summary>
@@ -1837,7 +1837,6 @@ namespace WH.DetectSystem.Models
         private void UpdatDetSet()
         {
             SpeciesFilter zipperDetNames = this.MaociFilterConfig["大缺陷"];
-
             foreach (var detname in zipperDetNames.RecipeDefects)
             {
                 if (detname.Name.Contains("正面上止") || detname.Name.Contains("反面上止"))
@@ -1888,256 +1887,240 @@ namespace WH.DetectSystem.Models
         {
             if (leftorright == "左相机")
             {
-               // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
-                SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
-                foreach (var pullname in pullnames.RecipeDefects)
+                RecipeDefect pullnames = this.MaociFilterConfig["LOGO"]["拉头"];
+                if (pullnames != null)
                 {
-                    if (pullname.Name == "拉头")
+                    foreach (var df in pullnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = false;
-                            }
+                            fl.FilterSelectEnable = false;
                         }
                     }
-                    if (pullname.Name == "拉片")
+                }
+                RecipeDefect pullernames = this.MaociFilterConfig["LOGO"]["拉片"];
+                if (pullernames != null)
+                {
+                    foreach (var df in pullernames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = true;
-                            }
+                            fl.FilterSelectEnable = true;
                         }
                     }
-
                 }
             }
             else
             {
-                // SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
-                SpeciesFilter pullnames = this.MaociFilterConfig["LOGO"];
-                foreach (var pullname in pullnames.RecipeDefects)
+                RecipeDefect pullnames = this.MaociFilterConfig["LOGO"]["拉头"];
+                if (pullnames != null)
                 {
-                    if (pullname.Name == "拉头")
+                    foreach (var df in pullnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = true;
-                            }
+                            fl.FilterSelectEnable = true;
                         }
                     }
-                    if (pullname.Name == "拉片")
+                }
+                RecipeDefect pullernames = this.MaociFilterConfig["LOGO"]["拉片"];
+                if (pullernames != null)
+                {
+                    foreach (var df in pullernames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = false;
-                            }
+                            fl.FilterSelectEnable = false;
                         }
                     }
-
                 }
             }
         }
-
         private void UpdatepullSegArea(string leftorright)
         {
             if (leftorright == "左相机")
             {
-                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
-                foreach (var pullname in pullnames.RecipeDefects)
+                RecipeDefect pullsegnames = this.MaociFilterConfig["拉头拉片"]["拉片外形"];
+                if (pullsegnames != null)
                 {
-                    if (pullname.Name == "拉片外形")
+                    foreach (var df in pullsegnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = true; //
-                            }
+                            fl.FilterSelectEnable = true; //
                         }
-
                     }
-                    if (pullname.Name == "H")
+                }
+                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["H"];
+                if (pullHnames != null)
+                {
+                    foreach (var df in pullHnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
+                            foreach (var se in fl.SelectList)
                             {
-                                foreach (var se in fl.SelectList)
+                                foreach (var pa in se.SelectParams)
                                 {
-                                    foreach (var pa in se.SelectParams)
+                                    if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
                                     {
-                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                         {
-                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                            {
 
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 20; //烤漆拉片H
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 22;
-                                            }
-                                            else
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 20; //烤漆拉片H
+                                            if (diff <= 0)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 22; //包胶拉片H
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 25;
+                                                diff = 0;
                                             }
-
+                                            pa.Min = diff;
+                                            pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 22;
                                         }
+                                        else
+                                        {
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 22; //包胶拉片H
+                                            if (diff <= 0)
+                                            {
+                                                diff = 0;
+                                            }
+                                            pa.Min = diff;
+                                            pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH + 25;
+                                        }
+
                                     }
                                 }
                             }
                         }
                     }
-                    if (pullname.Name == "S")
+                }
+                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["S"];
+                if (pullSnames != null)
+                {
+                    foreach (var df in pullSnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
+                            foreach (var se in fl.SelectList)
                             {
-                                foreach (var se in fl.SelectList)
+                                foreach (var pa in se.SelectParams)
                                 {
-                                    foreach (var pa in se.SelectParams)
+                                    if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
                                     {
-                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                         {
-                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 15; //烤漆拉片S
+                                            if (diff <= 0)
                                             {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 15; //烤漆拉片S
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 22;
+                                                diff = 0;
                                             }
-                                            else
-                                            {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 23; //包胶拉片S
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 28;
-                                            }
-
+                                            pa.Min = diff;
+                                            pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 22;
                                         }
+                                        else
+                                        {
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 23; //包胶拉片S
+                                            if (diff <= 0)
+                                            {
+                                                diff = 0;
+                                            }
+                                            pa.Min = diff;
+                                            pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS + 28;
+                                        }
+
                                     }
                                 }
                             }
                         }
+
                     }
                 }
             }
             else
             {
-                SpeciesFilter pullnames = this.MaociFilterConfig["拉头拉片"];
-                foreach (var pullname in pullnames.RecipeDefects)
+                RecipeDefect pullsegnames = this.MaociFilterConfig["拉头拉片"]["拉片外形"]; ;
+                if (pullsegnames != null)
                 {
-                    if (pullname.Name == "拉片外形")
+                    foreach (var df in pullsegnames.DefectFilters)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var fl in df.FilterList)
                         {
-                            foreach (var fl in df.FilterList)
-                            {
-                                fl.FilterSelectEnable = false;
-                                // fl.IsReversal = false;
-                            }
+                            fl.FilterSelectEnable = false;
                         }
                     }
-                    if (pullname.Name == "H")
+                }
+                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["H"];
+                foreach (var df in pullHnames.DefectFilters)
+                {
+                    foreach (var fl in df.FilterList)
                     {
-                        foreach (var df in pullname.DefectFilters)
+                        foreach (var se in fl.SelectList)
                         {
-                            foreach (var fl in df.FilterList)
+                            foreach (var pa in se.SelectParams)
                             {
-                                foreach (var se in fl.SelectList)
+                                if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
                                 {
-                                    foreach (var pa in se.SelectParams)
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                     {
-                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 15; //烤漆拉头H
+                                        if (diff <= 0)
                                         {
-                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                            {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 15; //烤漆拉头H
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 18;
-                                            }
-                                            else
-                                            {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 20; //金属拉头H
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 25;
-                                            }
+                                            diff = 0;
                                         }
+                                        pa.Min = diff;
+                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 18;
                                     }
-                                }
-                            }
-                        }
-                    }
-                    if (pullname.Name == "S")
-                    {
-                        foreach (var df in pullname.DefectFilters)
-                        {
-                            foreach (var fl in df.FilterList)
-                            {
-                                foreach (var se in fl.SelectList)
-                                {
-                                    foreach (var pa in se.SelectParams)
+                                    else
                                     {
-                                        if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                        double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH - 20; //金属拉头H
+                                        if (diff <= 0)
                                         {
-                                            if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                            {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 12; //烤漆拉头S
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 15;
-                                            }
-                                            else
-                                            {
-                                                double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 15; //金属拉头S
-                                                if (diff <= 0)
-                                                {
-                                                    diff = 0;
-                                                }
-                                                pa.Min = diff;
-                                                pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 25;
-                                            }
+                                            diff = 0;
                                         }
+                                        pa.Min = diff;
+                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanH + 25;
                                     }
                                 }
                             }
                         }
                     }
                 }
+                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["S"];
+                foreach (var df in pullSnames.DefectFilters)
+                {
+                    foreach (var fl in df.FilterList)
+                    {
+                        foreach (var se in fl.SelectList)
+                        {
+                            foreach (var pa in se.SelectParams)
+                            {
+                                if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
+                                {
+                                    if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
+                                    {
+                                        double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 12; //烤漆拉头S
+                                        if (diff <= 0)
+                                        {
+                                            diff = 0;
+                                        }
+                                        pa.Min = diff;
+                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 15;
+                                    }
+                                    else
+                                    {
+                                        double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS - 15; //金属拉头S
+                                        if (diff <= 0)
+                                        {
+                                            diff = 0;
+                                        }
+                                        pa.Min = diff;
+                                        pa.Max = CZipperAutomaticAlgorithm.ZipperInfo.PullerMeanS + 25;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
             }
 
 
@@ -2190,12 +2173,8 @@ namespace WH.DetectSystem.Models
                                         {
                                             fl.IsReversal = true;
                                         }
-
                                     }
-
-
                                 }
-
                             }
                             else
                             {
@@ -2218,7 +2197,6 @@ namespace WH.DetectSystem.Models
                 SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
                 if ("无LOGO" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType)
                 {
-
                     foreach (var logoname in logonames.RecipeDefects)
                     {
                         if (!logoname.Name.Contains("拉"))
