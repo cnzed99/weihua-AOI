@@ -1814,7 +1814,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 110;
+                                            pa.Min = 130;
                                         }
                                         else
                                         {
