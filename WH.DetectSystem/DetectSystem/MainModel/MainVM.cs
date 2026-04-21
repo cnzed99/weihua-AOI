@@ -1747,11 +1747,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 28;
+                                            pa.Min = 30;
                                         }
                                         else
                                         {
-                                            pa.Min = 30;
+                                            pa.Min = 35;
                                         }
 
                                     }
@@ -1759,11 +1759,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 110;
+                                            pa.Min = 180;
                                         }
                                         else
                                         {
-                                            pa.Min = 180;
+                                            pa.Min = 280;
                                         }
 
                                     }
@@ -1791,7 +1791,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 1;
+                                            pa.Min = 2;
                                         }
                                         else
                                         {
@@ -1802,11 +1802,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                                         {
-                                            pa.Min = 28;
+                                            pa.Min = 30;
                                         }
                                         else
                                         {
-                                            pa.Min = 30;
+                                            pa.Min = 35;
                                         }
 
                                     }
@@ -1818,7 +1818,7 @@ namespace WH.DetectSystem.Models
                                         }
                                         else
                                         {
-                                            pa.Min = 180;
+                                            pa.Min = 280;
                                         }
 
                                     }
