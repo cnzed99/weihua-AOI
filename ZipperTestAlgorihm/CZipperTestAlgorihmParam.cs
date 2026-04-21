@@ -656,6 +656,10 @@ namespace ZipperTestAlgorihm
                             }
                             if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && labelname.Contains("正面上止"))// && !runtype) //最后一张图片有上止图片
                             {
+                                if (bigResult.datas[j].score<paramClass.UpLianciScore) //防止有别的区域误识别成上止的情况
+                                {
+                                    continue;
+                                }
                                 RunUpMassDet(cell, img, bigResult.datas[j], out Point upmassPos, out List<CoordRestoreData> updets);
                                 massPoints.Add(upmassPos);
                                 if (updets?.Count > 0)
@@ -694,7 +698,6 @@ namespace ZipperTestAlgorihm
                 {
                     for (int i = 0; i < 4; i++)
                     {
-
                         cropRec[i].X = i * smallimgWidth;
                         cropRec[i].Y = 0;
                         cropRec[i].Width = smallimgWidth;
