@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Channels;
@@ -33,7 +33,7 @@ using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
 using System.IO;
-using OpenVinoSharp.Extensions.process;
+
 
 namespace WH.DetectSystem.Models
 {
