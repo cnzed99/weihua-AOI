@@ -18,7 +18,7 @@ namespace ZipperInfo
         /// <summary>
         /// 刀口长度（cm)
         /// </summary>
-        float quekoulenght=3.5f;
+        float quekoulenght = 3.5f;
         public float QuekouLenght
         {
             get { return quekoulenght; }
@@ -37,10 +37,10 @@ namespace ZipperInfo
         public float ShowZipperLenght
         {
             get { return showZipperLenght; }
-            set 
-            { 
+            set
+            {
                 showZipperLenght = value;
-                ZipperLenght = showZipperLenght * 10+ QuekouLenght * 10;
+                ZipperLenght = showZipperLenght * 10 + QuekouLenght * 10;
                 OnPropertyChanged();
             }
         }

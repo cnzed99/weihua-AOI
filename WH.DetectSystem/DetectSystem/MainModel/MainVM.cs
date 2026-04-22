@@ -2077,7 +2077,7 @@ namespace WH.DetectSystem.Models
                         }
                     }
                 }
-                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头颜色1"];
+                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头色差1"];
                 if (pullHnames != null)
                 {
                     foreach (var df in pullHnames.DefectFilters)
@@ -2118,7 +2118,7 @@ namespace WH.DetectSystem.Models
                         }
                     }
                 }
-                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头颜色2"];
+                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头色差2"];
                 if (pullSnames != null)
                 {
                     foreach (var df in pullSnames.DefectFilters)
@@ -2173,7 +2173,7 @@ namespace WH.DetectSystem.Models
                         }
                     }
                 }
-                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头颜色1"];
+                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头色差1"];
                 foreach (var df in pullHnames.DefectFilters)
                 {
                     foreach (var fl in df.FilterList)
@@ -2209,7 +2209,7 @@ namespace WH.DetectSystem.Models
                         }
                     }
                 }
-                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头颜色2"];
+                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头色差2"];
                 foreach (var df in pullSnames.DefectFilters)
                 {
                     foreach (var fl in df.FilterList)

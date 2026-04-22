@@ -17,13 +17,45 @@ namespace ZipperInfo
 {
     public partial class CZipperAutomaticVM : ObservableObject
     {
-        public List< CAutomaticModel> AutoData { get; set; }
+        public List<CAutomaticModel> AutoData { get; set; }
 
+        private float showZipperLenght;
+        //代理属性，为了方便同步更新两套参数的值
+        public float ShowZipperLenght
+        {
+            get { return showZipperLenght; }
+            set
+            {
+                showZipperLenght = value;
+                AutoData[0].ShowZipperLenght = value;
+                AutoData[1].ZipperLenght = value;
+                OnPropertyChanged();
+            }
+        }
+
+        float quekoulenght = 3.6f;
+        //代理属性，为了方便同步更新两套参数的值
+        public float QuekouLenght
+        {
+            get { return quekoulenght; }
+            set
+            {
+                quekoulenght = value;
+                AutoData[0].QuekouLenght = value;
+                AutoData[1].QuekouLenght = value;
+                OnPropertyChanged();
+            }
+        }
         public CZipperAutomaticVM()
         {
             AutoData = LoadParameter();
-            CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
-            CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
+            if (AutoData.Count > 2)
+            {
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
+                ShowZipperLenght = AutoData[0].ShowZipperLenght;
+                QuekouLenght = AutoData[0].QuekouLenght;
+            }
         }
 
         bool startAutoTest;
@@ -36,7 +68,7 @@ namespace ZipperInfo
 
             CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData[0].ZipperLenght}");
             //写入拉链长度
-           // CZipperCommunicate.ClearWarn();
+            // CZipperCommunicate.ClearWarn();
             CZipperCommunicate.SendZipperLenght(AutoData[0].ZipperLenght);
             CGetZipperTriggerPoint.GetTriggerPoints(AutoData[0], out List<float> points, out List<float> handandtalipoints,
                 out int cutoffIndex, out int zipperCacheCount, out int triggerType);
@@ -99,7 +131,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Station1_Stage1_OK=false;
+                CZipperAutomaticAlgorithm.Station1_Stage1_OK = false;
                 CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
 
 
@@ -138,7 +170,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
                 CZipperAutomaticAlgorithm.findPullerCount = 0;
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
-                CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght*10);
+                CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 CZipperCommunicate.SendHelianEndPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage2 = 1;
@@ -182,62 +214,6 @@ namespace ZipperInfo
         }
 
         [RelayCommand]
-        void SendPoints2(object win)
-        {
-
-            CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData[0].ZipperLenght}");
-            //写入拉链长度
-            // CZipperCommunicate.ClearWarn();
-            CZipperCommunicate.SendZipperLenght(AutoData[0].ZipperLenght);
-            CGetZipperTriggerPoint.GetTriggerPoints(AutoData[0], out List<float> points, out List<float> handandtalipoints,
-                out int cutoffIndex, out int zipperCacheCount, out int triggerType);
-
-            CGetZipperTriggerPoint.GetTriggerPoints(AutoData[1], out List<float> points_2, out List<float> handandtalipoints_2,
-           out int cutoffIndex_2, out int zipperCacheCount_2, out int triggerType_2);
-
-           
-            if (points != null && points.Count > 0)
-            {
-                //写入拍照的总图片数量
-                CZipperCommunicate.SendPhotoCount(points.Count);
-                //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
-
-                //计算拉链触发点位 ID改变位置
-                CZipperCommunicate.SendPoints2(points_2, handandtalipoints_2, cutoffIndex_2, zipperCacheCount_2);
-
-                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
-                CZipperAutomaticAlgorithm.onWichStage = 1;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperDownmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperUpmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullsImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-
-
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.CutoffIndex = cutoffIndex_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType = triggerType_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperDownmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperUpmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullsImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCX = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
-
-            }
-        }
-        [RelayCommand]
         void CloseWin(object win)
         {
             var window = win as HandyControl.Controls.Window;
@@ -262,17 +238,17 @@ namespace ZipperInfo
 
         #region 读取参数
 
-        public static List< CAutomaticModel> LoadParameter()
+        public static List<CAutomaticModel> LoadParameter()
         {
-           List< CAutomaticModel> settingsModel = new List<CAutomaticModel>();
+            List<CAutomaticModel> settingsModel = new List<CAutomaticModel>();
             try
             {
                 if (File.Exists(ParameterPath))
                 {
-                    settingsModel = ConfigAPI.LoadDeserialize< List<CAutomaticModel>>(ParameterPath);
+                    settingsModel = ConfigAPI.LoadDeserialize<List<CAutomaticModel>>(ParameterPath);
                     if (settingsModel == null)
                     {
-                       settingsModel = new List<CAutomaticModel>();
+                        settingsModel = new List<CAutomaticModel>();
                         CAutomaticModel st1 = new CAutomaticModel();
                         CAutomaticModel st2 = new CAutomaticModel();
                         settingsModel.Add(st1);

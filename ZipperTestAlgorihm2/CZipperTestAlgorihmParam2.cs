@@ -24,7 +24,7 @@ namespace ZipperTestAlgorihm2
         /// <summary>
         /// 下止检测对象
         /// </summary>
-        IVisionModel WH_DownStopMass_obb;
+        IVisionModel WH_DownStopMass_Det;
 
         /// <summary>
         /// 上止检测对象
@@ -307,16 +307,18 @@ namespace ZipperTestAlgorihm2
 
             string commonModelPath = modelDirpath + "CommonModel\\";
             string bigModelPath = modelDirpath + "BigDetModel\\";
-
+            string upMassModelPath= modelDirpath + "UpStopMassModel";
             if (user.Contains("正面"))
             {
                // commonModelPath = commonModelPath + "Front\\";
                 bigModelPath = bigModelPath + "Front\\";
+                upMassModelPath= upMassModelPath + "FrontDefet\\";
             }
             else
             {
                // commonModelPath = commonModelPath + "Back\\";
                 bigModelPath = bigModelPath + "Back\\";
+                upMassModelPath = upMassModelPath + "BackDefet\\";
             }
             //if (user == "反面")
             //{
@@ -337,6 +339,7 @@ namespace ZipperTestAlgorihm2
             }
             if (user.Contains("正面"))
             {
+                //下止缺陷 和上止测量只在正面检测
                 string downStopMassPath = modelDirpath + "DownStopMassModel\\";
                 var downstopstrs = GetNames(downStopMassPath);
                 if (downstopstrs.Item1 != "")
@@ -344,14 +347,6 @@ namespace ZipperTestAlgorihm2
                     downStopMass_Model_Path = downstopstrs.Item1;
                     downStopMass_names = downstopstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
                 }
-                string upStopMassDefeModelPath = modelDirpath + "UpStopMassModel\\UpStopMassDefe";
-                var upstopsdefetrs = GetNames(upStopMassDefeModelPath);
-                if (upstopsdefetrs.Item1 != "")
-                {
-                    upStopMassDefe_Model_Path = upstopsdefetrs.Item1;
-                    upStopMassDefe_names = upstopsdefetrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                }
-
                 string upStopMassMeasModelPath = modelDirpath + "UpStopMassModel\\UpStopMassMeas";
                 var upstopsmeastrs = GetNames(upStopMassMeasModelPath);
                 if (upstopsmeastrs.Item1 != "")
@@ -360,8 +355,14 @@ namespace ZipperTestAlgorihm2
                     upStopMassMeas_names = upstopsmeastrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
                 }
             }
-
-
+            // 上止缺陷正反面都要检测
+            string upStopMassDefeModelPath = upMassModelPath+ "\\UpStopMassDefe";
+            var upstopsdefetrs = GetNames(upStopMassDefeModelPath);
+            if (upstopsdefetrs.Item1 != "")
+            {
+                upStopMassDefe_Model_Path = upstopsdefetrs.Item1;
+                upStopMassDefe_names = upstopsdefetrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            }
             string pullModelScearch = modelDirpath + "Pull\\PullSearch\\";
             var pullsearchtrs = GetNames(pullModelScearch);
             if (pullsearchtrs.Item1 != "")
@@ -403,7 +404,6 @@ namespace ZipperTestAlgorihm2
             }
 
         }
-
 
         private (string, string[]) GetNames(string Dirpath)
         {
@@ -530,7 +530,7 @@ namespace ZipperTestAlgorihm2
                                 cell.DownMassMatImg = cropDownMat;
 
                                 // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropDownMat);
-                                ObbResult downResult = ImageInferObb(WH_DownStopMass_obb, cropDownMat);
+                                DetResult downResult = ImageInferDet(WH_DownStopMass_Det, cropDownMat);
                                 if (downResult != null)
                                 {
                                     if (downResult.datas.Count > 0)
@@ -909,7 +909,6 @@ namespace ZipperTestAlgorihm2
             #endregion
         }
 
-
         protected void ParseResult(List<CoordRestoreData> sResultInfos, Cell cell)
         {
             if (sResultInfos is null)
@@ -1022,7 +1021,7 @@ namespace ZipperTestAlgorihm2
                    // int pullsharp_num = pullSharp_names.Length;
                     float Score = param.CommonScore;
                     float Nms = param.Nms;
-                    int Input_size = 640;
+                    //int Input_size = 640;
 
 //                    //Task task1 = Task.Run(() =>
 //                    //{
@@ -1455,9 +1454,9 @@ CurrentDevice, big_num, param.BigScore, Nms, 480);
             {
                 WH_UpStopMassMeas_obb.UpdateNMS_Score(param.Nms, param.UpLianciScore);
             }
-            if (WH_DownStopMass_obb != null)
+            if (WH_DownStopMass_Det != null)
             {
-                WH_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
+                WH_DownStopMass_Det.UpdateNMS_Score(param.Nms, param.DownScore);
             }
             //WH_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
             WH_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
