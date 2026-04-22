@@ -748,7 +748,7 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
-                        UpdatepullSegArea("左相机");
+                        UpdatWhiteZipperParam();
                         try
                         {
                             if (!isAutomaticTest)
@@ -1775,57 +1775,150 @@ namespace WH.DetectSystem.Models
 
             #endregion
             #region 点脏污
-            RecipeDefect pointDetNames = this.MaociFilterConfig["拉链"]["点脏污"];
-            if (pointDetNames != null)
+            //RecipeDefect WpointDetNames = this.MaociFilterConfig["拉链"]["白点脏污"];
+            //if (WpointDetNames != null)
+            //{
+            //    foreach (var df in WpointDetNames.DefectFilters)
+            //    {
+            //        foreach (var fl in df.FilterList)
+            //        {
+            //            foreach (var se in fl.SelectList)
+            //            {
+            //                foreach (var pa in se.SelectParams)
+            //                {
+            //                    if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
+            //                    {
+            //                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+            //                        {
+            //                            pa.Min = 2;
+            //                        }
+            //                        else
+            //                        {
+            //                            pa.Min = 3;
+            //                        }
+            //                    }
+            //                    if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+            //                    {
+            //                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+            //                        {
+            //                            pa.Min = 30;
+            //                        }
+            //                        else
+            //                        {
+            //                            pa.Min = 35;
+            //                        }
+
+            //                    }
+            //                    if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+            //                    {
+            //                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+            //                        {
+            //                            pa.Min = 150;
+            //                        }
+            //                        else
+            //                        {
+            //                            pa.Min = 180;
+            //                        }
+
+            //                    }
+            //                }
+            //            }
+            //        }
+
+            //    }
+            //}
+
+            RecipeDefect hpointDetNames = this.MaociFilterConfig["拉链"]["黑点脏污"];
+            if (hpointDetNames != null)
             {
-                foreach (var df in pointDetNames.DefectFilters)
+                if (hpointDetNames.DefectFilters.Count>0)
                 {
-                    foreach (var fl in df.FilterList)
+                    OneSelectParams pa1 = hpointDetNames.DefectFilters[0].FilterList[0].SelectList[0].SelectParams.FirstOrDefault(pa=> pa.Character.ZhName == "数量");
+                    if (pa1!=null)
                     {
-                        foreach (var se in fl.SelectList)
+                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
                         {
-                            foreach (var pa in se.SelectParams)
-                            {
-                                if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
-                                {
-                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 2;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 3;
-                                    }
-                                }
-                                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
-                                {
-                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 30;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 35;
-                                    }
-
-                                }
-                                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
-                                {
-                                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 130;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 280;
-                                    }
-
-                                }
-                            }
+                            pa1.Min = 1;
+                        }
+                        else
+                        {
+                            pa1.Min = 2;
+                        }
+                    }
+                    OneSelectParams pa2 = hpointDetNames.DefectFilters[0].FilterList[0].SelectList[0].SelectParams.FirstOrDefault(pa => pa.Character.ZhName == "分数");
+                    if (pa2 != null)
+                    {
+                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                        {
+                            pa2.Min = 30;
+                        }
+                        else
+                        {
+                            pa2.Min = 35;
+                        }
+                    }
+                    OneSelectParams pa3 = hpointDetNames.DefectFilters[0].FilterList[0].SelectList[0].SelectParams.FirstOrDefault(pa => pa.Character.ZhName == "面积");
+                    if (pa3 != null)
+                    {
+                        if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                        {
+                            pa3.Min = 120;
+                        }
+                        else
+                        {
+                            pa3.Min = 150;
                         }
                     }
 
                 }
+                //foreach (var df in hpointDetNames.DefectFilters)
+                //{
+                //    foreach (var fl in df.FilterList)
+                //    {
+                //        foreach (var se in fl.SelectList)
+                //        {
+                //            foreach (var pa in se.SelectParams)
+                //            {
+                //                if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
+                //                {
+                //                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                //                    {
+                //                        pa.Min = 1;
+                //                    }
+                //                    else
+                //                    {
+                //                        pa.Min = 2;
+                //                    }
+                //                }
+                //                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
+                //                {
+                //                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                //                    {
+                //                        pa.Min = 30;
+                //                    }
+                //                    else
+                //                    {
+                //                        pa.Min = 35;
+                //                    }
+
+                //                }
+                //                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
+                //                {
+                //                    if (CZipperAutomaticAlgorithm.ZipperInfo.WhiteZippers)
+                //                    {
+                //                        pa.Min = 130;
+                //                    }
+                //                    else
+                //                    {
+                //                        pa.Min = 150;
+                //                    }
+
+                //                }
+                //            }
+                //        }
+                //    }
+
+                //}
             }
 
             #endregion
@@ -1967,7 +2060,7 @@ namespace WH.DetectSystem.Models
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                         {
 
-                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 20; //烤漆拉片H
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 22; //烤漆拉片H
                                             if (diff <= 0)
                                             {
                                                 diff = 0;
@@ -1977,7 +2070,7 @@ namespace WH.DetectSystem.Models
                                         }
                                         else
                                         {
-                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 22; //包胶拉片H
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanH - 25; //包胶拉片H
                                             if (diff <= 0)
                                             {
                                                 diff = 0;
@@ -2007,7 +2100,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
                                         {
-                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 15; //烤漆拉片S
+                                            double diff = CZipperAutomaticAlgorithm.ZipperInfo.PullsMeanS - 17; //烤漆拉片S
                                             if (diff <= 0)
                                             {
                                                 diff = 0;
