@@ -803,6 +803,8 @@ namespace WH.DetectSystem.Models
                             }
                         }
                         cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
+                        cell.DownStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString();
+                        cell.UpStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
