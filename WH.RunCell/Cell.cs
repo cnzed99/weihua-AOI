@@ -124,6 +124,15 @@ namespace WH.RunCell
         /// 拉片轮廓点集合
         /// </summary>
         public OpenCvSharp.Point[] OrgContours {  get; set; }   
+        /// <summary>
+        /// 下止的类型 注塑 白铝 无 等
+        /// </summary>
+        public string DownStopMassType {  get; set; }
+
+        /// <summary>
+        /// 上止的类型 注塑 白铝 无 等
+        /// </summary>
+        public string UpStopMassType { get; set; }
 
         /// <summary>
         /// 接收信息字典

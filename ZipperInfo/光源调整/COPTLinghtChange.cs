@@ -22,9 +22,9 @@ namespace ZipperInfo
             try
             {
                 LightControl.BaseConfig.LightChannelList[0].Value += val;
-                if (LightControl.BaseConfig.LightChannelList[0].Value > 130)
+                if (LightControl.BaseConfig.LightChannelList[0].Value > 110)
                 {
-                    LightControl.BaseConfig.LightChannelList[0].Value = 130;
+                    LightControl.BaseConfig.LightChannelList[0].Value = 110;
                     MaxTimeOutCount++;
                 }
                 if (LightControl.BaseConfig.LightChannelList[0].Value < 30)

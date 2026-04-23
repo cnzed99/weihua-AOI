@@ -693,6 +693,8 @@ namespace WH.DetectSystem.Models
                             }
                         }
                         cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
+                        cell.DownStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString();
+                        cell.UpStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString();
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -747,8 +749,7 @@ namespace WH.DetectSystem.Models
                         //strbuilder.Append(cell.ID);
                         //strbuilder.Append("   配方开始执行。");
                         //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
-                        cell.Stopwatch.Restart();
-                        UpdatWhiteZipperParam();
+                        cell.Stopwatch.Restart();               
                         try
                         {
                             if (!isAutomaticTest)

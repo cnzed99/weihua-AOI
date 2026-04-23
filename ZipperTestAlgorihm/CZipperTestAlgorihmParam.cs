@@ -727,11 +727,11 @@ namespace ZipperTestAlgorihm
                             {
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
-
-
                                 //if (labelname.Contains("正面上止") || (labelname.Contains("反面上止") && !runtype)) //第一张图片不该有上止
                                 //    continue;
                                 if (labelname.Contains("毛丝") && (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
+                                    continue;
+                                if (labelname.Contains("毛丝") && cell.DownStopMassType=="无")
                                     continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                 dets.Add(restoreData);
@@ -763,6 +763,8 @@ namespace ZipperTestAlgorihm
                                 //if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
                                 //    continue;
                                 if (labelname.Contains("毛丝") && (detrets[i].Item2 == 1 || detrets[i].Item2 == 2))
+                                    continue;
+                                if (labelname.Contains("毛丝") && cell.UpStopMassType=="无")
                                     continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                 dets.Add(restoreData);
