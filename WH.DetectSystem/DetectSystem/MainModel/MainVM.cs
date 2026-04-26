@@ -921,7 +921,7 @@ namespace WH.DetectSystem.Models
                     catch (Exception ex)
                     {
                         await m_InfoChannel.Writer.WriteAsync(
-                            new PrintMsg("配方执行线程出错：" + ex.Message, LOG.LOG_ERROR)
+                            new PrintMsg("配方执行线程出错：" + ex.Message + ex.StackTrace, LOG.LOG_ERROR)
                         );
                         GC.Collect();
                     }

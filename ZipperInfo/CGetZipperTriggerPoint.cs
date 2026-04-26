@@ -294,6 +294,10 @@ namespace ZipperInfo
                 if (diff < 20 && diff > 0)
                 {
                     output[i - 1] -= 20;
+                    if (output[i - 1] < 0)
+                    {
+                        output[i - 1] = 1;
+                    }
                 }
             }
 
