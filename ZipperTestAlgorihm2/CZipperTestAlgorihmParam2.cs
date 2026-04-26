@@ -73,6 +73,8 @@ namespace ZipperTestAlgorihm2
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的
+                                                                                   //色差差异来判断它的明显程度
 
 
         }
@@ -134,7 +136,7 @@ namespace ZipperTestAlgorihm2
         /// </summary>
         private string name_Path;
         //常规缺陷名称
-       // protected string[] Common_names;
+        // protected string[] Common_names;
         //上止缺陷名称
         protected string[] upStopMassDefe_names;
 
@@ -152,7 +154,7 @@ namespace ZipperTestAlgorihm2
         //烤漆拉头匹配对对象名称
         protected string[] pull_Paint_names;
         //Logo匹配对对象名称
-       // protected string[] pull_Logo_names;
+        // protected string[] pull_Logo_names;
 
         //拉头拉片缺陷名称
         protected string[] bigDet_names;
@@ -214,14 +216,14 @@ namespace ZipperTestAlgorihm2
             //    CDefectRecipe defectRecipe = new CDefectRecipe(Common_names[i], Category.区域);
             //    cDefectRecipes.Add(defectRecipe);
             //}
-            if (user.Contains( "正面"))
+            if (user.Contains("正面"))
             {
-                CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
-                CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
+                CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离", Category.值);
+               // CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
                 cDefectRecipes.Add(defectRecipe1_1);
-                cDefectRecipes.Add(defectRecipe1_2);
+               // cDefectRecipes.Add(defectRecipe1_2);
             }
-       
+
             #endregion
             #region 上止
             if (upStopMassDefe_names?.Length > 0)
@@ -287,13 +289,11 @@ namespace ZipperTestAlgorihm2
             //    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Logo_names[i], Category.区域);
             //    logoRecipes.Add(defectRecipe);
             //}
-           // CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
-
-
+            // CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
 
             #endregion
 
-           DefectSpecies.Add(defectSpecies);
+            DefectSpecies.Add(defectSpecies);
             DefectSpecies.Add(bigSpecies);
             //DefectSpecies.Add(pullSpecies);
             //DefectSpecies.Add(logoSpecies);
@@ -307,18 +307,18 @@ namespace ZipperTestAlgorihm2
 
             string commonModelPath = modelDirpath + "CommonModel\\";
             string bigModelPath = modelDirpath + "BigDetModel\\";
-            string upMassModelPath= modelDirpath + "UpStopMassModel";
+            string upMassModelPath = modelDirpath + "UpStopMassModel";
             if (user.Contains("正面"))
             {
-               // commonModelPath = commonModelPath + "Front\\";
-                bigModelPath = bigModelPath + "Front\\";
-                upMassModelPath= upMassModelPath + "FrontDefet\\";
+                // commonModelPath = commonModelPath + "Front\\";
+                // bigModelPath = bigModelPath + "Front\\";
+                upMassModelPath = upMassModelPath + "\\FrontDefet\\";
             }
             else
             {
-               // commonModelPath = commonModelPath + "Back\\";
-                bigModelPath = bigModelPath + "Back\\";
-                upMassModelPath = upMassModelPath + "BackDefet\\";
+                // commonModelPath = commonModelPath + "Back\\";
+                // bigModelPath = bigModelPath + "Back\\";
+                upMassModelPath = upMassModelPath + "\\BackDefet\\";
             }
             //if (user == "反面")
             //{
@@ -356,7 +356,7 @@ namespace ZipperTestAlgorihm2
                 }
             }
             // 上止缺陷正反面都要检测
-            string upStopMassDefeModelPath = upMassModelPath+ "\\UpStopMassDefe";
+            string upStopMassDefeModelPath = upMassModelPath;// + "\\UpStopMassDefe";
             var upstopsdefetrs = GetNames(upStopMassDefeModelPath);
             if (upstopsdefetrs.Item1 != "")
             {
@@ -449,7 +449,8 @@ namespace ZipperTestAlgorihm2
 
             if (paramClass != null)
             {
-              //  UpdateScore(paramClass);
+
+                UpdateScore(paramClass);
                 Mat matimg = GetMatImage(cell, paramClass);
                 if (matimg == null)
                 {
@@ -486,7 +487,7 @@ namespace ZipperTestAlgorihm2
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth,
-                                cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);                           
+                                cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
                             dets.Add(restoreData);
                         }
                     }
@@ -508,7 +509,7 @@ namespace ZipperTestAlgorihm2
                                 int recw = 384;
                                 int rech = 384;
                                 int rex = Convert.ToInt32(serachResult.datas[j].box.X - recw / 2);
-                                int rey = Convert.ToInt32(serachResult.datas[j].box.Y+50 - rech / 2);
+                                int rey = Convert.ToInt32(serachResult.datas[j].box.Y + 50 - rech / 2);
                                 if ((rex + recw) > cell.Image.ImageWidth)
                                 {
                                     rex = cell.Image.ImageWidth - recw;
@@ -840,7 +841,7 @@ namespace ZipperTestAlgorihm2
             // updets.Add(restoreData);
             Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
             cell.UpMassMatImg.Add(cropUpMat);
-           // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropUpMat);
+            // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropUpMat);
             DetResult otherdet = ImageInferDet(WH_UpStopMassDefe_det, cropUpMat);
             if (otherdet != null)
             {
@@ -1018,87 +1019,87 @@ namespace ZipperTestAlgorihm2
                     int paintpull_num = pull_Paint_names.Length;
                     //int logopull_num = pull_Logo_names.Length;
                     int big_num = bigDet_names.Length;
-                   // int pullsharp_num = pullSharp_names.Length;
+                    // int pullsharp_num = pullSharp_names.Length;
                     float Score = param.CommonScore;
                     float Nms = param.Nms;
                     //int Input_size = 640;
 
-//                    //Task task1 = Task.Run(() =>
-//                    //{
-//                    WH_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-//                    // });
+                    //                    //Task task1 = Task.Run(() =>
+                    //                    //{
+                    //                    WH_all_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    //CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+                    //                    // });
 
-//                    //Task task2 = Task.Run(() =>
-//                    //{
-//                    WH_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-//                    // });
+                    //                    //Task task2 = Task.Run(() =>
+                    //                    //{
+                    //                    WH_all_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    //CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+                    //                    // });
 
-//                    //Task task3 = Task.Run(() =>
-//                    //{
-//                    WH_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-//                    // });
+                    //                    //Task task3 = Task.Run(() =>
+                    //                    //{
+                    //                    WH_all_det3 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    //CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+                    //                    // });
 
-//                    //Task task4 = Task.Run(() =>
-//                    //{
-//                    WH_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-//CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-//                    //});
+                    //                    //Task task4 = Task.Run(() =>
+                    //                    //{
+                    //                    WH_all_det4 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
+                    //CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+                    //                    //});
 
 
-//                    //Task task5 = Task.Run(() =>
-//                    //{
-//                    if (downmass_num > 0)
-//                    {
-//                        WH_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
-//CurrentDevice, downmass_num, param.DownScore, Nms, 256);
-//                    }
-//                    //  });
+                    //                    //Task task5 = Task.Run(() =>
+                    //                    //{
+                    if (downmass_num > 0)
+                    {
+                        WH_DownStopMass_Det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, downStopMass_Model_Path, engineType,
+CurrentDevice, downmass_num, param.DownScore, Nms, 384);
+                    }
+                    //                    //  });
 
-    //                //Task task6 = Task.Run(() =>
-    //                //{
-    //                if (upmass_num > 0)
-    //                {
-    //                    WH_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
-    //CurrentDevice, upmass_num, param.UpScore, Nms, 192);
-    //                }
-    //                //  });
+                    //                //Task task6 = Task.Run(() =>
+                    //                //{
+                    if (upmass_num > 0)
+                    {
+                        WH_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, upStopMassDefe_Model_Path, engineType,
+    CurrentDevice, upmass_num, param.UpScore, Nms, 384);
+                    }
+                    //  });
 
-    //                if (upmassmeas_num > 0)
-    //                {
-    //                    WH_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
-    //CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
-    //                }
+                    //                if (upmassmeas_num > 0)
+                    //                {
+                    //                    WH_UpStopMassMeas_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassMeas_Model_Path, engineType,
+                    //CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
+                    //                }
 
                     //Task task7 = Task.Run(() =>
                     //{
                     WH_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
-CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
+    CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
                     // });
 
-//                    // Task task8 = Task.Run(() =>
-//                    // {
-//                    WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
-//CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
-//                    //});
+                    //                    // Task task8 = Task.Run(() =>
+                    //                    // {
+                    //                    WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
+                    //CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
+                    //                    //});
 
-//                    WH_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
-//CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
+                    //                    WH_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
+                    //CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
 
-//                    WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
-//CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
+                    //                    WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
+                    //CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
                     //Task task9 = Task.Run(() =>
                     //{
                     WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
-CurrentDevice, big_num, param.BigScore, Nms, 480);
+CurrentDevice, big_num, param.BigScore, Nms, 640);
                     //});
                     // Task task10 = Task.Run(() =>
                     // {
-//                    WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
-//CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
+                    //                    WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
+                    //CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                     // });
 
                     // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
@@ -1459,12 +1460,12 @@ CurrentDevice, big_num, param.BigScore, Nms, 480);
                 WH_DownStopMass_Det.UpdateNMS_Score(param.Nms, param.DownScore);
             }
             //WH_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
-            WH_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
-            WH_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
+            WH_Meta_pull_det?.UpdateNMS_Score(param.Nms, param.MetaPullScore);
+            WH_Paint_pull_det?.UpdateNMS_Score(param.Nms, param.PaintPullScore);
             // WH_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
 
-            WH_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
-            WH_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
+            WH_BigDet_det?.UpdateNMS_Score(param.Nms, param.BigScore);
+            WH_pull_Serach_det?.UpdateNMS_Score(param.Nms, param.AutoScore);
 
         }
         public static bool HasDedicatedGraphicsCard()

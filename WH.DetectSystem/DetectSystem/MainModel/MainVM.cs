@@ -314,9 +314,8 @@ namespace WH.DetectSystem.Models
                     SaveOtherOldImage(cell);
                 }
                 MergeCells.Clear();
-                //  ZipperCommunicate.Idlist.Clear();
                 UpdatDetSet();
-                UpdatWhiteZipperParam(); //白色拉链加严处理
+                //UpdatWhiteZipperParam(); //白色拉链加严处理 20260424 鲍赞宝 弃用
                 if (this.Name == "正面")
                 {
                     if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)

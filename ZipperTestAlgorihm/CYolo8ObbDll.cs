@@ -84,6 +84,12 @@ namespace ZipperTestAlgorihm
         /// </summary>
         public double ContLen = 0;
 
+        /// <summary>
+        /// 20260424 ±«ÔÞ±¦
+        /// É«²îÖµ
+        /// </summary>
+        public double ColorDiffValue = 0;
+
         public SRegionInfo() { }
 
         public double GetValue(CFeacture feacture, SRegion region)
@@ -104,6 +110,8 @@ namespace ZipperTestAlgorihm
                     return Phi;
                 case "Score":
                     return Score;
+                case "ColorDiffValue":
+                    return ColorDiffValue;
                 default:
                     return 0;
             }

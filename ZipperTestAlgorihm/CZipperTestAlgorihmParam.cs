@@ -96,6 +96,8 @@ namespace ZipperTestAlgorihm
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的
+                                                                                   //色差差异来判断它的明显程度
 
 
         }
@@ -734,9 +736,13 @@ namespace ZipperTestAlgorihm
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
 
-
-                                //if (labelname.Contains("正面上止") || (labelname.Contains("反面上止") && !runtype)) //第一张图片不该有上止
-                                //    continue;
+                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                {
+                                    float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
+                                    dets.Add(dirtyData);
+                                    continue;
+                                }
                                 if (labelname.Contains("毛丝") && (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
                                     continue;
                                 if (labelname.Contains("毛丝") && cell.DownStopMassType == "无")
@@ -768,8 +774,13 @@ namespace ZipperTestAlgorihm
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
 
-                                //if (labelname.Contains("正面下止") || labelname.Contains("反面下止")) //最后一张图片不该有下止
-                                //    continue;
+                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                {
+                                    float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
+                                    dets.Add(dirtyData);
+                                    continue;
+                                }
                                 if (labelname.Contains("毛丝") && (detrets[i].Item2 == 1 || detrets[i].Item2 == 2))
                                     continue;
                                 if (labelname.Contains("毛丝") && cell.UpStopMassType == "无")
@@ -1054,8 +1065,13 @@ namespace ZipperTestAlgorihm
                                 int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
                                 string labelname = Common_names[labelindex];
 
-                                //if (labelname.Contains("正面上止") || labelname.Contains("反面上止") || (labelname.Contains("正面下止") || labelname.Contains("反面下止")))
-                                //    continue;
+                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                {
+                                    float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
+                                    dets.Add(dirtyData);
+                                    continue;
+                                }
                                 if (labelname.Contains("毛丝"))
                                     continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
@@ -1453,6 +1469,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             sRegioninfo.Phi = info.Angle;
             sRegioninfo.Area = info.RecWidth * info.RecHeight;
             sRegioninfo.Score = info.Score;
+            sRegioninfo.ColorDiffValue = info.Value;//20260424 鲍赞宝
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
             {
                 info.ShowLeftUp,
@@ -1651,6 +1668,301 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
             }
         }
+
+        #region 计算色差
+        /// <summary>
+        /// 计算两个颜色点的 ΔE76
+        /// </summary>
+        public double CalculateDeltaE76(double l1, double a1, double b1, double l2, double a2, double b2)
+        {
+            double dl = l2 - l1;
+            double da = a2 - a1;
+            double db = b2 - b1;
+            return Math.Sqrt(dl * dl + da * da + db * db);
+        }
+
+
+        /// <summary>
+        /// 计算 ΔE94 色差
+        /// </summary>
+        public double CalculateDeltaE94(
+            double l1, double a1, double b1,
+            double l2, double a2, double b2,
+            string applicationType = "graphicarts")
+        {
+            // 计算 C1, C2
+            double c1 = Math.Sqrt(a1 * a1 + b1 * b1);
+            double c2 = Math.Sqrt(a2 * a2 + b2 * b2);
+
+            // 计算 ΔL, ΔC, ΔH
+            double deltaL = l2 - l1;
+            double deltaC = c2 - c1;
+            double deltaH = CalculateDeltaH(a1, b1, a2, b2, c1, c2);
+
+            // 计算 C̄
+            double cBar = (c1 + c2) / 2.0;
+
+            // 权重因子
+            double sl = 1.0;
+            double sc = 1.0 + 0.045 * cBar;
+            double sh = 1.0 + 0.015 * cBar;
+
+            // 应用类型调整
+            if (applicationType.ToLower() == "textiles")
+            {
+                sl = 1.0;
+                sc = 1.0 + 0.045 * cBar;
+                sh = 1.0 + 0.015 * cBar;
+            }
+
+            // 计算 ΔE94
+            double term1 = deltaL / sl;
+            double term2 = deltaC / sc;
+            double term3 = deltaH / sh;
+
+            return Math.Sqrt(term1 * term1 + term2 * term2 + term3 * term3);
+        }
+
+        /// <summary>
+        /// 计算 ΔE00 色差（CIEDE2000）
+        /// </summary>
+        public double CalculateDeltaE00(
+            double l1, double a1, double b1,
+            double l2, double a2, double b2)
+        {
+            // 1. 计算 C1, C2
+            double c1 = Math.Sqrt(a1 * a1 + b1 * b1);
+            double c2 = Math.Sqrt(a2 * a2 + b2 * b2);
+            double cBar = (c1 + c2) / 2.0;
+
+            // 2. 计算 G
+            double g = 0.5 * (1 - Math.Sqrt(
+                Math.Pow(cBar, 7) / (Math.Pow(cBar, 7) + Math.Pow(25, 7))));
+
+            // 3. 计算 a'
+            double a1p = a1 * (1 + g);
+            double a2p = a2 * (1 + g);
+
+            // 4. 计算 C'
+            double c1p = Math.Sqrt(a1p * a1p + b1 * b1);
+            double c2p = Math.Sqrt(a2p * a2p + b2 * b2);
+
+            // 5. 计算 h'
+            double h1p = CalculateHue(a1p, b1);
+            double h2p = CalculateHue(a2p, b2);
+
+            // 6. 计算 ΔL', ΔC', ΔH'
+            double deltaLp = l2 - l1;
+            double deltaCp = c2p - c1p;
+            double deltahp = CalculateDeltaHue(h1p, h2p, c1p, c2p);
+            double deltaHp = 2 * Math.Sqrt(c1p * c2p) * Math.Sin(ToRadians(deltahp) / 2.0);
+
+            // 7. 计算平均值
+            double lpBar = (l1 + l2) / 2.0;
+            double cpBar = (c1p + c2p) / 2.0;
+            double hpBar = CalculateHueBar(h1p, h2p, c1p, c2p);
+
+            // 8. 计算 T
+            double t = 1 - 0.17 * Math.Cos(ToRadians(hpBar - 30)) +
+                       0.24 * Math.Cos(ToRadians(2 * hpBar)) +
+                       0.32 * Math.Cos(ToRadians(3 * hpBar + 6)) -
+                       0.20 * Math.Cos(ToRadians(4 * hpBar - 63));
+
+            // 9. 计算 Δθ 和 Rc
+            double deltaTheta = 30 * Math.Exp(-Math.Pow((hpBar - 275) / 25, 2));
+            double rc = 2 * Math.Sqrt(
+                Math.Pow(cpBar, 7) / (Math.Pow(cpBar, 7) + Math.Pow(25, 7)));
+
+            // 10. 计算权重因子
+            double sl = 1 + (0.015 * Math.Pow(lpBar - 50, 2)) / Math.Sqrt(20 + Math.Pow(lpBar - 50, 2));
+            double sc = 1 + 0.045 * cpBar;
+            double sh = 1 + 0.015 * cpBar * t;
+            double rt = -Math.Sin(ToRadians(2 * deltaTheta)) * rc;
+
+            // 11. 最终计算
+            double term1 = deltaLp / sl;
+            double term2 = deltaCp / sc;
+            double term3 = deltaHp / sh;
+
+            return Math.Sqrt(term1 * term1 + term2 * term2 + term3 * term3 + rt * term2 * term3);
+        }
+
+        private double CalculateHue(double a, double b)
+        {
+            if (a == 0 && b == 0) return 0;
+            double h = Math.Atan2(b, a) * 180.0 / Math.PI;
+            return h >= 0 ? h : h + 360;
+        }
+
+        private double CalculateDeltaHue(double h1, double h2, double c1, double c2)
+        {
+            if (c1 * c2 == 0) return 0;
+            double diff = h2 - h1;
+            if (Math.Abs(diff) <= 180) return diff;
+            return diff > 180 ? diff - 360 : diff + 360;
+        }
+
+        private double CalculateHueBar(double h1, double h2, double c1, double c2)
+        {
+            if (c1 * c2 == 0) return h1 + h2;
+            double sum = h1 + h2;
+            if (Math.Abs(h1 - h2) > 180) sum += 360;
+            return sum / 2.0;
+        }
+        private double ToRadians(double degrees) => degrees * Math.PI / 180.0;
+
+        /// <summary>
+        /// 单点 BGR 转 Lab
+        /// </summary>
+        public (double L, double a, double b) BgrToLab(byte b, byte g, byte r)
+        {
+            // 先转 XYZ
+            var xyz = RgbToXyz(r, g, b);
+            // 再转 Lab
+            return XyzToLab(xyz.x, xyz.y, xyz.z);
+        }
+
+        /// <summary>
+        /// RGB 转 XYZ（sRGB 色彩空间）
+        /// </summary>
+        private (double x, double y, double z) RgbToXyz(byte r, byte g, byte b)
+        {
+            double red = r / 255.0;
+            double green = g / 255.0;
+            double blue = b / 255.0;
+
+            // 反伽马校正
+            red = (red > 0.04045) ? Math.Pow((red + 0.055) / 1.055, 2.4) : red / 12.92;
+            green = (green > 0.04045) ? Math.Pow((green + 0.055) / 1.055, 2.4) : green / 12.92;
+            blue = (blue > 0.04045) ? Math.Pow((blue + 0.055) / 1.055, 2.4) : blue / 12.92;
+
+            // 转换矩阵
+            double x = red * 0.4124564 + green * 0.3575761 + blue * 0.1804375;
+            double y = red * 0.2126729 + green * 0.7151522 + blue * 0.0721750;
+            double z = red * 0.0193339 + green * 0.1191920 + blue * 0.9503041;
+
+            return (x * 100, y * 100, z * 100);
+        }
+
+        // D65 标准光源白点
+        private const double Xn = 95.047;
+        private const double Yn = 100.0;
+        private const double Zn = 108.883;
+
+        /// <summary>
+        /// XYZ 转 Lab
+        /// </summary>
+        private (double L, double a, double b) XyzToLab(double x, double y, double z)
+        {
+            x /= Xn;
+            y /= Yn;
+            z /= Zn;
+
+            x = (x > 0.008856) ? Math.Pow(x, 1.0 / 3.0) : (7.787 * x) + 16.0 / 116.0;
+            y = (y > 0.008856) ? Math.Pow(y, 1.0 / 3.0) : (7.787 * y) + 16.0 / 116.0;
+            z = (z > 0.008856) ? Math.Pow(z, 1.0 / 3.0) : (7.787 * z) + 16.0 / 116.0;
+
+            double l = (116.0 * y) - 16.0;
+            double aVal = 500.0 * (x - y);
+            double bVal = 200.0 * (y - z);
+
+            return (l, aVal, bVal);
+        }
+
+        private double CalculateDeltaH(double a1, double b1, double a2, double b2, double c1, double c2)
+        {
+            double deltaA = a2 - a1;
+            double deltaB = b2 - b1;
+            double deltaC = c2 - c1;
+
+            double deltaHSquared = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+            return deltaHSquared > 0 ? Math.Sqrt(deltaHSquared) : 0;
+        }
+        /// <summary>
+        /// 处理脏污缺陷色差
+        /// 20260424 鲍赞宝
+        /// </summary>
+        /// <param name="detData"></param>
+        /// <param name="detName"></param>
+        public float DirtyDefetOperration(Mat img, DetData detData)
+        {
+            int derArea = detData.box.Width * detData.box.Height;
+            if (derArea <= 1000)
+            {
+                int recx = detData.box.X;
+                int recy = detData.box.Y;
+
+                int recw2 = detData.box.Width * 2;
+                int rech2 = detData.box.Height * 2;
+                //先平移范围
+
+                int newrecx = detData.box.X + detData.box.Width + 10;
+
+                if ((newrecx + recw2) >= img.Width)
+                    newrecx = img.Width - recw2;
+                if (newrecx < 0) newrecx = 1;
+
+                if ((recy + rech2) > img.Height)
+                    recy = img.Height - rech2;
+                if (recy < 0) recy = 1;
+
+                //截取附近的区域
+                Mat cropMat = img[new Rect(newrecx, recy, recw2, rech2)];
+                //Scalar meanValues = Cv2.Mean(cropMat);
+                //double Bvalue = meanValues.Val0;
+                //double Gvalue = meanValues.Val1;
+                //double Rvalue = meanValues.Val2;
+
+                Mat hsvImage = new Mat();
+                Cv2.CvtColor(cropMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                Scalar hsvMean = Cv2.Mean(hsvImage);
+                double Hvalue = hsvMean.Val0;
+                double Svalue = hsvMean.Val1;
+                double Vvalue = hsvMean.Val2;
+
+                //原来缺陷的区域缩小一半
+                int recx2 = recx + (int)(detData.box.Width * 0.25);// + recw/2;
+                int recy2 = recy + (int)(detData.box.Height * 0.25);// + rech/2;
+                int recw = (int)(detData.box.Width * 0.75);
+                int rech = (int)(detData.box.Height * 0.75);
+
+
+                if ((recx2 + recw) > img.Width) recx2 = img.Width - recw;
+                if (recx2 < 0) recx2 = 1;
+
+                if ((recy2 + rech) > img.Height) recy2 = img.Height - rech;
+                if (rech2 < 0) rech2 = 1;
+
+
+                Mat orgcropMat = img[new Rect(recx2, recy2, recw, rech)];
+                //Scalar orgmeanValues = Cv2.Mean(orgcropMat);
+                //double orgBvalue = orgmeanValues.Val0;
+                //double orgGvalue = orgmeanValues.Val1;
+                //double orgRvalue = orgmeanValues.Val2;
+
+                Mat orghsvImage = new Mat();
+                Cv2.CvtColor(orgcropMat, orghsvImage, ColorConversionCodes.BGR2HSV);
+                Scalar orghsvMean = Cv2.Mean(orghsvImage);
+                double orgHvalue = orghsvMean.Val0;
+                double orgSvalue = orghsvMean.Val1;
+                double orgVvalue = orghsvMean.Val2;
+
+                var (l1, a1, b1Lab) = BgrToLab((byte)orgHvalue, (byte)orgSvalue, (byte)orgVvalue);
+                var (l2, a2, b2Lab) = BgrToLab((byte)Hvalue, (byte)Svalue, (byte)Vvalue);
+                double de00 = CalculateDeltaE76(l1, a1, b1Lab, l2, a2, b2Lab);
+                return (float)de00;
+            }
+            else
+            {
+                return 1;
+            }
+
+
+
+        }
+
+        #endregion
+
 
 
         //private BitmapSource Mat2BitmapSource(Mat img)
@@ -1977,9 +2289,13 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// <summary>
         /// 坐标还原
         /// </summary>
-        /// <param name="imgwidth">当前图宽</param>
-        /// <param name="imgheight">当前图高</param>
-        /// <param name="imgIndex">图片编号</param>
+        /// <param name="imgWidth">图像宽</param>
+        /// <param name="imgIndex">图像序号</param>
+        /// <param name="orgx">缺陷坐标x</param>
+        /// <param name="orgy">缺陷坐标y</param>
+        /// <param name="labelstr">缺陷名称</param>
+        /// <param name="det">缺陷对象</param>
+        /// <param name="showinview">在那个窗口显示</param>
         public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, int showinview = 0)
         {
             //坐标还原 
@@ -2006,6 +2322,45 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             ShowInView = showinview;
 
         }
+        /// <summary>
+        /// 坐标还原 
+        /// 20260424 鲍赞宝
+        /// </summary>
+        /// <param name="imgWidth">图像宽</param>
+        /// <param name="imgIndex">图像序号</param>
+        /// <param name="orgx">缺陷坐标x</param>
+        /// <param name="orgy">缺陷坐标y</param>
+        /// <param name="labelstr">缺陷名称</param>
+        /// <param name="det">缺陷对象</param>
+        /// <param name="colordiffValue">色差值</param>
+        /// <param name="showinview">在那个窗口显示</param>
+        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, float colordiffValue, int showinview = 0)
+        {
+            //坐标还原 
+
+            ShowLeftUp.X = det.box.Left + orgx + imgWidth * imgIndex;
+            ShowLeftUp.Y = det.box.Top + orgy;
+            ShowRightUp.X = det.box.Right + orgx + imgWidth * imgIndex;
+            ShowRightUp.Y = det.box.Top + orgy;
+
+            ShowRightDown.X = det.box.Right + orgx + imgWidth * imgIndex;
+            ShowRightDown.Y = det.box.Bottom + orgy;
+
+            ShowLeftDown.X = det.box.Left + orgx + imgWidth * imgIndex;
+            ShowLeftDown.Y = det.box.Bottom + orgy;
+
+            RecWidth = det.box.Width;
+            RecHeight = det.box.Height;
+            OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0) + orgx;
+            OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0) + orgy;
+            Score = det.score * 100;
+            Labelstr = labelstr;
+            Angle = 0.0f;
+            Value = colordiffValue;
+            ShowInView = showinview;
+
+        }
+
         public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, ObbData obb, int showinview = 0)
         {
             //坐标还原 
@@ -2032,6 +2387,12 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             Value = 0.0f;
             ShowInView = showinview;
         }
+        /// <summary>
+        /// 坐标还原
+        /// </summary>
+        /// <param name="labelstr">缺陷名称</param>
+        /// <param name="value">值大小</param>
+        /// <param name="showinview">在那个窗口显示</param>
         public CoordRestoreData(string labelstr, float value, int showinview = 0)
         {
             //坐标还原 
