@@ -908,9 +908,10 @@ namespace ZipperTestAlgorihm
                                         Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
                                         maskgray.Dispose();
                                         binary.Dispose();
-                                        if (contours != null && contours.Length == 1)
+                                        Point[] maxps= contours?.MaxBy(p=>p.Length);
+                                        if (maxps != null)
                                         {
-                                            contoursList.Add(contours[0]);
+                                            contoursList.Add(maxps);
                                         }
 
                                     }

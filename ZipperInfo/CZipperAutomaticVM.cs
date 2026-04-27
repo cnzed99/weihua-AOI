@@ -28,7 +28,7 @@ namespace ZipperInfo
             {
                 showZipperLenght = value;
                 AutoData[0].ShowZipperLenght = value;
-                AutoData[1].ZipperLenght = value;
+                AutoData[1].ShowZipperLenght = value;
                 OnPropertyChanged();
             }
         }
