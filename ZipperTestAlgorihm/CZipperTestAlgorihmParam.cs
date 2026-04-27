@@ -2051,10 +2051,10 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
         private void UpdateScore(CParam param)
         {
-            WH_all_det1.UpdateNMS_Score(param.Nms, param.CommonScore);
-            WH_all_det2.UpdateNMS_Score(param.Nms, param.CommonScore);
-            WH_all_det3.UpdateNMS_Score(param.Nms, param.CommonScore);
-            WH_all_det4.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det1?.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det2?.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det3?.UpdateNMS_Score(param.Nms, param.CommonScore);
+            WH_all_det4?.UpdateNMS_Score(param.Nms, param.CommonScore);
             if (WH_UpStopMassDefe_det != null)
             {
                 WH_UpStopMassDefe_det.UpdateNMS_Score(param.Nms, param.UpScore);
@@ -2068,13 +2068,13 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 WH_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
             }
             //WH_pull_Serach_det.UpdateNMS_Score(param.PullScore, param.Nms);
-            WH_Meta_pull_det.UpdateNMS_Score(param.Nms, param.MetaPullScore);
-            WH_Paint_pull_det.UpdateNMS_Score(param.Nms, param.PaintPullScore);
+            WH_Meta_pull_det?.UpdateNMS_Score(param.Nms, param.MetaPullScore);
+            WH_Paint_pull_det?.UpdateNMS_Score(param.Nms, param.PaintPullScore);
             // WH_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
 
-            WH_BigDet_det.UpdateNMS_Score(param.Nms, param.BigScore);
-            WH_pull_Serach_det.UpdateNMS_Score(param.Nms, param.AutoScore);
-            WH_PullShape_Seg.UpdateNMS_Score(param.Nms, param.PullSharpScore);
+            WH_BigDet_det?.UpdateNMS_Score(param.Nms, param.BigScore);
+            WH_pull_Serach_det?.UpdateNMS_Score(param.Nms, param.AutoScore);
+            WH_PullShape_Seg?.UpdateNMS_Score(param.Nms, param.PullSharpScore);
         }
 
         public static bool HasDedicatedGraphicsCard()
