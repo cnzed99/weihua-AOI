@@ -165,4 +165,13 @@
   <data name="控制插件读取失败" xml:space="preserve">
     <value>Motion Plug Read Failed!</value>
   </data>
+  <data name="通讯参数加载异常" xml:space="preserve">
+    <value>Loading comunication error</value>
+  </data>
+  <data name="加载相机参数完成" xml:space="preserve">
+    <value>Load Camera params ready</value>
+  </data>
+  <data name="加载相机参数失败" xml:space="preserve">
+    <value>Load Camera params error</value>
+  </data>
 </root>

@@ -115,6 +115,24 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 加载相机参数失败 的本地化字符串。
+        /// </summary>
+        internal static string 加载相机参数失败 {
+            get {
+                return ResourceManager.GetString("加载相机参数失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 加载相机参数完成 的本地化字符串。
+        /// </summary>
+        internal static string 加载相机参数完成 {
+            get {
+                return ResourceManager.GetString("加载相机参数完成", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 对焦插件读取失败！ 的本地化字符串。
         /// </summary>
         internal static string 对焦插件读取失败 {
@@ -192,6 +210,15 @@ namespace WH.DetectSystem.Properties {
         internal static string 算法读取失败 {
             get {
                 return ResourceManager.GetString("算法读取失败", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 通讯参数加载异常 的本地化字符串。
+        /// </summary>
+        internal static string 通讯参数加载异常 {
+            get {
+                return ResourceManager.GetString("通讯参数加载异常", resourceCulture);
             }
         }
         

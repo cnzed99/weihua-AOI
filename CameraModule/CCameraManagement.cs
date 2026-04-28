@@ -1,5 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Windows.Shapes;
 using WH.Entity;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -67,9 +71,35 @@ namespace CameraModule
         /// </summary>
         public static bool s_IsLoadParam = false;
 
-        public CCameraManagement(List<CCameraParameterBase> camparameters, string path)
+        //public CCameraManagement(List<CCameraParameterBase> camparameters, string path)
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+
+        //    WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+        //        this,
+        //        new Token("", this.GetType().Namespace)
+        //    );
+        //}
+
+        public static bool LoadCamParams()
         {
-            try
+            List<CCameraParameterBase> camparameters = null;
+            if (File.Exists(s_CamPath))
+            {
+                camparameters = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(s_CamPath);
+            }
+            else
+            {
+                camparameters = new List<CCameraParameterBase>();
+            }
+            if (camparameters != null)
             {
                 LoadCamPlugs.LoadCam();
                 s_IsLoadParam = true;
@@ -78,25 +108,21 @@ namespace CameraModule
                     for (int i = 0; i < camparameters.Count; i++)
                     {
                         string serialnumber = camparameters[i].SerialNumber;
-                        var param = CCameraManagement
-                            .CameraHelpers[camparameters[i].CameraSupplier]
-                            .Init(path, i, out CCameraBase obj);
+                        var param = CameraHelpers[camparameters[i].CameraSupplier]
+                            .Init(s_CamPath, i, out CCameraBase obj);
                         CamParamDict.Add(serialnumber, param);
                         CameraDict.Add(serialnumber, obj);
                     }
                 }
                 s_IsLoadParam = false;
                 InitializeAllCamera();
+                return true;
             }
-            catch (Exception)
+            else
             {
-                throw;
+                return false;
             }
 
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                this,
-                new Token("", this.GetType().Namespace)
-            );
         }
 
         /// <summary>
@@ -104,7 +130,7 @@ namespace CameraModule
         /// 初始化所有相机
         /// </summary>
         /// <returns>成功打开的相机集合</returns>
-        public void InitializeAllCamera()
+        public static void InitializeAllCamera()
         {
             List<(string serialnumber, bool connected)> connects =
                 new List<(string serialnumber, bool connected)>();

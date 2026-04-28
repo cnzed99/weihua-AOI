@@ -67,20 +67,38 @@ namespace CommunicationModule
             new Dictionary<string, CCommunicationSettingBase>();
         private static ObservableCollection<CCommunicationSettingBase> comparams;
 
-        public CCommunicationManagement(
-            ObservableCollection<CCommunicationSettingBase> param,
-            string paramPath
-        )
+        //public CCommunicationManagement(
+        //    ObservableCollection<CCommunicationSettingBase> param,
+        //    string paramPath
+        //)
+        //{
+        //    CLoadComPlugs.LoadCom();
+        //    comparams = param;
+
+        //}
+
+        public static bool LoadCommParam()
         {
-            CLoadComPlugs.LoadCom();
-            comparams = param;
+            ObservableCollection<CCommunicationSettingBase> param = null;
+            if (File.Exists(s_CommPath))
+            {
+                param = ConfigAPI.LoadDeserialize<
+                    ObservableCollection<CCommunicationSettingBase>
+                >(s_CommPath);
+            }
+            else
+            {
+                param = new ObservableCollection<CCommunicationSettingBase>();
+            }
             if (param != null)
             {
+                CLoadComPlugs.LoadCom();
+                comparams = param;
                 for (int i = 0; i < param.Count; i++)
                 {
                     ComLogger.Info($"开始读取{param[i].CommType}:" + param[i].Name + "参数");
                     var Param = ComHelper[param[i].CommType]
-                        .Init(paramPath, i, out CCommunicationBase _communication);
+                        .Init(s_CommPath, i, out CCommunicationBase _communication);
                     if (Param != null)
                     {
                         ComLogger.Info($"添加{param[i].CommType}:" + param[i].Name + "到字典中");
@@ -88,12 +106,17 @@ namespace CommunicationModule
                         CommDic.Add(param[i].Guid, _communication);
                     }
                 }
+                return true;
+            }
+            else
+            {
+                return false;
             }
 
-            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
-                this,
-                new Token("", this.GetType().Namespace)
-            );
+            //WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+            //    this,
+            //    new Token("", this.GetType().Namespace)
+            //);
         }
 
         /// <summary>
@@ -192,7 +215,7 @@ namespace CommunicationModule
         /// 2024.7.19 李焕彬
         /// 打开所有通讯
         /// </summary>
-        public bool OpenAllComm()
+        public static bool OpenAllComm()
         {
             ComLogger.Info("连接所有通讯:");
             bool result = true;

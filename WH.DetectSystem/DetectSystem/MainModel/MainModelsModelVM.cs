@@ -107,7 +107,7 @@ namespace WH.DetectSystem.ViewModels
         /// 通讯列表
         /// </summary>
         [ObservableProperty]
-        ObservableCollection<CCommunicationSettingBase> listCommSetParam;
+        List<CCommunicationSettingBase> listCommSetParam ;
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -383,25 +383,19 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在加载通讯配置);
                 try
                 {
-                    if (File.Exists(CCommunicationManagement.s_CommPath))
+                    if (CCommunicationManagement.LoadCommParam())
                     {
-                        ListCommSetParam = ConfigAPI.LoadDeserialize<
-                            ObservableCollection<CCommunicationSettingBase>
-                        >(CCommunicationManagement.s_CommPath);
+                        ListCommSetParam = CCommunicationManagement.CommParamDic.Values.ToList();
                     }
-                    else
+                    else 
                     {
-                        ListCommSetParam = new ObservableCollection<CCommunicationSettingBase>();
+                        Growl.Error(Properties.Resources.通讯参数加载异常);
                     }
-
-                    CommManagement = new CCommunicationManagement(
-                        ListCommSetParam,
-                        CCommunicationManagement.s_CommPath
-                    );
-                    if (!CommManagement.OpenAllComm())
+                    if (!CCommunicationManagement.OpenAllComm())
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
+                 
                     CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
                 }
                 catch (Exception ex)
@@ -414,20 +408,14 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在加载相机配置);
                 try
                 {
-                    if (File.Exists(CCameraManagement.s_CamPath))
+                    if (CCameraManagement.LoadCamParams())
                     {
-                        ListCamSetParam = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(
-                            CCameraManagement.s_CamPath
-                        );
+                        Growl.Info(Properties.Resources.加载相机参数完成);
                     }
-                    else
+                    else 
                     {
-                        ListCamSetParam = new List<CCameraParameterBase>();
+                        Growl.Error(Properties.Resources.加载相机参数失败);
                     }
-                    CamManagement = new CCameraManagement(
-                        ListCamSetParam,
-                        CCameraManagement.s_CamPath
-                    );
                 }
                 catch (Exception ex)
                 {
