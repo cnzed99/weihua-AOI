@@ -169,4 +169,7 @@
   <data name="黑背景" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\黑背景.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="通讯参数加载异常" xml:space="preserve">
+    <value>通讯参数加载异常</value>
+  </data>
 </root>

@@ -196,6 +196,15 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 通讯参数加载异常 的本地化字符串。
+        /// </summary>
+        internal static string 通讯参数加载异常 {
+            get {
+                return ResourceManager.GetString("通讯参数加载异常", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 连接通讯失败，请检查参数表！ 的本地化字符串。
         /// </summary>
         internal static string 通讯连接失败 {

@@ -107,7 +107,7 @@ namespace WH.DetectSystem.ViewModels
         /// 通讯列表
         /// </summary>
         [ObservableProperty]
-        ObservableCollection<CCommunicationSettingBase> listCommSetParam;
+        List<CCommunicationSettingBase> listCommSetParam;
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -383,25 +383,19 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在加载通讯配置);
                 try
                 {
-                    if (File.Exists(CCommunicationManagement.s_CommPath))
+                    if (!CCommunicationManagement.LoadCommParam())
                     {
-                        ListCommSetParam = ConfigAPI.LoadDeserialize<
-                            ObservableCollection<CCommunicationSettingBase>
-                        >(CCommunicationManagement.s_CommPath);
+                        Growl.Error(Properties.Resources.通讯参数加载异常);
                     }
-                    else
+                    else 
                     {
-                        ListCommSetParam = new ObservableCollection<CCommunicationSettingBase>();
+                        listCommSetParam = CCommunicationManagement.CommParamDic.Values.ToList();
                     }
-
-                    CommManagement = new CCommunicationManagement(
-                        ListCommSetParam,
-                        CCommunicationManagement.s_CommPath
-                    );
-                    if (!CommManagement.OpenAllComm())
+                    if (!CCommunicationManagement.OpenAllComm())
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
+                 
                     CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
                 }
                 catch (Exception ex)
