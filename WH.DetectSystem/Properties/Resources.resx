@@ -172,4 +172,10 @@
   <data name="通讯参数加载异常" xml:space="preserve">
     <value>通讯参数加载异常</value>
   </data>
+  <data name="加载相机参数完成" xml:space="preserve">
+    <value>加载相机参数完成</value>
+  </data>
+  <data name="加载相机参数失败" xml:space="preserve">
+    <value>加载相机参数失败</value>
+  </data>
 </root>

@@ -107,7 +107,7 @@ namespace WH.DetectSystem.ViewModels
         /// 通讯列表
         /// </summary>
         [ObservableProperty]
-        List<CCommunicationSettingBase> listCommSetParam;
+        List<CCommunicationSettingBase> listCommSetParam ;
 
         /// <summary>
         /// 2024.7.17 李焕彬
@@ -383,13 +383,13 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在加载通讯配置);
                 try
                 {
-                    if (!CCommunicationManagement.LoadCommParam())
+                    if (CCommunicationManagement.LoadCommParam())
                     {
-                        Growl.Error(Properties.Resources.通讯参数加载异常);
+                        ListCommSetParam = CCommunicationManagement.CommParamDic.Values.ToList();
                     }
                     else 
                     {
-                        listCommSetParam = CCommunicationManagement.CommParamDic.Values.ToList();
+                        Growl.Error(Properties.Resources.通讯参数加载异常);
                     }
                     if (!CCommunicationManagement.OpenAllComm())
                     {
@@ -408,20 +408,14 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在加载相机配置);
                 try
                 {
-                    if (File.Exists(CCameraManagement.s_CamPath))
+                    if (CCameraManagement.LoadCamParams())
                     {
-                        ListCamSetParam = ConfigAPI.LoadDeserialize<List<CCameraParameterBase>>(
-                            CCameraManagement.s_CamPath
-                        );
+                        Growl.Info(Properties.Resources.加载相机参数完成);
                     }
-                    else
+                    else 
                     {
-                        ListCamSetParam = new List<CCameraParameterBase>();
+                        Growl.Error(Properties.Resources.加载相机参数失败);
                     }
-                    CamManagement = new CCameraManagement(
-                        ListCamSetParam,
-                        CCameraManagement.s_CamPath
-                    );
                 }
                 catch (Exception ex)
                 {
