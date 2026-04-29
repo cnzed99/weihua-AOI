@@ -931,58 +931,66 @@ namespace 断面毛刺检测软件
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
         {
-            bool state = CZipperCommunicate.GetDeviceState();
-            if (state)
+            try
             {
-                Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
-                return;
-            }
-            CZipperAutomaticAlgorithm.Dispatcher = this.Dispatcher;
-            AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
-            ProgressBarWindow progressBarWindow = new ProgressBarWindow();
-            ZipperAutomaticWindow AutomaticWindow = App
-            .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
-            .Value;
-            CZipperAutomaticVM automaticVM = CPublicServices.Container.Resolve<CZipperAutomaticVM>();
-            AutomaticWindow.DataContext = automaticVM;
-            automaticVM.StartAutoTestEven = (b) =>
-            {
-                foreach (var mainVM in CMainList.CMainVMs)
+                bool state = CZipperCommunicate.GetDeviceState();
+                if (state)
                 {
-                    CMainList.StartStop = true;
-                    mainVM.IsStart = b;
-                    mainVM.IsAutomaticTest = b;
+                    Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
+                    return;
                 }
-
-                ProgressBarViewModel.ProgressFinshEven = null;
-                ProgressBarViewModel.ProgressFinshEven = () =>
+                CZipperAutomaticAlgorithm.Dispatcher = this.Dispatcher;
+                AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
+                ProgressBarWindow progressBarWindow = new ProgressBarWindow();
+                ZipperAutomaticWindow AutomaticWindow = App
+                .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
+                .Value;
+                CZipperAutomaticVM automaticVM = new CZipperAutomaticVM();//CPublicServices.Container.Resolve<CZipperAutomaticVM>();
+                AutomaticWindow.DataContext = automaticVM;
+                automaticVM.StartAutoTestEven = (b) =>
                 {
-                    this.Dispatcher.Invoke(() =>
+                    foreach (var mainVM in CMainList.CMainVMs)
                     {
-                        progressBarWindow?.Close();
-                    });
-                };
-                // progressBarWindow.Closed += ProgressBarWindow_Closed;
-                if (b)
-                {
-                    progressBarWindow.ShowDialog();
-                    if (CZipperAutomaticAlgorithm.TestFinsh)
-                    {
-                        ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
-                        autoFinshWindow = new AutoFinshWindow();
-                        autoFinshWindow.DataContext = zipperInfoVM;
-                        autoFinshWindow.Closed += AutoFinshWindow_Closed;
-                        autoFinshWindow.Show();
-                        autoFinshWindow.Activate();
-                        zipperInfoShow.DataContext = zipperInfoVM;
+                        CMainList.StartStop = true;
+                        mainVM.IsStart = b;
+                        mainVM.IsAutomaticTest = b;
                     }
 
-                }
+                    ProgressBarViewModel.ProgressFinshEven = null;
+                    ProgressBarViewModel.ProgressFinshEven = () =>
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            progressBarWindow?.Close();
+                        });
+                    };
+                    // progressBarWindow.Closed += ProgressBarWindow_Closed;
+                    if (b)
+                    {
+                        progressBarWindow.ShowDialog();
+                        if (CZipperAutomaticAlgorithm.TestFinsh)
+                        {
+                            ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+                            autoFinshWindow = new AutoFinshWindow();
+                            autoFinshWindow.DataContext = zipperInfoVM;
+                            autoFinshWindow.Closed += AutoFinshWindow_Closed;
+                            autoFinshWindow.Show();
+                            autoFinshWindow.Activate();
+                            zipperInfoShow.DataContext = zipperInfoVM;
+                        }
 
-            };
-            AutomaticWindow.Show();
-            AutomaticWindow.Activate();
-            //OperateLog.Info(Properties.Resources.ImageSave);
+                    }
+
+                };
+                AutomaticWindow.Show();
+                AutomaticWindow.Activate();
+                //OperateLog.Info(Properties.Resources.ImageSave);
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message+"\r\n"+ex.StackTrace);
+            }
+         
         }
         private void AutoFinshWindow_Closed(object sender, EventArgs e)
         {

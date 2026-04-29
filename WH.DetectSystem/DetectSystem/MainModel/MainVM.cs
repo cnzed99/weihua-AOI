@@ -1991,7 +1991,7 @@ namespace WH.DetectSystem.Models
                     {
                         foreach (var fl in df.FilterList)
                         {
-                            if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString())
+                            if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString())
                             {
                                 fl.FilterSelectEnable = false;
                             }

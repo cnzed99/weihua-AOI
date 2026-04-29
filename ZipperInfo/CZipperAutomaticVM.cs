@@ -49,7 +49,7 @@ namespace ZipperInfo
         public CZipperAutomaticVM()
         {
             AutoData = LoadParameter();
-            if (AutoData.Count > 2)
+            if (AutoData.Count >= 2)
             {
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
