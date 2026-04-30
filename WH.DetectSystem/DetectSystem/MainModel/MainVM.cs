@@ -787,7 +787,7 @@ namespace WH.DetectSystem.Models
                                 int photoTotalCount = 0;
                                 if (Name == "顶面")
                                 {
-                                    photoTotalCount = 1;
+                                    photoTotalCount = 0;
                                 }
                                 else
                                 {
