@@ -755,6 +755,10 @@ namespace WH.DetectSystem.Models
                             {
                                 CZipperCommunicate.GetID(out productID);
                             }
+                            else if (Name == "顶面")
+                            {
+                                CZipperCommunicate.GetID3(out productID);
+                            }
                             else
                             {
                                 CZipperCommunicate.GetID2(out productID);
@@ -780,7 +784,15 @@ namespace WH.DetectSystem.Models
                                 cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
-                                int photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                                int photoTotalCount = 0;
+                                if (Name == "顶面")
+                                {
+                                    photoTotalCount = 1;
+                                }
+                                else
+                                {
+                                    photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                                } 
                                 cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
                             else
@@ -972,7 +984,11 @@ namespace WH.DetectSystem.Models
                                             {
                                                 CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
-                                            else
+                                            else if (Name == "顶面")
+                                            {
+                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            }
+                                            else 
                                             {
                                                 CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
@@ -984,6 +1000,11 @@ namespace WH.DetectSystem.Models
                                             if (Name == "正面" || Name == "反面")
                                             {
                                                 CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            }
+                                            else if (Name == "顶面")
+                                            {
+                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.NG);
+
                                             }
                                             else
                                             {
@@ -1675,59 +1696,66 @@ namespace WH.DetectSystem.Models
         /// <returns></returns>
         Cell GetMergeCells(List<Cell> cells)
         {
-            Cell newCell = cells[cells.Count - 1].CloneExecptImg();
-            // 合并IsOK逻辑：只要有一个为false则整体为false
-            newCell.IsOK = !cells.Any(c => !c.IsOK);
-
-            // 按RecipeDefectName合并AlgorithmOut
-            newCell.AlgorithmOut = cells
-                   .SelectMany(c => c.AlgorithmOut)  // 展平所有AlgorithmOut
-                   .GroupBy(cd => cd.RecipeDefectName) // 按名称分组
-                   .Select(g => new CellDetection
-                   {
-                       RecipeDefectName = g.Key,
-                       regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
-                       Category = g.FirstOrDefault()?.Category ?? Category.区域,
-                       Value = g.SelectMany(cd => cd.Value).ToList(),
-                       Type = g.FirstOrDefault()?.Type ?? "",
-                       Index = g.Max(cd => cd.Index), // 取最大Index
-                       ShowInView = g.Max(cd => cd.ShowInView)
-                   }).ToList();
-            for (int i = 0; i < cells.Count; i++)
+            if (cells.Count == 1) //单个的直接返回 20240429 鲍赞宝
             {
-                newCell.DrawEdges.AddRange(cells[i].DrawEdges);
-                if (cells[i].ZipperPullPartImg != null)
+                return cells[0];
+            }
+            else
+            {
+                Cell newCell = cells[cells.Count - 1].CloneExecptImg();
+                // 合并IsOK逻辑：只要有一个为false则整体为false
+                newCell.IsOK = !cells.Any(c => !c.IsOK);
+
+                // 按RecipeDefectName合并AlgorithmOut
+                newCell.AlgorithmOut = cells
+                       .SelectMany(c => c.AlgorithmOut)  // 展平所有AlgorithmOut
+                       .GroupBy(cd => cd.RecipeDefectName) // 按名称分组
+                       .Select(g => new CellDetection
+                       {
+                           RecipeDefectName = g.Key,
+                           regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
+                           Category = g.FirstOrDefault()?.Category ?? Category.区域,
+                           Value = g.SelectMany(cd => cd.Value).ToList(),
+                           Type = g.FirstOrDefault()?.Type ?? "",
+                           Index = g.Max(cd => cd.Index), // 取最大Index
+                           ShowInView = g.Max(cd => cd.ShowInView)
+                       }).ToList();
+                for (int i = 0; i < cells.Count; i++)
                 {
-                    newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
-                }
-                if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
-                {
-                    for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
+                    newCell.DrawEdges.AddRange(cells[i].DrawEdges);
+                    if (cells[i].ZipperPullPartImg != null)
                     {
-                        newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
+                        newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
+                    }
+                    if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
+                    {
+                        for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
+                        {
+                            newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
+                        }
+                    }
+
+                    if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
+                    {
+                        for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
+                        {
+                            newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
+                        }
+                    }
+                    if (cells[i].DownMassMatImg != null)
+                    {
+                        newCell.DownMassMatImg = cells[i].DownMassMatImg;
                     }
                 }
 
-                if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
+                CImage img = GetCImage(cells);
+                if (img != null)
                 {
-                    for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
-                    {
-                        newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
-                    }
+                    newCell.Image = img;
                 }
-                if (cells[i].DownMassMatImg != null)
-                {
-                    newCell.DownMassMatImg = cells[i].DownMassMatImg;
-                }
-            }
 
-            CImage img = GetCImage(cells);
-            if (img != null)
-            {
-                newCell.Image = img;
+                return newCell;
             }
-
-            return newCell;
 
         }
         //  Mat matresult;

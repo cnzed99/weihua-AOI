@@ -49,6 +49,10 @@ namespace ZipperInfo
 
 
         }
+        /// <summary>
+        /// 工位2 产品ID
+        /// </summary>
+        /// <param name="productID"></param>
         public static void GetID2(out int productID)
         {
             //try
@@ -70,7 +74,32 @@ namespace ZipperInfo
 
 
         }
-       
+        /// <summary>
+        /// 工位3 产品ID
+        /// </summary>
+        /// <param name="productID"></param>
+        public static void GetID3(out int productID)
+        {
+            //try
+            //{
+            lock (lockobj)
+            {
+                productID = -1;
+                if (com != null)
+                {
+                    productID = com.ReadHoldingRegisterInt32(41512);
+                }
+            }
+            //}
+            //catch (Exception)
+            //{
+            //    productID = -1;
+            //    photoID = -1;
+            //}
+
+
+        }
+
 
         /// <summary>
         /// 读取拉头触发的位置 
@@ -275,13 +304,32 @@ namespace ZipperInfo
             }
 
         }
-
+        /// <summary>
+        /// 工位2 写入结果
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="result"></param>
         public static void SendResult2(string id, ZIPPERESULT result)
         {
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(41416, (int)result);
                 ZipperSetResultLogger.Info($"工位2发送ID:{id}->结果:{result}");
+            }
+
+        }
+
+        /// <summary>
+        /// 工位3 写入结果
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="result"></param>
+        public static void SendResult3(string id, ZIPPERESULT result)
+        {
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(41516, (int)result);
+                ZipperSetResultLogger.Info($"工位3发送ID:{id}->结果:{result}");
             }
 
         }
