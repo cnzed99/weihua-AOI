@@ -1403,7 +1403,7 @@ CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
                     //Task task9 = Task.Run(() =>
                     //{
                     WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
-CurrentDevice, big_num, param.BigScore, Nms, 480);
+CurrentDevice, big_num, param.BigScore, Nms, 640);
                     //});
                     // Task task10 = Task.Run(() =>
                     // {
