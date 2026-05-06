@@ -206,6 +206,7 @@ namespace DoThinkCam
                 //imageQueue.Enqueue(pBuffer);
                 //mutex.ReleaseMutex();
                 ImageQueueChannel.Writer.TryWrite(pBuffer);
+                _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = refFrame.iWidth;
                 paramSetting.ImageHeight = refFrame.iHeight;
                 paramSetting.CameraType =

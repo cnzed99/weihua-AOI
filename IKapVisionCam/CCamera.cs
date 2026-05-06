@@ -374,6 +374,7 @@ namespace IKapVisionCam
                     else
                     {
                         ImageQueueChannel.Writer.TryWrite(pUserBuffer);
+                        _semaphoreSlim.Release(1);
                     }
                     if (paramSetting.SaveImage)
                     {
@@ -387,7 +388,7 @@ namespace IKapVisionCam
                                     ? PixelFormats.Gray8
                                     : PixelFormats.Rgb24
                             );
-                            image.SaveImage($"Image\\{saveCount++}.jpg");
+                           // image.SaveImage($"Image\\{saveCount++}.jpg");
                         }
                         else
                         {

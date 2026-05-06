@@ -136,7 +136,7 @@ namespace MindVisionCam
                 getImageLogger.Info(textBuilder.ToString());
 
                 ImageQueueChannel.Writer.TryWrite(pFrameBuffer);
-
+                _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = pFrameHead.iWidth;
                 paramSetting.ImageHeight = pFrameHead.iHeight;
                 paramSetting.CameraType =

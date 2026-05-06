@@ -230,6 +230,7 @@ namespace DaHuaCam
                 if (m_pDstData != IntPtr.Zero)
                 {
                     ImageQueueChannel.Writer.TryWrite(m_pDstData);
+                    _semaphoreSlim.Release(1);
                 }
 
             }

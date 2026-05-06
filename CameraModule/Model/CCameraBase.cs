@@ -332,10 +332,10 @@ namespace CameraModule
         }
 
         /// <summary>
-        /// 2024.7.23 李焕彬
-        /// 主动取流线程
+        /// 线程阻塞锁
         /// </summary>
-        /// <param name="grabbedRawData">图像数据</param>
+        public readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0, 1000);
+
         public virtual void GrabThread()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -343,43 +343,65 @@ namespace CameraModule
             {
                 try
                 {
-                    if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+                    if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
                     {
-                        if (startGrabSoft)
-                        {
-                            if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
-                            {
-                                startGrabSoft = false;
-                                timeOut.Stop();
-                                GetImageFunc(ptr);
-                            }
-                            else if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
-                            {
-                                startGrabSoft = false;
-                                timeOut.Stop();
-                                if (LostImage != null)
-                                {
-                                    ExportImage(LostImage, true);
-                                }
-                                StringBuilder textBuilder = new StringBuilder();
-                                textBuilder.Append(Properties.Resources.ErrorLostImage2);
-                                textBuilder.Append(timeOut.ElapsedMilliseconds);
-                                CCameraManagement.CamLogger.Error(textBuilder.ToString());
-                            }
-                        }
+                        GetImageFunc(ptr);
                     }
-                    else
-                    {
-                        if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
-                        {
-                            GetImageFunc(ptr);
-                        }
-                    }
-                    Thread.Sleep(1);
+                    _semaphoreSlim.Wait();
                 }
-                catch (Exception) { }
+                catch (Exception) { _semaphoreSlim.Release(1); }
             }
         }
+
+        /// <summary>
+        /// 2024.7.23 李焕彬
+        /// 主动取流线程
+        /// </summary>
+        /// <param name="grabbedRawData">图像数据</param>
+        //public virtual void GrabThread()
+        //{
+        //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+        //    while (isStartGrabThread)
+        //    {
+        //        try
+        //        {
+        //            if (Setting.TriggerMode == EMTRIGGERMODE.EMTRIGGERSOFTWARE)
+        //            {
+        //                if (startGrabSoft)
+        //                {
+        //                    if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
+        //                    {
+        //                        startGrabSoft = false;
+        //                        timeOut.Stop();
+        //                        GetImageFunc(ptr);
+        //                    }
+        //                    else if ((int)timeOut.ElapsedMilliseconds >= Setting.TimeOut)
+        //                    {
+        //                        startGrabSoft = false;
+        //                        timeOut.Stop();
+        //                        if (LostImage != null)
+        //                        {
+        //                            ExportImage(LostImage, true);
+        //                        }
+        //                        StringBuilder textBuilder = new StringBuilder();
+        //                        textBuilder.Append(Properties.Resources.ErrorLostImage2);
+        //                        textBuilder.Append(timeOut.ElapsedMilliseconds);
+        //                        CCameraManagement.CamLogger.Error(textBuilder.ToString());
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (this.ImageQueueChannel.Reader.TryRead(out IntPtr ptr))
+        //                {
+        //                    GetImageFunc(ptr);
+        //                }
+        //            }
+        //            Thread.Sleep(1);
+        //        }
+        //        catch (Exception) { }
+        //    }
+        //}
 
         /// <summary>
         /// 2024.7.23 李焕彬

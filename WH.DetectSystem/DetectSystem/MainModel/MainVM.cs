@@ -207,6 +207,10 @@ namespace WH.DetectSystem.Models
             {
                 IDCreate = new CCreateIDBase();
             }
+            else if(Name == "顶面")
+            {
+                IDCreate = new CCreateIDStation3();
+            }
             else
             {
                 IDCreate = new CCreateIDStation2();

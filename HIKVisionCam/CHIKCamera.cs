@@ -160,6 +160,7 @@ namespace HIKVisionCam
                 //imageQueue.Enqueue(pData);
                 //mutex.ReleaseMutex();
                 ImageQueueChannel.Writer.TryWrite(pData);
+                _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = pFrameInfo.nWidth;
                 paramSetting.ImageHeight = pFrameInfo.nHeight;
                 paramSetting.CameraType =

@@ -22,6 +22,10 @@ namespace ZipperInfo
         Thread WaitIDThread = null;
 
         public bool Connend = false;
+        /// <summary>
+        /// ID数据传出事件
+        /// </summary>
+        public event EventHandler<ZipperID> IDSendEvent;
         public void IntThread()
         {
             Connend = true;
