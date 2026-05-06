@@ -12,12 +12,12 @@ namespace ZipperInfo
     {
 
         public static CLogRec ZipperIDsORTLogger { get; set; } = CLogRec.Create("IDSort", "D:/Data");
-        public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
-    new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
+       // public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
+   // new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
         /// <summary>
         /// 等待ID队列
         /// </summary>
-        public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
+      //  public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
 
         Thread WaitIDThread = null;
 
@@ -99,7 +99,8 @@ namespace ZipperInfo
                         for (int i = 0; i < Idlist.Count; i++)
                         {
                             ZipperID zipperID = new ZipperID(productID, Idlist[i]);
-                            m_WaitIDChannel.Writer.TryWrite(zipperID);
+                            // m_WaitIDChannel.Writer.TryWrite(zipperID);
+                            SendBaseEven(zipperID);
                         }
 
                     }
@@ -110,6 +111,11 @@ namespace ZipperInfo
                 }
                 Thread.Sleep(1);
             }
+        }
+
+        protected virtual void SendBaseEven(ZipperID zipperID)
+        {
+            IDSendEvent?.Invoke(null, zipperID);
         }
 
     }

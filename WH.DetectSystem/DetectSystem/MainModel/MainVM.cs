@@ -203,19 +203,6 @@ namespace WH.DetectSystem.Models
                 );
             CZipperAutomaticAlgorithm.TestFinshEven += TestFinshTodo;
             // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
-            if (Name == "正面" || Name == "反面")
-            {
-                IDCreate = new CCreateIDBase();
-            }
-            else if(Name == "顶面")
-            {
-                IDCreate = new CCreateIDStation3();
-            }
-            else
-            {
-                IDCreate = new CCreateIDStation2();
-            }
-            IDCreate.IntThread();
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -267,10 +254,7 @@ namespace WH.DetectSystem.Models
         private Brush lastBrush = Brushes.White;
 
         private BitmapSource ClearImage;
-        /// <summary>
-        /// ID生成1
-        /// </summary>
-        CCreateIDBase IDCreate;
+
 
         /// <summary>
         /// 新建制程
@@ -348,31 +332,31 @@ namespace WH.DetectSystem.Models
 
                     }
                 }
-                if(this.Name == "反面")
+                if (this.Name == "反面")
                 {
                     if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
                     {
                         var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
-                        if (camDic!=null)
+                        if (camDic != null)
                         {
                             UpdateCam(camDic.SerialNumber);
                             UpdateLogo("右相机");
                             Updatepull("右相机");
                             UpdatepullSegArea("右相机");
                         }
-                       
+
                     }
                     else
                     {
                         var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
-                        if (camDic!=null)
+                        if (camDic != null)
                         {
                             UpdateCam(camDic.SerialNumber);
                             UpdateLogo("左相机");
                             Updatepull("左相机");
                             UpdatepullSegArea("左相机");
                         }
-                        
+
                     }
                 }
                 if (this.Name == "正面内")
@@ -637,6 +621,9 @@ namespace WH.DetectSystem.Models
         public static readonly BoundedChannelOptions s_SinglechannelOptions =
             new BoundedChannelOptions(1) { FullMode = BoundedChannelFullMode.Wait };
 
+        public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
+        new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
+
         /// <summary>
         /// 消息队列
         /// </summary>
@@ -692,6 +679,11 @@ namespace WH.DetectSystem.Models
         private readonly Channel<Cell> m_SaveImageChannel = Channel.CreateBounded<Cell>(
             s_NormalChannelOptions
         );
+
+        /// <summary>
+        /// 等待ID队列
+        /// </summary>
+        public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
 
         public AutoResetEvent WaitSignal = new AutoResetEvent(false);
 
@@ -767,13 +759,13 @@ namespace WH.DetectSystem.Models
                             {
                                 CZipperCommunicate.GetID2(out productID);
                             }
-                            IDCreate.m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                            m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
                             if (zipperID.ProductID > 0)
                             {
                                 bool bnext = zipperID.ProductID < productID;
                                 while (bnext && zipperID.ProductID > 0)
                                 {
-                                    IDCreate.m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                   m_WaitIDChannel.Reader.TryRead(out zipperID);
                                     bnext = zipperID.ProductID < productID;
                                     if (bnext)
                                     {
@@ -796,7 +788,7 @@ namespace WH.DetectSystem.Models
                                 else
                                 {
                                     photoTotalCount = CZipperCommunicate.GetPhotoCount();
-                                } 
+                                }
                                 cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
                             else
@@ -992,7 +984,7 @@ namespace WH.DetectSystem.Models
                                             {
                                                 CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
-                                            else 
+                                            else
                                             {
                                                 CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }

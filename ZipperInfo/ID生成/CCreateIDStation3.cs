@@ -25,7 +25,7 @@ namespace ZipperInfo
                     {
                         TempproductID = productID;
                         ZipperID zipperID = new ZipperID(productID, 1);
-                        m_WaitIDChannel.Writer.TryWrite(zipperID);
+                        SendBaseEven(zipperID);
                     }
 
                 }

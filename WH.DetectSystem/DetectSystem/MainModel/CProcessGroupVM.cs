@@ -23,6 +23,7 @@ using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.RunCell;
+using ZipperInfo;
 
 namespace WH.DetectSystem.Models
 {
@@ -77,6 +78,11 @@ namespace WH.DetectSystem.Models
         public CMysqlBLL MysqlBLL { get; set; } = new CMysqlBLL();
 
         /// <summary>
+        /// ID生成
+        /// </summary>
+        CCreateIDBase IDCreate;
+
+        /// <summary>
         /// 2024.9.5 李焕彬
         /// 初始化，新建和加载时执行
         /// </summary>
@@ -110,6 +116,33 @@ namespace WH.DetectSystem.Models
                 MySqlVM.MysqlExecute.Clone(MysqlBLL);
                 NameUpdata();
             };
+            if (Name == "制程组1")
+            {
+                IDCreate = new CCreateIDBase();
+            }
+            else if (Name == "制程组2")
+            {
+                IDCreate = new CCreateIDStation2();
+            }
+            else
+            {
+                IDCreate = new CCreateIDStation3();
+            }
+            IDCreate.IntThread();
+            IDCreate.IDSendEvent += IDSend;
+        }
+        /// <summary>
+        /// 分配ID给各个制程
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="zipperID"></param>
+        private void IDSend(object sender,ZipperID zipperID)
+        {
+            foreach (var item in CMainModels)
+            {
+                if (item == null) continue;
+                item.m_WaitIDChannel.Writer.TryWrite(zipperID);
+            }
         }
 
         /// <summary>

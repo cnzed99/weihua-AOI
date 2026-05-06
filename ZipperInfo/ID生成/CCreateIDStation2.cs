@@ -69,7 +69,8 @@ namespace ZipperInfo
                         for (int i = 0; i < Idlist.Count; i++)
                         {
                             ZipperID zipperID = new ZipperID(productID, Idlist[i]);
-                            m_WaitIDChannel.Writer.TryWrite(zipperID);
+                            // m_WaitIDChannel.Writer.TryWrite(zipperID);
+                            SendBaseEven(zipperID);
                         }
 
                     }
