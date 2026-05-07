@@ -116,6 +116,7 @@ namespace WH.DetectSystem.Models
                 MySqlVM.MysqlExecute.Clone(MysqlBLL);
                 NameUpdata();
             };
+            //20260506 鲍赞宝
             if (Name == "制程组1")
             {
                 IDCreate = new CCreateIDBase();
@@ -132,7 +133,8 @@ namespace WH.DetectSystem.Models
             IDCreate.IDSendEvent += IDSend;
         }
         /// <summary>
-        /// 分配ID给各个制程
+        /// 分配ID给各个制程 
+        /// 20260506 鲍赞宝
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="zipperID"></param>

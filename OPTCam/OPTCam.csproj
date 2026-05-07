@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SciCamera.Net">
+      <HintPath>bin\Debug\net8.0-windows\SciCamera.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\CamPlug\$(TargetName)\ /d /y" />
+    <Exec Command="xcopy $(OutDir)SciCamera.Net.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\CamPlug\$(TargetName)\ /d /y" />
+  </Target>
+
+</Project>
