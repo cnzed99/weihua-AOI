@@ -1652,14 +1652,14 @@ namespace WH.DetectSystem.Models
                                     {
                                         if (savePath.Contains("NG"))
                                         {
-                                            if (HistoryVM.HistoryModel.NgImagePaths.Count > 1000)
-                                                HistoryVM.HistoryModel.NgImagePaths.RemoveAt(1000);
+                                            if (HistoryVM.HistoryModel.NgImagePaths.Count > 2000)
+                                                HistoryVM.HistoryModel.NgImagePaths.RemoveAt(2000);
                                             HistoryVM.HistoryModel.NgImagePaths.Insert(0, savePath);
                                         }
                                         else
                                         {
-                                            if (HistoryVM.HistoryModel.OkImagePaths.Count > 1000)
-                                                HistoryVM.HistoryModel.OkImagePaths.RemoveAt(1000);
+                                            if (HistoryVM.HistoryModel.OkImagePaths.Count > 2000)
+                                                HistoryVM.HistoryModel.OkImagePaths.RemoveAt(2000);
                                             HistoryVM.HistoryModel.OkImagePaths.Insert(0, savePath);
                                         }
 

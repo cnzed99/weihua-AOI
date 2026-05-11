@@ -248,8 +248,6 @@ namespace ZipperTestAlgorihm
                     CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
                     cDefectRecipes.Add(defectRecipe1_1);
                     cDefectRecipes.Add(defectRecipe1_2);
-                    CDefectRecipe defectRecipe2 = new CDefectRecipe("上止高低", Category.值);
-                    cDefectRecipes.Add(defectRecipe2);
                     CDefectRecipe defectRecipe3 = new CDefectRecipe("下止距离", Category.值);
                     cDefectRecipes.Add(defectRecipe3);
                     CDefectRecipe defectRecipe4 = new CDefectRecipe("下止歪", Category.值);
@@ -257,6 +255,8 @@ namespace ZipperTestAlgorihm
                     CDefectRecipe defectRecipe5 = new CDefectRecipe("下止偏", Category.值);
                     cDefectRecipes.Add(defectRecipe5);
                 }
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("上止高低", Category.值);
+                cDefectRecipes.Add(defectRecipe6);
                 CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
                 #endregion
                 #region 上止
@@ -673,6 +673,11 @@ namespace ZipperTestAlgorihm
                                 {
                                     dets.AddRange(updets);
                                 }
+                            }
+                            if (cell.PhotoIndex == cell.PhotoTatolCount - 1 && labelname.Contains("反面上止"))
+                            {
+                                Point upmassPos = new Point(bigResult.datas[j].box.X, bigResult.datas[j].box.Y);
+                                massPoints.Add(upmassPos);
                             }
 
                         }
