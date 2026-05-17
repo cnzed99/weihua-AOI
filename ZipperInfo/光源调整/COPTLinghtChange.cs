@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WH.Entity.LogRecord;
 using WH.LightControl;
+using WH.RunCell;
 
 namespace ZipperInfo
 {
     public class COPTLinghtChange : LightChangeBase
     {
         public CLightControlBase LightControl = null;
-
-        public COPTLinghtChange(string portname)
+        CLogRec AutoLogger;
+        public COPTLinghtChange(string portname, CLogRec autologger)
         {
             PortName = portname;
+            AutoLogger= autologger;
             var li = CLinghtManagement.LightControlDict.Values.FirstOrDefault(c => c.BaseConfig.Port?.Name == PortName);
             if (li != null) { LightControl = li; }
         }
@@ -49,6 +52,7 @@ namespace ZipperInfo
                 if (tempsave)
                 {
                     TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
+                    AutoLogger.Info($"{PortName} :TempLightValue_Change1光源值设置为：{LightControl.BaseConfig.LightChannelList[0].Value}");
                 }
 
             }
@@ -87,6 +91,7 @@ namespace ZipperInfo
         {
             try
             {
+                AutoLogger.Info($"{PortName} :通道1和5光源值设置为：TempLightValue_Change1={TempLightValue_Change1}");
                 Thread.Sleep(30);
                 LightControl.BaseConfig.LightChannelList[0].Value = TempLightValue_Change1;
                 LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);

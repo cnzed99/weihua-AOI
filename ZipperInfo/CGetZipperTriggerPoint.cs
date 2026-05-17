@@ -198,7 +198,7 @@ namespace ZipperInfo
                 HeadandTalipoints.Add(talipoint);
                 triggerType = 3;
             }
-            outpoints = ProcessList(points);
+            outpoints = ProcessList(points, AutoData.ZipperLenght);
             cutoffIndex = points.Count - pullchange;
             if (cutoffIndex == points.Count || points.Count == 1)
             {
@@ -273,7 +273,7 @@ namespace ZipperInfo
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private static List<float> ProcessList(List<float> input)
+        private static List<float> ProcessList(List<float> input, float zipperLenght)
         {
             if (input == null)
                 return null;
@@ -298,6 +298,16 @@ namespace ZipperInfo
                     {
                         output[i - 1] = 1;
                     }
+                }
+            }
+            float sub = 5; //鲍赞宝 20260515 判断每一个触发点离终点的距离不能太近，
+                           //太近有可能走不到位不触发，导致少触发，减少5mm确保走到位触发
+            for (int i = 0; i < output.Count; i++)
+            {
+                float newsub = zipperLenght - sub;
+                if (output[i] > newsub)
+                {
+                    output[i] = newsub;
                 }
             }
 

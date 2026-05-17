@@ -129,7 +129,8 @@ namespace WH.DetectSystem._5_存图操作
                         );
                     }
                 }
-
+                //if (!cell.IsOK && (cell.ProjName == "正面" || cell.ProjName == "反面"))
+                //{
                 if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
                 {
                     for (int i = 0; i < cell.FourCutMatImg.Count; i++)
@@ -161,7 +162,36 @@ namespace WH.DetectSystem._5_存图操作
                     // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
                     OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
                 }
-
+                // }
+                //if (cell.ProjName != "正面" && cell.ProjName != "反面")
+                //{
+                //    if (cell.FourCutMatImg != null)
+                //    {
+                //        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                //        {
+                //            int index = fourCutPath.IndexOf('.');
+                //            string fourpath = fourCutPath.Insert(index, $"_{i}");
+                //            OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i]);
+                //        }
+                //    }
+                //    if (cell.UpMassMatImg != null)
+                //    {
+                //        for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                //        {
+                //            int index = upMassPath.IndexOf('.');
+                //            string uppath = upMassPath.Insert(index, $"_{i}");
+                //            OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                //        }
+                //    }
+                //    if (cell.DownMassMatImg != null)
+                //    {
+                //        OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                //    }
+                //    if (cell.ZipperPullPartImg != null)
+                //    {
+                //        OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
+                //    }
+                //}
                 if (saveImageConfig.SaveImageEnable) //开启存原图
                 {
                     string fileName = classPath;
@@ -169,6 +199,7 @@ namespace WH.DetectSystem._5_存图操作
                     {
                         Directory.CreateDirectory(Directory.GetParent(fileName).FullName);
                     }
+
                     switch (saveImageConfig.SaveSelect)
                     {
                         case "0": //存所有图
@@ -214,6 +245,7 @@ namespace WH.DetectSystem._5_存图操作
                                 }
                             }
                             break;
+
                     }
                 }
                 return savePath;
@@ -227,7 +259,7 @@ namespace WH.DetectSystem._5_存图操作
             void SaveMatRgb2Bgr(string path, OpenCvSharp.Mat mat)
             {
                 OpenCvSharp.Mat colorMat = new OpenCvSharp.Mat();
-                OpenCvSharp.Cv2.CvtColor(mat, colorMat,OpenCvSharp.ColorConversionCodes.BGR2RGB);
+                OpenCvSharp.Cv2.CvtColor(mat, colorMat, OpenCvSharp.ColorConversionCodes.BGR2RGB);
                 OpenCvSharp.Cv2.ImWrite(path, colorMat);
                 colorMat.Dispose();
             }
@@ -252,15 +284,15 @@ namespace WH.DetectSystem._5_存图操作
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawImage(
                 cell.Image?.ToBitmapSource(),
-                new Rect(0, 0,(int)cell.Image?.ImageWidth,(int)cell.Image?.ImageHeight)
+                new Rect(0, 0, (int)cell.Image?.ImageWidth, (int)cell.Image?.ImageHeight)
             );
             DrawingVisual drawingVisua2 = null;
             DrawingContext drawingContext2 = null;
-            BitmapSource bitmapSource= null;
+            BitmapSource bitmapSource = null;
             if (cell.ZipperPullPartImg != null)
             {
-                 bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
-                if (bitmapSource!=null)
+                bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                if (bitmapSource != null)
                 {
                     drawingVisua2 = new DrawingVisual();
                     drawingContext2 = drawingVisua2.RenderOpen();
@@ -276,7 +308,7 @@ namespace WH.DetectSystem._5_存图操作
                         }
                     }
                 }
-              
+
             }
             foreach (var edge in cell.DrawEdges)
             {
@@ -309,7 +341,7 @@ namespace WH.DetectSystem._5_存图操作
             {
                 DefectFilter dstFilter = cell.Detection.DefectFilter;
                 StringBuilder textBuilder = new StringBuilder();
-               // textBuilder.AppendLine(dstFilter.Name);
+                // textBuilder.AppendLine(dstFilter.Name);
                 textBuilder.Append($"{cell.Quality.Name}:");
                 if (cell.Detection.Category != Category.区域)
                 {
@@ -444,7 +476,7 @@ namespace WH.DetectSystem._5_存图操作
                 new((int)cell.Image?.ImageWidth, (int)cell.Image?.ImageHeight, 96, 96, PixelFormats.Default);
             renderTargetBitmap.Render(drawingVisual);
             renderTargetBitmap.Freeze();
-            
+
             RenderTargetBitmap renderTargetBitmap2 = null;
             if (cell.ZipperPullPartImg != null && drawingContext2 != null)
             {
