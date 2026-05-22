@@ -111,10 +111,10 @@ namespace ZipperInfo
         public static int findPullerCount = 0; //识别到拉头的次数
         public static int findPullsCount = 0; //识别到拉片的次数
 
-        public static int tempLightValue_zuo_change1 = 0;
-        public static int tempLightValue_zuo_change2 = 0;
-        public static int tempLightValue_you_change1 = 0;
-        public static int tempLightValue_you_change2 = 0;
+        //public static int tempLightValue_zuo_change1 = 0;
+        //public static int tempLightValue_zuo_change2 = 0;
+        //public static int tempLightValue_you_change1 = 0;
+        //public static int tempLightValue_you_change2 = 0;
 
 
         public static bool Station1_Stage1_OK = false;
@@ -744,9 +744,9 @@ namespace ZipperInfo
                                 // int centery = resultDet.datas[i].box.Y + resultDet.datas[i].box.Height / 2;
                                 //List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
                                 // {
-                                //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
-                                //        new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
+                                //new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y),
+                                //            new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y),
+                                //            new System.Windows.Point(resultDet.datas[i].box.X + resultDet.datas[i].box.Width, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
                                 //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y + resultDet.datas[i].box.Height),
                                 //        new System.Windows.Point(resultDet.datas[i].box.X, resultDet.datas[i].box.Y)
                                 // };
@@ -755,11 +755,11 @@ namespace ZipperInfo
                                 //cell.DrawEdges.Add(new CEdgeDraw(labelstr, txtpoint, Brushes.Pink));
                                 // int eiddis = 700;
 
-                                if (resultDet.datas[i].box.X > 150 && (cell.Image.ImageWidth - resultDet.datas[i].box.X) > 850) //
+                                if ((resultDet.datas[i].box.X > 100 && resultDet.datas[i].box.X < 430)|| (resultDet.datas[i].box.X > 1050 && resultDet.datas[i].box.X < 1480)) //
                                 {
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=2," +
                                         $"timeOutCount={timeOutCount},识别到拉头," +
-                                        $"拉头离图像边缘距离:{resultDet.datas[i].box.X} > 150 && {(cell.Image.ImageWidth - resultDet.datas[i].box.X)} > 850");
+                                        $"拉头离图像边缘距离:{resultDet.datas[i].box.X}");
                                     float pos = CZipperCommunicate.GetGrippawlLocation();
                                     AutoLogger.Info($"{cell.CamName}:onWichStage=2," +
                                         $"timeOutCount={timeOutCount},获取当前机械轴位置:{pos}");
@@ -1609,6 +1609,7 @@ namespace ZipperInfo
         public static int UpmassAutoOK = 0;
         public static int DownmassAutoOK = 0;
         public static float EndPosTemp = 0;
+        public static int AutoSettingTimeoutCount = 0;
         public void AutoSettingTriggerPos(Cell cell)
         {
             if (cell == null) return;
@@ -1618,6 +1619,12 @@ namespace ZipperInfo
             Mat img = new Mat();
             Cv2.CvtColor(orgimg, img, ColorConversionCodes.BGR2RGB);
             orgimg.Dispose();
+            AutoSettingTimeoutCount++;
+            if (AutoSettingTimeoutCount>40)
+            {
+                AutoSettingPosFinsh = true;
+                return;
+            }
             if (onWichStage2 == 1)
             {
                 if (cell.PhotoIndex == 1) //拉链下止
@@ -1656,7 +1663,7 @@ namespace ZipperInfo
                                             ChangePoints(zipperlenght);
 
                                         }
-                                        else if (ave > 350)
+                                        else if (ave > 320)
                                         {
                                             float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
                                             AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
@@ -1711,14 +1718,14 @@ namespace ZipperInfo
                                         AutoLogger.Info($"{cell.CamName}:自动调整位置：上止平均中心位置{ave.ToString("f1")}");
                                         UpmassAutoCount = 0;
                                         upmassPoints.Clear();
-                                        if (ave > cell.Image.ImageWidth - 240)
+                                        if (ave > cell.Image.ImageWidth - 260)
                                         {
                                             EndPosTemp++;
                                             if (EndPosTemp <= 0) { EndPosTemp = 1; }
                                             AutoLogger.Info($"{cell.CamName}:自动调整位置：第一个点位设置为：{EndPosTemp}");
                                             ChangePoints2(ZipperInfo.TempData1.AutoData.ZipperLenght, EndPosTemp);
                                         }
-                                        else if (ave < cell.Image.ImageWidth - 380)
+                                        else if (ave < cell.Image.ImageWidth - 360)
                                         {
 
                                             EndPosTemp--;

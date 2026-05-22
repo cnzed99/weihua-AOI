@@ -19,6 +19,11 @@ namespace WH.DetectSystem
     public static class CFilterStage
     {
         /// <summary>
+        /// 特定缺陷关联下一条拉链的缓存对象
+        /// </summary>
+        static List<(int, CellDetection)> LinknextList = new List<(int, CellDetection)>();
+
+        /// <summary>
         /// 20240704 TCG
         /// 对cell 中的缺陷进行过滤 得到最终的定级缺陷你，写入Cell中
         /// true为OK false为NG
@@ -76,13 +81,13 @@ namespace WH.DetectSystem
                                             switch (filter.UnionMethod)
                                             {
                                                 case EMUNIONMETHOD.EMUNIONMETHOD_UNION:
-                                                {
-                                                    SRegion regionUnion = detectRegion[0]
-                                                        .regionInfo.Union(detectRegion);
-                                                    detectRegion.Clear();
-                                                    detectRegion.Add(regionUnion);
-                                                    break;
-                                                }
+                                                    {
+                                                        SRegion regionUnion = detectRegion[0]
+                                                            .regionInfo.Union(detectRegion);
+                                                        detectRegion.Clear();
+                                                        detectRegion.Add(regionUnion);
+                                                        break;
+                                                    }
                                             }
                                         }
 
@@ -361,36 +366,68 @@ namespace WH.DetectSystem
 
                     if (!detection.Result) //NG
                     {
-                        var qualityLevel = detection.DefectFilter.QualityLevel;
-                        if (cell.Detection == null)
-                        {
-                            cell.Detection = detection;
-                            cell.Quality = qualityLevel;
-                        }
-                        else
-                        {
-                            if (
-                                cell.Detection.DefectFilter.QualityLevel.Priority
-                                < qualityLevel.Priority
-                            ) //质量等级 还需判断优先级
-                            {
-                                cell.Detection = detection;
-                                cell.Quality = qualityLevel;
-                            }
-                            else if (
-                                cell.Detection.DefectFilter.QualityLevel.Priority
-                                    == qualityLevel.Priority
-                                && cell.Detection?.DefectFilter.Priority
-                                    < detection.DefectFilter.Priority
-                            ) //质量等级相等时 判断优先级
-                            {
-                                cell.Detection = detection;
-                                cell.Quality = qualityLevel;
-                            }
-                        }
+                        SetQualityLevel(cell, detection);
                         cell.IsOK = false;
+
                     }
                     cell.Detections.Add(detection);
+
+                    //20260517 鲍赞宝
+                    //如果出现关联下一条的缺陷类型，就存起来，到下一条到来时把下一条也置为NG,并把缓存中相同ID的项移除掉
+                    if (!detection.Result&& detection.DefectFilter.LinkNextOne)
+                    {
+                        int nextID = int.Parse(cell.ID) + 1;
+                        LinknextList.Add((nextID, detection.Clone()));
+                    }
+                    if (LinknextList.Count > 0)
+                    {
+                        int curID = int.Parse(cell.ID);
+                        for (int i = LinknextList.Count - 1; i >= 0; i--)
+                        {
+                            if (curID == LinknextList[i].Item1)
+                            {
+                                CellDetection detection1 = LinknextList[i].Item2;
+
+                                SetQualityLevel(cell,detection1);
+                                cell.Detections.Add(detection1);
+                                cell.IsOK = false;
+                                LinknextList.RemoveAll(c => c.Item1 == curID);
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        private static void SetQualityLevel(Cell cell, CellDetection detection)
+        {
+            var qualityLevel = detection.DefectFilter.QualityLevel;
+            if (cell.Detection == null)
+            {
+                cell.Detection = detection;
+                cell.Quality = qualityLevel;
+            }
+            else
+            {
+                if (
+                    cell.Detection.DefectFilter.QualityLevel.Priority
+                    < qualityLevel.Priority
+                ) //质量等级 还需判断优先级
+                {
+                    cell.Detection = detection;
+                    cell.Quality = qualityLevel;
+                }
+                else if (
+                    cell.Detection.DefectFilter.QualityLevel.Priority
+                        == qualityLevel.Priority
+                    && cell.Detection?.DefectFilter.Priority
+                        < detection.DefectFilter.Priority
+                ) //质量等级相等时 判断优先级
+                {
+                    cell.Detection = detection;
+                    cell.Quality = qualityLevel;
                 }
             }
         }

@@ -169,6 +169,15 @@ namespace SDFilter.Properties {
         }
         
         /// <summary>
+        ///   查找类似 关联下一条 的本地化字符串。
+        /// </summary>
+        public static string LinkNextOne {
+            get {
+                return ResourceManager.GetString("LinkNextOne", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 下限 的本地化字符串。
         /// </summary>
         public static string LowLimit {

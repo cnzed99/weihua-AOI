@@ -871,10 +871,10 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                //{
-                                //    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                //}
+                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
+                                {
+                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                }
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -1293,11 +1293,11 @@ namespace WH.DetectSystem.Models
                                             StringBuilder textBuilder = new StringBuilder();
                                             textBuilder.Append(cell.Quality.Name);
                                             textBuilder.Append(":");
-                                            if (cell.Detection.Category != Category.区域)
+                                            if (cell.Detection?.Category != Category.区域)
                                             {
-                                                if (cell.Detection.Value.Count > 0)
+                                                if (cell.Detection?.Value.Count > 0)
                                                 {
-                                                    textBuilder.Append($"{dstFilter.Name}-{cell.Detection.Value.Max().ToString("f2")}");
+                                                    textBuilder.Append($"{dstFilter.Name}-{cell.Detection?.Value.Max().ToString("f2")}");
                                                 }
                                                 else
                                                 {

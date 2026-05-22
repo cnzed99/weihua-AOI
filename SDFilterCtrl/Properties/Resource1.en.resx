@@ -198,4 +198,7 @@
   <data name="IsReversal" xml:space="preserve">
     <value>Reversal Result</value>
   </data>
+  <data name="LinkNextOne" xml:space="preserve">
+    <value>LinkNextOne</value>
+  </data>
 </root>

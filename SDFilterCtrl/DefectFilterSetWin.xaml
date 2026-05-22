@@ -316,6 +316,10 @@
                 hc:TitleElement.TitlePlacement="Left"
                 SelectColor="{Binding DefectFilter.ShowColor, Mode=TwoWay}"
                 Style="{StaticResource ComboBoxExtend}" />
+            <CheckBox
+          Height="40" FontSize="16" Margin="6,0"
+          Content="{Binding [LinkNextOne], Source={x:Static local:CLang.s_Instance}}"
+          IsChecked="{Binding DefectFilter.LinkNextOne}" />
         </UniformGrid>
         <StackPanel Grid.Row="1">
             <Button

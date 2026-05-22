@@ -560,6 +560,14 @@ namespace SDFilter
         private CKnownColor showColor = null;
 
         /// <summary>
+        /// 20260517 鲍赞宝
+        /// 当前的结果关联下一条的结果
+        /// </summary>
+        [property: DisplayName("当前的结果关联下一条的结果")]
+        [ObservableProperty]
+        private bool linkNextOne = false;
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// 质量等级
         /// </summary>
@@ -700,6 +708,8 @@ namespace SDFilter
         [property: DisplayName("是否翻转过滤分选器结果")]
         [ObservableProperty]
         private bool isReversal = false;
+
+
 
         /// <summary>
         /// 2024.7.4 李焕彬
