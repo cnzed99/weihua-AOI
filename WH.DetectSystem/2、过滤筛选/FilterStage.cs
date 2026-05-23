@@ -21,7 +21,7 @@ namespace WH.DetectSystem
         /// <summary>
         /// 特定缺陷关联下一条拉链的缓存对象
         /// </summary>
-        static List<(int, CellDetection)> LinknextList = new List<(int, CellDetection)>();
+       // static List<(int, CellDetection)> LinknextList = new List<(int, CellDetection)>();
 
         /// <summary>
         /// 20240704 TCG
@@ -372,30 +372,30 @@ namespace WH.DetectSystem
                     }
                     cell.Detections.Add(detection);
 
-                    //20260517 鲍赞宝
-                    //如果出现关联下一条的缺陷类型，就存起来，到下一条到来时把下一条也置为NG,并把缓存中相同ID的项移除掉
-                    if (!detection.Result&& detection.DefectFilter.LinkNextOne)
-                    {
-                        int nextID = int.Parse(cell.ID) + 1;
-                        LinknextList.Add((nextID, detection.Clone()));
-                    }
-                    if (LinknextList.Count > 0)
-                    {
-                        int curID = int.Parse(cell.ID);
-                        for (int i = LinknextList.Count - 1; i >= 0; i--)
-                        {
-                            if (curID == LinknextList[i].Item1)
-                            {
-                                CellDetection detection1 = LinknextList[i].Item2;
+                    ////20260517 鲍赞宝
+                    ////如果出现关联下一条的缺陷类型，就存起来，到下一条到来时把下一条也置为NG,并把缓存中相同ID的项移除掉
+                    //if (!detection.Result&& detection.DefectFilter.LinkNextOne)
+                    //{
+                    //    int nextID = int.Parse(cell.ID) + 1;
+                    //    LinknextList.Add((nextID, detection.Clone()));
+                    //}
+                    //if (LinknextList.Count > 0)
+                    //{
+                    //    int curID = int.Parse(cell.ID);
+                    //    for (int i = LinknextList.Count - 1; i >= 0; i--)
+                    //    {
+                    //        if (curID == LinknextList[i].Item1)
+                    //        {
+                    //            CellDetection detection1 = LinknextList[i].Item2;
 
-                                SetQualityLevel(cell,detection1);
-                                cell.Detections.Add(detection1);
-                                cell.IsOK = false;
-                                LinknextList.RemoveAll(c => c.Item1 == curID);
-                            }
-                        }
+                    //            SetQualityLevel(cell,detection1);
+                    //            cell.Detections.Add(detection1);
+                    //            cell.IsOK = false;
+                    //            LinknextList.RemoveAll(c => c.Item1 == curID);
+                    //        }
+                    //    }
 
-                    }
+                    //}
 
                 }
             }
