@@ -9,6 +9,8 @@
     xmlns:local="clr-namespace:WH.LightControl"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:keyboard="clr-namespace:KeyBoard.WPF.Behavior;assembly=KeyBoard.WPF"
     Title="光源控制"
     Width="800"
     Height="550"
@@ -44,13 +46,16 @@
                     hc:TitleElement.TitlePlacement="Left"
                     Text="{Binding ElementName=slider, Path=Value}" >
                     <hc:Interaction.Triggers>
-                    <hc:EventTrigger EventName="LostFocus">
+                        <hc:EventTrigger EventName="PropertyChanged">
                         <hc:InvokeCommandAction 
                                 Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
                                                   Path=DataContext.SetChannelValueCommand}" 
                                 CommandParameter="{Binding}" />
                     </hc:EventTrigger>
                     </hc:Interaction.Triggers>
+                    <i:Interaction.Behaviors>
+                        <keyboard:NumericKeyboardBehavior />
+                    </i:Interaction.Behaviors>
                 </TextBox>
                 <Slider
                     Name="slider"
