@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34714.143
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11819.183 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "控件Controls", "控件Controls", "{137396ED-F088-48E2-8054-A1AF7691511B}"
 EndProject
@@ -761,6 +761,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D8D7952-002A-4BD2-A551-D1EE20828B99}
-		RESX_NeutralResourcesLanguage = zh-CN
 	EndGlobalSection
 EndGlobal
