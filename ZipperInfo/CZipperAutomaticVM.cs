@@ -173,6 +173,7 @@ namespace ZipperInfo
                 CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 CZipperCommunicate.SendHelianEndPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
+                CZipperAutomaticAlgorithm.startTriggerCount = 0;
                 CZipperAutomaticAlgorithm.onWichStage2 = 1;
 
                 //将光源值先减小到较状态
@@ -201,8 +202,8 @@ namespace ZipperInfo
                 }
 
                 Thread.Sleep(100);
-
-                CZipperCommunicate.SendCamFPS(300); //起始300ms触发一次
+                
+                CZipperCommunicate.SendCamFPS(1000); //起始300ms触发一次
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
                 var window = win as HandyControl.Controls.Window;

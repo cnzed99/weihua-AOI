@@ -162,36 +162,6 @@ namespace WH.DetectSystem._5_存图操作
                     // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
                     OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
                 }
-                // }
-                //if (cell.ProjName != "正面" && cell.ProjName != "反面")
-                //{
-                //    if (cell.FourCutMatImg != null)
-                //    {
-                //        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
-                //        {
-                //            int index = fourCutPath.IndexOf('.');
-                //            string fourpath = fourCutPath.Insert(index, $"_{i}");
-                //            OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i]);
-                //        }
-                //    }
-                //    if (cell.UpMassMatImg != null)
-                //    {
-                //        for (int i = 0; i < cell.UpMassMatImg.Count; i++)
-                //        {
-                //            int index = upMassPath.IndexOf('.');
-                //            string uppath = upMassPath.Insert(index, $"_{i}");
-                //            OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
-                //        }
-                //    }
-                //    if (cell.DownMassMatImg != null)
-                //    {
-                //        OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
-                //    }
-                //    if (cell.ZipperPullPartImg != null)
-                //    {
-                //        OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
-                //    }
-                //}
                 if (saveImageConfig.SaveImageEnable) //开启存原图
                 {
                     string fileName = classPath;
@@ -780,34 +750,48 @@ namespace WH.DetectSystem._5_存图操作
         /// <param name="format">图片格式</param>
         private static void WriteImage(Cell cell, string filepath, string format)
         {
-            if (cell != null && cell.ZipperImages != null)
+            if (cell != null)
             {
-                string[] filenames = filepath.Split('.');
-                if (filenames.Length >= 2)
+                if (cell.ZipperImages.Count > 1)
                 {
-                    foreach ((CImage, int, DateTime, TimeSpan) img in cell.ZipperImages)
+                    string[] filenames = filepath.Split('.');
+                    if (filenames.Length >= 2)
                     {
-                        string[] namesplits = filenames[0].Split('_');
-                        if (namesplits.Length >= 2)
+                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.ZipperImages)
                         {
-                            namesplits[1] = img.Item2.ToString();
-                            filenames[0] = string.Join("_", namesplits);
-                            string createtime = string.Format("{0:HHmmssfff}", img.Item3);
-                            string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
-
-                            using (FileStream stream = new FileStream(filename, FileMode.Create))
+                            string[] namesplits = filenames[0].Split('_');
+                            if (namesplits.Length >= 2)
                             {
-                                BitmapEncoder encoder = GetEncoder(format);
-                                encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
-                                encoder.Save(stream);
+                                namesplits[1] = img.Item2.ToString();
+                                filenames[0] = string.Join("_", namesplits);
+                                string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                                string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                                {
+                                    BitmapEncoder encoder = GetEncoder(format);
+                                    encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                    encoder.Save(stream);
+                                }
                             }
                         }
+
                     }
-
                 }
-
-
+                else
+                {
+                    if (cell.Image!=null)
+                    {
+                        using (FileStream stream = new FileStream(filepath, FileMode.Create))
+                        {
+                            BitmapEncoder encoder = GetEncoder(format);
+                            encoder.Frames.Add(BitmapFrame.Create(cell.Image.ToBitmapSource()));
+                            encoder.Save(stream);
+                        }
+                    }
+                }
             }
+            
         }
 
         /// <summary>

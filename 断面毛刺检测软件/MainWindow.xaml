@@ -322,7 +322,7 @@
                     Margin="5"
                     Background="{DynamicResource ThirdlyRegionBrush}"
                     CornerRadius="10">
-                    <pro:ProduceData DataContext="{Binding CMainMModel.CProcessGroups[0].CDefectsOneFlowDataVM}" FontSize="15" /> 
+                    <pro:ProduceData DataContext="{Binding CMainMModel.CProcessGroups[0].CDefectsOneFlowDataVM}" FontSize="15" />
                 </Border>
 
                 <!--  系统时间  -->
@@ -469,7 +469,7 @@
                                 Text="{Binding [AllStart], Source={x:Static local:CLang.Instance}}" />
                         </Border>
                     </ToggleButton>
-           
+
                 </StackPanel>
             </Grid>
         </DockPanel>
@@ -538,128 +538,103 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <!--  图像视窗  -->
-                    <ListBox
-                    Padding="0" Grid.Row="0"
-                    hc:BorderElement.CornerRadius="0"
-                    ItemsSource="{Binding CMainVMs}"
-                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                    SelectedItem="{Binding SelectedProcess}">
-                        <ListBox.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
-                                <Setter Property="Padding" Value="2" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="DarkTurquoise" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemTemplate>
+                    <!-- 制程组分页显示 -->
+                    <hc:TabControl Grid.Row="0"   SelectedIndex="0" FontSize="16"
+                         Style="{DynamicResource TabControlBaseStyle}" ItemsSource="{Binding CMainMModel.CProcessGroups}">
+                        <hc:TabControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=DataContext}">
-                                    <Grid.ContextMenu>
-                                        <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-                                            <MenuItem
-                                            Click="ProcessEdit_Click"
-                                            Header="{Binding [Edit], Source={x:Static local:CLang.Instance}}"
-                                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-                                            Tag="{Binding SelectedProcess}" />
-                                            <MenuItem
-                                            Command="{Binding RemoveProcessCommand}"
-                                            Header="{Binding [Del], Source={x:Static local:CLang.Instance}}"
-                                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
-                                        </ContextMenu>
-                                    </Grid.ContextMenu>
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions >
-                                            <ColumnDefinition Width="4*"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0"
-                                             Background="{DynamicResource RegionBrush}"
-                                             BorderBrush="{Binding ModelBrush}"
-                                             BorderThickness="1">
-                                            <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}"
-                                                          ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
-                                        </Border>
-
-                                        <Border Grid.Column="1"
-                                            Background="{DynamicResource RegionBrush}"
-                                            BorderBrush="{Binding ModelBrush}"
-                                            BorderThickness="1">
-                                            <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
-                                                           ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
-                                        </Border>
-                                        <TextBlock Text="拉头" FontSize="18" Grid.Column="1" 
-                                                    Margin="10,5"
-                                                   HorizontalAlignment="Left" 
-                                                   VerticalAlignment="Top"/>
-                                    </Grid>
-                                    <TextBlock
-                                    Margin="10,5"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Bottom"
-                                    Foreground="Red"
-                                    Style="{StaticResource TextBlockDefault}"
-                                    Text="{Binding FocusCtrlVM.InfoAlarm}" />
-                                    <TextBlock Text="{Binding Name}" FontSize="18"
-                                    Margin="10,10"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Style="{StaticResource TextBlockDefault}">
-                                        <!--<TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{1}-{0}">
-                                                <Binding Path="Name" />
-                                                <Binding Path="ProcessGroup.Name" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>-->
-                                    </TextBlock>
-
-
-                                    <!--<ToggleButton
-                                    Margin="0,7,170,7"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    IsChecked="{Binding IsStart}"
-                                    IsEnabled="{Binding Source={StaticResource CurUser}, Path=Data.IsOperator}"
-                                    Style="{DynamicResource ToggleButtonCustom}">
-                                        <hc:StatusSwitchElement.CheckedElement>
-                                            <Border
-                                            Padding="20,3"
-                                            Background="{DynamicResource DangerBrush}"
-                                            CornerRadius="3">
-                                                <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding [Stop], Source={x:Static local:CLang.Instance}}" />
-                                            </Border>
-                                        </hc:StatusSwitchElement.CheckedElement>
-                                        <Border
-                                        Padding="20,3"
-                                        Background="{DynamicResource SuccessBrush}"
-                                        CornerRadius="3">
-                                            <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{Binding [Start], Source={x:Static local:CLang.Instance}}" />
-                                        </Border>
-                                    </ToggleButton>-->
-                                </Grid>
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <!--  下边设置栏  -->
+                        </hc:TabControl.ItemTemplate>
 
+                        <hc:TabControl.ContentTemplate>
+                            <DataTemplate>
+                                <ListBox
+                                  Padding="0"
+                                  hc:BorderElement.CornerRadius="0"
+                                  ItemsSource="{Binding CMainModels}" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  SelectedItem="{Binding DataContext.SelectedProcess, RelativeSource={RelativeSource AncestorType=Grid}}">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="2" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                            <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="DarkTurquoise" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}">
+                                                <Grid.ContextMenu>
+                                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
+                                                        <MenuItem
+                                      Click="ProcessEdit_Click"
+                                      Header="{Binding [Edit], Source={x:Static local:CLang.Instance}}"
+                                      IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                                      Tag="{Binding SelectedProcess}" />
+                                                        <MenuItem
+                                      Command="{Binding RemoveProcessCommand}"
+                                      Header="{Binding [Del], Source={x:Static local:CLang.Instance}}"
+                                      IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
+                                                    </ContextMenu>
+                                                </Grid.ContextMenu>
 
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions >
+                                                        <ColumnDefinition Width="4*"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0"
+                                       Background="{DynamicResource RegionBrush}"
+                                       BorderBrush="{Binding ModelBrush}"
+                                       BorderThickness="1">
+                                                        <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}"
+                                                    ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
+                                                    </Border>
+
+                                                    <Border Grid.Column="1"
+                                      Background="{DynamicResource RegionBrush}"
+                                      BorderBrush="{Binding ModelBrush}"
+                                      BorderThickness="1">
+                                                        <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
+                                                     ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
+                                                    </Border>
+                                                    <TextBlock Text="拉头" FontSize="18" Grid.Column="1" 
+                                              Margin="10,5"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"/>
+                                                </Grid>
+                                                <TextBlock
+                                                  Margin="10,5"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Bottom"
+                                                  Foreground="Red"
+                                                  Style="{StaticResource TextBlockDefault}"
+                                                  Text="{Binding FocusCtrlVM.InfoAlarm}" />
+                                                <TextBlock Text="{Binding Name}" FontSize="18"
+                                                  Margin="10,10"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Top"
+                                                  Style="{StaticResource TextBlockDefault}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DataTemplate>
+                        </hc:TabControl.ContentTemplate>
+                    </hc:TabControl>
+
+                        <!--  下边设置栏  -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="4*"/>
@@ -706,7 +681,7 @@
                                         <al:MaociAlgorParamCtrl DataContext="{Binding SelectedProcess.MaociAlgorVM}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                       
+
                                 <!--报警设置-->
                                 <hc:TabItem Padding="0" Header="{Binding [AlarmConfig], Source={x:Static local:CLang.Instance}}"
                                              Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}">
@@ -732,7 +707,7 @@
                                         <ContentControl Content="{Binding SelectedProcess.FocusCtrlVM.TestControl}" />
                                     </hc:SimplePanel>
                                 </hc:TabItem>
-                            
+
                             </hc:TabControl>
                         </Border>
                         <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">

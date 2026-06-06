@@ -748,9 +748,9 @@ namespace ZipperTestAlgorihm
                                     dets.Add(dirtyData);
                                     continue;
                                 }
-                                if (labelname.Contains("毛丝") && (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
+                                if (labelname.Contains("毛丝") && (cell.PhotoTatolCount>2)&& (detrets[i].Item2 == 3 || detrets[i].Item2 == 4))
                                     continue;
-                                if (labelname.Contains("毛丝") && cell.DownStopMassType == "无")
+                                if (labelname.Contains("毛丝") && (cell.PhotoTatolCount > 2) && cell.DownStopMassType == "无")
                                     continue;
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
                                 dets.Add(restoreData);
@@ -1387,17 +1387,12 @@ CurrentDevice, downmass_num, param.DownScore, Nms, 256);
     CurrentDevice, upmassmeas_num, param.UpLianciScore, Nms, 192);
                     }
 
-                    //Task task7 = Task.Run(() =>
-                    //{
                     WH_pull_Serach_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Search_Model_Path, engineType,
 CurrentDevice, pull_search_num, param.AutoScore, Nms, 480);
-                    // });
 
-                    // Task task8 = Task.Run(() =>
-                    // {
                     WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
 CurrentDevice, metapull_num, param.MetaPullScore, Nms, 640);
-                    //});
+
 
                     WH_Paint_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Paint_Model_Path, engineType,
 CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
@@ -1405,18 +1400,13 @@ CurrentDevice, paintpull_num, param.PaintPullScore, Nms, 640);
                     WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
 CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
 
-                    //Task task9 = Task.Run(() =>
-                    //{
                     WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
-CurrentDevice, big_num, param.BigScore, Nms, 640);
-                    //});
-                    // Task task10 = Task.Run(() =>
-                    // {
+CurrentDevice, big_num, param.BigScore, Nms, 1024);
+
+
                     WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
 CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
-                    // });
 
-                    // await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7, task8, task9);
 
                 }
 
@@ -1546,9 +1536,6 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             float degrees = (float)(radians * (180.0 / Math.PI));
             return degrees;
         }
-
-
-
 
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
