@@ -302,139 +302,139 @@ namespace WH.DetectSystem.Models
                     SaveOtherOldImage(cell);
                 }
                 MergeCells.Clear();
-                UpdatDetSet();
-                //UpdatWhiteZipperParam(); //白色拉链加严处理 20260424 鲍赞宝 弃用
-                if (this.Name == "正面")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                            UpdateLogo("左相机");
-                            Updatepull("左相机");
-                            UpdatepullSegArea("左相机");
-                        }
+                //UpdatDetSet();
+                ////UpdatWhiteZipperParam(); //白色拉链加严处理 20260424 鲍赞宝 弃用
+                //if (this.Name == "正面")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //            UpdateLogo("左相机");
+                //            Updatepull("左相机");
+                //            UpdatepullSegArea("左相机");
+                //        }
 
 
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                            UpdateLogo("右相机");
-                            Updatepull("右相机");
-                            UpdatepullSegArea("右相机");
-                        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //            UpdateLogo("右相机");
+                //            Updatepull("右相机");
+                //            UpdatepullSegArea("右相机");
+                //        }
 
-                    }
-                }
-                if (this.Name == "反面")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                            UpdateLogo("右相机");
-                            Updatepull("右相机");
-                            UpdatepullSegArea("右相机");
-                        }
+                //    }
+                //}
+                //if (this.Name == "反面")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //            UpdateLogo("右相机");
+                //            Updatepull("右相机");
+                //            UpdatepullSegArea("右相机");
+                //        }
 
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                            UpdateLogo("左相机");
-                            Updatepull("左相机");
-                            UpdatepullSegArea("左相机");
-                        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //            UpdateLogo("左相机");
+                //            Updatepull("左相机");
+                //            UpdatepullSegArea("左相机");
+                //        }
 
-                    }
-                }
-                if (this.Name == "正面内")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                }
-                if (this.Name == "正面外")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                }
-                if (this.Name == "反面内")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                }
-                if (this.Name == "反面外")
-                {
-                    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                    else
-                    {
-                        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
-                        if (camDic != null)
-                        {
-                            UpdateCam(camDic.SerialNumber);
-                        }
-                    }
-                }
+                //    }
+                //}
+                //if (this.Name == "正面内")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //}
+                //if (this.Name == "正面外")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //}
+                //if (this.Name == "反面内")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //}
+                //if (this.Name == "反面外")
+                //{
+                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
+                //        if (camDic != null)
+                //        {
+                //            UpdateCam(camDic.SerialNumber);
+                //        }
+                //    }
+                //}
             }
             if (!finsh)
             {
@@ -781,15 +781,15 @@ namespace WH.DetectSystem.Models
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
                                 int photoTotalCount = 0;
-                                if (Name == "顶面")
+                                if (Name != "正面"&& Name != "反面")
                                 {
-                                    photoTotalCount = 0;
+                                    photoTotalCount = 1;
                                 }
                                 else
                                 {
                                     photoTotalCount = CZipperCommunicate.GetPhotoCount();
                                 }
-                                cell.PhotoTatolCount = photoTotalCount + 1;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                                cell.PhotoTatolCount = photoTotalCount;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
                             else
                             {
@@ -860,21 +860,15 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        //StringBuilder strbuilder = new StringBuilder("[");
-                        //strbuilder.Append("算法");
-                        //strbuilder.Append("]     ");
-                        //strbuilder.Append(cell.ID);
-                        //strbuilder.Append("   配方开始执行。");
-                        //await m_InfoChannel.Writer.WriteAsync(strbuilder.ToString());
                         cell.Stopwatch.Restart();
                         try
                         {
                             if (!isAutomaticTest)
                             {
-                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                {
-                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                }
+                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
+                                //{
+                                //    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                //}
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -891,22 +885,7 @@ namespace WH.DetectSystem.Models
 
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
                         cell.Stopwatch.Restart();
-                        //strbuilder = new StringBuilder("[");
-                        //strbuilder.Append("算法");
-                        //strbuilder.Append("]     ");
-                        //strbuilder.Append(cell.ID);
-                        //strbuilder.Append("   配方执行完成,耗时:");
-                        //strbuilder.Append(cell.RecipeTime.TotalMilliseconds.ToString("F2"));
                         AlgorithmTime = cell.RecipeTime.TotalMilliseconds;
-                        //await m_InfoChannel.Writer.WriteAsync(
-                        //    new PrintMsg(strbuilder.ToString(), LOG.LOG_INFO)
-                        //);
-
-                        //if (!m_FilterChannel.Writer.TryWrite(cell))
-                        //{
-                        //    cell.Dispose();
-
-                        //}
                         try
                         {
                             if (!isAutomaticTest) //运行
@@ -1775,7 +1754,7 @@ namespace WH.DetectSystem.Models
                 }
 
             }
-            cells.RemoveAll(c => c.PhotoIndex == 100); //缺掉拉头的图片
+            cells.RemoveAll(c => c.PhotoIndex < 100); //缺掉拉头的图片
             if (cells[0].Image == null) return null;
             if (cells.Count == 1)
             {

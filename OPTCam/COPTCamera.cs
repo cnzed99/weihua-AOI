@@ -346,52 +346,6 @@ namespace OPTCam
                        ? PixelFormats.Gray8
                        : PixelFormats.Rgb24;
 
-
-            //当内存申请失败，返回false
-            //try
-            //{
-            //    if (m_pDstData == IntPtr.Zero || (int)(paramSetting.ImageWidth * paramSetting.ImageHeight * 3) > m_nDataLenth)
-            //    {
-            //        if (m_pDstData != IntPtr.Zero)
-            //        {
-            //            Marshal.FreeHGlobal(m_pDstData);
-            //        }
-            //        m_pDstData = Marshal.AllocHGlobal((int)(paramSetting.ImageWidth * paramSetting.ImageHeight * 3));
-            //        m_nDataLenth = (int)(paramSetting.ImageWidth * paramSetting.ImageHeight * 3);
-            //    }
-            //}
-            //catch
-            //{
-            //   //return false;
-            //}
-
-            //m_nDataLenth = payload;
-
-            //ImageQueueChannel.Writer.TryWrite(m_nDataLenth);
-            //switch (imgPixelType)
-            //{
-
-            //    case SciCam.SciCamPixelType.Mono8:
-            //    case SciCam.SciCamPixelType.Mono8s:
-            //        //case IMVDefine.IMV_EPixelType.gvspPixelMono10:
-            //        paramSetting.CameraType = PixelFormats.Gray8;
-            //        break;
-            //    case SciCam.SciCamPixelType.BayerGR8:
-            //    case SciCam.SciCamPixelType.BayerRG8:
-            //    case SciCam.SciCamPixelType.BayerGB8:
-            //    case SciCam.SciCamPixelType.BayerBG8:
-            //    case SciCam.SciCamPixelType.RGB8:
-            //    case SciCam.SciCamPixelType.BGR8:
-            //    case SciCam.SciCamPixelType.RGBa8:
-            //    case SciCam.SciCamPixelType.BGRa8:
-            //        paramSetting.CameraType = PixelFormats.Rgb24;
-            //        break;
-            //    default:
-            //        paramSetting.CameraType = PixelFormats.Rgb24;
-            //        break;
-            //}
-
-
             if (!imgIsComplete || payloadMode != SciCam.SciCamPayloadMode.SciCam_PayloadMode_2D)
             {
                 return -1;
@@ -514,6 +468,7 @@ namespace OPTCam
                             if (m_pDstData != IntPtr.Zero)
                             {
                                 ImageQueueChannel.Writer.TryWrite(m_pDstData);
+                                _semaphoreSlim.Release(1);
                             }
                             //string fileName = string.Format("Device_{0}Image_W{1}_H{2}_fID{3}.bmp", 0, paramSetting.ImageWidth, paramSetting.ImageHeight, framID);
                             //nReVal = SciCam.PayloadSaveImage(fileName, SciCam.SciCamPixelType.RGB8, destImg, (long)paramSetting.ImageWidth, (long)paramSetting.ImageHeight);

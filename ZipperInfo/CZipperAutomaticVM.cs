@@ -220,8 +220,40 @@ namespace ZipperInfo
             var window = win as HandyControl.Controls.Window;
             window?.Close();
         }
+        [RelayCommand]
+        void SendPoints2()
+        {
+            CZipperCommunicate.SendZipperLenght(AutoData[0].ZipperLenght);
+            CGetZipperTriggerPoint.GetTriggerPoints(AutoData[0], out List<float> points, out List<float> handandtalipoints,
+                out int cutoffIndex, out int zipperCacheCount, out int triggerType);
 
+            if (points != null && points.Count > 0)
+            {
+                //写入拍照的总图片数量
+                CZipperCommunicate.SendPhotoCount(points.Count);
+                //计算拉链触发点位 ID改变位置
+                CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
 
+                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
+
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Station1_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
+                SaveParameter(AutoData);
+            }
+        }
 
         public static string ParameterPath = "..\\SystemConfig\\ZipperAutoData.Json";
 

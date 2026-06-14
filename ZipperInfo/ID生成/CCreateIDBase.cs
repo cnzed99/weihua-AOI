@@ -8,17 +8,13 @@ using WH.Entity.LogRecord;
 
 namespace ZipperInfo
 {
+    /// <summary>
+    /// 工位ID生成基类
+    /// </summary>
     public class CCreateIDBase
     {
 
         public static CLogRec ZipperIDsORTLogger { get; set; } = CLogRec.Create("IDSort", "D:/Data");
-       // public static readonly BoundedChannelOptions s_WaitIDchannelOptions =
-   // new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
-        /// <summary>
-        /// 等待ID队列
-        /// </summary>
-      //  public readonly Channel<ZipperID> m_WaitIDChannel = Channel.CreateBounded<ZipperID>(s_WaitIDchannelOptions);
-
         Thread WaitIDThread = null;
 
         public bool Connend = false;
@@ -38,6 +34,10 @@ namespace ZipperInfo
         public float TempPullPos = -1.0f;
         public int pullIndex = 0;
         public List<int> Idlist = new List<int>();
+        /// <summary>
+        /// 切断机工位1ID生成
+        /// ID监控线程，监控拉头位置，生成ID并发送出去
+        /// </summary>
         public virtual void MonitoringID()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;

@@ -199,7 +199,8 @@ namespace ZipperInfo
                 triggerType = 3;
             }
             outpoints = ProcessList(points, AutoData.ZipperLenght);
-            cutoffIndex = points.Count - pullchange;
+            //cutoffIndex = points.Count - pullchange;
+            cutoffIndex =  pullchange;
             if (cutoffIndex == points.Count || points.Count == 1)
             {
                 cutoffIndex = 0;

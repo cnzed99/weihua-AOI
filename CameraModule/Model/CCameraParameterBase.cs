@@ -199,7 +199,7 @@ namespace CameraModule
         [ObservableProperty]
         private int imageHeight;
 
-        private uint exposureTime = 10;
+        private uint exposureTime = 110;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -239,7 +239,7 @@ namespace CameraModule
             }
         }
 
-        private float gain = 10.0f;
+        private float gain = 1.0f;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -279,7 +279,7 @@ namespace CameraModule
         /// 2024.7.23 李焕彬
         /// 触发模式
         /// </summary>
-        private EMTRIGGERMODE triggerMode = EMTRIGGERMODE.EMTRIGGERSOFTWARE;
+        private EMTRIGGERMODE triggerMode = EMTRIGGERMODE.EMTRIGGERHARDWARE;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -356,7 +356,7 @@ namespace CameraModule
             }
         }
 
-        private float gamma = 1f;
+        private float gamma = 1.0f;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -398,7 +398,7 @@ namespace CameraModule
         [property: DisplayName("15.像素当量(mm)")]
         [property: Description("15.像素当量(mm)")]
         [ObservableProperty]
-        private double mmPerPixel = 0.00225;
+        private double mmPerPixel = 0.056;
 
         /// <summary>
         /// 2024.7.23 李焕彬
@@ -448,15 +448,15 @@ namespace CameraModule
             }
         }
 
-        /// <summary>
-        /// 2025.05.26 鲍赞宝
-        /// 像素当量(mm)
-        /// </summary>
-        [property: Category("通用参数")]
-        [property: DisplayName("18.拼接图片数量")]
-        [property: Description("18.拼接图片数量")]
-        [ObservableProperty]
-        private int camCount = 3;
+        ///// <summary>
+        ///// 2025.05.26 鲍赞宝
+        ///// 像素当量(mm)
+        ///// </summary>
+        //[property: Category("通用参数")]
+        //[property: DisplayName("18.拼接图片数量")]
+        //[property: Description("18.拼接图片数量")]
+        //[ObservableProperty]
+        //private int camCount = 3;
 
         /// <summary>
         /// 所属制程

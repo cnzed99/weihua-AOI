@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace ZipperInfo
 {
+    /// <summary>
+    /// 切断机2号工位ID生成类
+    /// </summary>
     public class CCreateIDStation2: CCreateIDBase
     {
+        /// <summary>
+        /// 切断机工位2ID生成
+        /// ID监控线程，监控拉头位置，生成ID并发送出去
+        /// </summary>
         public override void MonitoringID()
         {
             Thread.CurrentThread.Priority = ThreadPriority.Highest;

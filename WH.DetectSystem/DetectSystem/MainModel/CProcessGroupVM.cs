@@ -119,16 +119,13 @@ namespace WH.DetectSystem.Models
             //20260506 鲍赞宝
             if (Name == "制程组1")
             {
-                IDCreate = new CCreateIDBase();
-            }
-            else if (Name == "制程组2")
-            {
-                IDCreate = new CCreateIDStation2();
+                IDCreate = new CCreateIDMetalStation1();
             }
             else
             {
                 IDCreate = new CCreateIDStation3();
             }
+
             IDCreate.IntThread();
             IDCreate.IDSendEvent += IDSend;
         }
