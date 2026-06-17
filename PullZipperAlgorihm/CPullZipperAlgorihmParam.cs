@@ -126,7 +126,7 @@ namespace PullZipperAlgorihm
             #endregion
             #region  LOGO 拉片外形
 
-            for (int i = 0; i < pullSharp_names.Length; i++)
+            for (int i = 0; i < pullSharp_names?.Length; i++)
             {
                 CDefectRecipe defectRecipe2 = new CDefectRecipe(pullSharp_names[i], Category.值);
                 pullRecipes.Add(defectRecipe2);
@@ -140,7 +140,7 @@ namespace PullZipperAlgorihm
             CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
 
             List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
-            for (int i = 0; i < pull_Logo_names.Length; i++)
+            for (int i = 0; i < pull_Logo_names?.Length; i++)
             {
                 CDefectRecipe defectRecipe = new CDefectRecipe(pull_Logo_names[i], Category.区域);
                 logoRecipes.Add(defectRecipe);
@@ -186,7 +186,14 @@ namespace PullZipperAlgorihm
             }
 
             string logoModelPath = modelDirpath + "PullLogoModel\\";
-
+            if (user == "拉片")
+            {
+                logoModelPath = logoModelPath + "Front\\";
+            }
+            else
+            {
+                logoModelPath = logoModelPath + "Back\\";
+            }
             var logotrs = GetNames(logoModelPath);
             if (logotrs.Item1 != "")
             {
@@ -368,9 +375,9 @@ namespace PullZipperAlgorihm
                 int rew = 0, reh = 0;
                 if (User == "拉头")
                 {
-                    px = img.Width / 2;
-                    py = img.Height / 2;
-                    rew = 50;
+                    px = 190;
+                    py = 280;
+                    rew = 100;
                     reh = 50;
                 }
                 else
@@ -400,6 +407,19 @@ namespace PullZipperAlgorihm
                 dets.Add(disDataS);
                 hsvImage.Dispose();
 
+                #endregion
+                #region Logo识别
+                DetResult logoResult = ImageInferDet(WH_Logo_pull_det, img);
+                if (logoResult != null)
+                {
+                    for (int i = 0; i < logoResult.count; i++)
+                    {
+                        int pulllabelindex = int.Parse(logoResult[i].lable);
+                        string pullabelname = pull_Logo_names[pulllabelindex];
+                        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, logoResult.datas[i]);
+                        dets.Add(restoreData);
+                    }
+                }
                 #endregion
 
                 ParseResult(dets, cell);
@@ -495,22 +515,26 @@ namespace PullZipperAlgorihm
                         engineType = EngineType.OpenVINO;
                         CurrentDevice = "CPU";
                     }
-
-                    int pull_num = pull_Meta_names.Length;
-                    int pullsharp_num = pullSharp_names.Length;
-                    int logopull_num = pull_Logo_names.Length;
                     float Nms = param.Nms;
+                    if (pull_Meta_names != null)
+                    {
+                        int pull_num = pull_Meta_names.Length;
+                        WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
+    CurrentDevice, pull_num, param.MetaPullScore, Nms, 640);
+                    }
 
-                    WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
-CurrentDevice, pull_num, param.MetaPullScore, Nms, 640);
-
-                    WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
+                    if (pullSharp_names != null)
+                    {
+                        int pullsharp_num = pullSharp_names.Length;
+                        WH_PullShape_Seg = VisionModelExtensions.GetVisionModel(ModelType.VisionModelSeg, pullSharp_Model_Path, engineType,
 CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
-
-                    WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
-CurrentDevice, logopull_num, param.LogoPullScore, 0.8f, 640);
-
-
+                    }
+                    if (pull_Logo_names != null)
+                    {
+                        int logopull_num = pull_Logo_names.Length;
+                        WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
+    CurrentDevice, logopull_num, param.LogoPullScore, 0.5f, 512);
+                    }
                 }
 
             }

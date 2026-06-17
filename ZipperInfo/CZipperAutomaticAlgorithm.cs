@@ -434,7 +434,7 @@ namespace ZipperInfo
                     resultDet = WH_search_det.Predict(img) as DetResult;
                     if (resultDet.datas.Count > 0)
                     {
-                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},开始识别拉头亮度");
+                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},开始识别链牙亮度");
                         for (int i = 0; i < resultDet.datas.Count; i++)
                         {
                             int nameindex = int.Parse(resultDet.datas[i].lable);
@@ -484,18 +484,28 @@ namespace ZipperInfo
                                     }
                                     if (addOrSubCount > 4)
                                     {
-                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},超过4次没变化,进入阶段4");
+                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},超过4次没变化,完成调整");
                                         addOrSubCount = 0;
                                         //进入下阶段
                                         img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Pull-{LightChange.TempLightValue_Change1}.png");
                                         LightChange.MaxTimeOutCount = 0;
-                                        CZipperCommunicate.SendCamFPS(40);
                                         timeOutCount = 0;
                                         img.Dispose();
-                                        return;
+                                        if (labelstr.Contains("金属"))
+                                        {
+                                            ZipperInfo.ZipperUpMassType = STOPMASS.金属;
+                                            ZipperInfo.ZipperDownMassType = STOPMASS.金属;
+                                        }
+
+                                        onWichStage = 0;
+                                        ProgressBarViewModel.ProgressBarValue = 100;
+                                        CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                        LightChange.LineValueReset();
+                                        Thread.Sleep(300);
+                                        TestFinsh = true;
+                                        ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                     }
                                     tempVState = hv_VState.I;
-
                                     int val = hv_VStride.I;
                                     if (val == 0)
                                     {
@@ -505,12 +515,24 @@ namespace ZipperInfo
                                     // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     if (LightChange.MaxTimeOutCount >= 5)
                                     {
-                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},maxtimeout超过5次，进入阶段4");
+                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},maxtimeout超过5次，完成调整");
                                         //maxtimeout = 0;
                                         //进入下阶段
-                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Pull-{LightChange.TempLightValue_Change1}.png");
+                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Tooth-{LightChange.TempLightValue_Change1}.png");
                                         LightChange.MaxTimeOutCount = 0;
                                         timeOutCount = 0;
+                                        onWichStage = 0;
+                                        if (labelstr.Contains("金属"))
+                                        {
+                                            ZipperInfo.ZipperUpMassType = STOPMASS.金属;
+                                            ZipperInfo.ZipperDownMassType = STOPMASS.金属;
+                                        }
+                                        ProgressBarViewModel.ProgressBarValue = 100;
+                                        CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                        LightChange.LineValueReset();
+                                        Thread.Sleep(300);
+                                        TestFinsh = true;
+                                        ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                     }
 
 
@@ -524,17 +546,26 @@ namespace ZipperInfo
                                     }
                                     if (addOrSubCount > 4)
                                     {
-                                        AutoLogger.Info($"{cell.CamName}:onWichStage=3,超过4次没变化,进入阶段4");
+                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},超过4次没变化,完成调整");
                                         addOrSubCount = 0;
                                         //maxtimeout = 0;
                                         //进入下阶段
-                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Pull-{LightChange.TempLightValue_Change1}.png");
-                                        //LightChange.MaxTimeOutCount = 0;
+                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Tooth-{LightChange.TempLightValue_Change1}.png");
                                         LightChange.MinTimeOutCount = 0;
                                         timeOutCount = 0;
-                                        // CLinghtManagement.SaveLightParams();
                                         img.Dispose();
-                                        return;
+                                        onWichStage = 0;
+                                        if (labelstr.Contains("金属"))
+                                        {
+                                            ZipperInfo.ZipperUpMassType = STOPMASS.金属;
+                                            ZipperInfo.ZipperDownMassType = STOPMASS.金属;
+                                        }
+                                        ProgressBarViewModel.ProgressBarValue = 100;
+                                        CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                        LightChange.LineValueReset();
+                                        Thread.Sleep(300);
+                                        TestFinsh = true;
+                                        ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                     }
                                     tempVState = hv_VState.I;
                                     int val = hv_VStride.I;
@@ -546,26 +577,47 @@ namespace ZipperInfo
                                     // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
                                     if (LightChange.MinTimeOutCount >= 5)
                                     {
-                                        AutoLogger.Info($"{cell.CamName}:onWichStage=3,maxtimeout超过5次，进入阶段4");
+                                        AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},maxtimeout超过5次，完成调整");
                                         //mintimeout = 0;
                                         //进入下阶段
-                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Pull-{LightChange.TempLightValue_Change1}.png");
-                                        // LightChange.MaxTimeOutCount = 0;
+                                        img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Tooth-{LightChange.TempLightValue_Change1}.png");
                                         LightChange.MinTimeOutCount = 0;
                                         timeOutCount = 0;
+                                        onWichStage = 0;
+                                        if (labelstr.Contains("金属"))
+                                        {
+                                            ZipperInfo.ZipperUpMassType = STOPMASS.金属;
+                                            ZipperInfo.ZipperDownMassType = STOPMASS.金属;
+                                        }
+                                        ProgressBarViewModel.ProgressBarValue = 100;
+                                        CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                        LightChange.LineValueReset();
+                                        Thread.Sleep(300);
+                                        TestFinsh = true;
+                                        ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                     }
                                 }
                                 else
                                 {
-                                    AutoLogger.Info($"{cell.CamName}:onWichStage=3,光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},光源调整hv_VState={hv_VState.I},推荐调整值:{hv_VStride.I}");
                                     //进入下阶段
-                                    // LightChange.LineValueReset();
-                                    // AutoLogger.Info($"onWichStage=3,设置光源值为{LightCtl_You.BaseConfig.LightChannelList[0].Value}");
-                                    AutoLogger.Info($"{cell.CamName}:onWichStage=3,进入阶段4");
-                                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Pull-{LightChange.TempLightValue_Change1}.png");
+                                    AutoLogger.Info($"{cell.CamName}:onWichStage={onWichStage},完成调整");
+                                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Tooth-{LightChange.TempLightValue_Change1}.png");
                                     LightChange.MaxTimeOutCount = 0;
                                     LightChange.MinTimeOutCount = 0;
                                     timeOutCount = 0;
+                                    onWichStage = 0;
+                                    if (labelstr.Contains("金属"))
+                                    {
+                                        ZipperInfo.ZipperUpMassType = STOPMASS.金属;
+                                        ZipperInfo.ZipperDownMassType = STOPMASS.金属;
+                                    }
+                                    ProgressBarViewModel.ProgressBarValue = 100;
+                                    CZipperCommunicate.CamTriggerStop(); //停止拍照
+                                    LightChange.LineValueReset();
+                                    Thread.Sleep(300);
+                                    TestFinsh = true;
+                                    ProgressBarViewModel.ProgressFinshEven?.Invoke();
                                 }
                             }
                         }

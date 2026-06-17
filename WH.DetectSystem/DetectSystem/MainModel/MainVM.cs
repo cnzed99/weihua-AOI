@@ -884,8 +884,8 @@ namespace WH.DetectSystem.Models
                         }
 
                         cell.RecipeTime = new TimeSpan(cell.Stopwatch.ElapsedTicks);
-                        cell.Stopwatch.Restart();
                         AlgorithmTime = cell.RecipeTime.TotalMilliseconds;
+                        cell.Stopwatch.Restart();
                         try
                         {
                             if (!isAutomaticTest) //运行

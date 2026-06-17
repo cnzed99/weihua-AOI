@@ -41,30 +41,11 @@ namespace MetalZipperAlgorihm
         /// </summary>
         IVisionModel WH_DownStopMass_obb;
 
-        /// <summary>
-        /// 上止检测对象
-        /// </summary>
-       // IVisionModel WH_UpStopMassDefe_det;
 
         /// <summary>
         /// 上止测量对象
         /// </summary>
         IVisionModel WH_UpStopMassMeas_obb;
-
-        /// <summary>
-        /// 金属拉头检测对象
-        /// </summary>
-       // IVisionModel WH_Meta_pull_det;
-
-        /// <summary>
-        /// 烤漆拉头检测对象
-        /// </summary>
-       // IVisionModel WH_Paint_pull_det;
-
-        /// <summary>
-        /// Logo检测对象
-        /// </summary>
-       // IVisionModel WH_Logo_pull_det;
 
         /// <summary>
         /// 拉头查找对象
@@ -105,39 +86,11 @@ namespace MetalZipperAlgorihm
         /// 2025.3.3 鲍赞宝
         /// 通用模型路径
         /// </summary>
-        private string Common_Model_Path;
+        private string Cloth_Model_Path;
         /// <summary>
         /// 下止模型路径
         /// </summary>
         private string downStopMass_Model_Path;
-        /// <summary>
-        /// 上止模型路径
-        /// </summary>
-       //private string upStopMassDefe_Model_Path;
-
-        /// <summary>
-        /// 上止模型路径
-        /// </summary>
-        //private string upStopMassMeas_Model_Path;
-        /// <summary>
-        /// 拉头匹配模型路径
-        /// </summary>
-        //private string pull_Search_Model_Path;
-
-        /// <summary>
-        /// 金属拉头模型路径
-        /// </summary>
-       // private string pull_Meta_Model_Path;
-
-        /// <summary>
-        /// 烤漆拉头模型路径
-        /// </summary>
-       // private string pull_Paint_Model_Path;
-
-        /// <summary>
-        /// Logo模型路径
-        /// </summary>
-      //  private string pull_Logo_Model_Path;
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
@@ -160,28 +113,12 @@ namespace MetalZipperAlgorihm
 
         /// <summary>
         /// 2025.3.3 鲍赞宝
-        /// 缺陷名称路径
+        /// 布带缺陷名称路径
         /// </summary>
         //常规缺陷名称
-        protected string[] Common_names;
-        //上止缺陷名称
-        // protected string[] upStopMassDefe_names;
-
-        //上止测量名称
-        // protected string[] upStopMassMeas_names;
+        protected string[] Cloth_names;
         //下止缺陷名称
         protected string[] downStopMass_names;
-
-        //拉头匹配对对象名称
-        // protected string[] pull_Search_names;
-
-        //金属拉头匹配对对象名称
-        // protected string[] pull_Meta_names;
-
-        //烤漆拉头匹配对对象名称
-        //  protected string[] pull_Paint_names;
-        //Logo匹配对对象名称
-        // protected string[] pull_Logo_names;
 
         //大缺陷名称
         protected string[] bigDet_names;
@@ -231,7 +168,7 @@ namespace MetalZipperAlgorihm
             List<CDefectRecipe> bigRecipes = new List<CDefectRecipe>();
             DefectSpecies = new List<CDefectSpecies>();
 
-            for (int i = 0; i < bigDet_names.Length; i++)
+            for (int i = 0; i < bigDet_names?.Length; i++)
             {
                 CDefectRecipe defectRecipe = new CDefectRecipe(bigDet_names[i], Category.区域);
                 bigRecipes.Add(defectRecipe);
@@ -241,12 +178,12 @@ namespace MetalZipperAlgorihm
             #endregion
             #region 通用
             List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
-            for (int i = 0; i < Common_names.Length; i++)
+            for (int i = 0; i < Cloth_names?.Length; i++)
             {
-                CDefectRecipe defectRecipe = new CDefectRecipe(Common_names[i], Category.区域);
+                CDefectRecipe defectRecipe = new CDefectRecipe(Cloth_names[i], Category.区域);
                 cDefectRecipes.Add(defectRecipe);
             }
-            for (int i = 0; i < Tooth_names.Length; i++)
+            for (int i = 0; i < Tooth_names?.Length; i++)
             {
                 CDefectRecipe defectRecipe = new CDefectRecipe(Tooth_names[i], Category.区域);
                 cDefectRecipes.Add(defectRecipe);
@@ -257,33 +194,26 @@ namespace MetalZipperAlgorihm
                 //CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
                 //cDefectRecipes.Add(defectRecipe1_1);
                 //cDefectRecipes.Add(defectRecipe1_2);
-                CDefectRecipe defectRecipe3 = new CDefectRecipe("下止距离", Category.值);
+                CDefectRecipe defectRecipe3 = new CDefectRecipe("长插销距离", Category.值);
                 cDefectRecipes.Add(defectRecipe3);
-                CDefectRecipe defectRecipe4 = new CDefectRecipe("下止歪", Category.值);
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("短插销距离", Category.值);
+                cDefectRecipes.Add(defectRecipe6);
+                CDefectRecipe defectRecipe4 = new CDefectRecipe("插销歪", Category.值);
                 cDefectRecipes.Add(defectRecipe4);
-                CDefectRecipe defectRecipe5 = new CDefectRecipe("下止偏", Category.值);
+                CDefectRecipe defectRecipe5 = new CDefectRecipe("插销偏", Category.值);
                 cDefectRecipes.Add(defectRecipe5);
+                CDefectRecipe defectRecipe7 = new CDefectRecipe("插销角度", Category.值);
+                cDefectRecipes.Add(defectRecipe7);
             }
             //CDefectRecipe defectRecipe6 = new CDefectRecipe("上止高低", Category.值);
             //cDefectRecipes.Add(defectRecipe6);
             CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
             #endregion
-            #region 上止
-            //if (upStopMassDefe_names?.Length > 0)
-            //{
-            //    //string[] upstrs = upStopMassDefe_names.Where(s => s != "注塑正面上止" && s != "链齿").ToArray();
-            //    for (int i = 0; i < upStopMassDefe_names.Length; i++)
-            //    {
-            //        CDefectRecipe defectRecipe = new CDefectRecipe(upStopMassDefe_names[i], Category.区域);
-            //        cDefectRecipes.Add(defectRecipe);
-            //    }
-            //}
 
-            #endregion
             #region 下止
             if (downStopMass_names?.Length > 0)
             {
-                string[] Downstrs = downStopMass_names.Where(s => s != "注塑正面下止" && s != "链齿" && s != "链牙").ToArray();
+                string[] Downstrs = downStopMass_names.Where(s =>  s != "链齿" && s != "链牙").ToArray();
                 for (int i = 0; i < Downstrs.Length; i++)
                 {
                     CDefectRecipe defectRecipe = new CDefectRecipe(Downstrs[i], Category.区域);
@@ -355,22 +285,11 @@ namespace MetalZipperAlgorihm
             string commonModelPath = modelDirpath + "CommonModel\\";
             string bigModelPath = modelDirpath + "BigDetModel\\";
 
-            //if (user == "正面")
-            //{
-            //    commonModelPath = commonModelPath + "Front\\";
-            //    bigModelPath = bigModelPath + "Front\\";
-            //}
-            //else
-            //{
-            //    commonModelPath = commonModelPath + "Back\\";
-            //    bigModelPath = bigModelPath + "Back\\";
-            //}
-
             var commons = GetNames(commonModelPath);
             if (commons.Item1 != "")
             {
-                Common_Model_Path = commons.Item1;
-                Common_names = commons.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                Cloth_Model_Path = commons.Item1;
+                Cloth_names = commons.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
             var bigstrs = GetNames(bigModelPath);
             if (bigstrs.Item1 != "")
@@ -389,13 +308,6 @@ namespace MetalZipperAlgorihm
                 }
 
             }
-            //string pullModelScearch = modelDirpath + "Pull\\PullSearch\\";
-            //var pullsearchtrs = GetNames(pullModelScearch);
-            //if (pullsearchtrs.Item1 != "")
-            //{
-            //    pull_Search_Model_Path = pullsearchtrs.Item1;
-            //    pull_Search_names = pullsearchtrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-            //}
 
             string ToothModel = modelDirpath + "ToothModel\\";
             var toothchtrs = GetNames(ToothModel);
@@ -471,14 +383,14 @@ namespace MetalZipperAlgorihm
                     img = matimg;
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
-               // Cv2.ImWrite(@"D:\MealImages\" + cell.CamName +"_"+cell.ID+"_"+cell.PhotoIndex+".jpg", img); 
+                // Cv2.ImWrite(@"D:\MealImages\" + cell.CamName +"_"+cell.ID+"_"+cell.PhotoIndex+".jpg", img); 
                 // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
                 //if (cell.PhotoTatolCount == 2)
                 //{
                 //    runtype = true;
                 //}
 
-               // int oddoreven = cell.PhotoIndex % 2;
+                // int oddoreven = cell.PhotoIndex % 2;
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex >= 100) // 大缺陷只检测偶数图（第二张图）
                 {
@@ -490,138 +402,175 @@ namespace MetalZipperAlgorihm
                         {
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelname, bigResult.datas[j]);
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, (cell.PhotoIndex/100) - 1, 0, 0, labelname, bigResult.datas[j]);
                             if (labelname.Contains("方块插销") && cell.PhotoIndex != 100)
                                 continue;
                             dets.Add(restoreData);
-                            //if (labelname.Contains("方块插销") && cell.PhotoIndex == 100) //检测下止
-                            //{
-                            //    int recw = 384;
-                            //    int rech = 384;
-                            //    int rex = Convert.ToInt32(restoreData.OrgCenterX - recw / 2);
-                            //    int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
-                            //    if ((rex + recw) > cell.Image.ImageWidth)
-                            //    {
-                            //        rex = cell.Image.ImageWidth - recw;
-                            //    }
-                            //    if (rex < 0)
-                            //    {
-                            //        rex = 0;
-                            //    }
-                            //    Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
-                            //    cell.DownMassMatImg = cropDownMat;
+                            if (labelname.Contains("方块插销") && cell.PhotoIndex == 100) //检测下止
+                            {
+                                int recw = 384;
+                                int rech = 384;
+                                int rex = Convert.ToInt32(restoreData.OrgCenterX - 115);
+                                int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
+                                if ((rex + recw) > cell.Image.ImageWidth)
+                                {
+                                    rex = cell.Image.ImageWidth - recw;
+                                }
+                                if (rex < 0)
+                                {
+                                    rex = 0;
+                                }
+                                Mat cropDownMat = img[new Rect(rex, rey, recw, rech)];
+                                cell.DownMassMatImg = cropDownMat;
 
-                            //    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropDownMat);
-                            //    ObbResult downResult = ImageInferObb(WH_DownStopMass_obb, cropDownMat);
-                            //    if (downResult != null)
-                            //    {
-                            //        if (downResult.datas.Count > 0)
-                            //        {
-                            //            List<int> luyaIndex = new List<int>();
-                            //            string downmassIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("正面下止")).ToString();
-                            //            List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == downmassIndexstr).ToList(); //下止
+                                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\正面下止\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_")  + ".png", cropDownMat);
+                                ObbResult downResult = ImageInferObb(WH_DownStopMass_obb, cropDownMat);
+                                if (downResult != null)
+                                {
+                                    if (downResult.datas.Count > 0)
+                                    {
+                                        List<int> luyaIndex = new List<int>();
+                                        string fangkuaiIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("方块插销")).ToString();
+                                        List<ObbData> fangkuaimass = downResult.datas.FindAll(c => c.lable == fangkuaiIndexstr).ToList(); //方块
 
-                            //            string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
-                            //            List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+                                        string downmassIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("长插销")).ToString();
+                                        List<ObbData> downmass = downResult.datas.FindAll(c => c.lable == downmassIndexstr).ToList(); //长插销
 
-                            //            string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
-                            //            List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
+                                        string downmassIndexstr2 = Array.FindIndex(downStopMass_names, s => s.Contains("短插销")).ToString();
+                                        List<ObbData> downmass2 = downResult.datas.FindAll(c => c.lable == downmassIndexstr2).ToList(); //短插销
 
-                            //            List<ObbData> otherobb = downResult.datas.Where(s => s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr).ToList();
+                                        string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
+                                        List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
 
-                            //            List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                            //            List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                            //            //计算下止到链齿的最短距离
-                            //            List<(float, int)> Diss = new List<(float, int)>();
-                            //            for (int a = 0; a < downmass.Count; a++)
-                            //            {
-                            //                for (int b = 0; b < lianci.Count; b++)
-                            //                {
-                            //                    float dis = CalculateDistance(downmass[a], lianci[b]);
-                            //                    Diss.Add((dis, b));
-                            //                    if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
-                            //                    {
-                            //                        luyaIndex.Add(b);
-                            //                    }
-                            //                }
-                            //            }
-                            //            if (Diss.Count > 0)
-                            //            {
-                            //                var min = Diss.Min(t => t.Item1);
-                            //                var dis = Diss.First(t => t.Item1 == min);
-                            //                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止距离", lianci[dis.Item2]);
-                            //                disData.Value = dis.Item1;
-                            //                dets.Add(disData);
-                            //                Diss.Clear();
-                            //            }
-                            //            else //没找到下止和链牙
-                            //            {
-                            //                CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
-                            //                dets.Add(disData);
-                            //            }
+                                        string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
+                                        List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
 
-                            //            if (luyaIndex.Count > 0)
-                            //            {
-                            //                for (int b = 0; b < luyaIndex.Count; b++)
-                            //                {
-                            //                    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
-                            //                    dets.Add(disData);
-                            //                }
-                            //            }
-                            //            List<(float, int)> Angs = new List<(float, int)>();
-                            //            for (int a = 0; a < downmass.Count; a++)
-                            //            {
-                            //                for (int b = 0; b < lianya.Count; b++)
-                            //                {
-                            //                    List<Point2f> downmassListsort = downmass[a].box.Points().ToList();  //先按Y从小到大排序
-                            //                    downmassListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
-                            //                    List<Point2f> lianyaListsort = lianya[b].box.Points().ToList();
-                            //                    lianyaListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
-                            //                    if (downmassListsort.Count >= 2 && lianyaListsort.Count >= 2)
-                            //                    {
-                            //                        List<Point2f> downmass01 = new List<Point2f>() { downmassListsort[0], downmassListsort[1] }; //再按X从小到大排序
-                            //                        downmass01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
-                            //                        List<Point2f> lianya01 = new List<Point2f>() { lianyaListsort[0], lianyaListsort[1] };
-                            //                        lianya01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+                                        List<ObbData> otherobb = downResult.datas.Where(s => s.lable != fangkuaiIndexstr && s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr && s.lable != downmassIndexstr2).ToList();
 
-                            //                        float A1 = CalculateLineAngle(downmass01[0], downmass01[1]);
-                            //                        float A2 = CalculateLineAngle(lianya01[0], lianya01[1]);
+                                        List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
+                                        List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
 
-                            //                        float an = A2 - A1;
-                            //                        Angs.Add((Math.Abs(an), b));
+                                        if (downmass.Count > 0)
+                                        {
+                                            float dcpointx = downmass[0].box.Center.X;
+                                            float dcpointy = downmass[0].box.Center.Y;
+                                            List<ObbData> lianci2 = lianci.FindAll(s => Math.Abs(s.box.Center.Y - dcpointy) <= 15).ToList(); //链齿根据Y坐标距离来筛选，排除和下止不在同一水平线的链齿
+                                            lianci2.Sort((a, b) => Math.Abs(a.box.Center.X - dcpointx).CompareTo(Math.Abs(b.box.Center.X - dcpointx))); //根据X坐标距离来排序，找出最靠近下止的链齿
 
-                            //                        float downmassCenterPos = Math.Abs(downmass[a].box.Center.Y - lianya[b].box.Center.Y);
-                            //                        CoordRestoreData disData = new CoordRestoreData("下止偏", downmassCenterPos);
-                            //                        dets.Add(disData);
-                            //                    }
-                            //                }
-                            //            }
-                            //            if (Angs.Count > 0)
-                            //            {
-                            //                var max = Angs.Max(t => t.Item1);
-                            //                var ang = Angs.First(t => t.Item1 == max);
-                            //                CoordRestoreData angData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止歪", lianya[ang.Item2]);
-                            //                angData.Value = ang.Item1;
-                            //                dets.Add(angData);
-                            //                Angs.Clear();
-                            //            }
-                            //            else //没找到下止和链牙
-                            //            {
-                            //                CoordRestoreData disData = new CoordRestoreData("下止歪", 360);
-                            //                dets.Add(disData);
-                            //            }
+                                            float dis = lianci2[0].box.Center.X - dcpointx;
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销距离", lianci2[0]);
+                                            disData.Value = dis;
+                                            dets.Add(disData);
 
-                            //            for (int a = 0; a < otherobb.Count; a++)
-                            //            {
-                            //                int obblabelindex = int.Parse(otherobb[a].lable);
-                            //                string obblabelname = downStopMass_names[obblabelindex];
-                            //                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, obblabelname, otherobb[a]);
-                            //                dets.Add(disData);
-                            //            }
-                            //        }
-                            //    }
+                                            CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销", downmass[0]);
+                                            dets.Add(disData1);
+                                        }
 
-                            //}
+                                        if (downmass2.Count > 0)
+                                        {
+                                            float dcpointx = downmass2[0].box.Center.X;
+                                            float dcpointy = downmass2[0].box.Center.Y;
+                                            List<ObbData> lianci2 = lianci.FindAll(s => Math.Abs(s.box.Center.Y - dcpointy) <= 15).ToList(); //链齿根据Y坐标距离来筛选，排除和下止不在同一水平线的链齿
+                                            lianci2.Sort((a, b) => Math.Abs(a.box.Center.X - dcpointx).CompareTo(Math.Abs(b.box.Center.X - dcpointx))); //根据X坐标距离来排序，找出最靠近下止的链齿
+                                            float dis = lianci2[0].box.Center.X - dcpointx;
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销距离", lianci2[0]);
+                                            disData.Value = dis;
+                                            dets.Add(disData);
+                                            CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销", downmass2[0]);
+                                            dets.Add(disData1);
+                                        }
+
+                                        ////计算下止到链齿的最短距离
+                                        //List<(float, int)> Diss = new List<(float, int)>();
+                                        //for (int a = 0; a < downmass.Count; a++)
+                                        //{
+                                        //    for (int b = 0; b < lianci.Count; b++)
+                                        //    {
+                                        //        float dis = CalculateDistance(downmass[a], lianci[b]);
+                                        //        Diss.Add((dis, b));
+                                        //        if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
+                                        //        {
+                                        //            luyaIndex.Add(b);
+                                        //        }
+                                        //    }
+                                        //}
+                                        //if (Diss.Count > 0)
+                                        //{
+                                        //    var min = Diss.Min(t => t.Item1);
+                                        //    var dis = Diss.First(t => t.Item1 == min);
+                                        //    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止距离", lianci[dis.Item2]);
+                                        //    disData.Value = dis.Item1;
+                                        //    dets.Add(disData);
+                                        //    Diss.Clear();
+                                        //}
+                                        //else //没找到下止和链牙
+                                        //{
+                                        //    CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
+                                        //    dets.Add(disData);
+                                        //}
+
+                                        //if (luyaIndex.Count > 0)
+                                        //{
+                                        //    for (int b = 0; b < luyaIndex.Count; b++)
+                                        //    {
+                                        //        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
+                                        //        dets.Add(disData);
+                                        //    }
+                                        //}
+                                        List<(float, int)> Angs = new List<(float, int)>();
+                                        for (int a = 0; a < downmass.Count; a++)
+                                        {
+                                            for (int b = 0; b < downmass2.Count; b++)
+                                            {
+                                                List<Point2f> downmassListsort = downmass[a].box.Points().ToList();  //先按Y从小到大排序
+                                                downmassListsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                List<Point2f> downmass2Listsort = downmass2[b].box.Points().ToList();
+                                                downmass2Listsort.Sort((p1, p2) => p1.Y.CompareTo(p2.Y));
+                                                if (downmassListsort.Count >= 2 && downmass2Listsort.Count >= 2)
+                                                {
+                                                    List<Point2f> downmass01 = new List<Point2f>() { downmassListsort[0], downmassListsort[1] }; //再按X从小到大排序
+                                                    downmass01.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+                                                    List<Point2f> downmass02 = new List<Point2f>() { downmass2Listsort[0], downmass2Listsort[1] };
+                                                    downmass02.Sort((p1, p2) => p1.X.CompareTo(p2.X));
+
+                                                    float A1 = CalculateLineAngle(downmass01[0], downmass01[1]);
+                                                    float A2 = CalculateLineAngle(downmass02[0], downmass02[1]);
+
+                                                    float an = A2 - A1;
+                                                    Angs.Add((Math.Abs(an), b));
+
+                                                    //float downmassCenterPos = Math.Abs(downmass[a].box.Center.Y - lianya[b].box.Center.Y);
+                                                    //CoordRestoreData disData = new CoordRestoreData("下止偏", downmassCenterPos);
+                                                    //dets.Add(disData);
+                                                }
+                                            }
+                                        }
+                                        if (Angs.Count > 0)
+                                        {
+                                            var max = Angs.Max(t => t.Item1);
+                                            var ang = Angs.First(t => t.Item1 == max);
+                                            CoordRestoreData angData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "插销角度", downmass2[ang.Item2]);
+                                            angData.Value = ang.Item1;
+                                            dets.Add(angData);
+                                            Angs.Clear();
+                                        }
+                                        else //没找到插销
+                                        {
+                                            CoordRestoreData disData = new CoordRestoreData("插销角度", 360);
+                                            dets.Add(disData);
+                                        }
+
+                                        for (int a = 0; a < otherobb.Count; a++)
+                                        {
+                                            int obblabelindex = int.Parse(otherobb[a].lable);
+                                            string obblabelname = downStopMass_names[obblabelindex];
+                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, obblabelname, otherobb[a]);
+                                            dets.Add(disData);
+                                        }
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
@@ -646,7 +595,7 @@ namespace MetalZipperAlgorihm
                     return;
                 }
                 List<(DetResult, int)> detrets = null;
-                if (cell.PhotoIndex >=100)
+                if (cell.PhotoIndex >= 100)
                 {
                     detrets = ToothImageInferall(mats).Result; //链牙工位的缺陷检测结果 
                 }
@@ -659,14 +608,20 @@ namespace MetalZipperAlgorihm
                 {
                     for (int i = 0; i < detrets.Count; i++)
                     {
-                        for (int j = 0; j < detrets[i].Item1.datas.Count; j++)
+                        for (int j = 0; j < detrets[i].Item1?.datas.Count; j++)
                         {
                             int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
-                            string labelname = Common_names[labelindex];
+                            string labelname="";
                             int photoindex = 0;
                             if (cell.PhotoIndex >= 100)
                             {
+                                labelname = Tooth_names[labelindex];
                                 photoindex = cell.PhotoIndex / 100;
+                            }
+                            else
+                            {
+                                labelname = Cloth_names[labelindex];
+                                photoindex = cell.PhotoIndex;
                             }
                             if (labelname == "布带脏污" || labelname == "黑点脏污")
                             {
@@ -690,105 +645,7 @@ namespace MetalZipperAlgorihm
             }
         }
 
-        // int upmassCount;
-        //private void RunUpMassDet(Cell cell, Mat img, DetData detData, int i, int smallimgWidth, CParam param, out Point upmassPos, out List<CoordRestoreData> updets)
-        //private void RunUpMassDet(Cell cell, Mat img, DetData detData, out Point upmassPos, out List<CoordRestoreData> updets)
-        //{
-        //    updets = new List<CoordRestoreData>();
-        //    //坐标还原
-        //    //int nameindex = int.Parse(detData.lable);
-        //    //string labelstr = bigDet_names[nameindex];
-        //    //CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, 0, 0, labelstr, detData);
-        //    upmassPos = new Point(detData.box.X, detData.box.Y);
-        //    int recw = 192;
-        //    int rech = 96;
-        //    int rex = Convert.ToInt32((detData.box.X+ detData.box.Width/2) - recw / 2);
-        //    int rey = Convert.ToInt32((detData.box.Y+detData.box.Height/2) - rech / 2);
-        //    if ((rex + recw) > cell.Image.ImageWidth)
-        //    {
-        //        rex = cell.Image.ImageWidth - recw;
-        //    }
-        //    if (rex < 0)
-        //    {
-        //        rex = 0;
-        //    }
-        //   // updets.Add(restoreData);
-        //    Mat cropUpMat = img[new Rect(rex, rey, recw, rech)];
-        //    cell.UpMassMatImg.Add(cropUpMat);
 
-        //    DetResult otherdet = ImageInferDet(WH_UpStopMassDefe_det, cropUpMat);
-        //    if (otherdet != null)
-        //    {
-        //        if (otherdet.datas.Count > 0)
-        //        {
-        //            for (int k = 0; k < otherdet.datas.Count; k++)
-        //            {
-        //                int otherindex = int.Parse(otherdet[k].lable);
-        //                string otherstr = upStopMassDefe_names[otherindex];
-        //                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, otherstr, otherdet[k]);
-        //                updets.Add(disData);
-        //            }
-
-
-        //            //List<ObbData> otherdet = upResult.datas.Where(s => s.lable != upmassIndexstr && s.lable != lianciIndexstr).ToList();
-
-        //            // List<ObbData> upmass=upmassorg.Where(s=>s.score>= param.UpLianciScore).ToList();
-        //            //  List<ObbData> lianci = lianciorg.Where(s => s.score >= param.UpLianciScore).ToList();
-        //            //计算上止到链齿的最短距离
-        //        }
-
-        //    }
-
-        //    ObbResult upmeasobbResult = ImageInferObb(WH_UpStopMassMeas_obb, cropUpMat);
-        //    if (upmeasobbResult != null && upmeasobbResult.datas.Count > 0)
-        //    {
-        //        List<int> luyaIndex = new List<int>();
-        //        string upmassIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("正面上止")).ToString();
-        //        List<ObbData> upmass = upmeasobbResult.datas.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
-
-        //        string lianciIndexstr = Array.FindIndex(upStopMassMeas_names, s => s.Contains("链齿")).ToString();
-        //        List<ObbData> lianciorg = upmeasobbResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
-
-        //        // Cv2.ImWrite(@"D:\测试存图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上止.png", cropUpMat);
-        //        List<(float, int)> Diss = new List<(float, int)>();
-        //        for (int a = 0; a < upmass.Count; a++)
-        //        {
-        //            for (int b = 0; b < lianciorg.Count; b++)
-        //            {
-        //                float dis = CalculateDistance(upmass[a], lianciorg[b]);
-        //                Diss.Add((dis, b));
-        //                if (lianciorg[b].box.Center.X > upmass[a].box.Center.X) //链牙在下止左边 露牙
-        //                {
-        //                    luyaIndex.Add(b);
-        //                }
-        //            }
-        //        }
-
-        //        if (Diss.Count > 0) //有找到链牙和上止
-        //        {
-        //            upmassCount++;
-        //            var min = Diss.Min(t => t.Item1);
-        //            var dis = Diss.First(t => t.Item1 == min);
-        //            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, $"上止距离{upmassCount}", lianciorg[dis.Item2]);
-        //            disData.Value = dis.Item1;
-        //            updets.Add(disData);
-        //            Diss.Clear();
-        //        }
-        //        else //没找到链牙和上止
-        //        {
-        //            upmassCount++;
-        //            CoordRestoreData disData = new CoordRestoreData($"上止距离{upmassCount}", 1000);
-        //            updets.Add(disData);
-        //        }
-        //        if (luyaIndex.Count > 0)
-        //        {
-        //            for (int b = 0; b < luyaIndex.Count; b++)
-        //            {
-        //                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, cell.PhotoIndex - 1, rex, rey, "上止露牙", lianciorg[b]);
-        //            }
-        //        }
-        //    }
-        //}
         /// <summary>
         /// 布带工位的算法推理，2026.6.9 鲍赞宝
         /// </summary>
@@ -910,26 +767,8 @@ namespace MetalZipperAlgorihm
             CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {
+
                 string CurrentDevice = param.CurrentDevice;
-                int common_Categ_num = Common_names.Length;
-                int tooth_Categ_num = Tooth_names.Length;
-                int downmass_num = 0;
-                if (downStopMass_names?.Length > 0)
-                {
-                    downmass_num = downStopMass_names.Length;
-                }
-                //int upmass_num = 0;
-                //if (upStopMassDefe_names?.Length > 0)
-                //{
-                //    upmass_num = upStopMassDefe_names.Length;
-                //}
-
-                //int upmassmeas_num = 0;
-                //if (upStopMassMeas_names?.Length > 0)
-                //{
-                //    upmassmeas_num = upStopMassMeas_names.Length;
-                //}
-
                 EngineType engineType;
                 if (HasDedicatedGraphicsCard()) //有显卡
                 {
@@ -940,37 +779,42 @@ namespace MetalZipperAlgorihm
                     engineType = EngineType.OpenVINO;
                     CurrentDevice = "CPU";
                 }
-
-                //int pull_search_num = pull_Search_names.Length;
-                //int metapull_num = pull_Meta_names.Length;
-                //int paintpull_num = pull_Paint_names.Length;
-                //int logopull_num = pull_Logo_names.Length;
-                int big_num = bigDet_names.Length;
-                //int pullsharp_num = pullSharp_names.Length;
-                float Score = param.CommonScore;
                 float Nms = param.Nms;
                 int Input_size = 1024;
-
-                WH_Cloth_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-
-                WH_Cloth_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Common_Model_Path, engineType,
-CurrentDevice, common_Categ_num, Score, Nms, Input_size);
-
-                WH_Tooth_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Tooth_Model_Path, engineType,
-CurrentDevice, tooth_Categ_num, Score, Nms, Input_size);
-
-                WH_Tooth_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Tooth_Model_Path, engineType,
-CurrentDevice, tooth_Categ_num, Score, Nms, Input_size);
-
-                if (downmass_num > 0)
+                float Score = param.CommonScore;
+                if (Cloth_names != null && Cloth_names.Length > 0)
                 {
-                    WH_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
-CurrentDevice, downmass_num, param.DownScore, Nms, 1024);
+                    int common_Categ_num = Cloth_names.Length;
+                    WH_Cloth_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Cloth_Model_Path, engineType,
+                        CurrentDevice, common_Categ_num, Score, Nms, Input_size);
+
+                    WH_Cloth_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Cloth_Model_Path, engineType,
+                        CurrentDevice, common_Categ_num, Score, Nms, Input_size);
                 }
 
-                WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
-CurrentDevice, big_num, param.BigScore, Nms, 1024);
+                if (Tooth_names != null && Tooth_names.Length > 0)
+                {
+                    int tooth_Categ_num = Tooth_names.Length;
+                    WH_Tooth_det1 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Tooth_Model_Path, engineType,
+                        CurrentDevice, tooth_Categ_num, Score, Nms, Input_size);
+
+                    WH_Tooth_det2 = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Tooth_Model_Path, engineType,
+                        CurrentDevice, tooth_Categ_num, Score, Nms, Input_size);
+                }
+
+                if (downStopMass_names != null && downStopMass_names?.Length > 0)
+                {
+                    int downmass_num = downStopMass_names.Length;
+                    WH_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
+                        CurrentDevice, downmass_num, param.DownScore, Nms, 384);
+                }
+                if (bigDet_names != null && bigDet_names.Length > 0)
+                {
+                    int big_num = bigDet_names.Length;
+                    WH_BigDet_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, Big_Model_Path, engineType,
+                        CurrentDevice, big_num, param.BigScore, Nms, 1024);
+                }
+
 
                 //                    if (upmass_num > 0)
                 //                    {
@@ -1553,92 +1397,6 @@ CurrentDevice, big_num, param.BigScore, Nms, 1024);
 
         #endregion
 
-
-
-        //private BitmapSource Mat2BitmapSource(Mat img)
-        //{
-        //    // 方法1：编码为 PNG 字节流
-        //    Cv2.ImEncode(".png", InputArray.Create(img), out byte[] imageBytes);
-
-        //    // 方法2：通过 MemoryStream 转换
-        //    using (MemoryStream ms = new MemoryStream(imageBytes))
-        //    {
-        //        //// 方式A：直接创建 BitmapSource（需指定像素格式）
-        //        //BitmapSource bitmapSource = BitmapSource.Create(
-        //        //    img.Width,
-        //        //    img.Height,
-        //        //    96, 96, // DPI
-        //        //    PixelFormats.Pbgra32, // OpenCV 默认 BGR 格式
-        //        //null,
-        //        //imageBytes,
-        //        //    img.Width * (img.Channels() == 1 ? 1 : 4) // 每行字节数
-        //        //);
-
-        //        // 方式B：通过 PngBitmapEncoder（更通用）
-        //        //BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-        //        //encoder.Frames.Add(BitmapFrame.Create(ms));
-        //        // BitmapSource enbitmapSource = encoder.Frames[0];
-        //        BitmapSource enbitmapSource = BitmapFrame.Create(ms);
-        //        BitmapSource bitmapSource = new CachedBitmap(enbitmapSource, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-
-        //        //if (bitmapSource is BitmapFrameDecode)
-        //        //{
-        //        //    // 方案1：转换为缓存位图
-
-
-        //        //    // 方案2：克隆像素数据
-        //        //    var writable = new WriteableBitmap(source);
-        //        //    writable.Freeze();
-        //        //    return writable;
-        //        //}
-        //        bitmapSource.Freeze();
-
-        //        return bitmapSource;
-
-
-
-        //    }
-        //}
-
-        //private BitmapSource Mat2BitmapSource(Mat img)
-        //{
-        //    using (System.Drawing.Bitmap bitmap = img.ToBitmap())
-        //    {
-        //        BitmapSource bitimg = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-        //           bitmap.GetHbitmap(),
-        //           IntPtr.Zero,
-        //           System.Windows.Int32Rect.Empty,
-        //           BitmapSizeOptions.FromEmptyOptions());
-        //        bitimg.Freeze();
-        //        return bitimg;
-        //    }
-        //}
-
-        /// <summary>
-        /// 裁剪BitmapSource的核心方法
-        /// </summary>
-        private BitmapSource CropBitmapSource(BitmapSource source, System.Windows.Int32Rect cropRect)
-        {
-            // 计算像素缓冲区大小
-            int stride = source.Format.BitsPerPixel * cropRect.Width / 8;
-            byte[] buffer = new byte[cropRect.Height * stride];
-
-            // 复制目标区域的像素数据（高效内存操作）
-            source.CopyPixels(cropRect, buffer, stride, 0);
-
-            // 创建新BitmapSource（保留原始DPI和色彩格式）
-            return BitmapSource.Create(
-                cropRect.Width,
-                cropRect.Height,
-                source.DpiX,
-                source.DpiY,
-                source.Format,
-                source.Palette,
-                buffer,
-                stride
-            );
-        }
-
         private void UpdateScore(CParam param)
         {
             WH_Cloth_det1?.UpdateNMS_Score(param.Nms, param.CommonScore);
@@ -1649,10 +1407,10 @@ CurrentDevice, big_num, param.BigScore, Nms, 1024);
             //{
             //    WH_UpStopMassDefe_det.UpdateNMS_Score(param.Nms, param.UpScore);
             //}
-            if (WH_UpStopMassMeas_obb != null)
-            {
-                WH_UpStopMassMeas_obb.UpdateNMS_Score(param.Nms, param.UpLianciScore);
-            }
+            //if (WH_UpStopMassMeas_obb != null)
+            //{
+            //    WH_UpStopMassMeas_obb.UpdateNMS_Score(param.Nms, param.UpLianciScore);
+            //}
             if (WH_DownStopMass_obb != null)
             {
                 WH_DownStopMass_obb.UpdateNMS_Score(param.Nms, param.DownScore);
@@ -1662,7 +1420,7 @@ CurrentDevice, big_num, param.BigScore, Nms, 1024);
             //WH_Paint_pull_det?.UpdateNMS_Score(param.Nms, param.PaintPullScore);
             //// WH_Logo_pull_det.UpdateNMS_Score(0.8f, param.LogoPullScore);
 
-            //WH_BigDet_det?.UpdateNMS_Score(param.Nms, param.BigScore);
+            WH_BigDet_det?.UpdateNMS_Score(param.Nms, param.BigScore);
             //WH_pull_Serach_det?.UpdateNMS_Score(param.Nms, param.AutoScore);
             //WH_PullShape_Seg?.UpdateNMS_Score(param.Nms, param.PullSharpScore);
         }
