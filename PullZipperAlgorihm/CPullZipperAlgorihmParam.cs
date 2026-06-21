@@ -145,7 +145,7 @@ namespace PullZipperAlgorihm
             pullRecipes.Add(defectRecipe1_H);
             pullRecipes.Add(defectRecipe1_S);
 
-            if(user == "拉片")
+            if (user == "拉片")
             {
                 CDefectRecipe defectRecipe2 = new CDefectRecipe("拉片外形", Category.值);
                 pullRecipes.Add(defectRecipe2);
@@ -326,14 +326,14 @@ namespace PullZipperAlgorihm
                         CoordRestoreData restoreData1 = new CoordRestoreData("孔洞外形", (float)holdsimiValue, HolesPoints);
                         dets.Add(restoreData1);
                     }
-                  
+
 
                     CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)Hvalue);
                     CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)Svalue);
                     dets.Add(disDataH);
                     dets.Add(disDataS);
 
-             
+
 
                 }
                 #endregion
@@ -367,17 +367,17 @@ namespace PullZipperAlgorihm
                 }
                 #endregion
                 #region Logo识别
-                DetResult logoResult = ImageInferDet(WH_Logo_pull_det, img);
-                if (logoResult != null)
-                {
-                    for (int i = 0; i < logoResult.count; i++)
-                    {
-                        int pulllabelindex = int.Parse(logoResult[i].lable);
-                        string pullabelname = pull_Logo_names[pulllabelindex];
-                        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, logoResult.datas[i]);
-                        dets.Add(restoreData);
-                    }
-                }
+                //DetResult logoResult = ImageInferDet(WH_Logo_pull_det, img);
+                //if (logoResult != null)
+                //{
+                //    for (int i = 0; i < logoResult.count; i++)
+                //    {
+                //        int pulllabelindex = int.Parse(logoResult[i].lable);
+                //        string pullabelname = pull_Logo_names[pulllabelindex];
+                //        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, pullabelname, logoResult.datas[i]);
+                //        dets.Add(restoreData);
+                //    }
+                //}
                 #endregion
 
                 ParseResult(dets, cell);
@@ -477,8 +477,17 @@ namespace PullZipperAlgorihm
                     if (pull_Meta_names != null)
                     {
                         int pull_num = pull_Meta_names.Length;
+                        int modelsize = 0;
+                        if (User == "拉片")
+                        {
+                            modelsize = 1024;
+                        }
+                        else
+                        {
+                            modelsize = 512;
+                        }
                         WH_Meta_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Meta_Model_Path, engineType,
-    CurrentDevice, pull_num, param.MetaPullScore, Nms, 640);
+    CurrentDevice, pull_num, param.MetaPullScore, Nms, modelsize);
                     }
 
                     if (pullSharp_names != null)
@@ -493,8 +502,9 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                         WH_Logo_pull_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, pull_Logo_Model_Path, engineType,
     CurrentDevice, logopull_num, param.LogoPullScore, 0.5f, 512);
                     }
-                }
 
+
+                }
             }
         }
 
@@ -724,23 +734,23 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.GenEmptyObj(out ho_ImageS);
             HOperatorSet.GenEmptyObj(out ho_ImageV);
 
-            //HOperatorSet.GenImageInterleaved(
-            //        out ho_Image,
-            //        cell.Image.ImageData,
-            //        "rgb",
-            //        cell.Image.ImageWidth,
-            //        cell.Image.ImageHeight,
-            //        -1,
-            //        "byte",
-            //        0,
-            //        0,
-            //        0,
-            //        0,
-            //        -1,
-            //        0
-            //    );
+            HOperatorSet.GenImageInterleaved(
+                    out ho_Image,
+                    cell.Image.ImageData,
+                    "rgb",
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    -1,
+                    "byte",
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
+                    0
+                );
 
-            HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+            //HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
 
             ho_GrayImage.Dispose();
             HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);

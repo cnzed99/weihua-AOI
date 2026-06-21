@@ -176,103 +176,58 @@ namespace MetalZipperAlgorihm
 
             CDefectSpecies bigSpecies = new CDefectSpecies("大缺陷", bigRecipes);
             #endregion
-            #region 通用
+            #region 链牙
             List<CDefectRecipe> cDefectRecipes = new List<CDefectRecipe>();
-            for (int i = 0; i < Cloth_names?.Length; i++)
-            {
-                CDefectRecipe defectRecipe = new CDefectRecipe(Cloth_names[i], Category.区域);
-                cDefectRecipes.Add(defectRecipe);
-            }
             for (int i = 0; i < Tooth_names?.Length; i++)
             {
                 CDefectRecipe defectRecipe = new CDefectRecipe(Tooth_names[i], Category.区域);
                 cDefectRecipes.Add(defectRecipe);
             }
-            if (user == "正面")
-            {
-                //CDefectRecipe defectRecipe1_1 = new CDefectRecipe("上止距离1", Category.值);
-                //CDefectRecipe defectRecipe1_2 = new CDefectRecipe("上止距离2", Category.值);
-                //cDefectRecipes.Add(defectRecipe1_1);
-                //cDefectRecipes.Add(defectRecipe1_2);
-                CDefectRecipe defectRecipe3 = new CDefectRecipe("长插销距离", Category.值);
-                cDefectRecipes.Add(defectRecipe3);
-                CDefectRecipe defectRecipe6 = new CDefectRecipe("短插销距离", Category.值);
-                cDefectRecipes.Add(defectRecipe6);
-                CDefectRecipe defectRecipe4 = new CDefectRecipe("插销歪", Category.值);
-                cDefectRecipes.Add(defectRecipe4);
-                CDefectRecipe defectRecipe5 = new CDefectRecipe("插销偏", Category.值);
-                cDefectRecipes.Add(defectRecipe5);
-                CDefectRecipe defectRecipe7 = new CDefectRecipe("插销角度", Category.值);
-                cDefectRecipes.Add(defectRecipe7);
-            }
-            //CDefectRecipe defectRecipe6 = new CDefectRecipe("上止高低", Category.值);
-            //cDefectRecipes.Add(defectRecipe6);
-            CDefectSpecies defectSpecies = new CDefectSpecies("拉链", cDefectRecipes);
+
+            CDefectSpecies defectSpecies = new CDefectSpecies("链牙", cDefectRecipes);
             #endregion
 
-            #region 下止
+            #region 布带
+            List<CDefectRecipe> cClothDefectRecipes = new List<CDefectRecipe>();
+            for (int i = 0; i < Cloth_names?.Length; i++)
+            {
+                CDefectRecipe defectRecipe = new CDefectRecipe(Cloth_names[i], Category.区域);
+                cClothDefectRecipes.Add(defectRecipe);
+            }
+            CDefectSpecies ClothdefectSpecies = new CDefectSpecies("布带", cClothDefectRecipes);
+            #endregion
+
+            #region 方块插销
+            List<CDefectRecipe> cdownDefectRecipes = new List<CDefectRecipe>();
             if (downStopMass_names?.Length > 0)
             {
                 string[] Downstrs = downStopMass_names.Where(s => s != "链齿" && s != "链牙").ToArray();
                 for (int i = 0; i < Downstrs.Length; i++)
                 {
                     CDefectRecipe defectRecipe = new CDefectRecipe(Downstrs[i], Category.区域);
-                    cDefectRecipes.Add(defectRecipe);
+                    cdownDefectRecipes.Add(defectRecipe);
                 }
-                //CDefectRecipe defectRecipe5 = new CDefectRecipe("下止露牙", Category.区域);
-                //cDefectRecipes.Add(defectRecipe5);
+
             }
-
+            if (user == "正面")
+            {
+                CDefectRecipe defectRecipe3 = new CDefectRecipe("长插销距离", Category.值);
+                cdownDefectRecipes.Add(defectRecipe3);
+                CDefectRecipe defectRecipe6 = new CDefectRecipe("短插销距离", Category.值);
+                cdownDefectRecipes.Add(defectRecipe6);
+                CDefectRecipe defectRecipe4 = new CDefectRecipe("插销歪", Category.值);
+                cdownDefectRecipes.Add(defectRecipe4);
+                CDefectRecipe defectRecipe5 = new CDefectRecipe("插销偏", Category.值);
+                cdownDefectRecipes.Add(defectRecipe5);
+                CDefectRecipe defectRecipe7 = new CDefectRecipe("插销角度", Category.值);
+                cdownDefectRecipes.Add(defectRecipe7);
+            }
+            CDefectSpecies downdefectSpecies = new CDefectSpecies("方块插销", cdownDefectRecipes);
             #endregion
-
-            #region 拉头 拉片 LOGO 拉片外形
-
-            //int sbsindex = pull_names.ToList().IndexOf("SBS");
-            //string[] pullstrs = pull_names.Take(sbsindex).ToArray();
-            //string[] logostrs = pull_names.Skip(sbsindex).ToArray();
-
-            // string[] pullstrs = pull_Meta_names.Where(s => s.Contains("拉")).ToArray();
-
-
-            //List<CDefectRecipe> pullRecipes = new List<CDefectRecipe>();
-            //for (int i = 0; i < pull_Meta_names.Length; i++)
-            //{
-            //    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Meta_names[i], Category.区域);
-            //    pullRecipes.Add(defectRecipe);
-            //}
-            //for (int i = 0; i < pull_Paint_names.Length; i++)
-            //{
-            //    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Paint_names[i], Category.区域);
-            //    pullRecipes.Add(defectRecipe);
-            //}
-            //for (int i = 0; i < pullSharp_names.Length; i++)
-            //{
-            //    CDefectRecipe defectRecipe2 = new CDefectRecipe(pullSharp_names[i], Category.值);
-            //    pullRecipes.Add(defectRecipe2);
-            //}
-            ////颜色
-            //CDefectRecipe defectRecipe1_H = new CDefectRecipe("拉头色差1", Category.值);
-            //CDefectRecipe defectRecipe1_S = new CDefectRecipe("拉头色差2", Category.值);
-            //pullRecipes.Add(defectRecipe1_H);
-            //pullRecipes.Add(defectRecipe1_S);
-
-            //CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
-
-            //List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
-            //for (int i = 0; i < pull_Logo_names.Length; i++)
-            //{
-            //    CDefectRecipe defectRecipe = new CDefectRecipe(pull_Logo_names[i], Category.区域);
-            //    logoRecipes.Add(defectRecipe);
-            //}
-            //CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
-
-
-
-            #endregion
-
-            DefectSpecies.Add(defectSpecies);
-            DefectSpecies.Add(bigSpecies);
-            //DefectSpecies.Add(pullSpecies);
+            DefectSpecies.Add(downdefectSpecies); //方块插销
+            DefectSpecies.Add(defectSpecies); //链牙
+            DefectSpecies.Add(ClothdefectSpecies); //布带
+            DefectSpecies.Add(bigSpecies); //大缺陷
             //DefectSpecies.Add(logoSpecies);
 
         }
@@ -408,9 +363,9 @@ namespace MetalZipperAlgorihm
                                 int rech = 384;
                                 int rex = Convert.ToInt32(restoreData.OrgCenterX - 115);
                                 int rey = Convert.ToInt32(restoreData.OrgCenterY - rech / 2);
-                                if ((rex + recw) > cell.Image.ImageWidth)
+                                if ((rex + recw) > img.Width)
                                 {
-                                    rex = cell.Image.ImageWidth - recw;
+                                    rex = img.Width - recw;
                                 }
                                 if (rex < 0)
                                 {
@@ -753,7 +708,7 @@ namespace MetalZipperAlgorihm
                     CurrentDevice = "CPU";
                 }
                 float Nms = param.Nms;
-                int Input_size = 1024;
+                int Input_size = 736;
                 float Score = param.CommonScore;
                 if (Cloth_names != null && Cloth_names.Length > 0)
                 {
