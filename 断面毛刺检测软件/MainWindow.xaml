@@ -591,7 +591,8 @@
 
                                                 <Grid>
                                                     <Grid.ColumnDefinitions >
-                                                        <ColumnDefinition Width="4*"/>
+                                                        <!--<ColumnDefinition Width="4*"/>-->
+                                                        <ColumnDefinition Width="1*"/>
                                                         <ColumnDefinition/>
                                                     </Grid.ColumnDefinitions>
                                                     <Border Grid.Column="0"

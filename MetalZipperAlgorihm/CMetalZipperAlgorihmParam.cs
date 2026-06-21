@@ -213,7 +213,7 @@ namespace MetalZipperAlgorihm
             #region 下止
             if (downStopMass_names?.Length > 0)
             {
-                string[] Downstrs = downStopMass_names.Where(s =>  s != "链齿" && s != "链牙").ToArray();
+                string[] Downstrs = downStopMass_names.Where(s => s != "链齿" && s != "链牙").ToArray();
                 for (int i = 0; i < Downstrs.Length; i++)
                 {
                     CDefectRecipe defectRecipe = new CDefectRecipe(Downstrs[i], Category.区域);
@@ -282,7 +282,7 @@ namespace MetalZipperAlgorihm
 
             string modelDirpath = ".\\AlgorithmPlug\\MetalZipperAlgorihm\\Models\\";
 
-            string commonModelPath = modelDirpath + "CommonModel\\";
+            string commonModelPath = modelDirpath + "ClothModel\\";
             string bigModelPath = modelDirpath + "BigDetModel\\";
 
             var commons = GetNames(commonModelPath);
@@ -297,16 +297,12 @@ namespace MetalZipperAlgorihm
                 Big_Model_Path = bigstrs.Item1;
                 bigDet_names = bigstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
-            if (user == "正面")
+            string downStopMassPath = modelDirpath + "DownStopMassModel\\";
+            var downstopstrs = GetNames(downStopMassPath);
+            if (downstopstrs.Item1 != "")
             {
-                string downStopMassPath = modelDirpath + "DownStopMassModel\\";
-                var downstopstrs = GetNames(downStopMassPath);
-                if (downstopstrs.Item1 != "")
-                {
-                    downStopMass_Model_Path = downstopstrs.Item1;
-                    downStopMass_names = downstopstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                }
-
+                downStopMass_Model_Path = downstopstrs.Item1;
+                downStopMass_names = downstopstrs.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
             }
 
             string ToothModel = modelDirpath + "ToothModel\\";
@@ -392,7 +388,7 @@ namespace MetalZipperAlgorihm
 
                 // int oddoreven = cell.PhotoIndex % 2;
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
-                if (cell.PhotoIndex >= 100) // 大缺陷只检测偶数图（第二张图）
+                if (cell.PhotoIndex >= 100) // 大缺陷只检测底曝光图片(>=100)
                 {
                     DetResult bigResult = ImageInferDet(WH_BigDet_det, img);
 
@@ -402,7 +398,7 @@ namespace MetalZipperAlgorihm
                         {
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, (cell.PhotoIndex/100) - 1, 0, 0, labelname, bigResult.datas[j]);
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, (cell.PhotoIndex / 100) - 1, 0, 0, labelname, bigResult.datas[j]);
                             if (labelname.Contains("方块插销") && cell.PhotoIndex != 100)
                                 continue;
                             dets.Add(restoreData);
@@ -417,6 +413,10 @@ namespace MetalZipperAlgorihm
                                     rex = cell.Image.ImageWidth - recw;
                                 }
                                 if (rex < 0)
+                                {
+                                    rex = 0;
+                                }
+                                if (rey < 0)
                                 {
                                     rex = 0;
                                 }
@@ -480,43 +480,6 @@ namespace MetalZipperAlgorihm
                                             dets.Add(disData1);
                                         }
 
-                                        ////计算下止到链齿的最短距离
-                                        //List<(float, int)> Diss = new List<(float, int)>();
-                                        //for (int a = 0; a < downmass.Count; a++)
-                                        //{
-                                        //    for (int b = 0; b < lianci.Count; b++)
-                                        //    {
-                                        //        float dis = CalculateDistance(downmass[a], lianci[b]);
-                                        //        Diss.Add((dis, b));
-                                        //        if (lianci[b].box.Center.X < downmass[a].box.Center.X) //链牙在下止左边 露牙
-                                        //        {
-                                        //            luyaIndex.Add(b);
-                                        //        }
-                                        //    }
-                                        //}
-                                        //if (Diss.Count > 0)
-                                        //{
-                                        //    var min = Diss.Min(t => t.Item1);
-                                        //    var dis = Diss.First(t => t.Item1 == min);
-                                        //    CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止距离", lianci[dis.Item2]);
-                                        //    disData.Value = dis.Item1;
-                                        //    dets.Add(disData);
-                                        //    Diss.Clear();
-                                        //}
-                                        //else //没找到下止和链牙
-                                        //{
-                                        //    CoordRestoreData disData = new CoordRestoreData("下止距离", 1000);
-                                        //    dets.Add(disData);
-                                        //}
-
-                                        //if (luyaIndex.Count > 0)
-                                        //{
-                                        //    for (int b = 0; b < luyaIndex.Count; b++)
-                                        //    {
-                                        //        CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "下止露牙", lianci[luyaIndex[b]]);
-                                        //        dets.Add(disData);
-                                        //    }
-                                        //}
                                         List<(float, int)> Angs = new List<(float, int)>();
                                         for (int a = 0; a < downmass.Count; a++)
                                         {
@@ -611,27 +574,37 @@ namespace MetalZipperAlgorihm
                         for (int j = 0; j < detrets[i].Item1?.datas.Count; j++)
                         {
                             int labelindex = int.Parse(detrets[i].Item1.datas[j].lable);
-                            string labelname="";
+                            string labelname = "";
                             int photoindex = 0;
                             if (cell.PhotoIndex >= 100)
                             {
                                 labelname = Tooth_names[labelindex];
                                 photoindex = cell.PhotoIndex / 100;
+                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                {
+                                    float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
+                                    dets.Add(dirtyData);
+                                    continue;
+                                }
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
+                                dets.Add(restoreData);
                             }
                             else
                             {
                                 labelname = Cloth_names[labelindex];
                                 photoindex = cell.PhotoIndex;
+                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                {
+                                    float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue, 1);
+                                    dets.Add(dirtyData);
+                                    continue;
+                                }
+                                CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], 1);
+                                dets.Add(restoreData);
                             }
-                            if (labelname == "布带脏污" || labelname == "黑点脏污")
-                            {
-                                float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
-                                CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
-                                dets.Add(dirtyData);
-                                continue;
-                            }
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
-                            dets.Add(restoreData);
+
 
                         }
 

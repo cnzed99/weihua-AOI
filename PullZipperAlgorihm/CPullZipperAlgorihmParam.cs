@@ -1,18 +1,20 @@
-﻿using System.ComponentModel;
-using AlgorithmDll;
+﻿using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
+using System.ComponentModel;
 using System.IO;
+using System.Management;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using WH.VisionLearning;
-using System.Management;
+using HalconDotNet;
 
 
 namespace PullZipperAlgorihm
@@ -85,6 +87,12 @@ namespace PullZipperAlgorihm
 
         protected OpenCvSharp.Point[] offlineContours;
 
+        /// <summary>
+        /// 离线测试拉片圆孔模板
+        /// </summary>
+
+        protected OpenCvSharp.Point[] offlineHoleContours;
+
         public string User { get; set; }
         /// <summary>
         /// 2024.10.28 鲍赞宝
@@ -136,6 +144,14 @@ namespace PullZipperAlgorihm
             CDefectRecipe defectRecipe1_S = new CDefectRecipe("拉头色差2", Category.值);
             pullRecipes.Add(defectRecipe1_H);
             pullRecipes.Add(defectRecipe1_S);
+
+            if(user == "拉片")
+            {
+                CDefectRecipe defectRecipe2 = new CDefectRecipe("拉片外形", Category.值);
+                pullRecipes.Add(defectRecipe2);
+                CDefectRecipe defectRecipe3 = new CDefectRecipe("孔洞外形", Category.值);
+                pullRecipes.Add(defectRecipe3);
+            }
 
             CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
 
@@ -283,94 +299,45 @@ namespace PullZipperAlgorihm
                 #region 拉片外形
                 if (User == "拉片")
                 {
-                    List<double> dsimilaritys = new List<double>();
-                    List<List<Point>> allcontourpoints = new List<List<Point>>();
 
-                    SegResult pullsegResult = WH_PullShape_Seg.Predict(img) as SegResult;
+                    GetContoursAndHSV(cell, out Point[] PullPoints, out Point[] HolesPoints, out float Hvalue, out float Svalue, out float Vvalue);
 
-                    if (pullsegResult == null) return;
-
-                    List<Point[]> contoursList = new List<Point[]>();
-                    foreach (var seg in pullsegResult.datas)
-                    {
-
-                        Mat maskgray = new Mat();
-                        Cv2.CvtColor(seg.mask, maskgray, ColorConversionCodes.BGR2GRAY);
-                        Mat binary = new Mat();
-                        Cv2.Threshold(maskgray, binary, 10, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
-
-                        Point[][] contours;
-                        HierarchyIndex[] hierarchy;
-                        Cv2.FindContours(binary, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-                        maskgray.Dispose();
-                        binary.Dispose();
-                        Point[] maxps = contours?.MaxBy(p => p.Length);
-                        if (maxps != null)
-                        {
-                            contoursList.Add(maxps);
-                        }
-
-                    }
                     if (paramClass.OffLinePullerTemplateEnabel)
                     {
                         paramClass.OffLinePullerTemplateEnabel = false;
-                        offlineContours = contoursList.OrderByDescending(contour => contour.Length).First();
+                        offlineContours = PullPoints;
+                        offlineHoleContours = HolesPoints;
                     }
-
                     if (cell.ImageFile == "")//在线
                     {
-                        if (cell.OrgContours != null && cell.OrgContours.Length > 0 && contoursList.Count > 0)
-                        {
-                            for (int i = 0; i < contoursList.Count; i++)
-                            {
-                                //double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
-                                double simiValue = MatchShapesWithCv2(cell.OrgContours, contoursList[i]);
-
-                                dsimilaritys.Add(simiValue);
-                            }
-                            double minvalue = dsimilaritys.Min();
-                            int minindex = dsimilaritys.IndexOf(minvalue);
-                            List<Point> p = contoursList[minindex].ToList();
-                            p.Add(p[0]);
-                            allcontourpoints.Add(p);
-                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
-                            dets.Add(restoreData);
-                        }
-                        else
-                        {
-                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
-                            dets.Add(restoreData);
-                        }
+                        double simiValue = MatchShapesWithCv2(cell.PullOrgContours, PullPoints);
+                        CoordRestoreData restoreData = new CoordRestoreData("拉片外形", (float)simiValue, PullPoints);
+                        dets.Add(restoreData);
+                        double holdsimiValue = MatchShapesWithCv2(cell.PullHoldOrgContours, HolesPoints);
+                        CoordRestoreData restoreData1 = new CoordRestoreData("孔洞外形", (float)holdsimiValue, HolesPoints);
+                        dets.Add(restoreData1);
                     }
-                    else //离线
+                    else
                     {
-                        if (offlineContours != null && contoursList.Count > 0)
-                        {
-                            for (int i = 0; i < contoursList.Count; i++)
-                            {
-                                // double simiValue = MatchShapesUsingHuMoments(offlineContours, contoursList[i]);
-                                double simiValue = MatchShapesWithCv2(offlineContours, contoursList[i]);
-                                dsimilaritys.Add(simiValue);
-                            }
-                            double minvalue = dsimilaritys.Min();
-                            int minindex = dsimilaritys.IndexOf(minvalue);
-                            List<Point> p = contoursList[minindex].ToList();
-                            p.Add(p[0]);
-                            allcontourpoints.Add(p);
-
-                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], (float)minvalue, allcontourpoints, 1);
-                            dets.Add(restoreData);
-                        }
-                        else
-                        {
-                            CoordRestoreData restoreData = new CoordRestoreData(pullSharp_names[0], 1000, allcontourpoints, 1);
-                            dets.Add(restoreData);
-                        }
+                        double simiValue = MatchShapesWithCv2(offlineContours, PullPoints);
+                        CoordRestoreData restoreData = new CoordRestoreData("拉片外形", (float)simiValue, PullPoints);
+                        dets.Add(restoreData);
+                        double holdsimiValue = MatchShapesWithCv2(offlineHoleContours, HolesPoints);
+                        CoordRestoreData restoreData1 = new CoordRestoreData("孔洞外形", (float)holdsimiValue, HolesPoints);
+                        dets.Add(restoreData1);
                     }
+                  
+
+                    CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)Hvalue);
+                    CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)Svalue);
+                    dets.Add(disDataH);
+                    dets.Add(disDataS);
+
+             
 
                 }
                 #endregion
-                #region 拉头拉片颜色
+                #region 拉头颜色
                 int px = 0, py = 0;
                 int rew = 0, reh = 0;
                 if (User == "拉头")
@@ -379,34 +346,25 @@ namespace PullZipperAlgorihm
                     py = 280;
                     rew = 100;
                     reh = 50;
+
+                    Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
+                    // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
+                    Mat hsvImage = new Mat();
+                    Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
+                    Scalar hsvMean = Cv2.Mean(hsvImage);
+                    // HSV通道说明：
+                    // H: 0-179 (色调)
+                    // S: 0-255 (饱和度)
+                    // V: 0-255 (明度)
+                    double hMean = hsvMean.Val0;
+                    double sMean = hsvMean.Val1;
+                    // double vMean = hsvMean.Val2;
+                    CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
+                    CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
+                    dets.Add(disDataH);
+                    dets.Add(disDataS);
+                    hsvImage.Dispose();
                 }
-                else
-                {
-                    px = img.Width / 2;
-                    py = img.Height / 2;
-                    rew = 50;
-                    reh = 50;
-                }
-
-                Mat cropullColorMat = img[new Rect(px, py, rew, reh)];
-                // Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹 (21)\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", cropullColorMat);
-                Mat hsvImage = new Mat();
-                Cv2.CvtColor(cropullColorMat, hsvImage, ColorConversionCodes.BGR2HSV);
-                Scalar hsvMean = Cv2.Mean(hsvImage);
-
-                // HSV通道说明：
-                // H: 0-179 (色调)
-                // S: 0-255 (饱和度)
-                // V: 0-255 (明度)
-                double hMean = hsvMean.Val0;
-                double sMean = hsvMean.Val1;
-                // double vMean = hsvMean.Val2;
-                CoordRestoreData disDataH = new CoordRestoreData("拉头色差1", (float)hMean);
-                CoordRestoreData disDataS = new CoordRestoreData("拉头色差2", (float)sMean);
-                dets.Add(disDataH);
-                dets.Add(disDataS);
-                hsvImage.Dispose();
-
                 #endregion
                 #region Logo识别
                 DetResult logoResult = ImageInferDet(WH_Logo_pull_det, img);
@@ -682,23 +640,247 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         public double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
                                                 ShapeMatchModes mode = ShapeMatchModes.I2)
         {
-            using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
-            using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
+            if (contours1 != null && contours2 != null)
             {
-
-                // 填充点数据
-                for (int i = 0; i < contours1.Length; i++)
+                using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
+                using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
                 {
-                    contour1Mat.Set(i, 0, new Point(contours1[i].X, contours1[i].Y));
-                }
-                for (int i = 0; i < contours2.Length; i++)
-                {
-                    contour2Mat.Set(i, 0, new Point(contours2[i].X, contours2[i].Y));
-                }
 
-                return Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
+                    // 填充点数据
+                    for (int i = 0; i < contours1.Length; i++)
+                    {
+                        contour1Mat.Set(i, 0, new Point(contours1[i].X, contours1[i].Y));
+                    }
+                    for (int i = 0; i < contours2.Length; i++)
+                    {
+                        contour2Mat.Set(i, 0, new Point(contours2[i].X, contours2[i].Y));
+                    }
 
+                    return Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
+
+                }
             }
+            else
+            {
+                return 1001;
+            }
+        }
+
+
+        private void GetContoursAndHSV(Cell cell, out Point[] pullPoints, out Point[] holdPoints, out float Hvalue, out float Svalue, out float Vvalue)
+        {
+
+
+            HObject ho_Image = null, ho_GrayImage = null, ho_Region = null;
+            HObject ho_ConnectedRegions = null, ho_SelectedRegions = null;
+            HObject ho_Rectangle = null, ho_ImageReduced = null, ho_Region1 = null;
+            HObject ho_RegionFillUp = null, ho_ConnectedRegions1 = null;
+            HObject ho_SelectedRegions1 = null, ho_RegionDifference = null;
+            HObject ho_ConnectedRegions3 = null, ho_SelectedRegions3 = null;
+            HObject ho_Contours = null, ho_ImageReduced1 = null, ho_Region2 = null;
+            HObject ho_RegionFillUp1 = null, ho_RegionOpening = null, ho_ConnectedRegions2 = null;
+            HObject ho_SelectedRegions2 = null, ho_Contours1 = null, ho_RegionDifference1 = null;
+            HObject ho_RegionOpening1 = null, ho_ImageR = null, ho_ImageG = null;
+            HObject ho_ImageB = null, ho_ImageH = null, ho_ImageS = null;
+            HObject ho_ImageV = null;
+            HTuple hv_Row = new HTuple(), hv_Col = new HTuple(), hv_Row4 = new HTuple(), hv_Col4 = new HTuple();
+
+            // Local control variables 
+
+            HTuple hv_Row1 = new HTuple(), hv_Column1 = new HTuple();
+            HTuple hv_Row2 = new HTuple(), hv_Column2 = new HTuple();
+            HTuple hv_MeanH = new HTuple(), hv_DevH = new HTuple();
+            HTuple hv_MeanS = new HTuple(), hv_DevS = new HTuple();
+            HTuple hv_MeanV = new HTuple(), hv_DevV = new HTuple();
+            // Initialize local and output iconic variables 
+            HOperatorSet.GenEmptyObj(out ho_Image);
+            HOperatorSet.GenEmptyObj(out ho_GrayImage);
+            HOperatorSet.GenEmptyObj(out ho_Region);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_Rectangle);
+            HOperatorSet.GenEmptyObj(out ho_ImageReduced);
+            HOperatorSet.GenEmptyObj(out ho_Region1);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions1);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions1);
+            HOperatorSet.GenEmptyObj(out ho_RegionDifference);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions3);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions3);
+            HOperatorSet.GenEmptyObj(out ho_Contours);
+            HOperatorSet.GenEmptyObj(out ho_ImageReduced1);
+            HOperatorSet.GenEmptyObj(out ho_Region2);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp1);
+            HOperatorSet.GenEmptyObj(out ho_RegionOpening);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions2);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions2);
+            HOperatorSet.GenEmptyObj(out ho_Contours1);
+            HOperatorSet.GenEmptyObj(out ho_RegionDifference1);
+            HOperatorSet.GenEmptyObj(out ho_RegionOpening1);
+            HOperatorSet.GenEmptyObj(out ho_ImageR);
+            HOperatorSet.GenEmptyObj(out ho_ImageG);
+            HOperatorSet.GenEmptyObj(out ho_ImageB);
+            HOperatorSet.GenEmptyObj(out ho_ImageH);
+            HOperatorSet.GenEmptyObj(out ho_ImageS);
+            HOperatorSet.GenEmptyObj(out ho_ImageV);
+
+            //HOperatorSet.GenImageInterleaved(
+            //        out ho_Image,
+            //        cell.Image.ImageData,
+            //        "rgb",
+            //        cell.Image.ImageWidth,
+            //        cell.Image.ImageHeight,
+            //        -1,
+            //        "byte",
+            //        0,
+            //        0,
+            //        0,
+            //        0,
+            //        -1,
+            //        0
+            //    );
+
+            HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+
+            ho_GrayImage.Dispose();
+            HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
+            ho_Region.Dispose();
+            HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 180, 255);
+            ho_ConnectedRegions.Dispose();
+            HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
+            ho_SelectedRegions.Dispose();
+            HOperatorSet.SelectShapeStd(ho_ConnectedRegions, out ho_SelectedRegions, "max_area",
+                70);
+            hv_Row1.Dispose(); hv_Column1.Dispose(); hv_Row2.Dispose(); hv_Column2.Dispose();
+            HOperatorSet.SmallestRectangle1(ho_SelectedRegions, out hv_Row1, out hv_Column1,
+                out hv_Row2, out hv_Column2);
+            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+            {
+                ho_Rectangle.Dispose();
+                HOperatorSet.GenRectangle1(out ho_Rectangle, hv_Row1, hv_Column1, hv_Row2,
+                    hv_Column2 - 50);
+            }
+            ho_ImageReduced.Dispose();
+            HOperatorSet.ReduceDomain(ho_Image, ho_Rectangle, out ho_ImageReduced);
+            //获取拉片外轮廓
+            ho_Region1.Dispose();
+            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region1, 220, 255);
+            ho_RegionFillUp.Dispose();
+            HOperatorSet.FillUp(ho_Region1, out ho_RegionFillUp);
+            ho_ConnectedRegions1.Dispose();
+            HOperatorSet.Connection(ho_RegionFillUp, out ho_ConnectedRegions1);
+            ho_SelectedRegions1.Dispose();
+            HOperatorSet.SelectShapeStd(ho_ConnectedRegions1, out ho_SelectedRegions1,
+                "max_area", 70);
+            ho_RegionDifference.Dispose();
+            HOperatorSet.Difference(ho_Rectangle, ho_SelectedRegions1, out ho_RegionDifference
+                );
+            ho_ConnectedRegions3.Dispose();
+            HOperatorSet.Connection(ho_RegionDifference, out ho_ConnectedRegions3);
+            ho_SelectedRegions3.Dispose();
+            HOperatorSet.SelectShapeStd(ho_ConnectedRegions3, out ho_SelectedRegions3,
+                "max_area", 70);
+            ho_Contours.Dispose();
+            HOperatorSet.GenContourRegionXld(ho_SelectedRegions3, out ho_Contours, "border_holes");
+            hv_Row.Dispose(); hv_Col.Dispose();
+            HOperatorSet.GetContourXld(ho_Contours, out hv_Row, out hv_Col);
+            //获取拉片内部孔轮廓
+            ho_ImageReduced1.Dispose();
+            HOperatorSet.ReduceDomain(ho_ImageReduced, ho_RegionDifference, out ho_ImageReduced1
+                );
+            ho_Region2.Dispose();
+            HOperatorSet.Threshold(ho_ImageReduced1, out ho_Region2, 245, 255);
+            ho_RegionFillUp1.Dispose();
+            HOperatorSet.FillUp(ho_Region2, out ho_RegionFillUp1);
+            ho_RegionOpening.Dispose();
+            HOperatorSet.OpeningCircle(ho_RegionFillUp1, out ho_RegionOpening, 8.5);
+            ho_ConnectedRegions2.Dispose();
+            HOperatorSet.Connection(ho_RegionOpening, out ho_ConnectedRegions2);
+
+            ho_SelectedRegions2.Dispose();
+            HOperatorSet.SelectShape(ho_ConnectedRegions2, out ho_SelectedRegions2, (new HTuple("area")).TupleConcat(
+                "convexity"), "and", (new HTuple(8000)).TupleConcat(0.9), (new HTuple(9999999999)).TupleConcat(1));
+            ho_Contours1.Dispose();
+            HOperatorSet.GenContourRegionXld(ho_SelectedRegions2, out ho_Contours1, "border_holes");
+            hv_Row4.Dispose(); hv_Col4.Dispose();
+            HOperatorSet.GetContourXld(ho_Contours1, out hv_Row4, out hv_Col4);
+
+            //计算拉片区域RGB
+
+            ho_RegionDifference1.Dispose();
+            HOperatorSet.Difference(ho_SelectedRegions3, ho_RegionOpening, out ho_RegionDifference1
+                );
+            ho_RegionOpening1.Dispose();
+            HOperatorSet.OpeningCircle(ho_RegionDifference1, out ho_RegionOpening1, 3.5);
+            ho_ImageR.Dispose(); ho_ImageG.Dispose(); ho_ImageB.Dispose();
+            HOperatorSet.Decompose3(ho_Image, out ho_ImageR, out ho_ImageG, out ho_ImageB
+                );
+            ho_ImageH.Dispose(); ho_ImageS.Dispose(); ho_ImageV.Dispose();
+            HOperatorSet.TransFromRgb(ho_ImageR, ho_ImageG, ho_ImageB, out ho_ImageH, out ho_ImageS,
+                out ho_ImageV, "hsv");
+            hv_MeanH.Dispose(); hv_DevH.Dispose();
+            HOperatorSet.Intensity(ho_RegionOpening1, ho_ImageH, out hv_MeanH, out hv_DevH);
+            hv_MeanS.Dispose(); hv_DevS.Dispose();
+            HOperatorSet.Intensity(ho_RegionOpening1, ho_ImageS, out hv_MeanS, out hv_DevS);
+            hv_MeanV.Dispose(); hv_DevV.Dispose();
+            HOperatorSet.Intensity(ho_RegionOpening1, ho_ImageV, out hv_MeanV, out hv_DevV);
+            Hvalue = (float)hv_MeanH.D;
+            Svalue = (float)hv_MeanS.D;
+            Vvalue = (float)hv_MeanV.D;
+
+            pullPoints = new Point[hv_Row.Length];
+            for (int i = 0; i < hv_Row.Length; i++)
+            {
+                pullPoints[i] = new Point((int)hv_Col[i].D, (int)hv_Row[i].D);
+            }
+            holdPoints = new Point[hv_Row4.Length];
+            for (int i = 0; i < hv_Row4.Length; i++)
+            {
+                holdPoints[i] = new Point((int)hv_Col4[i].D, (int)hv_Row4[i].D);
+            }
+
+
+            ho_Image.Dispose();
+            ho_GrayImage.Dispose();
+            ho_Region.Dispose();
+            ho_ConnectedRegions.Dispose();
+            ho_SelectedRegions.Dispose();
+            ho_Rectangle.Dispose();
+            ho_ImageReduced.Dispose();
+            ho_Region1.Dispose();
+            ho_RegionFillUp.Dispose();
+            ho_ConnectedRegions1.Dispose();
+            ho_SelectedRegions1.Dispose();
+            ho_RegionDifference.Dispose();
+            ho_ConnectedRegions3.Dispose();
+            ho_SelectedRegions3.Dispose();
+            ho_Contours.Dispose();
+            ho_ImageReduced1.Dispose();
+            ho_Region2.Dispose();
+            ho_RegionFillUp1.Dispose();
+            ho_RegionOpening.Dispose();
+            ho_ConnectedRegions2.Dispose();
+            ho_SelectedRegions2.Dispose();
+            ho_Contours1.Dispose();
+            ho_RegionDifference1.Dispose();
+            ho_RegionOpening1.Dispose();
+            ho_ImageR.Dispose();
+            ho_ImageG.Dispose();
+            ho_ImageB.Dispose();
+            ho_ImageH.Dispose();
+            ho_ImageS.Dispose();
+            ho_ImageV.Dispose();
+
+            hv_Row1.Dispose();
+            hv_Column1.Dispose();
+            hv_Row2.Dispose();
+            hv_Column2.Dispose();
+            hv_MeanH.Dispose();
+            hv_DevH.Dispose();
+            hv_MeanS.Dispose();
+            hv_DevS.Dispose();
+            hv_MeanV.Dispose();
+            hv_DevV.Dispose();
         }
 
         private void UpdateScore(CParam param)
@@ -890,7 +1072,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             ShowInView = showinview;
         }
 
-        public CoordRestoreData(string labelstr, float value, List<List<Point>> contours, int showinview = 0)
+        public CoordRestoreData(string labelstr, float value, Point[] contours, int showinview = 0)
         {
             //坐标还原 
 
@@ -916,17 +1098,16 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             Value = value;
             ShowInView = showinview;
 
-            for (int i = 0; i < contours.Count; i++)
-            {
-                List<System.Windows.Point> Points = new List<System.Windows.Point>();
-                for (int j = 0; j < contours[i].Count; j++)
-                {
-                    System.Windows.Point point = new System.Windows.Point() { X = contours[i][j].X, Y = contours[i][j].Y };
-                    Points.Add(point);
-                }
 
-                Contours.Add(Points);
+            List<System.Windows.Point> Points = new List<System.Windows.Point>();
+            for (int j = 0; j < contours.Length; j++)
+            {
+                System.Windows.Point point = new System.Windows.Point() { X = contours[j].X, Y = contours[j].Y };
+                Points.Add(point);
             }
+
+            Contours.Add(Points);
+
         }
         /// <summary>
         /// 用于显示左上角点

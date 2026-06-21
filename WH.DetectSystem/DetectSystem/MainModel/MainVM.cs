@@ -33,6 +33,7 @@ using ZipperInfo;
 using System.Runtime.InteropServices;
 using WH.Entity.MatConverter;
 using System.IO;
+using SharpCompress;
 
 namespace WH.DetectSystem.Models
 {
@@ -777,11 +778,12 @@ namespace WH.DetectSystem.Models
 
                                 cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
                                 cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
-                                cell.OrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
+                                cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
+                                cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
                                 int photoTotalCount = 0;
-                                if (Name != "正面"&& Name != "反面")
+                                if (Name != "正面" && Name != "反面")
                                 {
                                     photoTotalCount = 1;
                                 }
@@ -1147,7 +1149,7 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-                                BitmapSource zipperPullimg = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                                BitmapSource zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
                                 ImageView drawView;
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
@@ -1729,24 +1731,32 @@ namespace WH.DetectSystem.Models
                     }
                 }
 
-                CImage img = GetCImage(cells);
-                if (img != null)
+                List<CImage> img = GetCImage(cells);
+                if (img?.Count > 0)
                 {
-                    newCell.Image = img;
+                    if (img.Count == 1)
+                    {
+                        newCell.Image = img[0];
+                    }
+                    else
+                    {
+                        newCell.Image = img[0];
+                        newCell.ChangleImgae = img[1];
+                    }
                 }
-
                 return newCell;
             }
-
         }
         //  Mat matresult;
-        private CImage GetCImage(List<Cell> cells)
+        private List<CImage> GetCImage(List<Cell> cells)
         {
+            List<CImage> cImages = new List<CImage>();
             if (cells.Count <= 1)
             {
                 if (cells.Count == 1)
                 {
-                    return (CImage)cells[0].Image.Clone();
+                    cImages.Add((CImage)cells[0].Image.Clone());
+                    return cImages;
                 }
                 else
                 {
@@ -1754,7 +1764,25 @@ namespace WH.DetectSystem.Models
                 }
 
             }
-            cells.RemoveAll(c => c.PhotoIndex < 100); //缺掉拉头的图片
+            else
+            {
+                // 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
+                List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
+                List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
+
+                CImage lowimage = GetMergeImage(lowIndexGroup);
+                CImage heightimage = GetMergeImage(highIndexGroup);
+
+                cImages.Add(lowimage);
+                cImages.Add(heightimage);
+                return cImages;
+
+
+            }
+        }
+
+        private CImage GetMergeImage(List<Cell> cells)
+        {
             if (cells[0].Image == null) return null;
             if (cells.Count == 1)
             {
@@ -1811,10 +1839,7 @@ namespace WH.DetectSystem.Models
                     Marshal.FreeHGlobal(dstPtr);
                     throw;
                 }
-
             }
-
-
         }
 
         /// <summary>

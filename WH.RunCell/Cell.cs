@@ -41,9 +41,9 @@ namespace WH.RunCell
         public List<(CImage, int, DateTime, TimeSpan)> ZipperImages { get; set; } = new List<(CImage, int, DateTime, TimeSpan)>();
 
         /// <summary>
-        /// 义乌爱旭的丝网特殊用途 从预处理库中拿图显示
+        /// 高亮度拼接图 鲍赞宝 2026-06-17
         /// </summary>
-        public BitmapSource ChangleImgae { get; set; }
+        public CImage ChangleImgae { get; set; }
         /// <summary>
         /// 2025.7.11 鲍赞宝
         /// 下止截图，用于存图
@@ -123,7 +123,12 @@ namespace WH.RunCell
         /// <summary>
         /// 拉片轮廓点集合
         /// </summary>
-        public OpenCvSharp.Point[] OrgContours {  get; set; }
+        public OpenCvSharp.Point[] PullOrgContours {  get; set; }
+
+        /// <summary>
+        /// 拉片中圆孔点集合
+        /// </summary>
+        public OpenCvSharp.Point[] PullHoldOrgContours { get; set; }
         /// <summary>
         /// 下止的类型 注塑 白铝 无 等
         /// </summary>

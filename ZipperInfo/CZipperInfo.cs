@@ -308,6 +308,10 @@ namespace ZipperInfo
         /// </summary>
         public OpenCvSharp.Point[] OrgContours { get; set; }
         /// <summary>
+        /// 拉片孔轮廓点集合
+        /// </summary>
+        public OpenCvSharp.Point[] HoleOrgContours { get; set; }
+        /// <summary>
         /// 拉头的H值
         /// </summary>
         public double PullerMeanH { get; set; }

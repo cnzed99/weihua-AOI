@@ -928,12 +928,12 @@ namespace ZipperTestAlgorihm
 
                                     if (cell.ImageFile == "")//在线
                                     {
-                                        if (cell.OrgContours != null && cell.OrgContours.Length > 0 && contoursList.Count > 0)
+                                        if (cell.PullOrgContours != null && cell.PullOrgContours.Length > 0 && contoursList.Count > 0)
                                         {
                                             for (int i = 0; i < contoursList.Count; i++)
                                             {
                                                 //double simiValue = MatchShapesUsingHuMoments(cell.OrgContours, contoursList[i]);
-                                                double simiValue = MatchShapesWithCv2(cell.OrgContours, contoursList[i]);
+                                                double simiValue = MatchShapesWithCv2(cell.PullOrgContours, contoursList[i]);
                                                 
                                                 dsimilaritys.Add(simiValue);
                                             }
