@@ -650,30 +650,81 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         public double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
                                                 ShapeMatchModes mode = ShapeMatchModes.I2)
         {
-            if (contours1 != null && contours2 != null)
-            {
-                using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
-                using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
-                {
-
-                    // 填充点数据
-                    for (int i = 0; i < contours1.Length; i++)
-                    {
-                        contour1Mat.Set(i, 0, new Point(contours1[i].X, contours1[i].Y));
-                    }
-                    for (int i = 0; i < contours2.Length; i++)
-                    {
-                        contour2Mat.Set(i, 0, new Point(contours2[i].X, contours2[i].Y));
-                    }
-
-                    return Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
-
-                }
-            }
-            else
-            {
+            // 如果任何轮廓为空，返回一个很大的不相似值
+            if (contours1 == null || contours2 == null || contours1.Length == 0 || contours2.Length == 0)
                 return 1001;
+
+            // 1) 保留原始 Hu 矩度量作为参考
+            //double huValue;
+            //using (var contour1Mat = new Mat(contours1.Length, 1, MatType.CV_32SC2))
+            //using (var contour2Mat = new Mat(contours2.Length, 1, MatType.CV_32SC2))
+            //{
+            //    for (int i = 0; i < contours1.Length; i++)
+            //        contour1Mat.Set(i, 0, new Point(contours1[i].X, contours1[i].Y));
+            //    for (int i = 0; i < contours2.Length; i++)
+            //        contour2Mat.Set(i, 0, new Point(contours2[i].X, contours2[i].Y));
+
+            //    huValue = Cv2.MatchShapes(contour1Mat, contour2Mat, mode);
+            //}
+
+            // 2) 计算归一化的 Hausdorff 距离（0..1），对局部偏差更敏感
+            double haus = ComputeHausdorffDistance(contours1, contours2);
+
+            // 3) 融合两个度量（权重可根据需要调整），返回越小表示越相似
+            double fused = haus;
+            return fused;
+            //return huValue;
+        }
+
+        // 计算两组轮廓点的对称 Hausdorff 距离，并按图像对角线归一化（使结果大致在 0..1 范围）
+        private double ComputeHausdorffDistance(Point[] a, Point[] b)
+        {
+            if (a == null || b == null || a.Length == 0 || b.Length == 0)
+                return double.MaxValue;
+
+            double MaxMinDistAB = 0.0;
+            for (int i = 0; i < a.Length; i++)
+            {
+                double minDist = double.MaxValue;
+                for (int j = 0; j < b.Length; j++)
+                {
+                    double dx = a[i].X - b[j].X;
+                    double dy = a[i].Y - b[j].Y;
+                    double d = Math.Sqrt(dx * dx + dy * dy);
+                    if (d < minDist) minDist = d;
+                }
+                if (minDist > MaxMinDistAB) MaxMinDistAB = minDist;
             }
+
+            double MaxMinDistBA = 0.0;
+            for (int i = 0; i < b.Length; i++)
+            {
+                double minDist = double.MaxValue;
+                for (int j = 0; j < a.Length; j++)
+                {
+                    double dx = b[i].X - a[j].X;
+                    double dy = b[i].Y - a[j].Y;
+                    double d = Math.Sqrt(dx * dx + dy * dy);
+                    if (d < minDist) minDist = d;
+                }
+                if (minDist > MaxMinDistBA) MaxMinDistBA = minDist;
+            }
+
+            double hausdorff = Math.Max(MaxMinDistAB, MaxMinDistBA);
+
+            // 归一化：使用两个轮廓合并包围盒的对角线长度
+            int minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
+            foreach (var p in a.Concat(b))
+            {
+                if (p.X < minX) minX = p.X;
+                if (p.Y < minY) minY = p.Y;
+                if (p.X > maxX) maxX = p.X;
+                if (p.Y > maxY) maxY = p.Y;
+            }
+            double diag = Math.Sqrt((maxX - minX) * (maxX - minX) + (maxY - minY) * (maxY - minY));
+            if (diag <= 0.0) diag = 1.0;
+
+            return hausdorff / diag; // 归一化后通常在 0..1 范围
         }
 
 
@@ -734,23 +785,23 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.GenEmptyObj(out ho_ImageS);
             HOperatorSet.GenEmptyObj(out ho_ImageV);
 
-            HOperatorSet.GenImageInterleaved(
-                    out ho_Image,
-                    cell.Image.ImageData,
-                    "rgb",
-                    cell.Image.ImageWidth,
-                    cell.Image.ImageHeight,
-                    -1,
-                    "byte",
-                    0,
-                    0,
-                    0,
-                    0,
-                    -1,
-                    0
-                );
+            //HOperatorSet.GenImageInterleaved(
+            //        out ho_Image,
+            //        cell.Image.ImageData,
+            //        "rgb",
+            //        cell.Image.ImageWidth,
+            //        cell.Image.ImageHeight,
+            //        -1,
+            //        "byte",
+            //        0,
+            //        0,
+            //        0,
+            //        0,
+            //        -1,
+            //        0
+            //    );
 
-            //HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+            HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
 
             ho_GrayImage.Dispose();
             HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
