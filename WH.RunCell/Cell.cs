@@ -372,6 +372,11 @@ namespace WH.RunCell
                     FourCutMatImg[i].Dispose();
                 }
             }
+            if (this.ChangleImgae != null)
+            {
+                this.ChangleImgae.Dispose();
+                this.ChangleImgae = null;
+            }
         }
 
         public override Cell Clone()

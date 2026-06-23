@@ -613,7 +613,7 @@ namespace WH.DetectSystem.Models
         private CancellationTokenSource m_cts = new CancellationTokenSource();
 
         public static readonly BoundedChannelOptions s_NormalChannelOptions =
-            new BoundedChannelOptions(10) { FullMode = BoundedChannelFullMode.Wait };
+            new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait };
 
         public static readonly BoundedChannelOptions s_SaveImgchannelOptions =
             new BoundedChannelOptions(5) { FullMode = BoundedChannelFullMode.Wait };
@@ -635,7 +635,7 @@ namespace WH.DetectSystem.Models
         /// 取图队列
         /// </summary>
         public readonly Channel<Cell> m_WaitImgChannel = Channel.CreateBounded<Cell>(
-            s_SaveImgchannelOptions
+            s_NormalChannelOptions
         );
 
         /// <summary>
@@ -737,7 +737,7 @@ namespace WH.DetectSystem.Models
             bool IDisRight = false;
             Task waitGetImageTask = Task.Run(async () =>
             {
-                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 await foreach (Cell cell in m_WaitImgChannel.Reader.ReadAllAsync())
                 {
@@ -759,6 +759,15 @@ namespace WH.DetectSystem.Models
                             {
                                 CZipperCommunicate.GetID2(out productID);
                             }
+
+                            // 读取下一个可用的 ZipperID
+                            //if (!m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID))
+                            //{
+                            //    OperateLog.Info($"{Name}-产品ID图像ID读取失败:{productID}");
+                            //    // 通道为空，等待一小段时间（避免CPU空转）
+                            //    //await Task.Delay(1);
+                            //    continue;
+                            //}
                             m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
                             if (zipperID.ProductID > 0)
                             {

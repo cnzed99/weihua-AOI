@@ -125,7 +125,7 @@ namespace CameraModule
         /// 李焕彬 2024.7.24
         /// 通道数
         /// </summary>
-        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(5)
+        private static readonly BoundedChannelOptions channelOptions = new BoundedChannelOptions(100)
         {
             FullMode = BoundedChannelFullMode.Wait
         };

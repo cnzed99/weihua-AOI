@@ -408,26 +408,12 @@ namespace OPTCam
                             }
                             bitMap.Palette = palette;
 
-
-                            //string fileName = string.Format("Device_{0}Image_W{1}_H{2}_fID{3}.bmp", 0, paramSetting.ImageWidth, paramSetting.ImageHeight, framID);
-                            //nReVal = SciCam.PayloadSaveImage(fileName, SciCam.SciCamPixelType.Mono8, payload, (long)paramSetting.ImageWidth, (long)paramSetting.ImageHeight);
-                            //if (nReVal != SciCam.SCI_CAMERA_OK)
-                            //{
-                            //    //ShowMsg("Save bmp image failed", nReVal, index + 1, true);
-                            //}
-
                             //获得指向图像数据的指针
                             if (m_pDstData != IntPtr.Zero)
                             {
                                 ImageQueueChannel.Writer.TryWrite(m_pDstData);
                                 _semaphoreSlim.Release(1);
-                            }
-                          
-
-                            //显示图片
-                            //pictureBox_picture.Image = bitMap;
-                            //保存图片
-                            //SaveImage(destImg, imgWidth, imgHeight, framID, SciCam.SciCamPixelType.Mono8);
+                            }                  
                         }
                     }
                     catch (Exception ex)
@@ -436,11 +422,6 @@ namespace OPTCam
                       Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
                   );
                     }
-                    //finally
-                    //{
-                    //    //Marshal.FreeHGlobal(destImg); 
-                    //    Marshal.FreeHGlobal(m_pDstData);
-                    //}
                 }
             }
             else
@@ -470,31 +451,13 @@ namespace OPTCam
                                 ImageQueueChannel.Writer.TryWrite(m_pDstData);
                                 _semaphoreSlim.Release(1);
                             }
-                            //string fileName = string.Format("Device_{0}Image_W{1}_H{2}_fID{3}.bmp", 0, paramSetting.ImageWidth, paramSetting.ImageHeight, framID);
-                            //nReVal = SciCam.PayloadSaveImage(fileName, SciCam.SciCamPixelType.RGB8, destImg, (long)paramSetting.ImageWidth, (long)paramSetting.ImageHeight);
-                            //if (nReVal != SciCam.SCI_CAMERA_OK)
-                            //{
-                            //    //ShowMsg("Save bmp image failed", nReVal, index + 1, true);
-                            //}
-                            //ImageQueueChannel.Writer.TryWrite(destImg);
-                            //ImageQueueChannel.Writer.TryWrite(m_nDataLenth);
-                            //显示图片
-                            //pictureBox_picture.Image = bitMap;
-                            //保存图片
-                            //SaveImage(destImg, imgWidth, imgHeight, framID, SciCam.SciCamPixelType.RGB8);
                         }
                     }
                     catch (Exception ex)
                     {
                         CCameraManagement.CamLogger.Error(
-                      Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
-                  );
+                      Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message);
                     }
-                    //finally
-                    //{
-                    //    //Marshal.FreeHGlobal(destImg);
-                    //    Marshal.FreeHGlobal(m_pDstData);
-                    //}
                 }
             }
             return 0;
