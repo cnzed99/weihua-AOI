@@ -751,7 +751,7 @@ namespace WH.DetectSystem.Models
                             {
                                 CZipperCommunicate.GetID(out productID);
                             }
-                            else if (Name == "顶面")
+                            else if (Name == "上止")
                             {
                                 CZipperCommunicate.GetID3(out productID);
                             }

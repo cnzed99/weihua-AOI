@@ -509,11 +509,6 @@ namespace ZipperTestAlgorihm
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
                 //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "转后.png", img);
-               // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
-                //if (cell.PhotoTatolCount == 2)
-                //{
-                //    runtype = true;
-                //}
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (cell.PhotoIndex != 100) //除了拉头图片，其他先检大缺陷
                 {
