@@ -785,23 +785,23 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.GenEmptyObj(out ho_ImageS);
             HOperatorSet.GenEmptyObj(out ho_ImageV);
 
-            //HOperatorSet.GenImageInterleaved(
-            //        out ho_Image,
-            //        cell.Image.ImageData,
-            //        "rgb",
-            //        cell.Image.ImageWidth,
-            //        cell.Image.ImageHeight,
-            //        -1,
-            //        "byte",
-            //        0,
-            //        0,
-            //        0,
-            //        0,
-            //        -1,
-            //        0
-            //    );
+            HOperatorSet.GenImageInterleaved(
+                    out ho_Image,
+                    cell.Image.ImageData,
+                    "rgb",
+                    cell.Image.ImageWidth,
+                    cell.Image.ImageHeight,
+                    -1,
+                    "byte",
+                    0,
+                    0,
+                    0,
+                    0,
+                    -1,
+                    0
+                );
 
-            HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+            // HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
 
             ho_GrayImage.Dispose();
             HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);

@@ -313,14 +313,16 @@ namespace OPTCam
         {
             int reVal = GetConvertedInfo(payload);
         }
+
         private int GetConvertedInfo(IntPtr payload)
         {
             if (payload == IntPtr.Zero)
             {
                 return -1;
             }
+
             startGrabSoft = true;
-            grabCount++;  // 帧计数
+            grabCount++;
             StringBuilder textBuilder = new StringBuilder("OPT");
             textBuilder.Append(grabCount);
             getImageLogger.Info(textBuilder.ToString());
@@ -357,112 +359,305 @@ namespace OPTCam
             {
                 return -1;
             }
-            //ImageQueueChannel.Writer.TryWrite(imgData);
+
             long destImgSize = 0;
+            IntPtr destImg = IntPtr.Zero;  // 使用局部变量，不要用成员变量
 
-            if (imgPixelType == SciCam.SciCamPixelType.Mono1p ||
-
-                imgPixelType == SciCam.SciCamPixelType.Mono2p ||
-                imgPixelType == SciCam.SciCamPixelType.Mono4p ||
-                imgPixelType == SciCam.SciCamPixelType.Mono8s ||
-                imgPixelType == SciCam.SciCamPixelType.Mono8 ||
-                imgPixelType == SciCam.SciCamPixelType.Mono10 ||
-                imgPixelType == SciCam.SciCamPixelType.Mono10p ||
-                imgPixelType == SciCam.SciCamPixelType.Mono12 ||
-                imgPixelType == SciCam.SciCamPixelType.Mono12p ||
-                imgPixelType == SciCam.SciCamPixelType.Mono14 ||
-                imgPixelType == SciCam.SciCamPixelType.Mono16 ||
-                imgPixelType == SciCam.SciCamPixelType.Mono10Packed ||
-                imgPixelType == SciCam.SciCamPixelType.Mono12Packed ||
-                imgPixelType == SciCam.SciCamPixelType.Mono14p)
+            try
             {
-                nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, IntPtr.Zero, ref destImgSize, true, 0);
-                if (nReVal == SciCam.SCI_CAMERA_OK)
+                if (imgPixelType == SciCam.SciCamPixelType.Mono1p ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono2p ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono4p ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono8s ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono8 ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono10 ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono10p ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono12 ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono12p ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono14 ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono16 ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono10Packed ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono12Packed ||
+                    imgPixelType == SciCam.SciCamPixelType.Mono14p)
                 {
-                    //IntPtr destImg = Marshal.AllocHGlobal((int)destImgSize);
-                    m_pDstData = Marshal.AllocHGlobal((int)destImgSize);
-                    try
+                    // 第一次调用获取所需大小
+                    nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData,
+                        SciCam.SciCamPixelType.Mono8, IntPtr.Zero, ref destImgSize, true, 0);
+
+                    if (nReVal == SciCam.SCI_CAMERA_OK && destImgSize > 0)
                     {
-                        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, m_pDstData, ref destImgSize, true, 0);
-                        //nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, destImg, ref destImgSize, true, 0);
+                        destImg = Marshal.AllocHGlobal((int)destImgSize);
+
+                        // 第二次调用实际转换
+                        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData,
+                            SciCam.SciCamPixelType.Mono8, destImg, ref destImgSize, true, 0);
+
                         if (nReVal == SciCam.SCI_CAMERA_OK)
                         {
-                            //这里使用 Marshal.Copy 方法将从 destImg 指向的内存位置复制 destImgSize 字节的数据到 bBitmap 字节数组中。
-                            byte[] bBitmap = new byte[destImgSize];
-                            //Marshal.Copy(destImg, bBitmap, 0, (int)destImgSize);
-                            Marshal.Copy(m_pDstData, bBitmap, 0, (int)destImgSize);
-                            //使用 Bitmap 类的构造函数创建一个新的位图对象，指定宽度 imgWidth 和高度 imgHeight，并指定像素格式为 Format8bppIndexed，即8位灰度图像。
-                            Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight, GdiPlus.PixelFormat.Format8bppIndexed);
-                            //使用 LockBits 方法锁定位图的指定区域（整个位图），以便直接访问位图的像素数据。指定了写入模式 (WriteOnly) 和像素格式 (Format8bppIndexed)。
-                            GdiPlus.BitmapData bitmapData = bitMap.LockBits(new Rectangle(0, 0, (int)imgWidth, (int)imgHeight), GdiPlus.ImageLockMode.WriteOnly, GdiPlus.PixelFormat.Format8bppIndexed);
-                            //用 Marshal.Copy 方法将 bBitmap 字节数组中的数据复制到位图的像素数据 (bitmapData.Scan0) 中。bitmapData.Scan0 是位图数据的起始地址。
-                            Marshal.Copy(bBitmap, 0, bitmapData.Scan0, (int)destImgSize);
-                            //使用 UnlockBits 方法解锁位图数据，释放对位图数据的访问。
-                            bitMap.UnlockBits(bitmapData);
-
-                            //设置调色板
-                            GdiPlus.ColorPalette palette = bitMap.Palette;
-                            for (int i = 0; i < 256; i++)
+                            // 创建Bitmap并发送到队列
+                            using (Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight,
+                                GdiPlus.PixelFormat.Format8bppIndexed))
                             {
-                                palette.Entries[i] = System.Drawing.Color.FromArgb(i, i, i);
-                            }
-                            bitMap.Palette = palette;
+                                GdiPlus.BitmapData bitmapData = bitMap.LockBits(
+                                    new Rectangle(0, 0, (int)imgWidth, (int)imgHeight),
+                                    GdiPlus.ImageLockMode.WriteOnly,
+                                    GdiPlus.PixelFormat.Format8bppIndexed);
 
-                            //获得指向图像数据的指针
-                            if (m_pDstData != IntPtr.Zero)
-                            {
-                                ImageQueueChannel.Writer.TryWrite(m_pDstData);
+                                try
+                                {
+                                    // 需要在项目属性中启用"允许不安全代码"
+                                    unsafe
+                                    {
+                                        byte* srcPtr = (byte*)destImg.ToPointer();
+                                        byte* dstPtr = (byte*)bitmapData.Scan0.ToPointer();
+                                        Buffer.MemoryCopy(srcPtr, dstPtr, destImgSize, destImgSize);
+                                    }
+                                   // Marshal.Copy(destImg, bitmapData.Scan0, 0, (int)destImgSize);
+
+                                    // 设置灰度调色板
+                                    GdiPlus.ColorPalette palette = bitMap.Palette;
+                                    for (int i = 0; i < 256; i++)
+                                    {
+                                        palette.Entries[i] = System.Drawing.Color.FromArgb(i, i, i);
+                                    }
+                                    bitMap.Palette = palette;
+                                }
+                                finally
+                                {
+                                    bitMap.UnlockBits(bitmapData);
+                                }
+
+                                // 将Bitmap转换为字节数组或直接发送
+                                // 这里建议使用using块确保资源释放
+                                ImageQueueChannel.Writer.TryWrite(destImg);
                                 _semaphoreSlim.Release(1);
-                            }                  
+                            }
+                        }
+                        else
+                        {
+                            // 转换失败，释放内存
+                            Marshal.FreeHGlobal(destImg);
+                            destImg = IntPtr.Zero;
                         }
                     }
-                    catch (Exception ex)
+                }
+                else
+                {
+                    // 彩色图像处理（类似逻辑）
+                    nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData,
+                        SciCam.SciCamPixelType.RGB8, IntPtr.Zero, ref destImgSize, true, 0);
+
+                    if (nReVal == SciCam.SCI_CAMERA_OK && destImgSize > 0)
                     {
-                        CCameraManagement.CamLogger.Error(
-                      Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
-                  );
+                        destImg = Marshal.AllocHGlobal((int)destImgSize);
+
+                        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData,
+                            SciCam.SciCamPixelType.RGB8, destImg, ref destImgSize, true, 0);
+
+                        if (nReVal == SciCam.SCI_CAMERA_OK)
+                        {
+                            using (Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight,
+                                GdiPlus.PixelFormat.Format24bppRgb))
+                            {
+                                GdiPlus.BitmapData bitmapData = bitMap.LockBits(
+                                    new Rectangle(0, 0, (int)imgWidth, (int)imgHeight),
+                                    GdiPlus.ImageLockMode.WriteOnly,
+                                    GdiPlus.PixelFormat.Format24bppRgb);
+
+                                try
+                                {
+                                    // 需要在项目属性中启用"允许不安全代码"
+                                    unsafe
+                                    {
+                                        byte* srcPtr = (byte*)destImg.ToPointer();
+                                        byte* dstPtr = (byte*)bitmapData.Scan0.ToPointer();
+                                        Buffer.MemoryCopy(srcPtr, dstPtr, destImgSize, destImgSize);
+                                    }
+                                    //Marshal.Copy(destImg, bitmapData.Scan0, 0, (int)destImgSize);
+                                }
+                                finally
+                                {
+                                    bitMap.UnlockBits(bitmapData);
+                                }
+
+                                ImageQueueChannel.Writer.TryWrite(destImg);
+                                _semaphoreSlim.Release(1);
+                            }
+                        }
+                        else
+                        {
+                            Marshal.FreeHGlobal(destImg);
+                            destImg = IntPtr.Zero;
+                        }
                     }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, IntPtr.Zero, ref destImgSize, true, 0);
-                if (nReVal == SciCam.SCI_CAMERA_OK)
+                // 发生异常时释放内存
+                if (destImg != IntPtr.Zero)
                 {
-                    //IntPtr destImg = Marshal.AllocHGlobal((int)destImgSize);
-                    m_pDstData = Marshal.AllocHGlobal((int)destImgSize);
-                    try
-                    {
-                        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, m_pDstData, ref destImgSize, true, 0);
-                        //nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, destImg, ref destImgSize, true, 0);
-                        if (nReVal == SciCam.SCI_CAMERA_OK)
-                        {
-                            byte[] bBitmap = new byte[destImgSize];
-                            //Marshal.Copy(destImg, bBitmap, 0, (int)destImgSize);
-                            Marshal.Copy(m_pDstData, bBitmap, 0, (int)destImgSize);
-                            Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight, GdiPlus.PixelFormat.Format24bppRgb);
-                            GdiPlus.BitmapData bitmapData = bitMap.LockBits(new Rectangle(0, 0, (int)imgWidth, (int)imgHeight), GdiPlus.ImageLockMode.WriteOnly, GdiPlus.PixelFormat.Format24bppRgb);
-                            Marshal.Copy(bBitmap, 0, bitmapData.Scan0, (int)destImgSize);
-                            bitMap.UnlockBits(bitmapData);
-
-                            //获得指向图像数据的指针
-                            if (m_pDstData != IntPtr.Zero)
-                            {
-                                ImageQueueChannel.Writer.TryWrite(m_pDstData);
-                                _semaphoreSlim.Release(1);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        CCameraManagement.CamLogger.Error(
-                      Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message);
-                    }
+                    Marshal.FreeHGlobal(destImg);
+                    destImg = IntPtr.Zero;
                 }
+
+                CCameraManagement.CamLogger.Error(
+                    Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message);
             }
             return 0;
         }
-       
+
+
+        //private int GetConvertedInfo(IntPtr payload)
+        //{
+        //    if (payload == IntPtr.Zero)
+        //    {
+        //        return -1;
+        //    }
+        //    startGrabSoft = true;
+        //    grabCount++;  // 帧计数
+        //    StringBuilder textBuilder = new StringBuilder("OPT");
+        //    textBuilder.Append(grabCount);
+        //    getImageLogger.Info(textBuilder.ToString());
+
+        //    SciCam.SCI_CAM_PAYLOAD_ATTRIBUTE payloadAttribute = new SciCam.SCI_CAM_PAYLOAD_ATTRIBUTE();
+        //    uint nReVal = SciCam.PayloadGetAttribute(payload, ref payloadAttribute);
+        //    if (nReVal != SciCam.SCI_CAMERA_OK)
+        //    {
+        //        return -1;
+        //    }
+
+        //    bool imgIsComplete = payloadAttribute.isComplete;
+        //    SciCam.SciCamPayloadMode payloadMode = payloadAttribute.payloadMode;
+        //    SciCam.SciCamPixelType imgPixelType = payloadAttribute.imgAttr.pixelType;
+        //    ulong imgWidth = payloadAttribute.imgAttr.width;
+        //    ulong imgHeight = payloadAttribute.imgAttr.height;
+        //    ulong framID = payloadAttribute.frameID;
+
+        //    paramSetting.ImageWidth = (int)payloadAttribute.imgAttr.width;
+        //    paramSetting.ImageHeight = (int)payloadAttribute.imgAttr.height;
+        //    paramSetting.CameraType =
+        //           imgPixelType == SciCam.SciCamPixelType.Mono8
+        //               ? PixelFormats.Gray8
+        //               : PixelFormats.Rgb24;
+
+        //    if (!imgIsComplete || payloadMode != SciCam.SciCamPayloadMode.SciCam_PayloadMode_2D)
+        //    {
+        //        return -1;
+        //    }
+
+        //    IntPtr imgData = IntPtr.Zero;
+        //    nReVal = SciCam.PayloadGetImage(payload, ref imgData);
+        //    if (nReVal != SciCam.SCI_CAMERA_OK)
+        //    {
+        //        return -1;
+        //    }
+        //    //ImageQueueChannel.Writer.TryWrite(imgData);
+        //    long destImgSize = 0;
+
+        //    if (imgPixelType == SciCam.SciCamPixelType.Mono1p ||
+
+        //        imgPixelType == SciCam.SciCamPixelType.Mono2p ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono4p ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono8s ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono8 ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono10 ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono10p ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono12 ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono12p ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono14 ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono16 ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono10Packed ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono12Packed ||
+        //        imgPixelType == SciCam.SciCamPixelType.Mono14p)
+        //    {
+        //        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, IntPtr.Zero, ref destImgSize, true, 0);
+        //        if (nReVal == SciCam.SCI_CAMERA_OK)
+        //        {
+        //            //IntPtr destImg = Marshal.AllocHGlobal((int)destImgSize);
+        //            m_pDstData = Marshal.AllocHGlobal((int)destImgSize);
+        //            try
+        //            {
+        //                nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, m_pDstData, ref destImgSize, true, 0);
+        //                //nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.Mono8, destImg, ref destImgSize, true, 0);
+        //                if (nReVal == SciCam.SCI_CAMERA_OK)
+        //                {
+        //                    //这里使用 Marshal.Copy 方法将从 destImg 指向的内存位置复制 destImgSize 字节的数据到 bBitmap 字节数组中。
+        //                    byte[] bBitmap = new byte[destImgSize];
+        //                    //Marshal.Copy(destImg, bBitmap, 0, (int)destImgSize);
+        //                    Marshal.Copy(m_pDstData, bBitmap, 0, (int)destImgSize);
+        //                    //使用 Bitmap 类的构造函数创建一个新的位图对象，指定宽度 imgWidth 和高度 imgHeight，并指定像素格式为 Format8bppIndexed，即8位灰度图像。
+        //                    Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight, GdiPlus.PixelFormat.Format8bppIndexed);
+        //                    //使用 LockBits 方法锁定位图的指定区域（整个位图），以便直接访问位图的像素数据。指定了写入模式 (WriteOnly) 和像素格式 (Format8bppIndexed)。
+        //                    GdiPlus.BitmapData bitmapData = bitMap.LockBits(new Rectangle(0, 0, (int)imgWidth, (int)imgHeight), GdiPlus.ImageLockMode.WriteOnly, GdiPlus.PixelFormat.Format8bppIndexed);
+        //                    //用 Marshal.Copy 方法将 bBitmap 字节数组中的数据复制到位图的像素数据 (bitmapData.Scan0) 中。bitmapData.Scan0 是位图数据的起始地址。
+        //                    Marshal.Copy(bBitmap, 0, bitmapData.Scan0, (int)destImgSize);
+        //                    //使用 UnlockBits 方法解锁位图数据，释放对位图数据的访问。
+        //                    bitMap.UnlockBits(bitmapData);
+
+        //                    //设置调色板
+        //                    GdiPlus.ColorPalette palette = bitMap.Palette;
+        //                    for (int i = 0; i < 256; i++)
+        //                    {
+        //                        palette.Entries[i] = System.Drawing.Color.FromArgb(i, i, i);
+        //                    }
+        //                    bitMap.Palette = palette;
+
+        //                    //获得指向图像数据的指针
+        //                    if (m_pDstData != IntPtr.Zero)
+        //                    {
+        //                        ImageQueueChannel.Writer.TryWrite(m_pDstData);
+        //                        _semaphoreSlim.Release(1);
+        //                    }                  
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                CCameraManagement.CamLogger.Error(
+        //              Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message
+        //          );
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, IntPtr.Zero, ref destImgSize, true, 0);
+        //        if (nReVal == SciCam.SCI_CAMERA_OK)
+        //        {
+        //            //IntPtr destImg = Marshal.AllocHGlobal((int)destImgSize);
+        //            m_pDstData = Marshal.AllocHGlobal((int)destImgSize);
+        //            try
+        //            {
+        //                nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, m_pDstData, ref destImgSize, true, 0);
+        //                //nReVal = SciCam.PayloadConvertImageEx(ref payloadAttribute.imgAttr, imgData, SciCam.SciCamPixelType.RGB8, destImg, ref destImgSize, true, 0);
+        //                if (nReVal == SciCam.SCI_CAMERA_OK)
+        //                {
+        //                    byte[] bBitmap = new byte[destImgSize];
+        //                    //Marshal.Copy(destImg, bBitmap, 0, (int)destImgSize);
+        //                    Marshal.Copy(m_pDstData, bBitmap, 0, (int)destImgSize);
+        //                    Bitmap bitMap = new Bitmap((int)imgWidth, (int)imgHeight, GdiPlus.PixelFormat.Format24bppRgb);
+        //                    GdiPlus.BitmapData bitmapData = bitMap.LockBits(new Rectangle(0, 0, (int)imgWidth, (int)imgHeight), GdiPlus.ImageLockMode.WriteOnly, GdiPlus.PixelFormat.Format24bppRgb);
+        //                    Marshal.Copy(bBitmap, 0, bitmapData.Scan0, (int)destImgSize);
+        //                    bitMap.UnlockBits(bitmapData);
+
+        //                    //获得指向图像数据的指针
+        //                    if (m_pDstData != IntPtr.Zero)
+        //                    {
+        //                        ImageQueueChannel.Writer.TryWrite(m_pDstData);
+        //                        _semaphoreSlim.Release(1);
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                CCameraManagement.CamLogger.Error(
+        //              Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + ex.Message);
+        //            }
+        //        }
+        //    }
+        //    return 0;
+        //}
+
         public override bool GetImageFunc(IntPtr zoo)
         {
             try

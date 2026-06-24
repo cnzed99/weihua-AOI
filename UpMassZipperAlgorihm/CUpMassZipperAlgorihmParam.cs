@@ -1,5 +1,6 @@
 ﻿using AlgorithmDll;
 using CommunityToolkit.Mvvm.ComponentModel;
+using HandyControl.Expression.Shapes;
 using OpenCvSharp;
 using OpenVinoSharp.Extensions.result;
 using SharpCompress;
@@ -88,7 +89,7 @@ namespace UpMassZipperAlgorihm
 
             if (upStopMassDefe_names?.Length > 0)
             {
-                string[] upstrs = upStopMassDefe_names.Where(s => s != "链齿").ToArray();
+               // string[] upstrs = upStopMassDefe_names.Where(s => s != "链齿").ToArray();
                 for (int i = 0; i < upStopMassDefe_names.Length; i++)
                 {
                     CDefectRecipe defectRecipe = new CDefectRecipe(upStopMassDefe_names[i], Category.区域);
@@ -209,8 +210,10 @@ namespace UpMassZipperAlgorihm
                             // 高牙距离
                             string upmassIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("上止")).ToString();
                             List<ObbData> upmass1 = obbDatas1.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
+                      
                             if (upmass1 != null && upmass1.Count > 0)
                             {
+                                GetRoatImage(upmass1[0], img);
                                 // 最右与上止的X方向距离
                                 float dismin = Math.Abs(upmass1[0].box.Center.X - maxx);
                                 CoordRestoreData disData = new CoordRestoreData("高牙距离", dismin);
@@ -498,6 +501,31 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
              );
             return img;
 
+        }
+
+        private void GetRoatImage(ObbData obb,Mat img)
+        {
+            if( obb == null ) return;
+            // 定义斜矩形
+            RotatedRect rrect = new RotatedRect(
+                obb.box.Center,
+                obb.box.Size,
+                obb.box.Angle);
+
+            // 坑：OpenCV 的 RotatedRect.Angle 范围是 [-90,0)，
+            // 当 |angle|>45 时，width/height 会被自动互换，angle 也偏移
+            // 所以取 Size 时建议这样保稳：
+            float w = rrect.Size.Width;
+            float h = rrect.Size.Height;
+            if (Math.Abs(rrect.Angle) > 45)
+            {
+                (w, h) = (h, w);   // 互换
+            }
+
+            Mat patch = new Mat();
+            Cv2.GetRectSubPix(img, new Size(w, h), rrect.Center, patch,-3);
+
+             Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上止.png", img);
         }
 
         private void UpdateScore(CParam param)

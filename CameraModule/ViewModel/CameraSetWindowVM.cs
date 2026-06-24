@@ -282,6 +282,7 @@ namespace CameraModule
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             ImageShow = image.ToBitmapSource();
+                            cell.Dispose();
                         });
                         //if (camSelect?.FuncDistinct != null)
                         //{
@@ -291,7 +292,7 @@ namespace CameraModule
                         //{
                         //    Distinct = 0;
                         //}
-                        //cellRecv?.Dispose();
+                       // cellRecv?.Dispose();
                         //cellRecv = cell;
                     }
                     catch (Exception ex)
