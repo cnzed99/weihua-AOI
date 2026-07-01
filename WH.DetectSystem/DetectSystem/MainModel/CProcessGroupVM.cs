@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using AlarmSetCtrl;
+﻿using AlarmSetCtrl;
 using AlarmSetCtrl.View;
 using AlgorithmDll;
 using Autofac;
@@ -17,8 +10,16 @@ using Mapster;
 using MySqlOperatesApi;
 using Mysqlx.Crud;
 using MySqlX.XDevAPI;
+using OpenVinoSharp.Extensions.utility;
 using ProjProduceData;
 using SDFilter;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -135,13 +136,20 @@ namespace WH.DetectSystem.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="zipperID"></param>
-        private void IDSend(object sender,ZipperID zipperID)
+        private async void IDSend(object sender, ZipperID zipperID)
         {
-            foreach (var item in CMainModels)
+            try
             {
-                if (item == null) continue;
-                item.m_WaitIDChannel.Writer.TryWrite(zipperID);
+                foreach (var item in CMainModels)
+                {
+                    if (item == null) continue;
+                    await item.m_WaitIDChannel.Writer.WriteAsync(zipperID);
+                }
             }
+            catch (Exception)
+            {
+            }
+
         }
 
         /// <summary>

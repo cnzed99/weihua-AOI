@@ -442,15 +442,7 @@ namespace CameraModule
                         //CCameraManagement.CamLogger.Error(strbuilder.ToString());
                         cell.Dispose();
                     }
-                    else
-                    {
-                        //StringBuilder strbuilder = new StringBuilder("[");
-                        //strbuilder.Append("相机");
-                        //strbuilder.Append("]     ");
-                        //strbuilder.Append(cell.ID);
-                        //strbuilder.Append("   cell入列完成。");
-                        //SysLog.Info(strbuilder.ToString());
-                    }
+
                 }
 
                 return true;

@@ -205,7 +205,12 @@ namespace DoThinkCam
                 //mutex.WaitOne();
                 //imageQueue.Enqueue(pBuffer);
                 //mutex.ReleaseMutex();
-                ImageQueueChannel.Writer.TryWrite(pBuffer);
+               // ImageQueueChannel.Writer.TryWrite(pBuffer);
+                if (!ImageQueueChannel.Writer.TryWrite(pBuffer))
+                {
+                    CCameraManagement.CamLogger.Error(
+                Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                }
                 _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = refFrame.iWidth;
                 paramSetting.ImageHeight = refFrame.iHeight;

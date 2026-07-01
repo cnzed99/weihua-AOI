@@ -44,7 +44,7 @@ namespace ZipperInfo
 
                 //第一个点
                 pullchange = 0;
-                frontFinsshPos = frontzippers - 1;
+                frontFinsshPos = frontzippers;
                 float firstpoint = netZipperhandle - frontLim;
                 if (firstpoint < 1) //触发点不能为零，为零启动后不触发相机
                 {
@@ -83,7 +83,7 @@ namespace ZipperInfo
             {
                 //第一个点
                 pullchange = 0;
-                frontFinsshPos = frontzippers;
+                frontFinsshPos = frontzippers+1;
                 float firstpoint = netZipperTali - frontLim;
                 if (firstpoint < 1) //触发点不能为零，为零启动后不触发相机
                 {
@@ -121,7 +121,7 @@ namespace ZipperInfo
             else if (netZipperhandle <= frontLim && netZipperTali >= backLim) //类3 //如果下一条拉链的头位置比上视野小并且尾比下视野位置大
             {
                 int nextCount = 0;
-                frontFinsshPos = frontzippers - 1;
+                frontFinsshPos = frontzippers;
                 float firstpoint = 0;
                 float start = 0;
                 for (int i = 1; i < 20; i++)//第一个点

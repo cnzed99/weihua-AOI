@@ -134,6 +134,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.Station1_Stage1_OK = false;
                 CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
                 CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
+                CZipperAutomaticAlgorithm.Puller_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Pulls_Stage1_OK = false;
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
@@ -203,7 +205,7 @@ namespace ZipperInfo
 
                 Thread.Sleep(100);
                 
-                CZipperCommunicate.SendCamFPS(1000); //起始300ms触发一次
+                CZipperCommunicate.SendCamFPS(600); //起始300ms触发一次
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
                 var window = win as HandyControl.Controls.Window;

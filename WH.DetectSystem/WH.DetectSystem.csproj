@@ -47,6 +47,11 @@
 		<PackageReference Include="Newtonsoft.Json" />
 		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="halcondotnet">
+	    <HintPath>..\packages\ThirdLocalDll\halcondotnet.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
 	
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

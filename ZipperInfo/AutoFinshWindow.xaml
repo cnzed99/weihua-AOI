@@ -31,7 +31,7 @@
                                    ClearButtonVisibility="Collapsed"  LabelVisibility="Collapsed"/>
                     
                 </Border>
-                <TextBlock Grid.Row="0" Text="下止图片" Margin="10,5"  FontSize="16"
+                <TextBlock Grid.Row="0" Text="低爆图片" Margin="10,5"  FontSize="16"
                  Foreground="AliceBlue"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"/>
@@ -39,20 +39,20 @@
                 <Border Grid.Row="1" Margin="4,0,0,0"
                         Background="{DynamicResource RegionBrush}"
                         BorderThickness="1">
-                    <wh:ImageView   Grid.Row="0" Source="{Binding ZipperInfo.TempData1.ZipperPullerImg}"
+                    <wh:ImageView   Grid.Row="0" Source="{Binding ZipperInfo.TempData1.ZipperUpmssImg}"
                                     ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
                 </Border>
-                <TextBlock Grid.Row="1"  Text="拉头图片" Margin="10,5"  FontSize="16"
+                <TextBlock Grid.Row="1"  Text="高曝图片" Margin="10,5"  FontSize="16"
                  Foreground="AliceBlue"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"/>
                 <Border Grid.Row="2" Margin="4,0,0,0"
                         Background="{DynamicResource RegionBrush}"
                         BorderThickness="1">
-                    <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.TempData1.ZipperPullsImg}"
+                    <wh:ImageView  Grid.Row="0" Source="{Binding ZipperInfo.TempData1.ZipperLogoImg}"
                                    ClearButtonVisibility="Collapsed" LabelVisibility="Collapsed"/>
                 </Border>
-                <TextBlock Grid.Row="2"  Text="拉片图片" Margin="10,5"  FontSize="16"
+                <TextBlock Grid.Row="2"  Text="Logo图片" Margin="10,5"  FontSize="16"
    Foreground="AliceBlue"
    HorizontalAlignment="Left"
    VerticalAlignment="Top"/>

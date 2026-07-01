@@ -160,7 +160,7 @@ namespace ZipperInfo
             {
                 if (com != null)
                 {
-                    int count= com.ReadHoldingRegisterInt32(42300);
+                    int count = com.ReadHoldingRegisterInt32(42300);
                     return count * 2;
                 }
                 else
@@ -185,7 +185,7 @@ namespace ZipperInfo
             if (com != null)
             {
                 com.WriteSingleRegisterInt32(42300, count);
-               // com.WriteSingleRegisterInt32(41424, count);
+                // com.WriteSingleRegisterInt32(41424, count);
             }
 
             //}
@@ -228,9 +228,9 @@ namespace ZipperInfo
             if (com != null)
             {
                 //根据拉链的长度自动计算钩针勾起的位置=拉链长度-50mm
-               // float fgoulenght = lenght - 36;
+                // float fgoulenght = lenght - 36;
                 com.WriteSingleRegisterReal(42304, lenght);
-               // com.WriteSingleRegisterReal(41202, lenght); //工位1
+                // com.WriteSingleRegisterReal(41202, lenght); //工位1
 
                 //float NGLocation = lenght + 100.0f;  //NG料的放料位置，根据拉链长度来计算
                 //if (NGLocation > 4000) //限制最大后退距离
@@ -644,10 +644,10 @@ namespace ZipperInfo
             ////try
             ////{
 
-            //if (com != null)
-            //{
-            //    com.WriteSingleRegisterInt32(41256, time);
-            //}
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(42288, time);
+            }
 
             ////}
             ////catch (Exception)
@@ -682,8 +682,8 @@ namespace ZipperInfo
     public enum ZIPPERESULT
     {
         OK = 1,
-        NG = 2
-
+        NG = 2,
+        NG2 = 3
     }
 
     public struct ZipperID

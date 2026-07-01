@@ -788,6 +788,13 @@ namespace WH.DetectSystem.Models
                                 cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
                                 cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
                                 cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
+                                cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanH; //拉片
+                                cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanS;
+                                cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanV;
+                                cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanH; //拉头
+                                cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanS;
+                                cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanV;
+                                cell.ModelID = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID;
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
                                 int photoTotalCount = 0;
@@ -948,6 +955,12 @@ namespace WH.DetectSystem.Models
                                             new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
                                         );
                                     }
+                                    else
+                                    {
+                                        await m_InfoChannel.Writer.WriteAsync(
+                                           new PrintMsg(strbuilder.ToString(), LOG.LOG_NG)
+                                       );
+                                    }
                                     FilterTime = newCell.FilterTime.TotalMilliseconds;
 
 
@@ -971,7 +984,7 @@ namespace WH.DetectSystem.Models
                                             {
                                                 CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
-                                            else if (Name == "顶面")
+                                            else if (Name == "上止")
                                             {
                                                 CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
                                             }
@@ -986,9 +999,16 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (Name == "正面" || Name == "反面")
                                             {
-                                                CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污")|| CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉"))
+                                                {
+                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
+                                                }
+                                                else
+                                                {
+                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                                }                                           
                                             }
-                                            else if (Name == "顶面")
+                                            else if (Name == "上止")
                                             {
                                                 CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.NG);
 
@@ -1017,7 +1037,7 @@ namespace WH.DetectSystem.Models
                                         //    new PrintMsg(strbuilder.ToString(), LOG.LOG_ERROR)
                                         //);
                                     }
-                                    List<Cell> otheroldcell = MergeCells.Where(c => (DateTime.Now - c.CreateTime).TotalSeconds > 300).ToList(); //把超过5分钟没有进行组合的图片保存起来
+                                    List<Cell> otheroldcell = MergeCells.Where(c => (DateTime.Now - c.CreateTime).TotalSeconds > 180).ToList(); //把超过5分钟没有进行组合的图片保存起来
                                     if (otheroldcell?.Count > 0)
                                     {
                                         for (int i = 0; i < otheroldcell.Count; i++)

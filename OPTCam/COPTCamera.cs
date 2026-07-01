@@ -429,7 +429,12 @@ namespace OPTCam
 
                                 // 将Bitmap转换为字节数组或直接发送
                                 // 这里建议使用using块确保资源释放
-                                ImageQueueChannel.Writer.TryWrite(destImg);
+                               // ImageQueueChannel.Writer.TryWrite(destImg);
+                                if (!ImageQueueChannel.Writer.TryWrite(destImg))
+                                {
+                                    CCameraManagement.CamLogger.Error(
+                                Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                                }
                                 _semaphoreSlim.Release(1);
                             }
                         }
@@ -480,7 +485,12 @@ namespace OPTCam
                                     bitMap.UnlockBits(bitmapData);
                                 }
 
-                                ImageQueueChannel.Writer.TryWrite(destImg);
+                               // ImageQueueChannel.Writer.TryWrite(destImg);
+                                if (!ImageQueueChannel.Writer.TryWrite(destImg))
+                                {
+                                    CCameraManagement.CamLogger.Error(
+                                Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                                }
                                 _semaphoreSlim.Release(1);
                             }
                         }

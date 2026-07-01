@@ -316,4 +316,7 @@
   <data name="CameraNotFound" xml:space="preserve">
     <value>未搜索到度申相机,搜索个数为0</value>
   </data>
+  <data name="ErrorCallBack" xml:space="preserve">
+    <value>相机回调函数异常,序列号:</value>
+  </data>
 </root>

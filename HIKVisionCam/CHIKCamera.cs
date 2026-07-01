@@ -159,7 +159,12 @@ namespace HIKVisionCam
                 //mutex.WaitOne();
                 //imageQueue.Enqueue(pData);
                 //mutex.ReleaseMutex();
-                ImageQueueChannel.Writer.TryWrite(pData);
+                //ImageQueueChannel.Writer.TryWrite(pData);
+                if (!ImageQueueChannel.Writer.TryWrite(pData))
+                {
+                    CCameraManagement.CamLogger.Error(
+                Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                }
                 _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = pFrameInfo.nWidth;
                 paramSetting.ImageHeight = pFrameInfo.nHeight;

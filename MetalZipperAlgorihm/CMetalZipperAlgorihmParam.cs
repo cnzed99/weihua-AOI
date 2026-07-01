@@ -334,12 +334,6 @@ namespace MetalZipperAlgorihm
                     img = matimg;
                     // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "相机原图.png", img);
                 }
-                // Cv2.ImWrite(@"D:\MealImages\" + cell.CamName +"_"+cell.ID+"_"+cell.PhotoIndex+".jpg", img); 
-                // bool runtype = false; //判断是只处理1张图像还是多张图像，true为1张
-                //if (cell.PhotoTatolCount == 2)
-                //{
-                //    runtype = true;
-                //}
 
                 // int oddoreven = cell.PhotoIndex % 2;
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();

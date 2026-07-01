@@ -135,8 +135,13 @@ namespace MindVisionCamFpga
                 textBuilder.Append(grabCount);
                 getImageLogger.Info(textBuilder.ToString());
 
-                ImageQueueChannel.Writer.TryWrite(pFrameBuffer);
-
+               // ImageQueueChannel.Writer.TryWrite(pFrameBuffer);
+                if (!ImageQueueChannel.Writer.TryWrite(pFrameBuffer))
+                {
+                    CCameraManagement.CamLogger.Error(
+                Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                }
+                _semaphoreSlim.Release(1);
                 paramSetting.ImageWidth = pFrameHead.iWidth;
                 paramSetting.ImageHeight = pFrameHead.iHeight;
                 paramSetting.CameraType =

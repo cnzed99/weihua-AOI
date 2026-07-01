@@ -184,18 +184,6 @@ namespace DaHuaCam
                 paramSetting.ImageWidth = (int)frame.frameInfo.width;
                 paramSetting.ImageHeight = (int)frame.frameInfo.height;
 
-
-                //可以正常采集图
-                //paramSetting.CameraType =
-                //    frame.frameInfo.pixelFormat == IMVDefine.IMV_EPixelType.gvspPixelRGB8
-                //    ? PixelFormats.Rgb24
-                //    : PixelFormats.Gray8;
-
-                //paramSetting.CameraType =
-                //     frame.frameInfo.pixelFormat == IMVDefine.IMV_EPixelType.gvspPixelBayRG8
-                //     ? PixelFormats.Rgb24
-                //     : PixelFormats.Gray8;
-
                 //2025.10.11修改
                 switch (frame.frameInfo.pixelFormat)
                 {
@@ -229,7 +217,11 @@ namespace DaHuaCam
                 //获得指向图像数据的指针
                 if (m_pDstData != IntPtr.Zero)
                 {
-                    ImageQueueChannel.Writer.TryWrite(m_pDstData);
+                    if(!ImageQueueChannel.Writer.TryWrite(m_pDstData))
+                    {
+                        CCameraManagement.CamLogger.Error(
+                    Properties.Resources.ErrorCallBack + paramSetting.SerialNumber + "图像指针写入队列通道失败！");
+                    }
                     _semaphoreSlim.Release(1);
                 }
 

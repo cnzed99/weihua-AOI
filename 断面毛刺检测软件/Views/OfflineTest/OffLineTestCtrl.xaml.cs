@@ -384,8 +384,8 @@ namespace 断面毛刺检测软件.Views
                                     cell.CamName = CCameraManagement.CamParamDict[cell.CamSerial].Name;
                                     cell.MmPerPixel = CCameraManagement.CamParamDict[cell.CamSerial].MmPerPixel;
                                 }
-                                if (random.Next(10) > 5)
-                                    cell.IsOK = true;
+                                //if (random.Next(10) > 5)
+                                //    cell.IsOK = true;
                                 //  _infoLog.Enqueue($"{$"[{_waitTriggerImageQueue.s_Name}]",-10}{cell.ID,-8}{"离线触发",-20}");
                                 // _waitTriggerImageQueue.Enqueue(cell);
                                 cell.GetImageExcute(true, 0);

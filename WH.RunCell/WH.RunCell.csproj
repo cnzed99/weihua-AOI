@@ -15,4 +15,10 @@
     <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>..\packages\ThirdLocalDll\halcondotnet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

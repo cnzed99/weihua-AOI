@@ -8,6 +8,7 @@ using System.ComponentModel;
 using WH.RecipeCellRootBase;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
+using HalconDotNet;
 
 namespace ZipperInfo
 {
@@ -270,6 +271,12 @@ namespace ZipperInfo
         [JsonIgnore]
         public BitmapSource ZipperPullerImg { get; set; }
         /// <summary>
+        /// 识别出来的Logo图像
+        /// 2025.06.30 鲍赞宝
+        /// </summary>
+        [JsonIgnore]
+        public BitmapSource ZipperLogoImg { get; set; }
+        /// <summary>
         /// 拉头识别框中心X
         /// 2025.06.30 鲍赞宝
         /// </summary>
@@ -314,19 +321,31 @@ namespace ZipperInfo
         /// <summary>
         /// 拉头的H值
         /// </summary>
-        public double PullerMeanH { get; set; }
+        public float PullerMeanH { get; set; }
         /// <summary>
         /// 拉头的S值
         /// </summary>
-        public double PullerMeanS { get; set; }
+        public float PullerMeanS { get; set; }
+        /// <summary>
+        /// 拉头的V值
+        /// </summary>
+        public float PullerMeanV { get; set; }
         /// <summary>
         /// 拉片的H值
         /// </summary>
-        public double PullsMeanH { get; set; }
+        public float PullsMeanH { get; set; }
         /// <summary>
         /// 拉片的S值
         /// </summary>
-        public double PullsMeanS { get; set; }
+        public float PullsMeanS { get; set; }
+        /// <summary>
+        /// 拉片的V值
+        /// </summary>
+        public float PullsMeanV { get; set; }
+        /// <summary>
+        /// Logo模版
+        /// </summary>
+        public HTuple ModelID {  get; set; }
     }
 
 

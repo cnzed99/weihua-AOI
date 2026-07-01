@@ -1,11 +1,13 @@
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WH.Entity.Attribute;
 using WH.RecipeCellRootBase;
+using HalconDotNet;
 
 namespace WH.RunCell
 {
@@ -119,16 +121,43 @@ namespace WH.RunCell
         /// <summary>
         /// 拉头的材质类型
         /// </summary>
-        public string PullMaterlsType {  get; set; }
+        public string PullMaterlsType { get; set; }
         /// <summary>
         /// 拉片轮廓点集合
         /// </summary>
-        public OpenCvSharp.Point[] PullOrgContours {  get; set; }
+        public OpenCvSharp.Point[] PullOrgContours { get; set; }
 
         /// <summary>
         /// 拉片中圆孔点集合
         /// </summary>
         public OpenCvSharp.Point[] PullHoldOrgContours { get; set; }
+        /// <summary>
+        /// 拉片基准色H
+        /// </summary>
+        public float PullsOrgHvalue { get; set; }
+        /// <summary>
+        /// 拉片基准色S
+        /// </summary>
+        public float PullsOrgSvalue { get; set; }
+        /// <summary>
+        /// 拉片基准色V
+        /// </summary>
+        public float PullsOrgVvalue { get; set; }
+
+
+        /// <summary>
+        /// 拉头基准色H
+        /// </summary>
+        public float PullerOrgHvalue { get; set; }
+        /// <summary>
+        /// 拉头基准色S
+        /// </summary>
+        public float PullerOrgSvalue { get; set; }
+        /// <summary>
+        /// 拉头基准色V
+        /// </summary>
+        public float PullerOrgVvalue { get; set; }
+
         /// <summary>
         /// 下止的类型 注塑 白铝 无 等
         /// </summary>
@@ -138,6 +167,11 @@ namespace WH.RunCell
         /// 上止的类型 注塑 白铝 无 等
         /// </summary>
         public string UpStopMassType { get; set; }
+        /// <summary>
+        /// Logo模板ID
+        /// </summary>
+        public HTuple ModelID { get; set; }
+
         /// <summary>
         /// 接收信息字典
         /// </summary>
@@ -350,7 +384,7 @@ namespace WH.RunCell
                 }
             }
             ZipperImages.Clear();
-            if (ZipperPullPartImg != null )
+            if (ZipperPullPartImg != null)
             {
                 ZipperPullPartImg.Dispose();
             }

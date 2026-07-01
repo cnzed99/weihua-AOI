@@ -316,4 +316,7 @@
   <data name="CameraNotFound" xml:space="preserve">
     <value>Camera not found, Search count is 0</value>
   </data>
+  <data name="ErrorCallBack" xml:space="preserve">
+    <value>camera callback function exception, serial number:</value>
+  </data>
 </root>
