@@ -167,20 +167,18 @@ namespace PullZipperAlgorihm
                 pullRecipes.Add(defectRecipe6);
                 CDefectRecipe defectRecipe7 = new CDefectRecipe("孔洞周长", Category.值);
                 pullRecipes.Add(defectRecipe7);
+
+                List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
+                CDefectRecipe defectRecipelogo = new CDefectRecipe("Logo", Category.值);
+                logoRecipes.Add(defectRecipelogo);
+                CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
+                DefectSpecies.Add(logoSpecies);
             }
 
             CDefectSpecies pullSpecies = new CDefectSpecies("拉头拉片", pullRecipes);
-
-            List<CDefectRecipe> logoRecipes = new List<CDefectRecipe>();
-            for (int i = 0; i < pull_Logo_names?.Length; i++)
-            {
-                CDefectRecipe defectRecipe = new CDefectRecipe(pull_Logo_names[i], Category.区域);
-                logoRecipes.Add(defectRecipe);
-            }
-            CDefectSpecies logoSpecies = new CDefectSpecies("LOGO", logoRecipes);
             #endregion
             DefectSpecies.Add(pullSpecies);
-            DefectSpecies.Add(logoSpecies);
+
 
 
         }
@@ -316,7 +314,11 @@ namespace PullZipperAlgorihm
                 if (User == "拉片")
                 {
 
-                    GetContoursAndHSV(cell, out Point[] PullPoints, out Point[] HolesPoints, out float Hvalue, out float Svalue, out float Vvalue);
+                    GetContoursAndHSV(cell, out Point[] PullPoints, out Point[] HolesPoints,
+                        out float Hvalue, out float Svalue, out float Vvalue, out float ModleScore);
+                    CoordRestoreData logorestoreData = new CoordRestoreData("Logo", ModleScore);
+                    dets.Add(logorestoreData);
+
                     float orgconarea = 0; float orgconArclength = 0; //基准拉片面积和周长
                     float orgholeconarea = 0; float orgholeconArclength = 0; //基准孔洞面积和周长
 
@@ -423,7 +425,7 @@ namespace PullZipperAlgorihm
                     {
                         pullsDiffH = Math.Abs(cell.PullerOrgHvalue - hMean);
                         pullsDiffS = Math.Abs(cell.PullerOrgSvalue - sMean);
-                        pullsDiffV = Math.Abs(cell.PullerOrgSvalue - vMean);
+                        pullsDiffV = Math.Abs(cell.PullerOrgVvalue - vMean);
                     }
                     else
                     {
@@ -830,9 +832,9 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         }
 
 
-        private void GetContoursAndHSV(Cell cell, out Point[] pullPoints, out Point[] holdPoints, out float Hvalue, out float Svalue, out float Vvalue)
+        private void GetContoursAndHSV(Cell cell, out Point[] pullPoints, out Point[] holdPoints, out float Hvalue, out float Svalue, out float Vvalue, out float fScore)
         {
-
+            fScore = 0;
             HObject ho_Image = null, ho_GrayImage = null, ho_Region = null;
             HObject ho_ConnectedRegions = null, ho_SelectedRegions = null;
             HObject ho_Rectangle = null, ho_ImageReduced = null, ho_Region1 = null;
@@ -858,6 +860,10 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HTuple hv_MeanH = new HTuple(), hv_DevH = new HTuple();
             HTuple hv_MeanS = new HTuple(), hv_DevS = new HTuple();
             HTuple hv_MeanV = new HTuple(), hv_DevV = new HTuple();
+
+            HTuple model_Row = new HTuple(); HTuple model_Column = new HTuple();
+            HTuple model_Angle = new HTuple(); HTuple model_Score = new HTuple();
+
             // Initialize local and output iconic variables 
             HOperatorSet.GenEmptyObj(out ho_Image);
             HOperatorSet.GenEmptyObj(out ho_GrayImage);
@@ -1023,6 +1029,39 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 {
                     holdPoints[i] = new Point((int)hv_Col4[i].D, (int)hv_Row4[i].D);
                 }
+                model_Row.Dispose(); model_Column.Dispose();
+                model_Angle.Dispose(); model_Score.Dispose();
+                // 替换原来的判断与后续处理
+                if (cell.ModelID?.Length > 0)
+                {
+                    HOperatorSet.FindShapeModel(ho_Image, cell.ModelID, -15, 30, 0.3, 1, 0.5,
+                        "least_squares", 0, 0.9, out model_Row, out model_Column, out model_Angle, out model_Score);
+
+                    if (model_Score != null && model_Score.TupleLength() > 0)
+                    {
+                        fScore = (float)model_Score.D;
+                    }
+                    else
+                    {
+                        fScore = 0;
+                    }
+                }
+                else
+                {
+                    fScore = 0;
+                }
+                //if (cell.ModelID != null && cell.ModelID.NotNull())
+                //{
+                //    HOperatorSet.FindShapeModel(ho_Image, cell.ModelID, -15, 30, 0.3, 1, 0.5, "least_squares", 0, 0.9, out model_Row, out model_Column,
+                //    out model_Angle, out model_Score);
+                //    if ((int)(new HTuple((new HTuple(model_Score.TupleLength())).TupleGreater(0))) != 0)
+                //    {
+                //        fScore = (float)model_Score.D;
+                //    }
+                //    else { fScore = 0; }
+
+                //}
+
             }
             catch (Exception)
             {
@@ -1310,7 +1349,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 System.Windows.Point point = new System.Windows.Point() { X = contours[j].X, Y = contours[j].Y };
                 Points.Add(point);
             }
-            if (Points.Count>0)
+            if (Points.Count > 0)
             {
                 Contours.Add(Points);
             }

@@ -29,7 +29,7 @@ namespace ZipperInfo
                 CZipperCommunicate.SendHelianStastPos(80);
                 CZipperAutomaticAlgorithm.TestFinshEven(true);
                 CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
-                CZipperCommunicate.AixtContinue(true);
+                //CZipperCommunicate.AixtContinue(true);
                 CZipperCommunicate.TestFinish();
                // CZipperCommunicate.SendWolkBack(ZipperInfo.AutoData.WalkBackLenght_qiuk);
                 var window = win as Window;

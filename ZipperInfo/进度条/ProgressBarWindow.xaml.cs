@@ -28,7 +28,7 @@ namespace ZipperInfo
         {
             CZipperCommunicate.CamTriggerStop(); //停止拍照
             CZipperAutomaticAlgorithm.TestFinshEven(false);
-            CZipperCommunicate.AixtContinue(true);
+           // CZipperCommunicate.AixtContinue(true);
             CZipperCommunicate.TestFinish();
             this.Close();   
         }

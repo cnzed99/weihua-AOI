@@ -37,10 +37,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="1.2*"/>
-                    <RowDefinition Height="1.2*"/>
-                    <RowDefinition Height="1.2*"/>
-                    <RowDefinition Height="1.2*"/>
-
+                    <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
 
@@ -103,8 +100,24 @@
                         </hc:NumericUpDown>
 
                     </StackPanel>
-               
                     <Grid Grid.Row="4">
+                        <hc:ElementGroup>
+                            <RadioButton Margin="20"
+                  Content="黄电白" FontSize="20"
+                  DockPanel.Dock="Right"/>
+                            <RadioButton
+                  Content="古铜" FontSize="20"
+                  DockPanel.Dock="Right"/>
+                            <RadioButton
+                  Content="黑金" FontSize="20"
+                  DockPanel.Dock="Right" />
+                            <RadioButton
+                    Content="银白" FontSize="20"
+                    DockPanel.Dock="Right" />
+                        </hc:ElementGroup>
+                    </Grid>
+
+                    <Grid Grid.Row="5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
@@ -112,16 +125,17 @@
                             <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
                     </Grid>
-                    <Grid Grid.Row="5">
+
+                    <!--<Grid Grid.Row="5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <hc:NumericUpDown Value="{Binding AutoData[0].PullMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[0].PullMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[0].PullMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[0].PullMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
-                    </Grid>
+                    </Grid>-->
 
-                    <Grid Grid.Row="6">
+                    <!--<Grid Grid.Row="6">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <hc:NumericUpDown Value="{Binding AutoData[1].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[1].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
@@ -136,7 +150,7 @@
                             <hc:NumericUpDown Value="{Binding AutoData[1].PullMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[1].PullMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
-                    </Grid>
+                    </Grid>-->
 
 
                 </Grid>

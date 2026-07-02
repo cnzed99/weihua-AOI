@@ -336,49 +336,49 @@ namespace ZipperInfo
         /// <summary>
         /// 获取当前轴的位置坐标 2025-5-29 鲍赞宝
         /// </summary>
-        public static float GetGrippawlLocation()
-        {
-            //try
-            //{
-            if (com != null)
-            {
-                return com.ReadHoldingRegisterReal(1100);
-            }
-            else
-            {
-                return -1;
-            }
-            //}
-            //catch (Exception)
-            //{
-            //    return -1;
-            //}
+        //public static float GetGrippawlLocation()
+        //{
+        //    //try
+        //    //{
+        //    //if (com != null)
+        //    //{
+        //    //    return com.ReadHoldingRegisterReal(1100);
+        //    //}
+        //    //else
+        //    //{
+        //    //    return -1;
+        //    //}
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //    return -1;
+        //    //}
 
-        }
+        //}
 
         /// <summary>
         /// 获取设备的模式状态 
         /// 2025-8-25 鲍赞宝
         /// </summary>
-        public static bool GetDeviceState()
-        {
-            //try
-            //{
-            if (com != null)
-            {
-                return com.ReadCoil(12);
-            }
-            else
-            {
-                return true;
-            }
-            //}
-            //catch (Exception)
-            //{
-            //    return -1;
-            //}
+        //public static bool GetDeviceState()
+        //{
+        //    //try
+        //    //{
+        //    if (com != null)
+        //    {
+        //        return com.ReadCoil(12);
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //    return -1;
+        //    //}
 
-        }
+        //}
 
         /// <summary>
         /// 写入触发的点位置
@@ -533,21 +533,21 @@ namespace ZipperInfo
         /// <summary>
         /// 第一阶段位置完成
         /// </summary>
-        public static void FirststageFinsh()
-        {
-            ////try
-            ////{
-            //if (com != null)
-            //{
-            //    com.WriteSingleCoil(1201, true);
-            //}
+        //public static void FirststageFinsh()
+        //{
+        //    ////try
+        //    ////{
+        //    //if (com != null)
+        //    //{
+        //    //    com.WriteSingleCoil(1201, true);
+        //    //}
 
-            ////}
-            ////catch (Exception)
-            ////{
-            ////}
+        //    ////}
+        //    ////catch (Exception)
+        //    ////{
+        //    ////}
 
-        }
+        //}
         /// <summary>
         /// 第二阶段完成
         /// </summary>
@@ -605,23 +605,23 @@ namespace ZipperInfo
         /// <summary>
         /// 轴运动停止
         /// </summary>
-        public static void AixtStop()
-        {
-            //if (com != null)
-            //{
-            //    com.WriteSingleCoil(24, true);
-            //}
-        }
+        //public static void AixtStop()
+        //{
+        //    //if (com != null)
+        //    //{
+        //    //    com.WriteSingleCoil(24, true);
+        //    //}
+        //}
         /// <summary>
         /// 轴运动继续
         /// </summary>
-        public static void AixtContinue(bool con)
-        {
-            //if (com != null)
-            //{
-            //    com.WriteSingleCoil(25, con);
-            //}
-        }
+        //public static void AixtContinue(bool con)
+        //{
+        //    //if (com != null)
+        //    //{
+        //    //    com.WriteSingleCoil(25, con);
+        //    //}
+        //}
 
         /// <summary>
         /// 停止拍照

@@ -787,7 +787,7 @@ namespace WH.DetectSystem.Models
                                 cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
                                 cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
                                 cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
-                                cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
+                                cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
                                 cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanH; //拉片
                                 cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanS;
                                 cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanV;

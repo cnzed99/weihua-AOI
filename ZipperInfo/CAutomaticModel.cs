@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -80,13 +81,38 @@ namespace ZipperInfo
         int pullMinMean = 90;
         [ObservableProperty]
         int pullMaxMean = 180;
-        //[ObservableProperty]
-        //int walkBackLenght_slow = 400;
-        //[ObservableProperty]
-        //int walkBackLenght_qiuk = 1000;
 
+        [ObservableProperty]
+        private ObservableCollection<LinghtValueInfo> linghtValueInfos = new();
 
+    }
+    /// <summary>
+    /// 用于存储链牙光源亮度的值
+    /// </summary>
+    public partial class LinghtValueInfo : ObservableObject
+    {
+        /// <summary>
+        /// 是否被选中
+        /// </summary>
+        [ObservableProperty]
+        bool isSelected=false;
+        /// <summary>
+        /// 拉链颜色名称
+        /// </summary>
+        [ObservableProperty]
+        string colorName;
 
+        /// <summary>
+        /// 布带工位链牙颜色对应的光源值
+        /// </summary>
+        [ObservableProperty]
+        int clothLinghtValue;
+
+        /// <summary>
+        /// 上止工位链牙颜色对应的光源值
+        /// </summary>
+        [ObservableProperty]
+        int upMassLinghtValue;
 
     }
 }

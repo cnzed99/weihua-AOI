@@ -416,7 +416,7 @@ namespace ZipperInfo
                     ZipperInfo.TempData1.PullsMeanH = Hvalue;
                     ZipperInfo.TempData1.PullsMeanS = Svalue;
                     ZipperInfo.TempData1.PullsMeanV = Vvalue;
-                    if (ModelID != null)
+                    if (ModelID.Length>0)
                     {
                         ZipperInfo.TempData1.ModelID = ModelID;
                         if (recRow1.D != 0 && recCol1.D != 0)
@@ -433,6 +433,10 @@ namespace ZipperInfo
                             });
                         }
 
+                    }
+                    else
+                    {
+                        ZipperInfo.TempData1.ModelID = null;
                     }
                     Pulls_Stage1_OK=true;
 
@@ -714,7 +718,7 @@ namespace ZipperInfo
             recRow1 = new HTuple(); recRow2 = new HTuple();
             recCol1 = new HTuple(); recCol2 = new HTuple();
             // Local iconic variables 
-            ModelID = null;
+            ModelID = new HTuple();
             HObject ho_Image = null, ho_GrayImage = null, ho_Region = null;
             HObject ho_ConnectedRegions = null, ho_SelectedRegions = null;
             HObject ho_Rectangle = null, ho_ImageReduced = null, ho_Region1 = null;
@@ -1012,7 +1016,6 @@ namespace ZipperInfo
                 Hvalue = 0;
                 Svalue = 0;
                 Vvalue = 0;
-                ModelID = null;
             }
 
 

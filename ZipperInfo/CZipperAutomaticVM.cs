@@ -55,6 +55,13 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
                 ShowZipperLenght = AutoData[0].ShowZipperLenght;
                 QuekouLenght = AutoData[0].QuekouLenght;
+                if (AutoData[0].LinghtValueInfos.Count==0)
+                {
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
+                }
             }
         }
 
@@ -116,7 +123,7 @@ namespace ZipperInfo
                 CZipperCommunicate.SendPoints2(points_2, handandtalipoints_2, cutoffIndex_2, zipperCacheCount_2);
                 Thread.Sleep(100);
                 startAutoTest = true;
-                CZipperCommunicate.AixtContinue(false);
+               // CZipperCommunicate.AixtContinue(false);
                 CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
@@ -172,8 +179,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
                 CZipperAutomaticAlgorithm.findPullerCount = 0;
                 CZipperAutomaticAlgorithm.findPullsCount = 0;
-                CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
-                CZipperCommunicate.SendHelianEndPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
+                //CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
+                //CZipperCommunicate.SendHelianEndPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
                 CZipperAutomaticAlgorithm.startTriggerCount = 0;
                 CZipperAutomaticAlgorithm.onWichStage2 = 1;
