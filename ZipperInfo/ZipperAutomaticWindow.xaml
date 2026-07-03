@@ -101,9 +101,19 @@
 
                     </StackPanel>
                     <Grid Grid.Row="4">
-                        <ListBox ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
-                            
-                        </ListBox>
+                        <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <RadioButton Content="{Binding ColorName}" Margin="12" FontSize="20" GroupName="ColorGroup"
+                                                 IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
 
                     <Grid Grid.Row="5">
