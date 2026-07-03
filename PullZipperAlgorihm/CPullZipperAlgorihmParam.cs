@@ -1050,18 +1050,6 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 {
                     fScore = 0;
                 }
-                //if (cell.ModelID != null && cell.ModelID.NotNull())
-                //{
-                //    HOperatorSet.FindShapeModel(ho_Image, cell.ModelID, -15, 30, 0.3, 1, 0.5, "least_squares", 0, 0.9, out model_Row, out model_Column,
-                //    out model_Angle, out model_Score);
-                //    if ((int)(new HTuple((new HTuple(model_Score.TupleLength())).TupleGreater(0))) != 0)
-                //    {
-                //        fScore = (float)model_Score.D;
-                //    }
-                //    else { fScore = 0; }
-
-                //}
-
             }
             catch (Exception)
             {

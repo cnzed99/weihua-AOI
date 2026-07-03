@@ -57,10 +57,11 @@ namespace ZipperInfo
                 QuekouLenght = AutoData[0].QuekouLenght;
                 if (AutoData[0].LinghtValueInfos.Count==0)
                 {
-                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
-                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
-                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
-                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "", ClothLinghtValue = 0, UpMassLinghtValue = 0 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "黄铜", ClothLinghtValue = 35, UpMassLinghtValue = 255 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "黄电白", ClothLinghtValue = 45, UpMassLinghtValue = 255 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "亮黑镍", ClothLinghtValue = 50, UpMassLinghtValue = 255 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "古银", ClothLinghtValue = 60, UpMassLinghtValue = 255 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "青古银", ClothLinghtValue = 70, UpMassLinghtValue = 255 });
                 }
             }
         }

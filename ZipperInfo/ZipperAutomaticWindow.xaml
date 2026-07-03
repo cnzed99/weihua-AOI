@@ -37,7 +37,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="1.2*"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1.2*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
 
@@ -101,20 +101,9 @@
 
                     </StackPanel>
                     <Grid Grid.Row="4">
-                        <hc:ElementGroup>
-                            <RadioButton Margin="20"
-                  Content="黄电白" FontSize="20"
-                  DockPanel.Dock="Right"/>
-                            <RadioButton
-                  Content="古铜" FontSize="20"
-                  DockPanel.Dock="Right"/>
-                            <RadioButton
-                  Content="黑金" FontSize="20"
-                  DockPanel.Dock="Right" />
-                            <RadioButton
-                    Content="银白" FontSize="20"
-                    DockPanel.Dock="Right" />
-                        </hc:ElementGroup>
+                        <ListBox ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                            
+                        </ListBox>
                     </Grid>
 
                     <Grid Grid.Row="5">

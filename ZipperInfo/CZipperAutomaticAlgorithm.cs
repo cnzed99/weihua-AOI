@@ -437,6 +437,10 @@ namespace ZipperInfo
                     else
                     {
                         ZipperInfo.TempData1.ModelID = null;
+                        Dispatcher.Invoke(() =>
+                        {
+                            ZipperInfo.TempData1.ZipperLogoImg = null;
+                        });
                     }
                     Pulls_Stage1_OK=true;
 
