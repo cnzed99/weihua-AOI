@@ -61,32 +61,21 @@ namespace ZipperInfo
             }
 
         }
-        //public override void ChangeLineValue2(int val)
-        //{
-        //    try
-        //    {
-        //        LightControl.BaseConfig.LightChannelList[1].Value += val;
-        //        if (LightControl.BaseConfig.LightChannelList[1].Value > 130)
-        //        {
-        //            LightControl.BaseConfig.LightChannelList[1].Value = 130;
-        //        }
-        //        if (LightControl.BaseConfig.LightChannelList[1].Value < 30)
-        //        {
-        //            LightControl.BaseConfig.LightChannelList[1].Value = 30;
-        //        }
+        public override void ChangeLineValue2(int val)
+        {
+            try
+            {
+                LightControl.BaseConfig.LightChannelList[1].Value = val;
+                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                Thread.Sleep(10);
+                LightControl.BaseConfig.LightChannelList[5].Value = val;
+                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[5]);
+            }
+            catch (Exception)
+            {
+            }
 
-        //        LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-        //        Thread.Sleep(10);
-        //        LightControl.BaseConfig.LightChannelList[5].Value = LightControl.BaseConfig.LightChannelList[1].Value;
-        //        LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[5]);
-
-        //        //  TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-
-        //}
+        }
         public override void LineValueReset()
         {
             try

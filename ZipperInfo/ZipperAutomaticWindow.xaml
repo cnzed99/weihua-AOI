@@ -36,8 +36,8 @@
                     <RowDefinition />
                     <RowDefinition/>
                     <RowDefinition/>
-                    <RowDefinition Height="1.2*"/>
-                    <RowDefinition Height="1.2*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="1.5*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
 
@@ -101,27 +101,57 @@
 
                     </StackPanel>
                     <Grid Grid.Row="4">
-                        <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <RadioButton Content="{Binding ColorName}" Margin="12" FontSize="20" GroupName="ColorGroup"
-                                                 IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <RadioButton Content="{Binding ColorName}" Margin="12,5" FontSize="20" GroupName="ColorGroup"
+                                            IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <hc:NumericUpDown Width="73" Maximum="110"  Minimum="30" Value="{Binding ClothLinghtValue}" Margin="12,5" FontSize="20"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <hc:NumericUpDown Width="73"  Maximum="255"  Minimum="1" Value="{Binding UpMassLinghtValue}" Margin="12,5" FontSize="20"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                        
+     
                     </Grid>
 
                     <Grid Grid.Row="5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
-                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="16"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景下限" Style="{StaticResource NumericUpDownPlus}"  />
+                            <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                         </StackPanel>
                     </Grid>
 

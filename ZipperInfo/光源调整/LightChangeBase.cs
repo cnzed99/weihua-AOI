@@ -15,7 +15,7 @@ namespace ZipperInfo
 
         public int TempLightValue_Change1 { get; set; } = 30;
         public virtual void ChangeLineValue1(bool saveTemp,int lightValue) { }
-      //  public virtual void ChangeLineValue2(int lightValue) { }
+        public virtual void ChangeLineValue2(int lightValue) { }
         public virtual void LineValueReset() { }
 
 
