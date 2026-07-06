@@ -65,11 +65,11 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[1].Value = val;
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                LightControl.BaseConfig.LightChannelList[0].Value = val;
+                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
                 Thread.Sleep(10);
-                LightControl.BaseConfig.LightChannelList[5].Value = val;
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[5]);
+                LightControl.BaseConfig.LightChannelList[4].Value = val;
+                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[4]);
             }
             catch (Exception)
             {

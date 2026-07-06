@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0-windows</TargetFrameworks>
-    <AssemblyName>XR-光源</AssemblyName>
+    <AssemblyName>XR2-光源</AssemblyName>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\LightPlug\XR\ /d /y" />
+    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\LightPlug\XR2\ /d /y" />
     <Exec Command="xcopy $(OutDir)en\$(TargetName).resources.dll $(SolutionDir)断面毛刺检测软件\bin\Debug\$(TargetFramework)\en\ /d /y" />
   </Target>
 

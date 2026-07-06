@@ -9,7 +9,7 @@ using System.Windows.Media.Media3D;
 using WH.Entity;
 using WH.LightControl;
 
-namespace XRLightControl
+namespace XRDigitalLightControl
 {
     /// <summary>
     /// 20260412 鲍赞宝
@@ -26,34 +26,34 @@ namespace XRLightControl
         /// <param name="light">光源对象</param>
         public CLightParamsBase Init(string path, string indexstr, out CLightControlBase lightobj)
         {
-            XRLightControlVM XRlight = new XRLightControlVM();
+            XRDigitalLightControlVM XRlight = new XRDigitalLightControlVM();
             if (File.Exists(path))
             {
-                List<XRLightConfig> lightparambase = ConfigAPI.LoadDeserialize<List<XRLightConfig>>(path);
+                List<XRDigitalLightConfig> lightparambase = ConfigAPI.LoadDeserialize<List<XRDigitalLightConfig>>(path);
                 if (lightparambase != null)
                 {
-                     XRLightConfig lightparam = lightparambase.Find(t => t.LightStationName == indexstr) as XRLightConfig;
+                     XRDigitalLightConfig lightparam = lightparambase.Find(t => t.LightStationName == indexstr) as XRDigitalLightConfig;
                     if (lightparam != null)
                     {
                         XRlight.Config = lightparam;
                     }
                     else
                     {
-                        XRLightConfig lswlight = new XRLightConfig();
+                        XRDigitalLightConfig lswlight = new XRDigitalLightConfig();
                         lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
                         XRlight.Config = lswlight;
                     }
                 }
                 else
                 {
-                    XRLightConfig lswlight = new XRLightConfig();
+                    XRDigitalLightConfig lswlight = new XRDigitalLightConfig();
                     lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
                     XRlight.Config = lswlight;
                 }
             }
             else
             {
-                XRLightConfig lswlight = new XRLightConfig();
+                XRDigitalLightConfig lswlight = new XRDigitalLightConfig();
                 lswlight.LightBrandName = Assembly.GetExecutingAssembly().GetName().Name;
                 XRlight.Config = lswlight;
 

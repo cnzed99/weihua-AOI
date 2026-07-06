@@ -144,6 +144,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
                 CZipperAutomaticAlgorithm.Puller_Stage1_OK = false;
                 CZipperAutomaticAlgorithm.Pulls_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Puller_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Pulls_Stage2_OK = false;
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;

@@ -8,27 +8,17 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WH.LightControl;
 
-namespace XRLightControl
+namespace XRDigitalLightControl
 {
     /// <summary>
     /// 20240825 鲍赞宝
     /// 立实为光源参数类
     /// </summary>
-    public partial class XRLightConfig : CLightParamsBase
+    public partial class XRDigitalLightConfig : CLightParamsBase
     {
-        public XRLightConfig()
+        public XRDigitalLightConfig()
             : base()
         {
-            //if (LightChannelList == null)
-            //{
-            //    LightChannelList = new()
-            //    {
-            //        new CLight("A"),
-            //        new CLight("B"),
-            //        new CLight("C"),
-            //        new CLight("D")
-            //    }; //通道亮度
-            //}
         }
 
         /// <summary>
