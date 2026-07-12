@@ -85,6 +85,12 @@ namespace ZipperInfo
         [ObservableProperty]
         private ObservableCollection<LinghtValueInfo> linghtValueInfos = new();
 
+        /// <summary>
+        /// 插销的方向
+        /// </summary>
+        [ObservableProperty]
+        private BOLTDIRECTION boltDiretion = BOLTDIRECTION.右插;
+
     }
     /// <summary>
     /// 用于存储链牙光源亮度的值

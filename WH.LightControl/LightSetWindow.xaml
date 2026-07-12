@@ -41,18 +41,21 @@
         <DataTemplate DataType="{x:Type local:CLight}">
             <DockPanel Margin="5">
                 <TextBox
-                    Width="50"
-                    hc:TitleElement.Title="{Binding Channel, StringFormat={}{0}:}"
-                    hc:TitleElement.TitlePlacement="Left"
-                    Text="{Binding ElementName=slider, Path=Value}" >
+            Width="50"
+            hc:TitleElement.Title="{Binding Channel, StringFormat={}{0}:}"
+            hc:TitleElement.TitlePlacement="Left"
+            Text="{Binding ElementName=slider, Path=Value, UpdateSourceTrigger=PropertyChanged}">
+
+                    <!-- 使用 TextChanged 事件，每次文本变化都触发命令 -->
                     <hc:Interaction.Triggers>
-                        <hc:EventTrigger EventName="PropertyChanged">
-                        <hc:InvokeCommandAction 
-                                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
-                                                  Path=DataContext.SetChannelValueCommand}" 
-                                CommandParameter="{Binding}" />
-                    </hc:EventTrigger>
+                        <hc:EventTrigger EventName="TextChanged">
+                            <hc:InvokeCommandAction
+                        Command="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                                          Path=DataContext.SetChannelValueCommand}"
+                        CommandParameter="{Binding}" />
+                        </hc:EventTrigger>
                     </hc:Interaction.Triggers>
+
                     <i:Interaction.Behaviors>
                         <keyboard:NumericKeyboardBehavior />
                     </i:Interaction.Behaviors>
@@ -67,7 +70,8 @@
                     Value="{Binding Value}">
                     <hc:Interaction.Triggers>
                         <hc:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                            <hc:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.SetChannelValueCommand}" CommandParameter="{Binding}" />
+                            <hc:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
+                                Path=DataContext.SetChannelValueCommand}" CommandParameter="{Binding}" />
                         </hc:EventTrigger>
                     </hc:Interaction.Triggers>
                 </Slider>
@@ -131,9 +135,6 @@
                     </Grid>
 
                     <wh:CPropertyGridLang Background="{x:Null}" SelectedObject="{Binding BaseConfig}" />
-
-
-
                     <Button
                         Grid.Column="0"
                         Margin="10"
@@ -156,8 +157,6 @@
 
                 </StackPanel>
             </hc:ScrollViewer>
-
-
         </GroupBox>
         <StackPanel>
             <hc:ElementGroup Margin="5">

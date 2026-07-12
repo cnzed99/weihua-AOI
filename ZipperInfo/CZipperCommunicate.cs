@@ -162,6 +162,7 @@ namespace ZipperInfo
                 {
                     int count = com.ReadHoldingRegisterInt32(42300);
                     return count * 2;
+                    //return count;
                 }
                 else
                 {

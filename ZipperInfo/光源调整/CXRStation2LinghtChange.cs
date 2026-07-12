@@ -27,27 +27,24 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[1].Value += val;
-                if (LightControl.BaseConfig.LightChannelList[1].Value >= 255)
+                if (LightControl != null)
                 {
-                    LightControl.BaseConfig.LightChannelList[1].Value = 255;
-                    MaxTimeOutCount++;
-                }
-                if (LightControl.BaseConfig.LightChannelList[1].Value <=90)
-                {
-                    LightControl.BaseConfig.LightChannelList[1].Value = 90;
-                    MinTimeOutCount++;
-                }
+                    LightControl.BaseConfig.LightChannelList[1].Value += val;
+                    if (LightControl.BaseConfig.LightChannelList[1].Value >= 255)
+                    {
+                        LightControl.BaseConfig.LightChannelList[1].Value = 255;
+                        MaxTimeOutCount++;
+                    }
+                    if (LightControl.BaseConfig.LightChannelList[1].Value <= 15)
+                    {
+                        LightControl.BaseConfig.LightChannelList[1].Value = 15;
+                        MinTimeOutCount++;
+                    }
 
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-                //Thread.Sleep(10);
-                //LightControl.BaseConfig.LightChannelList[1].Value = LightControl.BaseConfig.LightChannelList[0].Value;
-                //LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-                //if (tempsave)
-                //{
-                //    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
-                //    AutoLogger.Info($"{PortName} :TempLightValue_Change1光源值设置为：{LightControl.BaseConfig.LightChannelList[0].Value}");
-                //}
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                }
+               
+
 
             }
             catch (Exception)
@@ -59,18 +56,22 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[1].Value = val;
-                if (LightControl.BaseConfig.LightChannelList[1].Value >= 255)
+                if (LightControl != null)
                 {
-                    LightControl.BaseConfig.LightChannelList[1].Value = 255;
-                }
-                if (LightControl.BaseConfig.LightChannelList[1].Value <= 0)
-                {
-                    LightControl.BaseConfig.LightChannelList[1].Value = 0;
+                    LightControl.BaseConfig.LightChannelList[1].Value = val;
+                    if (LightControl.BaseConfig.LightChannelList[1].Value >= 255)
+                    {
+                        LightControl.BaseConfig.LightChannelList[1].Value = 255;
+                    }
+                    if (LightControl.BaseConfig.LightChannelList[1].Value <= 15)
+                    {
+                        LightControl.BaseConfig.LightChannelList[1].Value = 15;
+                    }
+
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                    //  TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
                 }
 
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-                //  TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
             }
             catch (Exception)
             {
@@ -100,28 +101,30 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[0].Value += val;
-                if (LightControl.BaseConfig.LightChannelList[0].Value >= 255)
+                if (LightControl != null)
                 {
-                    LightControl.BaseConfig.LightChannelList[0].Value = 255;
-                    MaxTimeOutCount++;
-                }
-                if (LightControl.BaseConfig.LightChannelList[0].Value <= 90)
-                {
-                    LightControl.BaseConfig.LightChannelList[0].Value = 90;
-                    MinTimeOutCount++;
-                }
+                    LightControl.BaseConfig.LightChannelList[0].Value += val;
+                    if (LightControl.BaseConfig.LightChannelList[0].Value >= 255)
+                    {
+                        LightControl.BaseConfig.LightChannelList[0].Value = 255;
+                        MaxTimeOutCount++;
+                    }
+                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 50)
+                    {
+                        LightControl.BaseConfig.LightChannelList[0].Value = 50;
+                        MinTimeOutCount++;
+                    }
 
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
-                //Thread.Sleep(10);
-                //LightControl.BaseConfig.LightChannelList[1].Value = LightControl.BaseConfig.LightChannelList[0].Value;
-                //LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-                ////if (tempsave)
-                ////{
-                ////    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
-                ////    AutoLogger.Info($"{PortName} :TempLightValue_Change1光源值设置为：{LightControl.BaseConfig.LightChannelList[0].Value}");
-                ////}
-
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
+                    //Thread.Sleep(10);
+                    //LightControl.BaseConfig.LightChannelList[1].Value = LightControl.BaseConfig.LightChannelList[0].Value;
+                    //LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                    ////if (tempsave)
+                    ////{
+                    ////    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
+                    ////    AutoLogger.Info($"{PortName} :TempLightValue_Change1光源值设置为：{LightControl.BaseConfig.LightChannelList[0].Value}");
+                    ////}
+                }
             }
             catch (Exception)
             {
@@ -132,17 +135,21 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[0].Value = val;
-                if (LightControl.BaseConfig.LightChannelList[0].Value >= 255)
+                if (LightControl != null)
                 {
-                    LightControl.BaseConfig.LightChannelList[0].Value = 255;
-                }
-                if (LightControl.BaseConfig.LightChannelList[0].Value <= 0)
-                {
-                    LightControl.BaseConfig.LightChannelList[0].Value = 0;
-                }
+                    LightControl.BaseConfig.LightChannelList[0].Value = val;
+                    if (LightControl.BaseConfig.LightChannelList[0].Value >= 255)
+                    {
+                        LightControl.BaseConfig.LightChannelList[0].Value = 255;
+                    }
+                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 50)
+                    {
+                        LightControl.BaseConfig.LightChannelList[0].Value = 50;
+                    }
 
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[2]);
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
+                }
+             
             }
             catch (Exception)
             {
@@ -205,19 +212,22 @@ namespace ZipperInfo
         {
             try
             {
-                LightControl.BaseConfig.LightChannelList[2].Value = val;
-                if (LightControl.BaseConfig.LightChannelList[2].Value >= 255)
+                if (LightControl != null)
                 {
-                    LightControl.BaseConfig.LightChannelList[2].Value = 255;
-                }
-                if (LightControl.BaseConfig.LightChannelList[2].Value <= 0)
-                {
-                    LightControl.BaseConfig.LightChannelList[2].Value = 0;
-                }
+                    LightControl.BaseConfig.LightChannelList[2].Value = val;
+                    if (LightControl.BaseConfig.LightChannelList[2].Value >= 255)
+                    {
+                        LightControl.BaseConfig.LightChannelList[2].Value = 255;
+                    }
+                    if (LightControl.BaseConfig.LightChannelList[2].Value <= 0)
+                    {
+                        LightControl.BaseConfig.LightChannelList[2].Value = 0;
+                    }
 
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[2]);
-                LightControl.BaseConfig.LightChannelList[3].Value = LightControl.BaseConfig.LightChannelList[2].Value;
-                LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[3]);
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[2]);
+                    LightControl.BaseConfig.LightChannelList[3].Value = LightControl.BaseConfig.LightChannelList[2].Value;
+                    LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[3]);
+                }
             }
             catch (Exception)
             {

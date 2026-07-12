@@ -794,7 +794,11 @@ namespace WH.DetectSystem.Models
                                 cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanH; //拉头
                                 cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanS;
                                 cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanV;
-                                cell.ModelID = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID;
+                                cell.ModelID_Pull = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Pull;
+                                cell.ModelID_Logo = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Logo;
+                                cell.PullModelRow = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelRow;
+                                cell.PullModelCol = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelCol;
+                                cell.BoltDiretion=CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.BoltDiretion.ToString();
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
                                 int photoTotalCount = 0;
@@ -999,14 +1003,14 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (Name == "正面" || Name == "反面")
                                             {
-                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污")|| CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉"))
+                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污") || CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉"))
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
                                                 }
                                                 else
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
-                                                }                                           
+                                                }
                                             }
                                             else if (Name == "上止")
                                             {
@@ -1797,12 +1801,16 @@ namespace WH.DetectSystem.Models
                 // 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
                 List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
                 List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
-
-                CImage lowimage = GetMergeImage(lowIndexGroup);
-                CImage heightimage = GetMergeImage(highIndexGroup);
-
-                cImages.Add(lowimage);
-                cImages.Add(heightimage);
+                if (lowIndexGroup.Count > 0)
+                {
+                    CImage lowimage = GetMergeImage(lowIndexGroup);
+                    cImages.Add(lowimage);
+                }
+                if (highIndexGroup.Count > 0)
+                {
+                    CImage heightimage = GetMergeImage(highIndexGroup);
+                    cImages.Add(heightimage);
+                }
                 return cImages;
 
 

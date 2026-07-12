@@ -139,8 +139,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Station1_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
+               // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
                 CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
                 CZipperAutomaticAlgorithm.Puller_Stage1_OK = false;
                 CZipperAutomaticAlgorithm.Pulls_Stage1_OK = false;
@@ -159,8 +159,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Station2_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Station2_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
+               // CZipperAutomaticAlgorithm.Station2_Stage2_OK = false;
 
                 CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;
@@ -202,6 +202,9 @@ namespace ZipperInfo
                                 item.BaseConfig.LightChannelList[0].Value = 30;
                                 item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
                                 Thread.Sleep(20);
+                                item.BaseConfig.LightChannelList[1].Value = 30;
+                                item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
+                                Thread.Sleep(20);
                                 item.BaseConfig.LightChannelList[4].Value = 30;
                                 item.SetChannelValue(item.BaseConfig.LightChannelList[4]);
                             }
@@ -215,7 +218,7 @@ namespace ZipperInfo
 
                 Thread.Sleep(100);
                 
-                CZipperCommunicate.SendCamFPS(600); //起始300ms触发一次
+                CZipperCommunicate.SendCamFPS(400); //起始400ms触发一次
                 CZipperCommunicate.TestStart();
                 SaveParameter(AutoData);
                 var window = win as HandyControl.Controls.Window;
@@ -260,8 +263,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Station1_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
+               // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
                 CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
                 SaveParameter(AutoData);
             }

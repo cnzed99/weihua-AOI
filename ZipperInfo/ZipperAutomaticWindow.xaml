@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZipperInfo"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:keyboard="clr-namespace:KeyBoard.WPF.Behavior;assembly=KeyBoard.WPF"
@@ -16,6 +17,13 @@
 
     <hc:Window.Resources>
         <wh:Bool2VisiblityConverter x:Key="Bool2VisiblityConverter" />
+        <ObjectDataProvider x:Key="BoltTypeProvider" 
+                        MethodName="GetValues" 
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:BOLTDIRECTION"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </hc:Window.Resources>
     <Border BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="10">
         <Grid>
@@ -32,6 +40,7 @@
 
                  <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
+                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition/>
@@ -84,12 +93,12 @@
                             Value="{Binding AutoData[0].DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
                             Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                             Margin="1,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
-                             Width="140" Height="45" FontSize="30" >
+                             Width="310" Height="45" FontSize="30" >
                             <i:Interaction.Behaviors>
                                 <keyboard:NumericKeyboardBehavior/>
                             </i:Interaction.Behaviors>
                         </hc:NumericUpDown>
-                        <hc:NumericUpDown  
+                        <!--<hc:NumericUpDown  
                          Value="{Binding AutoData[1].DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
                          Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                          Margin="30,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
@@ -97,10 +106,17 @@
                             <i:Interaction.Behaviors>
                                 <keyboard:NumericKeyboardBehavior/>
                             </i:Interaction.Behaviors>
-                        </hc:NumericUpDown>
+                        </hc:NumericUpDown>-->
 
                     </StackPanel>
-                    <Grid Grid.Row="4">
+
+                    <StackPanel Grid.Row="4" Orientation="Horizontal">
+                        <TextBlock  Grid.Row="1" Margin="10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                           Text="插   销   方  向"  FontSize="22" />
+                        <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].BoltDiretion}" Width="310"
+                                     ItemsSource="{Binding Source={StaticResource  BoltTypeProvider}}" FontSize="24"/>
+                    </StackPanel>
+                    <Grid Grid.Row="5">
 
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
@@ -146,7 +162,7 @@
      
                     </Grid>
 
-                    <Grid Grid.Row="5">
+                    <Grid Grid.Row="6">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMinBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景下限" Style="{StaticResource NumericUpDownPlus}"  />
                             <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxBgMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="100" Height="55" FontSize="20"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="背景上限" Style="{StaticResource NumericUpDownPlus}"  />

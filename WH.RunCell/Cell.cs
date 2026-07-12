@@ -170,7 +170,24 @@ namespace WH.RunCell
         /// <summary>
         /// Logo模板ID
         /// </summary>
-        public HTuple ModelID { get; set; }
+        public HTuple ModelID_Logo { get; set; }
+
+        /// <summary>
+        /// 拉片模板ID
+        /// </summary>
+        public HTuple ModelID_Pull { get; set; }
+        /// <summary>
+        /// 拉片模版原始坐标row
+        /// </summary>
+        public double PullModelRow { get; set; }
+        /// <summary>
+        /// 拉片模版原始坐标col
+        /// </summary>
+        public double PullModelCol { get; set; }
+        /// <summary>
+        /// 插销方向
+        /// </summary>
+        public string BoltDiretion {  get; set; }
 
         /// <summary>
         /// 接收信息字典

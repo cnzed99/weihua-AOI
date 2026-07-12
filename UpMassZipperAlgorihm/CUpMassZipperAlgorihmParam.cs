@@ -103,18 +103,22 @@ namespace UpMassZipperAlgorihm
 
             CDefectRecipe defectRecipe1_3 = new CDefectRecipe("高牙色差H", Category.值);
             CDefectRecipe defectRecipe1_4 = new CDefectRecipe("高牙色差S", Category.值);
+            CDefectRecipe defectRecipe1_5 = new CDefectRecipe("高牙色差V", Category.值);
             cDefectRecipes.Add(defectRecipe1_3);
             cDefectRecipes.Add(defectRecipe1_4);
-
-            CDefectRecipe defectRecipe1_5 = new CDefectRecipe("低牙色差H", Category.值);
-            CDefectRecipe defectRecipe1_6 = new CDefectRecipe("低牙色差S", Category.值);
             cDefectRecipes.Add(defectRecipe1_5);
-            cDefectRecipes.Add(defectRecipe1_6);
 
-            CDefectRecipe defectRecipe1_7 = new CDefectRecipe("高牙平齐", Category.值);
-            CDefectRecipe defectRecipe1_8 = new CDefectRecipe("低牙平齐", Category.值);
+            CDefectRecipe defectRecipe1_6 = new CDefectRecipe("低牙色差H", Category.值);
+            CDefectRecipe defectRecipe1_7 = new CDefectRecipe("低牙色差S", Category.值);
+            CDefectRecipe defectRecipe1_8 = new CDefectRecipe("低牙色差V", Category.值);
+            cDefectRecipes.Add(defectRecipe1_6);
             cDefectRecipes.Add(defectRecipe1_7);
             cDefectRecipes.Add(defectRecipe1_8);
+
+            CDefectRecipe defectRecipe1_9 = new CDefectRecipe("高牙平齐", Category.值);
+            CDefectRecipe defectRecipe1_10 = new CDefectRecipe("低牙平齐", Category.值);
+            cDefectRecipes.Add(defectRecipe1_9);
+            cDefectRecipes.Add(defectRecipe1_10);
 
             CDefectSpecies UpmassSpecies = new CDefectSpecies("上止", cDefectRecipes);
             #endregion
@@ -233,12 +237,14 @@ namespace UpMassZipperAlgorihm
                                                                              // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "高牙上止1.png", uppatch);
                                 Mat liancipatch = GetRoatImage(maxxObb, img); //上止最近的一颗牙
                                 // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "高牙链牙1.png", liancipatch);
-                                var sub1 = GetHsSub(uppatch, liancipatch);
+                                var sub1 = GetHsvSub(uppatch, liancipatch);
 
                                 CoordRestoreData colordisDataH = new CoordRestoreData("高牙色差H", sub1.Item1);
                                 dets.Add(colordisDataH);
                                 CoordRestoreData colordisDataS = new CoordRestoreData("高牙色差S", sub1.Item2);
                                 dets.Add(colordisDataS);
+                                CoordRestoreData colordisDataV = new CoordRestoreData("高牙色差V", sub1.Item3);
+                                dets.Add(colordisDataV);
                                 uppatch.Dispose();
                                 liancipatch.Dispose();
                                 // 最右与上止的X方向距离
@@ -267,12 +273,14 @@ namespace UpMassZipperAlgorihm
                                                                                  // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "低牙上止1.png", uppatch);
                                     Mat liancipatch = GetRoatImage(lastobb, img); //上止最近的一颗牙
                                                                                   // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "低牙链牙1.png", liancipatch);
-                                    var sub1 = GetHsSub(uppatch, liancipatch);
+                                    var sub1 = GetHsvSub(uppatch, liancipatch);
 
                                     CoordRestoreData colordisDataH = new CoordRestoreData("低牙色差H", sub1.Item1);
                                     dets.Add(colordisDataH);
                                     CoordRestoreData colordisDataS = new CoordRestoreData("低牙色差S", sub1.Item2);
                                     dets.Add(colordisDataS);
+                                    CoordRestoreData colordisDataV = new CoordRestoreData("低牙色差V", sub1.Item3);
+                                    dets.Add(colordisDataV);
                                     uppatch.Dispose();
                                     liancipatch.Dispose();
                                     float dismin = Math.Abs(upmass2[0].box.Center.X - lastobb.box.Center.X);
@@ -721,26 +729,29 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         /// <param name="src"></param>
         /// <param name="dst"></param>
         /// <returns></returns>
-        private (float, float) GetHsSub(Mat src, Mat dst)
+        private (float, float,float) GetHsvSub(Mat src, Mat dst)
         {
             Mat hsvImage = new Mat();
             Cv2.CvtColor(src, hsvImage, ColorConversionCodes.BGR2HSV);
             Scalar hsvMean = Cv2.Mean(hsvImage);
             double hMean = hsvMean.Val0;
             double sMean = hsvMean.Val1;
+            double vMean = hsvMean.Val2;
 
             Mat hsvImage2 = new Mat();
             Cv2.CvtColor(dst, hsvImage2, ColorConversionCodes.BGR2HSV);
             Scalar hsvMean2 = Cv2.Mean(hsvImage2);
             double hMean2 = hsvMean2.Val0;
             double sMean2 = hsvMean2.Val1;
+            double vMean2 = hsvMean2.Val2;
 
             hsvImage.Dispose();
             hsvImage2.Dispose();
             float subH = (float)Math.Abs(hMean - hMean2);
             float subS = (float)Math.Abs(sMean - sMean2);
+            float subV = (float)Math.Abs(vMean - vMean2);
 
-            return (subH, subS);
+            return (subH, subS, subV);
         }
 
         private void UpdateScore(CParam param)

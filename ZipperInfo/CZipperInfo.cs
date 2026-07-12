@@ -213,6 +213,7 @@ namespace ZipperInfo
         /// </summary>
         public CZipperTempData TempData2 { get; set; }=new CZipperTempData();
 
+
     }
 
 
@@ -345,7 +346,20 @@ namespace ZipperInfo
         /// <summary>
         /// Logo模版
         /// </summary>
-        public HTuple ModelID {  get; set; }
+        public HTuple ModelID_Logo {  get; set; }
+        /// <summary>
+        /// 拉片模版
+        /// </summary>
+        public HTuple ModelID_Pull { get; set; }
+
+        /// <summary>
+        /// 拉片模版原始坐标row
+        /// </summary>
+        public double PullModelRow { get; set; }
+        /// <summary>
+        /// 拉片模版原始坐标col
+        /// </summary>
+        public double PullModelCol { get; set; }
     }
 
 
@@ -380,6 +394,12 @@ namespace ZipperInfo
     {
         烤漆 = 0,
         金属 = 1
+    }
+
+    public enum BOLTDIRECTION
+    {
+        左插 = 0,
+        右插 = 1
     }
 
 }
