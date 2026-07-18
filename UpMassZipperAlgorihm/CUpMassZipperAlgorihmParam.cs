@@ -101,22 +101,22 @@ namespace UpMassZipperAlgorihm
             cDefectRecipes.Add(defectRecipe1_1);
             cDefectRecipes.Add(defectRecipe1_2);
 
-            CDefectRecipe defectRecipe1_3 = new CDefectRecipe("高牙色差H", Category.值);
-            CDefectRecipe defectRecipe1_4 = new CDefectRecipe("高牙色差S", Category.值);
-            CDefectRecipe defectRecipe1_5 = new CDefectRecipe("高牙色差V", Category.值);
+            CDefectRecipe defectRecipe1_3 = new CDefectRecipe("上牙色差H", Category.值);
+            CDefectRecipe defectRecipe1_4 = new CDefectRecipe("上牙色差S", Category.值);
+            CDefectRecipe defectRecipe1_5 = new CDefectRecipe("上牙色差V", Category.值);
             cDefectRecipes.Add(defectRecipe1_3);
             cDefectRecipes.Add(defectRecipe1_4);
             cDefectRecipes.Add(defectRecipe1_5);
 
-            CDefectRecipe defectRecipe1_6 = new CDefectRecipe("低牙色差H", Category.值);
-            CDefectRecipe defectRecipe1_7 = new CDefectRecipe("低牙色差S", Category.值);
-            CDefectRecipe defectRecipe1_8 = new CDefectRecipe("低牙色差V", Category.值);
+            CDefectRecipe defectRecipe1_6 = new CDefectRecipe("下牙色差H", Category.值);
+            CDefectRecipe defectRecipe1_7 = new CDefectRecipe("下牙色差S", Category.值);
+            CDefectRecipe defectRecipe1_8 = new CDefectRecipe("下牙色差V", Category.值);
             cDefectRecipes.Add(defectRecipe1_6);
             cDefectRecipes.Add(defectRecipe1_7);
             cDefectRecipes.Add(defectRecipe1_8);
 
-            CDefectRecipe defectRecipe1_9 = new CDefectRecipe("高牙平齐", Category.值);
-            CDefectRecipe defectRecipe1_10 = new CDefectRecipe("低牙平齐", Category.值);
+            CDefectRecipe defectRecipe1_9 = new CDefectRecipe("上牙平齐", Category.值);
+            CDefectRecipe defectRecipe1_10 = new CDefectRecipe("下牙平齐", Category.值);
             cDefectRecipes.Add(defectRecipe1_9);
             cDefectRecipes.Add(defectRecipe1_10);
 
@@ -214,161 +214,130 @@ namespace UpMassZipperAlgorihm
                 if (upResult != null && upResult.datas.Count > 0) //如果有大缺陷直接退出
                 {
 
-                    string lianciIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("链齿")).ToString();
-                    List<ObbData> lianciorg = upResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
-                    // 获取lianciorg中坐标最右的点
-                    if (lianciorg?.Count > 0)
-                    {
-                        float maxx = lianciorg.Max(c => c.box.Center.X);
-                        ObbData maxxObb = lianciorg.Find(c => c.box.Center.X == maxx); //高牙链牙的最后一个牙
-                        if (maxxObb != null)
-                        {
-                            float rang = 35;
-                            List<ObbData> obbDatas1 = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - maxxObb.box.Center.Y) <= rang).ToList(); //分组 与最右边的链齿在一水平线的为一组
-                            List<ObbData> obbDatas2 = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - maxxObb.box.Center.Y) > rang).ToList(); //另一边为一组
-                            #region 高牙
-                            // 高牙距离
-                            string upmassIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("上止")).ToString();
-                            List<ObbData> upmass1 = obbDatas1.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
-
-                            if (upmass1 != null && upmass1.Count > 0)
-                            {
-                                Mat uppatch = GetRoatImage(upmass1[0], img); //高牙上止截图1
-                                                                             // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "高牙上止1.png", uppatch);
-                                Mat liancipatch = GetRoatImage(maxxObb, img); //上止最近的一颗牙
-                                // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "高牙链牙1.png", liancipatch);
-                                var sub1 = GetHsvSub(uppatch, liancipatch);
-
-                                CoordRestoreData colordisDataH = new CoordRestoreData("高牙色差H", sub1.Item1);
-                                dets.Add(colordisDataH);
-                                CoordRestoreData colordisDataS = new CoordRestoreData("高牙色差S", sub1.Item2);
-                                dets.Add(colordisDataS);
-                                CoordRestoreData colordisDataV = new CoordRestoreData("高牙色差V", sub1.Item3);
-                                dets.Add(colordisDataV);
-                                uppatch.Dispose();
-                                liancipatch.Dispose();
-                                // 最右与上止的X方向距离
-                                float dismin = Math.Abs(upmass1[0].box.Center.X - maxx);
-                                CoordRestoreData disData = new CoordRestoreData("高牙距离", dismin);
-                                dets.Add(disData);
-                            }
-                            else
-                            {
-                                CoordRestoreData disData = new CoordRestoreData("高牙距离", 1000);
-                                dets.Add(disData);
-                            }
-                            #endregion
-
-                            #region 低牙
-                            //低牙距离
-                            List<ObbData> upmass2 = obbDatas2.FindAll(c => c.lable == upmassIndexstr).ToList(); //上止
-                            if (upmass2 != null && upmass2.Count > 0)
-                            {
-                                List<ObbData> lianci2 = obbDatas2.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
-                                float lastx = lianci2.Max(x => x.box.Center.X);
-                                ObbData lastobb = lianci2.Find(c => c.box.Center.X == lastx);
-                                if (lastobb != null)
-                                {
-                                    Mat uppatch = GetRoatImage(upmass2[0], img); //高牙上止截图1
-                                                                                 // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "低牙上止1.png", uppatch);
-                                    Mat liancipatch = GetRoatImage(lastobb, img); //上止最近的一颗牙
-                                                                                  // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "低牙链牙1.png", liancipatch);
-                                    var sub1 = GetHsvSub(uppatch, liancipatch);
-
-                                    CoordRestoreData colordisDataH = new CoordRestoreData("低牙色差H", sub1.Item1);
-                                    dets.Add(colordisDataH);
-                                    CoordRestoreData colordisDataS = new CoordRestoreData("低牙色差S", sub1.Item2);
-                                    dets.Add(colordisDataS);
-                                    CoordRestoreData colordisDataV = new CoordRestoreData("低牙色差V", sub1.Item3);
-                                    dets.Add(colordisDataV);
-                                    uppatch.Dispose();
-                                    liancipatch.Dispose();
-                                    float dismin = Math.Abs(upmass2[0].box.Center.X - lastobb.box.Center.X);
-                                    CoordRestoreData disData = new CoordRestoreData("低牙距离", dismin);
-                                    dets.Add(disData);
-                                }
-                                else
-                                {
-                                    CoordRestoreData disData = new CoordRestoreData("低牙距离", 1000);
-                                    dets.Add(disData);
-                                }
-                                #region 链牙平齐
-                                if (upmass1.Count > 0 && upmass2.Count > 0)
-                                {
-                                    float firstx = upmass1[0].box.Center.Y - upmass2[0].box.Center.Y;
-                                    if (firstx > 0) // 高牙在下
-                                    {
-                                        //高牙在下
-                                        Point2f[] upPoints1 = upmass1[0].box.Points();
-                                        float upmaxy = upPoints1.Max(p => p.Y); // 上止
-                                        Point2f[] yaPoints1 = maxxObb.box.Points(); //牙
-                                        float yamaxy = yaPoints1.Max(p => p.Y); // 牙高点
-                                        float xiaSub = Math.Abs(upmaxy - yamaxy);
-
-                                        //低牙在上
-                                        Point2f[] upPoints2 = upmass2[0].box.Points();
-                                        float upminy2 = upPoints2.Min(p => p.Y); // 上止
-                                        Point2f[] yaPoints2 = lastobb.box.Points(); //牙
-                                        float yaminy = yaPoints2.Min(p => p.Y); // 牙高点
-                                        float shangSub = Math.Abs(upminy2 - yaminy);
-
-                                        CoordRestoreData xiadisData = new CoordRestoreData("高牙平齐", xiaSub);
-                                        dets.Add(xiadisData);
-                                        CoordRestoreData shangdisData = new CoordRestoreData("低牙平齐", shangSub);
-                                        dets.Add(shangdisData);
-
-                                    }
-                                    else //低牙在下
-                                    {
-                                        //高牙在上
-                                        Point2f[] upPoints1 = upmass1[0].box.Points();
-                                        float upmaxy = upPoints1.Min(p => p.Y); // 上止
-                                        Point2f[] yaPoints1 = maxxObb.box.Points(); //牙
-                                        float yamaxy = yaPoints1.Min(p => p.Y); // 牙高点
-                                        float xiaSub = Math.Abs(upmaxy - yamaxy);
-
-                                        //低牙在下
-                                        Point2f[] upPoints2 = upmass2[0].box.Points();
-                                        float upminy2 = upPoints2.Max(p => p.Y); // 上止
-                                        Point2f[] yaPoints2 = lastobb.box.Points(); //牙
-                                        float yaminy = yaPoints2.Max(p => p.Y); // 牙高点
-                                        float shangSub = Math.Abs(upminy2 - yaminy);
-
-                                        CoordRestoreData xiadisData = new CoordRestoreData("高牙平齐", xiaSub);
-                                        dets.Add(xiadisData);
-                                        CoordRestoreData shangdisData = new CoordRestoreData("低牙平齐", shangSub);
-                                        dets.Add(shangdisData);
-                                    }
-                                }
-                             
-                            }
-                                #endregion
-                        }
-                        else
-                        {
-                            CoordRestoreData disData = new CoordRestoreData("低牙距离", 1000);
-                            dets.Add(disData);
-                        }
-                            #endregion
-
-
-                    }
                     for (int j = 0; j < upResult.datas.Count; j++)
                     {
                         int labelindex = int.Parse(upResult.datas[j].lable);
                         string labelname = upStopMassDefe_names[labelindex];
-                        CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth,
-                            cell.PhotoIndex - 1, 0, 0, labelname, upResult.datas[j]);
+                        CoordRestoreData restoreData = new CoordRestoreData(0, 0, 0, 0, labelname, upResult.datas[j]);
                         dets.Add(restoreData);
                     }
-                }
-                ParseResult(dets, cell);
-                img.Dispose();
 
+                    string shangzhiIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("上止")).ToString();
+                    List<ObbData> shangzhiorg = upResult.datas.FindAll(c => c.lable == shangzhiIndexstr).ToList(); //上止
+                    if (shangzhiorg.Count == 2)
+                    {
+                        shangzhiorg.Sort((a, b) => a.box.Center.Y.CompareTo(b.box.Center.Y)); //按Y坐标排序
+                        ObbData gaoyashangzhiObb = null, diyashangzhiobb = null;
+                        float rang = 35;
+                        if (cell.BoltDiretion == "左插")
+                        {
+                            gaoyashangzhiObb = shangzhiorg[0]; //高牙
+                            diyashangzhiobb = shangzhiorg[1];  //低牙
+                        }
+                        else
+                        {
+                            gaoyashangzhiObb = shangzhiorg[1]; //高牙
+                            diyashangzhiobb = shangzhiorg[0];  //低牙
+                        }
+                        #region 高低牙距离
+                        if (gaoyashangzhiObb != null && diyashangzhiobb != null)
+                        {
+
+                            List<ObbData> gaoyaobbDatas = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - gaoyashangzhiObb.box.Center.Y) <= rang).ToList(); //分组 
+                            List<ObbData> diyaobbDatas = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - diyashangzhiobb.box.Center.Y) <= rang).ToList(); //分组 
+
+                            GetDisAndHSV(img, gaoyaobbDatas, gaoyashangzhiObb, out float gdis);
+                            CoordRestoreData disData = new CoordRestoreData("高牙距离", gdis);
+                            dets.Add(disData);
+
+                            GetDisAndHSV(img, diyaobbDatas, diyashangzhiobb, out float ddis);
+                            CoordRestoreData disData2 = new CoordRestoreData("低牙距离", ddis);
+                            dets.Add(disData2);
+
+                        }
+                        #endregion
+
+                        #region 上下牙平齐
+                        // 上半边上止和牙的最高点差值
+                        string lianciIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("链齿")).ToString();
+                        Point2f[] upPoints0 = shangzhiorg[0].box.Points();
+                        float upminy0 = upPoints0.Min(p => p.Y); // 上止最高点
+                        List<ObbData> obbDatas0 = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - shangzhiorg[0].box.Center.Y) <= rang).ToList(); //分组 
+                        List<ObbData> lianciiorg0 = obbDatas0.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+                        float liancimaxx0 = lianciiorg0.Max(c => c.box.Center.X);
+                        ObbData yamaxxObb0 = lianciiorg0.Find(c => c.box.Center.X == liancimaxx0); //链齿最右边的牙
+                        Point2f[] yaPoints0 = yamaxxObb0.box.Points(); //牙
+                        float yaminy0 = yaPoints0.Min(p => p.Y); // 牙最高点
+                        float shangSub0 = Math.Abs(upminy0 - yaminy0);
+                        CoordRestoreData shangdisData = new CoordRestoreData("上牙平齐", shangSub0);
+                        dets.Add(shangdisData);
+
+                        Mat uppatch = GetRoatImage(shangzhiorg[0], img);
+                        Mat liancipatch = GetRoatImage(yamaxxObb0, img);
+                        var sub0 = GetHsvSub(uppatch, liancipatch);
+                        float HvalueSub0 = sub0.Item1;
+                        float SvalueSub0 = sub0.Item2;
+                        float VvalueSub0 = sub0.Item3;
+                        CoordRestoreData colorDataH = new CoordRestoreData("上牙色差H", HvalueSub0);
+                        dets.Add(colorDataH);
+                        CoordRestoreData colorDataS = new CoordRestoreData("上牙色差S", SvalueSub0);
+                        dets.Add(colorDataS);
+                        CoordRestoreData colorDataV = new CoordRestoreData("上牙色差V", VvalueSub0);
+                        dets.Add(colorDataV);
+
+
+
+                        Point2f[] upPoints1 = shangzhiorg[1].box.Points();
+                        float upmaxy1 = upPoints1.Max(p => p.Y); // 上止最底点
+                        List<ObbData> obbDatas1 = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - shangzhiorg[1].box.Center.Y) <= rang).ToList(); //分组 
+                        List<ObbData> lianciiorg1 = obbDatas1.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+                        float liancimaxx1 = lianciiorg1.Max(c => c.box.Center.X);
+                        ObbData yamaxxObb1 = lianciiorg1.Find(c => c.box.Center.X == liancimaxx1); //链齿最右边的牙
+                        Point2f[] yaPoints1 = yamaxxObb1.box.Points(); //牙
+                        float yamaxy1 = yaPoints1.Max(p => p.Y); // 牙最高点
+                        float xiaSub = Math.Abs(upmaxy1 - yamaxy1);
+
+                        CoordRestoreData xiadisData = new CoordRestoreData("下牙平齐", xiaSub);
+                        dets.Add(xiadisData);
+                        Mat uppatch1 = GetRoatImage(shangzhiorg[1], img);
+                        Mat liancipatch1 = GetRoatImage(yamaxxObb1, img);
+                        var sub1 = GetHsvSub(uppatch1, liancipatch1);
+                        float HvalueSub1 = sub1.Item1;
+                        float SvalueSub1 = sub1.Item2;
+                        float VvalueSub1 = sub1.Item3;
+                        CoordRestoreData colorDataH1 = new CoordRestoreData("下牙色差H", HvalueSub1);
+                        dets.Add(colorDataH1);
+                        CoordRestoreData colorDataS1 = new CoordRestoreData("下牙色差S", SvalueSub1);
+                        dets.Add(colorDataS1);
+                        CoordRestoreData colorDataV1 = new CoordRestoreData("下牙色差V", VvalueSub1);
+                        dets.Add(colorDataV1);
+
+
+                        #endregion
+                    }
+
+                    ParseResult(dets, cell);
+                    img.Dispose();
+
+                }
+
+                void GetDisAndHSV(Mat img, List<ObbData> obbDatas, ObbData upMassobb, out float Dismin)
+                {
+                    Dismin = 0;
+                    string lianciIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("链齿")).ToString();
+                    List<ObbData> lianciiorg = obbDatas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
+
+                    float liancimaxx = lianciiorg.Max(c => c.box.Center.X);
+                    ObbData liancimaxxObb = lianciiorg.Find(c => c.box.Center.X == liancimaxx); //链齿最右边的牙
+                    if (liancimaxxObb != null && upMassobb != null)
+                    {
+                        // 最右与上止的X方向距离
+                        Dismin = Math.Abs(upMassobb.box.Center.X - liancimaxxObb.box.Center.X); //上止和牙距离
+                    }
+
+                }
             }
         }
-        
-
 
         protected void ParseResult(List<CoordRestoreData> sResultInfos, Cell cell)
         {
@@ -729,7 +698,7 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         /// <param name="src"></param>
         /// <param name="dst"></param>
         /// <returns></returns>
-        private (float, float,float) GetHsvSub(Mat src, Mat dst)
+        private (float, float, float) GetHsvSub(Mat src, Mat dst)
         {
             Mat hsvImage = new Mat();
             Cv2.CvtColor(src, hsvImage, ColorConversionCodes.BGR2HSV);
@@ -791,224 +760,224 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
     /// AI参数类
     /// </summary>
     public partial class CParam : CParamBase
-{
-    public CParam()
-        : base() { }
-
-    public CParam(string name, Token token)
-        : base(name, token) { }
-
-
-    /// <summary>
-    /// 2024.10.28 鲍赞宝
-    /// 驱动设备
-    /// </summary>
-    [ObservableProperty]
-    [property: Category("基础参数")]
-    [property: DisplayName("01驱动器")]
-    [property: Description("驱动器")]
-    private string currentDevice = "GPU.0";
-
-    /// <summary>
-    /// 2024.7.21 鲍赞宝
-    /// 拉头模型分数阈值
-    /// </summary>
-    [ObservableProperty]
-    [property: Category("分数设置")]
-    [property: DisplayName("09 大缺陷分数阈值")]
-    [property: Description("大缺陷分数阈值")]
-    private float upMassScore = 0.4f;
-
-    /// <summary>
-    /// 2024.10.28 鲍赞宝
-    /// NMScore
-    /// </summary>
-    [ObservableProperty]
-    private float nms = 0.5f;
-
-}
-
-public struct CoordRestoreData
-{
-    /// <summary>
-    /// 坐标还原
-    /// </summary>
-    /// <param name="imgwidth">当前图宽</param>
-    /// <param name="imgheight">当前图高</param>
-    /// <param name="imgIndex">图片编号</param>
-    public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, int showinview = 0)
     {
-        //坐标还原 
+        public CParam()
+            : base() { }
 
-        ShowLeftUp.X = det.box.Left + orgx + imgWidth * imgIndex;
-        ShowLeftUp.Y = det.box.Top + orgy;
-        ShowRightUp.X = det.box.Right + orgx + imgWidth * imgIndex;
-        ShowRightUp.Y = det.box.Top + orgy;
+        public CParam(string name, Token token)
+            : base(name, token) { }
 
-        ShowRightDown.X = det.box.Right + orgx + imgWidth * imgIndex;
-        ShowRightDown.Y = det.box.Bottom + orgy;
 
-        ShowLeftDown.X = det.box.Left + orgx + imgWidth * imgIndex;
-        ShowLeftDown.Y = det.box.Bottom + orgy;
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// 驱动设备
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("基础参数")]
+        [property: DisplayName("01驱动器")]
+        [property: Description("驱动器")]
+        private string currentDevice = "GPU.0";
 
-        RecWidth = det.box.Width;
-        RecHeight = det.box.Height;
-        OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0) + orgx;
-        OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0) + orgy;
-        Score = det.score * 100;
-        Labelstr = labelstr;
-        Angle = 0.0f;
-        Value = 0.0f;
-        ShowInView = showinview;
+        /// <summary>
+        /// 2024.7.21 鲍赞宝
+        /// 拉头模型分数阈值
+        /// </summary>
+        [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("09 大缺陷分数阈值")]
+        [property: Description("大缺陷分数阈值")]
+        private float upMassScore = 0.4f;
+
+        /// <summary>
+        /// 2024.10.28 鲍赞宝
+        /// NMScore
+        /// </summary>
+        [ObservableProperty]
+        private float nms = 0.5f;
 
     }
-    public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, ObbData obb, int showinview = 0)
+
+    public struct CoordRestoreData
     {
-        //坐标还原 
-
-        ShowLeftUp.X = obb.box.Points()[0].X + orgx + imgWidth * imgIndex;
-        ShowLeftUp.Y = obb.box.Points()[0].Y + orgy;
-
-        ShowRightUp.X = obb.box.Points()[1].X + orgx + imgWidth * imgIndex;
-        ShowRightUp.Y = obb.box.Points()[1].Y + orgy;
-
-        ShowRightDown.X = obb.box.Points()[2].X + orgx + imgWidth * imgIndex;
-        ShowRightDown.Y = obb.box.Points()[2].Y + orgy;
-
-        ShowLeftDown.X = obb.box.Points()[3].X + orgx + imgWidth * imgIndex;
-        ShowLeftDown.Y = obb.box.Points()[3].Y + orgy;
-
-        RecWidth = obb.box.Size.Width;
-        RecHeight = obb.box.Size.Height;
-        OrgCenterX = obb.box.Center.X + orgx;
-        OrgCenterY = obb.box.Center.Y + orgy;
-        Score = obb.score * 100;
-        Labelstr = labelstr;
-        Angle = obb.box.Angle;
-        Value = 0.0f;
-        ShowInView = showinview;
-    }
-    public CoordRestoreData(string labelstr, float value, int showinview = 0)
-    {
-        //坐标还原 
-
-        ShowLeftUp.X = 0;
-        ShowLeftUp.Y = 0;
-
-        ShowRightUp.X = 0;
-        ShowRightUp.Y = 0;
-
-        ShowRightDown.X = 0;
-        ShowRightDown.Y = 0;
-
-        ShowLeftDown.X = 0;
-        ShowLeftDown.Y = 0;
-
-        RecWidth = 0;
-        RecHeight = 0;
-        OrgCenterX = 0;
-        OrgCenterY = 0;
-        Score = 0;
-        Labelstr = labelstr;
-        Angle = 0;
-        Value = value;
-        ShowInView = showinview;
-    }
-
-    public CoordRestoreData(string labelstr, float value, List<List<Point>> contours, int showinview = 0)
-    {
-        //坐标还原 
-
-        ShowLeftUp.X = 0;
-        ShowLeftUp.Y = 0;
-
-        ShowRightUp.X = 0;
-        ShowRightUp.Y = 0;
-
-        ShowRightDown.X = 0;
-        ShowRightDown.Y = 0;
-
-        ShowLeftDown.X = 0;
-        ShowLeftDown.Y = 0;
-
-        RecWidth = 0;
-        RecHeight = 0;
-        OrgCenterX = 0;
-        OrgCenterY = 0;
-        Score = 0;
-        Labelstr = labelstr;
-        Angle = 0;
-        Value = value;
-        ShowInView = showinview;
-
-        for (int i = 0; i < contours.Count; i++)
+        /// <summary>
+        /// 坐标还原
+        /// </summary>
+        /// <param name="imgwidth">当前图宽</param>
+        /// <param name="imgheight">当前图高</param>
+        /// <param name="imgIndex">图片编号</param>
+        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, int showinview = 0)
         {
-            List<System.Windows.Point> Points = new List<System.Windows.Point>();
-            for (int j = 0; j < contours[i].Count; j++)
-            {
-                System.Windows.Point point = new System.Windows.Point() { X = contours[i][j].X, Y = contours[i][j].Y };
-                Points.Add(point);
-            }
+            //坐标还原 
 
-            Contours.Add(Points);
+            ShowLeftUp.X = det.box.Left + orgx + imgWidth * imgIndex;
+            ShowLeftUp.Y = det.box.Top + orgy;
+            ShowRightUp.X = det.box.Right + orgx + imgWidth * imgIndex;
+            ShowRightUp.Y = det.box.Top + orgy;
+
+            ShowRightDown.X = det.box.Right + orgx + imgWidth * imgIndex;
+            ShowRightDown.Y = det.box.Bottom + orgy;
+
+            ShowLeftDown.X = det.box.Left + orgx + imgWidth * imgIndex;
+            ShowLeftDown.Y = det.box.Bottom + orgy;
+
+            RecWidth = det.box.Width;
+            RecHeight = det.box.Height;
+            OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0) + orgx;
+            OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0) + orgy;
+            Score = det.score * 100;
+            Labelstr = labelstr;
+            Angle = 0.0f;
+            Value = 0.0f;
+            ShowInView = showinview;
+
         }
+        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, ObbData obb, int showinview = 0)
+        {
+            //坐标还原 
+
+            ShowLeftUp.X = obb.box.Points()[0].X + orgx + imgWidth * imgIndex;
+            ShowLeftUp.Y = obb.box.Points()[0].Y + orgy;
+
+            ShowRightUp.X = obb.box.Points()[1].X + orgx + imgWidth * imgIndex;
+            ShowRightUp.Y = obb.box.Points()[1].Y + orgy;
+
+            ShowRightDown.X = obb.box.Points()[2].X + orgx + imgWidth * imgIndex;
+            ShowRightDown.Y = obb.box.Points()[2].Y + orgy;
+
+            ShowLeftDown.X = obb.box.Points()[3].X + orgx + imgWidth * imgIndex;
+            ShowLeftDown.Y = obb.box.Points()[3].Y + orgy;
+
+            RecWidth = obb.box.Size.Width;
+            RecHeight = obb.box.Size.Height;
+            OrgCenterX = obb.box.Center.X + orgx;
+            OrgCenterY = obb.box.Center.Y + orgy;
+            Score = obb.score * 100;
+            Labelstr = labelstr;
+            Angle = obb.box.Angle;
+            Value = 0.0f;
+            ShowInView = showinview;
+        }
+        public CoordRestoreData(string labelstr, float value, int showinview = 0)
+        {
+            //坐标还原 
+
+            ShowLeftUp.X = 0;
+            ShowLeftUp.Y = 0;
+
+            ShowRightUp.X = 0;
+            ShowRightUp.Y = 0;
+
+            ShowRightDown.X = 0;
+            ShowRightDown.Y = 0;
+
+            ShowLeftDown.X = 0;
+            ShowLeftDown.Y = 0;
+
+            RecWidth = 0;
+            RecHeight = 0;
+            OrgCenterX = 0;
+            OrgCenterY = 0;
+            Score = 0;
+            Labelstr = labelstr;
+            Angle = 0;
+            Value = value;
+            ShowInView = showinview;
+        }
+
+        public CoordRestoreData(string labelstr, float value, List<List<Point>> contours, int showinview = 0)
+        {
+            //坐标还原 
+
+            ShowLeftUp.X = 0;
+            ShowLeftUp.Y = 0;
+
+            ShowRightUp.X = 0;
+            ShowRightUp.Y = 0;
+
+            ShowRightDown.X = 0;
+            ShowRightDown.Y = 0;
+
+            ShowLeftDown.X = 0;
+            ShowLeftDown.Y = 0;
+
+            RecWidth = 0;
+            RecHeight = 0;
+            OrgCenterX = 0;
+            OrgCenterY = 0;
+            Score = 0;
+            Labelstr = labelstr;
+            Angle = 0;
+            Value = value;
+            ShowInView = showinview;
+
+            for (int i = 0; i < contours.Count; i++)
+            {
+                List<System.Windows.Point> Points = new List<System.Windows.Point>();
+                for (int j = 0; j < contours[i].Count; j++)
+                {
+                    System.Windows.Point point = new System.Windows.Point() { X = contours[i][j].X, Y = contours[i][j].Y };
+                    Points.Add(point);
+                }
+
+                Contours.Add(Points);
+            }
+        }
+        /// <summary>
+        /// 用于显示左上角点
+        /// </summary>
+        public System.Windows.Point ShowLeftUp = new System.Windows.Point();
+        /// <summary>
+        /// 用于显示右上角点
+        /// </summary>
+        public System.Windows.Point ShowRightUp = new System.Windows.Point();
+        /// <summary>
+        /// 用于显示左上角点
+        /// </summary>
+        public System.Windows.Point ShowRightDown = new System.Windows.Point();
+        /// <summary>
+        ///用于显示左上角点
+        /// </summary>
+        public System.Windows.Point ShowLeftDown = new System.Windows.Point();
+        /// <summary>
+        /// 原图上中心X
+        /// </summary>
+        public float OrgCenterX { get; set; }
+        /// <summary>
+        /// 原图上中心Y
+        /// </summary>
+        public float OrgCenterY { get; set; }
+        /// <summary>
+        /// 缺陷框宽
+        /// </summary>
+        public float RecWidth { get; set; }
+        /// <summary>
+        /// 缺陷框高
+        /// </summary>
+        public float RecHeight { get; set; }
+        /// <summary>
+        /// 分数
+        /// </summary>
+        public float Score { get; set; }
+        /// <summary>
+        /// 标签
+        /// </summary>
+        public string Labelstr { get; set; }
+        /// <summary>
+        /// 角度
+        /// </summary>
+        public float Angle { get; set; }
+        /// <summary>
+        /// 值
+        /// </summary>
+        public float Value { get; set; }
+        /// <summary>
+        /// 在哪个窗口显示区域
+        /// </summary>
+        public int ShowInView { get; set; }
+        /// <summary>
+        /// 分割区域轮廓点集
+        /// </summary>
+        public List<List<System.Windows.Point>> Contours = new List<List<System.Windows.Point>>();
     }
-    /// <summary>
-    /// 用于显示左上角点
-    /// </summary>
-    public System.Windows.Point ShowLeftUp = new System.Windows.Point();
-    /// <summary>
-    /// 用于显示右上角点
-    /// </summary>
-    public System.Windows.Point ShowRightUp = new System.Windows.Point();
-    /// <summary>
-    /// 用于显示左上角点
-    /// </summary>
-    public System.Windows.Point ShowRightDown = new System.Windows.Point();
-    /// <summary>
-    ///用于显示左上角点
-    /// </summary>
-    public System.Windows.Point ShowLeftDown = new System.Windows.Point();
-    /// <summary>
-    /// 原图上中心X
-    /// </summary>
-    public float OrgCenterX { get; set; }
-    /// <summary>
-    /// 原图上中心Y
-    /// </summary>
-    public float OrgCenterY { get; set; }
-    /// <summary>
-    /// 缺陷框宽
-    /// </summary>
-    public float RecWidth { get; set; }
-    /// <summary>
-    /// 缺陷框高
-    /// </summary>
-    public float RecHeight { get; set; }
-    /// <summary>
-    /// 分数
-    /// </summary>
-    public float Score { get; set; }
-    /// <summary>
-    /// 标签
-    /// </summary>
-    public string Labelstr { get; set; }
-    /// <summary>
-    /// 角度
-    /// </summary>
-    public float Angle { get; set; }
-    /// <summary>
-    /// 值
-    /// </summary>
-    public float Value { get; set; }
-    /// <summary>
-    /// 在哪个窗口显示区域
-    /// </summary>
-    public int ShowInView { get; set; }
-    /// <summary>
-    /// 分割区域轮廓点集
-    /// </summary>
-    public List<List<System.Windows.Point>> Contours = new List<List<System.Windows.Point>>();
-}
 
 }

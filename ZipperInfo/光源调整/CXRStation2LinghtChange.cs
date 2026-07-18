@@ -42,6 +42,7 @@ namespace ZipperInfo
                     }
 
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
+                    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[1].Value;
                 }
                
 
@@ -69,7 +70,7 @@ namespace ZipperInfo
                     }
 
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
-                    //  TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
+                    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[1].Value;
                 }
 
             }
@@ -116,6 +117,7 @@ namespace ZipperInfo
                     }
 
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
+                    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
                     //Thread.Sleep(10);
                     //LightControl.BaseConfig.LightChannelList[1].Value = LightControl.BaseConfig.LightChannelList[0].Value;
                     //LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[1]);
@@ -148,6 +150,7 @@ namespace ZipperInfo
                     }
 
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);
+                    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[0].Value;
                 }
              
             }
@@ -227,6 +230,7 @@ namespace ZipperInfo
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[2]);
                     LightControl.BaseConfig.LightChannelList[3].Value = LightControl.BaseConfig.LightChannelList[2].Value;
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[3]);
+                    TempLightValue_Change1 = LightControl.BaseConfig.LightChannelList[2].Value;
                 }
             }
             catch (Exception)

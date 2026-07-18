@@ -225,6 +225,11 @@ namespace ZipperInfo
         /// </summary>
         public List<float> ZipperTriggerPos { get; set; } = new List<float>();
         /// <summary>
+        /// 拉链拍照的总张数
+        /// </summary>
+        public int ZipperImagesCount { get; set; }
+
+        /// <summary>
         /// 拉头ID拍照位置的序号
         /// </summary>
         public int PullchangeIndex { get; set; }
@@ -309,7 +314,8 @@ namespace ZipperInfo
         /// <summary>
         /// 拉片分割出来的标准面积
         /// </summary>
-        public double PullSegOrgArea { get; set; }
+        [ObservableProperty]
+        float pullSegOrgArea;
 
         /// <summary>
         /// 拉片外形轮廓点集合
@@ -322,44 +328,63 @@ namespace ZipperInfo
         /// <summary>
         /// 拉头的H值
         /// </summary>
-        public float PullerMeanH { get; set; }
+        [ObservableProperty]
+        float pullerMeanH;
         /// <summary>
         /// 拉头的S值
         /// </summary>
-        public float PullerMeanS { get; set; }
+
+        [ObservableProperty]
+        float pullerMeanS;
         /// <summary>
         /// 拉头的V值
         /// </summary>
-        public float PullerMeanV { get; set; }
+        [ObservableProperty]
+        float pullerMeanV;
         /// <summary>
         /// 拉片的H值
         /// </summary>
-        public float PullsMeanH { get; set; }
+        [ObservableProperty] 
+        float pullsMeanH;
         /// <summary>
         /// 拉片的S值
         /// </summary>
-        public float PullsMeanS { get; set; }
+        [ObservableProperty] 
+        float pullsMeanS;
         /// <summary>
         /// 拉片的V值
         /// </summary>
-        public float PullsMeanV { get; set; }
+        [ObservableProperty]
+        float pullsMeanV;
         /// <summary>
         /// Logo模版
         /// </summary>
-        public HTuple ModelID_Logo {  get; set; }
+        [ObservableProperty]
+        [JsonIgnore]
+        HTuple modelID_Logo;
         /// <summary>
         /// 拉片模版
         /// </summary>
-        public HTuple ModelID_Pull { get; set; }
+        [ObservableProperty]
+        [JsonIgnore]
+        HTuple modelID_Pull;
 
         /// <summary>
         /// 拉片模版原始坐标row
         /// </summary>
-        public double PullModelRow { get; set; }
+        [ObservableProperty]
+        double pullModelRow;
         /// <summary>
         /// 拉片模版原始坐标col
         /// </summary>
-        public double PullModelCol { get; set; }
+        [ObservableProperty]
+        double pullModelCol;
+        /// <summary>
+        /// 原始背景矩形
+        /// </summary>
+        [ObservableProperty]
+         HObject backRectangle;
+
     }
 
 

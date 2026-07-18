@@ -61,7 +61,7 @@ namespace WH.RunCell
         /// 2025.7.11 鲍赞宝
         /// 4拆分截图，用于存图
         /// </summary>
-        public List<OpenCvSharp.Mat> FourCutMatImg { get; set; } = new List<OpenCvSharp.Mat>();
+        public List<(int,OpenCvSharp.Mat)> FourCutMatImg { get; set; } = new List<(int,OpenCvSharp.Mat)>();
 
         public Cell()
         {
@@ -188,6 +188,28 @@ namespace WH.RunCell
         /// 插销方向
         /// </summary>
         public string BoltDiretion {  get; set; }
+        /// <summary>
+        /// 原始背景矩形
+        /// </summary>
+        public HObject BackRectangle { get; set; }
+
+        /// <summary>
+        /// 拉片分割出来的标准面积
+        /// </summary>
+        public float PullSegOrgArea { get; set; }
+        /// <summary>
+        /// 有无LOGO
+        /// </summary>
+        public string ZipperLogoType {  get; set; }
+        /// <summary>
+        /// 存大图编号，指定哪个编号的大图要存下来
+        /// </summary>
+        public List<int> SaveBigImagesIndex =new List<int>();
+
+        /// <summary>
+        /// 存截图编号，指定哪个编号的小图要存下来
+        /// </summary>
+        public List<(int,int)> SaveCutImagesIndex = new List<(int,int)>();
 
         /// <summary>
         /// 接收信息字典
@@ -420,7 +442,7 @@ namespace WH.RunCell
             {
                 for (int i = 0; i < FourCutMatImg.Count; i++)
                 {
-                    FourCutMatImg[i].Dispose();
+                    FourCutMatImg[i].Item2.Dispose();
                 }
             }
             if (this.ChangleImgae != null)
@@ -487,7 +509,7 @@ namespace WH.RunCell
             }
             for (int i = 0; i < this.FourCutMatImg?.Count; i++)
             {
-                cell.FourCutMatImg.Add(this.FourCutMatImg[i].Clone());
+                cell.FourCutMatImg.Add((this.FourCutMatImg[i].Item1,this.FourCutMatImg[i].Item2.Clone()));
             }
 
             cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();

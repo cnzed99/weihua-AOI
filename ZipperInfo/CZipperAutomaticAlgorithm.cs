@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using WH.Entity;
 using WH.Entity.LogRecord;
 using WH.Entity.MatConverter;
+using WH.LightControl;
 using WH.RunCell;
 using WH.VisionLearning;
 using ZipperLightHalconDet;
@@ -119,10 +120,10 @@ namespace ZipperInfo
 
 
         public static bool Cloth_Stage1_OK = false; //布带工位识别1OK
-       // public static bool Station2_Stage1_OK = false;
+                                                    // public static bool Station2_Stage1_OK = false;
 
         public static bool Cloth_Stage2_OK = false;//布带工位识别1OK
-       // public static bool Station2_Stage2_OK = false;
+                                                   // public static bool Station2_Stage2_OK = false;
 
         public static bool Pulls_Stage1_OK = false; //拉片识别1OK
         public static bool Puller_Stage1_OK = false; //拉头识别1OK
@@ -285,7 +286,7 @@ namespace ZipperInfo
             //Cv2.CvtColor(mat, img, ColorConversionCodes.BGR2RGB);
             // img.ImWrite($"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
             //相机采集图片
-            onWichStage = 1;
+            // onWichStage = 1;
             Mat img = new Mat();
             Cv2.CvtColor(orgimg, img, ColorConversionCodes.BGR2RGB);
             //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
@@ -446,7 +447,7 @@ namespace ZipperInfo
                     GetPullsRegion(ho_Image, out HObject ho_GrayImage, out HObject ho_Rectangle, out HObject ho_pullRegion);
                     GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegion,
                                    out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV);
-                    if (hv_MeanV.D < 80)
+                    if (hv_MeanV.D < 95)
                     {
                         LightChange_Pulls.ChangeLineValue1(false, 5);
                     }
@@ -459,7 +460,7 @@ namespace ZipperInfo
                         Pulls_Stage1_OK = true;
                     }
 
-                    if (LightChange_Pulls.MinTimeOutCount>5|| LightChange_Pulls.MaxTimeOutCount>5)
+                    if (LightChange_Pulls.MinTimeOutCount > 5 || LightChange_Pulls.MaxTimeOutCount > 5)
                     {
                         Pulls_Stage1_OK = true;
                     }
@@ -498,11 +499,11 @@ namespace ZipperInfo
 
                 if (Cloth_Stage1_OK && Pulls_Stage1_OK && Puller_Stage1_OK)
                 {
-                    if(cell.CamName == "右相机")
+                    if (cell.CamName == "右相机")
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            ZipperInfo.TempData1.ZipperDownmssImg = cell.Image?.ToBitmapSource().Clone();
+                            ZipperInfo.TempData1.ZipperUpmssImg = cell.Image?.ToBitmapSource().Clone();
                         });
                         img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-YOU-{LightChange.TempLightValue_Change1}.png");
                         timeOutCount = 0;
@@ -522,7 +523,7 @@ namespace ZipperInfo
             else if (onWichStage == 2) ////第二阶段 识别链牙亮度
             {
 
-                if (cell.CamName == "右相机")
+                if (cell.CamName == "右相机" && !Cloth_Stage2_OK)
                 {
                     startTriggerCount++;
                     var selectColor = ZipperInfo.TempData1.AutoData.LinghtValueInfos.Where(c => c.IsSelected).FirstOrDefault();
@@ -532,17 +533,18 @@ namespace ZipperInfo
                     LightChange_UpMass.ChangeLineValue2(UpMassLinghtValue);
                     ZipperInfo.ZipperUpMassType = STOPMASS.金属;
                     ZipperInfo.ZipperDownMassType = STOPMASS.金属;
-                    if (startTriggerCount > 2)
+                    if (startTriggerCount > 3)
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            ZipperInfo.TempData1.ZipperUpmssImg = cell.Image?.ToBitmapSource().Clone();
+                            ZipperInfo.TempData1.ZipperDownmssImg = cell.Image?.ToBitmapSource().Clone();
                         });
 
                         Cloth_Stage2_OK = true;
+                        startTriggerCount = 0;
                     }
-                
-             
+
+
                 }
                 if (cell.CamName == "拉片相机" && !Pulls_Stage2_OK)
                 {
@@ -568,11 +570,11 @@ namespace ZipperInfo
                     {
                         HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
                     }
-                    GetContoursAndHSV(ho_Image, out Point[] PullPoints, out Point[] HolesPoints,
+                    GetContoursAndHSV(ho_Image, out HObject ho_Rectangle, out Point[] PullPoints, out Point[] HolesPoints,
                         out float Hvalue, out float Svalue, out float Vvalue,
                         out HTuple ModelID_logo, out HTuple recRow1, out HTuple recCol1,
                         out HTuple recRow2, out HTuple recCol2,
-                        out HTuple modelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef);
+                        out HTuple modelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef, out HTuple pullArea);
                     ZipperInfo.TempData1.OrgContours = PullPoints;
                     ZipperInfo.TempData1.HoleOrgContours = HolesPoints;
                     ZipperInfo.TempData1.PullsMeanH = Hvalue;
@@ -581,6 +583,9 @@ namespace ZipperInfo
                     ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
                     ZipperInfo.TempData1.PullModelRow = hv_RowRef.D;
                     ZipperInfo.TempData1.PullModelCol = hv_ColumnRef.D;
+                    ZipperInfo.TempData1.BackRectangle = ho_Rectangle;
+                    ZipperInfo.TempData1.PullSegOrgArea = pullArea;
+                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Lapian-{LightChange_Pulls.TempLightValue_Change1}.png");
                     if (ModelID_logo.Length > 0)
                     {
                         ZipperInfo.TempData1.ModelID_Logo = ModelID_logo;
@@ -592,7 +597,6 @@ namespace ZipperInfo
                             int rew = (recCol2 - recCol1);
                             int reh = (recRow2 - recRow1);
                             Mat logoCutimg = img[new Rect(px, py, rew, reh)];
-                            //Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\新建文件夹\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + ".png", logoCutimg);
                             Dispatcher.Invoke(() =>
                             {
                                 ZipperInfo.TempData1.ZipperLogoImg = MatConverter.Mat2BitmapSource(logoCutimg);
@@ -615,7 +619,7 @@ namespace ZipperInfo
                         ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
                     }
 
-                    Pulls_Stage1_OK = true;
+                    Pulls_Stage2_OK = true;
 
                 }
                 if (cell.CamName == "拉头相机" && !Puller_Stage2_OK)
@@ -629,18 +633,20 @@ namespace ZipperInfo
                     //Scalar hsvMean = Cv2.Mean(hsvImage);
                     //float hMean = (float)hsvMean.Val0;
                     //float sMean = (float)hsvMean.Val1;
-                    //float vMean = (float)hsvMean.Val2;
+                    //float vMean = (float)hsvMean.Val2;                 
                     GetPullerHSV(cell, out float Hvalue, out float Svalue, out float Vvalue);
 
                     ZipperInfo.TempData1.PullerMeanH = Hvalue;
                     ZipperInfo.TempData1.PullerMeanS = Svalue;
                     ZipperInfo.TempData1.PullerMeanV = Vvalue;
-                    Puller_Stage1_OK = true;
+                    Puller_Stage2_OK = true;
+                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Latou-{LightChange_Puller.TempLightValue_Change1}.png");
                 }
-                if(Cloth_Stage2_OK &&Pulls_Stage2_OK && Puller_Stage2_OK)
+                if (Cloth_Stage2_OK && Pulls_Stage2_OK && Puller_Stage2_OK)
                 {
                     ProgressBarViewModel.ProgressBarValue = 100;
                     CZipperCommunicate.CamTriggerStop(); //停止拍照
+                    CLinghtManagement.SaveLightParams();
                     Thread.Sleep(300);
                     TestFinsh = true;
                     ProgressBarViewModel.ProgressFinshEven?.Invoke();
@@ -649,17 +655,17 @@ namespace ZipperInfo
             img.Dispose();
         }
 
-        private void GetContoursAndHSV(HObject ho_Image, out Point[] pullPoints, out Point[] holdPoints,
+        private void GetContoursAndHSV(HObject ho_Image, out HObject ho_Rectangle, out Point[] pullPoints, out Point[] holdPoints,
     out float Hvalue, out float Svalue, out float Vvalue,
     out HTuple ModelID_Logo, out HTuple recRow1_logo, out HTuple recCol1_logo,
     out HTuple recRow2_logo, out HTuple recCol2_logo,
-    out HTuple ModelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef)
+    out HTuple ModelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef, out HTuple pullArea)
         {
 
             // Local iconic variables 
 
             // HObject ho_Image,
-            HObject ho_GrayImage, ho_Rectangle;
+            HObject ho_GrayImage;
             HObject ho_pullRegion, ho_Contours_pull, ho_HoleRegion;
             HObject ho_Contours_hole, ho_Image1 = null, ho_ImageAffineTrans = null;
             HObject ho_ImageReduced = null;
@@ -677,7 +683,7 @@ namespace ZipperInfo
             HTuple hv_ModelID_logo = new HTuple();
             hv_RowRef = new HTuple(); hv_ColumnRef = new HTuple();
             HTuple hv_ModelID_pull = new HTuple();
-            HTuple hv_Files = new HTuple(), hv_Index = new HTuple();
+            // HTuple hv_Files = new HTuple(), hv_Index = new HTuple();
             HTuple hv_Score = new HTuple(), hv_BcanCreate = new HTuple();
             HTuple hv_IsHandle = new HTuple(), hv_Score1 = new HTuple();
             HTuple hv_Row = new HTuple(), hv_Column = new HTuple();
@@ -700,13 +706,14 @@ namespace ZipperInfo
             recRow2_logo = new HTuple();
             recCol2_logo = new HTuple();
             ModelID_pull = new HTuple();
+            pullArea = new HTuple();
 
             try
             {
                 //获取拉片区域
-                ho_GrayImage.Dispose(); ho_Rectangle.Dispose(); ho_pullRegion.Dispose();
-                GetPullsRegion(ho_Image, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion
-                    );
+                ho_GrayImage.Dispose(); ho_Rectangle.Dispose(); ho_pullRegion.Dispose(); pullArea.Dispose();
+                GetPullsRegion(ho_Image, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
+                HOperatorSet.AreaCenter(ho_pullRegion, out pullArea, out _, out _);
                 //获取拉片区域轮廓
                 ho_Contours_pull.Dispose();
                 HOperatorSet.GenContourRegionXld(ho_pullRegion, out ho_Contours_pull, "border");
@@ -785,7 +792,7 @@ namespace ZipperInfo
             {
                 // ho_Image.Dispose();
                 ho_GrayImage.Dispose();
-                ho_Rectangle.Dispose();
+                //ho_Rectangle.Dispose();
                 ho_pullRegion.Dispose();
                 ho_Contours_pull.Dispose();
                 ho_HoleRegion.Dispose();
@@ -810,12 +817,12 @@ namespace ZipperInfo
                 hv_col1_re.Dispose();
                 hv_row2_re.Dispose();
                 hv_col2_re.Dispose();
-                hv_ModelID_logo.Dispose();
+                //hv_ModelID_logo.Dispose();
                 //hv_RowRef.Dispose();
                 //hv_ColumnRef.Dispose();
-                hv_ModelID_pull.Dispose();
-                hv_Files.Dispose();
-                hv_Index.Dispose();
+                //hv_ModelID_pull.Dispose();
+                //hv_Files.Dispose();
+                //hv_Index.Dispose();
                 hv_Score.Dispose();
                 hv_BcanCreate.Dispose();
                 hv_IsHandle.Dispose();
@@ -1058,7 +1065,7 @@ namespace ZipperInfo
             ho_ImageReduced.Dispose();
             HOperatorSet.ReduceDomain(ho_GrayImage, ho_pullRegion, out ho_ImageReduced);
             ho_Region.Dispose();
-            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region, 250, 255);
+            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region, 230, 255);
             ho_RegionFillUp.Dispose();
             HOperatorSet.FillUp(ho_Region, out ho_RegionFillUp);
             ho_RegionClosing.Dispose();
@@ -1116,8 +1123,8 @@ namespace ZipperInfo
         }
 
         private void GetLogoModel(HObject ho_pullRegion, HObject ho_HoleRegion, HObject ho_GrayImage,
-            bool hv_BcanCreate, out HTuple hv_row1_re, out HTuple hv_col1_re, out HTuple hv_row2_re,
-            out HTuple hv_col2_re, out HTuple hv_ModelID_logo)
+           bool hv_BcanCreate, out HTuple hv_row1_re, out HTuple hv_col1_re, out HTuple hv_row2_re,
+           out HTuple hv_col2_re, out HTuple hv_ModelID_logo)
         {
 
 
@@ -1127,9 +1134,10 @@ namespace ZipperInfo
 
             HObject ho_RegionErosion, ho_ImageReduced;
             HObject ho_ImageEmphasize, ho_Region, ho_RegionFillUp, ho_RegionDifference;
-            HObject ho_ConnectedRegions, ho_RegionOpening, ho_ConnectedRegions1;
-            HObject ho_SelectedRegions, ho_SelectedRegions1, ho_RegionDifference2;
-            HObject ho_RegionUnion, ho_Rectangle1, ho_ImageReduced1 = null;
+            HObject ho_RegionFillUp1, ho_ConnectedRegions, ho_RegionOpening;
+            HObject ho_ConnectedRegions1, ho_SelectedRegions, ho_SelectedRegions1;
+            HObject ho_RegionDifference2, ho_RegionUnion, ho_Rectangle1;
+            HObject ho_ImageReduced1 = null;
 
             // Local control variables 
 
@@ -1145,6 +1153,7 @@ namespace ZipperInfo
             HOperatorSet.GenEmptyObj(out ho_Region);
             HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
             HOperatorSet.GenEmptyObj(out ho_RegionDifference);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp1);
             HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
             HOperatorSet.GenEmptyObj(out ho_RegionOpening);
             HOperatorSet.GenEmptyObj(out ho_ConnectedRegions1);
@@ -1167,15 +1176,17 @@ namespace ZipperInfo
             HOperatorSet.ReduceDomain(ho_GrayImage, ho_RegionErosion, out ho_ImageReduced
                 );
             ho_ImageEmphasize.Dispose();
-            HOperatorSet.Emphasize(ho_ImageReduced, out ho_ImageEmphasize, 17, 17, 1.5);
+            HOperatorSet.Emphasize(ho_ImageReduced, out ho_ImageEmphasize, 17, 17, 1);
             ho_Region.Dispose();
-            HOperatorSet.Threshold(ho_ImageEmphasize, out ho_Region, 45, 255);
+            HOperatorSet.Threshold(ho_ImageEmphasize, out ho_Region, 35, 255);
             ho_RegionFillUp.Dispose();
             HOperatorSet.FillUp(ho_Region, out ho_RegionFillUp);
             ho_RegionDifference.Dispose();
             HOperatorSet.Difference(ho_RegionFillUp, ho_Region, out ho_RegionDifference);
+            ho_RegionFillUp1.Dispose();
+            HOperatorSet.FillUp(ho_RegionDifference, out ho_RegionFillUp1);
             ho_ConnectedRegions.Dispose();
-            HOperatorSet.Connection(ho_RegionDifference, out ho_ConnectedRegions);
+            HOperatorSet.Connection(ho_RegionFillUp1, out ho_ConnectedRegions);
             ho_RegionOpening.Dispose();
             HOperatorSet.OpeningCircle(ho_ConnectedRegions, out ho_RegionOpening, 1.5);
             ho_ConnectedRegions1.Dispose();
@@ -1267,6 +1278,7 @@ namespace ZipperInfo
             ho_Region.Dispose();
             ho_RegionFillUp.Dispose();
             ho_RegionDifference.Dispose();
+            ho_RegionFillUp1.Dispose();
             ho_ConnectedRegions.Dispose();
             ho_RegionOpening.Dispose();
             ho_ConnectedRegions1.Dispose();
@@ -1342,7 +1354,7 @@ namespace ZipperInfo
         }
 
         private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out HObject ho_Rectangle,
-            out HObject ho_pullRegion)
+              out HObject ho_pullRegion)
         {
 
 
@@ -1386,7 +1398,8 @@ namespace ZipperInfo
             using (HDevDisposeHelper dh = new HDevDisposeHelper())
             {
                 ho_Rectangle.Dispose();
-                HOperatorSet.GenRectangle1(out ho_Rectangle, hv_Row1, hv_Column1, hv_Row2, hv_Column2 - 50);
+                HOperatorSet.GenRectangle1(out ho_Rectangle, hv_Row1 + 100, hv_Column1 + 100, hv_Row2 - 100,
+                    hv_Column2 - 50);
             }
             ho_ImageReduced.Dispose();
             HOperatorSet.ReduceDomain(ho_GrayImage, ho_Rectangle, out ho_ImageReduced);
@@ -1409,6 +1422,8 @@ namespace ZipperInfo
             ho_pullRegion.Dispose();
             HOperatorSet.SelectShapeStd(ho_ConnectedRegions2, out ho_pullRegion, "max_area",
                 70);
+
+
             ho_Region.Dispose();
             ho_ConnectedRegions.Dispose();
             ho_SelectedRegions.Dispose();
@@ -1764,12 +1779,23 @@ namespace ZipperInfo
 
         #region 保存参数
         public static string ParameterPath = "..\\SystemConfig\\ZipperInfoData.Json";
-
+        public static string Model_Logo_Path = "..\\SystemConfig\\ModelID_Logo.shm";
+        public static string Model_Pull_Path = "..\\SystemConfig\\ModelID_Pull.shm";
         public static void SaveParameter(CZipperInfo data)
         {
             try
             {
                 ConfigAPI.Save(data, ParameterPath);
+                if (data.TempData1.ModelID_Logo!=null&& data.TempData1.ModelID_Logo.Length>0)
+                {
+                    HOperatorSet.WriteShapeModel(data.TempData1.ModelID_Logo, Model_Logo_Path);
+                }
+                if (data.TempData1.ModelID_Pull != null && data.TempData1.ModelID_Pull.Length > 0)
+                {
+                    HOperatorSet.WriteShapeModel(data.TempData1.ModelID_Pull, Model_Pull_Path);
+                }
+               
+                
             }
             catch (Exception) { }
         }
@@ -1785,7 +1811,17 @@ namespace ZipperInfo
                 if (File.Exists(ParameterPath))
                 {
                     settingsModel = ConfigAPI.LoadDeserialize<CZipperInfo>(ParameterPath);
-                    if (settingsModel == null)
+                    if (settingsModel != null)
+                    {
+                        if (File.Exists(Model_Logo_Path) && File.Exists(Model_Pull_Path))
+                        {
+                            HOperatorSet.ReadShapeModel(Model_Logo_Path, out HTuple modelID_logo);
+                            settingsModel.TempData1.ModelID_Logo = modelID_logo;
+                            HOperatorSet.ReadShapeModel(Model_Pull_Path, out HTuple modelID_pull);
+                            settingsModel.TempData1.ModelID_Pull = modelID_pull;
+                        }
+                    }
+                    else
                     {
                         settingsModel = new CZipperInfo();
                     }

@@ -798,7 +798,8 @@ namespace WH.DetectSystem.Models
                                 cell.ModelID_Logo = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Logo;
                                 cell.PullModelRow = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelRow;
                                 cell.PullModelCol = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelCol;
-                                cell.BoltDiretion=CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.BoltDiretion.ToString();
+                                cell.BackRectangle = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.BackRectangle;
+                                cell.PullSegOrgArea = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullSegOrgArea;
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
                                 int photoTotalCount = 0;
@@ -808,7 +809,7 @@ namespace WH.DetectSystem.Models
                                 }
                                 else
                                 {
-                                    photoTotalCount = CZipperCommunicate.GetPhotoCount();
+                                    photoTotalCount = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount;
                                 }
                                 cell.PhotoTatolCount = photoTotalCount;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
                             }
@@ -833,6 +834,8 @@ namespace WH.DetectSystem.Models
                         cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
                         cell.DownStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString();
                         cell.UpStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString();
+                        cell.BoltDiretion = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.BoltDiretion.ToString();
+                        cell.ZipperLogoType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType;
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -925,7 +928,8 @@ namespace WH.DetectSystem.Models
                                     {
                                         for (int i = 0; i < currentCells.Count; i++)
                                         {
-                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, currentCells[i].CreateTime, currentCells[i].RecipeTime));
+                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, 
+                                                currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                         }
                                     }
                                     SysLog.Info($"{Name}-准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
@@ -1003,11 +1007,12 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (Name == "正面" || Name == "反面")
                                             {
-                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污") || CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉"))
+                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污") || CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉")||
+                                                CellOut.Cell.Detection.DefectFilter.Name.Contains("SAB"))
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
                                                 }
-                                                else
+                                                else 
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
                                                 }
@@ -1761,6 +1766,8 @@ namespace WH.DetectSystem.Models
                     {
                         newCell.DownMassMatImg = cells[i].DownMassMatImg;
                     }
+                    newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
+                    newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
 
                 List<CImage> img = GetCImage(cells);

@@ -757,7 +757,7 @@ namespace WH.DetectSystem._5_存图操作
                     string[] filenames = filepath.Split('.');
                     if (filenames.Length >= 2)
                     {
-                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.ZipperImages)
+                        foreach ((CImage, int, DateTime, TimeSpan,bool) img in cell.ZipperImages)
                         {
                             string[] namesplits = filenames[0].Split('_');
                             if (namesplits.Length >= 2)

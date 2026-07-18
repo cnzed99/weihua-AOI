@@ -129,6 +129,7 @@ namespace ZipperInfo
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
@@ -160,7 +161,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
-               // CZipperAutomaticAlgorithm.Station2_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Cloth_Stage2_OK = false;
 
                 CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;

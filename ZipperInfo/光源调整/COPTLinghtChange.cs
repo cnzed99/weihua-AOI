@@ -70,6 +70,7 @@ namespace ZipperInfo
                 Thread.Sleep(10);
                 LightControl.BaseConfig.LightChannelList[4].Value = val;
                 LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[4]);
+               
             }
             catch (Exception)
             {

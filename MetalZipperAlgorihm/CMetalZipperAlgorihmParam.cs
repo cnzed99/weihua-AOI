@@ -337,20 +337,42 @@ namespace MetalZipperAlgorihm
 
                 // int oddoreven = cell.PhotoIndex % 2;
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
-                if (cell.PhotoIndex >= 100) // 大缺陷只检测底曝光图片(>=100)
+                if (cell.PhotoIndex >= 100 || cell.PhotoIndex == 1 || cell.PhotoIndex == (cell.PhotoTatolCount/2)) // 大缺陷检测底曝光图片(>=100)
                 {
                     DetResult bigResult = ImageInferDet(WH_BigDet_det, img);
 
                     if (bigResult != null && bigResult.datas.Count > 0) //如果有大缺陷直接退出
                     {
+
                         for (int j = 0; j < bigResult.datas.Count; j++)
                         {
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, (cell.PhotoIndex / 100) - 1, 0, 0, labelname, bigResult.datas[j]);
-                            if (labelname.Contains("方块插销") && cell.PhotoIndex != 100)
+                            int imgindex=0 , showinview = 0;
+                            if (cell.PhotoIndex >= 100)
+                            {
+                                imgindex = (cell.PhotoIndex / 100)-1;
+                                showinview = 0;
+                            }
+                            else 
+                            {
+                                imgindex = cell.PhotoIndex - 1;
+                                showinview = 1;
+                            }
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, imgindex, 0, 0, labelname, bigResult.datas[j], showinview);
+                            if (labelname.Contains("方块插销") && cell.PhotoIndex != 100) 
+                                continue;
+                            if (labelname.Contains("布胶") && cell.PhotoIndex >= 100) //布胶在高曝光图像上检测，如果在低曝光上检测到布胶就不计数
+                                continue;
+                            if (!labelname.Contains("布胶") && cell.PhotoIndex == 1)//如果是在高曝光图像上检测到其他目标（方块。插销）不计数
+                                continue;
+                            if (!labelname.Contains("布胶") && cell.PhotoIndex == cell.PhotoTatolCount/2)
                                 continue;
                             dets.Add(restoreData);
+                            if (!labelname.Contains("方块插销") || !labelname.Contains("布胶"))
+                            {
+                                cell.SaveBigImagesIndex.Add(cell.PhotoIndex); //后续用来存存指定的图
+                            }
                             if (labelname.Contains("方块插销") && cell.PhotoIndex == 100) //检测下止
                             {
                                 int recw = 384;
@@ -497,7 +519,7 @@ namespace MetalZipperAlgorihm
                     cropRec[i].Height = smallimgHeight;
                     Mat cropimg = img[cropRec[i]];
                     mats.Add(cropimg);
-                    cell.FourCutMatImg.Add(cropimg);
+                    cell.FourCutMatImg.Add((cell.PhotoIndex,cropimg));
 
                     //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                 }
@@ -554,7 +576,7 @@ namespace MetalZipperAlgorihm
                                 dets.Add(restoreData);
                             }
 
-
+                                cell.SaveCutImagesIndex.Add((cell.PhotoIndex, detrets[i].Item2)); //后续用来存存指定的图
                         }
 
                     }
@@ -728,7 +750,7 @@ namespace MetalZipperAlgorihm
                 {
                     int downmass_num = downStopMass_names.Length;
                     WH_DownStopMass_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, downStopMass_Model_Path, engineType,
-                        CurrentDevice, downmass_num, param.DownScore, Nms, 384);
+                        CurrentDevice, downmass_num, param.DownScore, Nms, 320);
                 }
                 if (bigDet_names != null && bigDet_names.Length > 0)
                 {

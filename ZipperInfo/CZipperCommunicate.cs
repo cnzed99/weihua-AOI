@@ -30,15 +30,15 @@ namespace ZipperInfo
         {
             //try
             //{
-            lock (lockobj)
-            {
+            //lock (lockobj)
+            //{
                 productID = -1;
                 // photoID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(42292);
                 }
-            }
+           // }
             //}
             //catch (Exception)
             //{
@@ -56,14 +56,14 @@ namespace ZipperInfo
         {
             //try
             //{
-            lock (lockobj)
-            {
+            //lock (lockobj)
+            //{
                 productID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(42310);
                 }
-            }
+           // }
             //}
             //catch (Exception)
             //{
@@ -81,14 +81,14 @@ namespace ZipperInfo
         {
             //try
             //{
-            lock (lockobj)
-            {
+            //lock (lockobj)
+            //{
                 productID = -1;
                 if (com != null)
                 {
                     productID = com.ReadHoldingRegisterInt32(42318);
                 }
-            }
+            //}
             //}
             //catch (Exception)
             //{
@@ -156,8 +156,8 @@ namespace ZipperInfo
         {
             //try
             //{
-            lock (lockobj)
-            {
+            //lock (lockobj)
+            //{
                 if (com != null)
                 {
                     int count = com.ReadHoldingRegisterInt32(42300);
@@ -168,7 +168,7 @@ namespace ZipperInfo
                 {
                     return -1;
                 }
-            }
+           // }
             //}
             //catch (Exception)
             //{
@@ -684,7 +684,7 @@ namespace ZipperInfo
     {
         OK = 1,
         NG = 2,
-        NG2 = 3
+        NG2 = 3,
     }
 
     public struct ZipperID

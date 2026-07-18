@@ -198,7 +198,7 @@ namespace ZipperInfo
                 HeadandTalipoints.Add(talipoint);
                 triggerType = 3;
             }
-            outpoints = ProcessList(points, AutoData.ZipperLenght);
+            outpoints = ProcessList(points, AutoData.ZipperLenght,HeadandTalipoints, triggerType);
             //cutoffIndex = points.Count - pullchange;
             cutoffIndex =  pullchange;
             if (cutoffIndex == points.Count || points.Count == 1)
@@ -274,7 +274,7 @@ namespace ZipperInfo
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private static List<float> ProcessList(List<float> input, float zipperLenght)
+        private static List<float> ProcessList(List<float> input, float zipperLenght, List<float> HandAndTaliPos, int triggerType)
         {
             if (input == null)
                 return null;
@@ -287,31 +287,81 @@ namespace ZipperInfo
                 }
             }
 
-            List<float> output = new List<float>(input);
-
-            for (int i = 1; i < output.Count; i++)
+            // List<float> output = new List<float>(input);
+            float diff = 27;
+            float lastdiff = zipperLenght - input[input.Count - 1];
+            float subvalue = diff - lastdiff;
+            List<float> output;
+            if (lastdiff <= diff) //27为经验值
             {
-                float diff = output[i] - output[i - 1];
-                if (diff < 20 && diff > 0)
+                output = new List<float>(input);
+                List<float> copyPos = new List<float>(input);
+                List<float> zipperPos = new List<float>();
+                copyPos.Sort();
+                if (triggerType == 3)
                 {
-                    output[i - 1] -= 20;
+
+                    float handpos = HandAndTaliPos[0];
+                    int handIndex = copyPos.IndexOf(handpos);
+                    float lastvalue = input[input.Count - 1];
+                    List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
+                    zipperPos = copyPos.Skip(handIndex).ToList(); //尾
+                    zipperPos.AddRange(taskpos);
+
+                    int lastIndex = zipperPos.IndexOf(lastvalue);
+                    List<float> lastLists = new List<float>();
+                    for (int i = lastIndex; i < zipperPos.Count - 1; i++)
+                    {
+                        lastLists.Add(zipperPos[i]);
+                    }
+                    for (int i = 0; i < lastLists.Count; i++)
+                    {
+                        int index = output.IndexOf(lastLists[i]);
+                        float subtemp = output[index] - subvalue;
+                        output[index] = subtemp;
+                        if (output[index] <= 0)
+                        {
+                            output[index] = 1;
+                        }
+                    }
+
+                }
+                else
+                {
+                    output = new List<float>(input);
+                    output[output.Count - 1] = zipperLenght - diff;
+                }
+            }
+            else
+            {
+                output = new List<float>(input);
+            }
+
+           // return output;
+
+
+            for (int i = 1; i < output.Count; i++) //如果最后一个点离它前面一个点很近就不触发，需要把前一个点前移
+            {
+                float diff2 = output[i] - output[i - 1];
+                if (diff2 < 30 && diff2 > 0)
+                {
+                    output[i - 1] -= 30;
                     if (output[i - 1] < 0)
                     {
                         output[i - 1] = 1;
                     }
                 }
             }
-            float sub = 5; //鲍赞宝 20260515 判断每一个触发点离终点的距离不能太近，
-                           //太近有可能走不到位不触发，导致少触发，减少5mm确保走到位触发
-            for (int i = 0; i < output.Count; i++)
-            {
-                float newsub = zipperLenght - sub;
-                if (output[i] > newsub)
-                {
-                    output[i] = newsub;
-                }
-            }
-
+            //float sub = 5; //鲍赞宝 20260515 判断每一个触发点离终点的距离不能太近，
+            //               //太近有可能走不到位不触发，导致少触发，减少5mm确保走到位触发
+            //for (int i = 0; i < output.Count; i++)
+            //{
+            //    float newsub = zipperLenght - sub;
+            //    if (output[i] > newsub)
+            //    {
+            //        output[i] = newsub;
+            //    }
+            //}
             return output;
         }
     }
