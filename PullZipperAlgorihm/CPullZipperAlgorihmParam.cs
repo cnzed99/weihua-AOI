@@ -920,7 +920,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             try
             {
                // HOperatorSet.ReadRegion(out ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back.hobj");
-               HOperatorSet.WriteRegion(ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back11111.hobj");
+              // HOperatorSet.WriteRegion(ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back11111.hobj");
                 GetPullsRegion(ho_Image, out _, out _, out  ho_pullRegion);
                 HOperatorSet.AreaCenter(ho_pullRegion, out HTuple hv_pullArea, out _, out _);
                 pullArea = (float)hv_pullArea.D;

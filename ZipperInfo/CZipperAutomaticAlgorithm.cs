@@ -16,6 +16,10 @@ namespace ZipperInfo
 {
     public class CZipperAutomaticAlgorithm
     {
+
+        public static CZipperAutomaticAlgorithm Instance => _instance.Value;
+        private static readonly Lazy<CZipperAutomaticAlgorithm> _instance = new Lazy<CZipperAutomaticAlgorithm>(() => new CZipperAutomaticAlgorithm());
+
         /// <summary>
         /// 2025.7.2 鲍赞宝
         /// UI线程调度器，MainWindow
@@ -449,11 +453,11 @@ namespace ZipperInfo
                                    out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV);
                     if (hv_MeanV.D < 95)
                     {
-                        LightChange_Pulls.ChangeLineValue1(false, 5);
+                        LightChange_Pulls.ChangeLineValue1(false, 10);
                     }
                     else if (hv_MeanV.D > 140)
                     {
-                        LightChange_Pulls.ChangeLineValue1(false, -5);
+                        LightChange_Pulls.ChangeLineValue1(false, -10);
                     }
                     else
                     {
@@ -480,11 +484,11 @@ namespace ZipperInfo
                     GetPullerHSV(cell, out float Hvalue, out float Svalue, out float Vvalue);
                     if (Vvalue < 80)
                     {
-                        LightChange_Puller.ChangeLineValue1(false, 5);
+                        LightChange_Puller.ChangeLineValue1(false, 10);
                     }
                     else if (Vvalue > 140)
                     {
-                        LightChange_Puller.ChangeLineValue1(false, -5);
+                        LightChange_Puller.ChangeLineValue1(false, -10);
                     }
                     else
                     {

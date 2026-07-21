@@ -694,7 +694,7 @@ namespace WH.DetectSystem.Models
         /// <summary>
         /// 拉链自动识别算法
         /// </summary>
-        public CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
+       // public CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
         private void InitTask()
         {
             #region 信息记录线程
@@ -883,15 +883,17 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                {
-                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                }
+                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
+                                //{
+                                //    // ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                //    CZipperAutomaticAlgorithm.Instance.AutoSettingTriggerPos(cell);
+                                //}
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
                             {
-                                ZipperAutomaticAlgorithm.ZipperAutomaticAlgorithmRun(cell);
+                                // ZipperAutomaticAlgorithm.ZipperAutomaticAlgorithmRun(cell);
+                                CZipperAutomaticAlgorithm.Instance.ZipperAutomaticAlgorithmRun(cell);
                             }
 
                         }
