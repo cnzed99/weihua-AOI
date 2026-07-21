@@ -200,13 +200,13 @@ namespace ZipperInfo
                             if (item.IsOpen())
                             {
                                 Thread.Sleep(20);
-                                item.BaseConfig.LightChannelList[0].Value = 30;
+                                item.BaseConfig.LightChannelList[0].Value = 110;
                                 item.SetChannelValue(item.BaseConfig.LightChannelList[0]);
                                 Thread.Sleep(20);
                                 item.BaseConfig.LightChannelList[1].Value = 30;
                                 item.SetChannelValue(item.BaseConfig.LightChannelList[1]);
                                 Thread.Sleep(20);
-                                item.BaseConfig.LightChannelList[4].Value = 30;
+                                item.BaseConfig.LightChannelList[4].Value = 110;
                                 item.SetChannelValue(item.BaseConfig.LightChannelList[4]);
                             }
                         }
@@ -254,6 +254,7 @@ namespace ZipperInfo
 
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;

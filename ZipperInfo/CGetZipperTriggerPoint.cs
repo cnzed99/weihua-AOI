@@ -288,7 +288,7 @@ namespace ZipperInfo
             }
 
             // List<float> output = new List<float>(input);
-            float diff = 27;
+            float diff = 25;
             float lastdiff = zipperLenght - input[input.Count - 1];
             float subvalue = diff - lastdiff;
             List<float> output;
@@ -319,7 +319,7 @@ namespace ZipperInfo
                         int index = output.IndexOf(lastLists[i]);
                         float subtemp = output[index] - subvalue;
                         output[index] = subtemp;
-                        if (output[index] <= 0)
+                        if (output[index] < 1)
                         {
                             output[index] = 1;
                         }
@@ -343,10 +343,10 @@ namespace ZipperInfo
             for (int i = 1; i < output.Count; i++) //如果最后一个点离它前面一个点很近就不触发，需要把前一个点前移
             {
                 float diff2 = output[i] - output[i - 1];
-                if (diff2 < 30 && diff2 > 0)
+                if (diff2 < 25 && diff2 > 0)
                 {
-                    output[i - 1] -= 30;
-                    if (output[i - 1] < 0)
+                    output[i - 1] -= (25 - diff2);
+                    if (output[i - 1] < 1)
                     {
                         output[i - 1] = 1;
                     }

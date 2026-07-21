@@ -423,7 +423,7 @@ namespace ZipperInfo
                 com.WriteSingleRegisterInt32(42306, cutoffIndex); //切断时已经拍了几张照片
                 com.WriteSingleRegisterInt32(42308, cahceCount); //写切刀到拉链之间缓存的拉链数量
 
-                float IDchangepoint = LocationPoints[cutoffIndex] - 22.0f;
+                float IDchangepoint = LocationPoints[cutoffIndex] - 12.0f;
                 if (IDchangepoint <= 0)
                 {
                     IDchangepoint = 0.5f;

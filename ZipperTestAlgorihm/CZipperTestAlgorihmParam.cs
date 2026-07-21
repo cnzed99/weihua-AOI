@@ -712,7 +712,7 @@ namespace ZipperTestAlgorihm
                         cropRec[i].Height = smallimgHeight;
                         Mat cropimg = img[cropRec[i]];
                         mats.Add(cropimg);
-                        cell.FourCutMatImg.Add(cropimg);
+                        cell.FourCutMatImg.Add((cell.PhotoIndex,i,cropimg));
 
                         //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                     }

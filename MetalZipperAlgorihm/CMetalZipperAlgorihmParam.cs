@@ -369,7 +369,7 @@ namespace MetalZipperAlgorihm
                             if (!labelname.Contains("布胶") && cell.PhotoIndex == cell.PhotoTatolCount/2)
                                 continue;
                             dets.Add(restoreData);
-                            if (!labelname.Contains("方块插销") || !labelname.Contains("布胶"))
+                            if ((!labelname.Contains("方块插销")) && (!labelname.Contains("布胶")))
                             {
                                 cell.SaveBigImagesIndex.Add(cell.PhotoIndex); //后续用来存存指定的图
                             }
@@ -519,7 +519,7 @@ namespace MetalZipperAlgorihm
                     cropRec[i].Height = smallimgHeight;
                     Mat cropimg = img[cropRec[i]];
                     mats.Add(cropimg);
-                    cell.FourCutMatImg.Add((cell.PhotoIndex,cropimg));
+                    cell.FourCutMatImg.Add((cell.PhotoIndex,i,cropimg));
 
                     //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                 }
@@ -576,7 +576,7 @@ namespace MetalZipperAlgorihm
                                 dets.Add(restoreData);
                             }
 
-                                cell.SaveCutImagesIndex.Add((cell.PhotoIndex, detrets[i].Item2)); //后续用来存存指定的图
+                                cell.SaveCutImagesIndex.Add((cell.PhotoIndex, detrets[i].Item2-1)); //后续用来存存指定的图
                         }
 
                     }

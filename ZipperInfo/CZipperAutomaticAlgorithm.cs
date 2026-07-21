@@ -162,7 +162,7 @@ namespace ZipperInfo
        // public static Action ZipperInfoChangeEven;
         public CZipperAutomaticAlgorithm()
         {
-            string SearchmodelDirPath = ".\\AlgorithmPlug\\MetalZipperAlgorihm\\Models\\Auto\\";
+            string SearchmodelDirPath = ".\\AlgorithmPlug\\MetalZipperAlgorihm\\Models\\BigDetModel\\";
             string Searchtxtpath;
             string Searchmodelpath = "";
 
@@ -1193,7 +1193,7 @@ namespace ZipperInfo
             HOperatorSet.Connection(ho_RegionOpening, out ho_ConnectedRegions1);
             ho_SelectedRegions.Dispose();
             HOperatorSet.SelectShape(ho_ConnectedRegions1, out ho_SelectedRegions, "area",
-                "and", 300, 999999999999);
+                "and", 600, 999999999999);
             ho_SelectedRegions1.Dispose();
             HOperatorSet.GenEmptyObj(out ho_SelectedRegions1);
             if ((int)(new HTuple((new HTuple(hv_Row_hole.TupleLength())).TupleGreater(0))) != 0)
@@ -1236,22 +1236,22 @@ namespace ZipperInfo
                 hv_row1_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_row1_re = hv_Row11 - 10;
+                    hv_row1_re = hv_Row11;
                 }
                 hv_row2_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_row2_re = hv_Row21 + 10;
+                    hv_row2_re = hv_Row21;
                 }
                 hv_col1_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_col1_re = hv_Column11 - 10;
+                    hv_col1_re = hv_Column11;
                 }
                 hv_col2_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_col2_re = hv_Column21 + 10;
+                    hv_col2_re = hv_Column21;
                 }
                 ho_Rectangle1.Dispose();
                 HOperatorSet.GenRectangle1(out ho_Rectangle1, hv_row1_re, hv_col1_re, hv_row2_re,
@@ -1477,83 +1477,7 @@ namespace ZipperInfo
                 }
                 if (onWichStage2 == 1)
                 {
-                    if (cell.PhotoIndex == 1) //拉链下止
-                    {
-                        if (ZipperInfo.ZipperDownMassType == STOPMASS.无)
-                        {
-                            float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
-                            AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
-                            zipperlenght = zipperlenght + 3.0f;
-                            AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
-                            ChangePoints(zipperlenght);
-                            onWichStage2 = 2;
-                            return;
-                        }
-                        else
-                        {
-                            DetResult resultDet;
-                            resultDet = WH_search_det.Predict(img) as DetResult;
-                            if (resultDet.datas.Count > 0)
-                            {
-                                for (int i = 0; i < resultDet.datas.Count; i++)
-                                {
-                                    int nameindex = int.Parse(resultDet.datas[i].lable);
-                                    string labelstr = de_search_names[nameindex];
-
-                                    if (labelstr.Contains("下止"))
-                                    {
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到下止");
-                                        DownmassAutoCount++;
-                                        double cenx = resultDet.datas[i].box.Left + resultDet.datas[i].box.Width / 2;
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：下止中心位置{cenx.ToString("f1")}");
-                                        downmassPoints.Add(cenx);
-                                        if (DownmassAutoCount >= 2)
-                                        {
-                                            double ave = downmassPoints.Average();
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：下止平均中心位置{ave.ToString("f1")}");
-                                            DownmassAutoCount = 0;
-                                            downmassPoints.Clear();
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：原下止触发点位为：{EndPosTemp}");
-                                            if (ave < 230)
-                                            {
-                                                float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
-                                                zipperlenght = zipperlenght - 0.5f;
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
-                                                ChangePoints(zipperlenght);
-
-                                            }
-                                            else if (ave > 300)
-                                            {
-                                                float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
-                                                zipperlenght = zipperlenght + 0.5f;
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
-                                                ChangePoints(zipperlenght);
-                                            }
-                                            else
-                                            {
-                                                DownmassAutoOK++;
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：下止在范围内{DownmassAutoOK}次");
-                                                if (DownmassAutoOK >= 2)
-                                                {
-                                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：下止位置调整完毕，进入阶段2，调整上止");
-                                                    onWichStage2 = 2;
-                                                    // AutoSettingPosFinsh = true;
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-                if (onWichStage2 == 2)
-                {
-                    if (cell.PhotoIndex == cell.PhotoTatolCount - 1) //拉链下止
+                    if (cell.PhotoIndex == 100) //拉链下止
                     {
                         DetResult resultDet;
                         resultDet = WH_search_det.Predict(img) as DetResult;
@@ -1564,41 +1488,44 @@ namespace ZipperInfo
                                 int nameindex = int.Parse(resultDet.datas[i].lable);
                                 string labelstr = de_search_names[nameindex];
 
-                                if (labelstr.Contains("上止"))
+                                if (labelstr.Contains("方块插销"))
                                 {
-                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到上止");
-                                    UpmassAutoCount++;
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：识别到方块插销");
+                                    DownmassAutoCount++;
                                     double cenx = resultDet.datas[i].box.Left + resultDet.datas[i].box.Width / 2;
-                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：上止中心位置{cenx.ToString("f1")}");
-                                    upmassPoints.Add(cenx);
-                                    if (UpmassAutoCount >= 4)
+                                    AutoLogger.Info($"{cell.CamName}:自动调整位置：方块插销中心位置{cenx.ToString("f1")}");
+                                    downmassPoints.Add(cenx);
+                                    if (DownmassAutoCount >= 2)
                                     {
-                                        double ave = upmassPoints.Average();
-                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：上止平均中心位置{ave.ToString("f1")}");
-                                        UpmassAutoCount = 0;
-                                        upmassPoints.Clear();
-                                        if (ave > cell.Image.ImageWidth - 290)
+                                        double ave = downmassPoints.Average();
+                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：方块插销平均中心位置{ave.ToString("f1")}");
+                                        DownmassAutoCount = 0;
+                                        downmassPoints.Clear();
+                                        AutoLogger.Info($"{cell.CamName}:自动调整位置：原方块插销触发点位为：{EndPosTemp}");
+                                        if (ave < 185)
                                         {
-                                            EndPosTemp++;
-                                            if (EndPosTemp <= 0) { EndPosTemp = 1; }
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：第一个点位设置为：{EndPosTemp}");
-                                            ChangePoints2(ZipperInfo.TempData1.AutoData.ZipperLenght, EndPosTemp);
-                                        }
-                                        else if (ave < cell.Image.ImageWidth - 370)
-                                        {
+                                            float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
+                                            zipperlenght = zipperlenght - 1f;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
+                                            ChangePoints(zipperlenght);
 
-                                            EndPosTemp--;
-                                            if (EndPosTemp <= 0) { EndPosTemp = 1; }
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：第一个点位设置为：{EndPosTemp}");
-                                            ChangePoints2(ZipperInfo.TempData1.AutoData.ZipperLenght, EndPosTemp);
+                                        }
+                                        else if (ave > 265)
+                                        {
+                                            float zipperlenght = ZipperInfo.TempData1.AutoData.ZipperLenght;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：当前拉链长度为：{zipperlenght}");
+                                            zipperlenght = zipperlenght + 1f;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：设置拉链长度为：{zipperlenght}");
+                                            ChangePoints(zipperlenght);
                                         }
                                         else
                                         {
-                                            UpmassAutoOK++;
-                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：上止在范围内{UpmassAutoOK}次");
-                                            if (UpmassAutoOK >= 2)
+                                            DownmassAutoOK++;
+                                            AutoLogger.Info($"{cell.CamName}:自动调整位置：方块插销在范围内{DownmassAutoOK}次");
+                                            if (DownmassAutoOK >= 2)
                                             {
-                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：下止位置调节完成，结束");
+                                                AutoLogger.Info($"{cell.CamName}:自动调整位置：方块插销位置调节完成，结束");
                                                 AutoSettingPosFinsh = true;
                                             }
                                         }
@@ -1606,7 +1533,6 @@ namespace ZipperInfo
 
                                 }
                             }
-
                         }
                     }
                 }
@@ -1745,7 +1671,7 @@ namespace ZipperInfo
             float Score = 0.45f;
             float Nms = 0.5f;
             WH_search_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelDet, searchmodelpath, engineType,
-          CurrentDevice, search_Categ_num, Score, Nms, 640);
+          CurrentDevice, search_Categ_num, Score, Nms, 1024);
 
         }
 
@@ -1781,6 +1707,7 @@ namespace ZipperInfo
         public static string ParameterPath = "..\\SystemConfig\\ZipperInfoData.Json";
         public static string Model_Logo_Path = "..\\SystemConfig\\ModelID_Logo.shm";
         public static string Model_Pull_Path = "..\\SystemConfig\\ModelID_Pull.shm";
+        public static string Region_Back_Path = "..\\SystemConfig\\Region_Back.hobj";
         public static void SaveParameter(CZipperInfo data)
         {
             try
@@ -1793,6 +1720,10 @@ namespace ZipperInfo
                 if (data.TempData1.ModelID_Pull != null && data.TempData1.ModelID_Pull.Length > 0)
                 {
                     HOperatorSet.WriteShapeModel(data.TempData1.ModelID_Pull, Model_Pull_Path);
+                }
+                if (data.TempData1.BackRectangle != null)
+                {
+                    HOperatorSet.WriteObject(data.TempData1.BackRectangle, Region_Back_Path);
                 }
                
                 
@@ -1813,13 +1744,27 @@ namespace ZipperInfo
                     settingsModel = ConfigAPI.LoadDeserialize<CZipperInfo>(ParameterPath);
                     if (settingsModel != null)
                     {
-                        if (File.Exists(Model_Logo_Path) && File.Exists(Model_Pull_Path))
+                        if (File.Exists(Model_Logo_Path))
                         {
                             HOperatorSet.ReadShapeModel(Model_Logo_Path, out HTuple modelID_logo);
                             settingsModel.TempData1.ModelID_Logo = modelID_logo;
+                           
+                        }
+                        if (File.Exists(Model_Pull_Path))
+                        {
                             HOperatorSet.ReadShapeModel(Model_Pull_Path, out HTuple modelID_pull);
                             settingsModel.TempData1.ModelID_Pull = modelID_pull;
                         }
+                        if (File.Exists(Region_Back_Path))
+                        {
+                            settingsModel.TempData1.BackRectangle = new HObject();
+                            settingsModel.TempData1.BackRectangle.Dispose();
+                            HOperatorSet.ReadObject(out settingsModel.TempData1.BackRectangle, Region_Back_Path);
+                            //settingsModel.TempData1.BackRectangle = Region_back;
+                           // HOperatorSet.WriteObject(settingsModel.TempData1.BackRectangle, "F://拉链检测软件(三合一）//断面毛刺检测软件//bin//Debug//SystemConfig//Region_Back22223.hobj");
+
+                        }
+                       
                     }
                     else
                     {

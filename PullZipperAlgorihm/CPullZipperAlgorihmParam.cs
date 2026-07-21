@@ -381,7 +381,8 @@ namespace PullZipperAlgorihm
 
                     if (cell.ImageFile == "")//在线
                     {
-                        GetContoursAndHSV(cell,ho_Image, cell.BackRectangle, cell.PullModelRow, cell.PullModelCol, cell.ModelID_Logo, cell.ModelID_Pull,
+
+                        GetContoursAndHSV(cell, paramClass, ho_Image, cell.BackRectangle, cell.PullModelRow, cell.PullModelCol, cell.ModelID_Logo, cell.ModelID_Pull,
                             out PullPoints, out HolesPoints, out Hvalue, out Svalue, out Vvalue, out logoScore,out float pullarea);
                         CoordRestoreData logorestoreData = new CoordRestoreData("Logo", logoScore);
                         dets.Add(logorestoreData);
@@ -402,7 +403,7 @@ namespace PullZipperAlgorihm
                     }
                     else
                     {
-                        GetContoursAndHSV(cell,ho_Image, BackRectangle, offlineRow, offlineCol, offlineModel_Logo, offlineModel_Pull,
+                        GetContoursAndHSV(cell, paramClass, ho_Image, BackRectangle, offlineRow, offlineCol, offlineModel_Logo, offlineModel_Pull,
                            out PullPoints, out HolesPoints, out Hvalue, out Svalue, out Vvalue, out logoScore, out float pullarea);
                         CoordRestoreData logorestoreData = new CoordRestoreData("Logo", logoScore);
                         dets.Add(logorestoreData);
@@ -873,7 +874,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         }
 
 
-        private void GetContoursAndHSV(Cell cell,HObject ho_Image, HObject ho_Rectangle, double hv_RowRef, double hv_ColumnRef,
+        private void GetContoursAndHSV(Cell cell,CParam param, HObject ho_Image, HObject ho_Rectangle, double hv_RowRef, double hv_ColumnRef,
                              HTuple ModelID_Logo, HTuple ModelID_pull,
                              out Point[] pullPoints, out Point[] holdPoints,
                              out float Hvalue, out float Svalue, out float Vvalue, out float findScore,out float pullArea)
@@ -918,6 +919,8 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
             try
             {
+               // HOperatorSet.ReadRegion(out ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back.hobj");
+               HOperatorSet.WriteRegion(ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back11111.hobj");
                 GetPullsRegion(ho_Image, out _, out _, out  ho_pullRegion);
                 HOperatorSet.AreaCenter(ho_pullRegion, out HTuple hv_pullArea, out _, out _);
                 pullArea = (float)hv_pullArea.D;
@@ -970,7 +973,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                             {
                                 hv_Row.Dispose(); hv_Column.Dispose(); hv_Angle.Dispose(); hv_Score1.Dispose();
                                 HOperatorSet.FindShapeModel(ho_ImageReduced, ModelID_Logo, (new HTuple(-10)).TupleDeg()
-                                    , (new HTuple(20)).TupleDeg(), 0.5, 1, 0.5, "least_squares", 0, 0.9,
+                                    , (new HTuple(20)).TupleDeg(), param.LogoPullScore, 1, 0.5, "least_squares", 0, 0.9,
                                     out hv_Row, out hv_Column, out hv_Angle, out hv_Score1);
                             }
                         }
@@ -1653,7 +1656,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.Connection(ho_RegionOpening, out ho_ConnectedRegions1);
             ho_SelectedRegions.Dispose();
             HOperatorSet.SelectShape(ho_ConnectedRegions1, out ho_SelectedRegions, "area",
-                "and", 300, 999999999999);
+                "and", 600, 999999999999);
             ho_SelectedRegions1.Dispose();
             HOperatorSet.GenEmptyObj(out ho_SelectedRegions1);
             if ((int)(new HTuple((new HTuple(hv_Row_hole.TupleLength())).TupleGreater(0))) != 0)
@@ -1696,22 +1699,22 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 hv_row1_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_row1_re = hv_Row11 - 10;
+                    hv_row1_re = hv_Row11;
                 }
                 hv_row2_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_row2_re = hv_Row21 + 10;
+                    hv_row2_re = hv_Row21;
                 }
                 hv_col1_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_col1_re = hv_Column11 - 10;
+                    hv_col1_re = hv_Column11;
                 }
                 hv_col2_re.Dispose();
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
-                    hv_col2_re = hv_Column21 + 10;
+                    hv_col2_re = hv_Column21;
                 }
                 ho_Rectangle1.Dispose();
                 HOperatorSet.GenRectangle1(out ho_Rectangle1, hv_row1_re, hv_col1_re, hv_row2_re,

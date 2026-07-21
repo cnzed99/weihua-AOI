@@ -759,15 +759,6 @@ namespace WH.DetectSystem.Models
                             {
                                 CZipperCommunicate.GetID2(out productID);
                             }
-
-                            // 读取下一个可用的 ZipperID
-                            //if (!m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID))
-                            //{
-                            //    OperateLog.Info($"{Name}-产品ID图像ID读取失败:{productID}");
-                            //    // 通道为空，等待一小段时间（避免CPU空转）
-                            //    //await Task.Delay(1);
-                            //    continue;
-                            //}
                             m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
                             if (zipperID.ProductID > 0)
                             {
@@ -782,36 +773,9 @@ namespace WH.DetectSystem.Models
                                         continue;
                                     }
                                 }
-                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-
-                                cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
-                                cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
-                                cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
-                                cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
-                                cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanH; //拉片
-                                cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanS;
-                                cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanV;
-                                cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanH; //拉头
-                                cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanS;
-                                cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanV;
-                                cell.ModelID_Pull = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Pull;
-                                cell.ModelID_Logo = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Logo;
-                                cell.PullModelRow = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelRow;
-                                cell.PullModelCol = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelCol;
-                                cell.BackRectangle = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.BackRectangle;
-                                cell.PullSegOrgArea = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullSegOrgArea;
                                 cell.ID = zipperID.ProductID.ToString();
                                 cell.PhotoIndex = zipperID.PhotoID;
-                                int photoTotalCount = 0;
-                                if (Name != "正面" && Name != "反面")
-                                {
-                                    photoTotalCount = 1;
-                                }
-                                else
-                                {
-                                    photoTotalCount = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount;
-                                }
-                                cell.PhotoTatolCount = photoTotalCount;  //PLC读上来的图片总数是不包含拉头图片的，所以要加1
+                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
                             }
                             else
                             {
@@ -831,13 +795,7 @@ namespace WH.DetectSystem.Models
                                 cell.PhotoTatolCount = 1;
                             }
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
-                        cell.DownStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString();
-                        cell.UpStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString();
-                        cell.BoltDiretion = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.BoltDiretion.ToString();
-                        cell.ZipperLogoType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType;
-                        cell.ProjName = Name;
-                        cell.ProjGuid = GUID;
+
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
                         if ((IsStart || IsManualTest || isAutomaticTest) && IDisRight)
                         {
@@ -885,14 +843,50 @@ namespace WH.DetectSystem.Models
                     try
                     {
                         cell.Stopwatch.Restart();
+                        if (IsStart && !isAutomaticTest) //自动运行
+                        {
+                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX;
+                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY;
+                            cell.PullOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.OrgContours;
+                            cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HoleOrgContours;
+                            cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanH; //拉片
+                            cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanS;
+                            cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullsMeanV;
+                            cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanH; //拉头
+                            cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanS;
+                            cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullerMeanV;
+                            cell.ModelID_Pull = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Pull;
+                            cell.ModelID_Logo = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ModelID_Logo;
+                            cell.PullModelRow = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelRow;
+                            cell.PullModelCol = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullModelCol;
+                            cell.BackRectangle = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.BackRectangle;
+                            cell.PullSegOrgArea = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.PullSegOrgArea;
+                            int photoTotalCount = 0;
+                            if (Name != "正面" && Name != "反面")
+                            {
+                                photoTotalCount = 1;
+                            }
+                            else
+                            {
+                                photoTotalCount = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount * 2;
+                            }
+                            cell.PhotoTatolCount = photoTotalCount;
+                        }
+                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.ZipperInfo.PullMaterlsType.ToString();
+                        cell.DownStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString();
+                        cell.UpStopMassType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString();
+                        cell.BoltDiretion = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.BoltDiretion.ToString();
+                        cell.ZipperLogoType = CZipperAutomaticAlgorithm.ZipperInfo.ZipperLogoType;
+                        cell.ProjName = Name;
+                        cell.ProjGuid = GUID;
                         try
                         {
                             if (!isAutomaticTest)
                             {
-                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                //{
-                                //    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                //}
+                                if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
+                                {
+                                    ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
+                                }
                                 MaociAlgorParamConfig.MaociExcute(cell);
                             }
                             else
@@ -1770,6 +1764,8 @@ namespace WH.DetectSystem.Models
                     newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
 
+                newCell.SaveBigImagesIndex= newCell.SaveBigImagesIndex.Distinct().ToList(); //去掉重复项
+                newCell.SaveCutImagesIndex= newCell.SaveCutImagesIndex.Distinct().ToList();
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {

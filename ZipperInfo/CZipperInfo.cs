@@ -359,15 +359,13 @@ namespace ZipperInfo
         /// <summary>
         /// Logo模版
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        HTuple modelID_Logo;
+        public HTuple ModelID_Logo { get; set; }
         /// <summary>
         /// 拉片模版
         /// </summary>
-        [ObservableProperty]
         [JsonIgnore]
-        HTuple modelID_Pull;
+        public HTuple ModelID_Pull {  get; set; }
 
         /// <summary>
         /// 拉片模版原始坐标row
@@ -382,8 +380,8 @@ namespace ZipperInfo
         /// <summary>
         /// 原始背景矩形
         /// </summary>
-        [ObservableProperty]
-         HObject backRectangle;
+        [JsonIgnore]
+        public HObject BackRectangle;
 
     }
 

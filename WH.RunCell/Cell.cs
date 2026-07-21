@@ -61,7 +61,7 @@ namespace WH.RunCell
         /// 2025.7.11 ±«ÔÞ±¦
         /// 4²ð·Ö½ØÍ¼£¬ÓÃÓÚ´æÍ¼
         /// </summary>
-        public List<(int,OpenCvSharp.Mat)> FourCutMatImg { get; set; } = new List<(int,OpenCvSharp.Mat)>();
+        public List<(int, int, OpenCvSharp.Mat)> FourCutMatImg { get; set; } = new List<(int, int, OpenCvSharp.Mat)>();
 
         public Cell()
         {
@@ -442,13 +442,23 @@ namespace WH.RunCell
             {
                 for (int i = 0; i < FourCutMatImg.Count; i++)
                 {
-                    FourCutMatImg[i].Item2.Dispose();
+                    FourCutMatImg[i].Item3.Dispose();
                 }
             }
             if (this.ChangleImgae != null)
             {
                 this.ChangleImgae.Dispose();
                 this.ChangleImgae = null;
+            }
+            if (this.SaveBigImagesIndex.Count>0)
+            {
+                this.SaveBigImagesIndex.Clear();
+                this.SaveBigImagesIndex = null;
+            }
+            if (this.SaveCutImagesIndex.Count > 0)
+            {
+                this.SaveCutImagesIndex.Clear();
+                this.SaveCutImagesIndex = null;
             }
         }
 
@@ -509,7 +519,7 @@ namespace WH.RunCell
             }
             for (int i = 0; i < this.FourCutMatImg?.Count; i++)
             {
-                cell.FourCutMatImg.Add((this.FourCutMatImg[i].Item1,this.FourCutMatImg[i].Item2.Clone()));
+                cell.FourCutMatImg.Add((this.FourCutMatImg[i].Item1, this.FourCutMatImg[i].Item2, this.FourCutMatImg[i].Item3.Clone()));
             }
 
             cell.ZipperImages = new List<(CImage, int, DateTime, TimeSpan)>();
@@ -517,6 +527,8 @@ namespace WH.RunCell
             {
                 cell.ZipperImages.Add(((CImage)img.Item1.Clone(), img.Item2, img.Item3, img.Item4));
             }
+            cell.SaveBigImagesIndex = new List<int>(this.SaveBigImagesIndex);
+            cell.SaveCutImagesIndex = new List<(int, int)>(this.SaveCutImagesIndex);
             return cell;
         }
 
@@ -569,6 +581,8 @@ namespace WH.RunCell
             //cell.AlgorithmOut = this.AlgorithmOut;
             //cell.DrawEdges = this.DrawEdges;
             // cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
+            cell.SaveBigImagesIndex = new List<int>(this.SaveBigImagesIndex);
+            cell.SaveCutImagesIndex = new List<(int, int)>(this.SaveCutImagesIndex);
             return cell;
         }
 

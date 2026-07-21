@@ -10,8 +10,8 @@ namespace ZipperInfo
     {
         public string PortName {  get; set; }
 
-        public int MaxTimeOutCount {  get; set; }
-        public int  MinTimeOutCount { get; set; }
+        public  int MaxTimeOutCount {  get; set; }
+        public  int  MinTimeOutCount { get; set; }
 
         public int TempLightValue_Change1 { get; set; } = 30;
         public virtual void ChangeLineValue1(bool saveTemp,int lightValue) { }
