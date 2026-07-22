@@ -192,4 +192,7 @@
   <data name="自动获取" xml:space="preserve">
     <value>Error automatically obtaining light  name:</value>
   </data>
+  <data name="断开控制器" xml:space="preserve">
+    <value>DisConnect</value>
+  </data>
 </root>

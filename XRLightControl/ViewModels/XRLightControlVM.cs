@@ -108,6 +108,11 @@ namespace XRLightControl
             return true;
         }
 
+        [RelayCommand]
+        private void CloseConnect()
+        {
+            Close();
+        }
         public override void GetLightValues()
         {
             //if (slim.Wait(2000))

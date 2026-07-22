@@ -88,25 +88,34 @@
         <GroupBox Width="auto" Header="{Binding [基本参数], Source={x:Static local:CLang.LSWLightLang}}">
             <hc:ScrollViewer IsInertiaEnabled="True">
                 <StackPanel>
-                    <UniformGrid Columns="2">
+                 
                         <StackPanel Orientation="Horizontal">
                             <Button
-                                Width="100"
-                                Margin="10,0"
-                                wh:StatusDotElement.DotBrush="{Binding IsSerialPortOpen, Converter={StaticResource StatusBool2BrushConverter}}"
-                                Command="{Binding OpenCommand}"
-                                Content="{Binding [连接控制器], Source={x:Static local:CLang.LSWLightLang}}"
-                                Style="{StaticResource StatusDotButtonPrimary.Small}" />
+                               Width="80"
+                               Margin="10,0"
+                               wh:StatusDotElement.DotBrush="{Binding IsSerialPortOpen, Converter={StaticResource StatusBool2BrushConverter}}"
+                               Command="{Binding OpenCommand}"
+                               Content="{Binding [连接控制器], Source={x:Static local:CLang.LSWLightLang}}"
+                               Style="{StaticResource StatusDotButtonPrimary.Small}" />
+                            <Button
+                            Width="80"
+                            Margin="10,0"
+                            wh:StatusDotElement.DotBrush="{Binding IsSerialPortOpen, Converter={StaticResource StatusBool2BrushConverter}}"
+                            Command="{Binding CloseConnectCommand}"
+                            Content="{Binding [断开控制器], Source={x:Static local:CLang.LSWLightLang}}"
+                            Style="{StaticResource StatusDotButtonPrimary.Small}" />
+
+                            <Button
+                               Width="80"
+                               Margin="10,0"
+                               Command="{Binding SaveCommand}"
+                               Content="{Binding [保存配置], Source={x:Static local:CLang.LSWLightLang}}"
+                               Style="{StaticResource ButtonPrimary.Small}" />
                         </StackPanel>
 
-
-                        <Button
-                            Width="100"
-                            Margin="10,0"
-                            Command="{Binding SaveCommand}"
-                            Content="{Binding [保存配置], Source={x:Static local:CLang.LSWLightLang}}"
-                            Style="{StaticResource ButtonPrimary.Small}" />
-                    </UniformGrid>
+                      
+                        
+             
 
                     <Grid>
                         <Grid.ColumnDefinitions>

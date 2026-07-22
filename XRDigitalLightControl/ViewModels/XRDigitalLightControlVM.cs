@@ -102,6 +102,11 @@ namespace XRDigitalLightControl
             return true;
         }
 
+        [RelayCommand]
+        private void CloseConnect()
+        {
+            Close();
+        }
         public override void GetLightValues()
         {
             //try

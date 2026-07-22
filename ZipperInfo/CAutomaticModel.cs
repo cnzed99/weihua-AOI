@@ -91,6 +91,12 @@ namespace ZipperInfo
         [ObservableProperty]
         private BOLTDIRECTION boltDiretion = BOLTDIRECTION.右插;
 
+        /// <summary>
+        /// 插销有无SAB字符
+        /// </summary>
+        [ObservableProperty]
+        private HAVESAB haveSAB = HAVESAB.有SAB;
+
     }
     /// <summary>
     /// 用于存储链牙光源亮度的值

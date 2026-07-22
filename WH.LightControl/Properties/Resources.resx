@@ -172,4 +172,7 @@
   <data name="自动获取" xml:space="preserve">
     <value>自动获取光源名称出错:</value>
   </data>
+  <data name="断开控制器" xml:space="preserve">
+    <value>断开控制器</value>
+  </data>
 </root>

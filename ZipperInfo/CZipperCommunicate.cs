@@ -198,13 +198,13 @@ namespace ZipperInfo
         /// <summary>
         /// 获取单条拉链的长度 2025-5-29 鲍赞宝
         /// </summary>
-        public static int GetZipperLenght()
+        public static float GetZipperLenght()
         {
             //try
             //{
             if (com != null)
             {
-                return com.ReadHoldingRegisterInt32(41202);
+                return com.ReadHoldingRegisterInt32(41658)/10.0f;
 
             }
             else

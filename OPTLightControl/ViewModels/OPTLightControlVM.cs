@@ -107,6 +107,12 @@ namespace OPTLightControl
             //return true;
         }
 
+        [RelayCommand]
+        private void CloseConnect()
+        {
+            Close();
+        }
+
         /// <summary>
         /// 20260129 龚伟东
         /// 从光源设备读取所有通道的当前亮度值

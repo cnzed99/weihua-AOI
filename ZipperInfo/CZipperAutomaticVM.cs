@@ -51,9 +51,12 @@ namespace ZipperInfo
             AutoData = LoadParameter();
             if (AutoData.Count >= 2)
             {
+                //从PLC读取拉链长度
+                ShowZipperLenght = CZipperCommunicate.GetZipperLenght();
+                AutoData[0].ShowZipperLenght = ShowZipperLenght;
+                AutoData[1].ShowZipperLenght = ShowZipperLenght;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
-                ShowZipperLenght = AutoData[0].ShowZipperLenght;
                 QuekouLenght = AutoData[0].QuekouLenght;
                 if (AutoData[0].LinghtValueInfos.Count==0)
                 {

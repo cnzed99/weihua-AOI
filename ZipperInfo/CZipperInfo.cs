@@ -423,5 +423,13 @@ namespace ZipperInfo
         左插 = 0,
         右插 = 1
     }
+    /// <summary>
+    /// 插销有无SAB
+    /// </summary>
+    public enum HAVESAB
+    {
+        有SAB = 0,
+        无SAB = 1
+    }
 
 }
