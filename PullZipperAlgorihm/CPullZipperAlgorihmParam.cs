@@ -11,6 +11,7 @@ using System.Management;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WH.Entity.CommonLib;
@@ -103,7 +104,7 @@ namespace PullZipperAlgorihm
         float offlineRow = 0;
         float offlineCol = 0;
 
-        HObject BackRectangle;
+        double[] BackRectangle;
 
         float offinePullArea = 0;
 
@@ -353,7 +354,7 @@ namespace PullZipperAlgorihm
 
                     if (paramClass.OffLinePullerTemplateEnabel)
                     {
-                        GetContoursAndHSVAndModel(ho_Image, out HObject ho_Rectangle, out PullPoints, out HolesPoints,
+                        GetContoursAndHSVAndModel(ho_Image, out double[] ho_Rectangle, out PullPoints, out HolesPoints,
                             out Hvalue, out Svalue, out Vvalue, out ModelID_Logo,
                             out _, out _, out _, out _, out ModelID_Pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef, out HTuple pullArea);
 
@@ -383,7 +384,7 @@ namespace PullZipperAlgorihm
                     {
 
                         GetContoursAndHSV(cell, paramClass, ho_Image, cell.BackRectangle, cell.PullModelRow, cell.PullModelCol, cell.ModelID_Logo, cell.ModelID_Pull,
-                            out PullPoints, out HolesPoints, out Hvalue, out Svalue, out Vvalue, out logoScore,out float pullarea);
+                            out PullPoints, out HolesPoints, out Hvalue, out Svalue, out Vvalue, out logoScore, out float pullarea);
                         CoordRestoreData logorestoreData = new CoordRestoreData("Logo", logoScore);
                         dets.Add(logorestoreData);
 
@@ -874,10 +875,10 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         }
 
 
-        private void GetContoursAndHSV(Cell cell,CParam param, HObject ho_Image, HObject ho_Rectangle, double hv_RowRef, double hv_ColumnRef,
+        private void GetContoursAndHSV(Cell cell, CParam param, HObject ho_Image, double[] RecPoints, double hv_RowRef, double hv_ColumnRef,
                              HTuple ModelID_Logo, HTuple ModelID_pull,
                              out Point[] pullPoints, out Point[] holdPoints,
-                             out float Hvalue, out float Svalue, out float Vvalue, out float findScore,out float pullArea)
+                             out float Hvalue, out float Svalue, out float Vvalue, out float findScore, out float pullArea)
         {
 
 
@@ -891,7 +892,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HObject ho_Contours_hole, ho_RegionAffineTrans = null;
             HObject ho_ImageReduced = null;
             HObject ho_pullRegionaff = null;
-
+            HObject ho_Rectangle = null;
             // Local control variables 
 
             HTuple hv_Rows_pull = new HTuple(), hv_Cols_pull = new HTuple();
@@ -916,106 +917,110 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.GenEmptyObj(out ho_RegionAffineTrans);
             HOperatorSet.GenEmptyObj(out ho_ImageReduced);
             HOperatorSet.GenEmptyObj(out ho_pullRegionaff);
+            HOperatorSet.GenEmptyObj(out ho_Rectangle);
 
             try
             {
-               // HOperatorSet.ReadRegion(out ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back.hobj");
-              // HOperatorSet.WriteRegion(ho_Rectangle, "D://三合一软件//SystemConfig//Region_Back11111.hobj");
-                GetPullsRegion(ho_Image, out _, out _, out  ho_pullRegion);
-                HOperatorSet.AreaCenter(ho_pullRegion, out HTuple hv_pullArea, out _, out _);
-                pullArea = (float)hv_pullArea.D;
-                if (ModelID_pull != null)
+                if (RecPoints != null)
                 {
-                    //*转正图片
-                    ho_RegionAffineTrans.Dispose(); hv_Score.Dispose();
-                    GetAffImage(ho_Image, ho_Rectangle, out ho_RegionAffineTrans, ModelID_pull, hv_RowRef,
-                        hv_ColumnRef, out hv_Score);
-                    if ((int)(new HTuple((new HTuple(hv_Score.TupleLength())).TupleGreater(0))) != 0)
+                    ho_Rectangle.Dispose();
+                    HOperatorSet.GenRectangle1(out ho_Rectangle, RecPoints[0], RecPoints[1], RecPoints[2], RecPoints[3]);
+                    GetPullsRegion(ho_Image, out _, out _, out ho_pullRegion);
+                    HOperatorSet.AreaCenter(ho_pullRegion, out HTuple hv_pullArea, out _, out _);
+                    pullArea = (float)hv_pullArea.D;
+                    if (ModelID_pull != null)
                     {
-
-                        //获取拉片区域
-                        ho_GrayImage.Dispose(); ho_pullRegionaff.Dispose(); //ho_pullRegion.Dispose();
-                        // GetPullsRegion(ho_ImageAffineTrans, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
-                        GetAffinePullRegion(ho_Image, ho_RegionAffineTrans, out ho_GrayImage, out ho_pullRegionaff);
-
-                        //获取拉片区域轮廓
-                        ho_Contours_pull.Dispose();
-                        HOperatorSet.GenContourRegionXld(ho_pullRegionaff, out ho_Contours_pull, "border");
-                        hv_Rows_pull.Dispose(); hv_Cols_pull.Dispose();
-                        HOperatorSet.GetContourXld(ho_Contours_pull, out hv_Rows_pull, out hv_Cols_pull);
-                        hv_Area2.Dispose(); hv_Row6.Dispose(); hv_Column4.Dispose(); hv_PointOrder1.Dispose();
-                        HOperatorSet.AreaCenterXld(ho_Contours_pull, out hv_Area2, out hv_Row6, out hv_Column4,
-                            out hv_PointOrder1);
-                        hv_Length1.Dispose();
-                        HOperatorSet.LengthXld(ho_Contours_pull, out hv_Length1);
-                        //获取拉片HSV值
-
-
-                        //获取拉片中的孔洞
-                        ho_HoleRegion.Dispose(); hv_MeanH.Dispose(); hv_MeanS.Dispose(); hv_MeanV.Dispose();
-                        GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegionaff, out ho_HoleRegion, out hv_MeanH,
-                            out hv_MeanS, out hv_MeanV);
-                        ho_Contours_hole.Dispose();
-                        HOperatorSet.GenContourRegionXld(ho_HoleRegion, out ho_Contours_hole, "border");
-                        hv_Rows_hole.Dispose(); hv_Cols_hole.Dispose();
-                        HOperatorSet.GetContourXld(ho_Contours_hole, out hv_Rows_hole, out hv_Cols_hole);
-
-                        //hv_IsHandle.Dispose();
-                        //HOperatorSet.TupleIsHandle(hv_ModelID_logo, out hv_IsHandle);
-                        hv_Score1.Dispose();
-                        hv_Score1 = 0;
-                        if (cell.ZipperLogoType== "有LOGO" && ModelID_Logo != null && ModelID_Logo.Length > 0) //如果有LOGO模板 则查找LOGO 没有模版 则看当前的是否有LOGO，有则为混入了logo
+                        //*转正图片
+                        ho_RegionAffineTrans.Dispose(); hv_Score.Dispose();
+                        GetAffImage(ho_Image, ho_Rectangle, out ho_RegionAffineTrans, ModelID_pull, hv_RowRef,
+                            hv_ColumnRef, out hv_Score);
+                        if ((int)(new HTuple((new HTuple(hv_Score.TupleLength())).TupleGreater(0))) != 0)
                         {
-                            ho_ImageReduced.Dispose();
-                            HOperatorSet.ReduceDomain(ho_GrayImage, ho_pullRegionaff, out ho_ImageReduced
-                                );
-                            using (HDevDisposeHelper dh = new HDevDisposeHelper())
-                            {
-                                hv_Row.Dispose(); hv_Column.Dispose(); hv_Angle.Dispose(); hv_Score1.Dispose();
-                                HOperatorSet.FindShapeModel(ho_ImageReduced, ModelID_Logo, (new HTuple(-10)).TupleDeg()
-                                    , (new HTuple(20)).TupleDeg(), param.LogoPullScore, 1, 0.5, "least_squares", 0, 0.9,
-                                    out hv_Row, out hv_Column, out hv_Angle, out hv_Score1);
-                            }
-                        }
-                        else
-                        {
-                            hv_row1_re.Dispose(); hv_col1_re.Dispose(); hv_row2_re.Dispose(); hv_col2_re.Dispose(); hv_ModelID_logo.Dispose();
-                            GetLogoModel(ho_pullRegionaff, ho_HoleRegion, ho_GrayImage, false, out hv_row1_re,
-                                out hv_col1_re, out hv_row2_re, out hv_col2_re, out hv_ModelID_logo);
 
-                            if ((int)((new HTuple((new HTuple((new HTuple(hv_row1_re.TupleGreater(0))).TupleAnd(
-                                new HTuple(hv_row2_re.TupleGreater(0))))).TupleAnd(new HTuple(hv_col1_re.TupleGreater(
-                                0))))).TupleAnd(new HTuple(hv_col2_re.TupleGreater(0)))) != 0)
+                            //获取拉片区域
+                            ho_GrayImage.Dispose(); ho_pullRegionaff.Dispose(); //ho_pullRegion.Dispose();
+                                                                                // GetPullsRegion(ho_ImageAffineTrans, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
+                            GetAffinePullRegion(ho_Image, ho_RegionAffineTrans, out ho_GrayImage, out ho_pullRegionaff);
+
+                            //获取拉片区域轮廓
+                            ho_Contours_pull.Dispose();
+                            HOperatorSet.GenContourRegionXld(ho_pullRegionaff, out ho_Contours_pull, "border");
+                            hv_Rows_pull.Dispose(); hv_Cols_pull.Dispose();
+                            HOperatorSet.GetContourXld(ho_Contours_pull, out hv_Rows_pull, out hv_Cols_pull);
+                            hv_Area2.Dispose(); hv_Row6.Dispose(); hv_Column4.Dispose(); hv_PointOrder1.Dispose();
+                            HOperatorSet.AreaCenterXld(ho_Contours_pull, out hv_Area2, out hv_Row6, out hv_Column4,
+                                out hv_PointOrder1);
+                            hv_Length1.Dispose();
+                            HOperatorSet.LengthXld(ho_Contours_pull, out hv_Length1);
+                            //获取拉片HSV值
+
+
+                            //获取拉片中的孔洞
+                            ho_HoleRegion.Dispose(); hv_MeanH.Dispose(); hv_MeanS.Dispose(); hv_MeanV.Dispose();
+                            GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegionaff, out ho_HoleRegion, out hv_MeanH,
+                                out hv_MeanS, out hv_MeanV);
+                            ho_Contours_hole.Dispose();
+                            HOperatorSet.GenContourRegionXld(ho_HoleRegion, out ho_Contours_hole, "border");
+                            hv_Rows_hole.Dispose(); hv_Cols_hole.Dispose();
+                            HOperatorSet.GetContourXld(ho_Contours_hole, out hv_Rows_hole, out hv_Cols_hole);
+
+                            //hv_IsHandle.Dispose();
+                            //HOperatorSet.TupleIsHandle(hv_ModelID_logo, out hv_IsHandle);
+                            hv_Score1.Dispose();
+                            hv_Score1 = 0;
+                            if (cell.ZipperLogoType == "有LOGO" && ModelID_Logo != null && ModelID_Logo.Length > 0) //如果有LOGO模板 则查找LOGO 没有模版 则看当前的是否有LOGO，有则为混入了logo
                             {
-                                //找到了LOGO 判断基准是否有Logo 再做处理
-                                hv_Score1 = 0; //如果基准图没有logo,但当前找到了LOGO 则为混入了LOGO 赋值0
+                                ho_ImageReduced.Dispose();
+                                HOperatorSet.ReduceDomain(ho_GrayImage, ho_pullRegionaff, out ho_ImageReduced
+                                    );
+                                using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                                {
+                                    hv_Row.Dispose(); hv_Column.Dispose(); hv_Angle.Dispose(); hv_Score1.Dispose();
+                                    HOperatorSet.FindShapeModel(ho_ImageReduced, ModelID_Logo, (new HTuple(-10)).TupleDeg()
+                                        , (new HTuple(20)).TupleDeg(), param.LogoPullScore, 1, 0.5, "least_squares", 0, 0.9,
+                                        out hv_Row, out hv_Column, out hv_Angle, out hv_Score1);
+                                }
                             }
                             else
                             {
-                                hv_Score1 = 1; //如果基准图没有logo,当前也没找到了LOGO 则为混入了LOGO 赋值1
+                                hv_row1_re.Dispose(); hv_col1_re.Dispose(); hv_row2_re.Dispose(); hv_col2_re.Dispose(); hv_ModelID_logo.Dispose();
+                                GetLogoModel(ho_pullRegionaff, ho_HoleRegion, ho_GrayImage, false, out hv_row1_re,
+                                    out hv_col1_re, out hv_row2_re, out hv_col2_re, out hv_ModelID_logo);
+
+                                if ((int)((new HTuple((new HTuple((new HTuple(hv_row1_re.TupleGreater(0))).TupleAnd(
+                                    new HTuple(hv_row2_re.TupleGreater(0))))).TupleAnd(new HTuple(hv_col1_re.TupleGreater(
+                                    0))))).TupleAnd(new HTuple(hv_col2_re.TupleGreater(0)))) != 0)
+                                {
+                                    //找到了LOGO 判断基准是否有Logo 再做处理
+                                    hv_Score1 = 0; //如果基准图没有logo,但当前找到了LOGO 则为混入了LOGO 赋值0
+                                }
+                                else
+                                {
+                                    hv_Score1 = 1; //如果基准图没有logo,当前也没找到了LOGO 则为混入了LOGO 赋值1
+                                }
                             }
-                        }
-                        if ((int)(new HTuple((new HTuple(hv_Score1.TupleLength())).TupleGreater(0))) != 0)
-                        {
-                            findScore = (float)hv_Score1.D;
-                        }
+                            if ((int)(new HTuple((new HTuple(hv_Score1.TupleLength())).TupleGreater(0))) != 0)
+                            {
+                                findScore = (float)hv_Score1.D;
+                            }
 
 
-                        //得到颜色值
-                        Hvalue = (float)hv_MeanH.D;
-                        Svalue = (float)hv_MeanS.D;
-                        Vvalue = (float)hv_MeanV.D;
+                            //得到颜色值
+                            Hvalue = (float)hv_MeanH.D;
+                            Svalue = (float)hv_MeanS.D;
+                            Vvalue = (float)hv_MeanV.D;
 
-                        //得到拉片轮廓点和孔轮廓点
-                        pullPoints = new Point[hv_Rows_pull.Length];
-                        for (int i = 0; i < hv_Rows_pull.Length; i++)
-                        {
-                            pullPoints[i] = new Point((int)hv_Cols_pull[i].D, (int)hv_Rows_pull[i].D);
-                        }
-                        holdPoints = new Point[hv_Rows_hole.Length];
-                        for (int i = 0; i < hv_Rows_hole.Length; i++)
-                        {
-                            holdPoints[i] = new Point((int)hv_Cols_hole[i].D, (int)hv_Rows_hole[i].D);
+                            //得到拉片轮廓点和孔轮廓点
+                            pullPoints = new Point[hv_Rows_pull.Length];
+                            for (int i = 0; i < hv_Rows_pull.Length; i++)
+                            {
+                                pullPoints[i] = new Point((int)hv_Cols_pull[i].D, (int)hv_Rows_pull[i].D);
+                            }
+                            holdPoints = new Point[hv_Rows_hole.Length];
+                            for (int i = 0; i < hv_Rows_hole.Length; i++)
+                            {
+                                holdPoints[i] = new Point((int)hv_Cols_hole[i].D, (int)hv_Rows_hole[i].D);
+                            }
                         }
                     }
                 }
@@ -1057,10 +1062,11 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 hv_Row.Dispose();
                 hv_Column.Dispose();
                 hv_Angle.Dispose();
+                ho_Rectangle.Dispose();
             }
         }
 
-        private void GetContoursAndHSVAndModel(HObject ho_Image, out HObject ho_Rectangle, out Point[] pullPoints, out Point[] holdPoints,
+        private void GetContoursAndHSVAndModel(HObject ho_Image, out double[] ho_Rectangle, out Point[] pullPoints, out Point[] holdPoints,
                                      out float Hvalue, out float Svalue, out float Vvalue,
                                      out HTuple ModelID_Logo, out HTuple recRow1_logo, out HTuple recCol1_logo,
                                      out HTuple recRow2_logo, out HTuple recCol2_logo,
@@ -1095,7 +1101,6 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             // Initialize local and output iconic variables 
             // HOperatorSet.GenEmptyObj(out ho_Image);
             HOperatorSet.GenEmptyObj(out ho_GrayImage);
-            HOperatorSet.GenEmptyObj(out ho_Rectangle);
             HOperatorSet.GenEmptyObj(out ho_pullRegion);
             HOperatorSet.GenEmptyObj(out ho_Contours_pull);
             HOperatorSet.GenEmptyObj(out ho_HoleRegion);
@@ -1114,7 +1119,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             try
             {
                 //获取拉片区域
-                ho_GrayImage.Dispose(); ho_Rectangle.Dispose(); ho_pullRegion.Dispose(); pullArea.Dispose();
+                ho_GrayImage.Dispose(); ho_pullRegion.Dispose(); pullArea.Dispose();
                 GetPullsRegion(ho_Image, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
                 HOperatorSet.AreaCenter(ho_pullRegion, out pullArea, out _, out _);
                 //获取拉片区域轮廓
@@ -1816,7 +1821,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             return;
         }
 
-        private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out HObject ho_Rectangle,
+        private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out double[] recPoints,
               out HObject ho_pullRegion)
         {
 
@@ -1827,7 +1832,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HObject ho_Region, ho_ConnectedRegions, ho_SelectedRegions;
             HObject ho_ImageReduced, ho_Region1, ho_RegionFillUp, ho_ConnectedRegions1;
             HObject ho_SelectedRegions1, ho_RegionDifference, ho_ConnectedRegions2;
-
+            HObject ho_Rectangle;
             // Local control variables 
 
             HTuple hv_Row1 = new HTuple(), hv_Column1 = new HTuple();
@@ -1861,8 +1866,12 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             using (HDevDisposeHelper dh = new HDevDisposeHelper())
             {
                 ho_Rectangle.Dispose();
-                HOperatorSet.GenRectangle1(out ho_Rectangle, hv_Row1 + 100, hv_Column1 + 100, hv_Row2 - 100,
-                    hv_Column2 - 50);
+                double row1 = hv_Row1 + 100;
+                double col1 = hv_Column1 + 100;
+                double row2 = hv_Row2 - 100;
+                double col2 = hv_Column2 - 50;
+                recPoints = new double[] { row1, col1, row2, col2 };
+                HOperatorSet.GenRectangle1(out ho_Rectangle, row1, col1, row2, col2);
             }
             ho_ImageReduced.Dispose();
             HOperatorSet.ReduceDomain(ho_GrayImage, ho_Rectangle, out ho_ImageReduced);

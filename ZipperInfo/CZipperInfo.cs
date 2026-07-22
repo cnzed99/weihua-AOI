@@ -380,8 +380,7 @@ namespace ZipperInfo
         /// <summary>
         /// 原始背景矩形
         /// </summary>
-        [JsonIgnore]
-        public HObject BackRectangle;
+        public double[] BackRectangle;
 
     }
 

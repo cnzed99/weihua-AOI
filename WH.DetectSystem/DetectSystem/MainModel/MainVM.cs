@@ -750,38 +750,46 @@ namespace WH.DetectSystem.Models
                             if (Name == "正面" || Name == "反面")
                             {
                                 CZipperCommunicate.GetID(out productID);
-                            }
-                            else if (Name == "上止")
-                            {
-                                CZipperCommunicate.GetID3(out productID);
-                            }
-                            else
-                            {
-                                CZipperCommunicate.GetID2(out productID);
-                            }
-                            m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-                            if (zipperID.ProductID > 0)
-                            {
-                                bool bnext = zipperID.ProductID < productID;
-                                while (bnext && zipperID.ProductID > 0)
+
+                                //else if (Name == "上止")
+                                //{
+                                //    CZipperCommunicate.GetID3(out productID);
+                                //}
+                                //else
+                                //{
+                                //    CZipperCommunicate.GetID2(out productID);
+                                //}
+                                m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                                if (zipperID.ProductID > 0)
                                 {
-                                    m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                    bnext = zipperID.ProductID < productID;
-                                    if (bnext)
+                                    bool bnext = zipperID.ProductID < productID;
+                                    while (bnext && zipperID.ProductID > 0)
                                     {
-                                        SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                        continue;
+                                        m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                        bnext = zipperID.ProductID < productID;
+                                        if (bnext)
+                                        {
+                                            SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                            continue;
+                                        }
                                     }
+                                    cell.ID = zipperID.ProductID.ToString();
+                                    cell.PhotoIndex = zipperID.PhotoID;
+                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
                                 }
-                                cell.ID = zipperID.ProductID.ToString();
-                                cell.PhotoIndex = zipperID.PhotoID;
-                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                                else
+                                {
+                                    IDisRight = false;
+                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
+                                    cell.Dispose();
+                                }
                             }
                             else
                             {
-                                IDisRight = false;
-                                SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
-                                cell.Dispose();
+                                IDisRight = true;
+                                cell.ID = (MaociDefectsProduce.Total + 1).ToString();
+                                cell.PhotoIndex = 1;
+                                cell.PhotoTatolCount = 1;
                             }
 
                         }

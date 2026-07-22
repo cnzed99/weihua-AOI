@@ -191,7 +191,7 @@ namespace WH.RunCell
         /// <summary>
         /// 原始背景矩形
         /// </summary>
-        public HObject BackRectangle { get; set; }
+        public double[] BackRectangle { get; set; }
 
         /// <summary>
         /// 拉片分割出来的标准面积

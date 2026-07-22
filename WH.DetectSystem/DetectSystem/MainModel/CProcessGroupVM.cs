@@ -122,14 +122,14 @@ namespace WH.DetectSystem.Models
             {
                 IDCreate = new CCreateIDMetalStation1();
             }
-            else if (Name== "制程组3")
-            {
-                IDCreate = new CCreateIDStationUpMass();
-            }
-            else
-            {
-                IDCreate = new CCreateIDStation3();
-            }
+            //else if (Name== "制程组3")
+            //{
+            //    IDCreate = new CCreateIDStationUpMass();
+            //}
+            //else
+            //{
+            //    IDCreate = new CCreateIDStation3();
+            //}
 
             IDCreate.IntThread();
             IDCreate.IDSendEvent += IDSend;

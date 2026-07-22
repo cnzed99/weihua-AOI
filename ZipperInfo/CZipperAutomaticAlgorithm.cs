@@ -448,7 +448,7 @@ namespace ZipperInfo
                     {
                         HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
                     }
-                    GetPullsRegion(ho_Image, out HObject ho_GrayImage, out HObject ho_Rectangle, out HObject ho_pullRegion);
+                    GetPullsRegion(ho_Image, out HObject ho_GrayImage, out _, out HObject ho_pullRegion);
                     GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegion,
                                    out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV);
                     if (hv_MeanV.D < 95)
@@ -471,7 +471,6 @@ namespace ZipperInfo
 
                     ho_Image.Dispose();
                     ho_GrayImage.Dispose();
-                    ho_Rectangle.Dispose();
                     ho_pullRegion.Dispose();
                     ho_HoleRegion.Dispose();
                     hv_MeanH.Dispose();
@@ -574,7 +573,7 @@ namespace ZipperInfo
                     {
                         HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
                     }
-                    GetContoursAndHSV(ho_Image, out HObject ho_Rectangle, out Point[] PullPoints, out Point[] HolesPoints,
+                    GetContoursAndHSV(ho_Image, out double[] ho_Rectangle, out Point[] PullPoints, out Point[] HolesPoints,
                         out float Hvalue, out float Svalue, out float Vvalue,
                         out HTuple ModelID_logo, out HTuple recRow1, out HTuple recCol1,
                         out HTuple recRow2, out HTuple recCol2,
@@ -659,7 +658,7 @@ namespace ZipperInfo
             img.Dispose();
         }
 
-        private void GetContoursAndHSV(HObject ho_Image, out HObject ho_Rectangle, out Point[] pullPoints, out Point[] holdPoints,
+        private void GetContoursAndHSV(HObject ho_Image, out double[] ho_Rectangle, out Point[] pullPoints, out Point[] holdPoints,
     out float Hvalue, out float Svalue, out float Vvalue,
     out HTuple ModelID_Logo, out HTuple recRow1_logo, out HTuple recCol1_logo,
     out HTuple recRow2_logo, out HTuple recCol2_logo,
@@ -695,7 +694,6 @@ namespace ZipperInfo
             // Initialize local and output iconic variables 
             // HOperatorSet.GenEmptyObj(out ho_Image);
             HOperatorSet.GenEmptyObj(out ho_GrayImage);
-            HOperatorSet.GenEmptyObj(out ho_Rectangle);
             HOperatorSet.GenEmptyObj(out ho_pullRegion);
             HOperatorSet.GenEmptyObj(out ho_Contours_pull);
             HOperatorSet.GenEmptyObj(out ho_HoleRegion);
@@ -715,9 +713,10 @@ namespace ZipperInfo
             try
             {
                 //获取拉片区域
-                ho_GrayImage.Dispose(); ho_Rectangle.Dispose(); ho_pullRegion.Dispose(); pullArea.Dispose();
+                ho_GrayImage.Dispose();  ho_pullRegion.Dispose(); pullArea.Dispose();
                 GetPullsRegion(ho_Image, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
                 HOperatorSet.AreaCenter(ho_pullRegion, out pullArea, out _, out _);
+
                 //获取拉片区域轮廓
                 ho_Contours_pull.Dispose();
                 HOperatorSet.GenContourRegionXld(ho_pullRegion, out ho_Contours_pull, "border");
@@ -1357,7 +1356,7 @@ namespace ZipperInfo
             return;
         }
 
-        private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out HObject ho_Rectangle,
+        private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out double[] recPoints,
               out HObject ho_pullRegion)
         {
 
@@ -1368,7 +1367,7 @@ namespace ZipperInfo
             HObject ho_Region, ho_ConnectedRegions, ho_SelectedRegions;
             HObject ho_ImageReduced, ho_Region1, ho_RegionFillUp, ho_ConnectedRegions1;
             HObject ho_SelectedRegions1, ho_RegionDifference, ho_ConnectedRegions2;
-
+            HObject ho_Rectangle;
             // Local control variables 
 
             HTuple hv_Row1 = new HTuple(), hv_Column1 = new HTuple();
@@ -1402,8 +1401,12 @@ namespace ZipperInfo
             using (HDevDisposeHelper dh = new HDevDisposeHelper())
             {
                 ho_Rectangle.Dispose();
-                HOperatorSet.GenRectangle1(out ho_Rectangle, hv_Row1 + 100, hv_Column1 + 100, hv_Row2 - 100,
-                    hv_Column2 - 50);
+                double row1 = hv_Row1 + 100;
+                double col1 = hv_Column1 + 100;
+                double row2 = hv_Row2 - 100;
+                double col2 = hv_Column2 - 50;
+                recPoints=new double[] { row1, col1, row2, col2 };
+                HOperatorSet.GenRectangle1(out ho_Rectangle, row1, col1, row2,col2);
             }
             ho_ImageReduced.Dispose();
             HOperatorSet.ReduceDomain(ho_GrayImage, ho_Rectangle, out ho_ImageReduced);
@@ -1438,7 +1441,7 @@ namespace ZipperInfo
             ho_SelectedRegions1.Dispose();
             ho_RegionDifference.Dispose();
             ho_ConnectedRegions2.Dispose();
-
+            ho_Rectangle.Dispose();
             hv_Row1.Dispose();
             hv_Column1.Dispose();
             hv_Row2.Dispose();
@@ -1725,12 +1728,6 @@ namespace ZipperInfo
                 {
                     HOperatorSet.WriteShapeModel(data.TempData1.ModelID_Pull, Model_Pull_Path);
                 }
-                if (data.TempData1.BackRectangle != null)
-                {
-                    HOperatorSet.WriteObject(data.TempData1.BackRectangle, Region_Back_Path);
-                }
-               
-                
             }
             catch (Exception) { }
         }
@@ -1759,16 +1756,6 @@ namespace ZipperInfo
                             HOperatorSet.ReadShapeModel(Model_Pull_Path, out HTuple modelID_pull);
                             settingsModel.TempData1.ModelID_Pull = modelID_pull;
                         }
-                        if (File.Exists(Region_Back_Path))
-                        {
-                            settingsModel.TempData1.BackRectangle = new HObject();
-                            settingsModel.TempData1.BackRectangle.Dispose();
-                            HOperatorSet.ReadObject(out settingsModel.TempData1.BackRectangle, Region_Back_Path);
-                            //settingsModel.TempData1.BackRectangle = Region_back;
-                           // HOperatorSet.WriteObject(settingsModel.TempData1.BackRectangle, "F://拉链检测软件(三合一）//断面毛刺检测软件//bin//Debug//SystemConfig//Region_Back22223.hobj");
-
-                        }
-                       
                     }
                     else
                     {
