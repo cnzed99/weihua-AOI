@@ -12,6 +12,7 @@
         mc:Ignorable="d"
            WindowStartupLocation="CenterScreen"
            Name="win" WindowStyle="None"
+            ResizeMode="NoResize" SizeToContent="Height"
         d:DataContext="{d:DesignInstance Type=local:CZipperAutomaticVM}"
         Title="换料识别" Height="650" Width="750" >
 
@@ -40,7 +41,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1.5*"/>
             </Grid.RowDefinitions>
-            <GroupBox>
+            <Border Grid.Row="0" BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="10">
                 <Grid Grid.Row="0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
@@ -57,16 +58,16 @@
                             <TextBlock Margin="10,10"  Text="拉链长度(cm)"  FontSize="30"/>
                             <hc:NumericUpDown  
                            Margin="10,0" Value="{Binding ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}"
-                            DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000" Width="250" Height="55" FontSize="40">
+                            DecimalPlaces="2" Increment="0.1" Minimum="0" Maximum="2000" Width="250" Height="55" FontSize="40">
                                 <i:Interaction.Behaviors>
                                     <keyboard:NumericKeyboardBehavior/>
                                 </i:Interaction.Behaviors>
                             </hc:NumericUpDown>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <TextBlock  Grid.Row="1" Margin="10,10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            <TextBlock  Grid.Row="1" Margin="10,10" 
                                         Text="刀口长度(cm)"  FontSize="30" />
-                            <hc:NumericUpDown  Grid.Row="1" Margin="10,0" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" 
+                            <hc:NumericUpDown  Grid.Row="1" Margin="10,0" 
                                            Value="{Binding QuekouLenght, UpdateSourceTrigger=PropertyChanged}" DecimalPlaces="2" Increment="0.05" 
                                            Minimum="0" Maximum="2000" Width="250" Height="55" FontSize="40">
                                 <i:Interaction.Behaviors>
@@ -75,16 +76,16 @@
                             </hc:NumericUpDown>
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <TextBlock  Grid.Row="1" Margin="10,10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            <TextBlock  Grid.Row="1" Margin="10,10" 
                                Text="插   销   方  向"  FontSize="30" />
                             <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].BoltDiretion}" Width="250" Height="55"
                                          ItemsSource="{Binding Source={StaticResource  BoltTypeProvider}}" FontSize="35"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="3" Orientation="Horizontal">
-                            <TextBlock  Grid.Row="1" Margin="10,10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            <TextBlock  Grid.Row="1" Margin="10,10"
                    Text="插 销 有 无  字"  FontSize="30" />
-                            <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].HaveSAB}" Width="250" Height="55"
+                            <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].LockHaveSAB}" Width="250" Height="55"
                              ItemsSource="{Binding Source={StaticResource  HaveSabProvider}}" FontSize="35"/>
                         </StackPanel>
                     </Grid>
@@ -118,9 +119,9 @@
                     </Button>
                 </Grid>
             </Grid>
-            </GroupBox>
-            <GroupBox Grid.Row="1" >
-                <StackPanel  Orientation="Vertical" VerticalAlignment="Center" >
+            </Border>
+            <Border Grid.Row="1" BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="10">
+                    <StackPanel  Orientation="Vertical" VerticalAlignment="Center" >
                     <ItemsControl  ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -134,35 +135,45 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <Border Grid.Row="2" BorderBrush="Transparent" BorderThickness="1" CornerRadius="10"  
+                    Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, 
+                Converter={StaticResource Bool2VisiblityConverter}}">
+                        <StackPanel  Orientation="Vertical" VerticalAlignment="Center" >
+                            <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <hc:NumericUpDown Width="120" Maximum="110"  Minimum="30"
+                          Value="{Binding ClothLinghtValue}" Margin="12,5" FontSize="30"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <hc:NumericUpDown Width="120"  Maximum="255"  Minimum="1" 
+                          Value="{Binding UpMassLinghtValue}" Margin="12,5" FontSize="30"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
 
-                    <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <hc:NumericUpDown Width="120" Maximum="110"  Minimum="30" Value="{Binding ClothLinghtValue}" Margin="12,5" FontSize="30"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <ItemsControl ItemsSource="{Binding AutoData[0].LinghtValueInfos}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <hc:NumericUpDown Width="120"  Maximum="255"  Minimum="1" Value="{Binding UpMassLinghtValue}" Margin="12,5" FontSize="30"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
                 </StackPanel>
-            </GroupBox>
+            </Border>
 
-            <GroupBox Grid.Row="2">
+            <Border Grid.Row="2" BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="10"  
+                    Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, 
+                Converter={StaticResource Bool2VisiblityConverter}}">
                 <Grid >
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -170,9 +181,9 @@
                         <RowDefinition Height="1.5*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0"  Orientation="Horizontal">
-                        <TextBlock   Margin="10" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                        <TextBlock   Margin="10" 
                            Text="相机视野(mm)"  FontSize="30" />
-                        <hc:NumericUpDown   Margin="2" Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}" 
+                        <hc:NumericUpDown   Margin="2"
                               Value="{Binding AutoData[0].CcdWidth, UpdateSourceTrigger=PropertyChanged}" DecimalPlaces="2" Increment="1" 
                               Minimum="0" Maximum="500" Width="250" Height="55" FontSize="40">
                             <i:Interaction.Behaviors>
@@ -184,11 +195,10 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, Converter={StaticResource Bool2VisiblityConverter}}"-->
                         <TextBlock 
-                            Margin="10"   Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            Margin="10"  
                             Text="中心距离(mm)"  FontSize="30" />
                         <hc:NumericUpDown   
                             Value="{Binding AutoData[0].DaoDitance, UpdateSourceTrigger=PropertyChanged}" 
-                            Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}}"
                             Margin="1,0" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True"
                              Width="250" Height="55" FontSize="40" >
                             <i:Interaction.Behaviors>
@@ -203,7 +213,7 @@
                         <hc:NumericUpDown Value="{Binding AutoData[0].ZipperMaxMean, UpdateSourceTrigger=PropertyChanged}" Margin="10,1" DecimalPlaces="1" Minimum="0" Maximum="2000" hc:InfoElement.ShowClearButton="True" Width="150" Height="85" FontSize="30"  hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Title="前景上限" Style="{StaticResource NumericUpDownPlus}"  />
                     </StackPanel>
                 </Grid>
-            </GroupBox>
+            </Border>
        
 
         </Grid>

@@ -165,7 +165,7 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
                 CZipperAutomaticAlgorithm.Cloth_Stage2_OK = false;
-
+                CZipperAutomaticAlgorithm.UpMass_Stage2_OK = false;
                 CZipperAutomaticAlgorithm.TestFinsh = false;
                 CZipperAutomaticAlgorithm.onWichStage = 1;
                 CZipperAutomaticAlgorithm.findPuller = false;
@@ -269,7 +269,8 @@ namespace ZipperInfo
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
                 CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
                 CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
-               // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.UpMass_Stage2_OK = false;
+                // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
                 CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
                 SaveParameter(AutoData);
             }

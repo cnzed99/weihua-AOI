@@ -121,6 +121,8 @@ namespace WH.DetectSystem.Models
             if (Name == "制程组1")
             {
                 IDCreate = new CCreateIDMetalStation1();
+                IDCreate.IntThread();
+                IDCreate.IDSendEvent += IDSend;
             }
             //else if (Name== "制程组3")
             //{
@@ -130,9 +132,6 @@ namespace WH.DetectSystem.Models
             //{
             //    IDCreate = new CCreateIDStation3();
             //}
-
-            IDCreate.IntThread();
-            IDCreate.IDSendEvent += IDSend;
         }
         /// <summary>
         /// 分配ID给各个制程 

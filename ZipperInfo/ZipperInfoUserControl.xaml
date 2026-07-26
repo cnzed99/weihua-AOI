@@ -60,7 +60,7 @@
         <UniformGrid Grid.Row="0"  Rows="8" Columns="2">
             <TextBlock Margin="15,0,0,0" Text="拉链长度(cm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
             <hc:NumericUpDown Value="{Binding ZipperInfo.ShowZipperLenght, UpdateSourceTrigger=PropertyChanged}" 
-                 Margin="5" DecimalPlaces="2" Increment="0.05" Minimum="0" Maximum="2000" FontSize="24">
+                 Margin="5" DecimalPlaces="2" Increment="0.1" Minimum="0" Maximum="2000" FontSize="24">
                 <!--<i:Interaction.Behaviors>
              <keyboard:NumericKeyboardBehavior/>
          </i:Interaction.Behaviors>-->

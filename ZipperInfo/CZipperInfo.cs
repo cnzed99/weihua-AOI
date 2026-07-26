@@ -381,6 +381,10 @@ namespace ZipperInfo
         /// 原始背景矩形
         /// </summary>
         public double[] BackRectangle;
+        /// <summary>
+        /// 拉头有无SAB
+        /// </summary>
+        public HAVESAB PullerHaveSAB { get; set; } = HAVESAB.有SAB;
 
     }
 

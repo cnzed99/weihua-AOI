@@ -768,7 +768,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
         /// <summary>
         /// 使用OpenCV内置方法计算相似度（作为对比参考）
         /// </summary>
-        public double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
+        private double MatchShapesWithCv2(Point[] contours1, Point[] contours2,
                                                 ShapeMatchModes mode = ShapeMatchModes.I2)
         {
             // 如果任何轮廓为空，返回一个很大的不相似值
@@ -1242,7 +1242,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
 
         private void GetPullerHSV(Cell cell, out float Hvalue, out float Svalue, out float Vvalue)
         {
-            Hvalue = 0; Svalue = 0; Vvalue = 0;
+            Hvalue = 255; Svalue = 255; Vvalue = 255;
 
             HObject ho_Image = null, ho_GrayImage = null, ho_Region = null;
             HObject ho_ConnectedRegions = null, ho_RegionOpening = null;
@@ -1304,7 +1304,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 ho_GrayImage.Dispose();
                 HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
                 ho_Region.Dispose();
-                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 15);
+                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 60);
                 ho_ConnectedRegions.Dispose();
                 HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
                 ho_RegionOpening.Dispose();
@@ -1339,10 +1339,20 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 HOperatorSet.Intensity(ho_RegionErosion, ho_ImageResultS, out hv_MeanS, out hv_DevS);
                 hv_MeanV.Dispose(); hv_DevV.Dispose();
                 HOperatorSet.Intensity(ho_RegionErosion, ho_ImageResultV, out hv_MeanV, out hv_DevV);
+                if (hv_MeanH.D != 0)
+                {
+                    Hvalue = (float)hv_MeanH.D;
+                }
+                if (hv_MeanS.D != 0)
+                {
+                    Svalue = (float)hv_MeanS.D;
+                }
+                if (hv_MeanV.D != 0)
+                {
+                    Vvalue = (float)hv_MeanV.D;
+                }
 
-                Hvalue = (float)hv_MeanH.D;
-                Svalue = (float)hv_MeanS.D;
-                Vvalue = (float)hv_MeanV.D;
+
             }
             catch (Exception)
             {

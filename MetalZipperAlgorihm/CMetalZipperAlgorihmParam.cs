@@ -221,6 +221,17 @@ namespace MetalZipperAlgorihm
                 cdownDefectRecipes.Add(defectRecipe5);
                 CDefectRecipe defectRecipe7 = new CDefectRecipe("插销角度", Category.值);
                 cdownDefectRecipes.Add(defectRecipe7);
+                CDefectRecipe defectRecipe8 = new CDefectRecipe("插销色差", Category.值);
+                cdownDefectRecipes.Add(defectRecipe8);
+            }
+            if (user == "反面")
+            {
+                CDefectRecipe defectRecipe9 = new CDefectRecipe("长插销针孔偏位", Category.值);
+                cdownDefectRecipes.Add(defectRecipe9);
+                CDefectRecipe defectRecipe10 = new CDefectRecipe("短插销针孔偏位", Category.值);
+                cdownDefectRecipes.Add(defectRecipe10);
+                CDefectRecipe defectRecipe11 = new CDefectRecipe("针孔中心距", Category.值);
+                cdownDefectRecipes.Add(defectRecipe11);
             }
             CDefectSpecies downdefectSpecies = new CDefectSpecies("方块插销", cdownDefectRecipes);
             #endregion
@@ -337,7 +348,7 @@ namespace MetalZipperAlgorihm
 
                 // int oddoreven = cell.PhotoIndex % 2;
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
-                if (cell.PhotoIndex >= 100 || cell.PhotoIndex == 1 || cell.PhotoIndex == (cell.PhotoTatolCount/2)) // 大缺陷检测底曝光图片(>=100)
+                if (cell.PhotoIndex >= 100 || cell.PhotoIndex == 1 || cell.PhotoIndex == (cell.PhotoTatolCount / 2)) // 大缺陷检测底曝光图片(>=100)
                 {
                     DetResult bigResult = ImageInferDet(WH_BigDet_det, img);
 
@@ -348,25 +359,25 @@ namespace MetalZipperAlgorihm
                         {
                             int labelindex = int.Parse(bigResult.datas[j].lable);
                             string labelname = bigDet_names[labelindex];
-                            int imgindex=0 , showinview = 0;
+                            int imgindex = 0, showinview = 0;
                             if (cell.PhotoIndex >= 100)
                             {
-                                imgindex = (cell.PhotoIndex / 100)-1;
+                                imgindex = (cell.PhotoIndex / 100) - 1;
                                 showinview = 0;
                             }
-                            else 
+                            else
                             {
                                 imgindex = cell.PhotoIndex - 1;
                                 showinview = 1;
                             }
                             CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, imgindex, 0, 0, labelname, bigResult.datas[j], showinview);
-                            if (labelname.Contains("方块插销") && cell.PhotoIndex != 100) 
+                            if (labelname.Contains("方块插销") && cell.PhotoIndex != 100)
                                 continue;
                             if (labelname.Contains("布胶") && cell.PhotoIndex >= 100) //布胶在高曝光图像上检测，如果在低曝光上检测到布胶就不计数
                                 continue;
                             if (!labelname.Contains("布胶") && cell.PhotoIndex == 1)//如果是在高曝光图像上检测到其他目标（方块。插销）不计数
                                 continue;
-                            if (!labelname.Contains("布胶") && cell.PhotoIndex == cell.PhotoTatolCount/2)
+                            if (!labelname.Contains("布胶") && cell.PhotoIndex == cell.PhotoTatolCount / 2)
                                 continue;
                             dets.Add(restoreData);
                             if ((!labelname.Contains("方块插销")) && (!labelname.Contains("布胶")))
@@ -413,14 +424,14 @@ namespace MetalZipperAlgorihm
                                         string lianciIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链齿")).ToString();
                                         List<ObbData> lianciorg = downResult.datas.FindAll(c => c.lable == lianciIndexstr).ToList(); //链齿
 
-                                        string lianyaIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("链牙")).ToString();
-                                        List<ObbData> lianyaorg = downResult.datas.FindAll(c => c.lable == lianyaIndexstr).ToList(); //链牙
+                                        string zhenkongIndexstr = Array.FindIndex(downStopMass_names, s => s.Contains("针孔")).ToString();
+                                        List<ObbData> zhenkongorg = downResult.datas.FindAll(c => c.lable == zhenkongIndexstr).ToList(); //链牙
 
-                                        List<ObbData> otherobb = downResult.datas.Where(s => s.lable != fangkuaiIndexstr && s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != lianyaIndexstr && s.lable != downmassIndexstr2).ToList();
+                                        List<ObbData> otherobb = downResult.datas.Where(s => s.lable != fangkuaiIndexstr && s.lable != downmassIndexstr && s.lable != lianciIndexstr && s.lable != downmassIndexstr2).ToList();
 
                                         List<ObbData> lianci = lianciorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-                                        List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
-
+                                        // List<ObbData> lianya = lianyaorg.Where(s => s.score >= paramClass.DownLianciScore).ToList();
+                                        Mat cropshoutMat = null, cropshoutMat2 = null;
                                         if (downmass.Count > 0)
                                         {
                                             float dcpointx = downmass[0].box.Center.X;
@@ -432,9 +443,45 @@ namespace MetalZipperAlgorihm
                                             CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销距离", lianci2[0]);
                                             disData.Value = dis;
                                             dets.Add(disData);
-
                                             CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销", downmass[0]);
                                             dets.Add(disData1);
+
+                                            //识别颜色
+                                            Rect shoutmass = downmass[0].box.BoundingRect();
+                                            cropshoutMat = cropDownMat[new Rect(shoutmass.X, shoutmass.Y, shoutmass.Width - 5, shoutmass.Height - 5)];
+
+                                            List<ObbData> zhenkong1 = zhenkongorg.FindAll(s => Math.Abs(s.box.Center.Y - downmass[0].box.Center.Y) <= 20).ToList(); //长插销针孔
+                                            if (zhenkong1 != null && zhenkong1.Count > 0)
+                                            {
+                                                Point2f[] innerRect = zhenkong1[0].box.Points(); //获取针孔的四个顶点坐标
+                                                Point2f[] outerRect = downmass[0].box.Points(); //获取长插销的四个顶点坐标
+
+                                                // ========== 3. 构建外矩形的有向边（按逆时针顺序） ==========
+                                                // 边的方向：P1→P2, P2→P3, P3→P4, P4→P1
+                                                // 法向量指向多边形内部（左侧）
+                                                var edges = new List<RecEdge>();
+                                                for (int i = 0; i < outerRect.Length; i++)
+                                                {
+                                                    var a = outerRect[i];
+                                                    var b = outerRect[(i + 1) % outerRect.Length];
+                                                    edges.Add(new RecEdge(a, b));
+                                                }
+
+                                                List<float> distances = new List<float>();
+
+                                                foreach (var pt in innerRect)
+                                                {
+                                                    foreach (var edge in edges)
+                                                    {
+                                                        float d = edge.SignedDistance(pt);
+                                                        distances.Add(d);
+                                                    }
+                                                }
+
+                                                float minDistance = (float)distances.Min(); //获取最短距离
+                                                CoordRestoreData zhenkongData1 = new CoordRestoreData("长插销针孔偏位", minDistance);
+                                                dets.Add(zhenkongData1);
+                                            }
                                         }
 
                                         if (downmass2.Count > 0)
@@ -449,8 +496,45 @@ namespace MetalZipperAlgorihm
                                             dets.Add(disData);
                                             CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销", downmass2[0]);
                                             dets.Add(disData1);
-                                        }
 
+                                            //识别颜色
+                                            Rect shoutmass = downmass2[0].box.BoundingRect();
+                                            cropshoutMat2 = cropDownMat[new Rect(shoutmass.X, shoutmass.Y, shoutmass.Width - 5, shoutmass.Height - 5)];
+                                            //短针孔位置度
+                                            List<ObbData> zhenkong1 = zhenkongorg.FindAll(s => Math.Abs(s.box.Center.Y - downmass2[0].box.Center.Y) <= 20).ToList(); //长插销针孔
+                                            if (zhenkong1 != null && zhenkong1.Count > 0)
+                                            {
+
+                                                Point2f[] innerRect = zhenkong1[0].box.Points(); //获取针孔的四个顶点坐标
+                                                Point2f[] outerRect = downmass2[0].box.Points(); //获取长插销的四个顶点坐标
+
+                                                // ========== 3. 构建外矩形的有向边（按逆时针顺序） ==========
+                                                // 边的方向：P1→P2, P2→P3, P3→P4, P4→P1
+                                                // 法向量指向多边形内部（左侧）
+                                                var edges = new List<RecEdge>();
+                                                for (int i = 0; i < outerRect.Length; i++)
+                                                {
+                                                    var a = outerRect[i];
+                                                    var b = outerRect[(i + 1) % outerRect.Length];
+                                                    edges.Add(new RecEdge(a, b));
+                                                }
+
+                                                List<float> distances = new List<float>();
+
+                                                foreach (var pt in innerRect)
+                                                {
+                                                    foreach (var edge in edges)
+                                                    {
+                                                        float d = edge.SignedDistance(pt);
+                                                        distances.Add(d);
+                                                    }
+                                                }
+                                                float minDistance = distances.Min(); //获取最短距离
+                                                CoordRestoreData zhenkongData1 = new CoordRestoreData("短插销针孔偏位", minDistance);
+                                                dets.Add(zhenkongData1);
+                                            }
+
+                                        }
                                         List<(float, int)> Angs = new List<(float, int)>();
                                         for (int a = 0; a < downmass.Count; a++)
                                         {
@@ -494,6 +578,16 @@ namespace MetalZipperAlgorihm
                                             dets.Add(disData);
                                         }
 
+                                        //针孔中心距
+                                        float discenter = Math.Abs(downmass[0].box.Center.Y - downmass2[0].box.Center.Y);
+                                        CoordRestoreData disCenterData = new CoordRestoreData("针孔中心距", discenter);
+                                        dets.Add(disCenterData);
+
+                                        //对比长短插销的颜色
+                                        float diffhsv = DiffHSV(cropshoutMat, cropshoutMat2);
+                                        CoordRestoreData disHsvData = new CoordRestoreData("插销色差", diffhsv);
+                                        dets.Add(disHsvData);
+
                                         for (int a = 0; a < otherobb.Count; a++)
                                         {
                                             int obblabelindex = int.Parse(otherobb[a].lable);
@@ -519,7 +613,7 @@ namespace MetalZipperAlgorihm
                     cropRec[i].Height = smallimgHeight;
                     Mat cropimg = img[cropRec[i]];
                     mats.Add(cropimg);
-                    cell.FourCutMatImg.Add((cell.PhotoIndex,i,cropimg));
+                    cell.FourCutMatImg.Add((cell.PhotoIndex, i, cropimg));
 
                     //  Cv2.ImWrite(@"C:\Users\Administrator.B\Desktop\截图\" +DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + i + ".png", cropimg);
                 }
@@ -576,7 +670,7 @@ namespace MetalZipperAlgorihm
                                 dets.Add(restoreData);
                             }
 
-                                cell.SaveCutImagesIndex.Add((cell.PhotoIndex, detrets[i].Item2-1)); //后续用来存存指定的图
+                            cell.SaveCutImagesIndex.Add((cell.PhotoIndex, detrets[i].Item2 - 1)); //后续用来存存指定的图
                         }
 
                     }
@@ -921,6 +1015,52 @@ namespace MetalZipperAlgorihm
             float degrees = (float)(radians * (180.0 / Math.PI));
             return degrees;
         }
+
+        #region 内外矩形边界距离
+
+        struct RecEdge
+        {
+            public Point2f A, B;
+            public Vec2f Tangent;   // 单位切向量 (B-A)/|B-A|
+            public Vec2f Normal;    // 单位法向量（指向左侧/多边形内部）
+
+            public RecEdge(Point2f a, Point2f b)
+            {
+                A = a; B = b;
+                float dx = b.X - a.X;
+                float dy = b.Y - a.Y;
+                float len = (float)Math.Sqrt(dx * dx + dy * dy);
+                Tangent = new Vec2f(dx / len, dy / len);
+                // 法向量取左侧：(-dy, dx) 再归一化
+                Normal = new Vec2f(-dy / len, dx / len);
+            }
+
+            /// <summary>
+            /// 有符号距离：点P到该有向边所在直线的距离。
+            /// 正值 = P在法向量指向的一侧（多边形内部），
+            /// 负值 = P在另一侧（多边形外部）。
+            /// </summary>
+            public float SignedDistance(Point2f p)
+            {
+                Vec2f ap = new Vec2f(p.X - A.X, p.Y - A.Y);
+                // dot(AP, Normal)
+                return ap.Item0 * Normal.Item0 + ap.Item1 * Normal.Item1;
+            }
+
+            /// <summary>
+            /// 投影到线段上的参数 t（0~1 表示在线段内）
+            /// </summary>
+            public float ProjectT(Point2f p)
+            {
+                Vec2f ab = new Vec2f(B.X - A.X, B.Y - A.Y);
+                Vec2f ap = new Vec2f(p.X - A.X, p.Y - A.Y);
+                float denom = ab.Item0 * ab.Item0 + ab.Item1 * ab.Item1;
+                if (denom < 1e-12f) return 0;
+                return (ap.Item0 * ab.Item0 + ap.Item1 * ab.Item1) / denom;
+            }
+        }
+        #endregion
+
 
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
@@ -1337,6 +1477,41 @@ namespace MetalZipperAlgorihm
 
 
 
+        }
+
+        /// <summary>
+        /// 对比两图片的色差
+        /// 20260424 鲍赞宝
+        /// </summary>
+        /// <param name="detData"></param>
+        /// <param name="detName"></param>
+        public float DiffHSV(Mat img1, Mat img2)
+        {
+            if (img1 != null && img2 != null)
+            {
+                Mat hsvImage = new Mat();
+                Cv2.CvtColor(img1, hsvImage, ColorConversionCodes.BGR2HSV);
+                Scalar hsvMean = Cv2.Mean(hsvImage);
+                double Hvalue = hsvMean.Val0;
+                double Svalue = hsvMean.Val1;
+                double Vvalue = hsvMean.Val2;
+
+                Mat orghsvImage = new Mat();
+                Cv2.CvtColor(img2, orghsvImage, ColorConversionCodes.BGR2HSV);
+                Scalar orghsvMean = Cv2.Mean(orghsvImage);
+                double orgHvalue = orghsvMean.Val0;
+                double orgSvalue = orghsvMean.Val1;
+                double orgVvalue = orghsvMean.Val2;
+
+                var (l1, a1, b1Lab) = BgrToLab((byte)orgHvalue, (byte)orgSvalue, (byte)orgVvalue);
+                var (l2, a2, b2Lab) = BgrToLab((byte)Hvalue, (byte)Svalue, (byte)Vvalue);
+                double de00 = CalculateDeltaE76(l1, a1, b1Lab, l2, a2, b2Lab);
+                return (float)de00;
+            }
+            else
+            {
+                return 100.0f;
+            }
         }
 
         #endregion

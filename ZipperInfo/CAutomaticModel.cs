@@ -95,7 +95,7 @@ namespace ZipperInfo
         /// 插销有无SAB字符
         /// </summary>
         [ObservableProperty]
-        private HAVESAB haveSAB = HAVESAB.有SAB;
+        private HAVESAB lockHaveSAB = HAVESAB.有SAB;
 
     }
     /// <summary>

@@ -246,11 +246,11 @@ namespace UpMassZipperAlgorihm
                             List<ObbData> gaoyaobbDatas = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - gaoyashangzhiObb.box.Center.Y) <= rang).ToList(); //分组 
                             List<ObbData> diyaobbDatas = upResult.datas.FindAll(s => Math.Abs(s.box.Center.Y - diyashangzhiobb.box.Center.Y) <= rang).ToList(); //分组 
 
-                            GetDisAndHSV(img, gaoyaobbDatas, gaoyashangzhiObb, out float gdis);
+                            GetDisAnd(img, gaoyaobbDatas, gaoyashangzhiObb, out float gdis);
                             CoordRestoreData disData = new CoordRestoreData("高牙距离", gdis);
                             dets.Add(disData);
 
-                            GetDisAndHSV(img, diyaobbDatas, diyashangzhiobb, out float ddis);
+                            GetDisAnd(img, diyaobbDatas, diyashangzhiobb, out float ddis);
                             CoordRestoreData disData2 = new CoordRestoreData("低牙距离", ddis);
                             dets.Add(disData2);
 
@@ -321,7 +321,7 @@ namespace UpMassZipperAlgorihm
 
                 }
 
-                void GetDisAndHSV(Mat img, List<ObbData> obbDatas, ObbData upMassobb, out float Dismin)
+                void GetDisAnd(Mat img, List<ObbData> obbDatas, ObbData upMassobb, out float Dismin)
                 {
                     Dismin = 0;
                     string lianciIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("链齿")).ToString();
@@ -784,8 +784,8 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         /// </summary>
         [ObservableProperty]
         [property: Category("分数设置")]
-        [property: DisplayName("09 大缺陷分数阈值")]
-        [property: Description("大缺陷分数阈值")]
+        [property: DisplayName("09 上止分数阈值")]
+        [property: Description("上止分数阈值")]
         private float upMassScore = 0.4f;
 
         /// <summary>

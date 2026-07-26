@@ -49,6 +49,7 @@ namespace 断面毛刺检测软件
         private CProgress<string> progress;
         private CLogRec SysLog;
         private CLogRec OperateLog;
+        private System.Timers.Timer Hearttimer; //心跳发送
 
         #region 初始化 加载
 
@@ -173,6 +174,15 @@ namespace 断面毛刺检测软件
                     "拉链智能视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
+                Hearttimer = new System.Timers.Timer(1000); //2026.7.25 鲍赞宝
+                Hearttimer.Elapsed += (sender, e) => 
+                {
+                    if (CMainList.IsStart)
+                    {
+                        CZipperCommunicate.SendHeartBeat();
+                    }
+                };
+                Hearttimer.Start();
                 welComePage.ShowDialog();
             }
             catch (Exception ex)

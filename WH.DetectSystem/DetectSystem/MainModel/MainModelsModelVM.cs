@@ -503,6 +503,7 @@ namespace WH.DetectSystem.ViewModels
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
+                CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
                 await longtimefunc(progress);
             }
             catch (Exception ex)

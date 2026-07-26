@@ -83,7 +83,7 @@ namespace ZipperInfo
             {
                 //第一个点
                 pullchange = 0;
-                frontFinsshPos = frontzippers+1;
+                frontFinsshPos = frontzippers + 1;
                 float firstpoint = netZipperTali - frontLim;
                 if (firstpoint < 1) //触发点不能为零，为零启动后不触发相机
                 {
@@ -198,9 +198,9 @@ namespace ZipperInfo
                 HeadandTalipoints.Add(talipoint);
                 triggerType = 3;
             }
-            outpoints = ProcessList(points, AutoData.ZipperLenght,HeadandTalipoints, triggerType);
+            outpoints = ProcessList(points, AutoData.ZipperLenght, HeadandTalipoints, triggerType);
             //cutoffIndex = points.Count - pullchange;
-            cutoffIndex =  pullchange;
+            cutoffIndex = pullchange;
             if (cutoffIndex == points.Count || points.Count == 1)
             {
                 cutoffIndex = 0;
@@ -288,11 +288,11 @@ namespace ZipperInfo
             }
 
             // List<float> output = new List<float>(input);
-            float diff = 25;
+            float diff = 15;
             float lastdiff = zipperLenght - input[input.Count - 1];
             float subvalue = diff - lastdiff;
             List<float> output;
-            if (lastdiff <= diff) //27为经验值
+            if (lastdiff <= diff) //15为经验值
             {
                 output = new List<float>(input);
                 List<float> copyPos = new List<float>(input);
@@ -337,15 +337,15 @@ namespace ZipperInfo
                 output = new List<float>(input);
             }
 
-           // return output;
+            // return output;
 
 
             for (int i = 1; i < output.Count; i++) //如果最后一个点离它前面一个点很近就不触发，需要把前一个点前移
             {
                 float diff2 = output[i] - output[i - 1];
-                if (diff2 < 25 && diff2 > 0)
+                if (diff2 < 10 && diff2 >= 0)
                 {
-                    output[i - 1] -= (25 - diff2);
+                    output[i - 1] -= (10 - diff2);
                     if (output[i - 1] < 1)
                     {
                         output[i - 1] = 1;

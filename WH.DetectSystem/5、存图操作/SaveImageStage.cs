@@ -141,7 +141,7 @@ namespace WH.DetectSystem._5_存图操作
                         if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                         {
                             string spltstr;
-                            if (cell.FourCutMatImg[i].Item1>=100)
+                            if (cell.FourCutMatImg[i].Item1 >= 100)
                             {
                                 spltstr = "NG低曝";
                             }
@@ -151,7 +151,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             string smfourpath = fourpath.Replace("FourCutImg", spltstr);
                             string[] splfour = smfourpath.Split(spltstr);
-                            if (splfour.Length>0)
+                            if (splfour.Length > 0)
                             {
                                 string dir = $"{splfour[0]}\\{spltstr}";
                                 if (!Directory.Exists(dir))
@@ -162,83 +162,116 @@ namespace WH.DetectSystem._5_存图操作
                             }
                         }
                     }
-                    if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
+                }
+                if (cell.FourCutMatImg != null)
+                {
+                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                     {
-                        for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                        int index = fourCutPath.IndexOf('.');
+                        string fourpath = fourCutPath.Insert(index, $"_{i}");
+                        if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                         {
-                            int index = upMassPath.IndexOf('.');
-                            string uppath = upMassPath.Insert(index, $"_{i}");
-                            // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
-                            OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                            string spltstr;
+                            if (cell.FourCutMatImg[i].Item1 >= 100)
+                            {
+                                spltstr = "NG低曝";
+                            }
+                            else
+                            {
+                                spltstr = "NG高曝";
+                            }
+                            string smfourpath = fourpath.Replace("FourCutImg", spltstr);
+                            string[] splfour = smfourpath.Split(spltstr);
+                            if (splfour.Length > 0)
+                            {
+                                string dir = $"{splfour[0]}\\{spltstr}";
+                                if (!Directory.Exists(dir))
+                                {
+                                    Directory.CreateDirectory(dir);
+                                }
+                                OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                            }
                         }
                     }
-                    if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                }
+
+                if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
+                {
+                    for (int i = 0; i < cell.UpMassMatImg.Count; i++)
                     {
-                        // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
-                        OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                        int index = upMassPath.IndexOf('.');
+                        string uppath = upMassPath.Insert(index, $"_{i}");
+                        // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
+                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
                     }
-                    if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
+                }
+                if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                {
+                    // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
+                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                }
+                if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
+                {
+                    // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
+                    // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
+                    OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
+                }
+                if (saveImageConfig.SaveImageEnable) //开启存原图
+                {
+                    string fileName = classPath;
+                    if (Directory.Exists(Directory.GetParent(fileName).FullName))
                     {
-                        // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
-                        // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
-                        OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
+                        Directory.CreateDirectory(Directory.GetParent(fileName).FullName);
                     }
-                    if (saveImageConfig.SaveImageEnable) //开启存原图
+
+                    switch (saveImageConfig.SaveSelect)
                     {
-                        string fileName = classPath;
-                        if (Directory.Exists(Directory.GetParent(fileName).FullName))
-                        {
-                            Directory.CreateDirectory(Directory.GetParent(fileName).FullName);
-                        }
-
-                        switch (saveImageConfig.SaveSelect)
-                        {
-                            case "0": //存所有图
-                                if (cell.IsOK)
+                        case "0": //存所有图
+                            if (cell.IsOK)
+                            {
+                                saveCountOk++;
+                                if (saveCountOk >= saveImageConfig.OkIntervalCount)
                                 {
-                                    saveCountOk++;
-                                    if (saveCountOk >= saveImageConfig.OkIntervalCount)
-                                    {
-                                        saveCountOk = 0;
-                                        WriteImage(
-                                            cell,
-                                            fileName,
-                                            saveImageConfig.SaveImageFormat
-                                        );
-                                    }
+                                    saveCountOk = 0;
+                                    WriteImage(
+                                        cell,
+                                        fileName,
+                                        saveImageConfig.SaveImageFormat
+                                    );
                                 }
-                                else
+                            }
+                            else
+                            {
+                                WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
+                            }
+
+                            break;
+
+                        case "1": //只存不良图
+                            if (!cell.IsOK)
+                            {
+                                WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
+                            }
+                            break;
+
+                        case "2": //只存合格图
+                            if (cell.IsOK)
+                            {
+                                saveCountOk++;
+                                if (saveCountOk >= saveImageConfig.OkIntervalCount)
                                 {
-                                    WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
+                                    saveCountOk = 0;
+                                    WriteImage(
+                                        cell,
+                                        fileName,
+                                        saveImageConfig.SaveImageFormat
+                                    );
                                 }
+                            }
+                            break;
 
-                                break;
-
-                            case "1": //只存不良图
-                                if (!cell.IsOK)
-                                {
-                                    WriteImage(cell, fileName, saveImageConfig.SaveImageFormat);
-                                }
-                                break;
-
-                            case "2": //只存合格图
-                                if (cell.IsOK)
-                                {
-                                    saveCountOk++;
-                                    if (saveCountOk >= saveImageConfig.OkIntervalCount)
-                                    {
-                                        saveCountOk = 0;
-                                        WriteImage(
-                                            cell,
-                                            fileName,
-                                            saveImageConfig.SaveImageFormat
-                                        );
-                                    }
-                                }
-                                break;
-
-                        }
                     }
+
                 }
                 return savePath;
             }

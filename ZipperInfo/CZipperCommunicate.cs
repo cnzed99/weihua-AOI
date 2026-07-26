@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CommunicationModule;
+using Modbus;
+using OpenVinoSharp.Extensions.result;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using CommunicationModule;
-using Modbus;
 using WH.Entity.LogRecord;
 using WH.RunCell;
 
@@ -517,6 +518,19 @@ namespace ZipperInfo
             //{
             //    com.WriteSingleRegisterReal(41260, pos);
             //}
+        }
+
+        /// <summary>
+        /// 与PLC连接心跳信号
+        /// 20260725 鲍赞宝
+        /// </summary>
+        public static void SendHeartBeat()
+        {
+
+            if (com != null)
+            {
+                com.WriteSingleRegisterInt32(42638, 1);
+            }
         }
 
         #region 自动识别拉链
