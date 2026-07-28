@@ -55,8 +55,8 @@ namespace ZipperInfo
                 ShowZipperLenght = CZipperCommunicate.GetZipperLenght();
                 AutoData[0].ShowZipperLenght = ShowZipperLenght;
                 AutoData[1].ShowZipperLenght = ShowZipperLenght;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.AutoData = AutoData[1];
                 QuekouLenght = AutoData[0].QuekouLenght;
                 if (AutoData[0].LinghtValueInfos.Count==0)
                 {
@@ -77,7 +77,7 @@ namespace ZipperInfo
         void SendPoints(object win)
         {
 
-            CZipperAutomaticAlgorithm.AutoLogger.Info($"开始识别,设置拉链长度{AutoData[0].ZipperLenght}");
+            CZipperAutomaticAlgorithm.Instance.AutoLogger.Info($"开始识别,设置拉链长度{AutoData[0].ZipperLenght}");
             //写入拉链长度
             // CZipperCommunicate.ClearWarn();
             CZipperCommunicate.SendZipperLenght(AutoData[0].ZipperLenght);
@@ -101,12 +101,12 @@ namespace ZipperInfo
                     int endposIndex = firstIndex - 1;
                     if (endposIndex >= 0)
                     {
-                        CZipperAutomaticAlgorithm.EndPosTemp = points[endposIndex];
+                        CZipperAutomaticAlgorithm.Instance.EndPosTemp = points[endposIndex];
                     }
                 }
                 else
                 {
-                    CZipperAutomaticAlgorithm.EndPosTemp = points.Last();
+                    CZipperAutomaticAlgorithm.Instance.EndPosTemp = points.Last();
                 }
 
 
@@ -114,7 +114,7 @@ namespace ZipperInfo
             }
             stringBuilder.Append($",切断时已经拍了{cutoffIndex}张照片");
             stringBuilder.Append($",切断时,切刀到相机有{zipperCacheCount}条拉链已经拍完照片");
-            CZipperAutomaticAlgorithm.AutoLogger.Info(stringBuilder.ToString());
+            CZipperAutomaticAlgorithm.Instance.AutoLogger.Info(stringBuilder.ToString());
             stringBuilder.Clear();
             if (points != null && points.Count > 0)
             {
@@ -128,69 +128,69 @@ namespace ZipperInfo
                 Thread.Sleep(100);
                 startAutoTest = true;
                // CZipperCommunicate.AixtContinue(false);
-                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
 
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperDownmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperUpmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullsImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.TriggerType = triggerType;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Instance.Cloth_Stage1_OK = false;
                // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
-                CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
-                CZipperAutomaticAlgorithm.Puller_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Pulls_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Puller_Stage2_OK = false;
-                CZipperAutomaticAlgorithm.Pulls_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Instance.AutoSettingTimeoutCount = 0;
+                CZipperAutomaticAlgorithm.Instance.Puller_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Instance.Pulls_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Instance.Puller_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Instance.Pulls_Stage2_OK = false;
 
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.AutoData = AutoData[1];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.CutoffIndex = cutoffIndex_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType = triggerType_2;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperDownmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperUpmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullsImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCX = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperPullerCY = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData2.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.Cloth_Stage2_OK = false;
-                CZipperAutomaticAlgorithm.UpMass_Stage2_OK = false;
-                CZipperAutomaticAlgorithm.TestFinsh = false;
-                CZipperAutomaticAlgorithm.onWichStage = 1;
-                CZipperAutomaticAlgorithm.findPuller = false;
-                CZipperAutomaticAlgorithm.findPulls = false;
-                CZipperAutomaticAlgorithm.findLogo = false;
-                CZipperAutomaticAlgorithm.findUpMass = false;
-                CZipperAutomaticAlgorithm.findDownMass = false;
-                CZipperAutomaticAlgorithm.findlianya = false;
-                CZipperAutomaticAlgorithm.findUpMassCount = 0;
-                CZipperAutomaticAlgorithm.findDownMassCount = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.AutoData = AutoData[1];
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperTriggerPos = points_2;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.CutoffIndex = cutoffIndex_2;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.HandAndTaliPos = handandtalipoints_2;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.TriggerType = triggerType_2;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Instance.Cloth_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Instance.Cloth_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Instance.UpMass_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Instance.TestFinsh = false;
+                CZipperAutomaticAlgorithm.Instance.onWichStage = 1;
+                CZipperAutomaticAlgorithm.Instance.findPuller = false;
+                CZipperAutomaticAlgorithm.Instance.findPulls = false;
+                CZipperAutomaticAlgorithm.Instance.findLogo = false;
+                CZipperAutomaticAlgorithm.Instance.findUpMass = false;
+                CZipperAutomaticAlgorithm.Instance.findDownMass = false;
+                CZipperAutomaticAlgorithm.Instance.findlianya = false;
+                CZipperAutomaticAlgorithm.Instance.findUpMassCount = 0;
+                CZipperAutomaticAlgorithm.Instance.findDownMassCount = 0;
                 //CZipperAutomaticAlgorithm.tempLightValue_zuo_change1 = 0;
                 //CZipperAutomaticAlgorithm.tempLightValue_zuo_change2 = 0;
                 //CZipperAutomaticAlgorithm.tempLightValue_you_change1 = 0;
                 //CZipperAutomaticAlgorithm.tempLightValue_you_change2 = 0;
                 //CZipperAutomaticAlgorithm.zuo_lightOK = false;
                 //CZipperAutomaticAlgorithm.you_lightOK = false;
-                CZipperAutomaticAlgorithm.findLogosidertype[0] = false;
-                CZipperAutomaticAlgorithm.findLogosidertype[1] = false;
-                CZipperAutomaticAlgorithm.findPullerCount = 0;
-                CZipperAutomaticAlgorithm.findPullsCount = 0;
+                CZipperAutomaticAlgorithm.Instance.findLogosidertype[0] = false;
+                CZipperAutomaticAlgorithm.Instance.findLogosidertype[1] = false;
+                CZipperAutomaticAlgorithm.Instance.findPullerCount = 0;
+                CZipperAutomaticAlgorithm.Instance.findPullsCount = 0;
                 //CZipperCommunicate.SendHelianStastPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
                 //CZipperCommunicate.SendHelianEndPos(AutoData[0].ZipperLenght - AutoData[0].QuekouLenght * 10);
-                CZipperAutomaticAlgorithm.AutoSettingPosFinsh = false;
-                CZipperAutomaticAlgorithm.startTriggerCount = 0;
-                CZipperAutomaticAlgorithm.onWichStage2 = 1;
+                CZipperAutomaticAlgorithm.Instance.AutoSettingPosFinsh = false;
+                CZipperAutomaticAlgorithm.Instance.startTriggerCount = 0;
+                CZipperAutomaticAlgorithm.Instance.onWichStage2 = 1;
 
                 //将光源值先减小到较状态
                 try
@@ -253,25 +253,25 @@ namespace ZipperInfo
                 //计算拉链触发点位 ID改变位置
                 CZipperCommunicate.SendPoints(points, handandtalipoints, cutoffIndex, zipperCacheCount);
 
-                CZipperAutomaticAlgorithm.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.ShowZipperLenght = AutoData[0].ShowZipperLenght;
 
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData = AutoData[0];
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos = points;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.TriggerType = triggerType;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperDownmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperUpmssImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullsImg = null;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCX = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperPullerCY = 0;
-                CZipperAutomaticAlgorithm.ZipperInfo.TempData1.FindLogoSider = 0;
-                CZipperAutomaticAlgorithm.Cloth_Stage1_OK = false;
-                CZipperAutomaticAlgorithm.UpMass_Stage2_OK = false;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData = AutoData[0];
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperTriggerPos = points;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperImagesCount = points.Count;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.CutoffIndex = cutoffIndex;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.HandAndTaliPos = handandtalipoints;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.TriggerType = triggerType;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperDownmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperUpmssImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullsImg = null;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCX = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCY = 0;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.FindLogoSider = 0;
+                CZipperAutomaticAlgorithm.Instance.Cloth_Stage1_OK = false;
+                CZipperAutomaticAlgorithm.Instance.UpMass_Stage2_OK = false;
                 // CZipperAutomaticAlgorithm.Station1_Stage2_OK = false;
-                CZipperAutomaticAlgorithm.AutoSettingTimeoutCount = 0;
+                CZipperAutomaticAlgorithm.Instance.AutoSettingTimeoutCount = 0;
                 SaveParameter(AutoData);
             }
         }

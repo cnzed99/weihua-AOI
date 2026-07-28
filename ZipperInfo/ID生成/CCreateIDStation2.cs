@@ -39,15 +39,15 @@ namespace ZipperInfo
                             Idlist.Clear();
                             TempPullPos = ipullpos;
                             float fpullpos = ipullpos;
-                            for (int i = 0; i < CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos.Count; i++)
+                            for (int i = 0; i < CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperTriggerPos.Count; i++)
                             {
-                                copyPos.Add(CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos[i]);
+                                copyPos.Add(CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperTriggerPos[i]);
                             }
                             copyPos.Add(fpullpos);
                             copyPos.Sort();
-                            if (CZipperAutomaticAlgorithm.ZipperInfo.TempData2.TriggerType == 3)
+                            if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.TriggerType == 3)
                             {
-                                float handpos = CZipperAutomaticAlgorithm.ZipperInfo.TempData2.HandAndTaliPos[0];
+                                float handpos = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.HandAndTaliPos[0];
                                 int handIndex = copyPos.IndexOf(handpos);
 
                                 List<float> taskpos = copyPos.Take(handIndex).ToList(); //头
@@ -60,7 +60,7 @@ namespace ZipperInfo
                             {
                                 pullIndex = copyPos.IndexOf(fpullpos);
                             }
-                            for (int i = 1; i <= CZipperAutomaticAlgorithm.ZipperInfo.TempData2.ZipperTriggerPos.Count; i++)
+                            for (int i = 1; i <= CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData2.ZipperTriggerPos.Count; i++)
                             {
                                 Idlist.Add(i);
                             }

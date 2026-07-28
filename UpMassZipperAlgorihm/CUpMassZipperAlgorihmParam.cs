@@ -40,6 +40,7 @@ namespace UpMassZipperAlgorihm
 
 
         }
+
         /// <summary>
         /// 上止检测对象
         /// </summary>
@@ -78,6 +79,33 @@ namespace UpMassZipperAlgorihm
                 return 0;
             };
         }
+
+
+        /// <summary>
+        /// 上止上牙的H值
+        /// </summary>
+        float OfflineUpMass_1_MeanH;
+        /// <summary>
+        /// 上止上牙的S值
+        /// </summary>
+        float OfflineUpMass_1_MeanS;
+        /// <summary>
+        /// 上止上牙的V值
+        /// </summary>
+        float OfflineUpMass_1_MeanV;
+
+        /// <summary>
+        /// 上止下牙的H值
+        /// </summary>
+        float OfflineUpMass_2_MeanH;
+        /// <summary>
+        /// 上止下牙的S值
+        /// </summary>
+        float OfflineUpMass_2_MeanS;
+        /// <summary>
+        /// 上止下牙的V值
+        /// </summary>
+        float OfflineUpMass_2_MeanV;
 
         protected void SetDefectRecipe(string user)
         {
@@ -268,24 +296,17 @@ namespace UpMassZipperAlgorihm
                         ObbData yamaxxObb0 = lianciiorg0.Find(c => c.box.Center.X == liancimaxx0); //链齿最右边的牙
                         Point2f[] yaPoints0 = yamaxxObb0.box.Points(); //牙
                         float yaminy0 = yaPoints0.Min(p => p.Y); // 牙最高点
-                        float shangSub0 = Math.Abs(upminy0 - yaminy0);
+                        float shangSub0 = yaminy0-upminy0;
                         CoordRestoreData shangdisData = new CoordRestoreData("上牙平齐", shangSub0);
                         dets.Add(shangdisData);
 
                         Mat uppatch = GetRoatImage(shangzhiorg[0], img);
-                        Mat liancipatch = GetRoatImage(yamaxxObb0, img);
-                        var sub0 = GetHsvSub(uppatch, liancipatch);
-                        float HvalueSub0 = sub0.Item1;
-                        float SvalueSub0 = sub0.Item2;
-                        float VvalueSub0 = sub0.Item3;
-                        CoordRestoreData colorDataH = new CoordRestoreData("上牙色差H", HvalueSub0);
-                        dets.Add(colorDataH);
-                        CoordRestoreData colorDataS = new CoordRestoreData("上牙色差S", SvalueSub0);
-                        dets.Add(colorDataS);
-                        CoordRestoreData colorDataV = new CoordRestoreData("上牙色差V", VvalueSub0);
-                        dets.Add(colorDataV);
-
-
+                        Mat hsvImage = new Mat();
+                        Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
+                        Scalar hsvMean0 = Cv2.Mean(hsvImage);
+                        float Hvalue0 = (float)hsvMean0.Val0;
+                        float Svalue0 = (float)hsvMean0.Val1;
+                        float Vvalue0 = (float)hsvMean0.Val2;
 
                         Point2f[] upPoints1 = shangzhiorg[1].box.Points();
                         float upmaxy1 = upPoints1.Max(p => p.Y); // 上止最底点
@@ -295,16 +316,67 @@ namespace UpMassZipperAlgorihm
                         ObbData yamaxxObb1 = lianciiorg1.Find(c => c.box.Center.X == liancimaxx1); //链齿最右边的牙
                         Point2f[] yaPoints1 = yamaxxObb1.box.Points(); //牙
                         float yamaxy1 = yaPoints1.Max(p => p.Y); // 牙最高点
-                        float xiaSub = Math.Abs(upmaxy1 - yamaxy1);
+                        float xiaSub = upmaxy1 - yamaxy1;
 
                         CoordRestoreData xiadisData = new CoordRestoreData("下牙平齐", xiaSub);
                         dets.Add(xiadisData);
                         Mat uppatch1 = GetRoatImage(shangzhiorg[1], img);
-                        Mat liancipatch1 = GetRoatImage(yamaxxObb1, img);
-                        var sub1 = GetHsvSub(uppatch1, liancipatch1);
-                        float HvalueSub1 = sub1.Item1;
-                        float SvalueSub1 = sub1.Item2;
-                        float VvalueSub1 = sub1.Item3;
+                        Mat hsvImage1 = new Mat();
+                        Cv2.CvtColor(uppatch1, hsvImage1, ColorConversionCodes.BGR2HSV);
+                        Scalar hsvMean1 = Cv2.Mean(hsvImage1);
+                        float Hvalue1 = (float)hsvMean1.Val0;
+                        float Svalue1 = (float)hsvMean1.Val1;
+                        float Vvalue1 = (float)hsvMean1.Val2;
+
+                        float HvalueSub0 = 255;
+                        float SvalueSub0 = 255;
+                        float VvalueSub0 = 255;
+                        float HvalueSub1 = 255;
+                        float SvalueSub1 = 255;
+                        float VvalueSub1 = 255;
+
+                        if (paramClass.OffLinePullerTemplateEnabel)
+                        {
+                            paramClass.OffLinePullerTemplateEnabel = false;
+
+                            OfflineUpMass_1_MeanH = Hvalue0;
+                            OfflineUpMass_1_MeanS = Svalue0;
+                            OfflineUpMass_1_MeanV = Vvalue0;
+
+                            OfflineUpMass_2_MeanH = Hvalue1;
+                            OfflineUpMass_2_MeanS = Svalue1;
+                            OfflineUpMass_2_MeanV = Vvalue1;
+
+                        }
+
+                        if (cell.ImageFile == "")//在线
+                        {
+                            HvalueSub0 = Math.Abs(cell.UpMass_1_MeanH - Hvalue0);
+                            SvalueSub0 = Math.Abs(cell.UpMass_1_MeanS - Svalue0);
+                            VvalueSub0 = Math.Abs(cell.UpMass_1_MeanV - Vvalue0);
+
+                            HvalueSub1 = Math.Abs(cell.UpMass_2_MeanH - Hvalue1);
+                            SvalueSub1 = Math.Abs(cell.UpMass_2_MeanS - Svalue1);
+                            VvalueSub1 = Math.Abs(cell.UpMass_2_MeanV - Vvalue1);
+                        }
+                        else
+                        {
+                            HvalueSub0 = Math.Abs(OfflineUpMass_1_MeanH - Hvalue0);
+                            SvalueSub0 = Math.Abs(OfflineUpMass_1_MeanS - Svalue0);
+                            VvalueSub0 = Math.Abs(OfflineUpMass_1_MeanV - Vvalue0);
+
+                            HvalueSub1 = Math.Abs(OfflineUpMass_2_MeanH - Hvalue1);
+                            SvalueSub1 = Math.Abs(OfflineUpMass_2_MeanS - Svalue1);
+                            VvalueSub1 = Math.Abs(OfflineUpMass_2_MeanV - Vvalue1);
+                        }
+
+                        CoordRestoreData colorDataH = new CoordRestoreData("上牙色差H", HvalueSub0);
+                        dets.Add(colorDataH);
+                        CoordRestoreData colorDataS = new CoordRestoreData("上牙色差S", SvalueSub0);
+                        dets.Add(colorDataS);
+                        CoordRestoreData colorDataV = new CoordRestoreData("上牙色差V", VvalueSub0);
+                        dets.Add(colorDataV);
+
                         CoordRestoreData colorDataH1 = new CoordRestoreData("下牙色差H", HvalueSub1);
                         dets.Add(colorDataH1);
                         CoordRestoreData colorDataS1 = new CoordRestoreData("下牙色差S", SvalueSub1);
@@ -794,6 +866,12 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         /// </summary>
         [ObservableProperty]
         private float nms = 0.5f;
+
+        [ObservableProperty]
+        [property: Category("离线设置模板")]
+        [property: DisplayName("01 离线设置拉片外形模版开关")]
+        [property: Description("离线设置拉片模版开关")]
+        bool offLinePullerTemplateEnabel;
 
     }
 

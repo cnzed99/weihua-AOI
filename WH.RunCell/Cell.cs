@@ -1,4 +1,6 @@
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using HalconDotNet;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.RightsManagement;
@@ -7,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WH.Entity.Attribute;
 using WH.RecipeCellRootBase;
-using HalconDotNet;
 
 namespace WH.RunCell
 {
@@ -210,6 +211,36 @@ namespace WH.RunCell
         /// 存截图编号，指定哪个编号的小图要存下来
         /// </summary>
         public List<(int,int)> SaveCutImagesIndex = new List<(int,int)>();
+
+        /// <summary>
+        /// 上止上牙的H值
+        /// </summary>
+      public  float UpMass_1_MeanH {  get; set; }
+        /// <summary>
+        /// 上止上牙的S值
+        /// </summary>
+       public float UpMass_1_MeanS {  get; set; }
+        /// <summary>
+        /// 上止上牙的V值
+        /// </summary>
+       public float UpMass_1_MeanV { get; set; }
+
+        /// <summary>
+        /// 上止下牙的H值
+        /// </summary>
+      public  float UpMass_2_MeanH {  get; set; }
+        /// <summary>
+        /// 上止下牙的S值
+        /// </summary>
+      public  float UpMass_2_MeanS {  get; set; }
+        /// <summary>
+        /// 上止下牙的V值
+        /// </summary>
+      public  float UpMass_2_MeanV { get; set; }
+
+
+
+
 
         /// <summary>
         /// 接收信息字典
@@ -465,6 +496,7 @@ namespace WH.RunCell
         public override Cell Clone()
         {
             Cell cell = base.Clone();
+            cell.ChangleImgae= (CImage)this.ChangleImgae?.Clone();
             cell.DefectType = this.DefectType;
             cell.ID = this.ID;
             cell.IsOK = this.IsOK;

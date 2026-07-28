@@ -82,9 +82,9 @@ namespace ZipperInfo
             set
             {
                 zipperToothType = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
 
             }
@@ -106,9 +106,9 @@ namespace ZipperInfo
             set
             {
                 zipperSliderType = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
             }
         }
@@ -128,9 +128,9 @@ namespace ZipperInfo
             set
             {
                 zipperUpMassType = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
             }
         }
@@ -152,9 +152,9 @@ namespace ZipperInfo
             set
             {
                 zipperDownMassType = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
             }
         }
@@ -174,9 +174,9 @@ namespace ZipperInfo
             set
             {
                 zipperLogoType = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
             }
         }
@@ -191,9 +191,9 @@ namespace ZipperInfo
             set
             {
                 whiteZippers = value;
-                if (CZipperAutomaticAlgorithm.TestFinsh)
+                if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                 {
-                    CZipperAutomaticAlgorithm.TestFinshEven?.Invoke(true);
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven?.Invoke(true);
                 }
             }
         }
@@ -385,6 +385,40 @@ namespace ZipperInfo
         /// 拉头有无SAB
         /// </summary>
         public HAVESAB PullerHaveSAB { get; set; } = HAVESAB.有SAB;
+
+        /// <summary>
+        /// 上止上牙的H值
+        /// </summary>
+        [ObservableProperty]
+        float upMass_1_MeanH;
+        /// <summary>
+        /// 上止上牙的S值
+        /// </summary>
+
+        [ObservableProperty]
+        float upMass_1_MeanS;
+        /// <summary>
+        /// 上止上牙的V值
+        /// </summary>
+        [ObservableProperty]
+        float upMass_1_MeanV;
+
+        /// <summary>
+        /// 上止下牙的H值
+        /// </summary>
+        [ObservableProperty]
+        float upMass_2_MeanH;
+        /// <summary>
+        /// 上止下牙的S值
+        /// </summary>
+
+        [ObservableProperty]
+        float upMass_2_MeanS;
+        /// <summary>
+        /// 上止下牙的V值
+        /// </summary>
+        [ObservableProperty]
+        float upMass_2_MeanV;
 
     }
 

@@ -1,4 +1,5 @@
 ﻿using HalconDotNet;
+using Newtonsoft.Json.Linq;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using OpenVinoSharp.Extensions.result;
@@ -26,18 +27,18 @@ namespace ZipperInfo
         /// 2025.7.2 鲍赞宝
         /// UI线程调度器，MainWindow
         /// </summary>
-        public static Dispatcher Dispatcher { get; set; }
-        public static CZipperInfo ZipperInfo { get; set; } = new CZipperInfo();
+        public Dispatcher Dispatcher { get; set; }
+        public CZipperInfo ZipperInfo { get; set; } = new CZipperInfo();
         /// <summary>
         /// 2025.7.2 鲍赞宝
         /// 处在哪个阶段
         /// </summary>
-        public static int onWichStage = 0;
+        public int onWichStage = 0;
         /// <summary>
         /// 2025.7.2 鲍赞宝
         /// 自动识别结束
         /// </summary>
-        public static bool TestFinsh = false;
+        public bool TestFinsh = false;
         /// <summary>
         /// 2025.7.2 鲍赞宝
         /// 识别模型对象
@@ -55,7 +56,7 @@ namespace ZipperInfo
         /// <summary>
         /// 拉片分割模型
         /// </summary>
-        IVisionModel WH_UpStopMassDefe_det;
+        IVisionModel WH_UpStopMassDefe_obb;
 
         /// <summary>
         /// 2025.7.2 鲍赞宝
@@ -99,25 +100,25 @@ namespace ZipperInfo
         /// 2025.7.2 鲍赞宝
         /// 自动识别模块日志
         /// </summary>
-        public static CLogRec AutoLogger { get; set; } = CLogRec.Create("Auto", "D:/Data");
+        public CLogRec AutoLogger { get; set; } = CLogRec.Create("Auto", "D:/Data");
 
         //CLightControlBase LightCtl_Zuo = null;
         //CLightControlBase LightCtl_You = null;
 
-        public static bool findPulls = false;//检测到拉片
-        public static bool findPuller = false; //检测到拉头
-        public static bool findLogo = false; //检测到Logo
+        public bool findPulls = false;//检测到拉片
+        public bool findPuller = false; //检测到拉头
+        public bool findLogo = false; //检测到Logo
 
-        public static bool findDownMass = false;//检测到下止
-        public static bool findUpMass = false; //检测到上止
+        public bool findDownMass = false;//检测到下止
+        public bool findUpMass = false; //检测到上止
 
-        public static bool findlianya = false;
+        public bool findlianya = false;
 
-        public static int findDownMassCount = 0;//检测到下止
-        public static int findUpMassCount = 0; //检测到上止
+        public int findDownMassCount = 0;//检测到下止
+        public int findUpMassCount = 0; //检测到上止
 
-        public static int findPullerCount = 0; //识别到拉头的次数
-        public static int findPullsCount = 0; //识别到拉片的次数
+        public int findPullerCount = 0; //识别到拉头的次数
+        public int findPullsCount = 0; //识别到拉片的次数
 
         //public static int tempLightValue_zuo_change1 = 0;
         //public static int tempLightValue_zuo_change2 = 0;
@@ -125,20 +126,20 @@ namespace ZipperInfo
         //public static int tempLightValue_you_change2 = 0;
 
 
-        public static bool Cloth_Stage1_OK = false; //布带工位识别1OK
-                                                    // public static bool Station2_Stage1_OK = false;
+        public bool Cloth_Stage1_OK = false; //布带工位识别1OK
+                                             // public static bool Station2_Stage1_OK = false;
 
-        public static bool Cloth_Stage2_OK = false;//布带工位识别2OK
-        public static bool UpMass_Stage2_OK = false; //上止工位识别2OK
+        public bool Cloth_Stage2_OK = false;//布带工位识别2OK
+        public bool UpMass_Stage2_OK = false; //上止工位识别2OK
 
-        public static bool Pulls_Stage1_OK = false; //拉片识别1OK
-        public static bool Puller_Stage1_OK = false; //拉头识别1OK
+        public bool Pulls_Stage1_OK = false; //拉片识别1OK
+        public bool Puller_Stage1_OK = false; //拉头识别1OK
 
-        public static bool Pulls_Stage2_OK = false; //拉片识别2OK
-        public static bool Puller_Stage2_OK = false; //拉头识别2OK
+        public bool Pulls_Stage2_OK = false; //拉片识别2OK
+        public bool Puller_Stage2_OK = false; //拉头识别2OK
 
-        public static bool[] findLogosidertype = new bool[2];  //0拉头  1拉片
-        public static int startTriggerCount = 0;
+        public bool[] findLogosidertype = new bool[2];  //0拉头  1拉片
+        public int startTriggerCount = 0;
 
         /// <summary>
         /// 工位1光源控制
@@ -161,12 +162,12 @@ namespace ZipperInfo
         /// <summary>
         /// 自动识别完成事件
         /// </summary>
-        public static Action<bool> TestFinshEven;
+        public Action<bool> TestFinshEven;
         /// <summary>
         /// 拉链信息改变事件
         /// </summary>
-       // public static Action ZipperInfoChangeEven;
-
+        // public static Action ZipperInfoChangeEven;
+        string UpMassOrgImagesPath = ".\\AlgorithmPlug\\UpMassZipperAlgorihm\\Models\\UpStopMassImages";
         public void IniAutomaticAlgorithm()
         {
             string SearchmodelDirPath = ".\\AlgorithmPlug\\MetalZipperAlgorihm\\Models\\BigDetModel\\";
@@ -180,6 +181,8 @@ namespace ZipperInfo
             string upmassmodelDirPath = ".\\AlgorithmPlug\\UpMassZipperAlgorihm\\Models\\UpStopMassModel";
             string upmasstxtpath;
             string upmassmodelpath = "";
+
+
 
             //string SearchmodelDirPath2 = ".\\AlgorithmPlug\\ZipperTestAlgorihm2\\Models\\Pull\\PullSearch";
             //string Searchtxtpath2;
@@ -290,7 +293,7 @@ namespace ZipperInfo
             //Cv2.CvtColor(mat, img, ColorConversionCodes.BGR2RGB);
             // img.ImWrite($"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
             //相机采集图片
-             onWichStage = 2;
+            onWichStage = 2;
             Mat img = new Mat();
             Cv2.CvtColor(orgimg, img, ColorConversionCodes.BGR2RGB);
             //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
@@ -321,10 +324,10 @@ namespace ZipperInfo
                         HOperatorSet.ReadImage(out CameraImage, cell.ImageFile);
                     }
                     ZipperLightHelper.Instance.ZipperLightDetection(CameraImage, 10, 0.7,
-                        CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.ZipperMinBgMean,
-                        CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.ZipperMaxBgMean,
-                        CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.ZipperMinMean,
-                        CZipperAutomaticAlgorithm.ZipperInfo.TempData1.AutoData.ZipperMaxMean,
+                        CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.ZipperMinBgMean,
+                        CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.ZipperMaxBgMean,
+                        CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.ZipperMinMean,
+                        CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.ZipperMaxMean,
                         out var hv_VState, out var hv_VStride, out bool isWhiteZipper);
                     //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{hv_VState}_{hv_VStride}_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
                     //ProgressBarViewModel.AutoMessage = "正在识别拉链颜色...";
@@ -540,15 +543,68 @@ namespace ZipperInfo
                 if (cell.CamName == "右相机" && !Cloth_Stage2_OK)
                 {
                     startTriggerCount++;
-                    var selectColor = ZipperInfo.TempData1.AutoData.LinghtValueInfos.Where(c => c.IsSelected).FirstOrDefault();
+                    LinghtValueInfo selectColor = ZipperInfo?.TempData1?.AutoData?.LinghtValueInfos?
+                  .FirstOrDefault(c => c != null && c.IsSelected);
                     int linghtvalue = selectColor?.ClothLinghtValue ?? 35;
                     int UpMassLinghtValue = selectColor?.UpMassLinghtValue ?? 255;
+                    string colorname = selectColor?.ColorName ?? string.Empty;
                     LightChange.ChangeLineValue2(linghtvalue);
                     LightChange_UpMass.ChangeLineValue2(UpMassLinghtValue);
                     ZipperInfo.ZipperUpMassType = STOPMASS.金属;
                     ZipperInfo.ZipperDownMassType = STOPMASS.金属;
                     if (startTriggerCount > 3)
                     {
+                        #region 上止色差
+                        if (colorname != string.Empty)
+                        {
+                            string[] upPatterns = { "*.png", "*.bmp", "*.jpg" };
+                            List<string> files = upPatterns
+                            .SelectMany(pattern => Directory.GetFiles(UpMassOrgImagesPath, pattern))
+                            .ToList();
+                            int fileindex = 0;
+                            for (int i = 0; i < files.Count; i++)
+                            {
+                                if (files[i].Contains(colorname))
+                                {
+                                    fileindex = i;
+                                    break;
+                                }
+                            }
+                            Mat upimg = Cv2.ImRead(files[fileindex]);
+                            ObbResult upResult = WH_UpStopMassDefe_obb.Predict(upimg) as ObbResult;
+                            if (upResult != null && upResult.datas.Count > 0) //如果有大缺陷直接退出
+                            {
+                                string shangzhiIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("上止")).ToString();
+                                List<ObbData> shangzhiorg = upResult.datas.FindAll(c => c.lable == shangzhiIndexstr).ToList(); //上止
+                                if (shangzhiorg.Count == 2)
+                                {
+                                    shangzhiorg.Sort((a, b) => a.box.Center.Y.CompareTo(b.box.Center.Y)); //按Y坐标排序
+                                    Mat uppatch = GetRoatImage(shangzhiorg[0], img); //上牙
+                                    Mat hsvImage = new Mat();
+                                    Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
+                                    Scalar hsvMean0 = Cv2.Mean(hsvImage);
+                                    float Hvalue0 = (float)hsvMean0.Val0;
+                                    float Svalue0 = (float)hsvMean0.Val1;
+                                    float Vvalue0 = (float)hsvMean0.Val2;
+                                    ZipperInfo.TempData1.UpMass_1_MeanH = Hvalue0;
+                                    ZipperInfo.TempData1.UpMass_1_MeanS = Svalue0;
+                                    ZipperInfo.TempData1.UpMass_1_MeanV = Vvalue0;
+
+                                    Mat uppatch1 = GetRoatImage(shangzhiorg[1], img); //下牙
+                                    Mat hsvImage1 = new Mat();
+                                    Cv2.CvtColor(uppatch1, hsvImage1, ColorConversionCodes.BGR2HSV); 
+                                    Scalar hsvMean1 = Cv2.Mean(hsvImage1);
+                                    float Hvalue1 = (float)hsvMean1.Val0;
+                                    float Svalue1 = (float)hsvMean1.Val1;
+                                    float Vvalue1 = (float)hsvMean1.Val2;
+                                    ZipperInfo.TempData1.UpMass_2_MeanH = Hvalue1;
+                                    ZipperInfo.TempData1.UpMass_2_MeanS = Svalue1;
+                                    ZipperInfo.TempData1.UpMass_2_MeanV = Vvalue1;
+
+                                }
+                            }
+                        }
+                        #endregion
                         Dispatcher.Invoke(() =>
                         {
                             ZipperInfo.TempData1.ZipperDownmssImg = cell.Image?.ToBitmapSource().Clone();
@@ -556,166 +612,127 @@ namespace ZipperInfo
 
                         Cloth_Stage2_OK = true;
                         startTriggerCount = 0;
-                    }
-
-
-                }
-                if (cell.CamName == "拉片相机" && !Pulls_Stage2_OK)
-                {
-                    HObject ho_Image = new HObject();
-                    if (cell.ImageFile == "")
-                    {
-                        HOperatorSet.GenImageInterleaved(out ho_Image,
-                            cell.Image.ImageData,
-                            "rgb",
-                            cell.Image.ImageWidth,
-                            cell.Image.ImageHeight,
-                            -1,
-                            "byte",
-                            0,
-                            0,
-                            0,
-                            0,
-                            -1,
-                            0
-                            );
-                    }
-                    else
-                    {
-                        HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
-                    }
-                    GetContoursAndHSV(ho_Image, out double[] ho_Rectangle, out Point[] PullPoints, out Point[] HolesPoints,
-                        out float Hvalue, out float Svalue, out float Vvalue,
-                        out HTuple ModelID_logo, out HTuple recRow1, out HTuple recCol1,
-                        out HTuple recRow2, out HTuple recCol2,
-                        out HTuple modelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef, out HTuple pullArea);
-                    ZipperInfo.TempData1.OrgContours = PullPoints;
-                    ZipperInfo.TempData1.HoleOrgContours = HolesPoints;
-                    ZipperInfo.TempData1.PullsMeanH = Hvalue;
-                    ZipperInfo.TempData1.PullsMeanS = Svalue;
-                    ZipperInfo.TempData1.PullsMeanV = Vvalue;
-                    ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
-                    ZipperInfo.TempData1.PullModelRow = hv_RowRef.D;
-                    ZipperInfo.TempData1.PullModelCol = hv_ColumnRef.D;
-                    ZipperInfo.TempData1.BackRectangle = ho_Rectangle;
-                    ZipperInfo.TempData1.PullSegOrgArea = pullArea;
-                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Lapian-{LightChange_Pulls.TempLightValue_Change1}.png");
-                    if (ModelID_logo.Length > 0)
-                    {
-                        ZipperInfo.TempData1.ModelID_Logo = ModelID_logo;
-                        ZipperInfo.ZipperLogoType = "有LOGO";
-                        if (recRow1.D != 0 && recCol1.D != 0)
-                        {
-                            int px = recCol1;
-                            int py = recRow1;
-                            int rew = (recCol2 - recCol1);
-                            int reh = (recRow2 - recRow1);
-                            Mat logoCutimg = img[new Rect(px, py, rew, reh)];
-                            Dispatcher.Invoke(() =>
-                            {
-                                ZipperInfo.TempData1.ZipperLogoImg = MatConverter.Mat2BitmapSource(logoCutimg);
-                            });
-                        }
 
                     }
-                    else
-                    {
-                        ZipperInfo.TempData1.ModelID_Logo = null;
-                        ZipperInfo.ZipperLogoType = "无LOGO";
-                        Dispatcher.Invoke(() =>
-                        {
-                            ZipperInfo.TempData1.ZipperLogoImg = null;
-                        });
-
-                    }
-                    if (modelID_pull.Length > 0)
-                    {
-                        ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
-                    }
-
-                    Pulls_Stage2_OK = true;
-
-                }
-                if (cell.CamName == "拉头相机" && !Puller_Stage2_OK)
-                {
-                    DetResult pullResult = WH_Logo_Pull_det.Predict(img) as DetResult;
-                    for (int j = 0; j < pullResult.count; j++)
-                    {
-                        int pulllabelindex = int.Parse(pullResult[j].lable);
-                        string pullabelname = de_Logo_pull_names[pulllabelindex];
-                        if (pullabelname.Contains("SAB"))
-                        {
-                            ZipperInfo.TempData1.PullerHaveSAB= HAVESAB.有SAB;
-                        }
-                        else
-                        {
-                            ZipperInfo.TempData1.PullerHaveSAB = HAVESAB.无SAB;
-                        }
-                    }
-                    GetPullerHSV(cell, out float Hvalue, out float Svalue, out float Vvalue);
-                    ZipperInfo.TempData1.PullerMeanH = Hvalue;
-                    ZipperInfo.TempData1.PullerMeanS = Svalue;
-                    ZipperInfo.TempData1.PullerMeanV = Vvalue;
-                    Puller_Stage2_OK = true;
-                    img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Latou-{LightChange_Puller.TempLightValue_Change1}.png");
-                }
-                if (cell.CamName=="上止相机"&&Cloth_Stage2_OK&&!UpMass_Stage2_OK)
-                {
-                    var selectColor = ZipperInfo.TempData1.AutoData.LinghtValueInfos.Where(c => c.IsSelected).FirstOrDefault();
-                    string UpMassOrgImagesPath= ".\\AlgorithmPlug\\UpMassZipperAlgorihm\\Models\\UpStopMassImages";
-                    string[] upPatterns = { "*.png", "*.bmp", "*.jpg"};
-                    var files = upPatterns
-                    .SelectMany(pattern => Directory.GetFiles(UpMassOrgImagesPath, pattern))
-                    .ToList();
-
-                    string filepath = files.Where(c => c.Contains(selectColor?.ColorName.ToString())).FirstOrDefault();
-                    if (filepath != null && File.Exists(filepath))
-                    {
-                        Mat upimg = Cv2.ImRead(filepath);
-                        ObbResult upResult = WH_UpStopMassDefe_det.Predict(upimg) as ObbResult;
-
-                        if (upResult != null && upResult.datas.Count > 0) //如果有大缺陷直接退出
-                        {
-                            string shangzhiIndexstr = Array.FindIndex(upStopMassDefe_names, s => s.Contains("上止")).ToString();
-                            List<ObbData> shangzhiorg = upResult.datas.FindAll(c => c.lable == shangzhiIndexstr).ToList(); //上止
-                            if (shangzhiorg.Count == 2)
-                            {
-                                shangzhiorg.Sort((a, b) => a.box.Center.Y.CompareTo(b.box.Center.Y)); //按Y坐标排序
-                                Mat uppatch = GetRoatImage(shangzhiorg[0], img); //上牙
-                                Mat hsvImage = new Mat();
-                                Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
-                                Scalar sub0 = Cv2.Mean(hsvImage);
-                                Scalar hsvMean0 = Cv2.Mean(hsvImage);
-                                float Hvalue0 = (float)hsvMean0.Val0;
-                                float Svalue0= (float)hsvMean0.Val1;
-                                float Vvalue0 = (float)hsvMean0.Val2;
-
-
-                                Mat uppatch1 = GetRoatImage(shangzhiorg[1], img); //下牙
-                                Mat hsvImage1 = new Mat();
-                                Cv2.CvtColor(uppatch1, hsvImage1, ColorConversionCodes.BGR2HSV);
-                                Scalar sub1 = Cv2.Mean(hsvImage);
-                                Scalar hsvMean1 = Cv2.Mean(hsvImage1);
-                                float Hvalue1 = (float)hsvMean1.Val0;
-                                float Svalue1 = (float)hsvMean1.Val1;
-                                float Vvalue1 = (float)hsvMean1.Val2;
-
-                            }
-                        }
-                    }
-                }
-
-
-                if (Cloth_Stage2_OK && Pulls_Stage2_OK && Puller_Stage2_OK)
-                {
-                    ProgressBarViewModel.ProgressBarValue = 100;
-                    CZipperCommunicate.CamTriggerStop(); //停止拍照
-                    CLinghtManagement.SaveLightParams();
-                    Thread.Sleep(300);
-                    TestFinsh = true;
-                    ProgressBarViewModel.ProgressFinshEven?.Invoke();
                 }
             }
+            if (cell.CamName == "拉片相机" && !Pulls_Stage2_OK)
+            {
+                HObject ho_Image = new HObject();
+                if (cell.ImageFile == "")
+                {
+                    HOperatorSet.GenImageInterleaved(out ho_Image,
+                        cell.Image.ImageData,
+                        "rgb",
+                        cell.Image.ImageWidth,
+                        cell.Image.ImageHeight,
+                        -1,
+                        "byte",
+                        0,
+                        0,
+                        0,
+                        0,
+                        -1,
+                        0
+                        );
+                }
+                else
+                {
+                    HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+                }
+                GetContoursAndHSV(ho_Image, out double[] ho_Rectangle, out Point[] PullPoints, out Point[] HolesPoints,
+                    out float Hvalue, out float Svalue, out float Vvalue,
+                    out HTuple ModelID_logo, out HTuple recRow1, out HTuple recCol1,
+                    out HTuple recRow2, out HTuple recCol2,
+                    out HTuple modelID_pull, out HTuple hv_RowRef, out HTuple hv_ColumnRef, out HTuple pullArea);
+                ZipperInfo.TempData1.OrgContours = PullPoints;
+                ZipperInfo.TempData1.HoleOrgContours = HolesPoints;
+                ZipperInfo.TempData1.PullsMeanH = Hvalue;
+                ZipperInfo.TempData1.PullsMeanS = Svalue;
+                ZipperInfo.TempData1.PullsMeanV = Vvalue;
+                ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
+                ZipperInfo.TempData1.PullModelRow = hv_RowRef.D;
+                ZipperInfo.TempData1.PullModelCol = hv_ColumnRef.D;
+                ZipperInfo.TempData1.BackRectangle = ho_Rectangle;
+                ZipperInfo.TempData1.PullSegOrgArea = pullArea;
+                img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Lapian-{LightChange_Pulls.TempLightValue_Change1}.png");
+                if (ModelID_logo.Length > 0)
+                {
+                    ZipperInfo.TempData1.ModelID_Logo = ModelID_logo;
+                    ZipperInfo.ZipperLogoType = "有LOGO";
+                    if (recRow1.D != 0 && recCol1.D != 0)
+                    {
+                        int px = recCol1;
+                        int py = recRow1;
+                        int rew = (recCol2 - recCol1);
+                        int reh = (recRow2 - recRow1);
+                        Mat logoCutimg = img[new Rect(px, py, rew, reh)];
+
+                        int px2 = (int)ho_Rectangle[1];
+                        int py2 = (int)ho_Rectangle[0];
+                        int rew2 = (int)(ho_Rectangle[3] - ho_Rectangle[1]);
+                        int reh2 = (int)(ho_Rectangle[2] - ho_Rectangle[0]);
+                        Mat pullsCutimg = img[new Rect(px2, py2, rew2, reh2)];
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            ZipperInfo.TempData1.ZipperLogoImg = MatConverter.Mat2BitmapSource(logoCutimg);
+                            ZipperInfo.TempData1.ZipperPullsImg = MatConverter.Mat2BitmapSource(pullsCutimg);
+                        });
+                    }
+
+                }
+                else
+                {
+                    ZipperInfo.TempData1.ModelID_Logo = null;
+                    ZipperInfo.ZipperLogoType = "无LOGO";
+                    Dispatcher.Invoke(() =>
+                    {
+                        ZipperInfo.TempData1.ZipperLogoImg = null;
+                    });
+
+                }
+                if (modelID_pull.Length > 0)
+                {
+                    ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
+                }
+
+                Pulls_Stage2_OK = true;
+
+            }
+            if (cell.CamName == "拉头相机" && !Puller_Stage2_OK)
+            {
+                DetResult pullResult = WH_Logo_Pull_det.Predict(img) as DetResult;
+                for (int j = 0; j < pullResult.count; j++)
+                {
+                    int pulllabelindex = int.Parse(pullResult[j].lable);
+                    string pullabelname = de_Logo_pull_names[pulllabelindex];
+                    if (pullabelname.Contains("SAB"))
+                    {
+                        ZipperInfo.TempData1.PullerHaveSAB = HAVESAB.有SAB;
+                    }
+                    else
+                    {
+                        ZipperInfo.TempData1.PullerHaveSAB = HAVESAB.无SAB;
+                    }
+                }
+                GetPullerHSV(cell, out float Hvalue, out float Svalue, out float Vvalue);
+                ZipperInfo.TempData1.PullerMeanH = Hvalue;
+                ZipperInfo.TempData1.PullerMeanS = Svalue;
+                ZipperInfo.TempData1.PullerMeanV = Vvalue;
+                Puller_Stage2_OK = true;
+                img?.ImWrite($"D:\\LightValueImages\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}-Latou-{LightChange_Puller.TempLightValue_Change1}.png");
+            }
+            if (Cloth_Stage2_OK && Pulls_Stage2_OK && Puller_Stage2_OK)
+            {
+                ProgressBarViewModel.ProgressBarValue = 100;
+                CZipperCommunicate.CamTriggerStop(); //停止拍照
+                CLinghtManagement.SaveLightParams();
+                Thread.Sleep(300);
+                TestFinsh = true;
+                ProgressBarViewModel.ProgressFinshEven?.Invoke();
+            }
+
             img.Dispose();
         }
 
@@ -1558,17 +1575,17 @@ namespace ZipperInfo
         #endregion
 
         #region 自动调整拉链位置算法
-        public static int onWichStage2 = 0;
-        public static int DownmassAutoCount = 0;
-        public static int UpmassAutoCount = 0;
+        public int onWichStage2 = 0;
+        public int DownmassAutoCount = 0;
+        public int UpmassAutoCount = 0;
         List<double> downmassPoints = new List<double>();
         List<double> upmassPoints = new List<double>();
 
-        public static bool AutoSettingPosFinsh = false;
-        public static int UpmassAutoOK = 0;
-        public static int DownmassAutoOK = 0;
-        public static float EndPosTemp = 0;
-        public static int AutoSettingTimeoutCount = 0;
+        public bool AutoSettingPosFinsh = false;
+        public int UpmassAutoOK = 0;
+        public int DownmassAutoOK = 0;
+        public float EndPosTemp = 0;
+        public int AutoSettingTimeoutCount = 0;
         public void AutoSettingTriggerPos(Cell cell)
         {
             if (cell == null) return;
@@ -1759,7 +1776,7 @@ namespace ZipperInfo
         //  CurrentDevice, search_Categ_num2, Score2, Nms2, 480);
         //}
 
-        private void IniWH(string searchmodelpath, string pullmodelpath,string upmassmodelpath)
+        private void IniWH(string searchmodelpath, string pullmodelpath, string upmassmodelpath)
         {
             if (!File.Exists(searchmodelpath))
             {
@@ -1801,7 +1818,7 @@ namespace ZipperInfo
             int upmass_Categ_num = upStopMassDefe_names.Length;
             float upmassScore = 0.4f;
             float upNms = 0.5f;
-            WH_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upmassmodelpath, engineType,
+            WH_UpStopMassDefe_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upmassmodelpath, engineType,
 CurrentDevice, upmass_Categ_num, upmassScore, upNms, 512);
 
         }

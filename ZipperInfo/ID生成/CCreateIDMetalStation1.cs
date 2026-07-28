@@ -33,7 +33,7 @@ namespace ZipperInfo
                     {
                         TempproductID = productID;
                         Idlist.Clear();
-                        int count = CZipperAutomaticAlgorithm.ZipperInfo.TempData1.ZipperTriggerPos.Count;
+                        int count = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperTriggerPos.Count;
                         for (int i = 1; i <= count; i++)
                         {
                             Idlist.Add(i * 100); //100倍的ID用来区分高曝光和低曝光，1234为高曝光图片，100 200 300  400为低曝光图片

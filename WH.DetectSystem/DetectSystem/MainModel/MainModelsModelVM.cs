@@ -457,7 +457,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 #endregion
                 #region 读取拉链信息
-                CZipperAutomaticAlgorithm.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
                // ZipperInfo = CZipperAutomaticAlgorithm.ZipperInfo;
                 #endregion
             });

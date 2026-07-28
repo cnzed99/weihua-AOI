@@ -210,7 +210,7 @@ namespace ZipperInfo
             }
             else
             {
-                return -1;
+                return 100;
             }
             //}
             //catch (Exception)

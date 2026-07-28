@@ -17,7 +17,7 @@ namespace ZipperInfo
         CZipperInfo zipperInfo;
         public ZipperInfoVM()
         {
-            ZipperInfo= CZipperAutomaticAlgorithm.ZipperInfo;
+            ZipperInfo= CZipperAutomaticAlgorithm.Instance.ZipperInfo;
         }
 
         [RelayCommand]
@@ -27,7 +27,7 @@ namespace ZipperInfo
             {
                 CZipperCommunicate.CamTriggerStop(); //停止拍照
                 CZipperCommunicate.SendHelianStastPos(80);
-                CZipperAutomaticAlgorithm.TestFinshEven(true);
+                CZipperAutomaticAlgorithm.Instance.TestFinshEven(true);
                 CZipperAutomaticAlgorithm.SaveParameter(ZipperInfo);
                 //CZipperCommunicate.AixtContinue(true);
                 CZipperCommunicate.TestFinish();

@@ -472,7 +472,7 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                CZipperAutomaticAlgorithm.TestFinshEven += ClearProduceData;
+                CZipperAutomaticAlgorithm.Instance.TestFinshEven += ClearProduceData;
                 if (CMainList.CMainMModel.CProcessGroups.Count > 0 && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0)
                 {
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
@@ -948,7 +948,7 @@ namespace 断面毛刺检测软件
                 //    Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
                 //    return;
                 //}
-                CZipperAutomaticAlgorithm.Dispatcher = this.Dispatcher;
+                CZipperAutomaticAlgorithm.Instance.Dispatcher = this.Dispatcher;
                 AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
                 ProgressBarWindow progressBarWindow = new ProgressBarWindow();
                 ZipperAutomaticWindow AutomaticWindow = App
@@ -977,7 +977,7 @@ namespace 断面毛刺检测软件
                     if (b)
                     {
                         progressBarWindow.ShowDialog();
-                        if (CZipperAutomaticAlgorithm.TestFinsh)
+                        if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
                         {
                             ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
                             autoFinshWindow = new AutoFinshWindow();
@@ -1009,7 +1009,7 @@ namespace 断面毛刺检测软件
                 {
                     mainVM.IsAutomaticTest = false;
                 }
-                CZipperAutomaticAlgorithm.onWichStage = 0;
+                CZipperAutomaticAlgorithm.Instance.onWichStage = 0;
             });
 
         }
