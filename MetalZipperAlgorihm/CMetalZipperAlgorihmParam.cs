@@ -438,11 +438,13 @@ namespace MetalZipperAlgorihm
                                             float dcpointy = downmass[0].box.Center.Y;
                                             List<ObbData> lianci2 = lianci.FindAll(s => Math.Abs(s.box.Center.Y - dcpointy) <= 15).ToList(); //链齿根据Y坐标距离来筛选，排除和下止不在同一水平线的链齿
                                             lianci2.Sort((a, b) => Math.Abs(a.box.Center.X - dcpointx).CompareTo(Math.Abs(b.box.Center.X - dcpointx))); //根据X坐标距离来排序，找出最靠近下止的链齿
-
-                                            float dis = lianci2[0].box.Center.X - dcpointx;
-                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销距离", lianci2[0]);
-                                            disData.Value = dis;
-                                            dets.Add(disData);
+                                            if (lianci2.Count > 0)
+                                            {
+                                                float dis = lianci2[0].box.Center.X - dcpointx;
+                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销距离", lianci2[0]);
+                                                disData.Value = dis;
+                                                dets.Add(disData);
+                                            }
                                             CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "长插销", downmass[0]);
                                             dets.Add(disData1);
 
@@ -490,10 +492,13 @@ namespace MetalZipperAlgorihm
                                             float dcpointy = downmass2[0].box.Center.Y;
                                             List<ObbData> lianci2 = lianci.FindAll(s => Math.Abs(s.box.Center.Y - dcpointy) <= 15).ToList(); //链齿根据Y坐标距离来筛选，排除和下止不在同一水平线的链齿
                                             lianci2.Sort((a, b) => Math.Abs(a.box.Center.X - dcpointx).CompareTo(Math.Abs(b.box.Center.X - dcpointx))); //根据X坐标距离来排序，找出最靠近下止的链齿
-                                            float dis = lianci2[0].box.Center.X - dcpointx;
-                                            CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销距离", lianci2[0]);
-                                            disData.Value = dis;
-                                            dets.Add(disData);
+                                            if (lianci2.Count > 0)
+                                            {
+                                                float dis = lianci2[0].box.Center.X - dcpointx;
+                                                CoordRestoreData disData = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销距离", lianci2[0]);
+                                                disData.Value = dis;
+                                                dets.Add(disData);
+                                            }
                                             CoordRestoreData disData1 = new CoordRestoreData(cell.Image.ImageWidth, 0, rex, rey, "短插销", downmass2[0]);
                                             dets.Add(disData1);
 
@@ -579,9 +584,18 @@ namespace MetalZipperAlgorihm
                                         }
 
                                         //针孔中心距
-                                        float discenter = Math.Abs(downmass[0].box.Center.Y - downmass2[0].box.Center.Y);
-                                        CoordRestoreData disCenterData = new CoordRestoreData("针孔中心距", discenter);
-                                        dets.Add(disCenterData);
+                                        if (downmass.Count>0&& downmass2.Count>0)
+                                        {
+                                            float discenter = Math.Abs(downmass[0].box.Center.Y - downmass2[0].box.Center.Y);
+                                            CoordRestoreData disCenterData = new CoordRestoreData("针孔中心距", discenter);
+                                            dets.Add(disCenterData);
+                                        }
+                                        else
+                                        {
+                                            CoordRestoreData disCenterData = new CoordRestoreData("针孔中心距", 1000);
+                                            dets.Add(disCenterData);
+                                        }
+
 
                                         //对比长短插销的颜色
                                         float diffhsv = DiffHSV(cropshoutMat, cropshoutMat2);

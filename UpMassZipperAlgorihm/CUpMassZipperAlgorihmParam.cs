@@ -395,12 +395,9 @@ namespace UpMassZipperAlgorihm
 
                         #endregion
                     }
-
-                    ParseResult(dets, cell);
-                    img.Dispose();
-
                 }
-
+                ParseResult(dets, cell);
+                img.Dispose();
                 void GetDisAnd(Mat img, List<ObbData> obbDatas, ObbData upMassobb, out float Dismin)
                 {
                     Dismin = 0;
