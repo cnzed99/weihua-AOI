@@ -51,6 +51,7 @@ namespace SDFilter
         /// </summary>
         public DefectFilter LastSelectedDefectFilter { get; set; }
 
+
         /// <summary>
         /// 2024.7.4 李焕彬
         /// 增加过滤器

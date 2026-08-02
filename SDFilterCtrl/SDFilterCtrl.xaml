@@ -136,6 +136,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <wh:Bool2VisiblityConverter x:Key="Bool2VisiblityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <ScrollViewer DataContext="{Binding FilterConfig}" VerticalScrollBarVisibility="Auto">
@@ -153,7 +154,8 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="100"/>
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource TextBlock1}" Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=IsExpanded, Converter={StaticResource BoolToStringConverter}}" />
@@ -161,8 +163,13 @@
                                     Grid.Column="1"
                                     Style="{StaticResource TextBlock1}"
                                     Text="{Binding Name}" />
+                                <CheckBox      Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, 
+                                  Converter={StaticResource Bool2VisiblityConverter}}"
+                                  Grid.Column="2"
+                                  Content="{Binding [EnableAll], Source={x:Static local:CLang.s_Instance}}"
+                                  IsChecked="{Binding EnableAll}" />
                                 <Button
-                                    Grid.Column="2"
+                                    Grid.Column="3"
                                     Margin="2"
                                     Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.AddFilterCommand}"
                                     CommandParameter="{Binding}"
@@ -217,7 +224,7 @@
                                                             Grid.Column="2"
                                                             HorizontalAlignment="Center"
                                                             Orientation="Horizontal">
-                                                            <TextBlock
+                                                            <!--<TextBlock
                                                                 Margin="15,0,0,0"
                                                                 HorizontalAlignment="Center"
                                                                 VerticalAlignment="Center"
@@ -228,7 +235,7 @@
                                                                         <Binding Path="DataContext.Name" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
-                                                            </TextBlock>
+                                                            </TextBlock>-->
                                                             <TextBlock
                                                                 Margin="15,0,0,0"
                                                                 HorizontalAlignment="Center"
@@ -253,6 +260,14 @@
                                                                     </MultiBinding>
                                                                 </TextBlock.Text>
                                                             </TextBlock>
+                                                            <CheckBox IsChecked="{Binding FilterList[0].FilterSelectEnable}" 
+                                                                Margin="15,0,0,0"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Foreground="Gray" Content="{Binding [EnableReady], Source={x:Static local:CLang.s_Instance}}"                              
+                                                                Visibility="{Binding Path=IsEngineer,Source={x:Static wh:CLoginViewModel.SloinPerson}, 
+                                                                Converter={StaticResource Bool2VisiblityConverter}}">
+                                                            </CheckBox>
                                                         </StackPanel>
                                                         <Button x:Name="Add"
                                                             Grid.Column="3"

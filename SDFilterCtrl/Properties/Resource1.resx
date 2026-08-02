@@ -201,4 +201,10 @@
   <data name="LinkNextOne" xml:space="preserve">
     <value>关联下一条</value>
   </data>
+  <data name="EnableAll" xml:space="preserve">
+    <value>全部启用</value>
+  </data>
+  <data name="EnableReady" xml:space="preserve">
+    <value>已启用</value>
+  </data>
 </root>

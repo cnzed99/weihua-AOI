@@ -96,6 +96,11 @@ namespace ZipperInfo
         /// </summary>
         [ObservableProperty]
         private HAVESAB lockHaveSAB = HAVESAB.有SAB;
+        /// <summary>
+        /// 拉片是否有膜
+        /// </summary>
+        [ObservableProperty]
+        private PULLSHAVEFILM pullsHaveFilm = PULLSHAVEFILM.有膜;
 
     }
     /// <summary>

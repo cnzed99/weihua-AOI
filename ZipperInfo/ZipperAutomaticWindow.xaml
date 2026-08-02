@@ -33,11 +33,19 @@
                 <x:Type TypeName="local:HAVESAB"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="PullHaveFilmProvider" 
+                 MethodName="GetValues" 
+                 ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:PULLSHAVEFILM"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </hc:Window.Resources>
     <Border BorderBrush="#FF9E9C9C" BorderThickness="1" CornerRadius="10">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1.8*"/>
+                <RowDefinition Height="1.9*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1.5*"/>
             </Grid.RowDefinitions>
@@ -49,6 +57,7 @@
                 </Grid.ColumnDefinitions>
                      <Grid Grid.Row="0">
                         <Grid.RowDefinitions>
+                            <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
@@ -87,6 +96,12 @@
                    Text="插 销 有 无  字"  FontSize="30" />
                             <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].LockHaveSAB}" Width="250" Height="55"
                              ItemsSource="{Binding Source={StaticResource  HaveSabProvider}}" FontSize="35"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="4" Orientation="Horizontal">
+                            <TextBlock  Grid.Row="1" Margin="10,10"
+                               Text="拉 片 有 无  膜"  FontSize="30" />
+                            <hc:ComboBox  Margin="5" SelectedItem="{Binding AutoData[0].PullsHaveFilm}" Width="250" Height="55"
+                ItemsSource="{Binding Source={StaticResource  PullHaveFilmProvider}}" FontSize="35"/>
                         </StackPanel>
                     </Grid>
            

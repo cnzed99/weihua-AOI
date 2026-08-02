@@ -293,7 +293,7 @@ namespace ZipperInfo
             //Cv2.CvtColor(mat, img, ColorConversionCodes.BGR2RGB);
             // img.ImWrite($"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
             //相机采集图片
-            onWichStage = 2;
+           // onWichStage = 2;
             Mat img = new Mat();
             Cv2.CvtColor(orgimg, img, ColorConversionCodes.BGR2RGB);
             //  HOperatorSet.WriteImage(CameraImage, "png", 0, $"C:\\Users\\Administrator\\Desktop\\新建文件夹\\{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff")}.png");
@@ -428,57 +428,65 @@ namespace ZipperInfo
                 }
                 if (cell.CamName == "拉片相机" && !Pulls_Stage1_OK)
                 {
-                    HObject ho_Image = new HObject();
-                    ho_Image.Dispose();
-                    if (cell.ImageFile == "")
+                    if (ZipperInfo.TempData1.AutoData.PullsHaveFilm == PULLSHAVEFILM.有膜)
                     {
-                        HOperatorSet.GenImageInterleaved(out ho_Image,
-                            cell.Image.ImageData,
-                            "rgb",
-                            cell.Image.ImageWidth,
-                            cell.Image.ImageHeight,
-                            -1,
-                            "byte",
-                            0,
-                            0,
-                            0,
-                            0,
-                            -1,
-                            0
-                            );
+                        LightChange_Pulls.ChangeLineValue2(255);
+                        Pulls_Stage1_OK = true;
                     }
                     else
                     {
-                        HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
-                    }
-                    GetPullsRegion(ho_Image, out HObject ho_GrayImage, out _, out HObject ho_pullRegion);
-                    GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegion,
-                                   out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV);
-                    if (hv_MeanV.D < 95)
-                    {
-                        LightChange_Pulls.ChangeLineValue1(false, 10);
-                    }
-                    else if (hv_MeanV.D > 140)
-                    {
-                        LightChange_Pulls.ChangeLineValue1(false, -10);
-                    }
-                    else
-                    {
-                        Pulls_Stage1_OK = true;
-                    }
+                        HObject ho_Image = new HObject();
+                        ho_Image.Dispose();
+                        if (cell.ImageFile == "")
+                        {
+                            HOperatorSet.GenImageInterleaved(out ho_Image,
+                                cell.Image.ImageData,
+                                "rgb",
+                                cell.Image.ImageWidth,
+                                cell.Image.ImageHeight,
+                                -1,
+                                "byte",
+                                0,
+                                0,
+                                0,
+                                0,
+                                -1,
+                                0
+                                );
+                        }
+                        else
+                        {
+                            HOperatorSet.ReadImage(out ho_Image, cell.ImageFile);
+                        }
+                        GetPullsRegion(ho_Image, out HObject ho_GrayImage, out _, out HObject ho_pullRegion);
+                        GetHoleRegion(ho_Image, ho_GrayImage, ho_pullRegion,
+                                       out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV);
+                        if (hv_MeanV.D < 90)
+                        {
+                            LightChange_Pulls.ChangeLineValue1(false, 10);
+                        }
+                        else if (hv_MeanV.D > 120)
+                        {
+                            LightChange_Pulls.ChangeLineValue1(false, -10);
+                        }
+                        else
+                        {
+                            Pulls_Stage1_OK = true;
+                        }
 
-                    if (LightChange_Pulls.MinTimeOutCount > 5 || LightChange_Pulls.MaxTimeOutCount > 5)
-                    {
-                        Pulls_Stage1_OK = true;
-                    }
+                        if (LightChange_Pulls.MinTimeOutCount > 5 || LightChange_Pulls.MaxTimeOutCount > 5)
+                        {
+                            Pulls_Stage1_OK = true;
+                        }
 
-                    ho_Image.Dispose();
-                    ho_GrayImage.Dispose();
-                    ho_pullRegion.Dispose();
-                    ho_HoleRegion.Dispose();
-                    hv_MeanH.Dispose();
-                    hv_MeanS.Dispose();
-                    hv_MeanV.Dispose();
+                        ho_Image.Dispose();
+                        ho_GrayImage.Dispose();
+                        ho_pullRegion.Dispose();
+                        ho_HoleRegion.Dispose();
+                        hv_MeanH.Dispose();
+                        hv_MeanS.Dispose();
+                        hv_MeanV.Dispose();
+                    }
                 }
                 if (cell.CamName == "拉头相机" && !Puller_Stage1_OK)
                 {
@@ -495,11 +503,11 @@ namespace ZipperInfo
                     //float Svalue = (float)hsvMean.Val1;
                     float Vvalue = (float)hsvMean.Val2;
 
-                    if (Vvalue < 80)
+                    if (Vvalue < 90)
                     {
                         LightChange_Puller.ChangeLineValue1(false, 10);
                     }
-                    else if (Vvalue > 140)
+                    else if (Vvalue > 120)
                     {
                         LightChange_Puller.ChangeLineValue1(false, -10);
                     }
@@ -579,7 +587,8 @@ namespace ZipperInfo
                                 if (shangzhiorg.Count == 2)
                                 {
                                     shangzhiorg.Sort((a, b) => a.box.Center.Y.CompareTo(b.box.Center.Y)); //按Y坐标排序
-                                    Mat uppatch = GetRoatImage(shangzhiorg[0], img); //上牙
+                                    //Mat uppatch = GetRoatImage(shangzhiorg[0], img, "上牙");
+                                    Mat uppatch = GetRoatImage(shangzhiorg[0], upimg); //上牙
                                     Mat hsvImage = new Mat();
                                     Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
                                     Scalar hsvMean0 = Cv2.Mean(hsvImage);
@@ -590,7 +599,7 @@ namespace ZipperInfo
                                     ZipperInfo.TempData1.UpMass_1_MeanS = Svalue0;
                                     ZipperInfo.TempData1.UpMass_1_MeanV = Vvalue0;
 
-                                    Mat uppatch1 = GetRoatImage(shangzhiorg[1], img); //下牙
+                                    Mat uppatch1 = GetRoatImage(shangzhiorg[1], upimg); //下牙
                                     Mat hsvImage1 = new Mat();
                                     Cv2.CvtColor(uppatch1, hsvImage1, ColorConversionCodes.BGR2HSV); 
                                     Scalar hsvMean1 = Cv2.Mean(hsvImage1);
@@ -600,9 +609,12 @@ namespace ZipperInfo
                                     ZipperInfo.TempData1.UpMass_2_MeanH = Hvalue1;
                                     ZipperInfo.TempData1.UpMass_2_MeanS = Svalue1;
                                     ZipperInfo.TempData1.UpMass_2_MeanV = Vvalue1;
-
+                                    hsvImage.Dispose();
+                                    hsvImage1.Dispose();
                                 }
                             }
+                            upimg.Dispose();
+                           
                         }
                         #endregion
                         Dispatcher.Invoke(() =>
@@ -612,11 +624,10 @@ namespace ZipperInfo
 
                         Cloth_Stage2_OK = true;
                         startTriggerCount = 0;
-
                     }
                 }
             }
-            if (cell.CamName == "拉片相机" && !Pulls_Stage2_OK)
+            if (cell.CamName == "拉片相机" && Pulls_Stage1_OK)
             {
                 HObject ho_Image = new HObject();
                 if (cell.ImageFile == "")
@@ -667,17 +678,9 @@ namespace ZipperInfo
                         int rew = (recCol2 - recCol1);
                         int reh = (recRow2 - recRow1);
                         Mat logoCutimg = img[new Rect(px, py, rew, reh)];
-
-                        int px2 = (int)ho_Rectangle[1];
-                        int py2 = (int)ho_Rectangle[0];
-                        int rew2 = (int)(ho_Rectangle[3] - ho_Rectangle[1]);
-                        int reh2 = (int)(ho_Rectangle[2] - ho_Rectangle[0]);
-                        Mat pullsCutimg = img[new Rect(px2, py2, rew2, reh2)];
-
                         Dispatcher.Invoke(() =>
                         {
                             ZipperInfo.TempData1.ZipperLogoImg = MatConverter.Mat2BitmapSource(logoCutimg);
-                            ZipperInfo.TempData1.ZipperPullsImg = MatConverter.Mat2BitmapSource(pullsCutimg);
                         });
                     }
 
@@ -695,12 +698,21 @@ namespace ZipperInfo
                 if (modelID_pull.Length > 0)
                 {
                     ZipperInfo.TempData1.ModelID_Pull = modelID_pull;
+                    int px2 = (int)ho_Rectangle[1];
+                    int py2 = (int)ho_Rectangle[0];
+                    int rew2 = (int)(ho_Rectangle[3] - ho_Rectangle[1]);
+                    int reh2 = (int)(ho_Rectangle[2] - ho_Rectangle[0]);
+                    Mat pullsCutimg = img[new Rect(px2, py2, rew2, reh2)];
+                    Dispatcher.Invoke(() =>
+                    {
+                        ZipperInfo.TempData1.ZipperPullsImg = MatConverter.Mat2BitmapSource(pullsCutimg);
+                    });
                 }
 
                 Pulls_Stage2_OK = true;
 
             }
-            if (cell.CamName == "拉头相机" && !Puller_Stage2_OK)
+            if (cell.CamName == "拉头相机" && Puller_Stage1_OK)
             {
                 DetResult pullResult = WH_Logo_Pull_det.Predict(img) as DetResult;
                 for (int j = 0; j < pullResult.count; j++)
@@ -979,7 +991,7 @@ namespace ZipperInfo
                 ho_GrayImage.Dispose();
                 HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
                 ho_Region.Dispose();
-                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 60);
+                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 48);
                 ho_ConnectedRegions.Dispose();
                 HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
                 ho_RegionOpening.Dispose();
@@ -1572,6 +1584,36 @@ namespace ZipperInfo
 
         }
 
+        private Mat GetRoatImage(ObbData obb, Mat img, string posName)
+        {
+            if (obb == null) return null;
+
+            //  Point2f[] points = obb.box.Points();
+            //List<Point2f> poinstList = points.ToList();
+            //poinstList.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+            Rect rect = obb.box.BoundingRect();
+            int x, y, w, h;
+            if (posName == "上牙")
+            {
+                x = rect.X + 10;
+                y = rect.Y + 5;
+                w = rect.Width - 15;
+                h = 10;
+            }
+            else
+            {
+                x = rect.X + 10;
+                y = rect.Bottom - 25;
+                w = rect.Width - 20;
+                h = 15;
+            }
+
+            Mat patch = new Mat(img, new Rect(x, y, w, h));
+            return patch;
+
+        }
+
         #endregion
 
         #region 自动调整拉链位置算法
@@ -1817,7 +1859,7 @@ namespace ZipperInfo
 
             int upmass_Categ_num = upStopMassDefe_names.Length;
             float upmassScore = 0.4f;
-            float upNms = 0.5f;
+            float upNms = 0.4f;
             WH_UpStopMassDefe_obb = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upmassmodelpath, engineType,
 CurrentDevice, upmass_Categ_num, upmassScore, upNms, 512);
 

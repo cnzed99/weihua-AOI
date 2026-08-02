@@ -296,11 +296,13 @@ namespace UpMassZipperAlgorihm
                         ObbData yamaxxObb0 = lianciiorg0.Find(c => c.box.Center.X == liancimaxx0); //链齿最右边的牙
                         Point2f[] yaPoints0 = yamaxxObb0.box.Points(); //牙
                         float yaminy0 = yaPoints0.Min(p => p.Y); // 牙最高点
-                        float shangSub0 = yaminy0-upminy0;
+                        float shangSub0 = yaminy0 - upminy0;
                         CoordRestoreData shangdisData = new CoordRestoreData("上牙平齐", shangSub0);
                         dets.Add(shangdisData);
 
+                       // Mat uppatch = GetRoatImage(shangzhiorg[0], img, "上牙");
                         Mat uppatch = GetRoatImage(shangzhiorg[0], img);
+                        Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上牙.png", uppatch);
                         Mat hsvImage = new Mat();
                         Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
                         Scalar hsvMean0 = Cv2.Mean(hsvImage);
@@ -320,7 +322,9 @@ namespace UpMassZipperAlgorihm
 
                         CoordRestoreData xiadisData = new CoordRestoreData("下牙平齐", xiaSub);
                         dets.Add(xiadisData);
+                      //  Mat uppatch1 = GetRoatImage(shangzhiorg[1], img, "下牙");
                         Mat uppatch1 = GetRoatImage(shangzhiorg[1], img);
+                        //Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "下牙.png", uppatch1);
                         Mat hsvImage1 = new Mat();
                         Cv2.CvtColor(uppatch1, hsvImage1, ColorConversionCodes.BGR2HSV);
                         Scalar hsvMean1 = Cv2.Mean(hsvImage1);
@@ -369,6 +373,10 @@ namespace UpMassZipperAlgorihm
                             SvalueSub1 = Math.Abs(OfflineUpMass_2_MeanS - Svalue1);
                             VvalueSub1 = Math.Abs(OfflineUpMass_2_MeanV - Vvalue1);
                         }
+
+                        //HvalueSub0 = Math.Abs(Hvalue1 - Hvalue0);
+                        //SvalueSub0 = Math.Abs(Svalue1 - Svalue0);
+                        //VvalueSub0 = Math.Abs(Vvalue1 - Vvalue0);
 
                         CoordRestoreData colorDataH = new CoordRestoreData("上牙色差H", HvalueSub0);
                         dets.Add(colorDataH);
@@ -501,7 +509,7 @@ namespace UpMassZipperAlgorihm
                     float Nms = param.Nms;
 
                     WH_UpStopMassDefe_det = VisionModelExtensions.GetVisionModel(ModelType.VisionModelObb, upStopMassDefe_Model_Path, engineType,
-CurrentDevice, up_num, param.UpMassScore, Nms, 512);
+CurrentDevice, up_num, param.UpMassScore, 0.4f, 512);
 
 
                 }
@@ -667,7 +675,7 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
             //  坑：OpenCV 的 RotatedRect.Angle 范围是 [-90,0)，
             // 当 |angle|>45 时，width/height 会被自动互换，angle 也偏移
             // 所以取 Size 时建议这样保稳：
-            float w = rrect.Size.Width - 10;
+            float w = rrect.Size.Width - 30;
             float h = rrect.Size.Height - 5;
             if (Math.Abs(rrect.Angle) > 45)
             {
@@ -677,6 +685,36 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
             Mat patch = new Mat();
             Cv2.GetRectSubPix(img2, new Size(w, h), rrect.Center, patch);
 
+            return patch;
+
+        }
+
+        private Mat GetRoatImage(ObbData obb, Mat img, string posName)
+        {
+            if (obb == null) return null;
+
+            //  Point2f[] points = obb.box.Points();
+            //List<Point2f> poinstList = points.ToList();
+            //poinstList.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+            Rect rect = obb.box.BoundingRect();
+            int x, y, w, h;
+            if (posName == "上牙")
+            {
+                x = rect.X + 10;
+                y = rect.Y + 5;
+                w = rect.Width - 15;
+                h = 10;
+            }
+            else
+            {
+                x = rect.X + 10;
+                y = rect.Bottom - 25;
+                w = rect.Width - 20;
+                h = 15;
+            }
+
+            Mat patch = new Mat(img, new Rect(x, y, w, h));
             return patch;
 
         }
@@ -746,7 +784,7 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         //    // 仿射变换
         //    Cv2.Transform(mapPts, mapPts, rotMat);
 
-        //    // ✅ 正确取出 Point2f[]
+        //    //  正确取出 Point2f[]
         //    Point2f[] transformedPts = new Point2f[pts.Length];
         //    mapPts.GetArray(out transformedPts);
 
@@ -865,6 +903,9 @@ CurrentDevice, up_num, param.UpMassScore, Nms, 512);
         /// NMScore
         /// </summary>
         [ObservableProperty]
+        [property: Category("分数设置")]
+        [property: DisplayName("05 NMS分数")]
+        [property: Description("NMS分数")]
         private float nms = 0.5f;
 
         [ObservableProperty]

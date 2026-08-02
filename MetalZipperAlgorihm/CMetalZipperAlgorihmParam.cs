@@ -1626,55 +1626,55 @@ namespace MetalZipperAlgorihm
         [property: Description("下止链齿分数阈值")]
         private float downLianciScore = 0.6f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 上止模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("04 上止缺陷分数阈值")]
-        [property: Description("上止缺陷分数阈值")]
-        private float upScore = 0.4f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 上止模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("04 上止缺陷分数阈值")]
+        //[property: Description("上止缺陷分数阈值")]
+        //private float upScore = 0.4f;
 
-        /// <summary>
-        /// 2025.11.07 鲍赞宝
-        /// 上止模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("05 上止链齿分数阈值")]
-        [property: Description("上止链齿分数阈值")]
-        private float upLianciScore = 0.7f;
+        ///// <summary>
+        ///// 2025.11.07 鲍赞宝
+        ///// 上止模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("05 上止链齿分数阈值")]
+        //[property: Description("上止链齿分数阈值")]
+        //private float upLianciScore = 0.7f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 拉头模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("06 金属拉头分数阈值")]
-        [property: Description("金属拉头分数阈值")]
-        private float metaPullScore = 0.4f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 拉头模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("06 金属拉头分数阈值")]
+        //[property: Description("金属拉头分数阈值")]
+        //private float metaPullScore = 0.4f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 拉头模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("07 烤漆拉头分数阈值")]
-        [property: Description("烤漆拉头分数阈值")]
-        private float paintPullScore = 0.4f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 拉头模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("07 烤漆拉头分数阈值")]
+        //[property: Description("烤漆拉头分数阈值")]
+        //private float paintPullScore = 0.4f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 拉头模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("08 Logo分数阈值")]
-        [property: Description("Logo分数阈值")]
-        private float logoPullScore = 0.4f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 拉头模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("08 Logo分数阈值")]
+        //[property: Description("Logo分数阈值")]
+        //private float logoPullScore = 0.4f;
 
         /// <summary>
         /// 2024.7.21 鲍赞宝
@@ -1686,25 +1686,25 @@ namespace MetalZipperAlgorihm
         [property: Description("大缺陷分数阈值")]
         private float bigScore = 0.4f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 拉头模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("10 自动识别分数阈值")]
-        [property: Description("自动识别分数阈值")]
-        private float autoScore = 0.45f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 拉头模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("10 自动识别分数阈值")]
+        //[property: Description("自动识别分数阈值")]
+        //private float autoScore = 0.45f;
 
-        /// <summary>
-        /// 2024.7.21 鲍赞宝
-        /// 拉头模型分数阈值
-        /// </summary>
-        [ObservableProperty]
-        [property: Category("分数设置")]
-        [property: DisplayName("11 拉片分割分数阈值")]
-        [property: Description("拉片分割分数阈值")]
-        private float pullSharpScore = 0.5f;
+        ///// <summary>
+        ///// 2024.7.21 鲍赞宝
+        ///// 拉头模型分数阈值
+        ///// </summary>
+        //[ObservableProperty]
+        //[property: Category("分数设置")]
+        //[property: DisplayName("11 拉片分割分数阈值")]
+        //[property: Description("拉片分割分数阈值")]
+        //private float pullSharpScore = 0.5f;
 
         [ObservableProperty]
         [property: Category("离线设置模板")]

@@ -231,26 +231,18 @@
 
 
             <Grid Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding HisTital}" Margin="10,5"  FontSize="20"
-                Foreground="AliceBlue"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"/>
-                <Border   BorderBrush="DarkGray" Margin="1" Grid.Row="0" BorderThickness="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Border  Grid.Row="0"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
                     <wh:ImageView Source="{Binding ReadImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
                 </Border>
 
-
-                <TextBlock Grid.Column="1" Text="拉头" Margin="10,5"  FontSize="20"
-                  Foreground="AliceBlue"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"/>
-                <Border Grid.Column="1"   BorderBrush="DarkGray" Margin="1" Grid.Row="0" BorderThickness="1">
+                <Border Grid.Row="1"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
                         <wh:ImageView Source="{Binding ReadPullImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
-                    </Border>
+                 </Border>
         
             </Grid>
 

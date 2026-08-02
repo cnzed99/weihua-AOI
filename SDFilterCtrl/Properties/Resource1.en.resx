@@ -201,4 +201,10 @@
   <data name="LinkNextOne" xml:space="preserve">
     <value>LinkNextOne</value>
   </data>
+  <data name="EnableAll" xml:space="preserve">
+    <value>EnableAll</value>
+  </data>
+  <data name="EnableReady" xml:space="preserve">
+    <value>EnableReady</value>
+  </data>
 </root>

@@ -469,5 +469,13 @@ namespace ZipperInfo
         有SAB = 0,
         无SAB = 1
     }
+    /// <summary>
+    /// 拉片是否有膜
+    /// </summary>
+    public enum  PULLSHAVEFILM
+    {
+        无膜 = 0,
+        有膜 = 1
+    }
 
 }

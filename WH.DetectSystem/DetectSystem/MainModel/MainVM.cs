@@ -775,7 +775,7 @@ namespace WH.DetectSystem.Models
                                     cell.Dispose();
                                 }
                             }
-                            else if( Name =="上止") //上止
+                            else if (Name == "上止") //上止
                             {
                                 IDisRight = true;
                                 cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
@@ -785,14 +785,14 @@ namespace WH.DetectSystem.Models
                             else //拉头拉片
                             {
                                 CZipperCommunicate.GetID2(out productID);
-                                if (productID!=-1)
+                                if (productID != -1)
                                 {
                                     IDisRight = true;
                                     cell.ID = productID.ToString();
                                     cell.PhotoIndex = 1;
                                     cell.PhotoTatolCount = 1;
                                 }
-                              
+
                             }
 
                         }
@@ -874,7 +874,7 @@ namespace WH.DetectSystem.Models
                             cell.PullSegOrgArea = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullSegOrgArea;
                             cell.UpMass_1_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanH;
                             cell.UpMass_1_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanS;
-                            cell.UpMass_1_MeanV= CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanV;
+                            cell.UpMass_1_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanV;
                             cell.UpMass_2_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanH;
                             cell.UpMass_2_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanS;
                             cell.UpMass_2_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanV;
@@ -941,7 +941,7 @@ namespace WH.DetectSystem.Models
                                     {
                                         for (int i = 0; i < currentCells.Count; i++)
                                         {
-                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex, 
+                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex,
                                                 currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                         }
                                     }
@@ -1024,7 +1024,7 @@ namespace WH.DetectSystem.Models
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
                                                 }
-                                                else 
+                                                else
                                                 {
                                                     CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
                                                 }
@@ -1782,8 +1782,8 @@ namespace WH.DetectSystem.Models
                     newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
 
-                newCell.SaveBigImagesIndex= newCell.SaveBigImagesIndex.Distinct().ToList(); //去掉重复项
-                newCell.SaveCutImagesIndex= newCell.SaveCutImagesIndex.Distinct().ToList();
+                newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList(); //去掉重复项
+                newCell.SaveCutImagesIndex = newCell.SaveCutImagesIndex.Distinct().ToList();
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {
@@ -2056,7 +2056,7 @@ namespace WH.DetectSystem.Models
         /// <param name="leftorright"></param>
         private void UpdatDetSet()
         {
-            if (this.Name == "正面"|| this.Name == "反面")
+            if (this.Name == "正面" || this.Name == "反面")
             {
                 RecipeDefect zipperDetNames = this.MaociFilterConfig["方块插销"]["SAB"];
                 if (zipperDetNames != null)
@@ -2073,7 +2073,7 @@ namespace WH.DetectSystem.Models
                             {
                                 fl.FilterSelectEnable = false;
                             }
-                           
+
                         }
                     }
                 }
@@ -2090,12 +2090,12 @@ namespace WH.DetectSystem.Models
                         {
                             if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerHaveSAB == HAVESAB.有SAB)
                             {
-                               // fl.FilterSelectEnable = true;
+                                // fl.FilterSelectEnable = true;
                                 fl.IsReversal = true;
                             }
                             else
                             {
-                               // fl.FilterSelectEnable = false;
+                                // fl.FilterSelectEnable = false;
                                 fl.IsReversal = true;
                             }
 
@@ -2103,7 +2103,37 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-           
+
+            if (this.Name == "拉片")
+            {
+                SpeciesFilter pullsdetName = this.MaociFilterConfig["拉头拉片"];
+                foreach (var detname in pullsdetName.RecipeDefects)
+                {
+                    if (detname.Name != "拉片外形")
+                    {
+                        foreach (var df in detname.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+
+                                if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.PullsHaveFilm == PULLSHAVEFILM.有膜)
+                                {
+                                    fl.FilterSelectEnable = false;
+                                }
+                                else
+                                {
+                                    fl.FilterSelectEnable = true;
+                                }
+
+                                // fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
             //foreach (var detname in zipperDetNames.RecipeDefects)
             //{
             //    if (detname.Name.Contains("正面上止") || detname.Name.Contains("反面上止"))

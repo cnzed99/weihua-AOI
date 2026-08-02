@@ -51,7 +51,7 @@ namespace SDFilter
         {
             this.token = new Token("", this.GetType().Namespace);
             var SpFilters = new ObservableCollection<SpeciesFilter>();
-            if (defectSpecies!=null)
+            if (defectSpecies != null)
             {
                 foreach (var specie in defectSpecies)
                 {
@@ -59,7 +59,7 @@ namespace SDFilter
                     foreach (var recipe in specie.RecipeDefects)
                     {
                         RecipeDefect rd = new RecipeDefect(recipe.Name, recipe.Category, token);
-                        if (recipe.Category==Category.区域)
+                        if (recipe.Category == Category.区域)
                         {
                             rd.DefectFilters[0].FilterList[0].Filter[0].SelectParams[0].Character = CFeacture.FeactureArea;
                             rd.DefectFilters[0].FilterList[0].SelectList[0].SelectParams[0].Character = CFeacture.FeactureArea;
@@ -77,7 +77,7 @@ namespace SDFilter
                 }
                 SpeciesFilters = SpFilters;
             }
-        
+
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)
@@ -106,7 +106,7 @@ namespace SDFilter
                     }
                 }
             }
-          
+
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace SDFilter
         protected void Synchronization(CQualityConfig MaociQuality)
         {
             #region 同步毛刺过滤配置
-            if (SpeciesFilters!=null)
+            if (SpeciesFilters != null)
             {
                 foreach (var spFilter in SpeciesFilters)
                 {
@@ -142,14 +142,14 @@ namespace SDFilter
                     }
                 }
             }
-           
+
 
             #endregion 同步毛刺过滤配置
         }
 
         protected void UpdateDefectList()
         {
-            if (SpeciesFilters!=null)
+            if (SpeciesFilters != null)
             {
                 List<string> strings = new List<string>();
                 foreach (var sp in SpeciesFilters)
@@ -174,7 +174,7 @@ namespace SDFilter
                     }
                 }
             }
-          
+
         }
 
         /// <summary>
@@ -432,6 +432,33 @@ namespace SDFilter
         {
             return Name;
         }
+
+        private bool enableAll = true;
+        /// <summary>
+        /// 启用所有缺陷
+        /// </summary>
+        public bool EnableAll
+        {
+            get { return enableAll; }
+            set
+            {
+                enableAll = value;
+                if (RecipeDefects != null)
+                {
+                    foreach (var species in RecipeDefects)
+                    {
+                        foreach (var df in species.DefectFilters)
+                        {
+                            foreach (var fl in df.FilterList)
+                            {
+                                fl.FilterSelectEnable = value;
+                            }
+                        }
+                    }
+                }
+                OnPropertyChanged();
+            }
+        }
     }
 
     /// <summary>
@@ -649,7 +676,7 @@ namespace SDFilter
         public FilterAndSelect(Token token)
         {
             this.token = token;
-            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig(token)};
+            Filter = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
             SelectList = new ObservableCollection<SelectConfig>() { new SelectConfig(token) };
         }
 

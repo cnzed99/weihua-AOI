@@ -1304,7 +1304,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 ho_GrayImage.Dispose();
                 HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
                 ho_Region.Dispose();
-                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 60);
+                HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 0, 48);
                 ho_ConnectedRegions.Dispose();
                 HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
                 ho_RegionOpening.Dispose();
