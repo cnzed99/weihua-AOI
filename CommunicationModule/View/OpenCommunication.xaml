@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Title="{Binding [CommSet], Source={x:Static local:CLang.s_Instance}}"
-    Width="1000"
-    Height="600"
+    Width="1100"
+    Height="800"
     Background="{DynamicResource SecondaryRegionBrush}"
     Icon="/CommunicationModule;component/Resources/外接通讯数据.png"
     ResizeMode="NoResize"
@@ -105,7 +105,8 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1.5*" />
             </Grid.RowDefinitions>
             <GroupBox
                 Grid.Row="0"
@@ -217,9 +218,119 @@
                     </ScrollViewer>
                 </Grid>
             </GroupBox>
+            <GroupBox
+                 Grid.Row="1"
+                 Margin="5"
+                 Style="{StaticResource GroupBoxTab}">
+                <GroupBox.Header>
+                    <DockPanel Width="{Binding RelativeSource={RelativeSource AncestorType=GroupBox}, Path=ActualWidth}" LastChildFill="False">
+                        <TextBlock
+                     DockPanel.Dock="Left"
+                     Style="{StaticResource TextBlockDefault}"
+                     Text="{Binding [结果信号], Source={x:Static local:CLang.s_Instance}}" />
+                        <Button
+                     Width="80"
+                     Margin="20,3"
+                     Command="{Binding AddResultSignalCommand}"
+                     Content="{Binding [新增信号], Source={x:Static local:CLang.s_Instance}}"
+                     DockPanel.Dock="Right"
+                     IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                     Style="{StaticResource Button}" />
+                    </DockPanel>
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding [Order], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="1" Text="{Binding [Name], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="2" Text="{Binding [Info], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="3" Text="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}" />
+                        <TextBlock Grid.Column="4" Text="{Binding [Del], Source={x:Static local:CLang.s_Instance}}" />
+                    </Grid>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl AlternationCount="10000" ItemsSource="{Binding Setting.ResultAgreements}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                             Margin="0,3"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             BorderThickness="1">
+                                        <Grid Margin="0,2">
+                                            <Grid.Resources>
+                                                <ResourceDictionary>
+                                                    <Style BasedOn="{StaticResource TextBlockDefault}" TargetType="TextBlock" />
+                                                </ResourceDictionary>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50" />
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="80" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" />
+                                            <TextBox
+                                     Grid.Column="1"
+                                     IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                     Text="{Binding Name}" />
+                                            <ItemsControl
+                                     Grid.Column="2"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     ItemsSource="{Binding Protocol}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Margin="2" Text="{Binding Name}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <Button
+                                     Grid.Column="3"
+                                     Width="60"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.SetResultSignalCommand}"
+                                     CommandParameter="{Binding}"
+                                     Content="{Binding [Edit], Source={x:Static local:CLang.s_Instance}}"
+                                     IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                     Style="{StaticResource Button}" />
+                                            <Button
+                                     Grid.Column="4"
+                                     Width="60"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DelResultSignalCommand}"
+                                     CommandParameter="{Binding}"
+                                     Content="{Binding [Del], Source={x:Static local:CLang.s_Instance}}"
+                                     IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}"
+                                     Style="{StaticResource ButtonDanger}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </GroupBox>
             <ContentControl
                 Name="testGrid"
-                Grid.Row="1"
+                Grid.Row="2"
                 Margin="5"
                 Content="{Binding Com.TestControl}"
                 IsEnabled="{Binding Source={x:Static wh:CLoginViewModel.SloinPerson}, Path=IsEngineer}" />

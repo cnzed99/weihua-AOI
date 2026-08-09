@@ -288,7 +288,7 @@ namespace ZipperInfo
             }
 
             // List<float> output = new List<float>(input);
-            float diff = 15;
+            float diff = 8;
             float lastdiff = zipperLenght - input[input.Count - 1];
             float subvalue = diff - lastdiff;
             List<float> output;

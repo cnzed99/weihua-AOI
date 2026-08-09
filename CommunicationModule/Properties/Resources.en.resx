@@ -342,4 +342,10 @@
   <data name="AddAlarm" xml:space="preserve">
     <value>Add Alarm</value>
   </data>
+  <data name="结果信号" xml:space="preserve">
+    <value>Result Signal</value>
+  </data>
+  <data name="新增信号" xml:space="preserve">
+    <value>Add Signal</value>
+  </data>
 </root>

@@ -302,7 +302,7 @@ namespace UpMassZipperAlgorihm
 
                        // Mat uppatch = GetRoatImage(shangzhiorg[0], img, "上牙");
                         Mat uppatch = GetRoatImage(shangzhiorg[0], img);
-                        Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上牙.png", uppatch);
+                       // Cv2.ImWrite(@"D:\测试存图\" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + "上牙.png", uppatch);
                         Mat hsvImage = new Mat();
                         Cv2.CvtColor(uppatch, hsvImage, ColorConversionCodes.BGR2HSV);
                         Scalar hsvMean0 = Cv2.Mean(hsvImage);

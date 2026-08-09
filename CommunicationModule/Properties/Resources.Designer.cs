@@ -19,7 +19,7 @@ namespace CommunicationModule.Properties {
     // 类通过类似于 ResGen 或 Visual Studio 的工具自动生成的。
     // 若要添加或移除成员，请编辑 .ResX 文件，然后重新运行 ResGen
     // (以 /str 作为命令选项)，或重新生成 VS 项目。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -705,6 +705,24 @@ namespace CommunicationModule.Properties {
         public static string 应用相机 {
             get {
                 return ResourceManager.GetString("应用相机", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 新增信号 的本地化字符串。
+        /// </summary>
+        public static string 新增信号 {
+            get {
+                return ResourceManager.GetString("新增信号", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 结果信号 的本地化字符串。
+        /// </summary>
+        public static string 结果信号 {
+            get {
+                return ResourceManager.GetString("结果信号", resourceCulture);
             }
         }
         

@@ -999,6 +999,7 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.MaociDefectsProduce.Excute(CellOut.Cell);
                                         ProcessGroup.MaociDefectsOneFlowProduce.Excute(CellOut.Cell);
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
+                                       // ProcessGroup.MaociQualityConfig.Excute(CellOut.Cell);
                                         if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
                                         {
                                             if (Name == "正面" || Name == "反面")
@@ -1020,13 +1021,14 @@ namespace WH.DetectSystem.Models
                                         {
                                             if (Name == "正面" || Name == "反面")
                                             {
-                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("脏污") || CellOut.Cell.Detection.DefectFilter.Name.Contains("色粉"))
+                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("大接头") || CellOut.Cell.Detection.DefectFilter.Name.Contains("大破损")
+                                                 || CellOut.Cell.Detection.DefectFilter.Name.Contains("大起毛"))
                                                 {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
+                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG); 
                                                 }
                                                 else
                                                 {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
                                                 }
                                             }
                                             else if (Name == "上止")

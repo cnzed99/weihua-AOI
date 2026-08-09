@@ -4,6 +4,7 @@ using HandyControl.Controls;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,7 +18,8 @@ namespace ZipperInfo
 {
     public partial class CZipperAutomaticVM : ObservableObject
     {
-        public List<CAutomaticModel> AutoData { get; set; }
+        [ObservableProperty]
+        private ObservableCollection<CAutomaticModel> autoData;
 
         private float showZipperLenght;
         //代理属性，为了方便同步更新两套参数的值
@@ -64,7 +66,7 @@ namespace ZipperInfo
                     AutoData[0].LinghtValueInfos.Add(new() { ColorName = "黄电白", ClothLinghtValue = 45, UpMassLinghtValue = 255 });
                     AutoData[0].LinghtValueInfos.Add(new() { ColorName = "亮黑镍", ClothLinghtValue = 50, UpMassLinghtValue = 255 });
                     AutoData[0].LinghtValueInfos.Add(new() { ColorName = "古银", ClothLinghtValue = 60, UpMassLinghtValue = 255 });
-                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "青古银", ClothLinghtValue = 70, UpMassLinghtValue = 255 });
+                    AutoData[0].LinghtValueInfos.Add(new() { ColorName = "青古铜", ClothLinghtValue = 70, UpMassLinghtValue = 255 });
                 }
             }
         }
@@ -280,7 +282,7 @@ namespace ZipperInfo
 
         #region 保存参数
 
-        public static void SaveParameter(List<CAutomaticModel> data)
+        public static void SaveParameter(ObservableCollection<CAutomaticModel> data)
         {
             try
             {
@@ -292,17 +294,17 @@ namespace ZipperInfo
 
         #region 读取参数
 
-        public static List<CAutomaticModel> LoadParameter()
+        public static ObservableCollection<CAutomaticModel> LoadParameter()
         {
-            List<CAutomaticModel> settingsModel = new List<CAutomaticModel>();
+            ObservableCollection<CAutomaticModel> settingsModel = new ObservableCollection<CAutomaticModel>();
             try
             {
                 if (File.Exists(ParameterPath))
                 {
-                    settingsModel = ConfigAPI.LoadDeserialize<List<CAutomaticModel>>(ParameterPath);
+                    settingsModel = ConfigAPI.LoadDeserialize<ObservableCollection<CAutomaticModel>>(ParameterPath);
                     if (settingsModel == null)
                     {
-                        settingsModel = new List<CAutomaticModel>();
+                        settingsModel = new ObservableCollection<CAutomaticModel>();
                         CAutomaticModel st1 = new CAutomaticModel();
                         CAutomaticModel st2 = new CAutomaticModel();
                         settingsModel.Add(st1);

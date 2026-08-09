@@ -145,7 +145,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <RadioButton Content="{Binding ColorName}" Margin="22,1" FontSize="30" GroupName="ColorGroup"
+                                <RadioButton Content="{Binding ColorName}" Margin="10,1" FontSize="30" GroupName="ColorGroup"
                   IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -162,8 +162,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <hc:NumericUpDown Width="120" Maximum="110"  Minimum="30"
-                          Value="{Binding ClothLinghtValue}" Margin="12,5" FontSize="30"/>
+                                        <hc:NumericUpDown Width="100" Maximum="110"  Minimum="30"
+                          Value="{Binding ClothLinghtValue}" Margin="11,5" FontSize="30"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -175,8 +175,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <hc:NumericUpDown Width="120"  Maximum="255"  Minimum="1" 
-                          Value="{Binding UpMassLinghtValue}" Margin="12,5" FontSize="30"/>
+                                        <hc:NumericUpDown Width="100"  Maximum="255"  Minimum="1" 
+                          Value="{Binding UpMassLinghtValue}" Margin="11,5" FontSize="30"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

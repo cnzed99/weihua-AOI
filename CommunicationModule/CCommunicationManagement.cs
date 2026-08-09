@@ -314,5 +314,19 @@ namespace CommunicationModule
                 CommDic[alarm.GUID].Send(alarm.Protocol);
             }
         }
+
+        /// <summary>
+        /// 2026.8.3 鲍赞宝
+        /// 发送结果信息
+        /// </summary>
+        /// <param name="com">通讯名</param>
+        /// <param name="alarmName">结果名</param>
+        public static void SendResultSignal(CResultSignalAgreement result)
+        {
+            if (result != null)
+            {
+                CommDic[result.GUID].Send(result.Protocol);
+            }
+        }
     }
 }

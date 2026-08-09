@@ -362,15 +362,15 @@ namespace MetalZipperAlgorihm
                             int imgindex = 0, showinview = 0;
                             if (cell.PhotoIndex >= 100)
                             {
-                                imgindex = (cell.PhotoIndex / 100) - 1;
+                                imgindex = (cell.PhotoIndex / 100);
                                 showinview = 0;
                             }
                             else
                             {
-                                imgindex = cell.PhotoIndex - 1;
+                                imgindex = cell.PhotoIndex;
                                 showinview = 1;
                             }
-                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, imgindex, 0, 0, labelname, bigResult.datas[j], showinview);
+                           
                             if (labelname.Contains("方块插销") && cell.PhotoIndex != 100)
                                 continue;
                             if (labelname.Contains("布胶") && cell.PhotoIndex >= 100) //布胶在高曝光图像上检测，如果在低曝光上检测到布胶就不计数
@@ -379,6 +379,16 @@ namespace MetalZipperAlgorihm
                                 continue;
                             if (!labelname.Contains("布胶") && cell.PhotoIndex == cell.PhotoTatolCount / 2)
                                 continue;
+                            if (labelname.Contains("SAB") && imgindex == (cell.PhotoTatolCount / 2)) //最后一张低曝图能拍到下一条拉链的方块插销\SAB，所已检测出的方块插销缺陷要忽略掉
+                                continue;
+                            if (labelname.Contains("脏污")|| labelname.Contains("轮印"))
+                            {
+                                float colordiffvalue = DirtyDefetOperration(img, bigResult.datas[j]);
+                                CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, imgindex - 1, 0, 0, labelname, bigResult.datas[j], colordiffvalue,showinview);
+                                dets.Add(dirtyData);
+                                continue;
+                            }
+                            CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, imgindex - 1, 0, 0, labelname, bigResult.datas[j], showinview);
                             dets.Add(restoreData);
                             if ((!labelname.Contains("方块插销")) && (!labelname.Contains("布胶")))
                             {
@@ -584,7 +594,7 @@ namespace MetalZipperAlgorihm
                                         }
 
                                         //针孔中心距
-                                        if (downmass.Count>0&& downmass2.Count>0)
+                                        if (downmass.Count > 0 && downmass2.Count > 0)
                                         {
                                             float discenter = Math.Abs(downmass[0].box.Center.Y - downmass2[0].box.Center.Y);
                                             CoordRestoreData disCenterData = new CoordRestoreData("针孔中心距", discenter);
@@ -659,11 +669,22 @@ namespace MetalZipperAlgorihm
                             {
                                 labelname = Tooth_names[labelindex];
                                 photoindex = cell.PhotoIndex / 100;
-                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                if (labelname == "布带脏污" || labelname == "黑点脏污" || labelname.Contains("轮印"))
                                 {
                                     float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
                                     CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue);
                                     dets.Add(dirtyData);
+                                    continue;
+                                }
+                                if (labelname.Contains("露铜"))
+                                {
+                                    float hvalue = HValueOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
+                                    CoordRestoreData hData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], hvalue);
+                                    dets.Add(hData);
+                                    continue;
+                                }
+                                if (photoindex == (cell.PhotoTatolCount / 2) && labelname.Contains("方块插销")) //最后一张低曝图能拍到下一条拉链的方块插销，所已检测出的方块插销缺陷要忽略掉
+                                {
                                     continue;
                                 }
                                 CoordRestoreData restoreData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j]);
@@ -673,7 +694,7 @@ namespace MetalZipperAlgorihm
                             {
                                 labelname = Cloth_names[labelindex];
                                 photoindex = cell.PhotoIndex;
-                                if (labelname == "布带脏污" || labelname == "黑点脏污")
+                                if (labelname == "布带脏污" || labelname == "黑点脏污" || labelname.Contains("轮印"))
                                 {
                                     float colordiffvalue = DirtyDefetOperration(mats[detrets[i].Item2 - 1], detrets[i].Item1.datas[j]);
                                     CoordRestoreData dirtyData = new CoordRestoreData(cell.Image.ImageWidth, photoindex - 1, i * smallimgWidth, 0, labelname, detrets[i].Item1.datas[j], colordiffvalue, 1);
@@ -1416,10 +1437,10 @@ namespace MetalZipperAlgorihm
         /// </summary>
         /// <param name="detData"></param>
         /// <param name="detName"></param>
-        public float DirtyDefetOperration(Mat img, DetData detData)
+        private float DirtyDefetOperration(Mat img, DetData detData)
         {
             int derArea = detData.box.Width * detData.box.Height;
-            if (derArea <= 1000)
+            if (derArea <= 50000)
             {
                 int recx = detData.box.X;
                 int recy = detData.box.Y;
@@ -1491,6 +1512,25 @@ namespace MetalZipperAlgorihm
 
 
 
+        }
+        /// <summary>
+        /// 处理链齿露铜颜色深浅
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="detData"></param>
+        /// <returns></returns>
+        private float HValueOperration(Mat img, DetData detData)
+        {
+            if (detData == null)
+            {
+                return 0;
+            }
+            Rect cutrec = detData.box;
+            Mat img2 = img[cutrec];
+            Mat hsvImage = new Mat();
+            Cv2.CvtColor(img2, hsvImage, ColorConversionCodes.BGR2HSV);
+            Scalar hsvMean = Cv2.Mean(hsvImage);
+            return (float)hsvMean.Val1;
         }
 
         /// <summary>

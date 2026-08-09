@@ -121,6 +121,8 @@ namespace CommunicationModule
         /// </summary>
         private string alarmName = "自定义报警";
 
+        private string resultSignalName = "自定义结果信号";
+
         /// <summary>
         /// 2024.7.19 李焕彬
         /// 设置报警协议
@@ -134,6 +136,24 @@ namespace CommunicationModule
                 CollectionEditor collectionEditor = new CollectionEditor();
                 collectionEditor.Collection = cAlarmProtocol.Protocol;
                 collectionEditor.Title = cAlarmProtocol.Name;
+                collectionEditor.Lang = Com.GetLanguage();
+                collectionEditor.ShowDialog();
+            }
+        }
+
+        /// <summary>
+        /// 2026.8.3 鲍赞宝
+        /// 设置结果信号协议
+        /// </summary>
+        /// <param name="cResultSignalProtocol">结果信号</param>
+        [RelayCommand]
+        public void SetResultSignal(CResultSignalAgreement cResultSignalProtocol)
+        {
+            if (cResultSignalProtocol != null)
+            {
+                CollectionEditor collectionEditor = new CollectionEditor();
+                collectionEditor.Collection = cResultSignalProtocol.Protocol;
+                collectionEditor.Title = cResultSignalProtocol.Name;
                 collectionEditor.Lang = Com.GetLanguage();
                 collectionEditor.ShowDialog();
             }
@@ -160,6 +180,27 @@ namespace CommunicationModule
                 new CAlarmAgreement(alarmName + index, Com.CreateProtocol(), Setting)
             );
         }
+        /// <summary>
+        /// 2026.8.3 鲍赞宝
+        /// 添加报警协议
+        /// </summary>
+        [RelayCommand]
+        public void AddResultSignal()
+        {
+            int index = 0;
+            for (int i = Setting.ResultAgreements.Count - 1; i >= 0; i--)
+            {
+                var match = Regex.Match(Setting.ResultAgreements[i].Name, resultSignalName + "[0-9]+");
+                if (match.Success)
+                {
+                    index = int.Parse(match.Value.Substring(resultSignalName.Length)) + 1;
+                    break;
+                }
+            }
+            Setting.ResultAgreements.Add(
+                new CResultSignalAgreement(resultSignalName + index, Com.CreateProtocol(), Setting)
+            );
+        }
 
         /// <summary>
         /// 2024.7.19 李焕彬
@@ -172,6 +213,20 @@ namespace CommunicationModule
             if (cAlarmProtocol != null)
             {
                 Setting.AlarmAgreements.Remove(cAlarmProtocol);
+            }
+        }
+
+        /// <summary>
+        /// 2026.8.3 鲍赞宝
+        /// 删除结果信号协议
+        /// </summary>
+        /// <param name="cResultSignalProtocol">结果信号协议</param>
+        [RelayCommand]
+        public void DelResultSignal(CResultSignalAgreement cResultSignalProtocol)
+        {
+            if (cResultSignalProtocol != null)
+            {
+                Setting.ResultAgreements.Remove(cResultSignalProtocol);
             }
         }
     }

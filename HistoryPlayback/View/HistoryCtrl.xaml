@@ -231,16 +231,16 @@
 
 
             <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-                <Border  Grid.Row="0"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
+                <Border  Grid.Column="0"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
                     <wh:ImageView Source="{Binding ReadImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
                 </Border>
 
-                <Border Grid.Row="1"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
+                <Border Grid.Column="1"  BorderBrush="DarkGray" Margin="1" BorderThickness="1">
                         <wh:ImageView Source="{Binding ReadPullImage}" LabelVisibility="Collapsed" ClearButtonVisibility="Collapsed" />
                  </Border>
         
