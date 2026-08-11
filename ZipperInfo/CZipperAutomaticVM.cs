@@ -277,6 +277,18 @@ namespace ZipperInfo
                 SaveParameter(AutoData);
             }
         }
+        [RelayCommand]
+        void UpMassUpdate()
+        {
+            try
+            {
+                CZipperAutomaticAlgorithm.Instance.UpMassUpdate();
+            }
+            catch (Exception)
+            {
+            }
+          
+        }
 
         public static string ParameterPath = "..\\SystemConfig\\ZipperAutoData.Json";
 

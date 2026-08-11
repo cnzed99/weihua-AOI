@@ -35,8 +35,9 @@ namespace UpMassZipperAlgorihm
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
-            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的
-                                                                                   //色差差异来判断它的明显程度
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的色差差异来判断它的明显程度
+            DefectFeatures.Add(new("PositionX", "位置X", "PositionX", "um"));
+            DefectFeatures.Add(new("PositionY", "位置Y", "PositionY", "um"));
 
 
         }
@@ -565,6 +566,9 @@ CurrentDevice, up_num, param.UpMassScore, 0.4f, 512);
             sRegioninfo.Phi = info.Angle;
             sRegioninfo.Area = info.RecWidth * info.RecHeight;
             sRegioninfo.Score = info.Score;
+            sRegioninfo.PositionX = info.OrgCenterX;
+            sRegioninfo.PositionY = info.OrgCenterY;
+            sRegioninfo.ColorDiffValue = info.Value;//20260424 鲍赞宝
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
             {
                 info.ShowLeftUp,

@@ -110,9 +110,9 @@ namespace ZipperInfo
                         LightControl.BaseConfig.LightChannelList[0].Value = 255;
                         MaxTimeOutCount++;
                     }
-                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 110)
+                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 60)
                     {
-                        LightControl.BaseConfig.LightChannelList[0].Value = 110;
+                        LightControl.BaseConfig.LightChannelList[0].Value = 60;
                         MinTimeOutCount++;
                     }
 
@@ -144,9 +144,9 @@ namespace ZipperInfo
                     {
                         LightControl.BaseConfig.LightChannelList[0].Value = 255;
                     }
-                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 110)
+                    if (LightControl.BaseConfig.LightChannelList[0].Value <= 60)
                     {
-                        LightControl.BaseConfig.LightChannelList[0].Value = 110;
+                        LightControl.BaseConfig.LightChannelList[0].Value = 60;
                     }
 
                     LightControl.SetChannelValue(LightControl.BaseConfig.LightChannelList[0]);

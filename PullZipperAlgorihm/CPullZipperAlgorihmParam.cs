@@ -55,8 +55,9 @@ namespace PullZipperAlgorihm
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
-            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的
-                                                                                   //色差差异来判断它的明显程度
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的色差差异来判断它的明显程度
+            DefectFeatures.Add(new("PositionX", "位置X", "PositionX", "um"));
+            DefectFeatures.Add(new("PositionY", "位置Y", "PositionY", "um"));
         }
 
         /// <summary>
@@ -680,6 +681,9 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             sRegioninfo.Phi = info.Angle;
             sRegioninfo.Area = info.RecWidth * info.RecHeight;
             sRegioninfo.Score = info.Score;
+            sRegioninfo.PositionX = info.OrgCenterX;
+            sRegioninfo.PositionY = info.OrgCenterY;
+            sRegioninfo.ColorDiffValue = info.Value;//20260424 鲍赞宝
             List<System.Windows.Point> rec1Points = new List<System.Windows.Point>()
             {
                 info.ShowLeftUp,
@@ -892,7 +896,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HObject ho_Contours_hole, ho_RegionAffineTrans = null;
             HObject ho_ImageReduced = null;
             HObject ho_pullRegionaff = null;
-            HObject ho_Rectangle = null;
+            HObject ho_BackRectangle = null;
             // Local control variables 
 
             HTuple hv_Rows_pull = new HTuple(), hv_Cols_pull = new HTuple();
@@ -917,22 +921,27 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             HOperatorSet.GenEmptyObj(out ho_RegionAffineTrans);
             HOperatorSet.GenEmptyObj(out ho_ImageReduced);
             HOperatorSet.GenEmptyObj(out ho_pullRegionaff);
-            HOperatorSet.GenEmptyObj(out ho_Rectangle);
+            HOperatorSet.GenEmptyObj(out ho_BackRectangle);
 
             try
             {
                 if (RecPoints != null)
                 {
-                    ho_Rectangle.Dispose();
-                    HOperatorSet.GenRectangle1(out ho_Rectangle, RecPoints[0], RecPoints[1], RecPoints[2], RecPoints[3]);
-                    GetPullsRegion(ho_Image, out _, out _, out ho_pullRegion);
+                    HObject ho_RectangleOrg;
+                    HOperatorSet.GenEmptyObj(out ho_RectangleOrg);
+                    ho_RectangleOrg.Dispose();
+                    HOperatorSet.GenRectangle1(out ho_RectangleOrg, 10, 0, 860, 930);
+                    GetPullsRegion(ho_Image, ho_RectangleOrg, out _, out ho_pullRegion,  out _, out _, out _, out _);
                     HOperatorSet.AreaCenter(ho_pullRegion, out HTuple hv_pullArea, out _, out _);
                     pullArea = (float)hv_pullArea.D;
+                    ho_RectangleOrg.Dispose();
                     if (ModelID_pull != null)
                     {
+                        ho_BackRectangle.Dispose();
+                        HOperatorSet.GenRectangle1(out ho_BackRectangle, RecPoints[0], RecPoints[1], RecPoints[2], RecPoints[3]);
                         //*转正图片
                         ho_RegionAffineTrans.Dispose(); hv_Score.Dispose();
-                        GetAffImage(ho_Image, ho_Rectangle, out ho_RegionAffineTrans, ModelID_pull, hv_RowRef,
+                        GetAffImage(ho_Image, ho_BackRectangle, out ho_RegionAffineTrans, ModelID_pull, hv_RowRef,
                             hv_ColumnRef, out hv_Score);
                         if ((int)(new HTuple((new HTuple(hv_Score.TupleLength())).TupleGreater(0))) != 0)
                         {
@@ -940,8 +949,8 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                             //获取拉片区域
                             ho_GrayImage.Dispose(); ho_pullRegionaff.Dispose(); //ho_pullRegion.Dispose();
                                                                                 // GetPullsRegion(ho_ImageAffineTrans, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
-                            GetAffinePullRegion(ho_Image, ho_RegionAffineTrans, out ho_GrayImage, out ho_pullRegionaff);
-
+                                                                               //  GetAffinePullRegion(ho_Image, ho_RegionAffineTrans, out ho_GrayImage, out ho_pullRegionaff);
+                            GetPullsRegion(ho_Image, ho_RegionAffineTrans, out ho_GrayImage, out ho_pullRegionaff, out _, out _, out _, out _);
                             //获取拉片区域轮廓
                             ho_Contours_pull.Dispose();
                             HOperatorSet.GenContourRegionXld(ho_pullRegionaff, out ho_Contours_pull, "border");
@@ -1062,7 +1071,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
                 hv_Row.Dispose();
                 hv_Column.Dispose();
                 hv_Angle.Dispose();
-                ho_Rectangle.Dispose();
+                ho_BackRectangle.Dispose();
             }
         }
 
@@ -1119,9 +1128,15 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             try
             {
                 //获取拉片区域
+                HObject ho_RectangleOrg;
+                HOperatorSet.GenEmptyObj(out ho_RectangleOrg);
+                ho_RectangleOrg.Dispose();
+                HOperatorSet.GenRectangle1(out ho_RectangleOrg, 10, 0, 860, 930);
                 ho_GrayImage.Dispose(); ho_pullRegion.Dispose(); pullArea.Dispose();
-                GetPullsRegion(ho_Image, out ho_GrayImage, out ho_Rectangle, out ho_pullRegion);
+                GetPullsRegion(ho_Image, ho_RectangleOrg, out ho_GrayImage, out ho_pullRegion, out HTuple hv_Backrow1,
+                 out HTuple hv_BackColumn1, out HTuple hv_Backrow2, out HTuple hv_BackColumn2);
                 HOperatorSet.AreaCenter(ho_pullRegion, out pullArea, out _, out _);
+                ho_Rectangle = new double[4] { hv_Backrow1.D, hv_BackColumn1.D, hv_Backrow2.D, hv_BackColumn2.D };
                 //获取拉片区域轮廓
                 ho_Contours_pull.Dispose();
                 HOperatorSet.GenContourRegionXld(ho_pullRegion, out ho_Contours_pull, "border");
@@ -1417,7 +1432,7 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             {
                 hv_Row3.Dispose(); hv_Column3.Dispose(); hv_Angle.Dispose(); hv_Score.Dispose();
                 HOperatorSet.FindShapeModel(ho_GrayImage, hv_ModelID, (new HTuple(-10)).TupleDeg()
-                    , (new HTuple(20)).TupleDeg(), 0.65, 1, 0.5, "least_squares", 0, 0.9, out hv_Row3,
+                    , (new HTuple(20)).TupleDeg(), 0.4, 1, 0.5, "least_squares", 0, 0.9, out hv_Row3,
                     out hv_Column3, out hv_Angle, out hv_Score);
             }
             ho_ImageAffineTrans.Dispose();
@@ -1498,104 +1513,6 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             ho_RegionDifference.Dispose();
             ho_ConnectedRegions2.Dispose();
 
-
-            return;
-        }
-
-        private void GetHoleRegion(HObject ho_Image, HObject ho_GrayImage, HObject ho_pullRegion,
-            out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV)
-        {
-
-
-
-            // Local iconic variables 
-
-            HObject ho_ImageReduced, ho_Region, ho_RegionFillUp;
-            HObject ho_RegionClosing, ho_ConnectedRegions, ho_SelectedRegions2;
-            HObject ho_RegionFillUp3, ho_RegionDifference, ho_RegionOpening;
-            HObject ho_ImageR, ho_ImageG, ho_ImageB, ho_ImageH, ho_ImageS;
-            HObject ho_ImageV;
-
-            // Local control variables 
-
-            HTuple hv_DevH = new HTuple(), hv_DevS = new HTuple();
-            HTuple hv_DevV = new HTuple();
-            // Initialize local and output iconic variables 
-            HOperatorSet.GenEmptyObj(out ho_HoleRegion);
-            HOperatorSet.GenEmptyObj(out ho_ImageReduced);
-            HOperatorSet.GenEmptyObj(out ho_Region);
-            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
-            HOperatorSet.GenEmptyObj(out ho_RegionClosing);
-            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
-            HOperatorSet.GenEmptyObj(out ho_SelectedRegions2);
-            HOperatorSet.GenEmptyObj(out ho_RegionFillUp3);
-            HOperatorSet.GenEmptyObj(out ho_RegionDifference);
-            HOperatorSet.GenEmptyObj(out ho_RegionOpening);
-            HOperatorSet.GenEmptyObj(out ho_ImageR);
-            HOperatorSet.GenEmptyObj(out ho_ImageG);
-            HOperatorSet.GenEmptyObj(out ho_ImageB);
-            HOperatorSet.GenEmptyObj(out ho_ImageH);
-            HOperatorSet.GenEmptyObj(out ho_ImageS);
-            HOperatorSet.GenEmptyObj(out ho_ImageV);
-            hv_MeanH = new HTuple();
-            hv_MeanS = new HTuple();
-            hv_MeanV = new HTuple();
-            ho_ImageReduced.Dispose();
-            HOperatorSet.ReduceDomain(ho_GrayImage, ho_pullRegion, out ho_ImageReduced);
-            ho_Region.Dispose();
-            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region, 230, 255);
-            ho_RegionFillUp.Dispose();
-            HOperatorSet.FillUp(ho_Region, out ho_RegionFillUp);
-            ho_RegionClosing.Dispose();
-            HOperatorSet.ClosingCircle(ho_RegionFillUp, out ho_RegionClosing, 5.5);
-            ho_ConnectedRegions.Dispose();
-            HOperatorSet.Connection(ho_RegionClosing, out ho_ConnectedRegions);
-            ho_SelectedRegions2.Dispose();
-            HOperatorSet.SelectShape(ho_ConnectedRegions, out ho_SelectedRegions2, (new HTuple("area")).TupleConcat(
-                "convexity"), "and", (new HTuple(6500)).TupleConcat(0.9), (new HTuple(9999999999)).TupleConcat(
-                1));
-            ho_RegionFillUp3.Dispose();
-            HOperatorSet.FillUp(ho_SelectedRegions2, out ho_RegionFillUp3);
-            ho_HoleRegion.Dispose();
-            HOperatorSet.SelectShapeStd(ho_RegionFillUp3, out ho_HoleRegion, "max_area",
-                70);
-            //*获取拉片HSV
-            ho_RegionDifference.Dispose();
-            HOperatorSet.Difference(ho_pullRegion, ho_RegionClosing, out ho_RegionDifference
-                );
-            ho_RegionOpening.Dispose();
-            HOperatorSet.OpeningCircle(ho_RegionDifference, out ho_RegionOpening, 3.5);
-            ho_ImageR.Dispose(); ho_ImageG.Dispose(); ho_ImageB.Dispose();
-            HOperatorSet.Decompose3(ho_Image, out ho_ImageR, out ho_ImageG, out ho_ImageB
-                );
-            ho_ImageH.Dispose(); ho_ImageS.Dispose(); ho_ImageV.Dispose();
-            HOperatorSet.TransFromRgb(ho_ImageR, ho_ImageG, ho_ImageB, out ho_ImageH, out ho_ImageS,
-                out ho_ImageV, "hsv");
-            hv_MeanH.Dispose(); hv_DevH.Dispose();
-            HOperatorSet.Intensity(ho_RegionOpening, ho_ImageH, out hv_MeanH, out hv_DevH);
-            hv_MeanS.Dispose(); hv_DevS.Dispose();
-            HOperatorSet.Intensity(ho_RegionOpening, ho_ImageS, out hv_MeanS, out hv_DevS);
-            hv_MeanV.Dispose(); hv_DevV.Dispose();
-            HOperatorSet.Intensity(ho_RegionOpening, ho_ImageV, out hv_MeanV, out hv_DevV);
-            ho_ImageReduced.Dispose();
-            ho_Region.Dispose();
-            ho_RegionFillUp.Dispose();
-            ho_RegionClosing.Dispose();
-            ho_ConnectedRegions.Dispose();
-            ho_SelectedRegions2.Dispose();
-            ho_RegionFillUp3.Dispose();
-            ho_RegionDifference.Dispose();
-            ho_RegionOpening.Dispose();
-            ho_ImageR.Dispose();
-            ho_ImageG.Dispose();
-            ho_ImageB.Dispose();
-            ho_ImageH.Dispose();
-            ho_ImageS.Dispose();
-            ho_ImageV.Dispose();
-
-            hv_DevH.Dispose();
-            hv_DevS.Dispose();
-            hv_DevV.Dispose();
 
             return;
         }
@@ -1831,91 +1748,103 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             return;
         }
 
-        private void GetPullsRegion(HObject ho_Image, out HObject ho_GrayImage, out double[] recPoints,
-              out HObject ho_pullRegion)
+        private void GetPullsRegion(HObject ho_Image, HObject ho_Rectangle, out HObject ho_GrayImage,
+   out HObject ho_pullRegion, out HTuple hv_Backrow1, out HTuple hv_BackColumn1,
+   out HTuple hv_Backrow2, out HTuple hv_BackColumn2)
         {
 
 
 
             // Local iconic variables 
 
-            HObject ho_Region, ho_ConnectedRegions, ho_SelectedRegions;
-            HObject ho_ImageReduced, ho_Region1, ho_RegionFillUp, ho_ConnectedRegions1;
-            HObject ho_SelectedRegions1, ho_RegionDifference, ho_ConnectedRegions2;
-            HObject ho_Rectangle;
+            HObject ho_ImageR, ho_ImageG, ho_ImageB, ho_ImageReduced;
+            HObject ho_Region1, ho_ConnectedRegions1, ho_SelectedRegions1;
+            HObject ho_RegionFillUp, ho_RegionDifference, ho_ConnectedRegions2;
+            HObject ho_SelectedRegions2;
+
             // Local control variables 
 
             HTuple hv_Row1 = new HTuple(), hv_Column1 = new HTuple();
             HTuple hv_Row2 = new HTuple(), hv_Column2 = new HTuple();
             // Initialize local and output iconic variables 
             HOperatorSet.GenEmptyObj(out ho_GrayImage);
-            HOperatorSet.GenEmptyObj(out ho_Rectangle);
             HOperatorSet.GenEmptyObj(out ho_pullRegion);
-            HOperatorSet.GenEmptyObj(out ho_Region);
-            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
-            HOperatorSet.GenEmptyObj(out ho_SelectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_ImageR);
+            HOperatorSet.GenEmptyObj(out ho_ImageG);
+            HOperatorSet.GenEmptyObj(out ho_ImageB);
             HOperatorSet.GenEmptyObj(out ho_ImageReduced);
             HOperatorSet.GenEmptyObj(out ho_Region1);
-            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
             HOperatorSet.GenEmptyObj(out ho_ConnectedRegions1);
             HOperatorSet.GenEmptyObj(out ho_SelectedRegions1);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
             HOperatorSet.GenEmptyObj(out ho_RegionDifference);
             HOperatorSet.GenEmptyObj(out ho_ConnectedRegions2);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions2);
+            hv_Backrow1 = new HTuple();
+            hv_BackColumn1 = new HTuple();
+            hv_Backrow2 = new HTuple();
+            hv_BackColumn2 = new HTuple();
             ho_GrayImage.Dispose();
             HOperatorSet.Rgb1ToGray(ho_Image, out ho_GrayImage);
-            ho_Region.Dispose();
-            HOperatorSet.Threshold(ho_GrayImage, out ho_Region, 180, 255);
-            ho_ConnectedRegions.Dispose();
-            HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
-            ho_SelectedRegions.Dispose();
-            HOperatorSet.SelectShapeStd(ho_ConnectedRegions, out ho_SelectedRegions, "max_area",
-                70);
-            hv_Row1.Dispose(); hv_Column1.Dispose(); hv_Row2.Dispose(); hv_Column2.Dispose();
-            HOperatorSet.SmallestRectangle1(ho_SelectedRegions, out hv_Row1, out hv_Column1,
-                out hv_Row2, out hv_Column2);
-            using (HDevDisposeHelper dh = new HDevDisposeHelper())
-            {
-                ho_Rectangle.Dispose();
-                double row1 = hv_Row1 + 100;
-                double col1 = hv_Column1 + 100;
-                double row2 = hv_Row2 - 100;
-                double col2 = hv_Column2 - 50;
-                recPoints = new double[] { row1, col1, row2, col2 };
-                HOperatorSet.GenRectangle1(out ho_Rectangle, row1, col1, row2, col2);
-            }
+            ho_ImageR.Dispose(); ho_ImageG.Dispose(); ho_ImageB.Dispose();
+            HOperatorSet.Decompose3(ho_Image, out ho_ImageR, out ho_ImageG, out ho_ImageB
+                );
             ho_ImageReduced.Dispose();
-            HOperatorSet.ReduceDomain(ho_GrayImage, ho_Rectangle, out ho_ImageReduced);
+            HOperatorSet.ReduceDomain(ho_ImageR, ho_Rectangle, out ho_ImageReduced);
 
             //获取拉片
             ho_Region1.Dispose();
-            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region1, 220, 255);
-            ho_RegionFillUp.Dispose();
-            HOperatorSet.FillUp(ho_Region1, out ho_RegionFillUp);
+            HOperatorSet.Threshold(ho_ImageReduced, out ho_Region1, 0, 65);
             ho_ConnectedRegions1.Dispose();
-            HOperatorSet.Connection(ho_RegionFillUp, out ho_ConnectedRegions1);
+            HOperatorSet.Connection(ho_Region1, out ho_ConnectedRegions1);
             ho_SelectedRegions1.Dispose();
             HOperatorSet.SelectShapeStd(ho_ConnectedRegions1, out ho_SelectedRegions1, "max_area",
                 70);
+            ho_RegionFillUp.Dispose();
+            HOperatorSet.FillUp(ho_SelectedRegions1, out ho_RegionFillUp);
             ho_RegionDifference.Dispose();
-            HOperatorSet.Difference(ho_Rectangle, ho_SelectedRegions1, out ho_RegionDifference
+            HOperatorSet.Difference(ho_Rectangle, ho_RegionFillUp, out ho_RegionDifference
                 );
             ho_ConnectedRegions2.Dispose();
             HOperatorSet.Connection(ho_RegionDifference, out ho_ConnectedRegions2);
-            ho_pullRegion.Dispose();
-            HOperatorSet.SelectShapeStd(ho_ConnectedRegions2, out ho_pullRegion, "max_area",
+            //opening_circle (ConnectedRegions2, RegionOpening, 3.5)
+            ho_SelectedRegions2.Dispose();
+            HOperatorSet.SelectShapeStd(ho_ConnectedRegions2, out ho_SelectedRegions2, "max_area",
                 70);
+            ho_pullRegion.Dispose();
+            HOperatorSet.Difference(ho_Rectangle, ho_SelectedRegions2, out ho_pullRegion);
+            hv_Row1.Dispose(); hv_Column1.Dispose(); hv_Row2.Dispose(); hv_Column2.Dispose();
+            HOperatorSet.SmallestRectangle1(ho_pullRegion, out hv_Row1, out hv_Column1, out hv_Row2,
+                out hv_Column2);
+            hv_Backrow1.Dispose();
+            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+            {
+                hv_Backrow1 = hv_Row1 - 150;
+            }
+            hv_BackColumn1.Dispose();
+            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+            {
+                hv_BackColumn1 = hv_Column1 - 50;
+            }
+            hv_Backrow2.Dispose();
+            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+            {
+                hv_Backrow2 = hv_Row2 + 150;
+            }
+            hv_BackColumn2.Dispose();
+            hv_BackColumn2 = new HTuple(hv_Column2);
 
-
-            ho_Region.Dispose();
-            ho_ConnectedRegions.Dispose();
-            ho_SelectedRegions.Dispose();
+            ho_ImageR.Dispose();
+            ho_ImageG.Dispose();
+            ho_ImageB.Dispose();
             ho_ImageReduced.Dispose();
             ho_Region1.Dispose();
-            ho_RegionFillUp.Dispose();
             ho_ConnectedRegions1.Dispose();
             ho_SelectedRegions1.Dispose();
+            ho_RegionFillUp.Dispose();
             ho_RegionDifference.Dispose();
             ho_ConnectedRegions2.Dispose();
+            ho_SelectedRegions2.Dispose();
 
             hv_Row1.Dispose();
             hv_Column1.Dispose();
@@ -1923,6 +1852,126 @@ CurrentDevice, pullsharp_num, param.PullSharpScore, Nms, 640);
             hv_Column2.Dispose();
 
             return;
+        }
+        private void GetHoleRegion(HObject ho_Image, HObject ho_GrayImage, HObject ho_pullRegion,
+        out HObject ho_HoleRegion, out HTuple hv_MeanH, out HTuple hv_MeanS, out HTuple hv_MeanV)
+        {
+
+
+
+            // Local iconic variables 
+
+            HObject ho_ImageReduced, ho_ImageR, ho_ImageG;
+            HObject ho_ImageB, ho_ImageH2, ho_ImageS2, ho_ImageI2, ho_Region;
+            HObject ho_RegionFillUp, ho_ConnectedRegions, ho_SelectedRegions2;
+            HObject ho_RegionFillUp3, ho_RegionDifference, ho_RegionDifference1;
+            HObject ho_RegionErosion, ho_ImageReduced1, ho_Region1;
+            HObject ho_ImageH, ho_ImageS, ho_ImageV;
+
+            // Local control variables 
+
+            HTuple hv_DevH = new HTuple(), hv_DevS = new HTuple();
+            HTuple hv_DevV = new HTuple();
+            // Initialize local and output iconic variables 
+            HOperatorSet.GenEmptyObj(out ho_HoleRegion);
+            HOperatorSet.GenEmptyObj(out ho_ImageReduced);
+            HOperatorSet.GenEmptyObj(out ho_ImageR);
+            HOperatorSet.GenEmptyObj(out ho_ImageG);
+            HOperatorSet.GenEmptyObj(out ho_ImageB);
+            HOperatorSet.GenEmptyObj(out ho_ImageH2);
+            HOperatorSet.GenEmptyObj(out ho_ImageS2);
+            HOperatorSet.GenEmptyObj(out ho_ImageI2);
+            HOperatorSet.GenEmptyObj(out ho_Region);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions2);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp3);
+            HOperatorSet.GenEmptyObj(out ho_RegionDifference);
+            HOperatorSet.GenEmptyObj(out ho_RegionDifference1);
+            HOperatorSet.GenEmptyObj(out ho_RegionErosion);
+            HOperatorSet.GenEmptyObj(out ho_ImageReduced1);
+            HOperatorSet.GenEmptyObj(out ho_Region1);
+            HOperatorSet.GenEmptyObj(out ho_ImageH);
+            HOperatorSet.GenEmptyObj(out ho_ImageS);
+            HOperatorSet.GenEmptyObj(out ho_ImageV);
+            hv_MeanH = new HTuple();
+            hv_MeanS = new HTuple();
+            hv_MeanV = new HTuple();
+            ho_ImageReduced.Dispose();
+            HOperatorSet.ReduceDomain(ho_Image, ho_pullRegion, out ho_ImageReduced);
+            ho_ImageR.Dispose(); ho_ImageG.Dispose(); ho_ImageB.Dispose();
+            HOperatorSet.Decompose3(ho_ImageReduced, out ho_ImageR, out ho_ImageG, out ho_ImageB
+                );
+            ho_ImageH2.Dispose(); ho_ImageS2.Dispose(); ho_ImageI2.Dispose();
+            HOperatorSet.TransFromRgb(ho_ImageR, ho_ImageG, ho_ImageB, out ho_ImageH2, out ho_ImageS2,
+                out ho_ImageI2, "hsi");
+            ho_Region.Dispose();
+            HOperatorSet.Threshold(ho_ImageS2, out ho_Region, 75, 255);
+            //fill_up (Region, RegionFillUp)
+            //closing_circle (Region, RegionClosing, 5.5)
+            ho_ConnectedRegions.Dispose();
+            HOperatorSet.Connection(ho_Region, out ho_ConnectedRegions);
+            ho_SelectedRegions2.Dispose();
+            HOperatorSet.SelectShape(ho_ConnectedRegions, out ho_SelectedRegions2, (new HTuple("area")).TupleConcat(
+                "convexity"), "and", (new HTuple(6500)).TupleConcat(0.9), (new HTuple(9999999999)).TupleConcat(
+                1));
+            ho_RegionFillUp3.Dispose();
+            HOperatorSet.FillUp(ho_SelectedRegions2, out ho_RegionFillUp3);
+            ho_HoleRegion.Dispose();
+            HOperatorSet.SelectShapeStd(ho_RegionFillUp3, out ho_HoleRegion, "max_area",
+                70);
+            //*获取拉片HSV
+            ho_RegionDifference.Dispose();
+            HOperatorSet.Difference(ho_pullRegion, ho_Region, out ho_RegionDifference);
+            //opening_circle (RegionDifference, RegionOpening, 3.5)
+            ho_RegionFillUp.Dispose();
+            HOperatorSet.FillUp(ho_RegionDifference, out ho_RegionFillUp);
+            ho_RegionDifference1.Dispose();
+            HOperatorSet.Difference(ho_RegionFillUp, ho_HoleRegion, out ho_RegionDifference1
+                );
+            ho_RegionErosion.Dispose();
+            HOperatorSet.ErosionCircle(ho_RegionDifference1, out ho_RegionErosion, 5.5);
+            ho_ImageReduced1.Dispose();
+            HOperatorSet.ReduceDomain(ho_GrayImage, ho_RegionErosion, out ho_ImageReduced1
+                );
+            ho_Region1.Dispose();
+            HOperatorSet.Threshold(ho_ImageReduced1, out ho_Region1, 20, 255);
+            ho_ImageH.Dispose(); ho_ImageS.Dispose(); ho_ImageV.Dispose();
+            HOperatorSet.TransFromRgb(ho_ImageR, ho_ImageG, ho_ImageB, out ho_ImageH, out ho_ImageS,
+                out ho_ImageV, "hsv");
+            hv_MeanH.Dispose(); hv_DevH.Dispose();
+            HOperatorSet.Intensity(ho_Region1, ho_ImageH, out hv_MeanH, out hv_DevH);
+            hv_MeanS.Dispose(); hv_DevS.Dispose();
+            HOperatorSet.Intensity(ho_Region1, ho_ImageS, out hv_MeanS, out hv_DevS);
+            hv_MeanV.Dispose(); hv_DevV.Dispose();
+            HOperatorSet.Intensity(ho_Region1, ho_ImageV, out hv_MeanV, out hv_DevV);
+            ho_ImageReduced.Dispose();
+            ho_ImageR.Dispose();
+            ho_ImageG.Dispose();
+            ho_ImageB.Dispose();
+            ho_ImageH2.Dispose();
+            ho_ImageS2.Dispose();
+            ho_ImageI2.Dispose();
+            ho_Region.Dispose();
+            ho_RegionFillUp.Dispose();
+            ho_ConnectedRegions.Dispose();
+            ho_SelectedRegions2.Dispose();
+            ho_RegionFillUp3.Dispose();
+            ho_RegionDifference.Dispose();
+            ho_RegionDifference1.Dispose();
+            ho_RegionErosion.Dispose();
+            ho_ImageReduced1.Dispose();
+            ho_Region1.Dispose();
+            ho_ImageH.Dispose();
+            ho_ImageS.Dispose();
+            ho_ImageV.Dispose();
+
+            hv_DevH.Dispose();
+            hv_DevS.Dispose();
+            hv_DevV.Dispose();
+
+            return;
+
         }
         private void UpdateScore(CParam param)
         {

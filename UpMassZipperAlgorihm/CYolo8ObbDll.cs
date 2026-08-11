@@ -90,6 +90,15 @@ namespace UpMassZipperAlgorihm
         /// </summary>
         public double ColorDiffValue = 0;
 
+        /// <summary>
+        /// È±ÏÝ×ø±êX
+        /// </summary>
+        public float PositionX = 0;
+        /// <summary>
+        /// È±ÏÝ×ø±êY
+        /// </summary>
+        public float PositionY = 0;
+
         public SRegionInfo() { }
 
         public double GetValue(CFeacture feacture, SRegion region)
@@ -112,6 +121,10 @@ namespace UpMassZipperAlgorihm
                     return Score;
                 case "ColorDiffValue":
                     return ColorDiffValue;
+                case "PositionX":
+                    return PositionX;
+                case "PositionY":
+                    return PositionY;
                 default:
                     return 0;
             }
