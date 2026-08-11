@@ -447,7 +447,7 @@ namespace ZipperTestAlgorihm
         {
             if (Directory.Exists(Dirpath))
             {
-                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model" };
                 var files = searchPatterns
                 .SelectMany(pattern => Directory.GetFiles(Dirpath, pattern))
                 .ToList();
@@ -1313,7 +1313,7 @@ namespace ZipperTestAlgorihm
                     }
 
                     EngineType engineType;
-                    if (HasDedicatedGraphicsCard()) //有显卡
+                    if (!HasDedicatedGraphicsCard()) //有显卡
                     {
                         engineType = EngineType.TensorRT;
                     }
