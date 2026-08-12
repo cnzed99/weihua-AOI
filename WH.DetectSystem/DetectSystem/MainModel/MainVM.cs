@@ -201,7 +201,8 @@ namespace WH.DetectSystem.Models
                     FocusConfig,
                     FocusConfig.token
                 );
-            CZipperAutomaticAlgorithm.Instance.TestFinshEven += TestFinshTodo;
+            //【盘齿方案0-注释】原因：取消制程Init内拉链自动识别完成事件订阅，TestFinshTodo及HSV回写方法群留作复盘不删
+            // 原： CZipperAutomaticAlgorithm.Instance.TestFinshEven += TestFinshTodo;
             // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
@@ -746,54 +747,55 @@ namespace WH.DetectSystem.Models
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
                             IDisRight = true;
-                            int productID = -1;
-                            if (Name == "正面" || Name == "反面")
-                            {
-                                CZipperCommunicate.GetID(out productID);
-                                m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-                                if (zipperID.ProductID > 0)
-                                {
-                                    bool bnext = zipperID.ProductID < productID;
-                                    while (bnext && zipperID.ProductID > 0)
-                                    {
-                                        m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                        bnext = zipperID.ProductID < productID;
-                                        if (bnext)
-                                        {
-                                            SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                            continue;
-                                        }
-                                    }
-                                    cell.ID = zipperID.ProductID.ToString();
-                                    cell.PhotoIndex = zipperID.PhotoID;
-                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                                }
-                                else
-                                {
-                                    IDisRight = false;
-                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
-                                    cell.Dispose();
-                                }
-                            }
-                            else if (Name == "上止") //上止
-                            {
-                                IDisRight = true;
-                                cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
-                                cell.PhotoIndex = 1;
-                                cell.PhotoTatolCount = 1;
-                            }
-                            else //拉头拉片
-                            {
-                                CZipperCommunicate.GetID2(out productID);
-                                if (productID != -1)
-                                {
-                                    IDisRight = true;
-                                    cell.ID = productID.ToString();
-                                    cell.PhotoIndex = 1;
-                                    cell.PhotoTatolCount = 1;
-                                }
+                            //【盘齿方案0-注释】原因：去掉取图线程按拉链制程名（正面/反面/上止/拉头拉片）绑PLC ID的三个分支，盘齿工位名语义不同，ID绑定由P2新协议重写
+                            // 原： int productID = -1;
+                            // 原： if (Name == "正面" || Name == "反面")
+                            // 原： {
+                                // 原： CZipperCommunicate.GetID(out productID);
+                                // 原： m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
+                                // 原： if (zipperID.ProductID > 0)
+                                // 原： {
+                                    // 原： bool bnext = zipperID.ProductID < productID;
+                                    // 原： while (bnext && zipperID.ProductID > 0)
+                                    // 原： {
+                                        // 原： m_WaitIDChannel.Reader.TryRead(out zipperID);
+                                        // 原： bnext = zipperID.ProductID < productID;
+                                        // 原： if (bnext)
+                                        // 原： {
+                                            // 原： SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
+                                            // 原： continue;
+                                        // 原： }
+                                    // 原： }
+                                    // 原： cell.ID = zipperID.ProductID.ToString();
+                                    // 原： cell.PhotoIndex = zipperID.PhotoID;
+                                    // 原： SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
+                                // 原： }
+                                // 原： else
+                                // 原： {
+                                    // 原： IDisRight = false;
+                                    // 原： SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
+                                    // 原： cell.Dispose();
+                                // 原： }
+                            // 原： }
+                            // 原： else if (Name == "上止") //上止
+                            // 原： {
+                                // 原： IDisRight = true;
+                                // 原： cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
+                                // 原： cell.PhotoIndex = 1;
+                                // 原： cell.PhotoTatolCount = 1;
+                            // 原： }
+                            // 原： else //拉头拉片
+                            // 原： {
+                                // 原： CZipperCommunicate.GetID2(out productID);
+                                // 原： if (productID != -1)
+                                // 原： {
+                                    // 原： IDisRight = true;
+                                    // 原： cell.ID = productID.ToString();
+                                    // 原： cell.PhotoIndex = 1;
+                                    // 原： cell.PhotoTatolCount = 1;
+                                // 原： }
 
-                            }
+                            // 原： }
 
                         }
                         else
@@ -856,44 +858,46 @@ namespace WH.DetectSystem.Models
                         cell.Stopwatch.Restart();
                         if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCX;
-                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCY;
-                            cell.PullOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.OrgContours;
-                            cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.HoleOrgContours;
-                            cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH; //拉片
-                            cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS;
-                            cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanV;
-                            cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH; //拉头
-                            cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS;
-                            cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanV;
-                            cell.ModelID_Pull = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Pull;
-                            cell.ModelID_Logo = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Logo;
-                            cell.PullModelRow = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelRow;
-                            cell.PullModelCol = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelCol;
-                            cell.BackRectangle = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.BackRectangle;
-                            cell.PullSegOrgArea = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullSegOrgArea;
-                            cell.UpMass_1_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanH;
-                            cell.UpMass_1_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanS;
-                            cell.UpMass_1_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanV;
-                            cell.UpMass_2_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanH;
-                            cell.UpMass_2_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanS;
-                            cell.UpMass_2_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanV;
-                            int photoTotalCount = 0;
-                            if (Name != "正面" && Name != "反面")
-                            {
-                                photoTotalCount = 1;
-                            }
-                            else
-                            {
-                                photoTotalCount = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperImagesCount * 2;
-                            }
-                            cell.PhotoTatolCount = photoTotalCount;
+                            //【盘齿方案0-注释】原因：去掉拉链几何/模板/材质参数拷贝及拉链张数规则（PhotoTatolCount=ZipperImagesCount*2），盘齿参数由M8换料阶段重写
+                            // 原： cell.ZipperPullerCX = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCX;
+                            // 原： cell.ZipperPullerCY = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCY;
+                            // 原： cell.PullOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.OrgContours;
+                            // 原： cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.HoleOrgContours;
+                            // 原： cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH; //拉片
+                            // 原： cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS;
+                            // 原： cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanV;
+                            // 原： cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH; //拉头
+                            // 原： cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS;
+                            // 原： cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanV;
+                            // 原： cell.ModelID_Pull = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Pull;
+                            // 原： cell.ModelID_Logo = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Logo;
+                            // 原： cell.PullModelRow = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelRow;
+                            // 原： cell.PullModelCol = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelCol;
+                            // 原： cell.BackRectangle = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.BackRectangle;
+                            // 原： cell.PullSegOrgArea = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullSegOrgArea;
+                            // 原： cell.UpMass_1_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanH;
+                            // 原： cell.UpMass_1_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanS;
+                            // 原： cell.UpMass_1_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanV;
+                            // 原： cell.UpMass_2_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanH;
+                            // 原： cell.UpMass_2_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanS;
+                            // 原： cell.UpMass_2_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanV;
+                            // 原： int photoTotalCount = 0;
+                            // 原： if (Name != "正面" && Name != "反面")
+                            // 原： {
+                                // 原： photoTotalCount = 1;
+                            // 原： }
+                            // 原： else
+                            // 原： {
+                                // 原： photoTotalCount = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperImagesCount * 2;
+                            // 原： }
+                            // 原： cell.PhotoTatolCount = photoTotalCount;
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType.ToString();
-                        cell.DownStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperDownMassType.ToString();
-                        cell.UpStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperUpMassType.ToString();
-                        cell.BoltDiretion = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData?.BoltDiretion.ToString();
-                        cell.ZipperLogoType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType;
+                        //【盘齿方案0-注释】原因：去掉拉链几何/模板/材质参数拷贝及拉链张数规则（PhotoTatolCount=ZipperImagesCount*2），盘齿参数由M8换料阶段重写
+                        // 原： cell.PullMaterlsType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType.ToString();
+                        // 原： cell.DownStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperDownMassType.ToString();
+                        // 原： cell.UpStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperUpMassType.ToString();
+                        // 原： cell.BoltDiretion = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData?.BoltDiretion.ToString();
+                        // 原： cell.ZipperLogoType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType;
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         try

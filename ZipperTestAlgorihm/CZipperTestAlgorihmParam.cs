@@ -1287,6 +1287,8 @@ namespace ZipperTestAlgorihm
         [OnDeserialized]
         private async void LoadModel(StreamingContext context)
         {
+            //【盘齿方案0-注释】原因：空工程占位算法从未运行 ReadNames，Common_names 为 null，1296 行 .Length 抛 NullReferenceException；类别名为空 = 算法未配置 = 跳过模型加载。拉链工程 ReadNames 已填充类别名，此守卫不改变拉链行为。
+            if (Common_names == null) return;
             CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {

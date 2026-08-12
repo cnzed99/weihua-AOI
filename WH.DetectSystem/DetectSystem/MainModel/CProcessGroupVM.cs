@@ -118,12 +118,13 @@ namespace WH.DetectSystem.Models
                 NameUpdata();
             };
             //20260506 鲍赞宝
-            if (Name == "制程组1")
-            {
-                IDCreate = new CCreateIDMetalStation1();
-                IDCreate.IntThread();
-                IDCreate.IDSendEvent += IDSend;
-            }
+            //【盘齿方案0-注释】原因：盘齿制程组1不再启动拉链ID生成轮询线程（CCreateIDMetalStation1读PLC），ID下发由P2新协议重写
+            // 原： if (Name == "制程组1")
+            // 原： {
+                // 原： IDCreate = new CCreateIDMetalStation1();
+                // 原： IDCreate.IntThread();
+                // 原： IDCreate.IDSendEvent += IDSend;
+            // 原： }
             //else if (Name== "制程组3")
             //{
             //    IDCreate = new CCreateIDStationUpMass();

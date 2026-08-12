@@ -503,7 +503,8 @@ namespace WH.DetectSystem.ViewModels
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
-                CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
+                //【盘齿方案0-注释】原因：开工程不再初始化拉链自动识别（扫模型目录/加载YOLO模型/占用COM1、COM3串口），盘齿无此流程
+                // 原： CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
                 await longtimefunc(progress);
             }
             catch (Exception ex)
