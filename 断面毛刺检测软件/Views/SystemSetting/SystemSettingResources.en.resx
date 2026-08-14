@@ -165,4 +165,7 @@
   <data name="ShowDrawEdges" xml:space="preserve">
     <value>ShowOther</value>
   </data>
+  <data name="ShowProcessSubWindow" xml:space="preserve">
+    <value>Show process sub-view</value>
+  </data>
 </root>

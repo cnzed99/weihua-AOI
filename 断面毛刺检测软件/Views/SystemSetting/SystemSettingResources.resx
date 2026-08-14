@@ -165,4 +165,7 @@
   <data name="ShowDrawEdges" xml:space="preserve">
     <value>显示标记图形</value>
   </data>
+  <data name="ShowProcessSubWindow" xml:space="preserve">
+    <value>显示制程副图</value>
+  </data>
 </root>

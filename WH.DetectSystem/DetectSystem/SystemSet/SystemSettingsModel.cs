@@ -88,6 +88,12 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         bool showDrawEdges = false;
+
+        /// <summary>
+        /// 是否显示制程格副图列。默认 false。本机 SystemSetting.Json，不进工程。
+        /// </summary>
+        [ObservableProperty]
+        bool showProcessSubWindow = false;
         
 
         /// <summary>
