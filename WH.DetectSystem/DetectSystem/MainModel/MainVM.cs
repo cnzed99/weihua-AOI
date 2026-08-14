@@ -278,6 +278,16 @@ namespace WH.DetectSystem.Models
             this.Algorithm = algorithm;
             this.Focus = focus;
             this.CameraSerial = cameraSerial;
+
+            //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；轴顶侧面/轴底侧面=10；整轴侧面=14；其余（底部/齿顶/齿顶外圆等）=1
+            this.PhotoTotalCount = name switch
+            {
+                "内孔" => 6,
+                "轴顶侧面" => 10,
+                "轴底侧面" => 10,
+                "整轴侧面" => 14,
+                _ => 1,
+            };
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm(name);
@@ -805,7 +815,9 @@ namespace WH.DetectSystem.Models
                             {
                                 cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
-                                cell.PhotoTatolCount = 1;
+                                //【盘齿方案4-注释】原因：离线/手动张数改读制程配置 PhotoTotalCount（方案4 改动D；方案审核 G3——写死 1 则旋转工位离线合并验收不通）
+                                // 原： cell.PhotoTatolCount = 1;
+                                cell.PhotoTatolCount = this.PhotoTotalCount;
                             }
                         }
 
