@@ -94,6 +94,12 @@ namespace WH.DetectSystem.Models
         /// </summary>
         [ObservableProperty]
         bool showProcessSubWindow = false;
+
+        /// <summary>
+        /// true=制程组 Tab 分页；false=无分页铺全部制程。默认 false。本机 JSON，不进工程。
+        /// </summary>
+        [ObservableProperty]
+        bool showTabControl = false;
         
 
         /// <summary>
