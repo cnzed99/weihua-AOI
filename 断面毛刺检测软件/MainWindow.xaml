@@ -223,6 +223,50 @@
                 </ListBox.ItemsPanel>
             </ListBox>
         </DataTemplate>
+        <!--【盘齿方案0.5-注释】盘齿固定 4x3 七格模板：仅 7 制程名全命中(UseGearFixedLayout)时使用；否则回 FlatProcessImageViewTemplate 通用 UniformGrid-->
+        <DataTemplate x:Key="GearFixedProcessViewTemplate">
+            <ListBox
+                Padding="0"
+                hc:BorderElement.CornerRadius="0"
+                ItemsSource="{Binding CMainVMs}"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                SelectedItem="{Binding SelectedProcess}"
+                ItemTemplate="{StaticResource ProcessCellTemplate}">
+                <ListBox.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="2" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                        <Setter Property="Grid.Row" Value="{Binding GridRow}" />
+                        <Setter Property="Grid.Column" Value="{Binding GridCol}" />
+                        <Setter Property="Grid.ColumnSpan" Value="{Binding GridColSpan}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="DarkTurquoise" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </DataTemplate>
     </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
@@ -696,7 +740,7 @@
 
                 <Grid>
                     <Grid.RowDefinitions >
-                        <RowDefinition Height="1.2*"/>
+                        <RowDefinition Height="2*"/> <!--【盘齿方案0.5-注释】图像区抬高，七格更清晰-->
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <!--  图像视窗  -->
@@ -709,6 +753,10 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding SystemSettings.ShowTabControl}" Value="True">
                                         <Setter Property="ContentTemplate" Value="{StaticResource TabProcessImageViewTemplate}"/>
+                                    </DataTrigger>
+                                    <!--【盘齿方案0.5-注释】盘齿七格固定模板；非盘齿回 Flat UniformGrid；分页优先-->
+                                    <DataTrigger Binding="{Binding UseGearFixedLayout}" Value="True">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

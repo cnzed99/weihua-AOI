@@ -75,6 +75,45 @@ namespace WH.DetectSystem.Models
             set => SetProperty(ref photoTotalCount, value);
         }
 
+        //【盘齿方案0.5-注释】无分页固定布局元数据：按制程名映射行列/跨度（非盘齿/未命中给默认，不进 .burrproj）
+        [JsonIgnore]
+        public int GridRow => Name switch
+        {
+            "齿底" => 0,
+            "齿顶" => 0,
+            "内孔" => 0,
+            "齿顶外圆" => 1,
+            "整轴侧面" => 1,
+            "轴顶侧面" => 2,
+            "轴底侧面" => 2,
+            _ => 0,
+        };
+
+        [JsonIgnore]
+        public int GridCol => Name switch
+        {
+            "齿底" => 0,
+            "齿顶" => 1,
+            "内孔" => 2,
+            "齿顶外圆" => 0,
+            "整轴侧面" => 1,
+            "轴顶侧面" => 0,
+            "轴底侧面" => 2,
+            _ => 0,
+        };
+
+        [JsonIgnore]
+        public int GridColSpan => Name switch
+        {
+            "内孔" => 2,
+            "整轴侧面" => 3,
+            "轴顶侧面" => 2,
+            "轴底侧面" => 2,
+            _ => 1,
+        };
+
+
+
         [ObservableProperty]
         [JsonProperty]
         private List<string> testImgFiles = new List<string>();

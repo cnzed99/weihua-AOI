@@ -598,6 +598,16 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.2 李焕彬
         /// 更新多制程视图模型
         /// </summary>
+        //【盘齿方案0.5-注释】无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
+        private static readonly string[] GearFixedProcesses =
+        {
+            "齿底", "齿顶", "齿顶外圆", "内孔", "轴顶侧面", "轴底侧面", "整轴侧面",
+        };
+
+        public bool UseGearFixedLayout =>
+            CMainVMs.Count == GearFixedProcesses.Length
+            && GearFixedProcesses.All(p => CMainVMs.Any(m => m.Name == p));
+
         public void UpdateMainVMs()
         {
             ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
@@ -628,6 +638,7 @@ namespace WH.DetectSystem.ViewModels
             }
             SelectedProcess = mainVMs.FirstOrDefault();
             CMainVMs = mainVMs;
+            OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
         }
 
         /// <summary>
