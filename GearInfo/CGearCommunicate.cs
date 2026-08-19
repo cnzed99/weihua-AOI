@@ -253,14 +253,90 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// F8：开机/换料写四路张数 + 两焦位。com==null 直接返回。P2-5 再实现。
+        /// 开机写四路旋转张数与两焦位。张数取工程制程 PhotoTotalCount；焦位暂写 0。每件不写。
         /// </summary>
-        public static void SendRecipePhotoAndFocus()
+        public static void SendRecipePhotoAndFocus(IEnumerable<(string processName, int photoTotalCount)> processes)
         {
+            //【盘齿方案2-注释】按物料开机写四路旋转张数与两焦位；每件不写
             if (com == null)
             {
+                TryLogInfo("无PLC，跳过配方张数/焦位下发");
                 return;
             }
+
+            try
+            {
+                Dictionary<string, int> byName = new Dictionary<string, int>();
+                if (processes != null)
+                {
+                    foreach ((string processName, int photoTotalCount) item in processes)
+                    {
+                        if (string.IsNullOrEmpty(item.processName))
+                        {
+                            continue;
+                        }
+                        byName[item.processName] = item.photoTotalCount;
+                    }
+                }
+
+                TryWriteProcessPhotoCount(byName, "内孔", "PhotoCount_Bore");
+                TryWriteProcessPhotoCount(byName, "轴顶侧面", "PhotoCount_ShaftTop");
+                TryWriteProcessPhotoCount(byName, "轴底侧面", "PhotoCount_ShaftBottom");
+                TryWriteProcessPhotoCount(byName, "整轴侧面", "PhotoCount_ShaftFull");
+
+                TryLogInfo("焦位未配置写 0");
+                TryWriteFocusPosition("FocusPos_ToothTop", 0f);
+                TryWriteFocusPosition("FocusPos_ToothOuter", 0f);
+            }
+            catch (Exception ex)
+            {
+                TryLogWarn("配方张数/焦位下发失败: " + ex.Message);
+            }
+        }
+
+        static void TryWriteProcessPhotoCount(Dictionary<string, int> byName, string processName, string pointName)
+        {
+            if (byName == null || !byName.TryGetValue(processName, out int count))
+            {
+                TryLogWarn("找不到制程「" + processName + "」，跳过张数点 " + pointName);
+                return;
+            }
+            if (Points == null || !Points.TryGetPoint(pointName, out GearPointDef def) || def == null)
+            {
+                TryLogWarn("找不到点位「" + pointName + "」，跳过制程「" + processName + "」张数下发");
+                return;
+            }
+            if (!def.Enabled)
+            {
+                TryLogWarn("点位「" + pointName + "」未启用，跳过制程「" + processName + "」张数下发");
+                return;
+            }
+            if (def.Address < 0 || def.Address > ushort.MaxValue)
+            {
+                TryLogWarn("点位「" + pointName + "」地址无效 addr=" + def.Address + "，跳过张数下发");
+                return;
+            }
+            WriteHoldingInt32Locked((ushort)def.Address, count);
+        }
+
+        static void TryWriteFocusPosition(string pointName, float value)
+        {
+            if (Points == null || !Points.TryGetPoint(pointName, out GearPointDef def) || def == null)
+            {
+                TryLogWarn("找不到点位「" + pointName + "」，跳过焦位下发");
+                return;
+            }
+            if (!def.Enabled)
+            {
+                TryLogWarn("点位「" + pointName + "」未启用，跳过焦位下发");
+                return;
+            }
+            if (def.Address < 0 || def.Address > ushort.MaxValue)
+            {
+                TryLogWarn("点位「" + pointName + "」地址无效 addr=" + def.Address + "，跳过焦位下发");
+                return;
+            }
+            WriteHoldingRealLocked((ushort)def.Address, value);
         }
 
         /// <summary>
@@ -297,6 +373,18 @@ namespace GearInfo
                     return;
                 }
                 com.WriteSingleRegisterInt32(address, value);
+            }
+        }
+
+        static void WriteHoldingRealLocked(ushort address, float value)
+        {
+            lock (_protocolLock)
+            {
+                if (com == null)
+                {
+                    return;
+                }
+                com.WriteSingleRegisterReal(address, value);
             }
         }
 

@@ -495,6 +495,8 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
+                //【盘齿方案2-注释】制程列表已装满后写一次配方张数/焦位，每件不写
+                SendLoadedRecipePhotoAndFocus();
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -516,6 +518,32 @@ namespace WH.DetectSystem.ViewModels
                 SysLog.Error(ex.Message);
             }
             #endregion
+        }
+
+        //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数/焦位
+        void SendLoadedRecipePhotoAndFocus()
+        {
+            if (CMainVMs == null || CMainVMs.Count == 0)
+            {
+                return;
+            }
+            List<(string processName, int photoTotalCount)> processes = new List<(string, int)>(CMainVMs.Count);
+            foreach (var vm in CMainVMs)
+            {
+                if (vm == null || string.IsNullOrEmpty(vm.Name))
+                {
+                    continue;
+                }
+                processes.Add((vm.Name, vm.PhotoTotalCount));
+            }
+            try
+            {
+                CGearCommunicate.SendRecipePhotoAndFocus(processes);
+            }
+            catch (Exception ex)
+            {
+                SysLog.Warn("配方张数/焦位下发失败: " + ex.Message);
+            }
         }
 
         async Task longtimefunc(IProgress<string> progress)
