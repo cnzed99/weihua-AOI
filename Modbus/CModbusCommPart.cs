@@ -145,6 +145,26 @@ namespace Modbus
         }
 
         /// <summary>
+        /// 【盘齿方案2-注释】原因：G5 仅对当前实例降低超时/重试，不改类默认值（Connect 仍写 1000ms/10 次）。master 尚未创建时为空操作。
+        /// </summary>
+        public void SetTransportTimeoutAndRetries(int timeoutMs, int retries)
+        {
+            try
+            {
+                if (master == null || master.Transport == null)
+                {
+                    return;
+                }
+                master.Transport.ReadTimeout = timeoutMs;
+                master.Transport.WriteTimeout = timeoutMs;
+                master.Transport.Retries = retries;
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>
         /// 2024.7.21 李焕彬
         /// 关闭
         /// </summary>

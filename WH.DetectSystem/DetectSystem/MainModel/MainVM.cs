@@ -30,6 +30,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
+using GearInfo;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Globalization;
@@ -764,6 +765,42 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
+        /// 【盘齿方案2】P2-3 策略B：正式路径只读 GetProductID 缓存绑 ID。com==null 或 ID<=0 返回 false（调用方丢弃）。
+        /// 禁止在取图线程 ReadHoldingRegister。成功则写 cell.ID/PhotoIndex/PhotoTatolCount 并维护换 ID 计数。
+        /// </summary>
+        private bool TryBindFormalProductId(Cell cell)
+        {
+            if (CGearCommunicate.com == null)
+            {
+                SysLog.Warn($"{Name}-无PLC，不绑ID，丢弃");
+                return false;
+            }
+            int id = CGearCommunicate.GetProductID();
+            if (id <= 0)
+            {
+                SysLog.Warn($"{Name}-产品ID无效:{id}，丢弃");
+                return false;
+            }
+            string productID = id.ToString(CultureInfo.InvariantCulture);
+
+            if (productID != _lastBoundProductId)
+            {
+                if (_photoCounter > 0 && _photoCounter < this.PhotoTotalCount)
+                {
+                    SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{this.PhotoTotalCount}");
+                }
+                _photoCounter = 0;
+                _lastBoundProductId = productID;
+            }
+
+            _photoCounter++;
+            cell.ID = productID;
+            cell.PhotoIndex = _photoCounter;
+            cell.PhotoTatolCount = this.PhotoTotalCount;
+            return true;
+        }
+
+        /// <summary>
         /// 拉链自动识别算法
         /// </summary>
        // public CZipperAutomaticAlgorithm ZipperAutomaticAlgorithm = new CZipperAutomaticAlgorithm();
@@ -877,35 +914,43 @@ namespace WH.DetectSystem.Models
                             // ⚠ G1：取图线程只更新 _lastBoundProductId/_photoCounter，不得直接操作 MergeCells
                             //【盘齿方案4-注释】占位 ID 与拉链一样来自产量+1；Total 仍是 double，只 ToString 不经 int。
                             //【盘齿方案4-注释】ToString("0", InvariantCulture) 避免 1 vs 1.0 导致换 ID 误判；字符串比较。
-                            double nextId = ProcessGroup.MaociDefectsProduce.Total + 1;
-                            if (nextId <= 0)
+                            //【盘齿方案2-注释】 原： double nextId = ProcessGroup.MaociDefectsProduce.Total + 1;
+                            //【盘齿方案2-注释】 原： if (nextId <= 0)
+                            //【盘齿方案2-注释】 原： {
+                                //【盘齿方案2-注释】 原： IDisRight = false;
+                                //【盘齿方案2-注释】 原： SysLog.Warn($"{Name}-产品ID无效:{nextId}，丢弃");
+                                //【盘齿方案2-注释】 原： cell.Dispose();
+                                //【盘齿方案2-注释】 原： continue;
+                            //【盘齿方案2-注释】 原： }
+                            //【盘齿方案2-注释】 原： string productID = nextId.ToString("0", CultureInfo.InvariantCulture);
+
+                            //【盘齿方案2-注释】 原： if (productID != _lastBoundProductId)
+                            //【盘齿方案2-注释】 原： {
+                                //【盘齿方案2-注释】 原： if (_photoCounter > 0 && _photoCounter < this.PhotoTotalCount)
+                                //【盘齿方案2-注释】 原： {
+                                    //【盘齿方案2-注释】 原： SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{this.PhotoTotalCount}");
+                                //【盘齿方案2-注释】 原： }
+                                //【盘齿方案2-注释】 原： _photoCounter = 0;
+                                //【盘齿方案2-注释】 原： _lastBoundProductId = productID;
+                            //【盘齿方案2-注释】 原： }
+
+                            //【盘齿方案2-注释】 原： _photoCounter++;
+                            //【盘齿方案2-注释】 原： cell.ID = productID;
+                            //【盘齿方案2-注释】 原： cell.PhotoIndex = _photoCounter;
+                            //【盘齿方案2-注释】 原： cell.PhotoTatolCount = this.PhotoTotalCount;
+                            //【盘齿方案2】P2-3 策略B：正式路径只读 GetProductID 缓存；com==null 或 ID<=0 丢弃不绑
+                            if (!TryBindFormalProductId(cell))
                             {
                                 IDisRight = false;
-                                SysLog.Warn($"{Name}-产品ID无效:{nextId}，丢弃");
                                 cell.Dispose();
                                 continue;
                             }
-                            string productID = nextId.ToString("0", CultureInfo.InvariantCulture);
 
-                            if (productID != _lastBoundProductId)
-                            {
-                                if (_photoCounter > 0 && _photoCounter < this.PhotoTotalCount)
-                                {
-                                    SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{this.PhotoTotalCount}");
-                                }
-                                _photoCounter = 0;
-                                _lastBoundProductId = productID;
-                            }
-
-                            _photoCounter++;
-                            cell.ID = productID;
-                            cell.PhotoIndex = _photoCounter;
-                            cell.PhotoTatolCount = this.PhotoTotalCount;
                             //【盘齿方案4】改动B：齿顶 N=1 的第2张转外圆、第3张起丢弃，禁止走本制程过张（否则第2张到不了转发）
                             if (_photoCounter > cell.PhotoTatolCount && Name != "齿顶")
                             {
                                 IDisRight = false;
-                                SysLog.Warn($"{Name}-过张丢弃：产品ID:{productID},PhotoIndex:{_photoCounter}>PhotoTatolCount:{cell.PhotoTatolCount}");
+                                SysLog.Warn($"{Name}-过张丢弃：产品ID:{cell.ID},PhotoIndex:{_photoCounter}>PhotoTatolCount:{cell.PhotoTatolCount}");
                                 cell.Dispose();
                                 continue;
                             }

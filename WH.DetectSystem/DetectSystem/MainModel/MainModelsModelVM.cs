@@ -44,6 +44,7 @@ using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
+using GearInfo;
 using Modbus;
 
 namespace WH.DetectSystem.ViewModels
@@ -396,7 +397,10 @@ namespace WH.DetectSystem.ViewModels
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
                  
-                    CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    //【盘齿方案2-注释】原因：C1 静态 com 挂接到盘齿协议类（方案接入点3），拉链行保留
+                    // 原：CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    CGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    CGearCommunicate.OnComAttached();
                 }
                 catch (Exception ex)
                 {
