@@ -32,6 +32,7 @@ using WH.RunCell;
 using ZipperInfo;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Globalization;
 
 
 namespace WH.DetectSystem.Models
@@ -535,6 +536,17 @@ namespace WH.DetectSystem.Models
         /// </summary>
         private List<Cell> MergeCells = new List<Cell>();
 
+        /// <summary>
+        /// 【盘齿方案4】改动A：本制程上次绑定的 ProductID（取图线程维护，禁止静态全局）
+        /// 【盘齿方案4-注释】string；空/null 表示尚未绑定。占位 ID 与拉链一样来自产量+1，字符串比较。
+        /// </summary>
+        private string _lastBoundProductId;
+
+        /// <summary>
+        /// 【盘齿方案4】改动A：本制程当前 ID 已收张数（本地 PhotoIndex 1..N）
+        /// </summary>
+        private int _photoCounter;
+
         #region 启停 状态
 
         /// <summary>
@@ -702,6 +714,55 @@ namespace WH.DetectSystem.Models
         {
             return filter.IsReversal;
         }
+
+        /// <summary>
+        /// 【盘齿方案4】改动B：齿顶第 k 张分流。k==1 返回 false 入本制程算法；k==2 转发齿顶外圆；k>=3 丢弃。
+        /// 返回 true 表示本张已处理完，取图线程应 continue，禁止写入本制程 m_AlgorithmChannel。
+        /// CloneExecptImg 不拷贝 Image（方法内 WriteTo 已注释），此处移交 Image 所有权后再 Dispose 原 cell。
+        /// </summary>
+        private bool TryDispatchToothTopByIndex(Cell cell, int k)
+        {
+            if (k <= 1)
+            {
+                return false;
+            }
+            if (k >= 3)
+            {
+                SysLog.Warn($"{Name}-工位1多余张丢弃：产品ID:{cell.ID},PhotoIndex:{k}>=3");
+                cell.Dispose();
+                return true;
+            }
+
+            CMainModel outerVm = ProcessGroup?.CMainModels?.FirstOrDefault(m => m.Name == "齿顶外圆");
+            if (outerVm == null)
+            {
+                SysLog.Error($"{Name}-工位1转发失败：同组未找到制程「齿顶外圆」，丢弃 ID:{cell.ID}");
+                cell.Dispose();
+                return true;
+            }
+
+            Cell fwd = cell.CloneExecptImg();
+            fwd.Image = cell.Image;
+            cell.Image = null;
+            fwd.ID = cell.ID;
+            fwd.PhotoIndex = 1;
+            fwd.PhotoTatolCount = 1;
+            fwd.ProjName = "齿顶外圆";
+            fwd.ProjGuid = outerVm.GUID;
+            fwd.IsPreBound = true;
+            if (!outerVm.m_WaitImgChannel.Writer.TryWrite(fwd))
+            {
+                SysLog.Error($"{Name}-工位1转发失败：齿顶外圆通道写入失败，丢弃 ID:{fwd.ID}");
+                fwd.Dispose();
+            }
+            else
+            {
+                SysLog.Info($"{Name}-工位1转发第2张到齿顶外圆：ID:{fwd.ID},PhotoIndex:{fwd.PhotoIndex},IsPreBound:{fwd.IsPreBound}");
+            }
+            cell.Dispose();
+            return true;
+        }
+
         /// <summary>
         /// 拉链自动识别算法
         /// </summary>
@@ -754,7 +815,12 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        if (IsStart && !isAutomaticTest) //自动运行
+                        //【盘齿方案4】改动B/G2：转发 Cell 已由齿顶绑好；必须在改动A 与离线 ImageFile=="" 覆盖之前拦截
+                        if (cell.IsPreBound)
+                        {
+                            IDisRight = true;
+                        }
+                        else if (IsStart && !isAutomaticTest) //自动运行
                         {
                             IDisRight = true;
                             //【盘齿方案0-注释】原因：去掉取图线程按拉链制程名（正面/反面/上止/拉头拉片）绑PLC ID的三个分支，盘齿工位名语义不同，ID绑定由P2新协议重写
@@ -807,9 +873,62 @@ namespace WH.DetectSystem.Models
 
                             // 原： }
 
+                            //【盘齿方案4】改动A：取图线程绑盘齿 ID / PhotoIndex 1..N（方案2 GetProductID 未接回，占位 Total+1）
+                            // ⚠ G1：取图线程只更新 _lastBoundProductId/_photoCounter，不得直接操作 MergeCells
+                            //【盘齿方案4-注释】占位 ID 与拉链一样来自产量+1；Total 仍是 double，只 ToString 不经 int。
+                            //【盘齿方案4-注释】ToString("0", InvariantCulture) 避免 1 vs 1.0 导致换 ID 误判；字符串比较。
+                            double nextId = ProcessGroup.MaociDefectsProduce.Total + 1;
+                            if (nextId <= 0)
+                            {
+                                IDisRight = false;
+                                SysLog.Warn($"{Name}-产品ID无效:{nextId}，丢弃");
+                                cell.Dispose();
+                                continue;
+                            }
+                            string productID = nextId.ToString("0", CultureInfo.InvariantCulture);
+
+                            if (productID != _lastBoundProductId)
+                            {
+                                if (_photoCounter > 0 && _photoCounter < this.PhotoTotalCount)
+                                {
+                                    SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{this.PhotoTotalCount}");
+                                }
+                                _photoCounter = 0;
+                                _lastBoundProductId = productID;
+                            }
+
+                            _photoCounter++;
+                            cell.ID = productID;
+                            cell.PhotoIndex = _photoCounter;
+                            cell.PhotoTatolCount = this.PhotoTotalCount;
+                            //【盘齿方案4】改动B：齿顶 N=1 的第2张转外圆、第3张起丢弃，禁止走本制程过张（否则第2张到不了转发）
+                            if (_photoCounter > cell.PhotoTatolCount && Name != "齿顶")
+                            {
+                                IDisRight = false;
+                                SysLog.Warn($"{Name}-过张丢弃：产品ID:{productID},PhotoIndex:{_photoCounter}>PhotoTatolCount:{cell.PhotoTatolCount}");
+                                cell.Dispose();
+                                continue;
+                            }
+                            IDisRight = true;
+
+                            //【盘齿方案4】改动B：齿顶分流（A 计数之后、入本制程 m_AlgorithmChannel 之前）
+                            if (Name == "齿顶" && TryDispatchToothTopByIndex(cell, _photoCounter))
+                            {
+                                continue;
+                            }
                         }
                         else
                         {
+                            //【盘齿方案4】改动B：离线齿顶用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
+                            if (Name == "齿顶")
+                            {
+                                if (TryDispatchToothTopByIndex(cell, cell.PhotoIndex))
+                                {
+                                    continue;
+                                }
+                                // k==1：本制程 N=1，避免同夹同时放 _1_/_2_ 时 PhotoTatolCount=2 误等第二张
+                                cell.PhotoTatolCount = this.PhotoTotalCount;
+                            }
                             IDisRight = true;
                             if (cell.ImageFile == "") //手动调试
                             {
@@ -819,6 +938,7 @@ namespace WH.DetectSystem.Models
                                 // 原： cell.PhotoTatolCount = 1;
                                 cell.PhotoTatolCount = this.PhotoTotalCount;
                             }
+                            //【盘齿方案4】改动A：OffLineTestCtrl 已写 ID/PhotoIndex/PhotoTatolCount 且 ImageFile 非空时透传，不覆盖
                         }
 
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -943,6 +1063,17 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest) //运行
                             {
+                                //【盘齿方案4】G1：算法线程清旧 ID 残图（取图线程不得操作 MergeCells）
+                                List<Cell> staleIdCells = MergeCells.FindAll(c => c.ID != cell.ID);
+                                if (staleIdCells.Count > 0)
+                                {
+                                    SysLog.Warn($"{Name}-残图清台：新ID:{cell.ID}，清除旧ID残图{staleIdCells.Count}张");
+                                    for (int i = 0; i < staleIdCells.Count; i++)
+                                    {
+                                        SaveOtherOldImage(staleIdCells[i]);
+                                        MergeCells.Remove(staleIdCells[i]);
+                                    }
+                                }
                                 MergeCells.Add(cell);
                                 SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
                                 List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
@@ -957,7 +1088,10 @@ namespace WH.DetectSystem.Models
                                     {
                                         for (int i = 0; i < currentCells.Count; i++)
                                         {
-                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex,
+                                            //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
+                                            // 原：newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex,
+                                            // 原：    currentCells[i].CreateTime, currentCells[i].RecipeTime));
+                                            newCell.GearImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex,
                                                 currentCells[i].CreateTime, currentCells[i].RecipeTime));
                                         }
                                     }
@@ -1773,29 +1907,29 @@ namespace WH.DetectSystem.Models
                 for (int i = 0; i < cells.Count; i++)
                 {
                     newCell.DrawEdges.AddRange(cells[i].DrawEdges);
-                    if (cells[i].ZipperPullPartImg != null)
-                    {
-                        newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
-                    }
-                    if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
-                    {
-                        for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
-                        {
-                            newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
-                        }
-                    }
-
-                    if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
-                    {
-                        for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
-                        {
-                            newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
-                        }
-                    }
-                    if (cells[i].DownMassMatImg != null)
-                    {
-                        newCell.DownMassMatImg = cells[i].DownMassMatImg;
-                    }
+                    //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
+                    // 原：if (cells[i].ZipperPullPartImg != null)
+                    // 原：{
+                    // 原：    newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
+                    // 原：}
+                    // 原：if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
+                    // 原：{
+                    // 原：    for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
+                    // 原：    {
+                    // 原：        newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
+                    // 原：    }
+                    // 原：}
+                    // 原：if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
+                    // 原：{
+                    // 原：    for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
+                    // 原：    {
+                    // 原：        newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
+                    // 原：    }
+                    // 原：}
+                    // 原：if (cells[i].DownMassMatImg != null)
+                    // 原：{
+                    // 原：    newCell.DownMassMatImg = cells[i].DownMassMatImg;
+                    // 原：}
                     newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
                     newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
@@ -1805,15 +1939,18 @@ namespace WH.DetectSystem.Models
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {
-                    if (img.Count == 1)
-                    {
-                        newCell.Image = img[0];
-                    }
-                    else
-                    {
-                        newCell.Image = img[0];
-                        newCell.ChangleImgae = img[1];
-                    }
+                    newCell.Image = img[0];
+                    newCell.MergedPanorama = img[0];
+                    //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
+                    // 原：if (img.Count == 1)
+                    // 原：{
+                    // 原：    newCell.Image = img[0];
+                    // 原：}
+                    // 原：else
+                    // 原：{
+                    // 原：    newCell.Image = img[0];
+                    // 原：    newCell.ChangleImgae = img[1];
+                    // 原：}
                 }
                 return newCell;
             }
@@ -1837,20 +1974,28 @@ namespace WH.DetectSystem.Models
             }
             else
             {
-                // 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
-                List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
-                List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
-                lowIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                highIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                if (lowIndexGroup.Count > 0)
+                //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
+                // 原：// 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
+                // 原：List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
+                // 原：List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
+                // 原：lowIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
+                // 原：highIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
+                // 原：if (lowIndexGroup.Count > 0)
+                // 原：{
+                // 原：    CImage lowimage = GetMergeImage(lowIndexGroup);
+                // 原：    cImages.Add(lowimage);
+                // 原：}
+                // 原：if (highIndexGroup.Count > 0)
+                // 原：{
+                // 原：    CImage heightimage = GetMergeImage(highIndexGroup);
+                // 原：    cImages.Add(heightimage);
+                // 原：}
+                // 原：return cImages;
+                List<Cell> ordered = cells.OrderBy(c => c.PhotoIndex).ToList();
+                CImage merged = GetMergeImage(ordered);
+                if (merged != null)
                 {
-                    CImage lowimage = GetMergeImage(lowIndexGroup);
-                    cImages.Add(lowimage);
-                }
-                if (highIndexGroup.Count > 0)
-                {
-                    CImage heightimage = GetMergeImage(highIndexGroup);
-                    cImages.Add(heightimage);
+                    cImages.Add(merged);
                 }
                 return cImages;
 
