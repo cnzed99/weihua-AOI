@@ -151,13 +151,49 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// F2：按制程组结果回写。P2-4 再接线。com==null 直接返回。
+        /// 按制程组名回写组结果。查 GroupResults 得点位名再查 Address；com==null 只打日志不抛。
         /// </summary>
         public static void SendGroupResult(string groupName, string id, GearResult result)
         {
             if (com == null)
             {
+                TryLogWarn("无PLC，跳过组结果回写 groupName=" + groupName + " id=" + id + " result=" + result);
                 return;
+            }
+
+            try
+            {
+                if (Points == null || Points.GroupResults == null)
+                {
+                    TryLogWarn("组结果点位未加载，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(groupName)
+                    || !Points.GroupResults.TryGetValue(groupName, out string pointName)
+                    || string.IsNullOrEmpty(pointName))
+                {
+                    TryLogWarn("未找到制程组结果映射，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                    return;
+                }
+
+                if (!Points.TryGetPoint(pointName, out GearPointDef def) || def == null)
+                {
+                    TryLogWarn("未找到组结果点位定义，跳过回写 groupName=" + groupName + " point=" + pointName + " id=" + id + " result=" + result);
+                    return;
+                }
+
+                if (def.Address < 0 || def.Address > ushort.MaxValue)
+                {
+                    TryLogWarn("组结果点位地址无效，跳过回写 groupName=" + groupName + " point=" + pointName + " addr=" + def.Address);
+                    return;
+                }
+
+                WriteHoldingInt32Locked((ushort)def.Address, (int)result);
+            }
+            catch (Exception ex)
+            {
+                TryLogWarn("组结果回写失败 groupName=" + groupName + " id=" + id + " result=" + result + " " + ex.Message);
             }
         }
 

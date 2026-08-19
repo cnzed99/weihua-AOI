@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -34,6 +34,7 @@ using WH.Entity.Progress;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using ZipperInfo;
+using GearInfo;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -140,6 +141,12 @@ namespace 断面毛刺检测软件
                             Growl.Warning("正在对焦中，不能启动！");
                             return;
                         }
+                        //【盘齿方案2-注释】原因：即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
+                        if (CMainList.StartStop && !TryValidateProcessGroupResultMapping())
+                        {
+                            CMainList.StartStop = false;
+                            return;
+                        }
                         if (CMainList.IsStart == CMainList.StartStop)
                             return;
                         CMainList.IsStart = CMainList.StartStop;
@@ -201,6 +208,55 @@ namespace 断面毛刺检测软件
             finally
             {
                 ((IProgress<string>)progress).Report("Loaded!");
+            }
+        }
+
+        /// <summary>
+        /// 启动前校验工程所有制程组名都能在已加载的 GroupResults 中找到。点位未加载或缺映射返回 false。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateProcessGroupResultMapping()
+        {
+            try
+            {
+                bool pointsReady = CGearCommunicate.Points != null
+                    && CGearCommunicate.Points.GroupResults != null
+                    && CGearCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CGearCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CGearCommunicate.Points != null
+                        && CGearCommunicate.Points.GroupResults != null
+                        && CGearCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\GearProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CGearCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
             }
         }
 

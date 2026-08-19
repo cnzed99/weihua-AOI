@@ -1195,48 +1195,51 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.MaociDefectsOneFlowProduce.Excute(CellOut.Cell);
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                        // ProcessGroup.MaociQualityConfig.Excute(CellOut.Cell);
-                                        if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
-                                        {
-                                            if (Name == "正面" || Name == "反面")
-                                            {
-                                                CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
-                                            else if (Name == "上止")
-                                            {
-                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
-                                            else
-                                            {
-                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
+                                        //【盘齿方案2-注释】 原： if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
+                                        //【盘齿方案2-注释】 原： {
+                                            //【盘齿方案2-注释】 原： if (Name == "正面" || Name == "反面")
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            //【盘齿方案2-注释】 原： }
+                                            //【盘齿方案2-注释】 原： else if (Name == "上止")
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            //【盘齿方案2-注释】 原： }
+                                            //【盘齿方案2-注释】 原： else
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
+                                            //【盘齿方案2-注释】 原： }
+                                        //【盘齿方案2-注释】 原： }
+                                        //【盘齿方案2-注释】 原： else
+                                        //【盘齿方案2-注释】 原： {
+                                            //【盘齿方案2-注释】 原： if (Name == "正面" || Name == "反面")
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： if (CellOut.Cell.Detection.DefectFilter.Name.Contains("大接头") || CellOut.Cell.Detection.DefectFilter.Name.Contains("大破损")
+                                                //【盘齿方案2-注释】 原：  || CellOut.Cell.Detection.DefectFilter.Name.Contains("大起毛"))
+                                                //【盘齿方案2-注释】 原： {
+                                                    //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                                //【盘齿方案2-注释】 原： }
+                                                //【盘齿方案2-注释】 原： else
+                                                //【盘齿方案2-注释】 原： {
+                                                    //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
+                                                //【盘齿方案2-注释】 原： }
+                                            //【盘齿方案2-注释】 原： }
+                                            //【盘齿方案2-注释】 原： else if (Name == "上止")
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            //【盘齿方案2-注释】 原： }
+                                            //【盘齿方案2-注释】 原： else
+                                            //【盘齿方案2-注释】 原： {
+                                                //【盘齿方案2-注释】 原： CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.NG);
+                                            //【盘齿方案2-注释】 原： }
+                                        //【盘齿方案2-注释】 原： }
 
+                                        //【盘齿方案2-注释】原因：组齐套后按制程组名回写；一期仅 OK/NG，不启用 NG_Severe
+                                        CGearCommunicate.SendGroupResult(
+                                            ProcessGroup.Name,
+                                            CellOut.Cell.ID,
+                                            CellOut.Cell.IsOK ? GearResult.OK : GearResult.NG);
 
-                                        }
-                                        else
-                                        {
-                                            if (Name == "正面" || Name == "反面")
-                                            {
-                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("大接头") || CellOut.Cell.Detection.DefectFilter.Name.Contains("大破损")
-                                                 || CellOut.Cell.Detection.DefectFilter.Name.Contains("大起毛"))
-                                                {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG); 
-                                                }
-                                                else
-                                                {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
-                                                }
-                                            }
-                                            else if (Name == "上止")
-                                            {
-                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.NG);
-
-                                            }
-                                            else
-                                            {
-                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.NG);
-                                            }
-
-                                        }
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
                                         {
