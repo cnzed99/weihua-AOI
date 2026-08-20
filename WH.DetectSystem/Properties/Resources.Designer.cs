@@ -79,6 +79,15 @@ namespace WH.DetectSystem.Properties {
         }
         
         /// <summary>
+        ///   查找类似 副窗已勾选但名称为空，已填为「副图」 的本地化字符串。
+        /// </summary>
+        internal static string EmptySubWindowName {
+            get {
+                return ResourceManager.GetString("EmptySubWindowName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 初始化光源控制器失败 的本地化字符串。
         /// </summary>
         internal static string 初始化光源失败 {

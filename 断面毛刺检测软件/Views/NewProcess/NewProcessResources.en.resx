@@ -147,4 +147,10 @@
   <data name="Motion" xml:space="preserve">
     <value>Motion:</value>
   </data>
+  <data name="HasSubWindow" xml:space="preserve">
+    <value>Has sub-view</value>
+  </data>
+  <data name="SubWindowName" xml:space="preserve">
+    <value>Sub-view name</value>
+  </data>
 </root>

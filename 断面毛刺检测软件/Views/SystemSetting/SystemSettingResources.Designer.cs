@@ -186,14 +186,6 @@ namespace 断面毛刺检测软件.Views.SystemSetting {
             }
         }
         
-        /// <summary>
-        ///   查找类似 显示制程副图 的本地化字符串。
-        /// </summary>
-        internal static string ShowProcessSubWindow {
-            get {
-                return ResourceManager.GetString("ShowProcessSubWindow", resourceCulture);
-            }
-        }
         
         /// <summary>
         ///   查找类似 制程组分页显示 的本地化字符串。

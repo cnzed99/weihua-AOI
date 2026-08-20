@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -140,6 +140,9 @@
   </data>
   <data name="UnfinishedError" xml:space="preserve">
     <value>The project is not fully configured. Please reconfigure it</value>
+  </data>
+  <data name="EmptySubWindowName" xml:space="preserve">
+    <value>A checked sub-view has an empty name; it was set to the default.</value>
   </data>
   <data name="初始化光源失败" xml:space="preserve">
     <value>Failed to initialize the light source controller</value>

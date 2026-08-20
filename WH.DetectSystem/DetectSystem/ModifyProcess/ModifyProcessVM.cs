@@ -99,6 +99,12 @@ namespace WH.DetectSystem.ViewModels
         ObservableCollection<string> cams = new();
 
         /// <summary>
+        /// 制程副窗列表（弹窗编辑，确定后写回 CMainModel）
+        /// </summary>
+        [ObservableProperty]
+        ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
+
+        /// <summary>
         /// 2024.9.2 李焕彬
         /// 制程模型
         /// </summary>
@@ -135,6 +141,7 @@ namespace WH.DetectSystem.ViewModels
                 Cams.Add(this.CameraSerial);
             }
             Cams.Add("无相机-无相机");
+            ProcessSubWindows = ProcessSubWindowList.CreateEditorList(mainVM.ProcessSubWindows);
         }
 
         /// <summary>
@@ -183,6 +190,11 @@ namespace WH.DetectSystem.ViewModels
                 this.GroupVM?.AddProcess(mainVM);
                 MainModelVM.UpdateMainVMs();
             }
+            if (ProcessSubWindowList.FillBlankEnabledDisplayNames(ProcessSubWindows))
+            {
+                Growl.Warning(Properties.Resources.EmptySubWindowName);
+            }
+            mainVM.ProcessSubWindows = ProcessSubWindowList.CopyForStore(ProcessSubWindows);
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(
                 new CloseWindowMessage() { Sender = new WeakReference(this), DialogResult = true }
             );

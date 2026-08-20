@@ -141,6 +141,9 @@
   <data name="UnfinishedError" xml:space="preserve">
     <value>工程未配置完整,请重新配置</value>
   </data>
+  <data name="EmptySubWindowName" xml:space="preserve">
+    <value>副窗已勾选但名称为空，已填为「副图」</value>
+  </data>
   <data name="初始化光源失败" xml:space="preserve">
     <value>初始化光源控制器失败</value>
   </data>

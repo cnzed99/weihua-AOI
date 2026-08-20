@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Channels;
@@ -9,6 +11,7 @@ using AlgorithmDll;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.Messaging;
 using FocusControl;
 using HandyControl.Controls;
@@ -112,6 +115,95 @@ namespace WH.DetectSystem.Models
             get => ProcessGroup?.MaociQualityConfig;
         }
 
+        //【盘齿方案0.1-注释】 VM: HasProcessSubWindow / ProcessSubWindowTitle + collection hook; not in .burrproj
+        [JsonIgnore]
+        public bool HasProcessSubWindow =>
+            ProcessSubWindows != null && ProcessSubWindows.Any(o => o.Enabled);
+
+        [JsonIgnore]
+        public string ProcessSubWindowTitle
+        {
+            get
+            {
+                var item = ProcessSubWindows?.FirstOrDefault(o => o.Enabled);
+                if (item == null || string.IsNullOrWhiteSpace(item.DisplayName))
+                    return ProcessSubWindowList.DefaultTitle;
+                return item.DisplayName;
+            }
+        }
+
+        partial void OnProcessSubWindowsChanged(
+            ObservableCollection<CProcessSubWindowItem> oldValue,
+            ObservableCollection<CProcessSubWindowItem> newValue
+        )
+        {
+            UnhookProcessSubWindowCollection(oldValue);
+            HookProcessSubWindowCollection(newValue);
+            NotifyProcessSubWindowDisplay();
+        }
+
+        public void AttachProcessSubWindowNotifications()
+        {
+            UnhookProcessSubWindowCollection(ProcessSubWindows);
+            HookProcessSubWindowCollection(ProcessSubWindows);
+            NotifyProcessSubWindowDisplay();
+        }
+
+        void NotifyProcessSubWindowDisplay()
+        {
+            OnPropertyChanged(nameof(HasProcessSubWindow));
+            OnPropertyChanged(nameof(ProcessSubWindowTitle));
+        }
+
+        void HookProcessSubWindowCollection(ObservableCollection<CProcessSubWindowItem> col)
+        {
+            if (col == null)
+                return;
+            col.CollectionChanged += ProcessSubWindows_CollectionChanged;
+            foreach (var item in col)
+            {
+                item.PropertyChanged += ProcessSubWindowItem_PropertyChanged;
+            }
+        }
+
+        void UnhookProcessSubWindowCollection(ObservableCollection<CProcessSubWindowItem> col)
+        {
+            if (col == null)
+                return;
+            col.CollectionChanged -= ProcessSubWindows_CollectionChanged;
+            foreach (var item in col)
+            {
+                item.PropertyChanged -= ProcessSubWindowItem_PropertyChanged;
+            }
+        }
+
+        void ProcessSubWindows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (CProcessSubWindowItem item in e.OldItems)
+                    item.PropertyChanged -= ProcessSubWindowItem_PropertyChanged;
+            }
+            if (e.NewItems != null)
+            {
+                foreach (CProcessSubWindowItem item in e.NewItems)
+                    item.PropertyChanged += ProcessSubWindowItem_PropertyChanged;
+            }
+            NotifyProcessSubWindowDisplay();
+        }
+
+        void ProcessSubWindowItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (
+                string.IsNullOrEmpty(e.PropertyName)
+                || e.PropertyName == nameof(CProcessSubWindowItem.Enabled)
+                || e.PropertyName == nameof(CProcessSubWindowItem.DisplayName)
+            )
+            {
+                NotifyProcessSubWindowDisplay();
+            }
+        }
+
         /// <summary>
         /// 20240707 TCG
         /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息
@@ -170,6 +262,7 @@ namespace WH.DetectSystem.Models
             //};
 
             this.ProcessGroup = processGroup;
+            AttachProcessSubWindowNotifications();
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)

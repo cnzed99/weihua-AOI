@@ -149,5 +149,25 @@ namespace 断面毛刺检测软件.Views.NewProcess {
                 return ResourceManager.GetString("Sure", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 含副窗 的本地化字符串。
+        /// </summary>
+        public static string HasSubWindow {
+            get {
+                return ResourceManager.GetString("HasSubWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 副窗名称 的本地化字符串。
+        /// </summary>
+        public static string SubWindowName {
+            get {
+                return ResourceManager.GetString("SubWindowName", resourceCulture);
+            }
+        }
+        
+        
     }
 }

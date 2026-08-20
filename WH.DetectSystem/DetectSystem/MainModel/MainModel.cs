@@ -9,6 +9,7 @@ using Motion;
 using Newtonsoft.Json;
 using ProjProduceData;
 using SDFilter;
+using System.Collections.ObjectModel;
 using WH.Entity;
 using WH.Entity.CommonLib;
 
@@ -74,6 +75,11 @@ namespace WH.DetectSystem.Models
             get => photoTotalCount <= 0 ? 1 : photoTotalCount;
             set => SetProperty(ref photoTotalCount, value);
         }
+
+        //【盘齿方案0.1-注释】制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
+        [ObservableProperty]
+        [JsonProperty]
+        ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
 
         //【盘齿方案0.5-注释】无分页固定布局元数据：按制程名映射行列/跨度（非盘齿/未命中给默认，不进 .burrproj）
         [JsonIgnore]
