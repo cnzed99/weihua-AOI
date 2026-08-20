@@ -253,14 +253,14 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// 开机写四路旋转张数与两焦位。张数取工程制程 PhotoTotalCount；焦位暂写 0。每件不写。
+        /// 开机只写 HD1200 四路旋转张数。张数取工程制程 PhotoTotalCount。焦位不进点位；换料信号属方案8。每件不写。
         /// </summary>
         public static void SendRecipePhotoAndFocus(IEnumerable<(string processName, int photoTotalCount)> processes)
         {
-            //【盘齿方案2-注释】按物料开机写四路旋转张数与两焦位；每件不写
+            //【盘齿方案2-注释】只写 HD1200 四路；焦位不进点位；换料信号属方案8
             if (com == null)
             {
-                TryLogInfo("无PLC，跳过配方张数/焦位下发");
+                TryLogInfo("无PLC，跳过配方张数下发");
                 return;
             }
 
@@ -284,13 +284,10 @@ namespace GearInfo
                 TryWriteProcessPhotoCount(byName, "下轴侧面", "PhotoCount_ShaftBottom");
                 TryWriteProcessPhotoCount(byName, "整轴侧面", "PhotoCount_ShaftFull");
 
-                TryLogInfo("焦位未配置写 0");
-                TryWriteFocusPosition("FocusPos_ToothTop", 0f);
-                TryWriteFocusPosition("FocusPos_ToothOuter", 0f);
             }
             catch (Exception ex)
             {
-                TryLogWarn("配方张数/焦位下发失败: " + ex.Message);
+                TryLogWarn("配方张数下发失败: " + ex.Message);
             }
         }
 
@@ -319,25 +316,6 @@ namespace GearInfo
             WriteHoldingInt32Locked((ushort)def.Address, count);
         }
 
-        static void TryWriteFocusPosition(string pointName, float value)
-        {
-            if (Points == null || !Points.TryGetPoint(pointName, out GearPointDef def) || def == null)
-            {
-                TryLogWarn("找不到点位「" + pointName + "」，跳过焦位下发");
-                return;
-            }
-            if (!def.Enabled)
-            {
-                TryLogWarn("点位「" + pointName + "」未启用，跳过焦位下发");
-                return;
-            }
-            if (def.Address < 0 || def.Address > ushort.MaxValue)
-            {
-                TryLogWarn("点位「" + pointName + "」地址无效 addr=" + def.Address + "，跳过焦位下发");
-                return;
-            }
-            WriteHoldingRealLocked((ushort)def.Address, value);
-        }
 
         /// <summary>
         /// 轮询读 ProductID 寄存器。走协议锁。失败不抛、不把缓存改成垃圾值。
@@ -376,17 +354,6 @@ namespace GearInfo
             }
         }
 
-        static void WriteHoldingRealLocked(ushort address, float value)
-        {
-            lock (_protocolLock)
-            {
-                if (com == null)
-                {
-                    return;
-                }
-                com.WriteSingleRegisterReal(address, value);
-            }
-        }
 
         static void TryLogInfo(string message)
         {

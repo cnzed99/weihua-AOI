@@ -495,7 +495,7 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
-                //【盘齿方案2-注释】制程列表已装满后写一次配方张数/焦位，每件不写
+                //【盘齿方案2-注释】制程列表已装满后写一次配方张数，每件不写
                 SendLoadedRecipePhotoAndFocus();
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
@@ -520,7 +520,7 @@ namespace WH.DetectSystem.ViewModels
             #endregion
         }
 
-        //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数/焦位
+        //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数
         void SendLoadedRecipePhotoAndFocus()
         {
             if (CMainVMs == null || CMainVMs.Count == 0)
@@ -542,7 +542,7 @@ namespace WH.DetectSystem.ViewModels
             }
             catch (Exception ex)
             {
-                SysLog.Warn("配方张数/焦位下发失败: " + ex.Message);
+                SysLog.Warn("配方张数下发失败: " + ex.Message);
             }
         }
 
