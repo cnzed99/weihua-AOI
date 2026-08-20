@@ -671,6 +671,31 @@
                                 Text="{Binding [AllStart], Source={x:Static local:CLang.Instance}}" />
                         </Border>
                     </ToggleButton>
+                    <!--  Debug 快捷登录（Release 下保持 Collapsed）  -->
+                    <ToggleButton
+                        x:Name="Btn_OfflineDebug"
+                        Width="70"
+                        Height="70"
+                        Margin="10,0"
+                        Click="Btn_OfflineDebug_Click"
+                        FontSize="8"
+                        Style="{DynamicResource ToggleButtonFlip}"
+                        Visibility="Collapsed">
+                        <hc:StatusSwitchElement.CheckedElement>
+                            <Border Margin="-2" Background="{DynamicResource DangerBrush}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="注销" />
+                            </Border>
+                        </hc:StatusSwitchElement.CheckedElement>
+                        <Border Margin="-2" Background="Orange">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="离线调试" />
+                            </Border>
+                        </ToggleButton>
 
                 </StackPanel>
             </Grid>

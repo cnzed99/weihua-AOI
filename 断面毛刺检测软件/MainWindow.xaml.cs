@@ -57,6 +57,9 @@ namespace 断面毛刺检测软件
         public MainWindow()
         {
             InitializeComponent();
+#if DEBUG
+            Btn_OfflineDebug.Visibility = Visibility.Visible;
+#endif
             AddAssemblyPath();
             CMainList = App.Container.Resolve<CMainModelsModelVM>();
             CMainModelsModelVM.Dispatcher = this.Dispatcher;
@@ -297,6 +300,41 @@ namespace 断面毛刺检测软件
             UserInfoFrm.ShowDialog();
             //mainVM.OperateLog.UserName = CMainList.LoginViewModel.LoginPerson.UserName;
             OperateLog.Info(Properties.Resources.OpenedUserLogin);
+        }
+
+        private void Btn_OfflineDebug_Click(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            try
+            {
+                var loginVm = CMainList.LoginViewModel;
+                bool wasLogged = loginVm.LoggedSuccess;
+                bool logged = loginVm.ToggleOfflineDebugLogin();
+                Btn_OfflineDebug.IsChecked = logged;
+                if (logged)
+                {
+                    OperateLog.Info("离线调试：已登录工程师");
+                    Growl.Info("离线调试：已登录工程师");
+                }
+                else if (wasLogged)
+                {
+                    OperateLog.Info("离线调试：已注销");
+                    Growl.Info("离线调试：已注销");
+                }
+                else
+                {
+                    string err = string.IsNullOrEmpty(loginVm.ErrorMsg)
+                        ? "离线调试登录失败"
+                        : loginVm.ErrorMsg;
+                    Growl.Error(err);
+                }
+            }
+            catch (Exception ex)
+            {
+                Btn_OfflineDebug.IsChecked = false;
+                Growl.Error("离线调试失败" + Environment.NewLine + ex.Message);
+            }
+#endif
         }
 
         #endregion 用户登录

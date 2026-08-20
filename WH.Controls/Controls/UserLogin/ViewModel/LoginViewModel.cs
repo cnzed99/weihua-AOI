@@ -257,5 +257,34 @@ namespace WH.Controls
                        new CloseWindowMessage() { Sender = new WeakReference(this) }
                    );
         }
+
+        /// <summary>
+        /// Debug 快捷登录：账号工程师 / 密码 vision；已是该账号则注销。
+        /// </summary>
+        public bool ToggleOfflineDebugLogin()
+        {
+            const string fallbackUser = "工程师";
+            const string debugPassword = "vision";
+            string engineer = Properties.Resources.Engineer;
+            if (string.IsNullOrEmpty(engineer))
+            {
+                engineer = fallbackUser;
+            }
+            if (LoggedSuccess && LoginPerson != null && LoginPerson.UserName == engineer)
+            {
+                LogoutButton();
+                return LoggedSuccess;
+            }
+            if (!LoginLoad.useNamesDictionary.ContainsKey(engineer)
+                && LoginLoad.useNamesDictionary.ContainsKey(fallbackUser))
+            {
+                engineer = fallbackUser;
+            }
+            LoginPerson.UserName = engineer;
+            LoginPerson.PassWord = debugPassword;
+            LoginLeftTimeMinute = 480;
+            LoginButton();
+            return LoggedSuccess;
+        }
     }
 }
