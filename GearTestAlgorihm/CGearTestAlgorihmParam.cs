@@ -90,22 +90,18 @@ namespace GearTestAlgorihm
             }
 
             SetDefectRecipe(User);
-            if (DefectFeatures is null || DefectFeatures.Count == 0)
-            {
-                InitDefectFeatures();
-            }
+            InitDefectFeatures();
         }
 
         protected void InitDefectFeatures()
         {
+            //【盘齿方案6-注释】几何过滤用「数值」；区域下拉只用面积类特征
             DefectFeatures = new List<CFeacture>
             {
                 new("Area", "面积", "Area", "um2"),
                 new("Width", "宽度", "Width", "um"),
                 new("Height", "高度", "Height", "um"),
                 new("Score", "分数", "Score", ""),
-                new("Angle", "角度", "Angle", "°"),
-                new("Diameter", "直径", "Diameter", "um"),
             };
         }
 
