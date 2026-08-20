@@ -165,4 +165,7 @@
   <data name="ShowDrawEdges" xml:space="preserve">
     <value>显示标记图形</value>
   </data>
+  <data name="ShowTabControl" xml:space="preserve">
+    <value>制程组分页显示</value>
+  </data>
 </root>

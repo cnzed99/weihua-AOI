@@ -165,4 +165,7 @@
   <data name="ShowDrawEdges" xml:space="preserve">
     <value>ShowOther</value>
   </data>
+  <data name="ShowTabControl" xml:space="preserve">
+    <value>Show process-group tabs</value>
+  </data>
 </root>

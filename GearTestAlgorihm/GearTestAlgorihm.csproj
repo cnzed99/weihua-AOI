@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
+    <Exec Command="xcopy $(OutDir)$(TargetName).pdb $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+  </ItemGroup>
+
+</Project>

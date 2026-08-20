@@ -44,6 +44,7 @@ using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
+using GearInfo;
 using Modbus;
 
 namespace WH.DetectSystem.ViewModels
@@ -396,7 +397,10 @@ namespace WH.DetectSystem.ViewModels
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
                  
-                    CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    //【盘齿方案2-注释】原因：C1 静态 com 挂接到盘齿协议类（方案接入点3），拉链行保留
+                    // 原：CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    CGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                    CGearCommunicate.OnComAttached();
                 }
                 catch (Exception ex)
                 {
@@ -491,6 +495,8 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
+                //【盘齿方案2-注释】制程列表已装满后写一次配方张数/焦位，每件不写
+                SendLoadedRecipePhotoAndFocus();
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -503,7 +509,8 @@ namespace WH.DetectSystem.ViewModels
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
-                CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
+                //【盘齿方案0-注释】原因：开工程不再初始化拉链自动识别（扫模型目录/加载YOLO模型/占用COM1、COM3串口），盘齿无此流程
+                // 原： CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
                 await longtimefunc(progress);
             }
             catch (Exception ex)
@@ -511,6 +518,32 @@ namespace WH.DetectSystem.ViewModels
                 SysLog.Error(ex.Message);
             }
             #endregion
+        }
+
+        //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数/焦位
+        void SendLoadedRecipePhotoAndFocus()
+        {
+            if (CMainVMs == null || CMainVMs.Count == 0)
+            {
+                return;
+            }
+            List<(string processName, int photoTotalCount)> processes = new List<(string, int)>(CMainVMs.Count);
+            foreach (var vm in CMainVMs)
+            {
+                if (vm == null || string.IsNullOrEmpty(vm.Name))
+                {
+                    continue;
+                }
+                processes.Add((vm.Name, vm.PhotoTotalCount));
+            }
+            try
+            {
+                CGearCommunicate.SendRecipePhotoAndFocus(processes);
+            }
+            catch (Exception ex)
+            {
+                SysLog.Warn("配方张数/焦位下发失败: " + ex.Message);
+            }
         }
 
         async Task longtimefunc(IProgress<string> progress)
@@ -597,6 +630,16 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.2 李焕彬
         /// 更新多制程视图模型
         /// </summary>
+        //【盘齿方案0.5-注释】无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
+        private static readonly string[] GearFixedProcesses =
+        {
+            "齿底", "齿顶", "齿顶外圆", "内孔", "轴顶侧面", "轴底侧面", "整轴侧面",
+        };
+
+        public bool UseGearFixedLayout =>
+            CMainVMs.Count == GearFixedProcesses.Length
+            && GearFixedProcesses.All(p => CMainVMs.Any(m => m.Name == p));
+
         public void UpdateMainVMs()
         {
             ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
@@ -627,6 +670,7 @@ namespace WH.DetectSystem.ViewModels
             }
             SelectedProcess = mainVMs.FirstOrDefault();
             CMainVMs = mainVMs;
+            OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
         }
 
         /// <summary>

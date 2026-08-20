@@ -186,6 +186,16 @@ namespace 断面毛刺检测软件.Views.SystemSetting {
             }
         }
         
+        
+        /// <summary>
+        ///   查找类似 制程组分页显示 的本地化字符串。
+        /// </summary>
+        internal static string ShowTabControl {
+            get {
+                return ResourceManager.GetString("ShowTabControl", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   查找类似 系统设置 的本地化字符串。
         /// </summary>

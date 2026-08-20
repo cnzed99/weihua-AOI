@@ -14,7 +14,7 @@
     xmlns:vm="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     Width="450"
-    Height="330"
+    Height="350"
     d:DataContext="{d:DesignInstance vm:CNewProcessVM}"
     d:Title="增加制程"
     Background="{DynamicResource RegionBrush}"
@@ -34,50 +34,60 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10">
-            <TextBox
-                hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.NewProcess}}"
-                hc:TitleElement.TitleWidth="80"
-                Text="{Binding Name}" />
-            <ComboBox
-                Margin="5"
-                hc:TitleElement.Title="{Binding [Cam], Source={x:Static local:CLang.NewProcess}}"
-                hc:TitleElement.TitlePlacement="Left"
-                hc:TitleElement.TitleWidth="80"
-                ItemsSource="{Binding Cams}"
-                SelectedItem="{Binding CameraSerial}"
-                Style="{StaticResource ComboBoxExtend}" />
-            <ComboBox
-                Margin="5"
-                hc:TitleElement.Title="{Binding [Algorithm], Source={x:Static local:CLang.NewProcess}}"
-                hc:TitleElement.TitlePlacement="Left"
-                hc:TitleElement.TitleWidth="80"
-                ItemsSource="{Binding Source={x:Static alg:CAlgorithmManagement.AlgorithmHeper}, Path=Keys}"
-                SelectedItem="{Binding Algorithm}"
-                Style="{StaticResource ComboBoxExtend}" />
-            <ComboBox
-                Margin="5"
-                hc:TitleElement.Title="{Binding [Focus], Source={x:Static local:CLang.NewProcess}}"
-                hc:TitleElement.TitlePlacement="Left"
-                hc:TitleElement.TitleWidth="80"
-                ItemsSource="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Path=Keys}"
-                SelectedItem="{Binding Focus}"
-                Style="{StaticResource ComboBoxExtend}"
-                Visibility="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
-            <ComboBox
-                Margin="5"
-                hc:TitleElement.Title="{Binding [Group], Source={x:Static local:CLang.NewProcess}}"
-                hc:TitleElement.TitlePlacement="Left"
-                hc:TitleElement.TitleWidth="80"
-                ItemsSource="{Binding MainModelVM.CMainMModel.CProcessGroups}"
-                SelectedItem="{Binding GroupVM}"
-                Style="{StaticResource ComboBoxExtend}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+                <TextBox
+                    hc:TitleElement.Title="{Binding [Name], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitleWidth="80"
+                    Text="{Binding Name}" />
+                <ComboBox
+                    Margin="5"
+                    hc:TitleElement.Title="{Binding [Cam], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="80"
+                    ItemsSource="{Binding Cams}"
+                    SelectedItem="{Binding CameraSerial}"
+                    Style="{StaticResource ComboBoxExtend}" />
+                <ComboBox
+                    Margin="5"
+                    hc:TitleElement.Title="{Binding [Algorithm], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="80"
+                    ItemsSource="{Binding Source={x:Static alg:CAlgorithmManagement.AlgorithmHeper}, Path=Keys}"
+                    SelectedItem="{Binding Algorithm}"
+                    Style="{StaticResource ComboBoxExtend}" />
+                <ComboBox
+                    Margin="5"
+                    hc:TitleElement.Title="{Binding [Focus], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="80"
+                    ItemsSource="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Path=Keys}"
+                    SelectedItem="{Binding Focus}"
+                    Style="{StaticResource ComboBoxExtend}"
+                    Visibility="{Binding Source={x:Static focus:CFocusManagement.FocusHeper}, Converter={StaticResource EmptyToVisibilityConverter}}" />
+                <ComboBox
+                    Margin="5"
+                    hc:TitleElement.Title="{Binding [Group], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitlePlacement="Left"
+                    hc:TitleElement.TitleWidth="80"
+                    ItemsSource="{Binding MainModelVM.CMainMModel.CProcessGroups}"
+                    SelectedItem="{Binding GroupVM}"
+                    Style="{StaticResource ComboBoxExtend}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <!--【盘齿方案0.1-注释】组下拉下方：固定一行（含副窗勾选 + 名称默认「副图」）；一期主界面只取第一勾选行。编辑制程同一窗。-->
+                <CheckBox
+                    Margin="5"
+                    VerticalAlignment="Center"
+                    Content="{Binding [HasSubWindow], Source={x:Static local:CLang.NewProcess}}"
+                    IsChecked="{Binding ProcessSubWindows[0].Enabled}" />
+                <TextBox
+                    hc:TitleElement.Title="{Binding [SubWindowName], Source={x:Static local:CLang.NewProcess}}"
+                    hc:TitleElement.TitleWidth="80"
+                    Text="{Binding ProcessSubWindows[0].DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
         <hc:ElementGroup Grid.Row="1" Margin="10">
             <Button
                 Width="100"

@@ -60,6 +60,10 @@
                 <!--<ToggleButton Content="{Binding [IsSaveDetectData], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding IsToMysql}" />-->
                 <ToggleButton Content="{Binding [ShowAllDefect], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding ShowAllDefect}" />
                 <ToggleButton Content="{Binding [ShowDrawEdges], Source={x:Static local:CLang.SystemSettings}}" IsChecked="{Binding ShowDrawEdges}" />
+                <!--【盘齿方案0.2-注释】制程组 Tab 分页开关；关=无分页铺全部制程。关窗不写 JSON-->
+                <ToggleButton
+                    Content="{Binding [ShowTabControl], Source={x:Static local:CLang.SystemSettings}}"
+                    IsChecked="{Binding ShowTabControl}" />
                 <TextBox
                     hc:TitleElement.Title="{Binding [DisplayFrameRate], Source={x:Static local:CLang.SystemSettings}}"
                     hc:TitleElement.TitlePlacement="Left"

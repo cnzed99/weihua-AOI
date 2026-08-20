@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -34,6 +34,7 @@ using WH.Entity.Progress;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using ZipperInfo;
+using GearInfo;
 using 断面毛刺检测软件.Views;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -140,6 +141,12 @@ namespace 断面毛刺检测软件
                             Growl.Warning("正在对焦中，不能启动！");
                             return;
                         }
+                        //【盘齿方案2-注释】原因：即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
+                        if (CMainList.StartStop && !TryValidateProcessGroupResultMapping())
+                        {
+                            CMainList.StartStop = false;
+                            return;
+                        }
                         if (CMainList.IsStart == CMainList.StartStop)
                             return;
                         CMainList.IsStart = CMainList.StartStop;
@@ -157,7 +164,8 @@ namespace 断面毛刺检测软件
 
                 await CMainList.LoadAsync(progress);
                 // CLinghtManagement.LoadLightParams();
-                zipperInfoShow.DataContext = new ZipperInfoVM();
+                //【盘齿方案0-注释】原因：右侧面板不再绑定拉链参数VM（配合B2移除面板控件）
+                // 原： zipperInfoShow.DataContext = new ZipperInfoVM();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
@@ -169,20 +177,27 @@ namespace 断面毛刺检测软件
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<string>)progress).Report("Loaded!");
+                //【盘齿方案0-注释】原因：欢迎页标题由拉链改为盘齿（原拉链标题保留在下方注释块）
+                // 原： WelComePage welComePage = new WelComePage(
+                // 原：     CMainList.SystemSettings.RecentProjs.ToList(),
+                // 原：     "拉链智能视觉检测软件"
+                // 原： );
+                //【盘齿方案0】新标题（原拉链标题见上方注释块）
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
-                    "拉链智能视觉检测软件"
+                    "盘齿外观检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
-                Hearttimer = new System.Timers.Timer(1000); //2026.7.25 鲍赞宝
-                Hearttimer.Elapsed += (sender, e) => 
-                {
-                    if (CMainList.IsStart)
-                    {
-                        CZipperCommunicate.SendHeartBeat();
-                    }
-                };
-                Hearttimer.Start();
+                //【盘齿方案0-注释】原因：去掉拉链心跳定时器（SendHeartBeat写寄存器42638），盘齿心跳由P2新协议重写
+                // 原： Hearttimer = new System.Timers.Timer(1000); //2026.7.25 鲍赞宝
+                // 原： Hearttimer.Elapsed += (sender, e) => 
+                // 原： {
+                // 原：     if (CMainList.IsStart)
+                // 原：     {
+                // 原：         CZipperCommunicate.SendHeartBeat();
+                // 原：     }
+                // 原： };
+                // 原： Hearttimer.Start();
                 welComePage.ShowDialog();
             }
             catch (Exception ex)
@@ -193,6 +208,55 @@ namespace 断面毛刺检测软件
             finally
             {
                 ((IProgress<string>)progress).Report("Loaded!");
+            }
+        }
+
+        /// <summary>
+        /// 启动前校验工程所有制程组名都能在已加载的 GroupResults 中找到。点位未加载或缺映射返回 false。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateProcessGroupResultMapping()
+        {
+            try
+            {
+                bool pointsReady = CGearCommunicate.Points != null
+                    && CGearCommunicate.Points.GroupResults != null
+                    && CGearCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CGearCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CGearCommunicate.Points != null
+                        && CGearCommunicate.Points.GroupResults != null
+                        && CGearCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\GearProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CGearCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
             }
         }
 
@@ -472,7 +536,8 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                CZipperAutomaticAlgorithm.Instance.TestFinshEven += ClearProduceData;
+                //【盘齿方案0-注释】原因：取消开工程后拉链自动识别完成事件订阅
+                // 原： CZipperAutomaticAlgorithm.Instance.TestFinshEven += ClearProduceData;
                 if (CMainList.CMainMModel.CProcessGroups.Count > 0 && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0)
                 {
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
@@ -937,83 +1002,84 @@ namespace 断面毛刺检测软件
         }
         #endregion
 
-        #region 自动换料
-        private void AutoMatic_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                //bool state = CZipperCommunicate.GetDeviceState();
-                //if (state)
-                //{
-                //    Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
-                //    return;
-                //}
-                CZipperAutomaticAlgorithm.Instance.Dispatcher = this.Dispatcher;
-                AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
-                ProgressBarWindow progressBarWindow = new ProgressBarWindow();
-                ZipperAutomaticWindow AutomaticWindow = App
-                .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
-                .Value;
-                CZipperAutomaticVM automaticVM = new CZipperAutomaticVM();//CPublicServices.Container.Resolve<CZipperAutomaticVM>();
-                AutomaticWindow.DataContext = automaticVM;
-                automaticVM.StartAutoTestEven = (b) =>
-                {
-                    foreach (var mainVM in CMainList.CMainVMs)
-                    {
-                        CMainList.StartStop = true;
-                        mainVM.IsStart = b;
-                        mainVM.IsAutomaticTest = b;
-                    }
+        //【盘齿方案0-注释】原因：注释拉链自动换料识别入口（Halcon识别+串口光源），整个region留作复盘不删
+        // 原： #region 自动换料
+        // 原： private void AutoMatic_Click(object sender, RoutedEventArgs e)
+        // 原： {
+            // 原： try
+            // 原： {
+                // 原： //bool state = CZipperCommunicate.GetDeviceState();
+                // 原： //if (state)
+                // 原： //{
+                // 原： //    Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
+                // 原： //    return;
+                // 原： //}
+                // 原： CZipperAutomaticAlgorithm.Instance.Dispatcher = this.Dispatcher;
+                // 原： AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
+                // 原： ProgressBarWindow progressBarWindow = new ProgressBarWindow();
+                // 原： ZipperAutomaticWindow AutomaticWindow = App
+                // 原： .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
+                // 原： .Value;
+                // 原： CZipperAutomaticVM automaticVM = new CZipperAutomaticVM();//CPublicServices.Container.Resolve<CZipperAutomaticVM>();
+                // 原： AutomaticWindow.DataContext = automaticVM;
+                // 原： automaticVM.StartAutoTestEven = (b) =>
+                // 原： {
+                    // 原： foreach (var mainVM in CMainList.CMainVMs)
+                    // 原： {
+                        // 原： CMainList.StartStop = true;
+                        // 原： mainVM.IsStart = b;
+                        // 原： mainVM.IsAutomaticTest = b;
+                    // 原： }
 
-                    ProgressBarViewModel.ProgressFinshEven = null;
-                    ProgressBarViewModel.ProgressFinshEven = () =>
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            progressBarWindow?.Close();
-                        });
-                    };
-                    // progressBarWindow.Closed += ProgressBarWindow_Closed;
-                    if (b)
-                    {
-                        progressBarWindow.ShowDialog();
-                        if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
-                        {
-                            ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
-                            autoFinshWindow = new AutoFinshWindow();
-                            autoFinshWindow.DataContext = zipperInfoVM;
-                            autoFinshWindow.Closed += AutoFinshWindow_Closed;
-                            autoFinshWindow.Show();
-                            autoFinshWindow.Activate();
-                            zipperInfoShow.DataContext = zipperInfoVM;
-                        }
+                    // 原： ProgressBarViewModel.ProgressFinshEven = null;
+                    // 原： ProgressBarViewModel.ProgressFinshEven = () =>
+                    // 原： {
+                        // 原： this.Dispatcher.Invoke(() =>
+                        // 原： {
+                            // 原： progressBarWindow?.Close();
+                        // 原： });
+                    // 原： };
+                    // 原： // progressBarWindow.Closed += ProgressBarWindow_Closed;
+                    // 原： if (b)
+                    // 原： {
+                        // 原： progressBarWindow.ShowDialog();
+                        // 原： if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
+                        // 原： {
+                            // 原： ZipperInfoVM zipperInfoVM = new ZipperInfoVM();
+                            // 原： autoFinshWindow = new AutoFinshWindow();
+                            // 原： autoFinshWindow.DataContext = zipperInfoVM;
+                            // 原： autoFinshWindow.Closed += AutoFinshWindow_Closed;
+                            // 原： autoFinshWindow.Show();
+                            // 原： autoFinshWindow.Activate();
+                            // 原： zipperInfoShow.DataContext = zipperInfoVM;
+                        // 原： }
 
-                    }
+                    // 原： }
 
-                };
-                AutomaticWindow.Show();
-                AutomaticWindow.Activate();
-                //OperateLog.Info(Properties.Resources.ImageSave);
-            }
-            catch (Exception ex)
-            {
-                Growl.Error(ex.Message+"\r\n"+ex.StackTrace);
-            }
+                // 原： };
+                // 原： AutomaticWindow.Show();
+                // 原： AutomaticWindow.Activate();
+                // 原： //OperateLog.Info(Properties.Resources.ImageSave);
+            // 原： }
+            // 原： catch (Exception ex)
+            // 原： {
+                // 原： Growl.Error(ex.Message+"\r\n"+ex.StackTrace);
+            // 原： }
          
-        }
-        private void AutoFinshWindow_Closed(object sender, EventArgs e)
-        {
-            this.Dispatcher?.Invoke(() =>
-            {
-                foreach (var mainVM in CMainList.CMainVMs)
-                {
-                    mainVM.IsAutomaticTest = false;
-                }
-                CZipperAutomaticAlgorithm.Instance.onWichStage = 0;
-            });
+        // 原： }
+        // 原： private void AutoFinshWindow_Closed(object sender, EventArgs e)
+        // 原： {
+            // 原： this.Dispatcher?.Invoke(() =>
+            // 原： {
+                // 原： foreach (var mainVM in CMainList.CMainVMs)
+                // 原： {
+                    // 原： mainVM.IsAutomaticTest = false;
+                // 原： }
+                // 原： CZipperAutomaticAlgorithm.Instance.onWichStage = 0;
+            // 原： });
 
-        }
-        #endregion
+        // 原： }
+        // 原： #endregion
     }
 
     /// <summary>

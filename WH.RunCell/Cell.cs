@@ -1,4 +1,4 @@
-
+ï»¿
 using CommunityToolkit.Mvvm.ComponentModel;
 using HalconDotNet;
 using System.Diagnostics;
@@ -17,52 +17,72 @@ namespace WH.RunCell
         public static int MaxParallelism = 5;
 
         /// <summary>
-        /// ÊÇ·ñÊÇµ¥ÕÅÍ¼Æ¬£¬×îºóÒ»ÕÅÍ¼Æ¬
-        /// ÌáÊ¾ Ê¹ÄÜ°´Å¥²Ù×÷
+        /// æ˜¯å¦æ˜¯å•å¼ å›¾ç‰‡ï¼Œæœ€åä¸€å¼ å›¾ç‰‡
+        /// æç¤º ä½¿èƒ½æŒ‰é’®æ“ä½œ
         /// </summary>
         public bool isOnce { get; set; } = false;
 
         /// <summary>
-        /// Í¼ÏñÎÄ¼ş
+        /// å›¾åƒæ–‡ä»¶
         /// </summary>
         public string ImageFile = string.Empty;
 
         /// <summary>
-        /// È±ÏİÎ»ÖÃÍ¼Ïñ
+        /// ç¼ºé™·ä½ç½®å›¾åƒ
         /// </summary>
         public BitmapSource DefectPartImg { get; set; }
 
         /// <summary>
-        /// 2025.6.2 ±«ÔŞ±¦
-        /// À­Á´Í·Í¼Ïñ
+        /// 2025.6.2 é²èµå®
+        /// æ‹‰é“¾å¤´å›¾åƒ
         /// </summary>
         public OpenCvSharp.Mat ZipperPullPartImg { get; set; }
         /// <summary>
-        ///  2025.6.2 ±«ÔŞ±¦
-        ///  µ¥ÌõÀ­Á´°üº¬µÄÍ¼Æ¬,´æÍ¼Ê¹ÓÃ
+        ///  2025.6.2 é²èµå®
+        ///  å•æ¡æ‹‰é“¾åŒ…å«çš„å›¾ç‰‡,å­˜å›¾ä½¿ç”¨
         /// </summary>
         public List<(CImage, int, DateTime, TimeSpan)> ZipperImages { get; set; } = new List<(CImage, int, DateTime, TimeSpan)>();
 
         /// <summary>
-        /// ¸ßÁÁ¶ÈÆ´½ÓÍ¼ ±«ÔŞ±¦ 2026-06-17
+        /// é«˜äº®åº¦æ‹¼æ¥å›¾ é²èµå® 2026-06-17
         /// </summary>
         public CImage ChangleImgae { get; set; }
         /// <summary>
-        /// 2025.7.11 ±«ÔŞ±¦
-        /// ÏÂÖ¹½ØÍ¼£¬ÓÃÓÚ´æÍ¼
+        /// 2025.7.11 é²èµå®
+        /// ä¸‹æ­¢æˆªå›¾ï¼Œç”¨äºå­˜å›¾
         /// </summary>
         public OpenCvSharp.Mat DownMassMatImg { get; set; }
         /// <summary>
-        /// 2025.7.11 ±«ÔŞ±¦
-        /// ÉÏÖ¹½ØÍ¼£¬ÓÃÓÚ´æÍ¼
+        /// 2025.7.11 é²èµå®
+        /// ä¸Šæ­¢æˆªå›¾ï¼Œç”¨äºå­˜å›¾
         /// </summary>
         public List<OpenCvSharp.Mat> UpMassMatImg { get; set; } = new List<OpenCvSharp.Mat>();
 
         /// <summary>
-        /// 2025.7.11 ±«ÔŞ±¦
-        /// 4²ğ·Ö½ØÍ¼£¬ÓÃÓÚ´æÍ¼
+        /// 2025.7.11 é²èµå®
+        /// 4æ‹†åˆ†æˆªå›¾ï¼Œç”¨äºå­˜å›¾
         /// </summary>
         public List<(int, int, OpenCvSharp.Mat)> FourCutMatImg { get; set; } = new List<(int, int, OpenCvSharp.Mat)>();
+
+        /// <summary>
+        /// ç›˜é½¿æ—‹è½¬å·¥ä½å„å¼ åŸå›¾ï¼ˆå¯¹åº”æ‹‰é“¾ ZipperImagesï¼‰
+        /// </summary>
+        public List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> GearImages { get; set; } = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
+
+        /// <summary>
+        /// ç›˜é½¿åˆå¹¶åçš„å…¨æ™¯å›¾ï¼ˆå¯¹åº”æ‹‰é“¾ ChangleImgaeï¼‰
+        /// </summary>
+        public CImage MergedPanorama { get; set; }
+
+        /// <summary>
+        /// ç›˜é½¿ç¼ºé™·ä½å›¾ï¼ˆæ–¹æ¡ˆ3.1 bit0~bit9ï¼‰
+        /// </summary>
+        public uint DefectBits { get; set; }
+
+        /// <summary>
+        /// é½¿é¡¶è½¬å‘å¤–åœ†å·²ç»‘å®šæ ‡è®°ï¼ˆæ–¹æ¡ˆ4 G2ï¼‰
+        /// </summary>
+        public bool IsPreBound { get; set; }
 
         public Cell()
         {
@@ -72,169 +92,169 @@ namespace WH.RunCell
         }
 
         /// <summary>
-        /// 2024.7.2 Àî»À±ò
-        /// ¶îÍâ»æÖÆÇøÓò
+        /// 2024.7.2 æç„•å½¬
+        /// é¢å¤–ç»˜åˆ¶åŒºåŸŸ
         /// </summary>
         public List<CEdgeDraw> DrawEdges { get; set; } = new List<CEdgeDraw>();
 
         /// <summary>
-        /// 2024.7.2 Àî»À±ò
-        /// Êä³öÈ±Ïİ
+        /// 2024.7.2 æç„•å½¬
+        /// è¾“å‡ºç¼ºé™·
         /// </summary>
         public List<CellDetection> AlgorithmOut { get; set; } = new List<CellDetection>();
 
         /// <summary>
-        /// ÊÇ·ñÊÇOK²úÆ·
+        /// æ˜¯å¦æ˜¯OKäº§å“
         /// </summary>
         public bool IsOK { get; set; } = false;
 
         /// <summary>
-        /// ÓÃÀ´´æ´¢ÊÇÖÊÁ¿OK»¹ÊÇÑÕÉ«OK [0]=ÖÊÁ¿ [1]=ÑÕÉ«;
+        /// ç”¨æ¥å­˜å‚¨æ˜¯è´¨é‡OKè¿˜æ˜¯é¢œè‰²OK [0]=è´¨é‡ [1]=é¢œè‰²;
         /// </summary>
         // public bool[] DetectionOrColorOK { get; set; } = new bool[2];
 
         /// <summary>
-        /// Á÷Ë®ºÅ
+        /// æµæ°´å·
         /// </summary>
         public string ID { get; set; } = string.Empty;
 
         /// <summary>
-        /// ²úÆ·ID
+        /// äº§å“ID
         /// </summary>
         public string WaferID { get; set; } = string.Empty;
 
         /// <summary>
-        /// Í¼Æ¬±àºÅ
+        /// å›¾ç‰‡ç¼–å·
         /// </summary>
         public int PhotoIndex { get; set; }
         /// <summary>
-        /// Í¼Æ¬×ÜÊıÁ¿
+        /// å›¾ç‰‡æ€»æ•°é‡
         /// </summary>
         public int PhotoTatolCount { get; set; }
         /// <summary>
-        /// À­Í·Ê¶±ğ¿òµÄÖĞĞÄX
+        /// æ‹‰å¤´è¯†åˆ«æ¡†çš„ä¸­å¿ƒX
         /// </summary>
         public int ZipperPullerCX { get; set; }
         /// <summary>
-        /// À­Í·Ê¶±ğ¿òµÄÖĞĞÄY
+        /// æ‹‰å¤´è¯†åˆ«æ¡†çš„ä¸­å¿ƒY
         /// </summary>
         public int ZipperPullerCY { get; set; }
         /// <summary>
-        /// À­Í·µÄ²ÄÖÊÀàĞÍ
+        /// æ‹‰å¤´çš„æè´¨ç±»å‹
         /// </summary>
         public string PullMaterlsType { get; set; }
         /// <summary>
-        /// À­Æ¬ÂÖÀªµã¼¯ºÏ
+        /// æ‹‰ç‰‡è½®å»“ç‚¹é›†åˆ
         /// </summary>
         public OpenCvSharp.Point[] PullOrgContours { get; set; }
 
         /// <summary>
-        /// À­Æ¬ÖĞÔ²¿×µã¼¯ºÏ
+        /// æ‹‰ç‰‡ä¸­åœ†å­”ç‚¹é›†åˆ
         /// </summary>
         public OpenCvSharp.Point[] PullHoldOrgContours { get; set; }
         /// <summary>
-        /// À­Æ¬»ù×¼É«H
+        /// æ‹‰ç‰‡åŸºå‡†è‰²H
         /// </summary>
         public float PullsOrgHvalue { get; set; }
         /// <summary>
-        /// À­Æ¬»ù×¼É«S
+        /// æ‹‰ç‰‡åŸºå‡†è‰²S
         /// </summary>
         public float PullsOrgSvalue { get; set; }
         /// <summary>
-        /// À­Æ¬»ù×¼É«V
+        /// æ‹‰ç‰‡åŸºå‡†è‰²V
         /// </summary>
         public float PullsOrgVvalue { get; set; }
 
 
         /// <summary>
-        /// À­Í·»ù×¼É«H
+        /// æ‹‰å¤´åŸºå‡†è‰²H
         /// </summary>
         public float PullerOrgHvalue { get; set; }
         /// <summary>
-        /// À­Í·»ù×¼É«S
+        /// æ‹‰å¤´åŸºå‡†è‰²S
         /// </summary>
         public float PullerOrgSvalue { get; set; }
         /// <summary>
-        /// À­Í·»ù×¼É«V
+        /// æ‹‰å¤´åŸºå‡†è‰²V
         /// </summary>
         public float PullerOrgVvalue { get; set; }
 
         /// <summary>
-        /// ÏÂÖ¹µÄÀàĞÍ ×¢ËÜ °×ÂÁ ÎŞ µÈ
+        /// ä¸‹æ­¢çš„ç±»å‹ æ³¨å¡‘ ç™½é“ æ—  ç­‰
         /// </summary>
         public string DownStopMassType { get; set; }
 
         /// <summary>
-        /// ÉÏÖ¹µÄÀàĞÍ ×¢ËÜ °×ÂÁ ÎŞ µÈ
+        /// ä¸Šæ­¢çš„ç±»å‹ æ³¨å¡‘ ç™½é“ æ—  ç­‰
         /// </summary>
         public string UpStopMassType { get; set; }
         /// <summary>
-        /// LogoÄ£°åID
+        /// Logoæ¨¡æ¿ID
         /// </summary>
         public HTuple ModelID_Logo { get; set; }
 
         /// <summary>
-        /// À­Æ¬Ä£°åID
+        /// æ‹‰ç‰‡æ¨¡æ¿ID
         /// </summary>
         public HTuple ModelID_Pull { get; set; }
         /// <summary>
-        /// À­Æ¬Ä£°æÔ­Ê¼×ø±êrow
+        /// æ‹‰ç‰‡æ¨¡ç‰ˆåŸå§‹åæ ‡row
         /// </summary>
         public double PullModelRow { get; set; }
         /// <summary>
-        /// À­Æ¬Ä£°æÔ­Ê¼×ø±êcol
+        /// æ‹‰ç‰‡æ¨¡ç‰ˆåŸå§‹åæ ‡col
         /// </summary>
         public double PullModelCol { get; set; }
         /// <summary>
-        /// ²åÏú·½Ïò
+        /// æ’é”€æ–¹å‘
         /// </summary>
         public string BoltDiretion {  get; set; }
         /// <summary>
-        /// Ô­Ê¼±³¾°¾ØĞÎ
+        /// åŸå§‹èƒŒæ™¯çŸ©å½¢
         /// </summary>
         public double[] BackRectangle { get; set; }
 
         /// <summary>
-        /// À­Æ¬·Ö¸î³öÀ´µÄ±ê×¼Ãæ»ı
+        /// æ‹‰ç‰‡åˆ†å‰²å‡ºæ¥çš„æ ‡å‡†é¢ç§¯
         /// </summary>
         public float PullSegOrgArea { get; set; }
         /// <summary>
-        /// ÓĞÎŞLOGO
+        /// æœ‰æ— LOGO
         /// </summary>
         public string ZipperLogoType {  get; set; }
         /// <summary>
-        /// ´æ´óÍ¼±àºÅ£¬Ö¸¶¨ÄÄ¸ö±àºÅµÄ´óÍ¼Òª´æÏÂÀ´
+        /// å­˜å¤§å›¾ç¼–å·ï¼ŒæŒ‡å®šå“ªä¸ªç¼–å·çš„å¤§å›¾è¦å­˜ä¸‹æ¥
         /// </summary>
         public List<int> SaveBigImagesIndex =new List<int>();
 
         /// <summary>
-        /// ´æ½ØÍ¼±àºÅ£¬Ö¸¶¨ÄÄ¸ö±àºÅµÄĞ¡Í¼Òª´æÏÂÀ´
+        /// å­˜æˆªå›¾ç¼–å·ï¼ŒæŒ‡å®šå“ªä¸ªç¼–å·çš„å°å›¾è¦å­˜ä¸‹æ¥
         /// </summary>
         public List<(int,int)> SaveCutImagesIndex = new List<(int,int)>();
 
         /// <summary>
-        /// ÉÏÖ¹ÉÏÑÀµÄHÖµ
+        /// ä¸Šæ­¢ä¸Šç‰™çš„Hå€¼
         /// </summary>
       public  float UpMass_1_MeanH {  get; set; }
         /// <summary>
-        /// ÉÏÖ¹ÉÏÑÀµÄSÖµ
+        /// ä¸Šæ­¢ä¸Šç‰™çš„Så€¼
         /// </summary>
        public float UpMass_1_MeanS {  get; set; }
         /// <summary>
-        /// ÉÏÖ¹ÉÏÑÀµÄVÖµ
+        /// ä¸Šæ­¢ä¸Šç‰™çš„Vå€¼
         /// </summary>
        public float UpMass_1_MeanV { get; set; }
 
         /// <summary>
-        /// ÉÏÖ¹ÏÂÑÀµÄHÖµ
+        /// ä¸Šæ­¢ä¸‹ç‰™çš„Hå€¼
         /// </summary>
       public  float UpMass_2_MeanH {  get; set; }
         /// <summary>
-        /// ÉÏÖ¹ÏÂÑÀµÄSÖµ
+        /// ä¸Šæ­¢ä¸‹ç‰™çš„Så€¼
         /// </summary>
       public  float UpMass_2_MeanS {  get; set; }
         /// <summary>
-        /// ÉÏÖ¹ÏÂÑÀµÄVÖµ
+        /// ä¸Šæ­¢ä¸‹ç‰™çš„Vå€¼
         /// </summary>
       public  float UpMass_2_MeanV { get; set; }
 
@@ -243,18 +263,18 @@ namespace WH.RunCell
 
 
         /// <summary>
-        /// ½ÓÊÕĞÅÏ¢×Öµä
+        /// æ¥æ”¶ä¿¡æ¯å­—å…¸
         /// </summary>
         public Dictionary<string, string> OtherInfoRecv { get; set; }
 
         /// <summary>
-        /// ·¢ËÍĞÅÏ¢×Öµä
+        /// å‘é€ä¿¡æ¯å­—å…¸
         /// </summary>
         public Dictionary<string, string> OtherInfoSend { get; set; } =
             new Dictionary<string, string>();
 
         ///// <summary>
-        ///// Ô­Í¼Ïñ== Image
+        ///// åŸå›¾åƒ== Image
         ///// </summary>
         //public BitmapSource RealImage => this.Image;
 
@@ -265,24 +285,24 @@ namespace WH.RunCell
         public double defectSize { get; set; }
 
         /// <summary>
-        /// ¼ì²â¿ªÊ¼Ê±¼ä ´ÓÊÕµ½´¥·¢ĞÅºÅ¿ªÊ¼¼ÆÊ±
+        /// æ£€æµ‹å¼€å§‹æ—¶é—´ ä»æ”¶åˆ°è§¦å‘ä¿¡å·å¼€å§‹è®¡æ—¶
         /// </summary>
         public DateTime BeginVisionTime { get; set; }
 
         /// <summary>
-        /// ´´½¨CellµÄÊ±¼ä
+        /// åˆ›å»ºCellçš„æ—¶é—´
         /// </summary>
         public DateTime CreateTime { get; private set; }
 
         /// <summary>
-        /// Ìø¹ı
+        /// è·³è¿‡
         /// </summary>
         public bool Skipthis { get; set; } = false;
 
         private bool _timeOut = false;
 
         /// <summary>
-        /// ³¬Ê±
+        /// è¶…æ—¶
         /// </summary>
         public bool TimeOut
         {
@@ -300,7 +320,7 @@ namespace WH.RunCell
         private bool _preError;
 
         /// <summary>
-        /// Ô¤´¦Àí±¨´í
+        /// é¢„å¤„ç†æŠ¥é”™
         /// </summary>
         public bool PreError
         {
@@ -318,7 +338,7 @@ namespace WH.RunCell
         private bool _recipeError;
 
         /// <summary>
-        /// Åä·½±¨´í
+        /// é…æ–¹æŠ¥é”™
         /// </summary>
         public bool RecipeError
         {
@@ -336,7 +356,7 @@ namespace WH.RunCell
         private bool _isempty = false;
 
         /// <summary>
-        /// ¿ÕÁÏ
+        /// ç©ºæ–™
         /// </summary>
         public bool IsEmpty
         {
@@ -354,7 +374,7 @@ namespace WH.RunCell
         private bool _ismix = false;
 
         /// <summary>
-        /// »ìÁÏ
+        /// æ··æ–™
         /// </summary>
         public bool IsMix
         {
@@ -372,7 +392,7 @@ namespace WH.RunCell
         private bool _isBurst = false;
 
         /// <summary>
-        /// ±¬°å
+        /// çˆ†æ¿
         /// </summary>
         public bool IsBurstBoard
         {
@@ -392,19 +412,19 @@ namespace WH.RunCell
         public List<string> DetectedDef { get; set; }
 
         /// <summary>
-        /// ÖÊÁ¿µÈ¼¶
+        /// è´¨é‡ç­‰çº§
         /// </summary>
         public dynamic Quality { get; set; }
 
         /// <summary>
-        /// ¼ÆÊ±
+        /// è®¡æ—¶
         /// </summary>
         public Stopwatch Stopwatch { get; set; }
 
         private bool _frameLoss = false;
 
         /// <summary>
-        /// ÊÇ·ñ¶ªÖ¡
+        /// æ˜¯å¦ä¸¢å¸§
         /// </summary>
         public bool FrameLoss
         {
@@ -420,8 +440,8 @@ namespace WH.RunCell
         }
 
         /// <summary>
-        /// 2024.8.6 Àî»À±ò
-        /// ±àÂëÆ÷Î»ÖÃ
+        /// 2024.8.6 æç„•å½¬
+        /// ç¼–ç å™¨ä½ç½®
         /// </summary>
         public int EncoderPos { get; set; } = 0;
 
@@ -615,41 +635,47 @@ namespace WH.RunCell
             // cell.ZipperPullPartImg = this.ZipperPullPartImg?.Clone();
             cell.SaveBigImagesIndex = new List<int>(this.SaveBigImagesIndex);
             cell.SaveCutImagesIndex = new List<(int, int)>(this.SaveCutImagesIndex);
+            cell.GearImages = this.GearImages != null
+                ? new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>(this.GearImages)
+                : new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
+            cell.MergedPanorama = this.MergedPanorama == null ? null : (CImage)this.MergedPanorama.Clone();
+            cell.DefectBits = this.DefectBits;
+            cell.IsPreBound = this.IsPreBound;
             return cell;
         }
 
         /// <summary>
-        /// È¡Í¼Ê±¼ä
+        /// å–å›¾æ—¶é—´
         /// </summary>
         public TimeSpan GetImageTime { get; set; }
 
         /// <summary>
-        /// Ö´ĞĞÔ¤´¦ÀíÊ±¼ä
+        /// æ‰§è¡Œé¢„å¤„ç†æ—¶é—´
         /// </summary>
         public TimeSpan PreTime { get; set; }
 
         /// <summary>
-        /// Ö´ĞĞÅä·½Ê±¼ä
+        /// æ‰§è¡Œé…æ–¹æ—¶é—´
         /// </summary>
         public TimeSpan RecipeTime { get; set; }
 
         /// <summary>
-        /// Ö´ĞĞÉ¸Ñ¡Ê±¼ä
+        /// æ‰§è¡Œç­›é€‰æ—¶é—´
         /// </summary>
         public TimeSpan FilterTime { get; set; }
 
         /// <summary>
-        /// ÏÔÊ¾Ê±¼ä
+        /// æ˜¾ç¤ºæ—¶é—´
         /// </summary>
         public TimeSpan ShowTime { get; set; }
 
         /// <summary>
-        /// ´æÍ¼Ê±¼ä
+        /// å­˜å›¾æ—¶é—´
         /// </summary>
         public TimeSpan SaveImgTime { get; set; }
 
         /// <summary>
-        /// ×ÜÊ±¼ä
+        /// æ€»æ—¶é—´
         /// </summary>
         public TimeSpan ProcessTime { get; set; }
 
@@ -681,30 +707,30 @@ namespace WH.RunCell
         }
 
         /// <summary>
-        /// ÖÆ³Ì°ó¶¨µÄÏà»úĞòÁĞºÅ
+        /// åˆ¶ç¨‹ç»‘å®šçš„ç›¸æœºåºåˆ—å·
         /// </summary>
         public string CamSerial { get; set; } = string.Empty;
         public string CamName { get; set; } = string.Empty;
 
         /// <summary>
-        /// ÖÆ³Ì°ó¶¨µÄÍ¨Ñ¶
+        /// åˆ¶ç¨‹ç»‘å®šçš„é€šè®¯
         /// </summary>
         public string ComGuid { get; set; } = string.Empty;
 
         /// <summary>
-        /// ÖÆ³Ì°ó¶¨µÄÎ¨Ò»ID
+        /// åˆ¶ç¨‹ç»‘å®šçš„å”¯ä¸€ID
         /// </summary>
         public string ProjGuid { get; set; } = string.Empty;
 
         public string ProjName { get; set; } = string.Empty;
 
         /// <summary>
-        /// ÏßÃû³Æ£¨ÊôÓÚÄÄÌõ²úÏß£©
+        /// çº¿åç§°ï¼ˆå±äºå“ªæ¡äº§çº¿ï¼‰
         /// </summary>
         public string LineName { get; set; } = string.Empty;
 
         /// <summary>
-        /// ½ÓÊÕµ½µÄĞÅºÅÊı¾İ
+        /// æ¥æ”¶åˆ°çš„ä¿¡å·æ•°æ®
         /// </summary>
         public byte[] DataBytes { get; set; }
 
@@ -712,46 +738,46 @@ namespace WH.RunCell
     }
 
     /// <summary>
-    /// 2025.3.23 Àî»À±ò
-    /// »æÖÆÇøÓòÀàĞÍ
+    /// 2025.3.23 æç„•å½¬
+    /// ç»˜åˆ¶åŒºåŸŸç±»å‹
     /// </summary>
     public enum EMDRAWTYPE
     {
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ²»±ÕºÏÇøÓò
+        /// 2025.3.23 æç„•å½¬
+        /// ä¸é—­åˆåŒºåŸŸ
         /// </summary>
-        [EnumString("²»Á¬¹áÇøÓò", "Points")]
+        [EnumString("ä¸è¿è´¯åŒºåŸŸ", "Points")]
         EMDRAWTYPE_POINTS,
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ±ÕºÏÇøÓò
+        /// 2025.3.23 æç„•å½¬
+        /// é—­åˆåŒºåŸŸ
         /// </summary>
-        [EnumString("Á¬¹áÇøÓò", "Region")]
+        [EnumString("è¿è´¯åŒºåŸŸ", "Region")]
         EMDRAWTYPE_REGION,
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ÎÄ×Ö
+        /// 2025.3.23 æç„•å½¬
+        /// æ–‡å­—
         /// </summary>
-        [EnumString("ÎÄ×Ö", "Text")]
+        [EnumString("æ–‡å­—", "Text")]
         EMDRAWTYPE_Text,
     }
 
     /// <summary>
-    /// 2024.9.6 Àî»À±ò
-    /// »æÖÆÇøÓò£¬º¬»æÖÆÑÕÉ«
+    /// 2024.9.6 æç„•å½¬
+    /// ç»˜åˆ¶åŒºåŸŸï¼Œå«ç»˜åˆ¶é¢œè‰²
     /// </summary>
     public class CEdgeDraw
     {
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ÏÔÊ¾ÇøÓò
+        /// 2025.3.23 æç„•å½¬
+        /// æ˜¾ç¤ºåŒºåŸŸ
         /// </summary>
-        /// <param name="points">µã¼¯</param>
-        /// <param name="brush">»­Ë¢</param>
-        /// <param name="isClosed">ÊÇ·ñÎª±ÕºÏÇøÓò</param>
+        /// <param name="points">ç‚¹é›†</param>
+        /// <param name="brush">ç”»åˆ·</param>
+        /// <param name="isClosed">æ˜¯å¦ä¸ºé—­åˆåŒºåŸŸ</param>
         public CEdgeDraw(List<Point> points, Brush brush, bool isClosed = false, int showinview = 0)
         {
             DrawType = isClosed ? EMDRAWTYPE.EMDRAWTYPE_REGION : EMDRAWTYPE.EMDRAWTYPE_POINTS;
@@ -761,13 +787,13 @@ namespace WH.RunCell
         }
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ÏÔÊ¾ÎÄ×Ö
+        /// 2025.3.23 æç„•å½¬
+        /// æ˜¾ç¤ºæ–‡å­—
         /// </summary>
-        /// <param name="text">ÎÄ×Ö</param>
-        /// <param name="pos">ÏÔÊ¾Î»ÖÃ</param>
-        /// <param name="brush">»­Ë¢</param>
-        /// <param name="fontSize">×ÖÌå´óĞ¡</param>
+        /// <param name="text">æ–‡å­—</param>
+        /// <param name="pos">æ˜¾ç¤ºä½ç½®</param>
+        /// <param name="brush">ç”»åˆ·</param>
+        /// <param name="fontSize">å­—ä½“å¤§å°</param>
         public CEdgeDraw(string text, Point pos, Brush brush, int fontSize = 15, int showinview = 0)
         {
             DrawType = EMDRAWTYPE.EMDRAWTYPE_Text;
@@ -781,37 +807,37 @@ namespace WH.RunCell
         public EMDRAWTYPE DrawType { get; set; }
 
         /// <summary>
-        /// 2024.9.6 Àî»À±ò
-        /// »æÖÆÇøÓò
+        /// 2024.9.6 æç„•å½¬
+        /// ç»˜åˆ¶åŒºåŸŸ
         /// </summary>
         public List<Point> Points { get; set; }
 
         /// <summary>
-        /// 2024.9.6 Àî»À±ò
-        /// »æÖÆÑÕÉ«
+        /// 2024.9.6 æç„•å½¬
+        /// ç»˜åˆ¶é¢œè‰²
         /// </summary>
         public Brush BrushDraw { get; set; }
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ÏÔÊ¾ÎÄ×Ö
+        /// 2025.3.23 æç„•å½¬
+        /// æ˜¾ç¤ºæ–‡å­—
         /// </summary>
         public string Text { get; set; }
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ÏÔÊ¾ÎÄ×ÖÎ»ÖÃ
+        /// 2025.3.23 æç„•å½¬
+        /// æ˜¾ç¤ºæ–‡å­—ä½ç½®
         /// </summary>
         public Point TextPos { get; set; }
 
         /// <summary>
-        /// 2025.3.23 Àî»À±ò
-        /// ×ÖÌå´óĞ¡
+        /// 2025.3.23 æç„•å½¬
+        /// å­—ä½“å¤§å°
         /// </summary>
         public int FontSize { get; set; }
 
         /// <summary>
-        /// ÔÚÄÄ¸ö´°¿ÚÏÔÊ¾ÇøÓò
+        /// åœ¨å“ªä¸ªçª—å£æ˜¾ç¤ºåŒºåŸŸ
         /// </summary>
         public int ShowInView { get; set; }
     }

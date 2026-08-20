@@ -9,6 +9,7 @@ using Motion;
 using Newtonsoft.Json;
 using ProjProduceData;
 using SDFilter;
+using System.Collections.ObjectModel;
 using WH.Entity;
 using WH.Entity.CommonLib;
 
@@ -58,6 +59,66 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         [JsonProperty]
         private string name = "检测制程";
+
+        /// <summary>
+        /// 2026.8.14【盘齿方案4-改动D】该制程每件应收图张数 N（合并门槛来源，随 .burrproj 序列化）
+        /// 盘齿默认：底部/齿顶/齿顶外圆=1；内孔=6；轴顶侧面/轴底侧面=10；整轴侧面=14（建制程时按名写入，见 CMainModel 构造）
+        /// 0 值防线（方案审核 G3）：合并门槛 MainVM.cs:938 为 Count>=PhotoTatolCount，0 恒真会导致每张图立即合并；
+        /// 旧工程无此键时走字段缺省 1，getter 再兜底 &lt;=0 返回 1
+        /// </summary>
+        [JsonProperty]
+        private int photoTotalCount = 1;
+
+        [JsonIgnore]
+        public int PhotoTotalCount
+        {
+            get => photoTotalCount <= 0 ? 1 : photoTotalCount;
+            set => SetProperty(ref photoTotalCount, value);
+        }
+
+        //【盘齿方案0.1-注释】制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
+        [ObservableProperty]
+        [JsonProperty]
+        ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
+
+        //【盘齿方案0.5-注释】无分页固定布局元数据：按制程名映射行列/跨度（非盘齿/未命中给默认，不进 .burrproj）
+        [JsonIgnore]
+        public int GridRow => Name switch
+        {
+            "齿底" => 0,
+            "齿顶" => 0,
+            "内孔" => 0,
+            "齿顶外圆" => 1,
+            "整轴侧面" => 1,
+            "轴顶侧面" => 2,
+            "轴底侧面" => 2,
+            _ => 0,
+        };
+
+        [JsonIgnore]
+        public int GridCol => Name switch
+        {
+            "齿底" => 0,
+            "齿顶" => 1,
+            "内孔" => 2,
+            "齿顶外圆" => 0,
+            "整轴侧面" => 1,
+            "轴顶侧面" => 0,
+            "轴底侧面" => 2,
+            _ => 0,
+        };
+
+        [JsonIgnore]
+        public int GridColSpan => Name switch
+        {
+            "内孔" => 2,
+            "整轴侧面" => 3,
+            "轴顶侧面" => 2,
+            "轴底侧面" => 2,
+            _ => 1,
+        };
+
+
 
         [ObservableProperty]
         [JsonProperty]

@@ -190,7 +190,7 @@ namespace ZipperInfo
 
             if (Directory.Exists(SearchmodelDirPath))
             {
-                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model"};
                 var files = searchPatterns
                 .SelectMany(pattern => Directory.GetFiles(SearchmodelDirPath, pattern))
                 .ToList();
@@ -207,7 +207,7 @@ namespace ZipperInfo
 
             if (Directory.Exists(pullmodelDirPath))
             {
-                string[] pullPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                string[] pullPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model" };
                 var files = pullPatterns
                 .SelectMany(pattern => Directory.GetFiles(pullmodelDirPath, pattern))
                 .ToList();
@@ -223,7 +223,7 @@ namespace ZipperInfo
             }
             if (Directory.Exists(upmassmodelDirPath))
             {
-                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model" };
                 var files = searchPatterns
                 .SelectMany(pattern => Directory.GetFiles(upmassmodelDirPath, pattern))
                 .ToList();
