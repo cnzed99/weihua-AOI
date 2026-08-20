@@ -280,8 +280,8 @@ namespace GearInfo
                 }
 
                 TryWriteProcessPhotoCount(byName, "内孔", "PhotoCount_Bore");
-                TryWriteProcessPhotoCount(byName, "轴顶侧面", "PhotoCount_ShaftTop");
-                TryWriteProcessPhotoCount(byName, "轴底侧面", "PhotoCount_ShaftBottom");
+                TryWriteProcessPhotoCount(byName, "上轴侧面", "PhotoCount_ShaftTop");
+                TryWriteProcessPhotoCount(byName, "下轴侧面", "PhotoCount_ShaftBottom");
                 TryWriteProcessPhotoCount(byName, "整轴侧面", "PhotoCount_ShaftFull");
 
                 TryLogInfo("焦位未配置写 0");

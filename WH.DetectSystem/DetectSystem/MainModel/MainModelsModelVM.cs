@@ -633,7 +633,7 @@ namespace WH.DetectSystem.ViewModels
         //【盘齿方案0.5-注释】无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
         private static readonly string[] GearFixedProcesses =
         {
-            "齿底", "齿顶", "齿顶外圆", "内孔", "轴顶侧面", "轴底侧面", "整轴侧面",
+            "下端面", "上齿面", "上端面", "内孔", "上轴侧面", "下轴侧面", "整轴侧面",
         };
 
         public bool UseGearFixedLayout =>

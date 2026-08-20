@@ -45,7 +45,7 @@ namespace GearTestAlgorihm
 
         /// <summary>
         /// 空实现：不推理、不写 AlgorithmOut。过滤阶段会把无缺陷判为 OK。
-        /// 齿顶外圆（倒角偏、孔钻错）、轴顶侧面（小孔未钻）走 Halcon 空壳，仍返回空列表。
+        /// 上端面（倒角偏、孔钻错）、上轴侧面（小孔未钻）走 Halcon 空壳，仍返回空列表。
         /// </summary>
         public override void DetectImage(Cell cell)
         {
@@ -60,7 +60,7 @@ namespace GearTestAlgorihm
             }
 
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
-            if (processName == "轴顶侧面" || processName == "齿顶外圆")
+            if (processName == "上轴侧面" || processName == "上端面")
             {
                 RunHalconEmpty(cell);
             }
@@ -69,7 +69,7 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// Halcon 空壳（方案3.1）：齿顶外圆=倒角偏+孔钻错；轴顶侧面=小孔未钻。
+        /// Halcon 空壳（方案3.1）：上端面=倒角偏+孔钻错；上轴侧面=小孔未钻。
         /// 后续接入见 HDev/05。本阶段不引用 Halcon 运行时。
         /// </summary>
         protected List<CellDetection> RunHalconEmpty(Cell cell)
@@ -111,7 +111,6 @@ namespace GearTestAlgorihm
 
         /// <summary>
         /// 按方案3.1 矩阵挂本制程缺陷名。始终 new List，禁止 null。
-        /// 「底部」与「齿底」等同（旧工程名兼容）。
         /// 几何、倒角偏、孔钻错、小孔未钻 均为 Halcon。过滤 Category.值。
         /// </summary>
         protected void SetDefectRecipe(string processName)
@@ -125,21 +124,20 @@ namespace GearTestAlgorihm
 
             switch (processName)
             {
-                case "齿底":
-                case "底部":
+                case "下端面":
                     Area("锈蚀");
                     Area("有划痕");
                     Area("端面碰伤");
                     Area("端面缠花");
                     break;
-                case "齿顶":
+                case "上齿面":
                     Area("锈蚀");
                     Area("有划痕");
                     Area("齿顶缠花");
                     Area("表面压伤");
                     Area("齿顶碰伤");
                     break;
-                case "齿顶外圆":
+                case "上端面":
                     Area("锈蚀");
                     Area("有划痕");
                     Area("端面碰伤");
@@ -152,12 +150,12 @@ namespace GearTestAlgorihm
                     Area("内孔划伤");
                     Area("内孔缠花");
                     break;
-                case "轴顶侧面":
+                case "上轴侧面":
                     Area("锈蚀");
                     Area("有划痕");
                     Val("小孔未钻"); // Halcon
                     break;
-                case "轴底侧面":
+                case "下轴侧面":
                     Area("锈蚀");
                     Area("有划痕");
                     break;

@@ -6,7 +6,7 @@ namespace GearTestAlgorihm
     {
         /// <summary>
         /// 2026.08.17 盘齿方案3.4
-        /// 创建新算法。user = 制程名（底部/齿顶/…）
+        /// 创建新算法。user = 制程名（下端面/上齿面/…）
         /// </summary>
         public CAlgorithmParamBase CreateNewAlgorithm(string user)
         {

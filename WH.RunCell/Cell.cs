@@ -80,7 +80,7 @@ namespace WH.RunCell
         public uint DefectBits { get; set; }
 
         /// <summary>
-        /// 齿顶转发外圆已绑定标记（方案4 G2）
+        /// 上齿面转发上端面已绑定标记（方案4 G2）
         /// </summary>
         public bool IsPreBound { get; set; }
 

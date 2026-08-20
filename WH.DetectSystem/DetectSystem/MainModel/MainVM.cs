@@ -374,12 +374,12 @@ namespace WH.DetectSystem.Models
             this.Focus = focus;
             this.CameraSerial = cameraSerial;
 
-            //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；轴顶侧面/轴底侧面=10；整轴侧面=14；其余（底部/齿顶/齿顶外圆等）=1
+            //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
             this.PhotoTotalCount = name switch
             {
                 "内孔" => 6,
-                "轴顶侧面" => 10,
-                "轴底侧面" => 10,
+                "上轴侧面" => 10,
+                "下轴侧面" => 10,
                 "整轴侧面" => 14,
                 _ => 1,
             };
@@ -810,7 +810,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【盘齿方案4】改动B：齿顶第 k 张分流。k==1 返回 false 入本制程算法；k==2 转发齿顶外圆；k>=3 丢弃。
+        /// 【盘齿方案4】改动B：上齿面第 k 张分流。k==1 返回 false 入本制程算法；k==2 转发上端面；k>=3 丢弃。
         /// 返回 true 表示本张已处理完，取图线程应 continue，禁止写入本制程 m_AlgorithmChannel。
         /// CloneExecptImg 不拷贝 Image（方法内 WriteTo 已注释），此处移交 Image 所有权后再 Dispose 原 cell。
         /// </summary>
@@ -827,10 +827,10 @@ namespace WH.DetectSystem.Models
                 return true;
             }
 
-            CMainModel outerVm = ProcessGroup?.CMainModels?.FirstOrDefault(m => m.Name == "齿顶外圆");
+            CMainModel outerVm = ProcessGroup?.CMainModels?.FirstOrDefault(m => m.Name == "上端面");
             if (outerVm == null)
             {
-                SysLog.Error($"{Name}-工位1转发失败：同组未找到制程「齿顶外圆」，丢弃 ID:{cell.ID}");
+                SysLog.Error($"{Name}-工位1转发失败：同组未找到制程「上端面」，丢弃 ID:{cell.ID}");
                 cell.Dispose();
                 return true;
             }
@@ -841,17 +841,17 @@ namespace WH.DetectSystem.Models
             fwd.ID = cell.ID;
             fwd.PhotoIndex = 1;
             fwd.PhotoTatolCount = 1;
-            fwd.ProjName = "齿顶外圆";
+            fwd.ProjName = "上端面";
             fwd.ProjGuid = outerVm.GUID;
             fwd.IsPreBound = true;
             if (!outerVm.m_WaitImgChannel.Writer.TryWrite(fwd))
             {
-                SysLog.Error($"{Name}-工位1转发失败：齿顶外圆通道写入失败，丢弃 ID:{fwd.ID}");
+                SysLog.Error($"{Name}-工位1转发失败：上端面通道写入失败，丢弃 ID:{fwd.ID}");
                 fwd.Dispose();
             }
             else
             {
-                SysLog.Info($"{Name}-工位1转发第2张到齿顶外圆：ID:{fwd.ID},PhotoIndex:{fwd.PhotoIndex},IsPreBound:{fwd.IsPreBound}");
+                SysLog.Info($"{Name}-工位1转发第2张到上端面：ID:{fwd.ID},PhotoIndex:{fwd.PhotoIndex},IsPreBound:{fwd.IsPreBound}");
             }
             cell.Dispose();
             return true;
@@ -945,7 +945,7 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        //【盘齿方案4】改动B/G2：转发 Cell 已由齿顶绑好；必须在改动A 与离线 ImageFile=="" 覆盖之前拦截
+                        //【盘齿方案4】改动B/G2：转发 Cell 已由上齿面绑好；必须在改动A 与离线 ImageFile=="" 覆盖之前拦截
                         if (cell.IsPreBound)
                         {
                             IDisRight = true;
@@ -1039,8 +1039,8 @@ namespace WH.DetectSystem.Models
                                 continue;
                             }
 
-                            //【盘齿方案4】改动B：齿顶 N=1 的第2张转外圆、第3张起丢弃，禁止走本制程过张（否则第2张到不了转发）
-                            if (_photoCounter > cell.PhotoTatolCount && Name != "齿顶")
+                            //【盘齿方案4】改动B：上齿面 N=1 的第2张转上端面、第3张起丢弃，禁止走本制程过张（否则第2张到不了转发）
+                            if (_photoCounter > cell.PhotoTatolCount && Name != "上齿面")
                             {
                                 IDisRight = false;
                                 SysLog.Warn($"{Name}-过张丢弃：产品ID:{cell.ID},PhotoIndex:{_photoCounter}>PhotoTatolCount:{cell.PhotoTatolCount}");
@@ -1049,16 +1049,16 @@ namespace WH.DetectSystem.Models
                             }
                             IDisRight = true;
 
-                            //【盘齿方案4】改动B：齿顶分流（A 计数之后、入本制程 m_AlgorithmChannel 之前）
-                            if (Name == "齿顶" && TryDispatchToothTopByIndex(cell, _photoCounter))
+                            //【盘齿方案4】改动B：上齿面分流（A 计数之后、入本制程 m_AlgorithmChannel 之前）
+                            if (Name == "上齿面" && TryDispatchToothTopByIndex(cell, _photoCounter))
                             {
                                 continue;
                             }
                         }
                         else
                         {
-                            //【盘齿方案4】改动B：离线齿顶用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
-                            if (Name == "齿顶")
+                            //【盘齿方案4】改动B：离线上齿面用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
+                            if (Name == "上齿面")
                             {
                                 if (TryDispatchToothTopByIndex(cell, cell.PhotoIndex))
                                 {
