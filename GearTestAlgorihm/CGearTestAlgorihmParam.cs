@@ -13,7 +13,7 @@ namespace GearTestAlgorihm
 {
     /// <summary>
     /// 盘齿算法参数（方案3.4）。
-    /// 仅「整轴侧面」加载 OpenVINO Det 并 Infer；其它制程仍空壳。
+    /// 按制程名加载 Models 下本制程 OpenVINO Det 并 Infer；ParseResult Type=外观。
     /// </summary>
     public class CGearTestAlgorihmParam : CAlgorithmParamBase
     {
@@ -25,19 +25,19 @@ namespace GearTestAlgorihm
         public double MmPerPixel { get; set; } = 0.04;
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】整轴侧面 Det 模型。
+        /// 【盘齿方案3.4-注释】本制程实例 Det 模型（每实例只加载自己的 Models\\制程）。
         /// </summary>
-        IVisionModel WH_Side_det;
+        IVisionModel WH_det;
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】整轴侧面模型路径。
+        /// 【盘齿方案3.4-注释】本制程 .model 路径。
         /// </summary>
-        private string Side_Model_Path;
+        private string Model_Path;
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】整轴侧面 classes.txt 类别名。
+        /// 【盘齿方案3.4-注释】本制程 classes.txt 类别名。
         /// </summary>
-        protected string[] Side_names;
+        protected string[] class_names;
 
         public CGearTestAlgorihmParam()
             : this("")
@@ -50,9 +50,10 @@ namespace GearTestAlgorihm
             User = user ?? "";
             PrcessName = User;
             //【盘齿方案3.4-注释】分组1 已由 CAlgorithmParamBase 构造 AddParam；override AddParam 会在 base() 里写入 CParam
-            SetDefectRecipe(User);
+            //【盘齿方案3.4-注释】先 LoadYoloModel 读 classes.txt，再按 class_names 组外观配方
             InitDefectFeatures();
-            LoadWholeShaftSideModel();
+            LoadYoloModel();
+            SetDefectRecipe(User);
         }
 
         public override void AddParam(string name)
@@ -66,9 +67,8 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 非整轴侧面：不推理、不写 AlgorithmOut。过滤阶段会把无缺陷判为 OK。
-        /// 上端面（倒角偏、孔钻错）、上轴侧面（小孔未钻）走 Halcon 空壳，仍返回空列表。
-        /// 整轴侧面：OpenVINO Det Infer，ParseResult Type=外观。
+        /// 【盘齿方案3.4-注释】七制程 YOLO Infer，ParseResult Type=外观。
+        /// 上端面 / 上轴侧面在 Infer 之后仍跑 Halcon 空壳（不冲掉 AlgorithmOut）。
         /// </summary>
         public override void DetectImage(Cell cell)
         {
@@ -83,11 +83,8 @@ namespace GearTestAlgorihm
             }
 
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
-            if (processName == "整轴侧面")
-            {
-                DetectWholeShaftSide(cell);
-            }
-            else if (processName == "上轴侧面" || processName == "上端面")
+            DetectYolo(cell);
+            if (processName == "上轴侧面" || processName == "上端面")
             {
                 RunHalconEmpty(cell);
             }
@@ -96,11 +93,12 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】仅整轴侧面：GetMatImage → ImageInferDet → 坐标还原 → ParseResult。
+        /// 【盘齿方案3.4-注释】本制程：GetMatImage → ImageInferDet → 坐标还原 → ParseResult。
         /// </summary>
-        private void DetectWholeShaftSide(Cell cell)
+        private void DetectYolo(Cell cell)
         {
             Mat matimg = null;
+            string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
             try
             {
                 var paramClass = AlgorParams?.FirstOrDefault(o => o.Name == ParamSelect) as CParam;
@@ -112,29 +110,29 @@ namespace GearTestAlgorihm
                 matimg = GetMatImage(cell, paramClass);
                 if (matimg is null)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面 GetMatImage 为空，跳过 Infer");
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " GetMatImage 为空，跳过 Infer");
                     return;
                 }
 
                 DetResult detResult = null;
                 try
                 {
-                    detResult = ImageInferDet(WH_Side_det, matimg);
+                    detResult = ImageInferDet(WH_det, matimg);
                 }
                 catch (Exception ex)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面 Predict 失败: " + ex.Message);
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " Predict 失败: " + ex.Message);
                     return;
                 }
 
                 if (detResult is null)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面 Infer 无结果（模型未加载或 Predict 返回空）");
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " Infer 无结果（模型未加载或 Predict 返回空）");
                     return;
                 }
 
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
-                if (detResult.datas != null && Side_names != null && cell.Image != null)
+                if (detResult.datas != null && class_names != null && cell.Image != null)
                 {
                     int imgIndex = cell.PhotoIndex - 1;
                     for (int j = 0; j < detResult.datas.Count; j++)
@@ -143,11 +141,11 @@ namespace GearTestAlgorihm
                         {
                             continue;
                         }
-                        if (labelindex < 0 || labelindex >= Side_names.Length)
+                        if (labelindex < 0 || labelindex >= class_names.Length)
                         {
                             continue;
                         }
-                        string labelname = Side_names[labelindex];
+                        string labelname = class_names[labelindex];
                         CoordRestoreData restoreData = new CoordRestoreData(
                             cell.Image.ImageWidth, imgIndex, 0, 0, labelname, detResult.datas[j]);
                         dets.Add(restoreData);
@@ -174,7 +172,7 @@ namespace GearTestAlgorihm
         /// <summary>
         /// 方案0 A5：反序列化时空守卫。空工程无模型路径时不得 NRE。
         /// DefectSpecies 带 [JsonIgnore]，必须在此重建。
-        /// 【盘齿方案3.4-注释】整轴侧面在此加载 OpenVINO Det。
+        /// 【盘齿方案3.4-注释】按当前制程名加载 OpenVINO Det。
         /// </summary>
         [OnDeserialized]
         private void LoadModel(StreamingContext context)
@@ -194,18 +192,18 @@ namespace GearTestAlgorihm
                 AddParam("分组1");
             }
 
-            SetDefectRecipe(User);
             InitDefectFeatures();
-            LoadWholeShaftSideModel();
+            LoadYoloModel();
+            SetDefectRecipe(User);
         }
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】仅 User/PrcessName==整轴侧面 时加载模型。无文件或 names 空则打日志返回，禁止 NRE。
+        /// 【盘齿方案3.4-注释】按 User/PrcessName 加载 Models\\该制程。无文件或 names 空则打日志返回，禁止 NRE。
         /// </summary>
-        private void LoadWholeShaftSideModel()
+        private void LoadYoloModel()
         {
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
-            if (processName != "整轴侧面")
+            if (string.IsNullOrEmpty(processName))
             {
                 return;
             }
@@ -215,7 +213,7 @@ namespace GearTestAlgorihm
                 CParam param = AlgorParams?.FirstOrDefault() as CParam;
                 if (param is null)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面无算法参数，跳过加载模型");
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " 无算法参数，跳过加载模型");
                     return;
                 }
 
@@ -223,15 +221,15 @@ namespace GearTestAlgorihm
                 var names = GetNames(dirPath);
                 if (string.IsNullOrEmpty(names.Item1) || names.Item2 is null)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面无模型文件，跳过加载: " + dirPath);
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " 无模型文件，跳过加载: " + dirPath);
                     return;
                 }
 
-                Side_Model_Path = names.Item1;
-                Side_names = names.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-                if (Side_names.Length == 0)
+                Model_Path = names.Item1;
+                class_names = names.Item2.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                if (class_names.Length == 0)
                 {
-                    OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面 classes.txt 为空，跳过加载: " + dirPath);
+                    OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " classes.txt 为空，跳过加载: " + dirPath);
                     return;
                 }
 
@@ -239,23 +237,23 @@ namespace GearTestAlgorihm
                 float score = param.Score;
                 float nms = param.Nms;
                 const int inputSize = 640;
-                WH_Side_det = VisionModelExtensions.GetVisionModel(
+                WH_det = VisionModelExtensions.GetVisionModel(
                     ModelType.VisionModelDet,
-                    Side_Model_Path,
+                    Model_Path,
                     EngineType.OpenVINO,
                     currentDevice,
-                    Side_names.Length,
+                    class_names.Length,
                     score,
                     nms,
                     inputSize);
                 OperateLog?.Info(
-                    "【盘齿方案3.4-注释】整轴侧面模型已加载: " + Side_Model_Path
+                    "【盘齿方案3.4-注释】" + processName + " 模型已加载: " + Model_Path
                     + ", device=" + currentDevice
-                    + ", classes=" + Side_names.Length);
+                    + ", classes=" + class_names.Length);
             }
             catch (Exception ex)
             {
-                OperateLog?.Warn("【盘齿方案3.4-注释】整轴侧面加载模型失败: " + ex.Message);
+                OperateLog?.Warn("【盘齿方案3.4-注释】" + processName + " 加载模型失败: " + ex.Message);
             }
         }
 
@@ -410,18 +408,23 @@ namespace GearTestAlgorihm
         protected void InitDefectFeatures()
         {
             //【盘齿方案6-注释】几何过滤用「数值」；区域下拉只用面积类特征
-            DefectFeatures = new List<CFeacture>
-            {
-                new("Area", "面积", "Area", "um2"),
-                new("Width", "宽度", "Width", "um"),
-                new("Height", "高度", "Height", "um"),
-                new("Score", "分数", "Score", ""),
-            };
+            DefectFeatures = new List<CFeacture>();
+            DefectFeatures = new();
+            DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
+            DefectFeatures.Add(new("Width", "宽度", "Width", "um"));
+            DefectFeatures.Add(new("Height", "高度", "Height", "um"));
+            DefectFeatures.Add(new("LongLength", "长边", "LongLength", "um"));
+            DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
+            DefectFeatures.Add(new("Score", "分数", "Score", ""));
+            DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的色差差异来判断它的明显程度
+            DefectFeatures.Add(new("PositionX", "位置X", "PositionX", "um"));
+            DefectFeatures.Add(new("PositionY", "位置Y", "PositionY", "um"));
         }
 
         /// <summary>
-        /// 按方案3.1 矩阵挂本制程缺陷名。始终 new List，禁止 null。
-        /// 几何、倒角偏、孔钻错、小孔未钻 均为 Halcon。过滤 Category.值。
+        /// 【盘齿方案3.4-注释】外观按本制程 class_names（classes.txt）灌入，与 Infer 标签对齐。
+        /// 几何仅上端面 Halcon：倒角偏 / 孔钻错。始终 new List，禁止 null。
         /// </summary>
         protected void SetDefectRecipe(string processName)
         {
@@ -429,51 +432,23 @@ namespace GearTestAlgorihm
             var yolo = new List<CDefectRecipe>();
             var geo = new List<CDefectRecipe>();
 
-            void Area(string name) => yolo.Add(new CDefectRecipe(name, Category.区域));
-            void Val(string name) => geo.Add(new CDefectRecipe(name, Category.值));
-
-            switch (processName)
+            if (class_names != null)
             {
-                case "下端面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    Area("端面碰伤");
-                    Area("端面缠花");
-                    break;
-                case "上齿面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    Area("齿顶缠花");
-                    Area("表面压伤");
-                    Area("齿顶碰伤");
-                    break;
-                case "上端面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    Area("端面碰伤");
-                    Area("端面缠花");
-                    Val("倒角偏"); // Halcon
-                    Val("孔钻错"); // Halcon
-                    break;
-                case "内孔":
-                    Area("内壁锈蚀");
-                    Area("内孔划伤");
-                    Area("内孔缠花");
-                    break;
-                case "上轴侧面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    Area("小孔未钻"); // YOLO 区域，3.8 前不走 Halcon
-                    break;
-                case "下轴侧面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    break;
-                case "整轴侧面":
-                    Area("锈蚀");
-                    Area("有划痕");
-                    Area("侧面齿轮磕碰");
-                    break;
+                for (int i = 0; i < class_names.Length; i++)
+                {
+                    string name = class_names[i];
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        continue;
+                    }
+                    yolo.Add(new CDefectRecipe(name, Category.区域));
+                }
+            }
+
+            if (processName == "上端面")
+            {
+                geo.Add(new CDefectRecipe("倒角偏", Category.值));
+                geo.Add(new CDefectRecipe("孔钻错", Category.值));
             }
 
             if (yolo.Count > 0)
