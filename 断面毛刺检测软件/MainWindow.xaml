@@ -23,6 +23,7 @@
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     xmlns:zipper="clr-namespace:ZipperInfo;assembly=ZipperInfo"
+    xmlns:gear="clr-namespace:断面毛刺检测软件.Views.GearProduct"
     Title=""
     Width="1400"
     Height="850"
@@ -865,6 +866,10 @@
                             <zipper:ZipperInfoUserControl Name="zipperInfoShow"/>
                         </Border>
                         -->
+                        <!--【盘齿方案8-注释】一期：原拉链参数位改为盘齿型号只读面板；切型号只刷新数字、不写 JSON -->
+                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">
+                            <gear:GearProductUserControl x:Name="gearProductShow"/>
+                        </Border>
 
                     </Grid>
                 </Grid>

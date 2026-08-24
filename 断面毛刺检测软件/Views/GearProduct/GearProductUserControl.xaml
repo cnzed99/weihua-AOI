@@ -1,0 +1,32 @@
+<UserControl x:Class="断面毛刺检测软件.Views.GearProduct.GearProductUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:断面毛刺检测软件.Views.GearProduct"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=local:GearProductVM}"
+             d:DesignHeight="380" d:DesignWidth="200">
+    <!--【盘齿方案8-注释】一期：型号下拉 + 长宽高只读 TextBlock，无 NumericUpDown -->
+    <UniformGrid Rows="4" Columns="2">
+        <TextBlock Margin="15,0,0,0" Text="盘齿型号" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox Margin="5"
+                     FontSize="24"
+                     ItemsSource="{Binding Models}"
+                     DisplayMemberPath="Name"
+                     SelectedItem="{Binding SelectedModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Margin="15,0,0,0" Text="长(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <TextBlock Margin="5" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left"
+                   Text="{Binding SelectedModel.LengthMm}"/>
+
+        <TextBlock Margin="15,0,0,0" Text="宽(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <TextBlock Margin="5" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left"
+                   Text="{Binding SelectedModel.WidthMm}"/>
+
+        <TextBlock Margin="15,0,0,0" Text="高(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <TextBlock Margin="5" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left"
+                   Text="{Binding SelectedModel.HeightMm}"/>
+    </UniformGrid>
+</UserControl>

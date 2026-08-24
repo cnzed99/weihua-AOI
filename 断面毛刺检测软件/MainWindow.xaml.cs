@@ -36,6 +36,7 @@ using WH.RecipeCellRootBase;
 using ZipperInfo;
 using GearInfo;
 using 断面毛刺检测软件.Views;
+using 断面毛刺检测软件.Views.GearProduct;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 断面毛刺检测软件
@@ -166,9 +167,12 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-                // CLinghtManagement.LoadLightParams();
                 //【盘齿方案0-注释】原因：右侧面板不再绑定拉链参数VM（配合B2移除面板控件）
                 // 原： zipperInfoShow.DataContext = new ZipperInfoVM();
+                // CLinghtManagement.LoadLightParams();
+                //【盘齿方案8-注释】一期：右侧原拉链位绑定盘齿型号面板；切型号不写 JSON、不写 PLC
+                // 原： zipperInfoShow.DataContext = new ZipperInfoVM();
+                gearProductShow.DataContext = new GearProductVM();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
