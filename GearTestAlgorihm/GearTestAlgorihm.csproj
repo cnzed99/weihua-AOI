@@ -12,10 +12,30 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
     <Exec Command="xcopy $(OutDir)$(TargetName).pdb $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
+    <Exec Command="xcopy $(ProjectDir)Models $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\Models\ /e /d /y /i" />
   </Target>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.Extensions" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions" />
+    <PackageReference Include="OpenVINO.CSharp.API.Extensions.OpenCvSharp" />
+    <PackageReference Include="OpenVINO.CSharp.Windows" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TensorRtSharp">
+      <HintPath>..\packages\ThirdLocalDll\TensorRtSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WH.VisionLearning">
+      <HintPath>..\packages\ThirdLocalDll\WH.VisionLearning.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
