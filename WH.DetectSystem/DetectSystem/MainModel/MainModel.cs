@@ -85,10 +85,11 @@ namespace WH.DetectSystem.Models
         [JsonIgnore]
         public int GridRow => Name switch
         {
-            "下端面" => 0,
+            //【盘齿方案0.5-注释】上端面/下端面仅布局对调：上端面行0、下端面行1
+            "下端面" => 1,
             "上齿面" => 0,
             "内孔" => 0,
-            "上端面" => 1,
+            "上端面" => 0,
             "整轴侧面" => 1,
             "上轴侧面" => 2,
             "下轴侧面" => 2,
