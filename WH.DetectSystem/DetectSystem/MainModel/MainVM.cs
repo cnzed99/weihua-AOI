@@ -1073,7 +1073,12 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-                                BitmapSource zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                                //【盘齿方案11-注释】副图：拉链=ChangleImgae，盘齿=MergedPanorama，None=不绑产线字段
+                                BitmapSource zipperPullimg = null;
+                                if (COpenProjectLine.IsZipper)
+                                    zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                                else if (COpenProjectLine.IsGear)
+                                    zipperPullimg = cell.MergedPanorama?.ToBitmapSource();
                                 ImageView drawView;
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>

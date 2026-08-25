@@ -310,6 +310,12 @@ namespace WH.DetectSystem._5_存图操作
             bool showAllDefect
         )
         {
+            //【盘齿方案11-注释】截图第二画布：拉链=ChangleImgae，盘齿=MergedPanorama
+            CImage overlayImg = null;
+            if (COpenProjectLine.IsZipper)
+                overlayImg = cell.ChangleImgae;
+            else if (COpenProjectLine.IsGear)
+                overlayImg = cell.MergedPanorama;
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawImage(
@@ -319,16 +325,16 @@ namespace WH.DetectSystem._5_存图操作
             DrawingVisual drawingVisua2 = null;
             DrawingContext drawingContext2 = null;
             BitmapSource bitmapSource = null;
-            if (cell.ChangleImgae != null)
+            if (overlayImg != null)
             {
                 //bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
-                bitmapSource = cell.ChangleImgae.ToBitmapSource();
+                bitmapSource = overlayImg.ToBitmapSource();
                 if (bitmapSource != null)
                 {
                     drawingVisua2 = new DrawingVisual();
                     drawingContext2 = drawingVisua2.RenderOpen();
                     drawingContext2.DrawImage(bitmapSource,
-                        new Rect(0, 0, cell.ChangleImgae.ImageWidth, cell.ChangleImgae.ImageHeight)
+                        new Rect(0, 0, overlayImg.ImageWidth, overlayImg.ImageHeight)
                     );
                     foreach (var edge in cell.DrawEdges)
                     {
@@ -429,7 +435,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             else
                             {
-                                if (cell.ChangleImgae != null && drawingContext2 != null)
+                                if (overlayImg != null && drawingContext2 != null)
                                 {
                                     DrawPoints(drawingContext2, detection.regionOut[i].points, penDraw);
                                     DrawText(drawingContext2,
@@ -437,7 +443,7 @@ namespace WH.DetectSystem._5_存图操作
                                             detection.regionOut[i].GetBottomRight(),
                                            // defectFilter.ShowColor.Brush,
                                            Brushes.Red,
-                                            (int)(cell.ChangleImgae.ImageHeight / 10.0)
+                                            (int)(overlayImg.ImageHeight / 10.0)
                                         );
                                 }
 
@@ -474,7 +480,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             else
                             {
-                                if (cell.ChangleImgae != null && drawingContext2 != null)
+                                if (overlayImg != null && drawingContext2 != null)
                                 {
                                     DrawPoints(drawingContext, cell.Detection.regionOut[i].points, penDraw);
                                     DrawText(drawingContext,
@@ -482,7 +488,7 @@ namespace WH.DetectSystem._5_存图操作
                                            cell.Detection.regionOut[i].GetBottomRight(),
                                           // defectFilter.ShowColor.Brush,
                                           Brushes.Red,
-                                          (int)(cell.ChangleImgae.ImageHeight / 10)
+                                          (int)(overlayImg.ImageHeight / 10)
                                        );
 
                                 }
@@ -509,11 +515,11 @@ namespace WH.DetectSystem._5_存图操作
             renderTargetBitmap.Freeze();
 
             RenderTargetBitmap renderTargetBitmap2 = null;
-            if (cell.ChangleImgae != null && drawingContext2 != null)
+            if (overlayImg != null && drawingContext2 != null)
             {
                 drawingContext2.Close();
                 renderTargetBitmap2 =
-                   new(cell.ChangleImgae.ImageWidth, cell.ChangleImgae.ImageHeight, 96, 96, PixelFormats.Default);
+                   new(overlayImg.ImageWidth, overlayImg.ImageHeight, 96, 96, PixelFormats.Default);
                 renderTargetBitmap2.Render(drawingVisua2);
                 renderTargetBitmap2.Freeze();
             }
