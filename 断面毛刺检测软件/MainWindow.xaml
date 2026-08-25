@@ -610,19 +610,19 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <!--  打开测试页面按钮  -->
 
-                    <!--【盘齿方案0-注释】原因：隐藏拉链换料识别按钮（点击会打开拉链自动识别窗，Halcon+串口光源）。原代码保留在本注释块中
+                    <!--【盘齿方案11-注释】换料识别仅拉链工程显示，默认折叠-->
                     <Button Style="{DynamicResource CircleButton}"
                              Grid.Column="2"
                              Margin="10,0"
                             x:Name="Btn_TestStart"
                               Click="AutoMatic_Click"
-                            Content="换料识别" 
-                            FontSize="15" 
-                            Foreground="White"  
-                            Width="70" Height="70" 
-                            Background="Orange" 
-                            FontFamily="Microsoft YaHei"/>
-                    -->
+                            Content="换料识别"
+                            FontSize="15"
+                            Foreground="White"
+                            Width="70" Height="70"
+                            Background="Orange"
+                            FontFamily="Microsoft YaHei"
+                            Visibility="Collapsed"/>
 
                     <ToggleButton
                         Width="70"
@@ -861,13 +861,11 @@
 
                             </hc:TabControl>
                         </Border>
-                        <!--【盘齿方案0-注释】原因：移除右侧拉链参数面板控件（ZipperInfoUserControl），盘齿产品参数面板在M8换料阶段重做。原代码保留在本注释块中
-                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">
-                            <zipper:ZipperInfoUserControl Name="zipperInfoShow"/>
+                        <!--【盘齿方案11-注释】右侧拉链/盘齿面板同列，按 OpenProjectLine Visibility 二选一-->
+                        <Border x:Name="zipperInfoBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
+                            <zipper:ZipperInfoUserControl x:Name="zipperInfoShow"/>
                         </Border>
-                        -->
-                        <!--【盘齿方案8-注释】一期：原拉链参数位改为盘齿型号只读面板；切型号只刷新数字、不写 JSON -->
-                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">
+                        <Border x:Name="gearProductBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
                             <gear:GearProductUserControl x:Name="gearProductShow"/>
                         </Border>
 

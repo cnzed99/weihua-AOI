@@ -34,6 +34,8 @@ using SaveImageManage;
 using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
+using WH.DetectSystem.DetectSystem.ZipperLine;
+using WH.DetectSystem.DetectSystem.GearLine;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
@@ -43,9 +45,6 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using ZipperInfo;
-using GearInfo;
-using Modbus;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -482,6 +481,12 @@ namespace WH.DetectSystem.ViewModels
                 progress.Report(Properties.Resources.正在打开);
                 //【盘齿方案11-注释】先加载再识别；插件混用则中止，不拆当前工程
                 CMainModelsModel loaded = ConfigAPI.Load<CMainModelsModel>(header);
+                if (loaded == null || loaded.CProcessGroups == null)
+                {
+                    Growl.Warning("工程文件无效或无法读取，已中止打开。");
+                    SysLog.Error("OpenProj Load 失败: " + header);
+                    return;
+                }
                 if (!COpenProjectLine.TryRecognize(loaded, out OpenProjectLineKind lineKind, out string conflictMsg))
                 {
                     Growl.Warning(conflictMsg);
@@ -508,7 +513,7 @@ namespace WH.DetectSystem.ViewModels
                 //【盘齿方案11-注释】配方张数只下发给盘齿工程
                 if (COpenProjectLine.IsGear)
                 {
-                    SendLoadedRecipePhotoAndFocus();
+                    CGearLineHost.SendLoadedRecipePhotoAndFocus(CMainVMs, SysLog);
                 }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
@@ -522,8 +527,6 @@ namespace WH.DetectSystem.ViewModels
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
-                //【盘齿方案0-注释】原因：开工程不再初始化拉链自动识别（扫模型目录/加载YOLO模型/占用COM1、COM3串口），盘齿无此流程
-                // 原： CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
                 await longtimefunc(progress);
             }
             catch (Exception ex)
@@ -539,53 +542,23 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         void DetachCurrentLine()
         {
-            CGearCommunicate.Detach();
-            CZipperCommunicate.Detach();
+            CGearLineHost.Detach();
+            CZipperLineHost.Detach();
             COpenProjectLine.Kind = OpenProjectLineKind.None;
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】按已提交的 Kind 挂业务 com。IniAutomaticAlgorithm 留停点 3。
+        /// 【盘齿方案11-注释】按已提交的 Kind 挂业务 com。拉链工程在此 IniAutomaticAlgorithm。
         /// </summary>
         void AttachCurrentLine()
         {
             if (COpenProjectLine.IsGear)
             {
-                CGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
-                CGearCommunicate.OnComAttached();
+                CGearLineHost.Attach();
             }
             else if (COpenProjectLine.IsZipper)
             {
-                CZipperCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
-                CZipperAutomaticAlgorithm.Instance.ZipperInfo = CZipperAutomaticAlgorithm.LoadParameter();
-            }
-        }
-        void SendLoadedRecipePhotoAndFocus()
-        {
-            if (!COpenProjectLine.IsGear)
-            {
-                return;
-            }
-            if (CMainVMs == null || CMainVMs.Count == 0)
-            {
-                return;
-            }
-            List<(string processName, int photoTotalCount)> processes = new List<(string, int)>(CMainVMs.Count);
-            foreach (var vm in CMainVMs)
-            {
-                if (vm == null || string.IsNullOrEmpty(vm.Name))
-                {
-                    continue;
-                }
-                processes.Add((vm.Name, vm.PhotoTotalCount));
-            }
-            try
-            {
-                CGearCommunicate.SendRecipePhotoAndFocus(processes);
-            }
-            catch (Exception ex)
-            {
-                SysLog.Warn("配方张数下发失败: " + ex.Message);
+                CZipperLineHost.Attach(Dispatcher, SysLog);
             }
         }
 
@@ -748,6 +721,10 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void RemoveAllProcessGroup()
         {
+            if (CMainMModel?.CProcessGroups == null)
+            {
+                return;
+            }
             foreach (var item in CMainMModel.CProcessGroups)
             {
                 WeakReferenceMessenger.Default.UnregisterAll(item.MaociQualityConfig);
