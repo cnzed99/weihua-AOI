@@ -130,92 +130,96 @@ namespace WH.DetectSystem._5_存图操作
                         );
                     }
                 }
-                if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
+                //【盘齿方案11-注释】四分割/上下止/拉头仅拉链写入；盘齿即使配置为 true 也不走这些路径
+                if (COpenProjectLine.IsZipper)
                 {
-                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                    if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
                     {
-                        int index = fourCutPath.IndexOf('.');
-                        string fourpath = fourCutPath.Insert(index, $"_{i}");
-                        // SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
-                        OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i].Item3);
-
-                        if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
+                        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                         {
-                            string spltstr;
-                            if (cell.FourCutMatImg[i].Item1 >= 100)
+                            int index = fourCutPath.IndexOf('.');
+                            string fourpath = fourCutPath.Insert(index, $"_{i}");
+                            // SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
+                            OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i].Item3);
+
+                            if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                             {
-                                spltstr = "NG低曝";
-                            }
-                            else
-                            {
-                                spltstr = "NG高曝";
-                            }
-                            string smfourpath = fourpath.Replace("FourCutImg", spltstr);
-                            string[] splfour = smfourpath.Split(spltstr);
-                            if (splfour.Length > 0)
-                            {
-                                string dir = $"{splfour[0]}\\{spltstr}";
-                                if (!Directory.Exists(dir))
+                                string spltstr;
+                                if (cell.FourCutMatImg[i].Item1 >= 100)
                                 {
-                                    Directory.CreateDirectory(dir);
+                                    spltstr = "NG低曝";
                                 }
-                                OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                else
+                                {
+                                    spltstr = "NG高曝";
+                                }
+                                string smfourpath = fourpath.Replace("FourCutImg", spltstr);
+                                string[] splfour = smfourpath.Split(spltstr);
+                                if (splfour.Length > 0)
+                                {
+                                    string dir = $"{splfour[0]}\\{spltstr}";
+                                    if (!Directory.Exists(dir))
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+                                    OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                }
                             }
                         }
                     }
-                }
-                if (cell.FourCutMatImg != null)
-                {
-                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                    if (cell.FourCutMatImg != null)
                     {
-                        int index = fourCutPath.IndexOf('.');
-                        string fourpath = fourCutPath.Insert(index, $"_{i}");
-                        if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
+                        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                         {
-                            string spltstr;
-                            if (cell.FourCutMatImg[i].Item1 >= 100)
+                            int index = fourCutPath.IndexOf('.');
+                            string fourpath = fourCutPath.Insert(index, $"_{i}");
+                            if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                             {
-                                spltstr = "NG低曝";
-                            }
-                            else
-                            {
-                                spltstr = "NG高曝";
-                            }
-                            string smfourpath = fourpath.Replace("FourCutImg", spltstr);
-                            string[] splfour = smfourpath.Split(spltstr);
-                            if (splfour.Length > 0)
-                            {
-                                string dir = $"{splfour[0]}\\{spltstr}";
-                                if (!Directory.Exists(dir))
+                                string spltstr;
+                                if (cell.FourCutMatImg[i].Item1 >= 100)
                                 {
-                                    Directory.CreateDirectory(dir);
+                                    spltstr = "NG低曝";
                                 }
-                                OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                else
+                                {
+                                    spltstr = "NG高曝";
+                                }
+                                string smfourpath = fourpath.Replace("FourCutImg", spltstr);
+                                string[] splfour = smfourpath.Split(spltstr);
+                                if (splfour.Length > 0)
+                                {
+                                    string dir = $"{splfour[0]}\\{spltstr}";
+                                    if (!Directory.Exists(dir))
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+                                    OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                }
                             }
                         }
                     }
-                }
 
-                if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
-                {
-                    for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                    if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
                     {
-                        int index = upMassPath.IndexOf('.');
-                        string uppath = upMassPath.Insert(index, $"_{i}");
-                        // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
-                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                        for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                        {
+                            int index = upMassPath.IndexOf('.');
+                            string uppath = upMassPath.Insert(index, $"_{i}");
+                            // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
+                            OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                        }
                     }
-                }
-                if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
-                {
-                    // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
-                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
-                }
-                if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
-                {
-                    // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
-                    // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
-                    OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
+                    if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                    {
+                        // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
+                        OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                    }
+                    if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
+                    {
+                        // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
+                        // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
+                        OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
+                    }
                 }
                 if (saveImageConfig.SaveImageEnable) //开启存原图
                 {
@@ -706,34 +710,45 @@ namespace WH.DetectSystem._5_存图操作
                     //        classPath = classPath + "\\" + cell.CamName;
                     //    }
                     //}
-                    string dirstr = $"{classPath}\\截图";
-                    upmassPath = $"{dirstr}\\UpMassImg";
-                    if (!Directory.Exists(upmassPath))
+                    //【盘齿方案11-注释】仅拉链创建拉头/上下止/四分割目录；盘齿不 mkdir，out 赋占位避免未赋值
+                    if (COpenProjectLine.IsZipper)
                     {
-                        Directory.CreateDirectory(upmassPath);
-                    }
-                    upmassPath = $"{upmassPath}{filename}";
+                        string dirstr = $"{classPath}\\截图";
+                        upmassPath = $"{dirstr}\\UpMassImg";
+                        if (!Directory.Exists(upmassPath))
+                        {
+                            Directory.CreateDirectory(upmassPath);
+                        }
+                        upmassPath = $"{upmassPath}{filename}";
 
-                    downmassPath = $"{dirstr}\\DownMassImg";
-                    if (!Directory.Exists(downmassPath))
-                    {
-                        Directory.CreateDirectory(downmassPath);
-                    }
-                    downmassPath = $"{downmassPath}{filename}";
+                        downmassPath = $"{dirstr}\\DownMassImg";
+                        if (!Directory.Exists(downmassPath))
+                        {
+                            Directory.CreateDirectory(downmassPath);
+                        }
+                        downmassPath = $"{downmassPath}{filename}";
 
-                    pullPath = $"{dirstr}\\PullImg";
-                    if (!Directory.Exists(pullPath))
-                    {
-                        Directory.CreateDirectory(pullPath);
-                    }
-                    pullPath = $"{pullPath}{filename}";
+                        pullPath = $"{dirstr}\\PullImg";
+                        if (!Directory.Exists(pullPath))
+                        {
+                            Directory.CreateDirectory(pullPath);
+                        }
+                        pullPath = $"{pullPath}{filename}";
 
-                    fourCutPath = $"{dirstr}\\FourCutImg";
-                    if (!Directory.Exists(pullPath))
-                    {
-                        Directory.CreateDirectory(fourCutPath);
+                        fourCutPath = $"{dirstr}\\FourCutImg";
+                        if (!Directory.Exists(pullPath))
+                        {
+                            Directory.CreateDirectory(fourCutPath);
+                        }
+                        fourCutPath = $"{fourCutPath}{filename}";
                     }
-                    fourCutPath = $"{fourCutPath}{filename}";
+                    else
+                    {
+                        upmassPath = string.Empty;
+                        downmassPath = string.Empty;
+                        pullPath = string.Empty;
+                        fourCutPath = string.Empty;
+                    }
 
                     if (cell.IsOK)
                     {
