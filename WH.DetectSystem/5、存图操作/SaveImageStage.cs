@@ -9,6 +9,7 @@ using OpenCvSharp.Extensions;
 using SaveImageManage;
 using SDFilter;
 using WH.DetectSystem.Models;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.Entity.DiskSpace;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
@@ -808,7 +809,8 @@ namespace WH.DetectSystem._5_存图操作
         {
             if (cell != null)
             {
-                if (cell.ZipperImages.Count > 1)
+                //【盘齿方案11-注释】存图按打开工程选列表；拉链=git 原 ZipperImages，盘齿=GearImages
+                if (COpenProjectLine.IsZipper && cell.ZipperImages != null && cell.ZipperImages.Count > 1)
                 {
                     string[] filenames = filepath.Split('.');
                     if (filenames.Length >= 2)
@@ -858,6 +860,32 @@ namespace WH.DetectSystem._5_存图操作
 
                         }
 
+                    }
+                }
+                else if (COpenProjectLine.IsGear && cell.GearImages != null && cell.GearImages.Count > 1)
+                {
+                    //【盘齿方案11-注释】盘齿分张只写 GearImages，不拷 SaveBigImagesIndex 大图
+                    string[] filenames = filepath.Split('.');
+                    if (filenames.Length >= 2)
+                    {
+                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.GearImages)
+                        {
+                            string[] namesplits = filenames[0].Split('_');
+                            if (namesplits.Length >= 2)
+                            {
+                                namesplits[1] = img.Item2.ToString();
+                                filenames[0] = string.Join("_", namesplits);
+                                string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                                string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                                {
+                                    BitmapEncoder encoder = GetEncoder(format);
+                                    encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                    encoder.Save(stream);
+                                }
+                            }
+                        }
                     }
                 }
                 else
