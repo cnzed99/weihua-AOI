@@ -28,6 +28,14 @@ namespace GearInfo
         }
 
         /// <summary>
+        /// 【盘齿方案11-注释】停轮询：Connend=false，后台线程自行退出。
+        /// </summary>
+        public void StopThread()
+        {
+            Connend = false;
+        }
+
+        /// <summary>
         /// 轮询入口。基类 1ms 循环；子类覆盖 PollOnce。
         /// </summary>
         public virtual void MonitoringID()

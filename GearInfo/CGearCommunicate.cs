@@ -47,7 +47,7 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// LoadAsync 挂 com 之后调用：无论 com 是否 null 都尝试加载 JSON；com==null 不起轮询/心跳。不抛。
+        /// OpenProj 识别为盘齿并挂 com 之后调用：无论 com 是否 null 都尝试加载 JSON；com==null 不起轮询/心跳。不抛。
         /// </summary>
         public static void OnComAttached()
         {
@@ -68,6 +68,35 @@ namespace GearInfo
             catch (Exception ex)
             {
                 TryLogError("Gear 初始化失败: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 【盘齿方案11-注释】换工程/关闭时停心跳与 ID 轮询，清空 com，不关底层 OpenAllComm。
+        /// </summary>
+        public static void Detach()
+        {
+            try
+            {
+                _heartBeatStarted = false;
+                if (_heartBeatTimer != null)
+                {
+                    _heartBeatTimer.Dispose();
+                    _heartBeatTimer = null;
+                }
+                if (_idPoller != null)
+                {
+                    _idPoller.StopThread();
+                    _idPoller = null;
+                }
+                _pollStarted = false;
+                com = null;
+                CurrentProductID = 0;
+                TryLogInfo("Gear 已卸载协议");
+            }
+            catch (Exception ex)
+            {
+                TryLogWarn("Gear Detach 失败: " + ex.Message);
             }
         }
 

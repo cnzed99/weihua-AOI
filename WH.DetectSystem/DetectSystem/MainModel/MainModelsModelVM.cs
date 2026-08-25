@@ -397,10 +397,7 @@ namespace WH.DetectSystem.ViewModels
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
                  
-                    //【盘齿方案2-注释】原因：C1 静态 com 挂接到盘齿协议类（方案接入点3），拉链行保留
-                    // 原：CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
-                    CGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
-                    CGearCommunicate.OnComAttached();
+                    //【盘齿方案11-注释】此处只 OpenAllComm；业务 com 等到 OpenProj 识别后再挂（拉链/盘齿互斥）
                 }
                 catch (Exception ex)
                 {
@@ -461,7 +458,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 #endregion
                 #region 读取拉链信息
-                CZipperAutomaticAlgorithm.Instance.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
+                //【盘齿方案11-注释】LoadParameter 改到拉链 OpenProj，启动欢迎页不读拉链 JSON/形状模板
                // ZipperInfo = CZipperAutomaticAlgorithm.ZipperInfo;
                 #endregion
             });
@@ -483,9 +480,22 @@ namespace WH.DetectSystem.ViewModels
             try
             {
                 progress.Report(Properties.Resources.正在打开);
+                //【盘齿方案11-注释】先加载再识别；插件混用则中止，不拆当前工程
+                CMainModelsModel loaded = ConfigAPI.Load<CMainModelsModel>(header);
+                if (!COpenProjectLine.TryRecognize(loaded, out OpenProjectLineKind lineKind, out string conflictMsg))
+                {
+                    Growl.Warning(conflictMsg);
+                    SysLog.Error(conflictMsg);
+                    return;
+                }
+                DetachCurrentLine();
                 ProjPath = header;
                 RemoveAllProcessGroup();
-                CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
+                CMainMModel = loaded;
+                COpenProjectLine.Kind = lineKind;
+                AttachCurrentLine();
+                SysLog.Info("OpenProjectLine=" + lineKind);
+                Growl.Info("OpenProjectLine=" + lineKind);
                 foreach (var group in CMainMModel.CProcessGroups)
                 {
                     group.Init();
@@ -495,8 +505,11 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
-                //【盘齿方案2-注释】制程列表已装满后写一次配方张数，每件不写
-                SendLoadedRecipePhotoAndFocus();
+                //【盘齿方案11-注释】配方张数只下发给盘齿工程
+                if (COpenProjectLine.IsGear)
+                {
+                    SendLoadedRecipePhotoAndFocus();
+                }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -521,8 +534,38 @@ namespace WH.DetectSystem.ViewModels
         }
 
         //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数
+        /// <summary>
+        /// 【盘齿方案11-注释】卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。
+        /// </summary>
+        void DetachCurrentLine()
+        {
+            CGearCommunicate.Detach();
+            CZipperCommunicate.Detach();
+            COpenProjectLine.Kind = OpenProjectLineKind.None;
+        }
+
+        /// <summary>
+        /// 【盘齿方案11-注释】按已提交的 Kind 挂业务 com。IniAutomaticAlgorithm 留停点 3。
+        /// </summary>
+        void AttachCurrentLine()
+        {
+            if (COpenProjectLine.IsGear)
+            {
+                CGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                CGearCommunicate.OnComAttached();
+            }
+            else if (COpenProjectLine.IsZipper)
+            {
+                CZipperCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+                CZipperAutomaticAlgorithm.Instance.ZipperInfo = CZipperAutomaticAlgorithm.LoadParameter();
+            }
+        }
         void SendLoadedRecipePhotoAndFocus()
         {
+            if (!COpenProjectLine.IsGear)
+            {
+                return;
+            }
             if (CMainVMs == null || CMainVMs.Count == 0)
             {
                 return;
@@ -631,14 +674,9 @@ namespace WH.DetectSystem.ViewModels
         /// 更新多制程视图模型
         /// </summary>
         //【盘齿方案0.5-注释】无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
-        private static readonly string[] GearFixedProcesses =
-        {
-            "下端面", "上齿面", "上端面", "内孔", "上轴侧面", "下轴侧面", "整轴侧面",
-        };
-
         public bool UseGearFixedLayout =>
-            CMainVMs.Count == GearFixedProcesses.Length
-            && GearFixedProcesses.All(p => CMainVMs.Any(m => m.Name == p));
+            CMainVMs.Count == COpenProjectLine.GearFixedProcessNames.Length
+            && COpenProjectLine.GearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
         public void UpdateMainVMs()
         {
