@@ -543,7 +543,7 @@ namespace WH.DetectSystem.ViewModels
         void DetachCurrentLine()
         {
             CGearLineHost.Detach();
-            CZipperLineHost.Detach();
+            CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
             COpenProjectLine.Kind = OpenProjectLineKind.None;
         }
 

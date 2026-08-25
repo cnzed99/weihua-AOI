@@ -117,29 +117,9 @@ namespace WH.DetectSystem.Models
                 MySqlVM.MysqlExecute.Clone(MysqlBLL);
                 NameUpdata();
             };
-            //20260506 鲍赞宝
-            //【盘齿方案0-注释】原因：盘齿制程组1不再启动拉链ID生成轮询线程（CCreateIDMetalStation1读PLC），ID下发由P2新协议重写
-            // 原： if (Name == "制程组1")
-            // 原： {
-                // 原： IDCreate = new CCreateIDMetalStation1();
-                // 原： IDCreate.IntThread();
-                // 原： IDCreate.IDSendEvent += IDSend;
-            // 原： }
-            //else if (Name== "制程组3")
-            //{
-            //    IDCreate = new CCreateIDStationUpMass();
-            //}
-            //else
-            //{
-            //    IDCreate = new CCreateIDStation3();
-            //}
+            // zipper group-1 ID poller; gear does not subscribe WaitIDChannel
+            StartZipperIdThread();
         }
-        /// <summary>
-        /// 分配ID给各个制程 
-        /// 20260506 鲍赞宝
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="zipperID"></param>
         private async void IDSend(object sender, ZipperID zipperID)
         {
             try

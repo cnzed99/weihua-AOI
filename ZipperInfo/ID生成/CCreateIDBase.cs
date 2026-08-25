@@ -24,10 +24,19 @@ namespace ZipperInfo
         public event EventHandler<ZipperID> IDSendEvent;
         public void IntThread()
         {
+            if (WaitIDThread != null && WaitIDThread.IsAlive)
+            {
+                return;
+            }
             Connend = true;
             WaitIDThread = new Thread(MonitoringID);
             WaitIDThread.IsBackground = true;
             WaitIDThread.Start();
+        }
+
+        public void StopThread()
+        {
+            Connend = false;
         }
 
         public int TempproductID = -1;

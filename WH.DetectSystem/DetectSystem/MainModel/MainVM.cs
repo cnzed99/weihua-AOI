@@ -295,9 +295,10 @@ namespace WH.DetectSystem.Models
                     FocusConfig,
                     FocusConfig.token
                 );
-            //【盘齿方案0-注释】原因：取消制程Init内拉链自动识别完成事件订阅，TestFinshTodo及HSV回写方法群留作复盘不删
-            // 原： CZipperAutomaticAlgorithm.Instance.TestFinshEven += TestFinshTodo;
-            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
+            if (COpenProjectLine.IsZipper)
+            {
+                SubscribeZipperAutoFinish();
+            }
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -1633,29 +1634,6 @@ namespace WH.DetectSystem.Models
                     {
                         CopyZipperMergeSideFields(newCell, cells[i]);
                     }
-                    //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
-                    // 原：if (cells[i].ZipperPullPartImg != null)
-                    // 原：{
-                    // 原：    newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
-                    // 原：}
-                    // 原：if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
-                    // 原：{
-                    // 原：    for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
-                    // 原：    {
-                    // 原：        newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
-                    // 原：    }
-                    // 原：}
-                    // 原：if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
-                    // 原：{
-                    // 原：    for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
-                    // 原：    {
-                    // 原：        newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
-                    // 原：    }
-                    // 原：}
-                    // 原：if (cells[i].DownMassMatImg != null)
-                    // 原：{
-                    // 原：    newCell.DownMassMatImg = cells[i].DownMassMatImg;
-                    // 原：}
                     newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
                     newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
@@ -1696,23 +1674,6 @@ namespace WH.DetectSystem.Models
             }
             else
             {
-                //【盘齿方案4-注释】原因：拉链专属字段/高低曝光合并，盘齿改用 GearImages+MergedPanorama；工位张号 1..N
-                // 原：// 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
-                // 原：List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
-                // 原：List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
-                // 原：lowIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                // 原：highIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                // 原：if (lowIndexGroup.Count > 0)
-                // 原：{
-                // 原：    CImage lowimage = GetMergeImage(lowIndexGroup);
-                // 原：    cImages.Add(lowimage);
-                // 原：}
-                // 原：if (highIndexGroup.Count > 0)
-                // 原：{
-                // 原：    CImage heightimage = GetMergeImage(highIndexGroup);
-                // 原：    cImages.Add(heightimage);
-                // 原：}
-                // 原：return cImages;
                 if (COpenProjectLine.IsZipper)
                 {
                     return CollectZipperCImages(cells);

@@ -10,6 +10,17 @@ namespace WH.DetectSystem.Models
     /// </summary>
     public partial class CMainModel
     {
+        internal void SubscribeZipperAutoFinish()
+        {
+            CZipperAutomaticAlgorithm.Instance.TestFinshEven -= TestFinshTodo;
+            CZipperAutomaticAlgorithm.Instance.TestFinshEven += TestFinshTodo;
+        }
+
+        internal void UnsubscribeZipperAutoFinish()
+        {
+            CZipperAutomaticAlgorithm.Instance.TestFinshEven -= TestFinshTodo;
+        }
+
         private void TestFinshTodo(bool finsh)
         {
 
