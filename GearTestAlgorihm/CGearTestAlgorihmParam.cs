@@ -68,7 +68,7 @@ namespace GearTestAlgorihm
 
         /// <summary>
         /// 【盘齿方案3.4-注释】七制程 YOLO Infer，ParseResult Type=外观。
-        /// 上端面 / 上轴侧面在 Infer 之后仍跑 Halcon 空壳（不冲掉 AlgorithmOut）。
+        /// 【盘齿方案3.7-注释】上端面 YOLO 之后追加孔钻错（Type=几何，不 Clear AlgorithmOut）；上轴侧面仍空壳。
         /// </summary>
         public override void DetectImage(Cell cell)
         {
@@ -84,7 +84,11 @@ namespace GearTestAlgorihm
 
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
             DetectYolo(cell);
-            if (processName == "上轴侧面" || processName == "上端面")
+            if (processName == "上端面")
+            {
+                RunHalconGearAngle(cell);
+            }
+            else if (processName == "上轴侧面")
             {
                 RunHalconEmpty(cell);
             }
@@ -167,6 +171,73 @@ namespace GearTestAlgorihm
         protected List<CellDetection> RunHalconEmpty(Cell cell)
         {
             return new List<CellDetection>();
+        }
+
+        /// <summary>
+        /// 【盘齿方案3.7-注释】上端面：cell.Image 跑 gear_angle_fast，追加一条孔钻错。失败/无图/无许可仍出 MaxDev=1000。
+        /// </summary>
+        private void RunHalconGearAngle(Cell cell)
+        {
+            const float sentinel = 1000f;
+            GearAngleRunResult r = null;
+            try
+            {
+                GearAngleAlgorithm algo = new GearAngleAlgorithm();
+                r = algo.Run(cell);
+            }
+            catch (Exception ex)
+            {
+                r = new GearAngleRunResult();
+                r.MaxDev = sentinel;
+                r.HoleNum = 0;
+                r.FitN = 0;
+                r.Warn = ex.Message;
+            }
+
+            if (r is null)
+            {
+                r = new GearAngleRunResult();
+                r.MaxDev = sentinel;
+                r.Warn = "no result";
+            }
+
+            float maxDev = sentinel;
+            if (string.IsNullOrEmpty(r.Warn) && r.HoleNum == 3 && r.FitN == 3)
+            {
+                maxDev = r.MaxDev;
+            }
+            else
+            {
+                maxDev = sentinel;
+            }
+
+            CellDetection det = new CellDetection();
+            det.RecipeDefectName = "孔钻错";
+            det.Type = "几何";
+            det.Category = Category.值;
+            det.ShowInView = 0;
+            det.Value = new List<float> { maxDev };
+            cell.AlgorithmOut.Add(det);
+
+            double angleSum = r.Angle12 + r.Angle23 + r.Angle31;
+            string log = "【盘齿方案3.7-注释】孔钻错 HoleNum=" + r.HoleNum
+                + " FitN=" + r.FitN
+                + " MaxDev=" + maxDev
+                + " AngleSum=" + angleSum.ToString("F4")
+                + " " + r.Width + "x" + r.Height
+                + " bits=" + r.Bits
+                + " ch=" + r.Channels
+                + " fmt=" + r.ColorFmt
+                + " NDark=" + r.NDark;
+            if (!string.IsNullOrEmpty(r.Warn))
+            {
+                log = log + " warn=" + r.Warn;
+                OperateLog?.Warn(log);
+            }
+            else
+            {
+                OperateLog?.Info(log);
+            }
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -30,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>..\packages\ThirdLocalDll\halcondotnet.dll</HintPath>
+    </Reference>
     <Reference Include="TensorRtSharp">
       <HintPath>..\packages\ThirdLocalDll\TensorRtSharp.dll</HintPath>
     </Reference>
