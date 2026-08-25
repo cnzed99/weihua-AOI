@@ -30,9 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="halcondotnet">
-      <HintPath>..\packages\ThirdLocalDll\halcondotnet.dll</HintPath>
-    </Reference>
     <Reference Include="TensorRtSharp">
       <HintPath>..\packages\ThirdLocalDll\TensorRtSharp.dll</HintPath>
     </Reference>
