@@ -37,6 +37,7 @@ using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.DetectSystem.ZipperLine;
 using WH.DetectSystem.DetectSystem.GearLine;
 using WH.DetectSystem.DetectSystem.CrankLine;
+using WH.DetectSystem.DetectSystem.XinGearLine;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
@@ -546,6 +547,7 @@ namespace WH.DetectSystem.ViewModels
             CGearLineHost.Detach();
             CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
             CCrankLineHost.Detach(); // 【曲轴方案2-注释】停心跳/ID 轮询，不清底层 Modbus
+            CXinGearLineHost.Detach(); // 【新兴盘齿方案11-注释】空壳 Detach，不清底层 Modbus
             COpenProjectLine.Kind = OpenProjectLineKind.None;
         }
 
@@ -565,6 +567,10 @@ namespace WH.DetectSystem.ViewModels
             else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】挂 CCrankCommunicate；不下发 HD1200
             {
                 CCrankLineHost.Attach();
+            }
+            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案11-注释】挂空壳 Host；不写 PLC
+            {
+                CXinGearLineHost.Attach();
             }
         }
 
@@ -662,6 +668,11 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs.Count == COpenProjectLine.CrankFixedProcessNames.Length
             && COpenProjectLine.CrankFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
+        // 【新兴盘齿方案0.5-注释】三名全中且数量=3 才套 1×3；不替代 IsXinGear；不写入 GearFixedProcessNames
+        public bool UseXinGearFixedLayout =>
+            CMainVMs.Count == COpenProjectLine.XinGearFixedProcessNames.Length
+            && COpenProjectLine.XinGearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
+
         public void UpdateMainVMs()
         {
             ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
@@ -694,6 +705,7 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs = mainVMs;
             OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
             OnPropertyChanged(nameof(UseCrankFixedLayout)); //【曲轴方案0.5-注释】
+            OnPropertyChanged(nameof(UseXinGearFixedLayout)); //【新兴盘齿方案0.5-注释】
         }
 
         /// <summary>

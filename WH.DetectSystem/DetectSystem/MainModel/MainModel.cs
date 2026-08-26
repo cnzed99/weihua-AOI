@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using ProjProduceData;
 using SDFilter;
 using System.Collections.ObjectModel;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.Entity;
 using WH.Entity.CommonLib;
 
@@ -82,64 +83,101 @@ namespace WH.DetectSystem.Models
         ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
 
         //【盘齿方案0.5-注释】无分页固定布局元数据：按制程名映射行列/跨度（非盘齿/未命中给默认，不进 .burrproj）
-        [JsonIgnore]
-        public int GridRow => Name switch
+                [JsonIgnore]
+        public int GridRow
         {
-            //【盘齿方案0.5-注释】上端面/下端面仅布局对调：上端面行0、下端面行1
-            "下端面" => 1,
-            "上齿面" => 0,
-            "内孔" => 0,
-            "上端面" => 0,
-            "整轴侧面" => 1,
-            "上轴侧面" => 2,
-            "下轴侧面" => 2,
-            //【曲轴方案0.5-注释】六格 Row（0-based）；盘齿 case 原样保留
-            "端面" => 0,
-            "杆面" => 0,
-            "底部光滑面" => 1,
-            "底盘侧面" => 1,
-            "顶面" => 2,
-            "底面" => 2,
-            _ => 0,
-        };
-
-        [JsonIgnore]
-        public int GridCol => Name switch
-        {
-            "下端面" => 0,
-            "上齿面" => 1,
-            "内孔" => 2,
-            "上端面" => 0,
-            "整轴侧面" => 1,
-            "上轴侧面" => 0,
-            "下轴侧面" => 2,
-            //【曲轴方案0.5-注释】六格 Col（0-based）；盘齿 case 原样保留
-            "端面" => 0,
-            "杆面" => 1,
-            "底部光滑面" => 0,
-            "底盘侧面" => 1,
-            "顶面" => 0,
-            "底面" => 2,
-            _ => 0,
-        };
+            get
+            {
+                return Name switch
+                {
+                    //【盘齿方案0.5-注释】上端面/下端面仅布局对调：上端面行0、下端面行1
+                    "下端面" => 1,
+                    "上齿面" => 0,
+                    "内孔" => 0,
+                    "上端面" => 0,
+                    "整轴侧面" => 1,
+                    "上轴侧面" => 2,
+                    "下轴侧面" => 2,
+                    //【曲轴方案0.5-注释】六格 Row（0-based）；盘齿 case 原样保留
+                    "端面" => 0,
+                    "杆面" => 0,
+                    "底部光滑面" => 1,
+                    "底盘侧面" => 1,
+                    "顶面" => 2,
+                    "底面" => 2,
+                    // 【新兴盘齿方案0.5-注释】齿底/齿顶左列两行，侧面右列（旋转拍 4 张需更大空间）
+                    "齿底" => 0,
+                    "齿顶" => 1,
+                    "侧面" => 0,
+                    _ => 0,
+                };
+            }
+        }
 
         [JsonIgnore]
-        public int GridColSpan => Name switch
+        public int GridCol
         {
-            "内孔" => 2,
-            "整轴侧面" => 3,
-            "上轴侧面" => 2,
-            "下轴侧面" => 2,
-            //【曲轴方案0.5-注释】六格 ColSpan；端面/底部光滑面走 _ => 1
-            "杆面" => 3,
-            "底盘侧面" => 3,
-            "顶面" => 2,
-            "底面" => 2,
-            _ => 1,
-        };
+            get
+            {
+                return Name switch
+                {
+                    "下端面" => 0,
+                    "上齿面" => 1,
+                    "内孔" => 2,
+                    "上端面" => 0,
+                    "整轴侧面" => 1,
+                    "上轴侧面" => 0,
+                    "下轴侧面" => 2,
+                    //【曲轴方案0.5-注释】六格 Col（0-based）；盘齿 case 原样保留
+                    "端面" => 0,
+                    "杆面" => 1,
+                    "底部光滑面" => 0,
+                    "底盘侧面" => 1,
+                    "顶面" => 0,
+                    "底面" => 2,
+                    // 【新兴盘齿方案0.5-注释】齿底/齿顶左列(0)，侧面右列(1)
+                    "齿底" => 0,
+                    "齿顶" => 0,
+                    "侧面" => 1,
+                    _ => 0,
+                };
+            }
+        }
 
+        [JsonIgnore]
+        public int GridColSpan
+        {
+            get
+            {
+                return Name switch
+                {
+                    "内孔" => 2,
+                    "整轴侧面" => 3,
+                    "上轴侧面" => 2,
+                    "下轴侧面" => 2,
+                    //【曲轴方案0.5-注释】六格 ColSpan；端面/底部光滑面走 _ => 1
+                    "杆面" => 3,
+                    "底盘侧面" => 3,
+                    "顶面" => 2,
+                    "底面" => 2,
+                    _ => 1,
+                };
+            }
+        }
 
-
+        [JsonIgnore]
+        public int GridRowSpan
+        {
+            get
+            {
+                return Name switch
+                {
+                    // 【新兴盘齿方案0.5-注释】侧面跨 2 行（旋转拍 4 张需更大空间）
+                    "侧面" => 2,
+                    _ => 1,
+                };
+            }
+        }
         [ObservableProperty]
         [JsonProperty]
         private List<string> testImgFiles = new List<string>();

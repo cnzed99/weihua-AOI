@@ -40,6 +40,7 @@
     <ProjectReference Include="..\ZipperInfo\ZipperInfo.csproj" />
     <ProjectReference Include="..\GearInfo\GearInfo.csproj" />
     <ProjectReference Include="..\CrankInfo\CrankInfo.csproj" />
+    <ProjectReference Include="..\XinGearInfo\XinGearInfo.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Autofac" />

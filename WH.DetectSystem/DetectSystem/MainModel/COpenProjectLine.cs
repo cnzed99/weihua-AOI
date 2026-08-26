@@ -13,6 +13,7 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         Zipper = 1,
         Gear = 2,
         Crank = 3, // 【曲轴方案11-注释】第三条产线
+        XinGear = 4, // 【新兴盘齿方案11-注释】第四条产线
     }
 
     /// <summary>
@@ -31,6 +32,12 @@ namespace WH.DetectSystem.DetectSystem.MainModel
             "端面", "底部光滑面", "杆面", "底盘侧面", "顶面", "底面",
         };
 
+        // 【新兴盘齿方案11-注释】三名与方案0.5 布局、识别回退共用；禁止写入 GearFixedProcessNames
+        public static readonly string[] XinGearFixedProcessNames =
+        {
+            "齿底", "齿顶", "侧面",
+        };
+
         public static readonly HashSet<string> ZipperAlgorithmNames = new HashSet<string>(StringComparer.Ordinal)
         {
             "ZipperTestAlgorihm",
@@ -46,6 +53,9 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         // 【曲轴方案11-注释】拼写冻结，与 GearTestAlgorihm 同风格
         public const string CrankAlgorithmName = "CrankTestAlgorihm";
 
+        // 【新兴盘齿方案11-注释】拼写 Algorihm 与仓库一致
+        public const string PlaneGearAlgorithmName = "PlaneGearTestAlgorihm";
+
         public static OpenProjectLineKind Kind { get; internal set; } = OpenProjectLineKind.None;
 
         public static bool IsZipper => Kind == OpenProjectLineKind.Zipper;
@@ -53,6 +63,8 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         public static bool IsGear => Kind == OpenProjectLineKind.Gear;
 
         public static bool IsCrank => Kind == OpenProjectLineKind.Crank; // 【曲轴方案11-注释】
+
+        public static bool IsXinGear => Kind == OpenProjectLineKind.XinGear; // 【新兴盘齿方案11-注释】
 
         /// <summary>
         /// 冲突返回 false，不修改 Kind。成功时写出 kind，由 OpenProj 提交后再赋 Kind。
@@ -64,6 +76,7 @@ namespace WH.DetectSystem.DetectSystem.MainModel
             bool hasGearPlugin = false;
             bool hasZipperPlugin = false;
             bool hasCrankPlugin = false;
+            bool hasXinGearPlugin = false;
             var names = new HashSet<string>(StringComparer.Ordinal);
 
             if (model?.CProcessGroups != null)
@@ -101,19 +114,25 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                         {
                             hasCrankPlugin = true;
                         }
+                        if (string.Equals(algo, PlaneGearAlgorithmName, StringComparison.Ordinal))
+                        {
+                            hasXinGearPlugin = true;
+                        }
                     }
                 }
             }
 
             // 【曲轴方案11-注释】Gear / Zipper / Crank 插件任意两套拒绝打开
-            if ((hasGearPlugin && hasZipperPlugin)
-                || (hasGearPlugin && hasCrankPlugin)
-                || (hasZipperPlugin && hasCrankPlugin))
+            // 【新兴盘齿方案11-注释】混用矩阵纳入 XinGear
+            int pluginKinds = (hasGearPlugin ? 1 : 0) + (hasZipperPlugin ? 1 : 0)
+                + (hasCrankPlugin ? 1 : 0) + (hasXinGearPlugin ? 1 : 0);
+            if (pluginKinds > 1)
             {
                 var parts = new List<string>();
                 if (hasGearPlugin) parts.Add("盘齿 GearTestAlgorihm");
                 if (hasZipperPlugin) parts.Add("拉链插件");
                 if (hasCrankPlugin) parts.Add("曲轴 CrankTestAlgorihm");
+                if (hasXinGearPlugin) parts.Add("新兴 PlaneGearTestAlgorihm");
                 conflictMsg = "工程混用了多套算法插件（" + string.Join(" 与 ", parts) + "），已中止打开。请拆成两个 .burrproj。";
                 return false;
             }
@@ -133,6 +152,11 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                 kind = OpenProjectLineKind.Crank;
                 return true;
             }
+            if (hasXinGearPlugin)
+            {
+                kind = OpenProjectLineKind.XinGear;
+                return true;
+            }
             if (names.Count == GearFixedProcessNames.Length
                 && GearFixedProcessNames.All(p => names.Contains(p)))
             {
@@ -143,6 +167,12 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                 && CrankFixedProcessNames.All(p => names.Contains(p)))
             {
                 kind = OpenProjectLineKind.Crank;
+                return true;
+            }
+            if (names.Count == XinGearFixedProcessNames.Length
+                && XinGearFixedProcessNames.All(p => names.Contains(p)))
+            {
+                kind = OpenProjectLineKind.XinGear;
                 return true;
             }
 
