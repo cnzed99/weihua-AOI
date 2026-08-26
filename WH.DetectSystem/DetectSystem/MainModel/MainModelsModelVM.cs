@@ -545,7 +545,7 @@ namespace WH.DetectSystem.ViewModels
         {
             CGearLineHost.Detach();
             CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
-            CCrankLineHost.Detach(); // 【曲轴方案11-注释】方案2 未就绪，空壳
+            CCrankLineHost.Detach(); // 【曲轴方案2-注释】停心跳/ID 轮询，不清底层 Modbus
             COpenProjectLine.Kind = OpenProjectLineKind.None;
         }
 
@@ -562,7 +562,7 @@ namespace WH.DetectSystem.ViewModels
             {
                 CZipperLineHost.Attach(Dispatcher, SysLog);
             }
-            else if (COpenProjectLine.IsCrank) // 【曲轴方案11-注释】方案2 未就绪时空壳；不下发 HD1200
+            else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】挂 CCrankCommunicate；不下发 HD1200
             {
                 CCrankLineHost.Attach();
             }

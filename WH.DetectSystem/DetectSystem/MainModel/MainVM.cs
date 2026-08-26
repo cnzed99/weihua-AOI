@@ -34,6 +34,7 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
+using CrankInfo;
 using System.Runtime.InteropServices;
 using System.IO;
 
@@ -723,6 +724,15 @@ namespace WH.DetectSystem.Models
                                     continue;
                                 }
                             }
+                            else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】绑缓存 ProductID；无 PLC / ID<=0 仍放行（离线可点开始）
+                            {
+                                int crankProductId = CCrankCommunicate.GetProductID();
+                                if (crankProductId > 0)
+                                {
+                                    cell.ID = crankProductId.ToString();
+                                }
+                                IDisRight = true;
+                            }
                             else
                             {
                                 IDisRight = true;
@@ -919,6 +929,13 @@ namespace WH.DetectSystem.Models
                                         else if (COpenProjectLine.IsGear)
                                         {
                                             SendGearGroupResult(CellOut);
+                                        }
+                                        else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】组齐套回写 G1/G2
+                                        {
+                                            CCrankCommunicate.SendGroupResult(
+                                                ProcessGroup.Name,
+                                                CellOut.Cell.ID,
+                                                CellOut.Cell.IsOK ? CrankResult.OK : CrankResult.NG);
                                         }
 
 

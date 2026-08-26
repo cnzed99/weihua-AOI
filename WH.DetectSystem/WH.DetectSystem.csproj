@@ -39,6 +39,7 @@
     <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
     <ProjectReference Include="..\ZipperInfo\ZipperInfo.csproj" />
     <ProjectReference Include="..\GearInfo\GearInfo.csproj" />
+    <ProjectReference Include="..\CrankInfo\CrankInfo.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Autofac" />

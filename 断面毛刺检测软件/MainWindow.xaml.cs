@@ -36,6 +36,7 @@ using WH.LightControl;
 using WH.RecipeCellRootBase;
 using ZipperInfo;
 using GearInfo;
+using CrankInfo;
 using 断面毛刺检测软件.Views;
 using 断面毛刺检测软件.Views.GearProduct;
 using MessageBox = HandyControl.Controls.MessageBox;
@@ -148,8 +149,8 @@ namespace 断面毛刺检测软件
                             return;
                         }
                         //【盘齿方案2-注释】原因：即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
-                        //【曲轴方案11-注释】点位 JSON 仍仅 IsGear；IsCrank 本期允许空转（停点 C 再接 Crank JSON）
-                        if (CMainList.StartStop && COpenProjectLine.IsGear && !TryValidateProcessGroupResultMapping())
+                        //【曲轴方案2-注释】IsGear 读盘齿 JSON；IsCrank 读曲轴 JSON；拉链不走此校验
+                        if (CMainList.StartStop && (COpenProjectLine.IsGear || COpenProjectLine.IsCrank) && !TryValidateProcessGroupResultMapping())
                         {
                             CMainList.StartStop = false;
                             return;
@@ -259,7 +260,11 @@ namespace 断面毛刺检测软件
         /// </summary>
         private bool TryValidateProcessGroupResultMapping()
         {
-            //【曲轴方案11-注释】仅盘齿读 GearProtocolPoints.json；IsCrank 不走此校验
+            //【曲轴方案2-注释】盘齿读 Gear JSON；曲轴读 Crank JSON；拉链不走此校验
+            if (COpenProjectLine.IsCrank)
+            {
+                return TryValidateCrankProcessGroupResultMapping();
+            }
             if (!COpenProjectLine.IsGear)
             {
                 return true;
@@ -292,6 +297,55 @@ namespace 断面毛刺检测软件
                 {
                     string groupName = group == null ? null : group.Name;
                     if (string.IsNullOrEmpty(groupName) || !CGearCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 【曲轴方案2-注释】启动前校验曲轴工程组名都能在 CrankProtocolPoints.json 的 GroupResults 中找到。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateCrankProcessGroupResultMapping()
+        {
+            try
+            {
+                bool pointsReady = CCrankCommunicate.Points != null
+                    && CCrankCommunicate.Points.GroupResults != null
+                    && CCrankCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CCrankCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CCrankCommunicate.Points != null
+                        && CCrankCommunicate.Points.GroupResults != null
+                        && CCrankCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\CrankProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CCrankCommunicate.Points.GroupResults.ContainsKey(groupName))
                     {
                         string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
                         Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
