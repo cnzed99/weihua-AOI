@@ -402,6 +402,7 @@
     <ProjectReference Include="..\GearInfo\GearInfo.csproj" />
     <ProjectReference Include="..\CrankInfo\CrankInfo.csproj" />
     <ProjectReference Include="..\GearTestAlgorihm\GearTestAlgorihm.csproj" />
+    <ProjectReference Include="..\CrankTestAlgorihm\CrankTestAlgorihm.csproj" />
   </ItemGroup>
 
   <ItemGroup>
