@@ -148,6 +148,7 @@ namespace 断面毛刺检测软件
                             return;
                         }
                         //【盘齿方案2-注释】原因：即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
+                        //【曲轴方案11-注释】点位 JSON 仍仅 IsGear；IsCrank 本期允许空转（停点 C 再接 Crank JSON）
                         if (CMainList.StartStop && COpenProjectLine.IsGear && !TryValidateProcessGroupResultMapping())
                         {
                             CMainList.StartStop = false;
@@ -190,9 +191,10 @@ namespace 断面毛刺检测软件
                 // 原：     "拉链智能视觉检测软件"
                 // 原： );
                 //【盘齿方案0】新标题（原拉链标题见上方注释块）
+                //【曲轴方案0-注释】欢迎页用中性名，不写死盘齿/拉链/曲轴；HandyControl 左上角 Title 仍保持空
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
-                    "外观检测软件"
+                    "视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
                 //【盘齿方案11-注释】拉链心跳仅 IsZipper 且已启动时写 42638；盘齿走 CGearCommunicate 定时器
@@ -223,6 +225,7 @@ namespace 断面毛刺检测软件
         /// </summary>
         void ApplyOpenProjectLineUi()
         {
+            //【曲轴方案11-注释】曲轴不显示拉链信息栏/盘齿换料；Visibility 仍只跟 IsZipper/IsGear
             if (zipperInfoBorder != null)
             {
                 zipperInfoBorder.Visibility = COpenProjectLine.IsZipper ? Visibility.Visible : Visibility.Collapsed;
@@ -256,6 +259,7 @@ namespace 断面毛刺检测软件
         /// </summary>
         private bool TryValidateProcessGroupResultMapping()
         {
+            //【曲轴方案11-注释】仅盘齿读 GearProtocolPoints.json；IsCrank 不走此校验
             if (!COpenProjectLine.IsGear)
             {
                 return true;

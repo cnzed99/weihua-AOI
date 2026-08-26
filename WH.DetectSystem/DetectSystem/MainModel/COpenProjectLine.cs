@@ -12,6 +12,7 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         None = 0,
         Zipper = 1,
         Gear = 2,
+        Crank = 3, // 【曲轴方案11-注释】第三条产线
     }
 
     /// <summary>
@@ -22,6 +23,12 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         public static readonly string[] GearFixedProcessNames =
         {
             "下端面", "上齿面", "上端面", "内孔", "上轴侧面", "下轴侧面", "整轴侧面",
+        };
+
+        // 【曲轴方案11-注释】六名与方案0.5 布局、识别第 5 行共用；禁止写入 GearFixedProcessNames
+        public static readonly string[] CrankFixedProcessNames =
+        {
+            "端面", "底部光滑面", "杆面", "底盘侧面", "顶面", "底面",
         };
 
         public static readonly HashSet<string> ZipperAlgorithmNames = new HashSet<string>(StringComparer.Ordinal)
@@ -36,11 +43,16 @@ namespace WH.DetectSystem.DetectSystem.MainModel
 
         public const string GearAlgorithmName = "GearTestAlgorihm";
 
+        // 【曲轴方案11-注释】拼写冻结，与 GearTestAlgorihm 同风格
+        public const string CrankAlgorithmName = "CrankTestAlgorihm";
+
         public static OpenProjectLineKind Kind { get; internal set; } = OpenProjectLineKind.None;
 
         public static bool IsZipper => Kind == OpenProjectLineKind.Zipper;
 
         public static bool IsGear => Kind == OpenProjectLineKind.Gear;
+
+        public static bool IsCrank => Kind == OpenProjectLineKind.Crank; // 【曲轴方案11-注释】
 
         /// <summary>
         /// 冲突返回 false，不修改 Kind。成功时写出 kind，由 OpenProj 提交后再赋 Kind。
@@ -51,6 +63,7 @@ namespace WH.DetectSystem.DetectSystem.MainModel
             conflictMsg = null;
             bool hasGearPlugin = false;
             bool hasZipperPlugin = false;
+            bool hasCrankPlugin = false;
             var names = new HashSet<string>(StringComparer.Ordinal);
 
             if (model?.CProcessGroups != null)
@@ -84,13 +97,24 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                         {
                             hasZipperPlugin = true;
                         }
+                        if (string.Equals(algo, CrankAlgorithmName, StringComparison.Ordinal))
+                        {
+                            hasCrankPlugin = true;
+                        }
                     }
                 }
             }
 
-            if (hasGearPlugin && hasZipperPlugin)
+            // 【曲轴方案11-注释】Gear / Zipper / Crank 插件任意两套拒绝打开
+            if ((hasGearPlugin && hasZipperPlugin)
+                || (hasGearPlugin && hasCrankPlugin)
+                || (hasZipperPlugin && hasCrankPlugin))
             {
-                conflictMsg = "工程混用了两套算法插件（盘齿 GearTestAlgorihm 与拉链插件），已中止打开。请拆成两个 .burrproj。";
+                var parts = new List<string>();
+                if (hasGearPlugin) parts.Add("盘齿 GearTestAlgorihm");
+                if (hasZipperPlugin) parts.Add("拉链插件");
+                if (hasCrankPlugin) parts.Add("曲轴 CrankTestAlgorihm");
+                conflictMsg = "工程混用了多套算法插件（" + string.Join(" 与 ", parts) + "），已中止打开。请拆成两个 .burrproj。";
                 return false;
             }
 
@@ -104,10 +128,21 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                 kind = OpenProjectLineKind.Zipper;
                 return true;
             }
+            if (hasCrankPlugin)
+            {
+                kind = OpenProjectLineKind.Crank;
+                return true;
+            }
             if (names.Count == GearFixedProcessNames.Length
                 && GearFixedProcessNames.All(p => names.Contains(p)))
             {
                 kind = OpenProjectLineKind.Gear;
+                return true;
+            }
+            if (names.Count == CrankFixedProcessNames.Length
+                && CrankFixedProcessNames.All(p => names.Contains(p)))
+            {
+                kind = OpenProjectLineKind.Crank;
                 return true;
             }
 

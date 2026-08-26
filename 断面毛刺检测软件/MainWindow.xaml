@@ -777,9 +777,21 @@
                                         <Setter Property="ContentTemplate" Value="{StaticResource TabProcessImageViewTemplate}"/>
                                     </DataTrigger>
                                     <!--【盘齿方案0.5-注释】盘齿七格固定模板；非盘齿回 Flat UniformGrid；分页优先-->
-                                    <DataTrigger Binding="{Binding UseGearFixedLayout}" Value="True">
+                                    <!--【曲轴方案0.5-注释】无分页才套固定格（MultiDataTrigger），避免与 Tab 抢赋值；曲轴与盘齿共用同一份 4×3 模板-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SystemSettings.ShowTabControl}" Value="False"/>
+                                            <Condition Binding="{Binding UseGearFixedLayout}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
                                         <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
-                                    </DataTrigger>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SystemSettings.ShowTabControl}" Value="False"/>
+                                            <Condition Binding="{Binding UseCrankFixedLayout}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </ContentControl.Style>

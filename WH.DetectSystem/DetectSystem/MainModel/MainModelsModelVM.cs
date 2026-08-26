@@ -36,6 +36,7 @@ using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.DetectSystem.ZipperLine;
 using WH.DetectSystem.DetectSystem.GearLine;
+using WH.DetectSystem.DetectSystem.CrankLine;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
@@ -544,6 +545,7 @@ namespace WH.DetectSystem.ViewModels
         {
             CGearLineHost.Detach();
             CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
+            CCrankLineHost.Detach(); // 【曲轴方案11-注释】方案2 未就绪，空壳
             COpenProjectLine.Kind = OpenProjectLineKind.None;
         }
 
@@ -559,6 +561,10 @@ namespace WH.DetectSystem.ViewModels
             else if (COpenProjectLine.IsZipper)
             {
                 CZipperLineHost.Attach(Dispatcher, SysLog);
+            }
+            else if (COpenProjectLine.IsCrank) // 【曲轴方案11-注释】方案2 未就绪时空壳；不下发 HD1200
+            {
+                CCrankLineHost.Attach();
             }
         }
 
@@ -651,6 +657,11 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs.Count == COpenProjectLine.GearFixedProcessNames.Length
             && COpenProjectLine.GearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
+        // 【曲轴方案0.5-注释】六名全中且数量=6 才套曲轴格；不替代 IsCrank；不写入 GearFixedProcessNames
+        public bool UseCrankFixedLayout =>
+            CMainVMs.Count == COpenProjectLine.CrankFixedProcessNames.Length
+            && COpenProjectLine.CrankFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
+
         public void UpdateMainVMs()
         {
             ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
@@ -682,6 +693,7 @@ namespace WH.DetectSystem.ViewModels
             SelectedProcess = mainVMs.FirstOrDefault();
             CMainVMs = mainVMs;
             OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
+            OnPropertyChanged(nameof(UseCrankFixedLayout)); //【曲轴方案0.5-注释】
         }
 
         /// <summary>
