@@ -541,6 +541,12 @@ namespace WH.DetectSystem.Models
             get { return isAutomaticTest; }
             set
             {
+                //【盘齿方案11-注释】学料标志仅拉链工程可置 true
+                if (!COpenProjectLine.IsZipper)
+                {
+                    isAutomaticTest = false;
+                    return;
+                }
                 isAutomaticTest = value;
             }
         }
@@ -1638,23 +1644,32 @@ namespace WH.DetectSystem.Models
                     if (COpenProjectLine.IsZipper)
                     {
                         CopyZipperMergeSideFields(newCell, cells[i]);
+                        newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
+                        newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                     }
-                    newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
-                    newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
 
-                newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList(); //去掉重复项
-                newCell.SaveCutImagesIndex = newCell.SaveCutImagesIndex.Distinct().ToList();
+                //【盘齿方案11-注释】大图/四分割索引仅拉链合并拷贝
+                if (COpenProjectLine.IsZipper)
+                {
+                    newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList();
+                    newCell.SaveCutImagesIndex = newCell.SaveCutImagesIndex.Distinct().ToList();
+                }
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {
+                    //【盘齿方案11-注释】合并显示：拉链 ChangleImgae，盘齿 MergedPanorama，None 只赋 Image
                     if (COpenProjectLine.IsZipper)
                     {
                         ApplyZipperMergedDisplay(newCell, img);
                     }
-                    else
+                    else if (COpenProjectLine.IsGear)
                     {
                         ApplyGearMergedDisplay(newCell, img);
+                    }
+                    else
+                    {
+                        newCell.Image = img[0];
                     }
                 }
                 return newCell;
@@ -1679,11 +1694,21 @@ namespace WH.DetectSystem.Models
             }
             else
             {
+                //【盘齿方案11-注释】按打开工程选合并图；None 不调 CollectGear/CollectZipper
                 if (COpenProjectLine.IsZipper)
                 {
                     return CollectZipperCImages(cells);
                 }
-                return CollectGearCImages(cells);
+                if (COpenProjectLine.IsGear)
+                {
+                    return CollectGearCImages(cells);
+                }
+                CImage noneMerged = GetMergeImage(cells);
+                if (noneMerged == null)
+                {
+                    return null;
+                }
+                return new List<CImage> { noneMerged };
 
 
             }
