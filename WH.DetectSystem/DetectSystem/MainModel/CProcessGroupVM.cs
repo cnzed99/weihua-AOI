@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -122,6 +123,11 @@ namespace WH.DetectSystem.Models
         }
         private async void IDSend(object sender, ZipperID zipperID)
         {
+            //【盘齿方案11-注释】拉链 ID 通道只给拉链工程写，避免误挂事件时盘齿收到 ZipperID
+            if (!COpenProjectLine.IsZipper)
+            {
+                return;
+            }
             try
             {
                 foreach (var item in CMainModels)
