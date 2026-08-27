@@ -517,6 +517,10 @@ namespace WH.DetectSystem.ViewModels
                 {
                     CGearLineHost.SendLoadedRecipePhotoAndFocus(CMainVMs, SysLog);
                 }
+                if (COpenProjectLine.IsXinGear)
+                {
+                    CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+                }
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -568,7 +572,7 @@ namespace WH.DetectSystem.ViewModels
             {
                 CCrankLineHost.Attach();
             }
-            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案11-注释】挂空壳 Host；不写 PLC
+            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案11-注释】挂 Host；开机写三路张数
             {
                 CXinGearLineHost.Attach();
             }

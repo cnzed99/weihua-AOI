@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <Nullable>disable</Nullable>
@@ -10,5 +10,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Modbus\Modbus.csproj" />
     <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="XinGearProtocolPoints.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

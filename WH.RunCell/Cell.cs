@@ -70,6 +70,11 @@ namespace WH.RunCell
         public List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> GearImages { get; set; } = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
 
         /// <summary>
+        /// 【新兴盘齿方案4】注释 新兴分张原图，对应拉链 ZipperImages / 盘齿 GearImages。禁止写入 GearImages。
+        /// </summary>
+        public List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> XinGearImages { get; set; } = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
+
+        /// <summary>
         /// 盘齿合并后的全景图（对应拉链 ChangleImgae）
         /// </summary>
         public CImage MergedPanorama { get; set; }
@@ -637,6 +642,9 @@ namespace WH.RunCell
             cell.SaveCutImagesIndex = new List<(int, int)>(this.SaveCutImagesIndex);
             cell.GearImages = this.GearImages != null
                 ? new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>(this.GearImages)
+                : new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
+            cell.XinGearImages = this.XinGearImages != null
+                ? new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>(this.XinGearImages)
                 : new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
             cell.MergedPanorama = this.MergedPanorama == null ? null : (CImage)this.MergedPanorama.Clone();
             cell.DefectBits = this.DefectBits;

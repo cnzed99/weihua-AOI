@@ -316,6 +316,8 @@ namespace WH.DetectSystem._5_存图操作
                 overlayImg = cell.ChangleImgae;
             else if (COpenProjectLine.IsGear)
                 overlayImg = cell.MergedPanorama;
+            else if (COpenProjectLine.IsXinGear)
+                overlayImg = cell.MergedPanorama;
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawImage(
@@ -890,6 +892,32 @@ namespace WH.DetectSystem._5_存图操作
                     if (filenames.Length >= 2)
                     {
                         foreach ((CImage, int, DateTime, TimeSpan) img in cell.GearImages)
+                        {
+                            string[] namesplits = filenames[0].Split('_');
+                            if (namesplits.Length >= 2)
+                            {
+                                namesplits[1] = img.Item2.ToString();
+                                filenames[0] = string.Join("_", namesplits);
+                                string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                                string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                                {
+                                    BitmapEncoder encoder = GetEncoder(format);
+                                    encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                    encoder.Save(stream);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (COpenProjectLine.IsXinGear && cell.XinGearImages != null && cell.XinGearImages.Count > 1)
+                {
+                    // 【新兴盘齿方案7】注释 新兴分张只写 XinGearImages，不拷 SaveBigImagesIndex 大图
+                    string[] filenames = filepath.Split('.');
+                    if (filenames.Length >= 2)
+                    {
+                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.XinGearImages)
                         {
                             string[] namesplits = filenames[0].Split('_');
                             if (namesplits.Length >= 2)

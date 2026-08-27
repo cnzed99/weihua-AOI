@@ -35,6 +35,7 @@ using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
 using CrankInfo;
+using XinGearInfo;
 using System.Runtime.InteropServices;
 using System.IO;
 
@@ -382,6 +383,7 @@ namespace WH.DetectSystem.Models
                 "上轴侧面" => 10,
                 "下轴侧面" => 10,
                 "整轴侧面" => 14,
+                "侧面" => 4, // 【新兴盘齿方案4】注释
                 _ => 1,
             };
             this.MaociAlgorParamConfig = CAlgorithmManagement
@@ -733,6 +735,13 @@ namespace WH.DetectSystem.Models
                                 }
                                 IDisRight = true;
                             }
+                            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案4】注释
+                            {
+                                if (TryConsumeXinGearFormalCapture(cell, ref IDisRight))
+                                {
+                                    continue;
+                                }
+                            }
                             else
                             {
                                 IDisRight = true;
@@ -866,6 +875,10 @@ namespace WH.DetectSystem.Models
                                         {
                                             AppendGearMergedStationImages(newCell, currentCells);
                                         }
+                                        else if (COpenProjectLine.IsXinGear)
+                                        {
+                                            AppendXinGearMergedStationImages(newCell, currentCells);
+                                        }
                                     }
                                     SysLog.Info($"{Name}-准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                     MergeCells.RemoveAll(c => c.ID == newCell.ID);
@@ -936,6 +949,10 @@ namespace WH.DetectSystem.Models
                                                 ProcessGroup.Name,
                                                 CellOut.Cell.ID,
                                                 CellOut.Cell.IsOK ? CrankResult.OK : CrankResult.NG);
+                                        }
+                                        else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案4】注释
+                                        {
+                                            SendXinGearGroupResult(CellOut);
                                         }
 
 
@@ -1101,6 +1118,8 @@ namespace WH.DetectSystem.Models
                                 if (COpenProjectLine.IsZipper)
                                     zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
                                 else if (COpenProjectLine.IsGear)
+                                    zipperPullimg = cell.MergedPanorama?.ToBitmapSource();
+                                else if (COpenProjectLine.IsXinGear)
                                     zipperPullimg = cell.MergedPanorama?.ToBitmapSource();
                                 ImageView drawView;
 
@@ -1684,6 +1703,10 @@ namespace WH.DetectSystem.Models
                     {
                         ApplyGearMergedDisplay(newCell, img);
                     }
+                    else if (COpenProjectLine.IsXinGear)
+                    {
+                        ApplyXinGearMergedDisplay(newCell, img);
+                    }
                     else
                     {
                         newCell.Image = img[0];
@@ -1719,6 +1742,10 @@ namespace WH.DetectSystem.Models
                 if (COpenProjectLine.IsGear)
                 {
                     return CollectGearCImages(cells);
+                }
+                if (COpenProjectLine.IsXinGear)
+                {
+                    return CollectXinGearCImages(cells);
                 }
                 CImage noneMerged = GetMergeImage(cells);
                 if (noneMerged == null)

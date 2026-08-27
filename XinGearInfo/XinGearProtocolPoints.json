@@ -1,0 +1,17 @@
+﻿{
+  "Plc": { "Station": 1 },
+  "Points": {
+    "ProductID": { "Address": 42088, "Type": "DINT", "Access": "Read", "Enabled": true },
+    "Result_G1": { "Address": 42090, "Type": "DINT", "Access": "Write", "Enabled": true },
+    "Result_G2": { "Address": 42092, "Type": "DINT", "Access": "Write", "Enabled": true },
+    "MaterialType": { "Address": 42094, "Type": "DINT", "Access": "Write", "Enabled": true },
+    "HeartBeat": { "Address": 42188, "Type": "DINT", "Access": "Write", "Enabled": true },
+    "PhotoCount_Bottom": { "Address": 42288, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 1 },
+    "PhotoCount_Top": { "Address": 42290, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 1 },
+    "PhotoCount_Side": { "Address": 42292, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 4 }
+  },
+  "GroupResults": {
+    "制程组1": "Result_G1",
+    "制程组2": "Result_G2"
+  }
+}
