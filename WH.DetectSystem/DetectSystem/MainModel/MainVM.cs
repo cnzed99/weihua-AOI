@@ -376,16 +376,27 @@ namespace WH.DetectSystem.Models
             this.Focus = focus;
             this.CameraSerial = cameraSerial;
 
-            //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
-            this.PhotoTotalCount = name switch
+            if (COpenProjectLine.IsXinGear)
             {
-                "内孔" => 6,
-                "上轴侧面" => 10,
-                "下轴侧面" => 10,
-                "整轴侧面" => 14,
-                "侧面" => 4, // 【新兴盘齿方案4】注释
-                _ => 1,
-            };
+                // 【新兴盘齿方案0.6-注释】新兴默认张数，学盘齿写在制程构造里。侧面 6，齿底/齿顶 1。
+                this.PhotoTotalCount = name switch
+                {
+                    "侧面" => 6,
+                    _ => 1,
+                };
+            }
+            else if(COpenProjectLine.IsGear)
+            {
+                //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
+                this.PhotoTotalCount = name switch
+                {
+                    "内孔" => 6,
+                    "上轴侧面" => 10,
+                    "下轴侧面" => 10,
+                    "整轴侧面" => 14,
+                    _ => 1,
+                };
+            }
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm(name);
@@ -875,10 +886,6 @@ namespace WH.DetectSystem.Models
                                         {
                                             AppendGearMergedStationImages(newCell, currentCells);
                                         }
-                                        else if (COpenProjectLine.IsXinGear)
-                                        {
-                                            AppendXinGearMergedStationImages(newCell, currentCells);
-                                        }
                                     }
                                     SysLog.Info($"{Name}-准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                     MergeCells.RemoveAll(c => c.ID == newCell.ID);
@@ -1125,6 +1132,10 @@ namespace WH.DetectSystem.Models
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
                                 {
+                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2])
+                                    {
+                                        RefreshXinGearShotTiles(cell);
+                                    }
                                     if (CurView != null && LastView != null)
                                     {
                                         CurView.Clear(false);
@@ -1659,6 +1670,13 @@ namespace WH.DetectSystem.Models
                 Cell newCell = cells[cells.Count - 1].CloneExecptImg();
                 // 合并IsOK逻辑：只要有一个为false则整体为false
                 newCell.IsOK = !cells.Any(c => !c.IsOK);
+
+                // 【新兴盘齿方案0.6-注释】合并前落下分张图内框；再把本制程 N>1 的框平移到 2x3，供存图拼图。不改拉链/盘齿横拼。
+                if (COpenProjectLine.IsXinGear)
+                {
+                    newCell.XinGearImages = CopyXinGearImagesFromCells(cells);
+                    OffsetXinGearCellDetectionsTo2x2(cells);
+                }
 
                 // 按RecipeDefectName合并AlgorithmOut
                 newCell.AlgorithmOut = cells

@@ -144,7 +144,6 @@ namespace PlaneGearTestAlgorihm
                 List<CoordRestoreData> dets = new List<CoordRestoreData>();
                 if (detResult.datas != null && class_names != null && cell.Image != null)
                 {
-                    int imgIndex = cell.PhotoIndex - 1;
                     for (int j = 0; j < detResult.datas.Count; j++)
                     {
                         if (!int.TryParse(detResult.datas[j].lable, out int labelindex))
@@ -156,8 +155,9 @@ namespace PlaneGearTestAlgorihm
                             continue;
                         }
                         string labelname = class_names[labelindex];
+                        // 【新兴盘齿方案0.6-注释】Infer 只写当前 cell.Image 图内坐标（imgIndex=0, mosaic2x2=false）。2x3 平移在 GetMergeCells。不改 Gear/拉链 CoordRestore。
                         CoordRestoreData restoreData = new CoordRestoreData(
-                            cell.Image.ImageWidth, imgIndex, 0, 0, labelname, detResult.datas[j]);
+                            cell.Image.ImageWidth, cell.Image.ImageHeight, 0, 0, 0, labelname, detResult.datas[j], false);
                         dets.Add(restoreData);
                     }
                 }
@@ -526,25 +526,41 @@ namespace PlaneGearTestAlgorihm
     public struct CoordRestoreData
     {
         /// <summary>
-        /// 【新兴盘齿方案3.5-注释】坐标还原。imgIndex=PhotoIndex-1，orgx/orgy=0。
+        /// 【新兴盘齿方案3.5/4/0.6-注释】坐标还原。Infer 传 imgIndex=0 且 mosaic2x2=false 写图内框；合并时再 2x3。不要改 Gear/拉链。
         /// </summary>
-        public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy, string labelstr, DetData det, int showinview = 0)
+        public CoordRestoreData(int imgWidth, int imgHeight, int imgIndex, int orgx, int orgy, string labelstr, DetData det, bool mosaic2x2, int showinview = 0)
         {
-            ShowLeftUp.X = det.box.Left + orgx + imgWidth * imgIndex;
-            ShowLeftUp.Y = det.box.Top + orgy;
-            ShowRightUp.X = det.box.Right + orgx + imgWidth * imgIndex;
-            ShowRightUp.Y = det.box.Top + orgy;
+            int col;
+            int row;
+            if (mosaic2x2)
+            {
+                col = imgIndex % 2;
+                row = imgIndex / 2;
+            }
+            else
+            {
+                col = imgIndex;
+                row = 0;
+            }
 
-            ShowRightDown.X = det.box.Right + orgx + imgWidth * imgIndex;
-            ShowRightDown.Y = det.box.Bottom + orgy;
+            double ox = orgx + imgWidth * col;
+            double oy = orgy + imgHeight * row;
 
-            ShowLeftDown.X = det.box.Left + orgx + imgWidth * imgIndex;
-            ShowLeftDown.Y = det.box.Bottom + orgy;
+            ShowLeftUp.X = det.box.Left + ox;
+            ShowLeftUp.Y = det.box.Top + oy;
+            ShowRightUp.X = det.box.Right + ox;
+            ShowRightUp.Y = det.box.Top + oy;
+
+            ShowRightDown.X = det.box.Right + ox;
+            ShowRightDown.Y = det.box.Bottom + oy;
+
+            ShowLeftDown.X = det.box.Left + ox;
+            ShowLeftDown.Y = det.box.Bottom + oy;
 
             RecWidth = det.box.Width;
             RecHeight = det.box.Height;
-            OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0) + orgx;
-            OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0) + orgy;
+            OrgCenterX = (float)(det.box.Left + det.box.Width / 2.0 + ox);
+            OrgCenterY = (float)(det.box.Top + det.box.Height / 2.0 + oy);
             Score = det.score * 100;
             Labelstr = labelstr;
             Angle = 0.0f;

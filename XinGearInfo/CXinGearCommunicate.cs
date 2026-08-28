@@ -288,7 +288,7 @@ namespace XinGearInfo
 
                 TryWriteProcessPhotoCount(byName, "齿底", "PhotoCount_Bottom", 1);
                 TryWriteProcessPhotoCount(byName, "齿顶", "PhotoCount_Top", 1);
-                TryWriteProcessPhotoCount(byName, "侧面", "PhotoCount_Side", 4);
+                TryWriteProcessPhotoCount(byName, "侧面", "PhotoCount_Side", 6);
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@
     "HeartBeat": { "Address": 42188, "Type": "DINT", "Access": "Write", "Enabled": true },
     "PhotoCount_Bottom": { "Address": 42288, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 1 },
     "PhotoCount_Top": { "Address": 42290, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 1 },
-    "PhotoCount_Side": { "Address": 42292, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 4 }
+    "PhotoCount_Side": { "Address": 42292, "Type": "DINT", "Access": "Write", "Enabled": true, "Default": 6 }
   },
   "GroupResults": {
     "制程组1": "Result_G1",

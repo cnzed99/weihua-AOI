@@ -553,6 +553,7 @@ namespace WH.DetectSystem.ViewModels
             CCrankLineHost.Detach(); // 【曲轴方案2-注释】停心跳/ID 轮询，不清底层 Modbus
             CXinGearLineHost.Detach(); // 【新兴盘齿方案11-注释】空壳 Detach，不清底层 Modbus
             COpenProjectLine.Kind = OpenProjectLineKind.None;
+            OnPropertyChanged(nameof(IsXinGear));
         }
 
         /// <summary>
@@ -672,10 +673,49 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs.Count == COpenProjectLine.CrankFixedProcessNames.Length
             && COpenProjectLine.CrankFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
-        // 【新兴盘齿方案0.5-注释】三名全中且数量=3 才套 1×3；不替代 IsXinGear；不写入 GearFixedProcessNames
-        public bool UseXinGearFixedLayout =>
-            CMainVMs.Count == COpenProjectLine.XinGearFixedProcessNames.Length
-            && COpenProjectLine.XinGearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】当前打开工程是新兴盘齿则主视图固定拍摄分页。不替代协议挂接以外的 IsXinGear 判断。
+        /// </summary>
+        public bool IsXinGear => COpenProjectLine.IsXinGear;
+
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】拍摄分页页1：齿底、齿顶。
+        /// </summary>
+        public IReadOnlyList<CMainModel> XinGearShotFaceProcesses
+        {
+            get
+            {
+                List<CMainModel> list = new List<CMainModel>();
+                foreach (string name in COpenProjectLine.XinGearFixedProcessNames.Take(2))
+                {
+                    CMainModel item = CMainVMs.FirstOrDefault(m => m.Name == name);
+                    if (item != null)
+                    {
+                        list.Add(item);
+                    }
+                }
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】页2 绑定这一个侧面制程的 6 张分图，禁止拆成多个制程。
+        /// </summary>
+        public CMainModel XinGearSideProcess =>
+            CMainVMs.FirstOrDefault(m => m.Name == COpenProjectLine.XinGearFixedProcessNames[2]);
+
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】点侧面页：SelectedProcess 仍是侧面。
+        /// </summary>
+        [RelayCommand]
+        public void SelectXinGearSide()
+        {
+            CMainModel side = XinGearSideProcess;
+            if (side != null)
+            {
+                SelectedProcess = side;
+            }
+        }
 
         public void UpdateMainVMs()
         {
@@ -709,7 +749,9 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs = mainVMs;
             OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
             OnPropertyChanged(nameof(UseCrankFixedLayout)); //【曲轴方案0.5-注释】
-            OnPropertyChanged(nameof(UseXinGearFixedLayout)); //【新兴盘齿方案0.5-注释】
+            OnPropertyChanged(nameof(IsXinGear)); //【新兴盘齿方案0.6-注释】
+            OnPropertyChanged(nameof(XinGearShotFaceProcesses));
+            OnPropertyChanged(nameof(XinGearSideProcess));
         }
 
         /// <summary>

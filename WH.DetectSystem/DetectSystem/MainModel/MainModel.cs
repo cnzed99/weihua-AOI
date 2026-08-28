@@ -105,10 +105,6 @@ namespace WH.DetectSystem.Models
                     "底盘侧面" => 1,
                     "顶面" => 2,
                     "底面" => 2,
-                    // 【新兴盘齿方案0.5-注释】齿底/齿顶左列两行，侧面右列（旋转拍 4 张需更大空间）
-                    "齿底" => 0,
-                    "齿顶" => 1,
-                    "侧面" => 0,
                     _ => 0,
                 };
             }
@@ -135,10 +131,6 @@ namespace WH.DetectSystem.Models
                     "底盘侧面" => 1,
                     "顶面" => 0,
                     "底面" => 2,
-                    // 【新兴盘齿方案0.5-注释】齿底/齿顶左列(0)，侧面右列(1)
-                    "齿底" => 0,
-                    "齿顶" => 0,
-                    "侧面" => 1,
                     _ => 0,
                 };
             }
@@ -165,19 +157,6 @@ namespace WH.DetectSystem.Models
             }
         }
 
-        [JsonIgnore]
-        public int GridRowSpan
-        {
-            get
-            {
-                return Name switch
-                {
-                    // 【新兴盘齿方案0.5-注释】侧面跨 2 行（旋转拍 4 张需更大空间）
-                    "侧面" => 2,
-                    _ => 1,
-                };
-            }
-        }
         [ObservableProperty]
         [JsonProperty]
         private List<string> testImgFiles = new List<string>();
