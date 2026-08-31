@@ -376,16 +376,16 @@ namespace WH.DetectSystem.Models
             this.Focus = focus;
             this.CameraSerial = cameraSerial;
 
-            if (COpenProjectLine.IsXinGear)
+            if (string.Equals(algorithm, COpenProjectLine.PlaneGearAlgorithmName, StringComparison.Ordinal))
             {
-                // 【新兴盘齿方案0.6-注释】新兴默认张数，学盘齿写在制程构造里。侧面 6，齿底/齿顶 1。
+                // 【新兴盘齿方案0.6-注释】建制程按插件写默认 N：空工程 Kind 仍是 None，不能等 IsXinGear。侧面 6，其余 1。
                 this.PhotoTotalCount = name switch
                 {
                     "侧面" => 6,
                     _ => 1,
                 };
             }
-            else if(COpenProjectLine.IsGear)
+            else if (string.Equals(algorithm, COpenProjectLine.GearAlgorithmName, StringComparison.Ordinal))
             {
                 //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
                 this.PhotoTotalCount = name switch

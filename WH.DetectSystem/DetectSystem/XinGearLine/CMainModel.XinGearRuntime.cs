@@ -30,24 +30,48 @@ namespace WH.DetectSystem.Models
         {
             get
             {
-                if (_shotTiles == null)
+                if (_shotTiles == null || _shotTiles.Count != this.PhotoTotalCount)
                 {
-                    _shotTiles = new ObservableCollection<XinGearShotTileVM>();
-                    for (int i = 1; i <= this.PhotoTotalCount; i++)
-                    {
-                        XinGearShotTileVM tile = new XinGearShotTileVM(i);
-                        tile.WhenViewReady = vm =>
-                        {
-                            if (_lastXinGearShotCell != null)
-                            {
-                                DrawXinGearShotTile(vm, _lastXinGearShotCell);
-                            }
-                        };
-                        _shotTiles.Add(tile);
-                    }
+                    RebuildXinGearShotTiles();
                 }
                 return _shotTiles;
             }
+        }
+
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】格数跟随 PhotoTotalCount。已绑定则 Clear 重填，避免同会话改 N 仍只有侧面1。
+        /// </summary>
+        void RebuildXinGearShotTiles()
+        {
+            if (_shotTiles == null)
+            {
+                _shotTiles = new ObservableCollection<XinGearShotTileVM>();
+            }
+            else
+            {
+                _shotTiles.Clear();
+            }
+            for (int i = 1; i <= this.PhotoTotalCount; i++)
+            {
+                XinGearShotTileVM tile = new XinGearShotTileVM(i);
+                tile.WhenViewReady = vm =>
+                {
+                    if (_lastXinGearShotCell != null)
+                    {
+                        DrawXinGearShotTile(vm, _lastXinGearShotCell);
+                    }
+                };
+                _shotTiles.Add(tile);
+            }
+        }
+
+        void SyncXinGearShotTilesAfterPhotoCountChanged()
+        {
+            if (_shotTiles == null)
+            {
+                return;
+            }
+            RebuildXinGearShotTiles();
         }
 
         /// <summary>

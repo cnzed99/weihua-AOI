@@ -74,7 +74,13 @@ namespace WH.DetectSystem.Models
         public int PhotoTotalCount
         {
             get => photoTotalCount <= 0 ? 1 : photoTotalCount;
-            set => SetProperty(ref photoTotalCount, value);
+            set
+            {
+                if (SetProperty(ref photoTotalCount, value))
+                {
+                    SyncXinGearShotTilesAfterPhotoCountChanged();
+                }
+            }
         }
 
         //【盘齿方案0.1-注释】制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
