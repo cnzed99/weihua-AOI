@@ -298,21 +298,29 @@ namespace PlaneGearTestAlgorihm
         }
 
         /// <summary>
-        /// 【新兴盘齿方案3.5-注释】Mat 包 cell.Image.ImageData，不拷像素。
+        /// 【新兴盘齿方案3.5-注释】Predict 必须用自有 Mat。禁止只包 ImageData：显示 ToBitmapSource 不拷贝，显示线程随后 FreeHGlobal，下一张 Infer 会 0xC0000005。
         /// </summary>
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
-            if (cell?.Image == null)
+            if (cell?.Image == null || cell.Image.ImageData == IntPtr.Zero)
             {
                 return null;
             }
 
-            Mat img = new Mat(
+            int channels = (cell.Image.PixelFormat.BitsPerPixel + 7) / 8;
+            if (channels < 1)
+            {
+                channels = 1;
+            }
+            using (Mat wrap = new Mat(
                 cell.Image.ImageHeight,
                 cell.Image.ImageWidth,
-                MatType.CV_8UC((cell.Image.PixelFormat.BitsPerPixel + 7) / 8),
-                cell.Image.ImageData);
-            return img;
+                MatType.CV_8UC(channels),
+                cell.Image.ImageData,
+                cell.Image.StrideWidth))
+            {
+                return wrap.Clone();
+            }
         }
 
         /// <summary>

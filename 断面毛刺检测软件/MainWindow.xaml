@@ -304,8 +304,29 @@
                             <i:InvokeCommandAction Command="{Binding SelectXinGearSideCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <ItemsControl ItemsSource="{Binding XinGearSideProcess.ShotTiles}">
-                        <ItemsControl.ItemsPanel>
+                    <!--【新兴盘齿方案0.7-注释】页2 ListBox 选格；SelectedItem 是 ShotTile，不是 SelectedProcess。-->
+                    <ListBox
+                        Padding="0"
+                        hc:BorderElement.CornerRadius="0"
+                        ItemsSource="{Binding XinGearSideProcess.ShotTiles}"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        SelectedItem="{Binding SelectedXinGearShotTile}">
+                        <ListBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                                <Setter Property="Grid.Row" Value="{Binding GridRow}" />
+                                <Setter Property="Grid.Column" Value="{Binding GridCol}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="DarkTurquoise" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -319,16 +340,8 @@
                                     </Grid.RowDefinitions>
                                 </Grid>
                             </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Grid.Row" Value="{Binding GridRow}" />
-                                <Setter Property="Grid.Column" Value="{Binding GridCol}" />
-                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                <Setter Property="VerticalAlignment" Value="Stretch" />
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border
                                     Margin="2"
@@ -351,8 +364,8 @@
                                     </Grid>
                                 </Border>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </hc:TabItem>
             </hc:TabControl>
         </DataTemplate>

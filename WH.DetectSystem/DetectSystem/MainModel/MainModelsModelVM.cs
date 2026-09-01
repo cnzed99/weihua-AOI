@@ -705,15 +705,46 @@ namespace WH.DetectSystem.ViewModels
             CMainVMs.FirstOrDefault(m => m.Name == COpenProjectLine.XinGearFixedProcessNames[2]);
 
         /// <summary>
+        /// 【新兴盘齿方案0.7-注释】页2 当前格。不进 .burrproj。选中后 SelectedProcess 仍是侧面。
+        /// </summary>
+        [ObservableProperty]
+        XinGearShotTileVM selectedXinGearShotTile;
+
+        partial void OnSelectedXinGearShotTileChanged(XinGearShotTileVM value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+            CMainModel side = XinGearSideProcess;
+            if (side == null)
+            {
+                return;
+            }
+            SelectedProcess = side;
+            side.ApplyXinGearShotTileFilterPreview(value.PhotoIndex);
+        }
+
+        /// <summary>
         /// 【新兴盘齿方案0.6-注释】点侧面页：SelectedProcess 仍是侧面。
+        /// 【新兴盘齿方案0.7-注释】未选格时默认侧面 1。
         /// </summary>
         [RelayCommand]
         public void SelectXinGearSide()
         {
             CMainModel side = XinGearSideProcess;
-            if (side != null)
+            if (side == null)
             {
-                SelectedProcess = side;
+                return;
+            }
+            SelectedProcess = side;
+            if (SelectedXinGearShotTile == null || !side.ShotTiles.Contains(SelectedXinGearShotTile))
+            {
+                SelectedXinGearShotTile = side.ShotTiles.FirstOrDefault();
+            }
+            else
+            {
+                side.ApplyXinGearShotTileFilterPreview(SelectedXinGearShotTile.PhotoIndex);
             }
         }
 
@@ -746,6 +777,7 @@ namespace WH.DetectSystem.ViewModels
                 }
             }
             SelectedProcess = mainVMs.FirstOrDefault();
+            SelectedXinGearShotTile = null;
             CMainVMs = mainVMs;
             OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
             OnPropertyChanged(nameof(UseCrankFixedLayout)); //【曲轴方案0.5-注释】

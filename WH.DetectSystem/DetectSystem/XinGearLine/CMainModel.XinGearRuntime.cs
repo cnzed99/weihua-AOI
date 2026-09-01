@@ -5,9 +5,11 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using XinGearInfo;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
+using SDFilter;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 
@@ -298,6 +300,7 @@ namespace WH.DetectSystem.Models
             {
                 DrawXinGearShotTile(tileVm, cell);
             }
+            ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex);
         }
 
         private void DrawXinGearShotTile(XinGearShotTileVM tileVm, Cell cell)
@@ -318,7 +321,16 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-            tileVm.ModelImage = tileImg?.ToBitmapSource();
+            // 【新兴盘齿方案0.7-注释】ToBitmapSource 不拷像素；显示线程随后 Dispose/FreeHGlobal。必须 Clone 再给六格，否则下一张 Predict 读已释放内存。
+            if (tileImg == null)
+            {
+                tileVm.ModelImage = null;
+            }
+            else
+            {
+                BitmapSource raw = tileImg.ToBitmapSource();
+                tileVm.ModelImage = raw == null ? null : raw.Clone();
+            }
             if (tileVm.CurView == null)
             {
                 return;
@@ -402,6 +414,177 @@ namespace WH.DetectSystem.Models
             tileVm.CurView.Invalidate();
         }
 
+
+        int _xinGearFilterPreviewPhotoIndex = 1;
+
+        /// <summary>
+        /// 【新兴盘齿方案0.7-注释】检测区展示按格切片：只改 ResultList 数字，不在 UI 调 FilterExute / Predict。
+        /// 切片判定与 DrawXinGearShotTile 相同（拼图 2 列，不是界面 3 列）。
+        /// </summary>
+        public void ApplyXinGearShotTileFilterPreview(int photoIndex, Cell sourceCell = null)
+        {
+            if (photoIndex < 1)
+            {
+                photoIndex = 1;
+            }
+            _xinGearFilterPreviewPhotoIndex = photoIndex;
+            if (MaociFilterConfig == null)
+            {
+                return;
+            }
+            if (sourceCell != null)
+            {
+                _lastXinGearShotCell = sourceCell;
+            }
+            Cell sliceCell = sourceCell ?? _lastXinGearShotCell;
+            // 【新兴盘齿方案0.7-注释】禁止 FilterExute 做预览。检测区 Result/数字只按选中格覆盖，整件判定已在 FilterExute(newCell)。
+            ResetXinGearFilterResultDisplay();
+            List<CellDetection> sliced = SliceXinGearAlgorithmOutToPhoto(sliceCell, photoIndex);
+            FillXinGearFilterResultDisplay(sliced);
+        }
+
+        void FillXinGearFilterResultDisplay(List<CellDetection> sliced)
+        {
+            if (sliced == null || MaociFilterConfig == null)
+            {
+                return;
+            }
+            foreach (CellDetection det in sliced)
+            {
+                if (det?.regionOut == null || det.regionOut.Count == 0 || string.IsNullOrEmpty(det.Type) || string.IsNullOrEmpty(det.RecipeDefectName))
+                {
+                    continue;
+                }
+                var species = MaociFilterConfig[det.Type];
+                if (species == null)
+                {
+                    continue;
+                }
+                var recipe = species[det.RecipeDefectName];
+                if (recipe?.DefectFilters == null || recipe.DefectFilters.Count == 0)
+                {
+                    continue;
+                }
+                var de = recipe.DefectFilters[0];
+                de.Result = false;
+                species.Result = false;
+                if (de.ResultList == null)
+                {
+                    continue;
+                }
+                foreach (var item in de.ResultList)
+                {
+                    if (item.Feature == CFeacture.FeactureCount)
+                    {
+                        item.Value = det.regionOut.Count;
+                    }
+                    else
+                    {
+                        double v = 0;
+                        foreach (SRegion region in det.regionOut)
+                        {
+                            if (region.regionInfo != null)
+                            {
+                                v = region.regionInfo.GetValue(item.Feature, region);
+                            }
+                        }
+                        item.Value = v;
+                    }
+                }
+            }
+        }
+
+        void ResetXinGearFilterResultDisplay()
+        {
+            if (MaociFilterConfig.SpeciesFilters == null)
+            {
+                return;
+            }
+            foreach (var sp in MaociFilterConfig.SpeciesFilters)
+            {
+                sp.Result = true;
+                if (sp.RecipeDefects == null)
+                {
+                    continue;
+                }
+                foreach (var rd in sp.RecipeDefects)
+                {
+                    if (rd.DefectFilters == null)
+                    {
+                        continue;
+                    }
+                    foreach (var de in rd.DefectFilters)
+                    {
+                        de.Result = true;
+                        if (de.ResultList == null)
+                        {
+                            continue;
+                        }
+                        foreach (var item in de.ResultList)
+                        {
+                            item.Value = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        List<CellDetection> SliceXinGearAlgorithmOutToPhoto(Cell cell, int photoIndex)
+        {
+            List<CellDetection> sliced = new List<CellDetection>();
+            if (cell?.AlgorithmOut == null)
+            {
+                return sliced;
+            }
+            int w = 0;
+            int h = 0;
+            if (cell.XinGearImages != null)
+            {
+                foreach ((CImage img, int itemPhoto, DateTime t, TimeSpan cost) item in cell.XinGearImages)
+                {
+                    if (item.itemPhoto == photoIndex && item.img != null)
+                    {
+                        w = item.img.ImageWidth;
+                        h = item.img.ImageHeight;
+                        break;
+                    }
+                }
+            }
+            if (w <= 0 || h <= 0)
+            {
+                return sliced;
+            }
+            int idx = photoIndex - 1;
+            if (idx < 0)
+            {
+                idx = 0;
+            }
+            double dx = (idx % 2) * w;
+            double dy = (idx / 2) * h;
+            foreach (CellDetection det in cell.AlgorithmOut)
+            {
+                if (det?.regionOut == null)
+                {
+                    continue;
+                }
+                List<SRegion> kept = new List<SRegion>();
+                foreach (SRegion region in det.regionOut)
+                {
+                    if (XinGearRegionInMosaicTile(region, dx, dy, w, h))
+                    {
+                        kept.Add(region);
+                    }
+                }
+                if (kept.Count == 0)
+                {
+                    continue;
+                }
+                CellDetection copy = det.Clone();
+                copy.regionOut = kept;
+                sliced.Add(copy);
+            }
+            return sliced;
+        }
         private static bool XinGearRegionInMosaicTile(SRegion region, double dx, double dy, int w, int h)
         {
             if (region.points == null || w <= 0 || h <= 0)

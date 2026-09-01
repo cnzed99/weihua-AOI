@@ -897,6 +897,11 @@ namespace WH.DetectSystem.Models
                                     {
                                         SetBadCell(newCell);
                                     }
+                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2])
+                                    {
+                                        // 【新兴盘齿方案0.7-注释】整件 FilterExute 只服务 cell.IsOK/产量；检测区立刻按选中格覆盖，避免其它张把面板冲掉。
+                                        ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex, newCell);
+                                    }
                                     newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
                                     newCell.Stopwatch.Stop();
                                     newCell.ProcessTime = DateTime.Now - newCell.CreateTime;
