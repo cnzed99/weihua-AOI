@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -67,9 +68,14 @@ namespace WH.DetectSystem.Models
             }
         }
 
-        void SyncXinGearShotTilesAfterPhotoCountChanged()
+        /// <summary>
+        /// 【新兴盘齿方案0.6-注释】N 跟格只在新兴运行时收口。PhotoTotalCount 是全产线字段，禁止写进其 setter。
+        /// 仅当页2 已物化 ShotTiles（拉链/盘齿/曲轴/_shotTiles 未建则为空操作）。
+        /// </summary>
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (_shotTiles == null)
+            base.OnPropertyChanged(e);
+            if (_shotTiles == null || e == null || e.PropertyName != nameof(PhotoTotalCount))
             {
                 return;
             }

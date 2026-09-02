@@ -76,10 +76,7 @@ namespace WH.DetectSystem.Models
             get => photoTotalCount <= 0 ? 1 : photoTotalCount;
             set
             {
-                if (SetProperty(ref photoTotalCount, value))
-                {
-                    SyncXinGearShotTilesAfterPhotoCountChanged();
-                }
+                SetProperty(ref photoTotalCount, value);
             }
         }
 
