@@ -446,7 +446,7 @@ namespace GearTestAlgorihm
 
             if (processName == "上端面")
             {
-                geo.Add(new CDefectRecipe("倒角偏", Category.值));
+                geo.Add(new CDefectRecipe("倒角偏", Category.值, 3));
             }
 
             if (yolo.Count > 0)

@@ -30,6 +30,18 @@ namespace WH.DetectSystem
         /// </summary>
         /// <param name="filter">过滤参数</param>
         /// <param name="cell">检测对象</param>
+        /// <summary>
+        /// 【盘齿方案3.6-注释】Value 列表第 i 项；缺项哨兵 -1。不按缺陷名分支。
+        /// </summary>
+        static double GetListedValueOrSentinel(List<float> values, int index)
+        {
+            if (values == null || index < 0 || index >= values.Count)
+            {
+                return -1;
+            }
+            return values[index];
+        }
+
         public static void FilterExute(this CFilterConfig filterConfig, Cell cell)
         {
             if (cell.Skipthis)
@@ -340,11 +352,39 @@ namespace WH.DetectSystem
                                         //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
                                     }
                                 }
+                                if (detection.Value == null)
+                                {
+                                    detection.Value = new();
+                                }
+                                int listed = detection.Value.Count;
+                                int targetRows = listed > 1 ? listed : 1;
+                                if (listed <= 1)
+                                {
+                                    int existing = 0;
+                                    foreach (var row in de.ResultList)
+                                    {
+                                        if (row.Feature == CFeacture.FeactureValue)
+                                        {
+                                            existing++;
+                                        }
+                                    }
+                                    if (existing > 1)
+                                    {
+                                        targetRows = existing;
+                                    }
+                                }
+                                CFilterConfig.EnsureValueFeatureResultRows(de, targetRows);
+                                int valueIndex = 0;
                                 foreach (var item in de.ResultList)
                                 {
                                     if (item.Feature == CFeacture.FeactureCount)
                                     {
                                         item.Value = detection.Value.Count;
+                                    }
+                                    else if (listed > 1 && item.Feature == CFeacture.FeactureValue)
+                                    {
+                                        item.Value = GetListedValueOrSentinel(detection.Value, valueIndex);
+                                        valueIndex++;
                                     }
                                     else
                                     {

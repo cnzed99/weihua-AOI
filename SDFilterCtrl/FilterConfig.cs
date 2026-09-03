@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -71,6 +72,11 @@ namespace SDFilter
                             rd.DefectFilters[0].ResultList[0].Feature = CFeacture.FeactureArea;
                             rd.DefectFilters[0].ResultList[1].Feature = CFeacture.FeactureScore;
                         }
+                        else if (recipe.Category == Category.值)
+                        {
+                            // 【盘齿方案3.6-注释】检测区「数值」行数跟配方 ValueRowCount（插件声明；公共层不写缺陷名）。
+                            EnsureValueFeatureResultRows(rd.DefectFilters[0], recipe.ValueRowCount);
+                        }
                         speciesFilter.RecipeDefects.Add(rd);
                     }
                     SpFilters.Add(speciesFilter);
@@ -78,6 +84,46 @@ namespace SDFilter
                 SpeciesFilters = SpFilters;
             }
 
+        }
+
+        /// <summary>
+        /// 【盘齿方案3.6-注释】值类检测区「数值」行数：新建时跟配方 ValueRowCount，过滤时跟 Value.Count（>1）。不写缺陷名。
+        /// </summary>
+        public static void EnsureValueFeatureResultRows(DefectFilter defectFilter, int valueRowCount)
+        {
+            if (defectFilter?.ResultList == null)
+            {
+                return;
+            }
+            if (valueRowCount < 1)
+            {
+                valueRowCount = 1;
+            }
+            List<FilterResult> kept = new List<FilterResult>();
+            int valueRows = 0;
+            foreach (FilterResult item in defectFilter.ResultList)
+            {
+                if (item.Feature == CFeacture.FeactureCount)
+                {
+                    kept.Add(item);
+                    continue;
+                }
+                if (item.Feature == CFeacture.FeactureValue && valueRows < valueRowCount)
+                {
+                    kept.Add(item);
+                    valueRows++;
+                }
+            }
+            while (valueRows < valueRowCount)
+            {
+                kept.Add(new FilterResult(CFeacture.FeactureValue));
+                valueRows++;
+            }
+            defectFilter.ResultList.Clear();
+            foreach (FilterResult item in kept)
+            {
+                defectFilter.ResultList.Add(item);
+            }
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)

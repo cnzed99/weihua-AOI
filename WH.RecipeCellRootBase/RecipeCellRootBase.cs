@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -406,10 +406,20 @@ namespace WH.RecipeCellRootBase
         /// </summary>
         public Category Category { get; set; }
 
-        public CDefectRecipe(string name, Category category)
+        /// <summary>
+        /// 【盘齿方案3.6-注释】检测区「数值」行数。默认 1（拉链单值）；倒角偏由插件传 3。公共过滤不写缺陷名。
+        /// </summary>
+        public int ValueRowCount { get; set; } = 1;
+
+        public CDefectRecipe(string name, Category category, int valueRowCount = 1)
         {
             Name = name;
             Category = category;
+            if (valueRowCount < 1)
+            {
+                valueRowCount = 1;
+            }
+            ValueRowCount = valueRowCount;
         }
     }
 
