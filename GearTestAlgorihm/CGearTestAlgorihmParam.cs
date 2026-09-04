@@ -30,6 +30,11 @@ namespace GearTestAlgorihm
         public ChamferOffsetParams ChamferOffset { get; set; } = new ChamferOffsetParams();
 
         /// <summary>
+        /// 【盘齿方案3.9-注释】上齿面齿轮数 Halcon 参数（步骤 123 默认）。
+        /// </summary>
+        public GearToothCountParams GearToothCount { get; set; } = new GearToothCountParams();
+
+        /// <summary>
         /// 【盘齿方案3.4-注释】本制程实例 Det 模型（每实例只加载自己的 Models\\制程）。
         /// </summary>
         IVisionModel WH_det;
@@ -88,6 +93,10 @@ namespace GearTestAlgorihm
             }
 
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
+            if (processName == "上齿面")
+            {
+                RunHalconGearToothCount(cell);
+            }
             if (processName == "上端面")
             {
                 RunHalconChamferOffset(cell);
@@ -167,6 +176,33 @@ namespace GearTestAlgorihm
             {
                 matimg?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// 【盘齿方案3.9-注释】上齿面齿轮数：Halcon 包装写入一条几何齿数。
+        /// </summary>
+        protected void RunHalconGearToothCount(Cell cell)
+        {
+            CellDetection detection = new CellDetection();
+            detection.Type = "几何";
+            detection.Category = Category.值;
+            detection.RecipeDefectName = "齿轮数";
+            detection.ShowInView = 0;
+            detection.Value = new List<float> { -1f };
+            try
+            {
+                GearToothCountResult r = GearToothCountAlgorithm.Run(cell, GearToothCount);
+                detection.Value = new List<float> { r.Count };
+                if (!string.IsNullOrEmpty(r.Warn))
+                {
+                    OperateLog?.Warn("【盘齿方案3.9-注释】" + r.Warn);
+                }
+            }
+            catch (Exception ex)
+            {
+                OperateLog?.Warn("【盘齿方案3.9-注释】" + ex.Message);
+            }
+            cell.AlgorithmOut.Add(detection);
         }
 
         /// <summary>
@@ -459,7 +495,7 @@ namespace GearTestAlgorihm
 
         /// <summary>
         /// 【盘齿方案3.4-注释】外观按本制程 class_names（classes.txt）灌入，与 Infer 标签对齐。
-        /// 几何仅上端面预留倒角偏。孔钻错暂不挂。始终 new List，禁止 null。
+        /// 几何：上齿面齿轮数；上端面倒角偏。孔钻错暂不挂。始终 new List，禁止 null。
         /// </summary>
         protected void SetDefectRecipe(string processName)
         {
@@ -478,6 +514,11 @@ namespace GearTestAlgorihm
                     }
                     yolo.Add(new CDefectRecipe(name, Category.区域));
                 }
+            }
+
+            if (processName == "上齿面")
+            {
+                geo.Add(new CDefectRecipe("齿轮数", Category.值));
             }
 
             if (processName == "上端面")
