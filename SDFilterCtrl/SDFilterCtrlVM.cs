@@ -188,6 +188,7 @@ namespace SDFilter
                             defectFilter.ResultList.RemoveAt(i);
                         }
                     }
+                    CFilterConfig.EnsureValueFeatureResultRows(defectFilter, defectFilter.ValueRowCount);
                 };
                 defectFilterSetWin.Show();
                 defectFilterSetWin.Activate();

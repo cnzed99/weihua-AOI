@@ -8,6 +8,7 @@ using WH.Entity.CommonLib;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using WH.VisionLearning;
+using GearTestAlgorihm.Halcon;
 
 namespace GearTestAlgorihm
 {
@@ -23,6 +24,10 @@ namespace GearTestAlgorihm
         /// 面积换算默认值（方案3.4）；标定后以相机 cell.MmPerPixel 为准。
         /// </summary>
         public double MmPerPixel { get; set; } = 0.04;
+        /// <summary>
+        /// 3.6 ChamferOffset Halcon params (frozen fast defaults).
+        /// </summary>
+        public ChamferOffsetParams ChamferOffset { get; set; } = new ChamferOffsetParams();
 
         /// <summary>
         /// 【盘齿方案3.4-注释】本制程实例 Det 模型（每实例只加载自己的 Models\\制程）。
@@ -83,8 +88,12 @@ namespace GearTestAlgorihm
             }
 
             string processName = string.IsNullOrEmpty(User) ? PrcessName : User;
+            if (processName == "上端面")
+            {
+                RunHalconChamferOffset(cell);
+            }
             DetectYolo(cell);
-            if (processName == "上端面" || processName == "上轴侧面")
+            if (processName == "上轴侧面")
             {
                 RunHalconEmpty(cell);
             }
@@ -161,7 +170,34 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// Halcon 空壳。本阶段不引用 Halcon 运行时。
+        /// 【盘齿方案3.6-注释】上端面倒角偏：Halcon 包装写入一条几何 Dist1/2/3。
+        /// </summary>
+        protected void RunHalconChamferOffset(Cell cell)
+        {
+            CellDetection detection = new CellDetection();
+            detection.Type = "几何";
+            detection.Category = Category.值;
+            detection.RecipeDefectName = "倒角偏";
+            detection.ShowInView = 0;
+            detection.Value = new List<float> { -1f, -1f, -1f };
+            try
+            {
+                ChamferOffsetResult r = ChamferOffsetAlgorithm.Run(cell, ChamferOffset);
+                detection.Value = new List<float> { r.Dist1, r.Dist2, r.Dist3 };
+                if (!string.IsNullOrEmpty(r.Warn))
+                {
+                    OperateLog?.Warn("【盘齿方案3.6-注释】" + r.Warn);
+                }
+            }
+            catch (Exception ex)
+            {
+                OperateLog?.Warn("【盘齿方案3.6-注释】" + ex.Message);
+            }
+            cell.AlgorithmOut.Add(detection);
+        }
+
+        /// <summary>
+        /// Halcon 空壳。上轴侧面小孔未钻仍不引用算子。
         /// </summary>
         protected List<CellDetection> RunHalconEmpty(Cell cell)
         {

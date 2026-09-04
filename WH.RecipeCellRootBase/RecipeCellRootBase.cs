@@ -407,7 +407,7 @@ namespace WH.RecipeCellRootBase
         public Category Category { get; set; }
 
         /// <summary>
-        /// 【盘齿方案3.6-注释】检测区「数值」行数。默认 1（拉链单值）；倒角偏由插件传 3。公共过滤不写缺陷名。
+        /// 值类检测区「数值」行数。默认 1；插件可传大于 1。公共过滤不写缺陷名。
         /// </summary>
         public int ValueRowCount { get; set; } = 1;
 
