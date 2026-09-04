@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -9,14 +9,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(OutDir)$(TargetFileName) $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
-    <Exec Command="xcopy $(OutDir)$(TargetName).pdb $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\ /d /y /i" />
-    <Exec Command="xcopy $(ProjectDir)Models $(SolutionDir)断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\AlgorithmPlug\$(TargetName)\Models\ /e /d /y /i" />
-  </Target>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
     <PackageReference Include="OpenCvSharp4" />
     <PackageReference Include="OpenCvSharp4.Extensions" />
     <PackageReference Include="OpenCvSharp4.runtime.win" />
@@ -27,7 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
-    <ProjectReference Include="..\AlgorithmYoloBase\AlgorithmYoloBase.csproj" />
+    <ProjectReference Include="..\WH.Entity\WH.Entity.csproj" />
+    <ProjectReference Include="..\WH.RecipeCellRootBase\WH.RecipeCellRootBase.csproj" />
+    <ProjectReference Include="..\WH.RunCell\WH.RunCell.csproj" />
   </ItemGroup>
 
   <ItemGroup>

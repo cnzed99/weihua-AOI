@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AlgorithmDll\AlgorithmDll.csproj" />
+    <ProjectReference Include="..\AlgorithmYoloBase\AlgorithmYoloBase.csproj" />
   </ItemGroup>
 
   <ItemGroup>
