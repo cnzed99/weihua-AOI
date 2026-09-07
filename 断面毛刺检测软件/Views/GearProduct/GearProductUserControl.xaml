@@ -9,14 +9,20 @@
              d:DataContext="{d:DesignInstance Type=local:GearProductVM}"
              d:DesignHeight="380" d:DesignWidth="200">
     <!--【盘齿方案8-注释】一期：型号下拉 + 长宽高只读 TextBlock，无 NumericUpDown -->
-    <UniformGrid Rows="4" Columns="2">
-        <TextBlock Margin="15,0,0,0" Text="盘齿型号" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
-        <hc:ComboBox Margin="5"
-                     FontSize="24"
+    <StackPanel>
+        <TextBlock Margin="15,8,0,0" Text="盘齿型号" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
+        <hc:ComboBox Margin="15,4,15,8"
+                     Height="28"
+                     MinHeight="28"
+                     MaxHeight="28"
+                     Padding="6,0"
+                     FontSize="16"
+                     VerticalContentAlignment="Center"
+                     HorizontalAlignment="Stretch"
                      ItemsSource="{Binding Models}"
                      DisplayMemberPath="Name"
                      SelectedItem="{Binding SelectedModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
+        <UniformGrid Rows="3" Columns="2">
         <TextBlock Margin="15,0,0,0" Text="长(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
         <TextBlock Margin="5" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left"
                    Text="{Binding SelectedModel.LengthMm}"/>
@@ -28,5 +34,6 @@
         <TextBlock Margin="15,0,0,0" Text="高(mm)" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
         <TextBlock Margin="5" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left"
                    Text="{Binding SelectedModel.HeightMm}"/>
-    </UniformGrid>
+        </UniformGrid>
+    </StackPanel>
 </UserControl>
