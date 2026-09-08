@@ -138,6 +138,12 @@ namespace AlgorithmYoloBase
                     paramClass = AlgorParams?.FirstOrDefault() as CYoloInferParam;
                 }
 
+                // 【重构方案R1-注释】推理前把算法栏 Score/Nms 刷进已加载模型，改完立刻生效。拉链插件不走本基类。
+                if (paramClass != null)
+                {
+                    WH_det?.UpdateNMS_Score(paramClass.Nms, paramClass.Score);
+                }
+
                 matimg = GetMatImage(cell, paramClass);
                 if (matimg is null)
                 {
