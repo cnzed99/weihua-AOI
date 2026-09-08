@@ -74,10 +74,53 @@ namespace GearTestAlgorihm
 
         protected override void OnAfterYolo(Cell cell, string processName)
         {
+            if (processName == "上齿面")
+            {
+                RunMarkedToothCountFlags(cell);
+            }
             if (processName == "上轴侧面")
             {
                 RunHalconEmpty(cell);
             }
+        }
+
+        /// <summary>
+        /// 【盘齿方案3.10-注释】上齿面：数 YOLO「标记齿」框。0→漏倒=1；＞1→重复=1。不进 classes.txt。
+        /// </summary>
+        protected void RunMarkedToothCountFlags(Cell cell)
+        {
+            int n = 0;
+            if (cell?.AlgorithmOut != null)
+            {
+                for (int i = 0; i < cell.AlgorithmOut.Count; i++)
+                {
+                    CellDetection item = cell.AlgorithmOut[i];
+                    if (item != null && item.RecipeDefectName == "标记齿")
+                    {
+                        n = item.regionOut == null ? 0 : item.regionOut.Count;
+                        break;
+                    }
+                }
+            }
+
+            AddMarkedToothFlag(cell, "标记齿漏倒", n == 0 ? 1f : 0f);
+            AddMarkedToothFlag(cell, "标记齿重复", n > 1 ? 1f : 0f);
+        }
+
+        static void AddMarkedToothFlag(Cell cell, string name, float value)
+        {
+            if (cell?.AlgorithmOut == null)
+            {
+                return;
+            }
+
+            CellDetection detection = new CellDetection();
+            detection.Type = "几何";
+            detection.Category = Category.值;
+            detection.RecipeDefectName = name;
+            detection.ShowInView = 0;
+            detection.Value = new List<float> { value };
+            cell.AlgorithmOut.Add(detection);
         }
 
         /// <summary>
@@ -240,6 +283,8 @@ namespace GearTestAlgorihm
             if (processName == "上齿面")
             {
                 geo.Add(new CDefectRecipe("齿轮数", Category.值));
+                geo.Add(new CDefectRecipe("标记齿漏倒", Category.值));
+                geo.Add(new CDefectRecipe("标记齿重复", Category.值));
             }
 
             if (processName == "上端面")
