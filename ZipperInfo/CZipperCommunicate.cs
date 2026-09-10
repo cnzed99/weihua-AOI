@@ -23,7 +23,7 @@ namespace ZipperInfo
         public static CModbusCommPart com;
 
         /// <summary>
-        /// 【盘齿方案11-注释】换工程时清空业务 com，不断开底层通讯。心跳/ID 线程在停点 3/5 再停。
+        /// 换工程时清空业务 com，不断开底层通讯。
         /// </summary>
         public static void Detach()
         {

@@ -64,9 +64,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--【盘齿方案0.2-注释】制程格共用模板（含方案0.1 副图列）；分页/无分页视窗共用，禁止复制两份-->
+        <!--制程格共用模板（含方案0.1 副图列）；分页/无分页视窗共用-->
         <DataTemplate x:Key="ProcessCellTemplate">
-            <!--【盘齿方案0.2-注释】原 Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}"；无分页没有 TabControl 祖先，改绑 Window-->
+            <!--原 Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}"；无分页没有 TabControl 祖先，改绑 Window-->
             <Grid Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
                 <Grid.ContextMenu>
                     <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
@@ -84,13 +84,13 @@
 
                 <Grid>
                     <Grid.Resources>
-                        <!--【盘齿方案0.1-注释】格内绑本制程；ColumnDefinition 不在可视树，用 CBindingProxy（不再绑系统设置）-->
+                        <!--格内绑本制程；ColumnDefinition 不在可视树，用 CBindingProxy（不再绑系统设置）-->
                         <wh:CBindingProxy x:Key="ProcessCellProxy" Data="{Binding}" />
                     </Grid.Resources>
                     <Grid.ColumnDefinitions>
                         <!--<ColumnDefinition Width="4*"/>-->
                         <ColumnDefinition Width="1*"/>
-                        <!--【盘齿方案0.1-注释】原 <ColumnDefinition/> 默认 1*（与主图对半，拉链布带布局）。不要用 Auto（副图会变成窄条）。关=Width 0，开=1*；绑本制程 HasProcessSubWindow-->
+                        <!--原 <ColumnDefinition/> 默认 1*（与主图对半，拉链布带布局）。不要用 Auto（副图会变成窄条）。关=Width 0，开=1*；绑本制程 HasProcessSubWindow-->
                         <ColumnDefinition>
                             <ColumnDefinition.Style>
                                 <Style TargetType="ColumnDefinition">
@@ -112,7 +112,7 @@
                             ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
                     </Border>
 
-                    <!--【盘齿方案0.1-注释】恢复制程格副图列（替代方案0 B8 整段注释）；Visibility 绑该制程 HasProcessSubWindow，不再绑系统设置-->
+                    <!--恢复制程格副图列（替代方案0 B8 整段注释）；Visibility 绑该制程 HasProcessSubWindow，不再绑系统设置-->
                     <Border Grid.Column="1"
                         Background="{DynamicResource RegionBrush}"
                         BorderBrush="{Binding ModelBrush}"
@@ -121,7 +121,7 @@
                         <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
                             ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
                     </Border>
-                    <!--【盘齿方案0.1-注释】原标注「布带」，盘齿界面改为绑定自定义名 ProcessSubWindowTitle
+                    <!--原标注「布带」，盘齿界面改为绑定自定义名 ProcessSubWindowTitle
                     <TextBlock Text="布带" FontSize="18" Grid.Column="1" 
                               Margin="10,5"
                              HorizontalAlignment="Left" 
@@ -147,7 +147,7 @@
                     Style="{StaticResource TextBlockDefault}" />
             </Grid>
         </DataTemplate>
-        <!--【盘齿方案0.2-注释】原 Grid.Row=0 的 hc:TabControl 原样迁入；ItemsSource 仍 CProcessGroups，页内 ListBox 仍 CMainModels-->
+        <!--原 Grid.Row=0 的 hc:TabControl 原样迁入；ItemsSource 仍 CProcessGroups，页内 ListBox 仍 CMainModels-->
         <DataTemplate x:Key="TabProcessImageViewTemplate">
             <hc:TabControl
                 FontSize="16"
@@ -191,7 +191,7 @@
                 </hc:TabControl.ContentTemplate>
             </hc:TabControl>
         </DataTemplate>
-        <!--【盘齿方案0.2-注释】无分页：ItemsSource=CMainVMs 铺全部制程；格模板复用 ProcessCellTemplate-->
+        <!--无分页：ItemsSource=CMainVMs 铺全部制程；格模板复用 ProcessCellTemplate-->
         <DataTemplate x:Key="FlatProcessImageViewTemplate">
             <ListBox
                 Padding="0"
@@ -220,7 +220,7 @@
                 </ListBox.ItemsPanel>
             </ListBox>
         </DataTemplate>
-        <!--【盘齿方案0.5-注释】盘齿固定 4x3 七格模板：仅 7 制程名全命中(UseGearFixedLayout)时使用；否则回 FlatProcessImageViewTemplate 通用 UniformGrid-->
+        <!--盘齿固定 4x3 七格模板：仅 7 制程名全命中(UseGearFixedLayout)时使用；否则回 FlatProcessImageViewTemplate 通用 UniformGrid-->
         <DataTemplate x:Key="GearFixedProcessViewTemplate">
             <ListBox
                 Padding="0"
@@ -264,7 +264,7 @@
                 </ListBox.ItemsPanel>
             </ListBox>
         </DataTemplate>
-        <!--【新兴盘齿方案0.6-注释】两页签：齿底/齿顶；侧面 6 张 2行3列。禁止 ItemsSource=CProcessGroups。-->
+        <!--两页签：齿底/齿顶；侧面 6 张 2行3列。禁止 ItemsSource=CProcessGroups。-->
         <DataTemplate x:Key="XinGearShotPageViewTemplate">
             <hc:TabControl
                 FontSize="16"
@@ -304,7 +304,7 @@
                             <i:InvokeCommandAction Command="{Binding SelectXinGearSideCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <!--【新兴盘齿方案0.7-注释】页2 ListBox 选格；SelectedItem 是 ShotTile，不是 SelectedProcess。-->
+                    <!--页2 ListBox 选格；SelectedItem 是 ShotTile，不是 SelectedProcess。-->
                     <ListBox
                         Padding="0"
                         hc:BorderElement.CornerRadius="0"
@@ -715,7 +715,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <!--  打开测试页面按钮  -->
 
-                    <!--【盘齿方案11-注释】换料识别仅拉链工程显示，默认折叠-->
+                    <!--换料识别仅拉链工程显示，默认折叠-->
                     <Button Style="{DynamicResource CircleButton}"
                              Grid.Column="2"
                              Margin="10,0"
@@ -867,11 +867,11 @@
 
                 <Grid>
                     <Grid.RowDefinitions >
-                        <RowDefinition Height="2*"/> <!--【盘齿方案0.5-注释】图像区抬高，七格更清晰-->
+                        <RowDefinition Height="2*"/> <!--图像区抬高，七格更清晰-->
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <!--  图像视窗  -->
-                    <!--【盘齿方案0.2-注释】原 hc:TabControl 已迁入 TabProcessImageViewTemplate。ContentControl 按 ShowTabControl 切换模板，禁止两套 Visibility 叠放（会抢 CurView/LastView）-->
+                    <!--原 hc:TabControl 已迁入 TabProcessImageViewTemplate。ContentControl 按 ShowTabControl 切换模板，禁止两套 Visibility 叠放（会抢 CurView/LastView）-->
                     <ContentControl Grid.Row="0">
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
@@ -881,8 +881,8 @@
                                     <DataTrigger Binding="{Binding SystemSettings.ShowTabControl}" Value="True">
                                         <Setter Property="ContentTemplate" Value="{StaticResource TabProcessImageViewTemplate}"/>
                                     </DataTrigger>
-                                    <!--【盘齿方案0.5-注释】盘齿七格固定模板；非盘齿回 Flat UniformGrid；分页优先-->
-                                    <!--【曲轴方案0.5-注释】无分页才套固定格（MultiDataTrigger），避免与 Tab 抢赋值；曲轴与盘齿共用同一份 4×3 模板-->
+                                    <!--盘齿七格固定模板；非盘齿回 Flat UniformGrid；分页优先-->
+                                    <!--无分页才套固定格（MultiDataTrigger），避免与 Tab 抢赋值；曲轴与盘齿共用同一份 4×3 模板-->
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding SystemSettings.ShowTabControl}" Value="False"/>
@@ -897,7 +897,7 @@
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
                                     </MultiDataTrigger>
-                                    <!--【新兴盘齿方案0.6-注释】新兴工程固定拍摄分页，盖过组 Tab / 无分页。盘齿/曲轴 Trigger 语义不动。-->
+                                    <!--新兴工程固定拍摄分页，盖过组 Tab / 无分页。盘齿/曲轴 Trigger 语义不动。-->
                                     <DataTrigger Binding="{Binding IsXinGear}" Value="True">
                                         <Setter Property="ContentTemplate" Value="{StaticResource XinGearShotPageViewTemplate}"/>
                                     </DataTrigger>
@@ -982,7 +982,7 @@
 
                             </hc:TabControl>
                         </Border>
-                        <!--【盘齿方案11-注释】右侧拉链/盘齿面板同列，按 OpenProjectLine Visibility 二选一-->
+                        <!--右侧拉链/其他面板同列，按 OpenProjectLine Visibility 二选一-->
                         <Border x:Name="zipperInfoBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
                             <zipper:ZipperInfoUserControl x:Name="zipperInfoShow"/>
                         </Border>

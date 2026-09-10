@@ -65,27 +65,27 @@ namespace WH.RunCell
         public List<(int, int, OpenCvSharp.Mat)> FourCutMatImg { get; set; } = new List<(int, int, OpenCvSharp.Mat)>();
 
         /// <summary>
-        /// 盘齿旋转工位各张原图（对应拉链 ZipperImages）
+        /// 盘齿旋转工位各张原图
         /// </summary>
         public List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> GearImages { get; set; } = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
 
         /// <summary>
-        /// 【新兴盘齿方案4】注释 新兴分张原图，对应拉链 ZipperImages / 盘齿 GearImages。禁止写入 GearImages。
+        /// 新兴分张原图
         /// </summary>
         public List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> XinGearImages { get; set; } = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
 
         /// <summary>
-        /// 盘齿合并后的全景图（对应拉链 ChangleImgae）
+        /// 盘齿合并后的全景图
         /// </summary>
         public CImage MergedPanorama { get; set; }
 
         /// <summary>
-        /// 盘齿缺陷位图（方案3.1 bit0~bit9）
+        /// 盘齿缺陷位图
         /// </summary>
         public uint DefectBits { get; set; }
 
         /// <summary>
-        /// 上齿面转发上端面已绑定标记（方案4 G2）
+        /// 上齿面转发上端面已绑定标记
         /// </summary>
         public bool IsPreBound { get; set; }
 

@@ -77,7 +77,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <!--【盘齿方案0.1-注释】组下拉下方：固定一行（含副窗勾选 + 名称默认「副图」）；一期主界面只取第一勾选行。编辑制程同一窗。-->
+                <!--组下拉下方：固定一行（含副窗勾选 + 名称默认「副图」）；一期主界面只取第一勾选行。编辑制程同一窗。后续看是否有需求改成多列表多副窗形式-->
                 <CheckBox
                     Margin="5"
                     VerticalAlignment="Center"

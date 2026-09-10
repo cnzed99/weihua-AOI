@@ -6,7 +6,7 @@ using WH.Controls;
 namespace WH.DetectSystem.Models
 {
     /// <summary>
-    /// 【新兴盘齿方案0.6-注释】拍摄分页页2 一格。CurView 仅该格 Operator，不抢侧面制程格的 CurView。
+    /// 拍摄分页页2 一格。CurView 仅该格 Operator，不抢侧面制程格的 CurView。
     /// </summary>
     public partial class XinGearShotTileVM : ObservableObject
     {

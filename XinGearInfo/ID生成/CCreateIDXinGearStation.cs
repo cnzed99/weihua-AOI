@@ -4,7 +4,7 @@ using WH.Entity.LogRecord;
 namespace XinGearInfo
 {
     /// <summary>
-    /// 【新兴盘齿方案2-注释】 ID 缓存轮询：读 ProductID 寄存器，>0 且变化才更新 CurrentProductID。
+    ///ID 缓存轮询：读 ProductID 寄存器，>0 且变化才更新 CurrentProductID。
     /// </summary>
     public class CCreateIDXinGearStation : CXinGearCreateIDBase
     {

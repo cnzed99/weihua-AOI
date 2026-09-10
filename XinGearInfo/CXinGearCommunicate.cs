@@ -6,7 +6,7 @@ using WH.Entity.LogRecord;
 namespace XinGearInfo
 {
     /// <summary>
-    /// 【新兴盘齿方案2-注释】协议静态类。挂 com、加载点位、锁与短超时、ID 轮询/心跳；张数由 Host 开机写一次，不在 OnComAttached 写。
+    /// 协议静态类。挂 com、加载点位、锁与短超时、ID 轮询/心跳
     /// </summary>
     public static class CXinGearCommunicate
     {
@@ -19,7 +19,7 @@ namespace XinGearInfo
 
         public static CXinGearProtocolPoints Points { get; private set; } = new CXinGearProtocolPoints();
 
-        //【新兴盘齿方案2-注释】原因：D6 串行化全部 Modbus 读写（NModbus master 非线程安全）
+        //全部 Modbus 读写
         static readonly object _protocolLock = new object();
 
         static CCreateIDXinGearStation _idPoller;
@@ -72,7 +72,7 @@ namespace XinGearInfo
         }
 
         /// <summary>
-        /// 【新兴盘齿方案2-注释】换工程/关闭时停心跳与 ID 轮询，清空 com，不关底层 OpenAllComm。
+        /// 换工程/关闭时停心跳与 ID 轮询，清空 com。
         /// </summary>
         public static void Detach()
         {
@@ -261,7 +261,7 @@ namespace XinGearInfo
         }
 
         /// <summary>
-        /// 【新兴盘齿方案2-注释】 开机/换工程写三路张数一次：齿底/齿顶/侧面 -> PhotoCount_Bottom/Top/Side。每件不写。无 PLC 只日志。
+        /// 开机/换工程写三路张数一次：齿底/齿顶/侧面 -> PhotoCount_Bottom/Top/Side。每件不写。无 PLC 只日志。
         /// </summary>
         public static void SendRecipePhotoCount(IEnumerable<(string processName, int photoTotalCount)> processes)
         {

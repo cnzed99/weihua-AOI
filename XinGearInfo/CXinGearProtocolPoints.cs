@@ -6,7 +6,7 @@ using WH.Entity.LogRecord;
 namespace XinGearInfo
 {
     /// <summary>
-    /// 【新兴盘齿方案2-注释】点位定义（地址来自 JSON，代码零硬编码）。
+    /// 点位定义。
     /// </summary>
     public class XinGearPointDef
     {

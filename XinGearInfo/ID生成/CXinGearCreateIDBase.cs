@@ -3,7 +3,7 @@
 namespace XinGearInfo
 {
     /// <summary>
-    /// 【新兴盘齿方案2-注释】 ID 缓存轮询基类。1ms 后台线程。无 IDSendEvent。
+    /// ID 缓存轮询基类。1ms 后台线程。
     /// </summary>
     public class CXinGearCreateIDBase
     {
@@ -13,7 +13,7 @@ namespace XinGearInfo
         public int TempproductID = 0;
 
         /// <summary>
-        /// 【新兴盘齿方案启动 1ms 后台轮询线程。
+        /// 1ms 后台轮询线程。
         /// </summary>
         public void IntThread()
         {
@@ -28,7 +28,7 @@ namespace XinGearInfo
         }
 
         /// <summary>
-        /// 【新兴盘齿方案停轮询：Connend=false，后台线程自行退出。
+        /// 后台线程自行退出。
         /// </summary>
         public void StopThread()
         {

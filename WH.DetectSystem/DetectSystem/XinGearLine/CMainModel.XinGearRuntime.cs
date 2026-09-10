@@ -17,9 +17,8 @@ using WH.RunCell;
 namespace WH.DetectSystem.Models
 {
     /// <summary>
-    /// 【新兴盘齿方案4-注释】 新兴制程运行时：取图绑 ID、XinGearImages 分张、侧面 2x3、组结果回写。
+    /// 新兴制程运行时：取图绑 ID、XinGearImages 分张、侧面 2x3、组结果回写。
     /// 与 MainVM 同为 CMainModel 部分类；复用盘齿私有字段 _lastBoundProductId / _photoCounter。
-    /// 禁止写入 GearImages；无上齿面转发。
     /// </summary>
     public partial class CMainModel
     {
@@ -27,7 +26,7 @@ namespace WH.DetectSystem.Models
         private ObservableCollection<XinGearShotTileVM> _shotTiles;
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】页2 侧面分格（张数=本制程 PhotoTotalCount）。不进 .burrproj。
+        /// 页2 侧面分格（张数=本制程 PhotoTotalCount）。不进 .burrproj。
         /// </summary>
         public ObservableCollection<XinGearShotTileVM> ShotTiles
         {
@@ -42,7 +41,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】格数跟随 PhotoTotalCount。已绑定则 Clear 重填，避免同会话改 N 仍只有侧面1。
+        /// 格数跟随 PhotoTotalCount。已绑定则 Clear 重填，避免同会话改 N 仍只有侧面1。
         /// </summary>
         void RebuildXinGearShotTiles()
         {
@@ -69,7 +68,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】N 跟格只在新兴运行时收口。PhotoTotalCount 是全产线字段，禁止写进其 setter。
+        /// N 跟格只在新兴运行时收口。PhotoTotalCount 是全产线字段，禁止写进其 setter。
         /// 仅当页2 已物化 ShotTiles（拉链/盘齿/曲轴/_shotTiles 未建则为空操作）。
         /// </summary>
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -141,7 +140,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】侧面 6 张按 PhotoIndex 1..6 拼 2 列 3 行。缺张留黑。
+        /// 侧面 6 张按 PhotoIndex 1..6 拼 2 列 3 行。缺张留黑。
         /// </summary>
         private unsafe CImage GetMergeImage2x2(List<Cell> cells)
         {
@@ -225,7 +224,7 @@ namespace WH.DetectSystem.Models
 
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】合并前深拷贝分张（图+时间+图内框）。Clone() 的 regionOut.points 仍是同一 List，offset 会污染分张。
+        /// 合并前深拷贝分张（图+时间+图内框）。Clone() 的 regionOut.points 仍是同一 List，offset 会污染分张。
         /// </summary>
         private List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> CopyXinGearImagesFromCells(List<Cell> cells)
         {
@@ -255,7 +254,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】仅新兴 N>1：按 PhotoIndex 把图内框平移到 2 列 3 行。不改拉链/盘齿横拼。
+        /// 仅新兴：按 PhotoIndex 把图内框平移到 2 列 3 行。
         /// </summary>
         private void OffsetXinGearCellDetectionsTo2x2(List<Cell> cells)
         {
@@ -297,7 +296,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】页2 六格：原图 + 图内框。CurView 晚到时用 _lastXinGearShotCell 补画。
+        /// 页2 六格：原图 + 图内框。CurView 晚到时用 _lastXinGearShotCell 补画。
         /// </summary>
         public void RefreshXinGearShotTiles(Cell cell)
         {
@@ -327,7 +326,7 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-            // 【新兴盘齿方案0.7-注释】ToBitmapSource 不拷像素；显示线程随后 Dispose/FreeHGlobal。必须 Clone 再给六格，否则下一张 Predict 读已释放内存。
+            // ToBitmapSource 不拷像素；必须 Clone 再给六格，否则下一张 Predict 读已释放内存。
             if (tileImg == null)
             {
                 tileVm.ModelImage = null;
@@ -424,8 +423,7 @@ namespace WH.DetectSystem.Models
         int _xinGearFilterPreviewPhotoIndex = 1;
 
         /// <summary>
-        /// 【新兴盘齿方案0.7-注释】检测区展示按格切片：只改 ResultList 数字，不在 UI 调 FilterExute / Predict。
-        /// 切片判定与 DrawXinGearShotTile 相同（拼图 2 列，不是界面 3 列）。
+        /// 检测区展示按格切片：只改 ResultList 数字
         /// </summary>
         public void ApplyXinGearShotTileFilterPreview(int photoIndex, Cell sourceCell = null)
         {
@@ -443,7 +441,7 @@ namespace WH.DetectSystem.Models
                 _lastXinGearShotCell = sourceCell;
             }
             Cell sliceCell = sourceCell ?? _lastXinGearShotCell;
-            // 【新兴盘齿方案0.7-注释】禁止 FilterExute 做预览。检测区 Result/数字只按选中格覆盖，整件判定已在 FilterExute(newCell)。
+            // 禁止 FilterExute 做预览。检测区 Result/数字只按选中格覆盖，整件判定已在 FilterExute(newCell)。
             ResetXinGearFilterResultDisplay();
             List<CellDetection> sliced = SliceXinGearAlgorithmOutToPhoto(sliceCell, photoIndex);
             FillXinGearFilterResultDisplay(sliced);

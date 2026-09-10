@@ -149,8 +149,8 @@ namespace 断面毛刺检测软件
                             Growl.Warning("正在对焦中，不能启动！");
                             return;
                         }
-                        //【盘齿方案2-注释】原因：即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
-                        //【曲轴方案2-注释】IsGear 读盘齿 JSON；IsCrank 读曲轴 JSON；拉链不走此校验
+                        //即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
+                        //IsGear 读盘齿 JSON；IsCrank 读曲轴 JSON；拉链不走此校验
                         if (CMainList.StartStop && (COpenProjectLine.IsGear || COpenProjectLine.IsCrank || COpenProjectLine.IsXinGear) && !TryValidateProcessGroupResultMapping())
                         {
                             CMainList.StartStop = false;
@@ -172,7 +172,7 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-                //【盘齿方案11-注释】两套面板都创建，Visibility 由 ApplyOpenProjectLineUi 按工程切换
+                //两套面板都创建，Visibility 由 ApplyOpenProjectLineUi 按工程切换
                 zipperInfoShow.DataContext = new ZipperInfoVM();
                 gearProductShow.DataContext = new GearProductVM();
                 ApplyOpenProjectLineUi();
@@ -187,19 +187,18 @@ namespace 断面毛刺检测软件
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<string>)progress).Report("Loaded!");
-                //【盘齿方案0-注释】原因：欢迎页标题由拉链改为盘齿（原拉链标题保留在下方注释块）
                 // 原： WelComePage welComePage = new WelComePage(
                 // 原：     CMainList.SystemSettings.RecentProjs.ToList(),
                 // 原：     "拉链智能视觉检测软件"
                 // 原： );
-                //【盘齿方案0】新标题（原拉链标题见上方注释块）
-                //【曲轴方案0-注释】欢迎页用中性名，不写死盘齿/拉链/曲轴；HandyControl 左上角 Title 仍保持空
+                //新标题（原拉链标题见上方注释块）
+                //欢迎页用中性名，不写死盘齿/拉链/曲轴；HandyControl 左上角 Title 仍保持空
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
                     "视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
-                //【盘齿方案11-注释】拉链心跳仅 IsZipper 且已启动时写 42638；盘齿走 CGearCommunicate 定时器
+                //拉链心跳仅 IsZipper 且已启动时写 42638；盘齿走 CGearCommunicate 定时器
                 Hearttimer = new System.Timers.Timer(1000);
                 Hearttimer.Elapsed += (sender, e) =>
                 {
@@ -223,11 +222,11 @@ namespace 断面毛刺检测软件
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】按当前打开工程切换右侧面板、换料按钮、拉链完成事件。不写 Window.Title（HandyControl 左上角标题栏保持空）。
+        /// 按当前打开工程切换右侧面板、换料按钮、拉链完成事件
         /// </summary>
         void ApplyOpenProjectLineUi()
         {
-            //【曲轴方案11-注释】曲轴不显示拉链信息栏/盘齿换料；Visibility 仍只跟 IsZipper/IsGear
+            //曲轴不显示拉链信息栏/盘齿换料；Visibility 仍只跟 IsZipper/IsGear
             if (zipperInfoBorder != null)
             {
                 zipperInfoBorder.Visibility = COpenProjectLine.IsZipper ? Visibility.Visible : Visibility.Collapsed;
@@ -261,7 +260,7 @@ namespace 断面毛刺检测软件
         /// </summary>
         private bool TryValidateProcessGroupResultMapping()
         {
-            //【曲轴方案2-注释】盘齿读 Gear JSON；曲轴读 Crank JSON；拉链不走此校验
+            //校验点位 JSON；拉链不走此校验
             if (COpenProjectLine.IsXinGear)
             {
                 return TryValidateXinGearProcessGroupResultMapping();
@@ -318,7 +317,7 @@ namespace 断面毛刺检测软件
         }
 
         /// <summary>
-        /// 【新兴盘齿方案2-注释】启动前校验新兴工程组名都能在 XinGearProtocolPoints.json 的 GroupResults 中找到。
+        /// 点位表校验-启动前校验新兴工程组名都能在 XinGearProtocolPoints.json 的 GroupResults 中找到。
         /// JSON 正常时无 PLC 仍允许启动。
         /// </summary>
         private bool TryValidateXinGearProcessGroupResultMapping()
@@ -367,7 +366,7 @@ namespace 断面毛刺检测软件
         }
 
         /// <summary>
-        /// 【曲轴方案2-注释】启动前校验曲轴工程组名都能在 CrankProtocolPoints.json 的 GroupResults 中找到。
+        /// 点位表校验-启动前校验工程组名都能在 对应.json 的 GroupResults 中找到。
         /// JSON 正常时无 PLC 仍允许启动。
         /// </summary>
         private bool TryValidateCrankProcessGroupResultMapping()

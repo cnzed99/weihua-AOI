@@ -10,7 +10,7 @@ using XinGearInfo;
 namespace WH.DetectSystem.DetectSystem.XinGearLine
 {
     /// <summary>
-    /// 【新兴盘齿方案11-注释】 新兴工程挂接：赋 com、OnComAttached（点位/心跳/ID 轮询）。开机写三路张数。
+    /// 新兴工程挂接：赋 com、OnComAttached（点位/心跳/ID 轮询）。开机写三路张数。
     /// 底层 Modbus 连接仍走平台 OpenAllComm。Detach 不停底层连接。
     /// </summary>
     public static class CXinGearLineHost
@@ -27,7 +27,7 @@ namespace WH.DetectSystem.DetectSystem.XinGearLine
         }
 
         /// <summary>
-        /// 【新兴盘齿方案2-注释】 开工程成功后按制程 Name 收集 PhotoTotalCount，写一次 HD1200 三路。
+        ///  开工程成功后按制程 Name 收集 PhotoTotalCount，写一次 HD1200 三路。
         /// </summary>
         public static void SendLoadedRecipePhotoCount(IList<CMainModel> mainVms, CLogRec sysLog)
         {

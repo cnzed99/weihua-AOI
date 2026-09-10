@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:GearProductVM}"
              d:DesignHeight="380" d:DesignWidth="200">
-    <!--【盘齿方案8-注释】一期：型号下拉 + 长宽高只读 TextBlock，无 NumericUpDown -->
+    <!--富川盘齿型号下拉 + 长宽高只读 TextBlock -->
     <StackPanel>
         <TextBlock Margin="15,8,0,0" Text="盘齿型号" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="22" Foreground="White"/>
         <hc:ComboBox Margin="15,4,15,8"

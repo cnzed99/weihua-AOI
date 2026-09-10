@@ -5,7 +5,7 @@ using GearInfo;
 namespace 断面毛刺检测软件.Views.GearProduct
 {
     /// <summary>
-    /// 【盘齿方案8-注释】一期薄 VM：切 Combo 只刷新展示数字，不写 JSON、不写 PLC。
+    /// 切 Combo 只刷新展示数字，不写 JSON、不写 PLC。
     /// </summary>
     public partial class GearProductVM : ObservableObject
     {

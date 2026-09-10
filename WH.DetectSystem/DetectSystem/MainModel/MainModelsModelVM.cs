@@ -397,8 +397,6 @@ namespace WH.DetectSystem.ViewModels
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
-                 
-                    //【盘齿方案11-注释】此处只 OpenAllComm；业务 com 等到 OpenProj 识别后再挂（拉链/盘齿互斥）
                 }
                 catch (Exception ex)
                 {
@@ -459,7 +457,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 #endregion
                 #region 读取拉链信息
-                //【盘齿方案11-注释】LoadParameter 改到拉链 OpenProj，启动欢迎页不读拉链 JSON/形状模板
+                //LoadParameter 改到拉链 OpenProj，启动欢迎页不读拉链 JSON/形状模板
                // ZipperInfo = CZipperAutomaticAlgorithm.ZipperInfo;
                 #endregion
             });
@@ -481,7 +479,6 @@ namespace WH.DetectSystem.ViewModels
             try
             {
                 progress.Report(Properties.Resources.正在打开);
-                //【盘齿方案11-注释】先加载再识别；插件混用则中止，不拆当前工程
                 CMainModelsModel loaded = ConfigAPI.Load<CMainModelsModel>(header);
                 if (loaded == null || loaded.CProcessGroups == null)
                 {
@@ -512,7 +509,7 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
-                //【盘齿方案11-注释】配方张数只下发给盘齿工程
+                //配方张数下发
                 if (COpenProjectLine.IsGear)
                 {
                     CGearLineHost.SendLoadedRecipePhotoAndFocus(CMainVMs, SysLog);
@@ -542,22 +539,22 @@ namespace WH.DetectSystem.ViewModels
             #endregion
         }
 
-        //【盘齿方案2-注释】开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数
+        //开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数
         /// <summary>
-        /// 【盘齿方案11-注释】卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。
+        /// 卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。
         /// </summary>
         void DetachCurrentLine()
         {
             CGearLineHost.Detach();
             CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
-            CCrankLineHost.Detach(); // 【曲轴方案2-注释】停心跳/ID 轮询，不清底层 Modbus
-            CXinGearLineHost.Detach(); // 【新兴盘齿方案11-注释】空壳 Detach，不清底层 Modbus
+            CCrankLineHost.Detach();
+            CXinGearLineHost.Detach(); 
             COpenProjectLine.Kind = OpenProjectLineKind.None;
             OnPropertyChanged(nameof(IsXinGear));
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】按已提交的 Kind 挂业务 com。拉链工程在此 IniAutomaticAlgorithm。
+        /// 按已提交的 Kind 挂业务 com。拉链工程在此 IniAutomaticAlgorithm。
         /// </summary>
         void AttachCurrentLine()
         {
@@ -569,11 +566,11 @@ namespace WH.DetectSystem.ViewModels
             {
                 CZipperLineHost.Attach(Dispatcher, SysLog);
             }
-            else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】挂 CCrankCommunicate；不下发 HD1200
+            else if (COpenProjectLine.IsCrank)
             {
                 CCrankLineHost.Attach();
             }
-            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案11-注释】挂 Host；开机写三路张数
+            else if (COpenProjectLine.IsXinGear) 
             {
                 CXinGearLineHost.Attach();
             }
@@ -663,23 +660,23 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.2 李焕彬
         /// 更新多制程视图模型
         /// </summary>
-        //【盘齿方案0.5-注释】无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
+        //无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
         public bool UseGearFixedLayout =>
             CMainVMs.Count == COpenProjectLine.GearFixedProcessNames.Length
             && COpenProjectLine.GearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
-        // 【曲轴方案0.5-注释】六名全中且数量=6 才套曲轴格；不替代 IsCrank；不写入 GearFixedProcessNames
+        // 六名全中且数量=6 才套曲轴格；不替代 IsCrank；不写入 GearFixedProcessNames
         public bool UseCrankFixedLayout =>
             CMainVMs.Count == COpenProjectLine.CrankFixedProcessNames.Length
             && COpenProjectLine.CrankFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】当前打开工程是新兴盘齿则主视图固定拍摄分页。不替代协议挂接以外的 IsXinGear 判断。
+        /// 当前打开工程是新兴盘齿则主视图固定拍摄分页。不替代协议挂接以外的 IsXinGear 判断。
         /// </summary>
         public bool IsXinGear => COpenProjectLine.IsXinGear;
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】拍摄分页页1：齿底、齿顶。
+        /// 拍摄分页页1：齿底、齿顶。
         /// </summary>
         public IReadOnlyList<CMainModel> XinGearShotFaceProcesses
         {
@@ -699,13 +696,13 @@ namespace WH.DetectSystem.ViewModels
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】页2 绑定这一个侧面制程的 6 张分图，禁止拆成多个制程。
+        /// 绑定这一个侧面制程的 6 张分图，禁止拆成多个制程。
         /// </summary>
         public CMainModel XinGearSideProcess =>
             CMainVMs.FirstOrDefault(m => m.Name == COpenProjectLine.XinGearFixedProcessNames[2]);
 
         /// <summary>
-        /// 【新兴盘齿方案0.7-注释】页2 当前格。不进 .burrproj。选中后 SelectedProcess 仍是侧面。
+        /// 选中后 SelectedProcess 仍是侧面。
         /// </summary>
         [ObservableProperty]
         XinGearShotTileVM selectedXinGearShotTile;
@@ -726,8 +723,7 @@ namespace WH.DetectSystem.ViewModels
         }
 
         /// <summary>
-        /// 【新兴盘齿方案0.6-注释】点侧面页：SelectedProcess 仍是侧面。
-        /// 【新兴盘齿方案0.7-注释】未选格时默认侧面 1。
+        /// 点侧面页：SelectedProcess 仍是侧面。
         /// </summary>
         [RelayCommand]
         public void SelectXinGearSide()
@@ -779,9 +775,9 @@ namespace WH.DetectSystem.ViewModels
             SelectedProcess = mainVMs.FirstOrDefault();
             SelectedXinGearShotTile = null;
             CMainVMs = mainVMs;
-            OnPropertyChanged(nameof(UseGearFixedLayout)); //【盘齿方案0.5-注释】制程集合变化后刷新固定布局判定
-            OnPropertyChanged(nameof(UseCrankFixedLayout)); //【曲轴方案0.5-注释】
-            OnPropertyChanged(nameof(IsXinGear)); //【新兴盘齿方案0.6-注释】
+            OnPropertyChanged(nameof(UseGearFixedLayout));
+            OnPropertyChanged(nameof(UseCrankFixedLayout)); 
+            OnPropertyChanged(nameof(IsXinGear));
             OnPropertyChanged(nameof(XinGearShotFaceProcesses));
             OnPropertyChanged(nameof(XinGearSideProcess));
         }

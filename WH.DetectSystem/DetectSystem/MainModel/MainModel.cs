@@ -80,20 +80,18 @@ namespace WH.DetectSystem.Models
             }
         }
 
-        //【盘齿方案0.1-注释】制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
+        //制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
         [ObservableProperty]
         [JsonProperty]
         ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
 
-        //【盘齿方案0.5-注释】无分页固定布局元数据：按制程名映射行列/跨度（非盘齿/未命中给默认，不进 .burrproj）
-                [JsonIgnore]
+        [JsonIgnore]
         public int GridRow
         {
             get
             {
                 return Name switch
                 {
-                    //【盘齿方案0.5-注释】上端面/下端面仅布局对调：上端面行0、下端面行1
                     "下端面" => 1,
                     "上齿面" => 0,
                     "内孔" => 0,
@@ -101,7 +99,6 @@ namespace WH.DetectSystem.Models
                     "整轴侧面" => 1,
                     "上轴侧面" => 2,
                     "下轴侧面" => 2,
-                    //【曲轴方案0.5-注释】六格 Row（0-based）；盘齿 case 原样保留
                     "端面" => 0,
                     "杆面" => 0,
                     "底部光滑面" => 1,
@@ -127,7 +124,6 @@ namespace WH.DetectSystem.Models
                     "整轴侧面" => 1,
                     "上轴侧面" => 0,
                     "下轴侧面" => 2,
-                    //【曲轴方案0.5-注释】六格 Col（0-based）；盘齿 case 原样保留
                     "端面" => 0,
                     "杆面" => 1,
                     "底部光滑面" => 0,
@@ -150,7 +146,6 @@ namespace WH.DetectSystem.Models
                     "整轴侧面" => 3,
                     "上轴侧面" => 2,
                     "下轴侧面" => 2,
-                    //【曲轴方案0.5-注释】六格 ColSpan；端面/底部光滑面走 _ => 1
                     "杆面" => 3,
                     "底盘侧面" => 3,
                     "顶面" => 2,

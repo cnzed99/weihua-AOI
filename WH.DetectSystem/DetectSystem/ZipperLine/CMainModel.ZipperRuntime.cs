@@ -13,7 +13,7 @@ namespace WH.DetectSystem.Models
     public partial class CMainModel
     {
         /// <summary>
-        /// 【盘齿方案11-注释】拉链取图绑 ID。返回 true 表示 cell 已丢弃，调用方 continue。
+        /// 拉链取图绑 ID。返回 true 表示 cell 已丢弃，调用方 continue。
         /// </summary>
         private bool TryConsumeZipperCaptureReject(Cell cell, ref bool IDisRight)
         {
@@ -66,7 +66,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】拉链算法前灌参。copyGeometryAndCount 仅正式自动取图。
+        /// 拉链算法前灌参。copyGeometryAndCount 仅正式自动取图。
         /// </summary>
         private void CopyZipperInfoOntoCell(Cell cell, bool copyGeometryAndCount)
         {
@@ -114,7 +114,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】拉链组齐套后按制程名回写 SendResult/2/3。
+        /// 拉链组齐套后按制程名回写 SendResult/2/3。
         /// </summary>
         private void SendZipperProcessResult(CCellPro CellOut)
         {

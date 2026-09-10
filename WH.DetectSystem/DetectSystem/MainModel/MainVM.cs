@@ -116,7 +116,6 @@ namespace WH.DetectSystem.Models
             get => ProcessGroup?.MaociQualityConfig;
         }
 
-        //【盘齿方案0.1-注释】 VM: HasProcessSubWindow / ProcessSubWindowTitle + collection hook; not in .burrproj
         [JsonIgnore]
         public bool HasProcessSubWindow =>
             ProcessSubWindows != null && ProcessSubWindows.Any(o => o.Enabled);
@@ -378,7 +377,7 @@ namespace WH.DetectSystem.Models
 
             if (string.Equals(algorithm, COpenProjectLine.PlaneGearAlgorithmName, StringComparison.Ordinal))
             {
-                // 【新兴盘齿方案0.6-注释】建制程按插件写默认 N：空工程 Kind 仍是 None，不能等 IsXinGear。侧面 6，其余 1。
+                // 新兴盘齿建制程按插件写默认 N：空工程 Kind 仍是 None，不能等 IsXinGear。侧面 6，其余 1。
                 this.PhotoTotalCount = name switch
                 {
                     "侧面" => 6,
@@ -387,7 +386,7 @@ namespace WH.DetectSystem.Models
             }
             else if (string.Equals(algorithm, COpenProjectLine.GearAlgorithmName, StringComparison.Ordinal))
             {
-                //【盘齿方案4-改动D】按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
+                //富川盘齿按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
                 this.PhotoTotalCount = name switch
                 {
                     "内孔" => 6,
@@ -555,7 +554,7 @@ namespace WH.DetectSystem.Models
             get { return isAutomaticTest; }
             set
             {
-                //【盘齿方案11-注释】学料标志仅拉链工程可置 true
+                // 学料标志仅拉链工程可置 true
                 if (!COpenProjectLine.IsZipper)
                 {
                     isAutomaticTest = false;
@@ -715,14 +714,13 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        //【盘齿方案4】改动B/G2：转发 Cell 已由上齿面绑好；必须在改动A 与离线 ImageFile=="" 覆盖之前拦截
                         if (cell.IsPreBound)
                         {
                             IDisRight = true;
                         }
                         else if (IsStart && !isAutomaticTest) //自动运行
                         {
-                            //【盘齿方案11-注释】拉链三分支绑 ID；盘齿 GetProductID + 上齿面转发
+                            //拉链三分支绑 ID；盘齿 GetProductID + 上齿面转发
                             if (COpenProjectLine.IsZipper)
                             {
                                 if (TryConsumeZipperCaptureReject(cell, ref IDisRight))
@@ -737,7 +735,7 @@ namespace WH.DetectSystem.Models
                                     continue;
                                 }
                             }
-                            else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】绑缓存 ProductID；无 PLC / ID<=0 仍放行（离线可点开始）
+                            else if (COpenProjectLine.IsCrank)
                             {
                                 int crankProductId = CCrankCommunicate.GetProductID();
                                 if (crankProductId > 0)
@@ -746,7 +744,7 @@ namespace WH.DetectSystem.Models
                                 }
                                 IDisRight = true;
                             }
-                            else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案4】注释
+                            else if (COpenProjectLine.IsXinGear)
                             {
                                 if (TryConsumeXinGearFormalCapture(cell, ref IDisRight))
                                 {
@@ -760,7 +758,7 @@ namespace WH.DetectSystem.Models
                         }
                         else
                         {
-                            //【盘齿方案4】改动B：离线上齿面用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
+                            //离线上齿面用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
                             if (COpenProjectLine.IsGear && TryConsumeGearOfflineToothTop(cell))
                             {
                                 continue;
@@ -770,11 +768,11 @@ namespace WH.DetectSystem.Models
                             {
                                 cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
-                                //【盘齿方案4-注释】原因：离线/手动张数改读制程配置 PhotoTotalCount（方案4 改动D；方案审核 G3——写死 1 则旋转工位离线合并验收不通）
+                                //离线/手动张数改读制程配置 PhotoTotalCount（方案4 改动D；方案审核 G3——写死 1 则旋转工位离线合并验收不通）
                                 // 原： cell.PhotoTatolCount = 1;
                                 cell.PhotoTatolCount = this.PhotoTotalCount;
                             }
-                            //【盘齿方案4】改动A：OffLineTestCtrl 已写 ID/PhotoIndex/PhotoTatolCount 且 ImageFile 非空时透传，不覆盖
+                            //改动A：OffLineTestCtrl 已写 ID/PhotoIndex/PhotoTatolCount 且 ImageFile 非空时透传，不覆盖
                         }
 
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -855,7 +853,7 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest) //运行
                             {
-                                //【盘齿方案4】G1：算法线程清旧 ID 残图（取图线程不得操作 MergeCells）
+                                //算法线程清旧 ID 残图（取图线程不得操作 MergeCells）
                                 List<Cell> staleIdCells = MergeCells.FindAll(c => c.ID != cell.ID);
                                 if (staleIdCells.Count > 0)
                                 {
@@ -899,7 +897,7 @@ namespace WH.DetectSystem.Models
                                     }
                                     if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2])
                                     {
-                                        // 【新兴盘齿方案0.7-注释】整件 FilterExute 只服务 cell.IsOK/产量；检测区立刻按选中格覆盖，避免其它张把面板冲掉。
+                                        // 整件 FilterExute 只服务 cell.IsOK/产量；检测区立刻按选中格覆盖，避免其它张把面板冲掉。
                                         ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex, newCell);
                                     }
                                     newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
@@ -955,14 +953,14 @@ namespace WH.DetectSystem.Models
                                         {
                                             SendGearGroupResult(CellOut);
                                         }
-                                        else if (COpenProjectLine.IsCrank) // 【曲轴方案2-注释】组齐套回写 G1/G2
+                                        else if (COpenProjectLine.IsCrank) 
                                         {
                                             CCrankCommunicate.SendGroupResult(
                                                 ProcessGroup.Name,
                                                 CellOut.Cell.ID,
                                                 CellOut.Cell.IsOK ? CrankResult.OK : CrankResult.NG);
                                         }
-                                        else if (COpenProjectLine.IsXinGear) // 【新兴盘齿方案4】注释
+                                        else if (COpenProjectLine.IsXinGear) 
                                         {
                                             SendXinGearGroupResult(CellOut);
                                         }
@@ -1125,7 +1123,7 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-                                //【盘齿方案11-注释】副图：拉链=ChangleImgae，盘齿=MergedPanorama，None=不绑产线字段
+                                //副图：拉链=ChangleImgae，盘齿=MergedPanorama，None=不绑产线字段
                                 BitmapSource zipperPullimg = null;
                                 if (COpenProjectLine.IsZipper)
                                     zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
@@ -1676,7 +1674,7 @@ namespace WH.DetectSystem.Models
                 // 合并IsOK逻辑：只要有一个为false则整体为false
                 newCell.IsOK = !cells.Any(c => !c.IsOK);
 
-                // 【新兴盘齿方案0.6-注释】合并前落下分张图内框；再把本制程 N>1 的框平移到 2x3，供存图拼图。不改拉链/盘齿横拼。
+                //合并前落下分张图内框；再把本制程 N>1 的框平移到 2x3，供存图拼图。
                 if (COpenProjectLine.IsXinGear)
                 {
                     newCell.XinGearImages = CopyXinGearImagesFromCells(cells);
@@ -1708,7 +1706,7 @@ namespace WH.DetectSystem.Models
                     }
                 }
 
-                //【盘齿方案11-注释】大图/四分割索引仅拉链合并拷贝
+                //大图/四分割索引仅拉链合并拷贝
                 if (COpenProjectLine.IsZipper)
                 {
                     newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList();
@@ -1717,7 +1715,7 @@ namespace WH.DetectSystem.Models
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {
-                    //【盘齿方案11-注释】合并显示：拉链 ChangleImgae，盘齿 MergedPanorama，None 只赋 Image
+                    //合并显示：拉链 ChangleImgae，盘齿 MergedPanorama，None 只赋 Image
                     if (COpenProjectLine.IsZipper)
                     {
                         ApplyZipperMergedDisplay(newCell, img);
@@ -1757,7 +1755,7 @@ namespace WH.DetectSystem.Models
             }
             else
             {
-                //【盘齿方案11-注释】按打开工程选合并图；None 不调 CollectGear/CollectZipper
+                //按打开工程选合并图
                 if (COpenProjectLine.IsZipper)
                 {
                     return CollectZipperCImages(cells);
