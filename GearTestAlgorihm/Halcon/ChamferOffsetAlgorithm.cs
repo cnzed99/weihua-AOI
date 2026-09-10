@@ -6,7 +6,7 @@ using WH.RunCell;
 namespace GearTestAlgorihm.Halcon
 {
     /// <summary>
-    /// 【盘齿方案3.6-注释】倒角偏。拉链写法：Cell 入图、HObject 复用 Dispose、C# 算 Dist；算子语义对照 frozen fast。
+    /// 倒角偏
     /// </summary>
     public static class ChamferOffsetAlgorithm
     {
@@ -83,7 +83,7 @@ namespace GearTestAlgorihm.Halcon
             HObject raw = null;
             try
             {
-                // 【盘齿方案3.6-注释】拉链同款：有文件走 ReadImage（离线 BMP）；仅相机 ImageFile 空时才 GenImage 指针。
+                // 有文件走 ReadImage（离线 BMP）；仅相机 ImageFile 空时才 GenImage 指针。
                 if (hasFile)
                 {
                     HOperatorSet.ReadImage(out raw, cell.ImageFile);

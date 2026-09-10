@@ -64,7 +64,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--制程格共用模板（含方案0.1 副图列）；分页/无分页视窗共用-->
+        <!--制程格共用模板；分页/无分页视窗共用-->
         <DataTemplate x:Key="ProcessCellTemplate">
             <!--原 Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}"；无分页没有 TabControl 祖先，改绑 Window-->
             <Grid Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
@@ -112,7 +112,7 @@
                             ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
                     </Border>
 
-                    <!--恢复制程格副图列（替代方案0 B8 整段注释）；Visibility 绑该制程 HasProcessSubWindow，不再绑系统设置-->
+                    <!--恢复制程格副图列；Visibility 绑该制程 HasProcessSubWindow，不再绑系统设置-->
                     <Border Grid.Column="1"
                         Background="{DynamicResource RegionBrush}"
                         BorderBrush="{Binding ModelBrush}"

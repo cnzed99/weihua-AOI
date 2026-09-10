@@ -62,10 +62,7 @@ namespace WH.DetectSystem.Models
         private string name = "检测制程";
 
         /// <summary>
-        /// 2026.8.14【盘齿方案4-改动D】该制程每件应收图张数 N（合并门槛来源，随 .burrproj 序列化）
-        /// 盘齿默认：下端面/上齿面/上端面=1；内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14（建制程时按名写入，见 CMainModel 构造）
-        /// 0 值防线（方案审核 G3）：合并门槛 MainVM.cs:938 为 Count>=PhotoTatolCount，0 恒真会导致每张图立即合并；
-        /// 旧工程无此键时走字段缺省 1，getter 再兜底 &lt;=0 返回 1
+        /// 该制程每件应收图张数 N
         /// </summary>
         [JsonProperty]
         private int photoTotalCount = 1;

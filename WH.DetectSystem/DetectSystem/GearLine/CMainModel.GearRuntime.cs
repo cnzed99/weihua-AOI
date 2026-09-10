@@ -15,13 +15,12 @@ namespace WH.DetectSystem.Models
     public partial class CMainModel
     {
         /// <summary>
-        /// 【盘齿方案4】改动A：本制程上次绑定的 ProductID（取图线程维护，禁止静态全局）
-        /// 【盘齿方案4-注释】string；空/null 表示尚未绑定。占位 ID 与拉链一样来自产量+1，字符串比较。
+        /// 本制程上次绑定的 ProductID（取图线程维护）
         /// </summary>
         private string _lastBoundProductId;
 
         /// <summary>
-        /// 【盘齿方案4】改动A：本制程当前 ID 已收张数（本地 PhotoIndex 1..N）
+        /// 本制程当前 ID 已收张数（本地 PhotoIndex 1..N）
         /// </summary>
         private int _photoCounter;
 
@@ -72,9 +71,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【盘齿方案4】改动B：上齿面第 k 张分流。k==1 返回 false 入本制程算法；k==2 转发上端面；k>=3 丢弃。
-        /// 返回 true 表示本张已处理完，取图线程应 continue，禁止写入本制程 m_AlgorithmChannel。
-        /// CloneExecptImg 不拷贝 Image（方法内 WriteTo 已注释），此处移交 Image 所有权后再 Dispose 原 cell。
+        /// 上齿面第 k 张分流。k==1 返回 false 入本制程算法；k==2 转发上端面；k>=3 丢弃。
         /// </summary>
         private bool TryDispatchToothTopByIndex(Cell cell, int k)
         {
@@ -124,7 +121,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 【盘齿方案2】P2-3 策略B：正式路径只读 GetProductID 缓存绑 ID。com==null 或 ID&lt;=0 返回 false（调用方丢弃）。
+        /// 正式路径只读 GetProductID 缓存绑 ID
         /// 禁止在取图线程 ReadHoldingRegister。成功则写 cell.ID/PhotoIndex/PhotoTatolCount 并维护换 ID 计数。
         /// </summary>
         private bool TryBindFormalProductId(Cell cell)

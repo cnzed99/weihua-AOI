@@ -1,7 +1,7 @@
 ﻿namespace GearInfo
 {
     /// <summary>
-    /// 【盘齿方案8-注释】盘齿型号外形尺寸（mm）。一期只读展示，不作为检测阈值。
+    /// 盘齿型号外形尺寸
     /// </summary>
     public class CGearProductModel
     {

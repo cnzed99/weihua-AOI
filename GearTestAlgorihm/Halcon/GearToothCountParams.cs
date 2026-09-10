@@ -3,7 +3,7 @@
 namespace GearTestAlgorihm.Halcon
 {
     /// <summary>
-    /// 【盘齿方案3.9-注释】齿轮数 Halcon 比例/门槛，默认抄步骤 123。
+    /// 齿轮数 Halcon 比例/门槛
     /// </summary>
     public class GearToothCountParams
     {
@@ -105,7 +105,7 @@ namespace GearTestAlgorihm.Halcon
     }
 
     /// <summary>
-    /// 【盘齿方案3.9-注释】齿轮数结果。失败 Count=-1。
+    /// 齿轮数结果。失败 Count=-1。
     /// </summary>
     public class GearToothCountResult
     {

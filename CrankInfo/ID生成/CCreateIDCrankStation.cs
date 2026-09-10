@@ -4,7 +4,7 @@ using WH.Entity.LogRecord;
 namespace CrankInfo
 {
     /// <summary>
-    /// 【曲轴方案2-注释】曲轴 ID 缓存轮询：读 ProductID 寄存器，>0 且变化才更新 CurrentProductID。
+    /// 曲轴 ID 缓存轮询：读 ProductID 寄存器，>0 且变化才更新 CurrentProductID。
     /// </summary>
     public class CCreateIDCrankStation : CCrankCreateIDBase
     {

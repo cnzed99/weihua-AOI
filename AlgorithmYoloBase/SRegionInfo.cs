@@ -3,7 +3,7 @@ using WH.RunCell;
 
 namespace AlgorithmYoloBase
 {
-    /// <summary>【重构方案R1-注释】平台区域特征。GetValue 用盘齿完整 Id 表；Union 用曲轴 null 守卫。</summary>
+    /// 平台区域特征
     public struct SRegionInfo : IRegionInfo
     {
         public double WidthBound = 0;

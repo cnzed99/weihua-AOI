@@ -768,7 +768,7 @@ namespace WH.DetectSystem.Models
                             {
                                 cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
-                                //离线/手动张数改读制程配置 PhotoTotalCount（方案4 改动D；方案审核 G3——写死 1 则旋转工位离线合并验收不通）
+                                //离线/手动张数改读制程配置 PhotoTotalCount
                                 // 原： cell.PhotoTatolCount = 1;
                                 cell.PhotoTatolCount = this.PhotoTotalCount;
                             }

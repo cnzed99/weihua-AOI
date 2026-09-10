@@ -3,7 +3,7 @@
 namespace CrankInfo
 {
     /// <summary>
-    /// 【曲轴方案2-注释】曲轴 ID 缓存轮询基类。1ms 后台线程。无 IDSendEvent。
+    /// 曲轴 ID 缓存轮询基类
     /// </summary>
     public class CCrankCreateIDBase
     {
@@ -13,7 +13,7 @@ namespace CrankInfo
         public int TempproductID = 0;
 
         /// <summary>
-        /// 【曲轴方案2-注释】启动 1ms 后台轮询线程。
+        /// 启动 1ms 后台轮询线程。
         /// </summary>
         public void IntThread()
         {
@@ -28,7 +28,7 @@ namespace CrankInfo
         }
 
         /// <summary>
-        /// 【曲轴方案2-注释】停轮询：Connend=false，后台线程自行退出。
+        /// 停轮询：Connend=false，后台线程自行退出。
         /// </summary>
         public void StopThread()
         {

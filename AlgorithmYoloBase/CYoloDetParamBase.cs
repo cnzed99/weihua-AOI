@@ -10,7 +10,7 @@ using WH.VisionLearning;
 
 namespace AlgorithmYoloBase
 {
-    /// <summary>【重构方案R1-注释】YOLO Det 模板方法骨架。DetectImage 顺序锁死；产线差异走虚方法。</summary>
+    /// YOLO Det 模板方法骨架
     public abstract class CYoloDetParamBase : CAlgorithmParamBase
     {
         public string User { get; set; }
@@ -92,7 +92,7 @@ namespace AlgorithmYoloBase
             DefectFeatures.Add(new("Height", "高度", "Height", "um"));
         }
 
-        /// <summary>【重构方案R1-注释】默认 RecWidth &gt; RecHeight（新兴/曲轴）。盘齿 override 保持 RecWidth &gt; RecWidth。</summary>
+        /// 默认 RecWidth &gt; RecHeight（新兴/曲轴）;盘齿 override 保持 RecWidth &gt; RecWidth
         protected virtual SRegion GetDetectRegion(CoordRestoreData info)
         {
             SRegionInfo sRegioninfo = new SRegionInfo();
@@ -138,7 +138,7 @@ namespace AlgorithmYoloBase
                     paramClass = AlgorParams?.FirstOrDefault() as CYoloInferParam;
                 }
 
-                // 【重构方案R1-注释】推理前把算法栏 Score/Nms 刷进已加载模型，改完立刻生效。拉链插件不走本基类。
+                // 推理前把算法栏 Score/Nms 刷进已加载模型，改完立刻生效。拉链插件不走本基类。
                 if (paramClass != null)
                 {
                     WH_det?.UpdateNMS_Score(paramClass.Nms, paramClass.Score);
@@ -204,7 +204,6 @@ namespace AlgorithmYoloBase
             return null;
         }
 
-        /// <summary>【重构方案R1-注释】包装 ImageData，与盘齿/曲轴现状一致。新兴 Clone 路径在子类 override。</summary>
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
         {
             if (cell?.Image == null)
@@ -361,7 +360,6 @@ namespace AlgorithmYoloBase
 
         protected virtual void OnLoadModelFailed() { }
 
-        /// <summary>【重构方案R1-注释】目录不存在或没有权重+txt → ("", new[]{ "" })。产线扫法差异由子类 override。</summary>
         protected virtual (string, string[]) GetNames(string Dirpath)
         {
             if (Directory.Exists(Dirpath))

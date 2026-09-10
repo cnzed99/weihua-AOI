@@ -6,7 +6,7 @@ using WH.Entity.LogRecord;
 namespace CrankInfo
 {
     /// <summary>
-    /// 【曲轴方案2-注释】曲轴协议静态类。挂 com、加载点位、锁与短超时、ID 轮询/心跳；不写 HD1200。
+    /// 曲轴协议静态类。挂 com、加载点位、锁与短超时、ID 轮询/心跳
     /// </summary>
     public static class CCrankCommunicate
     {
@@ -19,7 +19,7 @@ namespace CrankInfo
 
         public static CCrankProtocolPoints Points { get; private set; } = new CCrankProtocolPoints();
 
-        //【曲轴方案2-注释】原因：D6 串行化全部 Modbus 读写（NModbus master 非线程安全）
+        // Modbus 读写（NModbus master 非线程安全）
         static readonly object _protocolLock = new object();
 
         static CCreateIDCrankStation _idPoller;
@@ -38,9 +38,6 @@ namespace CrankInfo
             return CurrentProductID;
         }
 
-        /// <summary>
-        /// F1：out 重载，对齐方案用词。
-        /// </summary>
         public static void GetProductID(out int productID)
         {
             productID = CurrentProductID;
@@ -72,7 +69,7 @@ namespace CrankInfo
         }
 
         /// <summary>
-        /// 【曲轴方案2-注释】换工程/关闭时停心跳与 ID 轮询，清空 com，不关底层 OpenAllComm。
+        /// 换工程/关闭时停心跳与 ID 轮询，清空 com
         /// </summary>
         public static void Detach()
         {

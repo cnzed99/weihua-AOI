@@ -130,7 +130,7 @@ namespace WH.DetectSystem._5_存图操作
                         );
                     }
                 }
-                //【盘齿方案11-注释】四分割/上下止/拉头仅拉链写入；盘齿即使配置为 true 也不走这些路径
+                //四分割/上下止/拉头仅拉链写入
                 if (COpenProjectLine.IsZipper)
                 {
                     if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
@@ -310,7 +310,7 @@ namespace WH.DetectSystem._5_存图操作
             bool showAllDefect
         )
         {
-            //【盘齿方案11-注释】截图第二画布：拉链=ChangleImgae，盘齿=MergedPanorama
+            //拉链=ChangleImgae，盘齿=MergedPanorama
             CImage overlayImg = null;
             if (COpenProjectLine.IsZipper)
                 overlayImg = cell.ChangleImgae;
@@ -718,7 +718,7 @@ namespace WH.DetectSystem._5_存图操作
                     //        classPath = classPath + "\\" + cell.CamName;
                     //    }
                     //}
-                    //【盘齿方案11-注释】仅拉链创建拉头/上下止/四分割目录；盘齿不 mkdir，out 赋占位避免未赋值
+                    //仅拉链创建拉头/上下止/四分割目录
                     if (COpenProjectLine.IsZipper)
                     {
                         string dirstr = $"{classPath}\\截图";
@@ -832,7 +832,7 @@ namespace WH.DetectSystem._5_存图操作
         {
             if (cell != null)
             {
-                //【盘齿方案11-注释】存图按打开工程选列表；拉链=git 原 ZipperImages，盘齿=GearImages
+                //存图按打开工程选列表
                 if (COpenProjectLine.IsZipper && cell.ZipperImages != null && cell.ZipperImages.Count > 1)
                 {
                     string[] filenames = filepath.Split('.');
@@ -887,7 +887,7 @@ namespace WH.DetectSystem._5_存图操作
                 }
                 else if (COpenProjectLine.IsGear && cell.GearImages != null && cell.GearImages.Count > 1)
                 {
-                    //【盘齿方案11-注释】盘齿分张只写 GearImages，不拷 SaveBigImagesIndex 大图
+                    //盘齿分张只写 GearImages，不拷 SaveBigImagesIndex 大图
                     string[] filenames = filepath.Split('.');
                     if (filenames.Length >= 2)
                     {
@@ -913,7 +913,7 @@ namespace WH.DetectSystem._5_存图操作
                 }
                 else if (COpenProjectLine.IsXinGear && cell.XinGearImages != null && cell.XinGearImages.Count > 1)
                 {
-                    // 【新兴盘齿方案7】注释 新兴分张只写 XinGearImages，不拷 SaveBigImagesIndex 大图
+                    // 新兴分张只写 XinGearImages，不拷 SaveBigImagesIndex 大图
                     string[] filenames = filepath.Split('.');
                     if (filenames.Length >= 2)
                     {

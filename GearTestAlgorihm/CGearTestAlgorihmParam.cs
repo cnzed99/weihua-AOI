@@ -11,11 +11,11 @@ using WH.RunCell;
 namespace GearTestAlgorihm
 {
     /// <summary>
-    /// 继承算法参数基类。方案3.4：七制程 YOLO Infer，ParseResult Type=外观。
+    /// 继承算法参数基类。七制程 YOLO Infer，ParseResult Type=外观。
     /// </summary>
     public class CGearTestAlgorihmParam : CYoloDetParamBase
     {
-        protected override string LogTag => "【盘齿方案3.4-注释】";
+        protected override string LogTag => "【盘齿方案】";
 
         protected override string PluginFolderName => "GearTestAlgorihm";
 
@@ -41,7 +41,7 @@ namespace GearTestAlgorihm
         public ChamferOffsetParams ChamferOffset { get; set; } = new ChamferOffsetParams();
 
         /// <summary>
-        /// 【盘齿方案3.9-注释】上齿面齿轮数 Halcon 参数。方案 123 默认，快。
+        /// 上齿面齿轮数 Halcon 参数
         /// </summary>
         public GearToothCountParams GearToothCount { get; set; } = new GearToothCountParams();
 
@@ -85,7 +85,7 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 【盘齿方案3.10-注释】上齿面：数 YOLO「标记齿」框。0→漏倒=1；＞1→重复=1。不进 classes.txt。
+        /// 上齿面：数 YOLO「标记齿」框。0→漏倒=1；＞1→重复=1
         /// </summary>
         protected void RunMarkedToothCountFlags(Cell cell)
         {
@@ -124,7 +124,7 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 【盘齿方案3.9-注释】上齿面齿轮数：Halcon 包装写入一条几何齿数。
+        /// 上齿面齿轮数：Halcon 包装写入一条几何齿数。
         /// </summary>
         protected void RunHalconGearToothCount(Cell cell)
         {
@@ -140,18 +140,18 @@ namespace GearTestAlgorihm
                 detection.Value = new List<float> { r.Count };
                 if (!string.IsNullOrEmpty(r.Warn))
                 {
-                    OperateLog?.Warn("【盘齿方案3.9-注释】" + r.Warn);
+                    OperateLog?.Warn("【盘齿方案】" + r.Warn);
                 }
             }
             catch (Exception ex)
             {
-                OperateLog?.Warn("【盘齿方案3.9-注释】" + ex.Message);
+                OperateLog?.Warn("【盘齿方案】" + ex.Message);
             }
             cell.AlgorithmOut.Add(detection);
         }
 
         /// <summary>
-        /// 【盘齿方案3.6-注释】上端面倒角偏：Halcon 包装写入一条几何 Dist1/2/3。
+        /// 上端面倒角偏：Halcon 包装写入一条几何 Dist1/2/3。
         /// </summary>
         protected void RunHalconChamferOffset(Cell cell)
         {
@@ -167,12 +167,12 @@ namespace GearTestAlgorihm
                 detection.Value = new List<float> { r.Dist1, r.Dist2, r.Dist3 };
                 if (!string.IsNullOrEmpty(r.Warn))
                 {
-                    OperateLog?.Warn("【盘齿方案3.6-注释】" + r.Warn);
+                    OperateLog?.Warn("【盘齿方案】" + r.Warn);
                 }
             }
             catch (Exception ex)
             {
-                OperateLog?.Warn("【盘齿方案3.6-注释】" + ex.Message);
+                OperateLog?.Warn("【盘齿方案】" + ex.Message);
             }
             cell.AlgorithmOut.Add(detection);
         }
@@ -186,9 +186,7 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 方案0 A5：反序列化时空守卫。空工程无模型路径时不得 NRE。
-        /// DefectSpecies 带 [JsonIgnore]，必须在此重建。
-        /// 【盘齿方案3.4-注释】按当前制程名加载 OpenVINO Det。
+        /// 按当前制程名加载 OpenVINO Det。
         /// </summary>
         [OnDeserialized]
         private void LoadModel(StreamingContext context) => OnDeserializedCore(context);
@@ -205,7 +203,7 @@ namespace GearTestAlgorihm
         }
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】精简自拉链 GetDetectRegion。长短边比较保持现状 RecWidth &gt; RecWidth。
+        /// 精简自拉链 GetDetectRegion。长短边比较保持现状 RecWidth &gt; RecWidth。
         /// </summary>
         protected override SRegion GetDetectRegion(CoordRestoreData info)
         {
@@ -242,7 +240,7 @@ namespace GearTestAlgorihm
 
         protected override void InitDefectFeatures()
         {
-            //【盘齿方案6-注释】几何过滤用「数值」；区域下拉只用面积类特征
+            //几何过滤用「数值」；区域下拉只用面积类特征
             DefectFeatures = new List<CFeacture>();
             DefectFeatures = new();
             DefectFeatures.Add(new("Area", "面积", "Area", "um²"));
@@ -252,14 +250,13 @@ namespace GearTestAlgorihm
             DefectFeatures.Add(new("ShortLength", "短边", "ShortLength", "um"));
             DefectFeatures.Add(new("Score", "分数", "Score", ""));
             DefectFeatures.Add(new("Angle", "角度", "Angle", "°"));
-            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); //20260424 鲍赞宝 针对缺陷与它周边的色差差异来判断它的明显程度
+            DefectFeatures.Add(new("ColorDiffValue", "色差", "ColorDiffValue", "")); 
             DefectFeatures.Add(new("PositionX", "位置X", "PositionX", "um"));
             DefectFeatures.Add(new("PositionY", "位置Y", "PositionY", "um"));
         }
 
         /// <summary>
-        /// 【盘齿方案3.4-注释】外观按本制程 class_names（classes.txt）灌入，与 Infer 标签对齐。
-        /// 几何：上齿面齿轮数；上端面倒角偏。孔钻错暂不挂。始终 new List，禁止 null。
+        /// 几何：上齿面齿轮数；上端面倒角偏
         /// </summary>
         protected override void SetDefectRecipe(string processName)
         {

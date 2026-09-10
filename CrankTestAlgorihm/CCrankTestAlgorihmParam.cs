@@ -10,7 +10,7 @@ using WH.RunCell;
 namespace CrankTestAlgorihm
 {
     /// <summary>
-    /// 【曲轴方案3.4-注释】曲轴算法参数。六制程全挂 划痕/裂纹/磕碰，仅 YOLO（Area+Score）。无 Halcon。
+    /// 曲轴算法参数。六制程全挂 划痕/裂纹/磕碰，仅 YOLO（Area+Score）
     /// </summary>
     public class CCrankTestAlgorihmParam : CYoloDetParamBase
     {
@@ -18,7 +18,7 @@ namespace CrankTestAlgorihm
 
         public static readonly string[] FrozenDefectNames = { "划痕", "裂纹", "磕碰" };
 
-        protected override string LogTag => "【曲轴方案3.4-注释】";
+        protected override string LogTag => "【曲轴方案】";
 
         protected override string PluginFolderName => "CrankTestAlgorihm";
 
@@ -65,12 +65,12 @@ namespace CrankTestAlgorihm
 
         protected override void OnNoModel(Cell cell, string processName)
         {
-            OperateLog?.Warn("【曲轴方案3.4-注释】" + processName + " 无模型，M0 空跑 IsOK=true");
+            OperateLog?.Warn("【曲轴方案】" + processName + " 无模型，M0 空跑 IsOK=true");
             cell.IsOK = true;
         }
 
         /// <summary>
-        /// 【曲轴方案3.4-注释】方案0 A5 空守卫。DefectSpecies 带 JsonIgnore，反序列化后必须重建。
+        /// DefectSpecies 带 JsonIgnore，反序列化后必须重建。
         /// </summary>
         [OnDeserialized]
         private void LoadModel(StreamingContext context) => OnDeserializedCore(context);
@@ -122,7 +122,7 @@ namespace CrankTestAlgorihm
                 }
                 if (!FrozenDefectNames.Contains(name))
                 {
-                    OperateLog?.Warn("【曲轴方案3.4-注释】" + processName + " classes.txt 额外类名已忽略（不进配方树）: " + name);
+                    OperateLog?.Warn("【曲轴方案】" + processName + " classes.txt 额外类名已忽略: " + name);
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace CrankTestAlgorihm
         }
 
         /// <summary>
-        /// 【曲轴方案3.4-注释】配方永远 划痕/裂纹/磕碰，不依赖 classes.txt。第四名 Warn 忽略。无几何种。
+        /// 配方永远 划痕/裂纹/磕碰，不依赖 classes.txt todo需要依赖classes.txt
         /// </summary>
         protected override void SetDefectRecipe(string processName)
         {

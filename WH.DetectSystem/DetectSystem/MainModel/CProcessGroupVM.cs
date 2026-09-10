@@ -123,7 +123,7 @@ namespace WH.DetectSystem.Models
         }
         private async void IDSend(object sender, ZipperID zipperID)
         {
-            //【盘齿方案11-注释】拉链 ID 通道只给拉链工程写，避免误挂事件时盘齿收到 ZipperID
+            //拉链 ID 通道只给拉链工程写
             if (!COpenProjectLine.IsZipper)
             {
                 return;

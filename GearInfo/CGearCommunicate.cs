@@ -19,7 +19,7 @@ namespace GearInfo
 
         public static CGearProtocolPoints Points { get; private set; } = new CGearProtocolPoints();
 
-        //【盘齿方案2-注释】原因：D6/G5 串行化全部 Modbus 读写（NModbus master 非线程安全）
+        // Modbus 读写（NModbus master 非线程安全）
         static readonly object _protocolLock = new object();
 
         static CCreateIDGearStation _idPoller;
@@ -38,9 +38,6 @@ namespace GearInfo
             return CurrentProductID;
         }
 
-        /// <summary>
-        /// F1：out 重载，对齐方案用词。
-        /// </summary>
         public static void GetProductID(out int productID)
         {
             productID = CurrentProductID;
@@ -72,7 +69,7 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】换工程/关闭时停心跳与 ID 轮询，清空 com，不关底层 OpenAllComm。
+        /// 换工程/关闭时停心跳与 ID 轮询，清空 com
         /// </summary>
         public static void Detach()
         {
@@ -282,11 +279,10 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// 开机只写 HD1200 四路旋转张数。张数取工程制程 PhotoTotalCount。焦位不进点位；换料信号属方案8。每件不写。
+        /// 开机只写 HD1200 四路旋转张数。张数取工程制程 PhotoTotalCount
         /// </summary>
         public static void SendRecipePhotoAndFocus(IEnumerable<(string processName, int photoTotalCount)> processes)
         {
-            //【盘齿方案2-注释】只写 HD1200 四路；焦位不进点位；换料信号属方案8
             if (com == null)
             {
                 TryLogInfo("无PLC，跳过配方张数下发");

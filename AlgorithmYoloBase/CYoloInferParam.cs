@@ -4,7 +4,7 @@ using WH.Entity.CommonLib;
 
 namespace AlgorithmYoloBase
 {
-    /// <summary>【重构方案R1-注释】三插件嵌套 CParam 的公共字段；JSON 属性名冻结。</summary>
+    /// CParam 的公共字段
     public class CYoloInferParam : CParamBase
     {
         public CYoloInferParam() { }

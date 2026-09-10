@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace GearTestAlgorihm.Halcon
 {
     /// <summary>
-    /// 【盘齿方案3.6-注释】倒角偏 Halcon 比例/阈值，默认抄 frozen fast。
+    /// 倒角偏 Halcon 比例/阈值
     /// </summary>
     public class ChamferOffsetParams
     {
@@ -61,7 +61,7 @@ namespace GearTestAlgorihm.Halcon
     }
 
     /// <summary>
-    /// 【盘齿方案3.6-注释】倒角偏三个 Dist（px 或 mm）；失败为 -1。
+    /// 倒角偏三个 Dist；失败为 -1。
     /// </summary>
     public class ChamferOffsetResult
     {

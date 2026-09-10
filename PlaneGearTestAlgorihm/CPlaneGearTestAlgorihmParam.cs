@@ -11,7 +11,7 @@ using WH.RunCell;
 namespace PlaneGearTestAlgorihm
 {
     /// <summary>
-    /// 【新兴盘齿方案3.5-注释】平面齿算法参数。配方永远 6 名；有 Models\\制程 权重则 OpenVINO Det，无则空跑。
+    /// 平面齿算法参数
     /// </summary>
     public class CPlaneGearTestAlgorihmParam : CYoloDetParamBase
     {
@@ -22,7 +22,7 @@ namespace PlaneGearTestAlgorihm
             "毛刺", "飞边", "锈蚀", "碰伤", "压伤", "氧化",
         };
 
-        protected override string LogTag => "【新兴盘齿方案3.5-注释】";
+        protected override string LogTag => "【新兴盘齿方案】";
 
         protected override string PluginFolderName => "PlaneGearTestAlgorihm";
 
@@ -67,13 +67,10 @@ namespace PlaneGearTestAlgorihm
 
         protected override void OnNoModel(Cell cell, string processName)
         {
-            OperateLog?.Warn("【新兴盘齿方案3.5-注释】" + processName + " 无模型，空跑 IsOK=true");
+            OperateLog?.Warn("【新兴盘齿方案】" + processName + " 无模型，空跑 IsOK=true");
             cell.IsOK = true;
         }
 
-        /// <summary>
-        /// 【新兴盘齿方案3.4-注释】方案0 A5 空守卫。DefectSpecies 带 JsonIgnore，反序列化后必须重建。
-        /// </summary>
         [OnDeserialized]
         private void LoadModel(StreamingContext context) => OnDeserializedCore(context);
 
@@ -88,9 +85,6 @@ namespace PlaneGearTestAlgorihm
             OperateLog?.Warn(LogTag + processName + " 无模型，空跑: " + dirPath);
         }
 
-        /// <summary>
-        /// 【新兴盘齿方案3.5-注释】只扫制程目录根下：优先 *.model，再 onnx/xml/engine/pt；classes.txt 不递归。
-        /// </summary>
         protected override (string, string[]) GetNames(string Dirpath)
         {
             if (!Directory.Exists(Dirpath))
@@ -115,9 +109,6 @@ namespace PlaneGearTestAlgorihm
             return ("", new string[1] { "" });
         }
 
-        /// <summary>
-        /// 【新兴盘齿方案3.5-注释】Predict 必须用自有 Mat。禁止只包 ImageData：显示 ToBitmapSource 不拷贝，显示线程随后 FreeHGlobal，下一张 Infer 会 0xC0000005。
-        /// </summary>
         public override Mat GetMatImage(Cell cell, CParamBase param)
         {
             if (cell?.Image == null || cell.Image.ImageData == IntPtr.Zero)
@@ -143,7 +134,6 @@ namespace PlaneGearTestAlgorihm
 
         protected override CoordRestoreData CreateRestoreData(Cell cell, string labelname, DetData det)
         {
-            // 【新兴盘齿方案0.6-注释】Infer 只写当前 cell.Image 图内坐标（imgIndex=0, mosaic2x2=false）。2x3 平移在 GetMergeCells。
             return new CoordRestoreData(
                 cell.Image.ImageWidth, cell.Image.ImageHeight, 0, 0, 0, labelname, det, false);
         }
@@ -168,12 +158,12 @@ namespace PlaneGearTestAlgorihm
                 .Where(name => !string.IsNullOrEmpty(name) && !recipeNames.Contains(name))
                 .Distinct())
             {
-                OperateLog?.Warn("【新兴盘齿方案3.5-注释】未匹配配方的类名已丢弃: " + unmatched);
+                OperateLog?.Warn("【新兴盘齿方案】未匹配配方的类名已丢弃: " + unmatched);
             }
         }
 
         /// <summary>
-        /// 【新兴盘齿方案3.1-注释】配方永远 6 名，不依赖 classes.txt。Category=区域，Type=外观。
+        /// 配方永远 6 名，不依赖 classes.txt。Category=区域，Type=外观。
         /// </summary>
         protected override void SetDefectRecipe(string processName)
         {

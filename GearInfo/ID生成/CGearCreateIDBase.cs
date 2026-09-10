@@ -13,7 +13,7 @@ namespace GearInfo
         public int TempproductID = 0;
 
         /// <summary>
-        /// 【盘齿方案2-注释】启动 1ms 后台轮询线程。
+        /// 启动 1ms 后台轮询线程。
         /// </summary>
         public void IntThread()
         {
@@ -28,7 +28,7 @@ namespace GearInfo
         }
 
         /// <summary>
-        /// 【盘齿方案11-注释】停轮询：Connend=false，后台线程自行退出。
+        /// 停轮询：Connend=false，后台线程自行退出。
         /// </summary>
         public void StopThread()
         {

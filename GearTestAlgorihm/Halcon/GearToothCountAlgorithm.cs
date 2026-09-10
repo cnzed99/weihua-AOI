@@ -5,10 +5,6 @@ using WH.RunCell;
 
 namespace GearTestAlgorihm.Halcon
 {
-    /// <summary>
-    /// 【盘齿方案3.9-注释】齿轮数拉链式包装：Cell 入图、HObject 成对 Dispose、C# 交齿数。
-    /// 算子顺序对照 test.cs 的 action() / 步骤 123；禁止 HDevelopExport 原样。
-    /// </summary>
     public static class GearToothCountAlgorithm
     {
         public static GearToothCountResult Run(Cell cell, GearToothCountParams p)
@@ -47,7 +43,6 @@ namespace GearTestAlgorihm.Halcon
                     return counted;
                 }
 
-                // 【盘齿方案3.9-注释】root fail：第一轮可能误收圆心（HDev Pic_17 要 BestScore<0 才进模糊轮）。丢掉第一轮，强制模糊再填孔。
                 if (TryReplaceHubWithBlur(gray, p, ref centerRow, ref centerCol, ref hubRadius))
                 {
                     counted = CountFromHub(gray, p, centerRow, centerCol, hubRadius, false);
@@ -427,8 +422,6 @@ namespace GearTestAlgorihm.Halcon
                     HOperatorSet.CountObj(circleCands, out numberCandidates);
                 }
 
-                // 【盘齿方案3.9-注释】与导出 test.cs 一致：第一轮 0 候选不 abort，交给模糊/填孔（Pic_17）。
-                // 步骤123 的 stop() 在导出里已被注释；HDevelop 对 Pic_17 走的是 BestScore<0 后续轮。
                 int candCount = ToInt(numberCandidates);
                 if (candCount > 0)
                 {

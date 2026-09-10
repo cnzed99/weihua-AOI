@@ -5,19 +5,19 @@ using System.Linq;
 namespace WH.DetectSystem.DetectSystem.MainModel
 {
     /// <summary>
-    /// 【盘齿方案11-注释】当前打开的 .burrproj 产线。仅 OpenProj / 关闭工程时赋值，不是 appConfig 锁。
+    /// 当前打开的 .burrproj 产线
     /// </summary>
     public enum OpenProjectLineKind
     {
         None = 0,
         Zipper = 1,
         Gear = 2,
-        Crank = 3, // 【曲轴方案11-注释】第三条产线
-        XinGear = 4, // 【新兴盘齿方案11-注释】第四条产线
+        Crank = 3, // 曲轴方案
+        XinGear = 4, // 新兴盘齿
     }
 
     /// <summary>
-    /// 【盘齿方案11-注释】按制程算法插件名识别产线（方案11.2 §2）。停点 1 只识别，不挂协议。
+    /// 按制程算法插件名识别产线
     /// </summary>
     public static class COpenProjectLine
     {
@@ -26,13 +26,13 @@ namespace WH.DetectSystem.DetectSystem.MainModel
             "下端面", "上齿面", "上端面", "内孔", "上轴侧面", "下轴侧面", "整轴侧面",
         };
 
-        // 【曲轴方案11-注释】六名与方案0.5 布局、识别第 5 行共用；禁止写入 GearFixedProcessNames
+        // 【曲轴】
         public static readonly string[] CrankFixedProcessNames =
         {
             "端面", "底部光滑面", "杆面", "底盘侧面", "顶面", "底面",
         };
 
-        // 【新兴盘齿方案11-注释】三名与方案0.5 布局、识别回退共用；禁止写入 GearFixedProcessNames
+        // 【新兴盘齿】
         public static readonly string[] XinGearFixedProcessNames =
         {
             "齿底", "齿顶", "侧面",
@@ -50,10 +50,10 @@ namespace WH.DetectSystem.DetectSystem.MainModel
 
         public const string GearAlgorithmName = "GearTestAlgorihm";
 
-        // 【曲轴方案11-注释】拼写冻结，与 GearTestAlgorihm 同风格
+        // 曲轴
         public const string CrankAlgorithmName = "CrankTestAlgorihm";
 
-        // 【新兴盘齿方案11-注释】拼写 Algorihm 与仓库一致
+        // 新兴
         public const string PlaneGearAlgorithmName = "PlaneGearTestAlgorihm";
 
         public static OpenProjectLineKind Kind { get; internal set; } = OpenProjectLineKind.None;
@@ -62,9 +62,9 @@ namespace WH.DetectSystem.DetectSystem.MainModel
 
         public static bool IsGear => Kind == OpenProjectLineKind.Gear;
 
-        public static bool IsCrank => Kind == OpenProjectLineKind.Crank; // 【曲轴方案11-注释】
+        public static bool IsCrank => Kind == OpenProjectLineKind.Crank;
 
-        public static bool IsXinGear => Kind == OpenProjectLineKind.XinGear; // 【新兴盘齿方案11-注释】
+        public static bool IsXinGear => Kind == OpenProjectLineKind.XinGear;
 
         /// <summary>
         /// 冲突返回 false，不修改 Kind。成功时写出 kind，由 OpenProj 提交后再赋 Kind。
@@ -122,8 +122,7 @@ namespace WH.DetectSystem.DetectSystem.MainModel
                 }
             }
 
-            // 【曲轴方案11-注释】Gear / Zipper / Crank 插件任意两套拒绝打开
-            // 【新兴盘齿方案11-注释】混用矩阵纳入 XinGear
+            // Gear / Zipper / Crank 插件任意两套拒绝打开
             int pluginKinds = (hasGearPlugin ? 1 : 0) + (hasZipperPlugin ? 1 : 0)
                 + (hasCrankPlugin ? 1 : 0) + (hasXinGearPlugin ? 1 : 0);
             if (pluginKinds > 1)

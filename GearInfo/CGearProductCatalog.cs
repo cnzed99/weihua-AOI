@@ -7,7 +7,7 @@ using WH.Entity.LogRecord;
 namespace GearInfo
 {
     /// <summary>
-    /// 【盘齿方案8-注释】盘齿型号目录。启动只 Load，缺文件用内存三型号且不写盘；切型号不得 Save。
+    /// 盘齿型号目录
     /// </summary>
     public class CGearProductCatalog
     {
@@ -29,9 +29,6 @@ namespace GearInfo
             }
         }
 
-        /// <summary>
-        /// 【盘齿方案8-注释】仅 Load。文件缺失/解析失败时 Warn + 内存默认，不 Save。
-        /// </summary>
         public static CGearProductCatalog Load()
         {
             CGearProductCatalog builtIn = CreateBuiltIn();
@@ -40,21 +37,21 @@ namespace GearInfo
                 string resolved = GetResolvedPath();
                 if (!File.Exists(ParameterPath) && !File.Exists(resolved))
                 {
-                    TryLogWarn("盘齿型号文件不存在: " + resolved + "，使用内存默认三型号，不写盘。");
+                    TryLogWarn("盘齿型号文件不存在: " + resolved + "，使用内存默认三型号");
                     return builtIn;
                 }
 
                 CGearProductCatalog loaded = ConfigAPI.LoadDeserialize<CGearProductCatalog>(ParameterPath);
                 if (loaded == null || loaded.Models == null || loaded.Models.Count == 0)
                 {
-                    TryLogWarn("盘齿型号文件解析为空: " + resolved + "，使用内存默认三型号，不写盘。");
+                    TryLogWarn("盘齿型号文件解析为空: " + resolved + "，使用内存默认三型号");
                     return builtIn;
                 }
 
                 loaded.Models.RemoveAll(m => m == null);
                 if (loaded.Models.Count == 0)
                 {
-                    TryLogWarn("盘齿型号列表为空: " + resolved + "，使用内存默认三型号，不写盘。");
+                    TryLogWarn("盘齿型号列表为空: " + resolved + "，使用内存默认三型号");
                     return builtIn;
                 }
 
@@ -62,7 +59,7 @@ namespace GearInfo
             }
             catch (Exception ex)
             {
-                TryLogWarn("盘齿型号加载失败: " + ex.Message + "，使用内存默认三型号，不写盘。");
+                TryLogWarn("盘齿型号加载失败: " + ex.Message + "，使用内存默认三型号");
                 return builtIn;
             }
         }

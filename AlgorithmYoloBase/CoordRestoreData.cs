@@ -2,10 +2,10 @@
 
 namespace AlgorithmYoloBase
 {
-    /// <summary>【重构方案R1-注释】Det 轴对齐框坐标还原。两个构造禁止合成（构造1 Value=0，构造2 Value=Score）。</summary>
+    ///Det 轴对齐框坐标还原。两个构造禁止合成（构造1 Value=0，构造2 Value=Score）
     public struct CoordRestoreData
     {
-        /// <summary>【重构方案R1-注释】盘齿/曲轴：X += orgx + imgWidth * imgIndex；Value = 0。</summary>
+        ///盘齿/曲轴：X += orgx + imgWidth * imgIndex；Value = 0
         public CoordRestoreData(int imgWidth, int imgIndex, int orgx, int orgy,
             string labelstr, DetData det, int showinview = 0)
         {
@@ -31,7 +31,7 @@ namespace AlgorithmYoloBase
             ShowInView = showinview;
         }
 
-        /// <summary>【重构方案R1-注释】新兴：mosaic 公式；Infer 现状 mosaic2x2=false；Value = Score。</summary>
+        /// 新兴：mosaic 公式；Infer 现状 mosaic2x2=false；Value = Score
         public CoordRestoreData(int imgWidth, int imgHeight, int imgIndex, int orgx, int orgy,
             string labelstr, DetData det, bool mosaic2x2, int showinview = 0)
         {
