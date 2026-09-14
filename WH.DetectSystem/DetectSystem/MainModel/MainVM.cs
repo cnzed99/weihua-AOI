@@ -833,6 +833,8 @@ namespace WH.DetectSystem.Models
                             if (!isAutomaticTest)
                             {
                                 MaociAlgorParamConfig.MaociExcute(cell);
+                                // 【方案7.1-注释】离线评测：合并前按张过滤记账；拉链不进。
+                                TryRecordOfflineSampleEval(cell);
                             }
                             else if (COpenProjectLine.IsZipper)
                             {

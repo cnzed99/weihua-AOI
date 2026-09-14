@@ -19,6 +19,7 @@ using CommunicationModule;
 using HandyControl.Controls;
 using Microsoft.Win32;
 using WH.DetectSystem.Models;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
@@ -247,6 +248,7 @@ namespace 断面毛刺检测软件.Views
             waitSignal.Set();
 
             CancelToken = new CancellationTokenSource();
+            TryBeginOfflineSampleEval();
             Task task = Task.Run(
                 () =>
                 {
@@ -275,6 +277,7 @@ namespace 断面毛刺检测软件.Views
                 CancelToken.Token
             );
             await task;
+            TryFinishOfflineSampleEval();
             EnableButtons();
             task.Dispose();
         }
@@ -286,6 +289,7 @@ namespace 断面毛刺检测软件.Views
             Stop = false;
             waitSignal.Set();
             CancelToken = new CancellationTokenSource();
+            TryBeginOfflineSampleEval();
             await Task.Run(
                     () =>
                     {
@@ -332,6 +336,7 @@ namespace 断面毛刺检测软件.Views
                 {
                     sysLog.Info(@"循环遍历已取消！");
                 });
+            TryFinishOfflineSampleEval();
             EnableButtons();
         }
 
@@ -357,11 +362,8 @@ namespace 断面毛刺检测软件.Views
                         for (int i = 0; i < Allfiles.Length; i++)
                         {
                             string filename = Path.GetFileName(Allfiles[i]);
-                            string[] strsplit = filename.Split('_');
-                            if (strsplit.Length > 2)
+                            if (TryGetOfflineImportIdAndIndex(filename, out string pid, out string pindex))
                             {
-                                string pid = strsplit[0];
-                                string pindex = strsplit[1];
                                 string filepath = Allfiles[i];
                                 Cell cell = new Cell()
                                 {
@@ -402,11 +404,8 @@ namespace 断面毛刺检测软件.Views
                         if (File.Exists(imgFiles[ImgIndex]))
                         {
                             string filename = Path.GetFileName(imgFiles[ImgIndex]);
-                            string[] strsplit = filename.Split('_');
-                            if (strsplit.Length > 2)
+                            if (TryGetOfflineImportIdAndIndex(filename, out string pid, out string pindex))
                             {
-                                string pid = strsplit[0];
-                                string pindex = strsplit[1];
                                 Cell cell = new Cell()
                                 {
                                     ID = pid,
@@ -453,6 +452,7 @@ namespace 断面毛刺检测软件.Views
         private void BtnStopOffLine_Click(object sender, RoutedEventArgs e)
         {
             Stop = true;
+            TryFinishOfflineSampleEval();
             EnableButtons();
             // DetectProgress.Value = 0;
         }
@@ -604,6 +604,58 @@ namespace 断面毛刺检测软件.Views
             }
         }
 
+
+        void TryBeginOfflineSampleEval()
+        {
+            MMainVM?.BeginOfflineSampleEval();
+        }
+
+        void TryFinishOfflineSampleEval()
+        {
+            MMainVM?.FinishOfflineSampleEval();
+        }
+
+        /// <summary>【方案7.1-注释】后做产线剥评测前缀后再按方案0.4取 ID/张号；拉链不剥。</summary>
+        static bool TryGetOfflineImportIdAndIndex(string filename, out string pid, out string pindex)
+        {
+            pid = null;
+            pindex = null;
+            if (string.IsNullOrEmpty(filename))
+            {
+                return false;
+            }
+
+            string fileName = Path.GetFileName(filename);
+            if (COpenProjectLine.UsesOfflineSampleEval
+                && OfflineSampleEval.TryStripEvalPrefix(fileName, out string rest)
+                && !string.IsNullOrEmpty(rest))
+            {
+                string noExt = Path.GetFileNameWithoutExtension(rest);
+                if (!string.IsNullOrEmpty(noExt))
+                {
+                    string[] parts = noExt.Split('_');
+                    if (parts.Length >= 2
+                        && !string.IsNullOrEmpty(parts[0])
+                        && int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                    {
+                        pid = parts[0];
+                        pindex = parts[1];
+                        return true;
+                    }
+                }
+                // 【方案7.1-注释】剥完不像0.4则整名走原规则
+            }
+
+            string[] strsplit = fileName.Split('_');
+            if (strsplit.Length > 2)
+            {
+                pid = strsplit[0];
+                pindex = strsplit[1];
+                return true;
+            }
+
+            return false;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

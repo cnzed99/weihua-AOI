@@ -66,6 +66,9 @@ namespace WH.DetectSystem.DetectSystem.MainModel
 
         public static bool IsXinGear => Kind == OpenProjectLineKind.XinGear;
 
+        /// 离线评测：后做产线共用，拉链除外
+        public static bool UsesOfflineSampleEval => IsGear || IsXinGear || IsCrank;
+
         /// <summary>
         /// 冲突返回 false，不修改 Kind。成功时写出 kind，由 OpenProj 提交后再赋 Kind。
         /// </summary>
