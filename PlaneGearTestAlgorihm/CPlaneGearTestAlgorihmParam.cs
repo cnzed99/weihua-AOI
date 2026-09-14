@@ -17,11 +17,6 @@ namespace PlaneGearTestAlgorihm
     {
         public const string SpeciesAppearance = "外观";
 
-        public static readonly string[] FrozenDefectNames =
-        {
-            "毛刺", "飞边", "锈蚀", "碰伤", "压伤", "氧化",
-        };
-
         protected override string LogTag => "【新兴盘齿方案】";
 
         protected override string PluginFolderName => "PlaneGearTestAlgorihm";
@@ -97,7 +92,7 @@ namespace PlaneGearTestAlgorihm
                 .SelectMany(pattern => Directory.GetFiles(Dirpath, pattern, SearchOption.TopDirectoryOnly))
                 .ToList();
 
-            var classNames = Directory.GetFiles(Dirpath, "*.txt", SearchOption.TopDirectoryOnly);
+            var classNames = Directory.GetFiles(Dirpath, "classes.txt", SearchOption.TopDirectoryOnly);
             if (files.Count > 0 && classNames.Length > 0)
             {
                 string model_Path = files[0];
@@ -163,18 +158,29 @@ namespace PlaneGearTestAlgorihm
         }
 
         /// <summary>
-        /// 配方永远 6 名，不依赖 classes.txt。Category=区域，Type=外观。
+        /// Appearance from current process classes.txt (class_names). No geometry.
         /// </summary>
         protected override void SetDefectRecipe(string processName)
         {
             DefectSpecies = new List<CDefectSpecies>();
             var yolo = new List<CDefectRecipe>();
-            foreach (string name in FrozenDefectNames)
+            if (class_names != null)
             {
-                yolo.Add(new CDefectRecipe(name, Category.区域));
+                for (int i = 0; i < class_names.Length; i++)
+                {
+                    string name = class_names[i];
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        continue;
+                    }
+                    yolo.Add(new CDefectRecipe(name, Category.区域));
+                }
             }
 
-            DefectSpecies.Add(new CDefectSpecies(SpeciesAppearance, yolo));
+            if (yolo.Count > 0)
+            {
+                DefectSpecies.Add(new CDefectSpecies(SpeciesAppearance, yolo));
+            }
         }
     }
 
