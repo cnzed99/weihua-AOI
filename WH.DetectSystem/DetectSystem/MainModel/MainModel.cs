@@ -9,6 +9,8 @@ using Motion;
 using Newtonsoft.Json;
 using ProjProduceData;
 using SDFilter;
+using System.Collections.ObjectModel;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.Entity;
 using WH.Entity.CommonLib;
 
@@ -58,6 +60,97 @@ namespace WH.DetectSystem.Models
         [ObservableProperty]
         [JsonProperty]
         private string name = "检测制程";
+
+        /// <summary>
+        /// 该制程每件应收图张数 N
+        /// </summary>
+        [JsonProperty]
+        private int photoTotalCount = 1;
+
+        [JsonIgnore]
+        public int PhotoTotalCount
+        {
+            get => photoTotalCount <= 0 ? 1 : photoTotalCount;
+            set
+            {
+                SetProperty(ref photoTotalCount, value);
+            }
+        }
+
+        //制程级副窗列表，随工程保存；不进 SystemSetting.Json。旧工程缺字段保持空集合=不含副窗
+        [ObservableProperty]
+        [JsonProperty]
+        ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
+
+        [JsonIgnore]
+        public int GridRow
+        {
+            get
+            {
+                return Name switch
+                {
+                    "下端面" => 1,
+                    "上齿面" => 0,
+                    "内孔" => 0,
+                    "上端面" => 0,
+                    "整轴侧面" => 1,
+                    "上轴侧面" => 2,
+                    "下轴侧面" => 2,
+                    "端面" => 0,
+                    "杆面" => 0,
+                    "底部光滑面" => 1,
+                    "底盘侧面" => 1,
+                    "顶面" => 2,
+                    "底面" => 2,
+                    _ => 0,
+                };
+            }
+        }
+
+        [JsonIgnore]
+        public int GridCol
+        {
+            get
+            {
+                return Name switch
+                {
+                    "下端面" => 0,
+                    "上齿面" => 1,
+                    "内孔" => 2,
+                    "上端面" => 0,
+                    "整轴侧面" => 1,
+                    "上轴侧面" => 0,
+                    "下轴侧面" => 2,
+                    "端面" => 0,
+                    "杆面" => 1,
+                    "底部光滑面" => 0,
+                    "底盘侧面" => 1,
+                    "顶面" => 0,
+                    "底面" => 2,
+                    _ => 0,
+                };
+            }
+        }
+
+        [JsonIgnore]
+        public int GridColSpan
+        {
+            get
+            {
+                return Name switch
+                {
+                    "内孔" => 2,
+                    "整轴侧面" => 3,
+                    "上轴侧面" => 2,
+                    "下轴侧面" => 2,
+                    "杆面" => 3,
+                    "底盘侧面" => 3,
+                    "顶面" => 2,
+                    "底面" => 2,
+                    _ => 1,
+                };
+            }
+        }
 
         [ObservableProperty]
         [JsonProperty]

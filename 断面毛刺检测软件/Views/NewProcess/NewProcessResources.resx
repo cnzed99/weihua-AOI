@@ -127,4 +127,10 @@
   <data name="Motion" xml:space="preserve">
     <value>控制：</value>
   </data>
+  <data name="HasSubWindow" xml:space="preserve">
+    <value>含副窗</value>
+  </data>
+  <data name="SubWindowName" xml:space="preserve">
+    <value>副窗名称</value>
+  </data>
 </root>

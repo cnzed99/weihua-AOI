@@ -144,6 +144,23 @@ namespace Modbus
             }
         }
 
+        public void SetTransportTimeoutAndRetries(int timeoutMs, int retries)
+        {
+            try
+            {
+                if (master == null || master.Transport == null)
+                {
+                    return;
+                }
+                master.Transport.ReadTimeout = timeoutMs;
+                master.Transport.WriteTimeout = timeoutMs;
+                master.Transport.Retries = retries;
+            }
+            catch
+            {
+            }
+        }
+
         /// <summary>
         /// 2024.7.21 李焕彬
         /// 关闭

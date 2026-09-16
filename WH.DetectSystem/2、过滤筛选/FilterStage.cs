@@ -251,6 +251,7 @@ namespace WH.DetectSystem
                                         );
                                     }
                                 }
+                                CFilterConfig.RefreshHeaderDisplayValue(de);
                             }
                             break;
 
@@ -340,25 +341,29 @@ namespace WH.DetectSystem
                                         //break;//不在这里break，还需要把上一次的排在后面的过滤分选器重置为true，否则NG状态一直未变
                                     }
                                 }
+                                if (detection.Value == null)
+                                {
+                                    detection.Value = new();
+                                }
+                                int listed = detection.Value.Count;
+                                int targetRows = listed > 1 ? listed : 1;
+                                if (listed <= 1)
+                                {
+                                    int existing = CFilterConfig.CountValueRows(de);
+                                    if (existing > 1)
+                                    {
+                                        targetRows = existing;
+                                    }
+                                }
+                                CFilterConfig.EnsureValueFeatureResultRows(de, targetRows);
+                                CFilterConfig.FillValueFeatureResultRows(de, detection.Value);
                                 foreach (var item in de.ResultList)
                                 {
-                                    if (item.Feature == CFeacture.FeactureCount)
-                                    {
-                                        item.Value = detection.Value.Count;
-                                    }
-                                    else
-                                    {
-                                        item.Value =
-                                            detection.Value.Count > 0 ? detection.Value.Max() : 0;
-                                    }
                                     detection.DetectLog.Add(
                                         new StringBuilder(
                                             $"{item.Feature.GetName()}:{item.Value:F2}"
                                         )
                                     );
-                                    //detection.DetectLog.AppendLine(
-                                    //    $"{item.Feature.GetName()}:{item.Value:F2}"
-                                    //);
                                 }
                             }
                             break;

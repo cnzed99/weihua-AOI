@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
 using WH.Entity.CommonLib;
@@ -117,30 +118,16 @@ namespace WH.DetectSystem.Models
                 MySqlVM.MysqlExecute.Clone(MysqlBLL);
                 NameUpdata();
             };
-            //20260506 鲍赞宝
-            if (Name == "制程组1")
-            {
-                IDCreate = new CCreateIDMetalStation1();
-                IDCreate.IntThread();
-                IDCreate.IDSendEvent += IDSend;
-            }
-            //else if (Name== "制程组3")
-            //{
-            //    IDCreate = new CCreateIDStationUpMass();
-            //}
-            //else
-            //{
-            //    IDCreate = new CCreateIDStation3();
-            //}
+            // zipper group-1 ID poller; gear does not subscribe WaitIDChannel
+            StartZipperIdThread();
         }
-        /// <summary>
-        /// 分配ID给各个制程 
-        /// 20260506 鲍赞宝
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="zipperID"></param>
         private async void IDSend(object sender, ZipperID zipperID)
         {
+            //拉链 ID 通道只给拉链工程写
+            if (!COpenProjectLine.IsZipper)
+            {
+                return;
+            }
             try
             {
                 foreach (var item in CMainModels)
