@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CamPlugOutput>$(MSBuildThisFileDirectory)..\断面毛刺检测软件\bin\$(Configuration)\$(TargetFramework)\CamPlug\HuarayCam\</CamPlugOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CameraModule\CameraModule.csproj" />
+    <Reference Include="MVSDK_Net">
+      <HintPath>..\packages\ThirdLocalDll\MVSDK_Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CamPlugOutput)" />
+    <Copy SourceFiles="$(TargetDir)MVSDK_Net.dll" DestinationFolder="$(CamPlugOutput)" />
+  </Target>
+</Project>

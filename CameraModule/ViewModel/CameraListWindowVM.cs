@@ -40,6 +40,25 @@ namespace CameraModule
                     );
                 }
             }
+
+            var overlappingDevices = CameraInfos
+                .Where(info => info.PlugName == "DaHuaCam" || info.PlugName == "HuarayCam")
+                .GroupBy(info => info.SerialNumber)
+                .Where(group => group.Any(info => info.PlugName == "DaHuaCam")
+                    && group.Any(info => info.PlugName == "HuarayCam"))
+                .ToList();
+            foreach (var group in overlappingDevices)
+            {
+                string preferred = CCameraManagement.CamParamDict.TryGetValue(
+                    group.Key, out var saved)
+                    && saved.CameraSupplier == "DaHuaCam"
+                    ? "DaHuaCam"
+                    : "HuarayCam";
+                foreach (var duplicate in group.Where(info => info.PlugName != preferred).ToList())
+                {
+                    CameraInfos.Remove(duplicate);
+                }
+            }
         }
 
         /// <summary>
