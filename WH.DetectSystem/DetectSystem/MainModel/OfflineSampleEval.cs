@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -13,6 +14,8 @@ namespace WH.DetectSystem.Models
         readonly object _lock = new object();
         readonly DefectStat _ok = new DefectStat();
         readonly DefectStat _ng = new DefectStat();
+        readonly HashSet<string> _fnFiles = new HashSet<string>();
+        readonly HashSet<string> _fpFiles = new HashSet<string>();
         int _total;
         int _skipped;
 
@@ -27,6 +30,8 @@ namespace WH.DetectSystem.Models
                 _skipped = 0;
                 _ok.Clear();
                 _ng.Clear();
+                _fnFiles.Clear();
+                _fpFiles.Clear();
             }
         }
 
@@ -73,6 +78,7 @@ namespace WH.DetectSystem.Models
             }
 
             bool hit = HasAnyNg(filteredCell);
+            string fileName = Path.GetFileName(sourceCell.ImageFile);
             lock (_lock)
             {
                 if (!IsRunning)
@@ -91,6 +97,7 @@ namespace WH.DetectSystem.Models
                     else
                     {
                         stat.Fn++;
+                        if (!string.IsNullOrEmpty(fileName)) { _fnFiles.Add(fileName); }
                     }
                 }
                 else
@@ -98,6 +105,7 @@ namespace WH.DetectSystem.Models
                     if (hit)
                     {
                         stat.Fp++;
+                        if (!string.IsNullOrEmpty(fileName)) { _fpFiles.Add(fileName); }
                     }
                     else
                     {
@@ -249,9 +257,30 @@ namespace WH.DetectSystem.Models
                 sb.Append(" 无OK前缀，误判率未测");
             }
 
+            AppendFileList(sb, "漏检", _fnFiles);
+            AppendFileList(sb, "误判", _fpFiles);
+
             return sb.ToString();
         }
 
+        static void AppendFileList(StringBuilder sb, string title, HashSet<string> files)
+        {
+            sb.AppendLine();
+            sb.Append("  ").Append(title).Append(" ").Append(files.Count).Append("张:");
+            if (files.Count == 0)
+            {
+                sb.Append(" 无");
+                return;
+            }
+
+            int i = 0;
+            foreach (string name in files)
+            {
+                i++;
+                sb.AppendLine();
+                sb.Append("    ").Append(i).Append(". ").Append(name);
+            }
+        }
         static string FormatStat(DefectStat s)
         {
             return "真NG=" + (s.Tp + s.Fn)
