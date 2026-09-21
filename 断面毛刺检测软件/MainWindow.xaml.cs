@@ -40,6 +40,7 @@ using CrankInfo;
 using XinGearInfo;
 using 断面毛刺检测软件.Views;
 using 断面毛刺检测软件.Views.GearProduct;
+using 断面毛刺检测软件.Views.XinGearProduct;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 断面毛刺检测软件
@@ -172,9 +173,10 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-                //两套面板都创建，Visibility 由 ApplyOpenProjectLineUi 按工程切换
+                //面板只创建一次，Visibility 由 ApplyOpenProjectLineUi 按工程切换
                 zipperInfoShow.DataContext = new ZipperInfoVM();
                 gearProductShow.DataContext = new GearProductVM();
+                xinGearProductShow.DataContext = new XinGearProductVM();
                 ApplyOpenProjectLineUi();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
@@ -234,6 +236,10 @@ namespace 断面毛刺检测软件
             if (gearProductBorder != null)
             {
                 gearProductBorder.Visibility = COpenProjectLine.IsGear ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (xinGearProductBorder != null)
+            {
+                xinGearProductBorder.Visibility = COpenProjectLine.IsXinGear ? Visibility.Visible : Visibility.Collapsed;
             }
             if (Btn_TestStart != null)
             {
@@ -694,6 +700,11 @@ namespace 断面毛刺检测软件
                 {
                     progress.Report("Loaded!");
                     return;
+                }
+                if (COpenProjectLine.IsXinGear
+                    && xinGearProductShow.DataContext is XinGearProductVM xinGearProductVM)
+                {
+                    xinGearProductVM.ReloadFromCatalog();
                 }
                 ApplyOpenProjectLineUi();
                 if (CMainList.CMainMModel?.CProcessGroups != null

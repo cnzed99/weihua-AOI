@@ -24,6 +24,7 @@
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     xmlns:zipper="clr-namespace:ZipperInfo;assembly=ZipperInfo"
     xmlns:gear="clr-namespace:断面毛刺检测软件.Views.GearProduct"
+    xmlns:xinGearProduct="clr-namespace:断面毛刺检测软件.Views.XinGearProduct"
     Title=""
     Width="1400"
     Height="850"
@@ -988,6 +989,9 @@
                         </Border>
                         <Border x:Name="gearProductBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
                             <gear:GearProductUserControl x:Name="gearProductShow"/>
+                        </Border>
+                        <Border x:Name="xinGearProductBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
+                            <xinGearProduct:XinGearProductUserControl x:Name="xinGearProductShow"/>
                         </Border>
 
                     </Grid>
