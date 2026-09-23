@@ -8,12 +8,18 @@ using WH.Entity.LogRecord;
 
 namespace XinGearInfo
 {
-    /// <summary>现场新兴盘齿型号。齿数只用于物料展示，当前不改变拍照张数。</summary>
+    /// <summary>现场新兴盘齿型号及侧面拍照配方。</summary>
     public class CXinGearProductModel
     {
         public string Id { get; set; }
 
         public int ToothCount { get; set; }
+
+        // 旧目录没有此字段时，以齿数作为侧面张数。
+        public int? SidePhotoCount { get; set; }
+
+        [JsonIgnore]
+        public int EffectiveSidePhotoCount => SidePhotoCount ?? ToothCount;
     }
 
     /// <summary>型号目录与最近选择分开存储，不依赖 .burrproj 或富川 GearInfo。</summary>
@@ -37,7 +43,7 @@ namespace XinGearInfo
                 var catalog = JsonConvert.DeserializeObject<CXinGearProductCatalog>(File.ReadAllText(path));
                 if (!IsValid(catalog))
                 {
-                    throw new InvalidDataException("型号目录必须包含非空且不重复的型号 ID，以及大于 0 的齿数");
+                    throw new InvalidDataException("型号目录必须包含非空且不重复的型号 ID，以及大于 0 的齿数和侧面拍照张数");
                 }
 
                 return catalog;
@@ -108,7 +114,7 @@ namespace XinGearInfo
         {
             return catalog?.Models != null
                 && catalog.Models.Count > 0
-                && catalog.Models.All(m => m != null && !string.IsNullOrWhiteSpace(m.Id) && m.ToothCount > 0)
+                && catalog.Models.All(m => m != null && !string.IsNullOrWhiteSpace(m.Id) && m.ToothCount > 0 && m.EffectiveSidePhotoCount > 0)
                 && catalog.Models.Select(m => m.Id).Distinct(StringComparer.Ordinal).Count() == catalog.Models.Count;
         }
 

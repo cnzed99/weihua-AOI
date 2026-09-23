@@ -508,5 +508,27 @@ namespace Modbus
                 Growl.Error(ex.Message + ex.StackTrace);
             }
         }
+        /// <summary>需要确认写入结果的配方张数调用。现有 void 接口保持兼容。</summary>
+        public bool TryWriteSingleRegisterInt32(ushort registerAddress, Int32 value)
+        {
+            try
+            {
+                if (tcpClient == null || !tcpClient.Connected || master == null)
+                    return false;
+                byte[] bytes = BitConverter.GetBytes(value);
+                ushort[] data =
+                {
+                    (ushort)((bytes[1] << 8) + bytes[0]),
+                    (ushort)((bytes[3] << 8) + bytes[2])
+                };
+                master.WriteMultipleRegisters(slaveAddress, registerAddress, data);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Error(ex.Message);
+                return false;
+            }
+        }
     }
 }

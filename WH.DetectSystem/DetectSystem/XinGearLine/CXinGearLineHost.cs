@@ -22,36 +22,23 @@ namespace WH.DetectSystem.DetectSystem.XinGearLine
 
         public static void Attach()
         {
-            CXinGearCommunicate.com = CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
+            CXinGearCommunicate.com = CCommunicationManagement.CommDic.Values.OfType<CModbusCommPart>().FirstOrDefault();
             CXinGearCommunicate.OnComAttached();
         }
 
-        /// <summary>
-        ///  开工程成功后按制程 Name 收集 PhotoTotalCount，写一次 HD1200 三路。
-        /// </summary>
-        public static void SendLoadedRecipePhotoCount(IList<CMainModel> mainVms, CLogRec sysLog)
+        /// <summary>打开新兴工程后按制程下发固定端面张数和型号侧面张数。</summary>
+        public static bool SendLoadedRecipePhotoCount(IList<CMainModel> mainVms, CLogRec sysLog)
         {
-            if (mainVms == null || mainVms.Count == 0)
+            int sideCount = mainVms?.FirstOrDefault(vm => vm?.Name == "侧面")?.PhotoTotalCount ?? 0;
+            if (sideCount <= 0)
             {
-                return;
+                sysLog?.Warn("侧面制程或拍照张数缺失");
+                return false;
             }
-            List<(string processName, int photoTotalCount)> processes = new List<(string, int)>(mainVms.Count);
-            foreach (var vm in mainVms)
-            {
-                if (vm == null || string.IsNullOrEmpty(vm.Name))
-                {
-                    continue;
-                }
-                processes.Add((vm.Name, vm.PhotoTotalCount));
-            }
-            try
-            {
-                CXinGearCommunicate.SendRecipePhotoCount(processes);
-            }
-            catch (Exception ex)
-            {
-                sysLog?.Warn("配方张数下发失败: " + ex.Message);
-            }
+            if (CXinGearCommunicate.TrySendRecipePhotoCount(sideCount, out string error))
+                return true;
+            sysLog?.Warn("配方张数下发失败: " + error);
+            return false;
         }
     }
 }

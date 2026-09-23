@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using XinGearInfo;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
+using WH.DetectSystem.ViewModels;
 using SDFilter;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -17,13 +18,135 @@ using WH.RunCell;
 namespace WH.DetectSystem.Models
 {
     /// <summary>
-    /// 新兴制程运行时：取图绑 ID、XinGearImages 分张、侧面 2x3、组结果回写。
+    /// 新兴制程运行时：取图绑 ID、XinGearImages 分张、侧面按型号分格及拼图、组结果回写。
     /// 与 MainVM 同为 CMainModel 部分类；复用盘齿私有字段 _lastBoundProductId / _photoCounter。
     /// </summary>
     public partial class CMainModel
     {
-        private Cell _lastXinGearShotCell;
+        private Cell _xinGearFilterPreviewCell;
         private ObservableCollection<XinGearShotTileVM> _shotTiles;
+        private readonly object _xinGearPhotoCountLock = new object();
+        private int _activeXinGearPhotoCount;
+        private int _pendingXinGearPhotoCount;
+        private int _switchAfterXinGearId;
+        private readonly Dictionary<int, Cell> _xinGearLiveShotCells = new Dictionary<int, Cell>();
+        private string _xinGearLiveProductId;
+
+        public int XinGearShotColumns => Math.Min(PhotoTotalCount,
+            Math.Max(3, (int)Math.Ceiling(Math.Sqrt(PhotoTotalCount * 1.5))));
+
+        private static int GetXinGearMosaicColumns(int count) =>
+            count <= 6 ? 2 : (int)Math.Ceiling(Math.Sqrt(count));
+
+        private bool UseXinGearProgressiveShotDisplay =>
+            COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2];
+
+        public void InitializeXinGearPhotoCount(int count)
+        {
+            lock (_xinGearPhotoCountLock)
+            {
+                _activeXinGearPhotoCount = count;
+                _pendingXinGearPhotoCount = 0;
+                _switchAfterXinGearId = 0;
+            }
+            PhotoTotalCount = count;
+        }
+
+        public void QueueXinGearPhotoCount(int count, int currentId, bool defer)
+        {
+            bool applyImmediately;
+            lock (_xinGearPhotoCountLock)
+            {
+                if (defer && currentId > 0)
+                {
+                    // 运行中只记录下一件张数；当前件继续使用旧格数和旧显示。
+                    _pendingXinGearPhotoCount = count;
+                    _switchAfterXinGearId = currentId;
+                    applyImmediately = false;
+                }
+                else
+                {
+                    _activeXinGearPhotoCount = count;
+                    _pendingXinGearPhotoCount = 0;
+                    _switchAfterXinGearId = 0;
+                    applyImmediately = true;
+                }
+            }
+
+            if (applyImmediately)
+            {
+                ResetXinGearShotTiles(null, count, true);
+            }
+        }
+
+        private bool ShouldDisplayXinGearCell(Cell cell)
+        {
+            if (cell == null)
+            {
+                return false;
+            }
+            return !UseXinGearProgressiveShotDisplay
+                || !IsStart
+                || string.Equals(cell.ID, _lastBoundProductId, StringComparison.Ordinal);
+        }
+
+        private static void ClearXinGearShotTile(XinGearShotTileVM tileVm)
+        {
+            if (tileVm == null)
+            {
+                return;
+            }
+            tileVm.ModelImage = null;
+            if (tileVm.CurView == null)
+            {
+                return;
+            }
+            // ImageView 的 Source=null 不会主动清内部底图，必须显式置空。
+            tileVm.CurView.UpdateImg(null);
+            tileVm.CurView.Clear();
+        }
+
+        /// <summary>
+        /// 停机切型或新产品 ID 到达时，原子切换格数并清除上一件逐格画面。
+        /// </summary>
+        private void ResetXinGearShotTiles(string productID, int photoCount, bool resetSelection)
+        {
+            if (!UseXinGearProgressiveShotDisplay)
+            {
+                return;
+            }
+
+            Action clearAction = () =>
+            {
+                _xinGearFilterPreviewCell = null;
+                _xinGearLiveShotCells.Clear();
+                _xinGearLiveProductId = productID;
+                bool countChanged = photoCount > 0 && PhotoTotalCount != photoCount;
+                if (resetSelection || countChanged)
+                {
+                    _xinGearFilterPreviewPhotoIndex = 1;
+                }
+                if (countChanged)
+                {
+                    PhotoTotalCount = photoCount;
+                }
+                foreach (XinGearShotTileVM tileVm in ShotTiles)
+                {
+                    ClearXinGearShotTile(tileVm);
+                }
+                ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex);
+            };
+
+            var dispatcher = CMainModelsModelVM.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                clearAction();
+            }
+            else
+            {
+                dispatcher.Invoke(clearAction);
+            }
+        }
 
         /// <summary>
         /// 页2 侧面分格（张数=本制程 PhotoTotalCount）。不进 .burrproj。
@@ -58,9 +181,13 @@ namespace WH.DetectSystem.Models
                 XinGearShotTileVM tile = new XinGearShotTileVM(i);
                 tile.WhenViewReady = vm =>
                 {
-                    if (_lastXinGearShotCell != null)
+                    if (_xinGearLiveShotCells.TryGetValue(vm.PhotoIndex, out Cell liveCell))
                     {
-                        DrawXinGearShotTile(vm, _lastXinGearShotCell);
+                        DrawXinGearLiveShotTile(vm, liveCell);
+                    }
+                    else
+                    {
+                        ClearXinGearShotTile(vm);
                     }
                 };
                 _shotTiles.Add(tile);
@@ -79,6 +206,7 @@ namespace WH.DetectSystem.Models
                 return;
             }
             RebuildXinGearShotTiles();
+            OnPropertyChanged(nameof(XinGearShotColumns));
         }
 
         /// <summary>
@@ -90,20 +218,34 @@ namespace WH.DetectSystem.Models
             int id = CXinGearCommunicate.GetProductID();
             string productID = id > 0 ? id.ToString(CultureInfo.InvariantCulture) : "0";
 
+            int expectedCount;
+            int previousCount;
+            lock (_xinGearPhotoCountLock)
+            {
+                previousCount = _activeXinGearPhotoCount > 0 ? _activeXinGearPhotoCount : PhotoTotalCount;
+                if (productID != _lastBoundProductId && _pendingXinGearPhotoCount > 0
+                    && id > _switchAfterXinGearId)
+                {
+                    _activeXinGearPhotoCount = _pendingXinGearPhotoCount;
+                    _pendingXinGearPhotoCount = 0;
+                }
+                expectedCount = _activeXinGearPhotoCount > 0 ? _activeXinGearPhotoCount : PhotoTotalCount;
+            }
             if (productID != _lastBoundProductId)
             {
-                if (_photoCounter > 0 && _photoCounter < this.PhotoTotalCount)
+                if (_photoCounter > 0 && _photoCounter < previousCount)
                 {
-                    SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{this.PhotoTotalCount}");
+                    SysLog.Warn($"{Name}-残图告警：制程/{_lastBoundProductId}/已收{_photoCounter}/应收{previousCount}");
                 }
                 _photoCounter = 0;
                 _lastBoundProductId = productID;
+                ResetXinGearShotTiles(productID, expectedCount, false);
             }
 
             _photoCounter++;
             cell.ID = productID;
             cell.PhotoIndex = _photoCounter;
-            cell.PhotoTatolCount = this.PhotoTotalCount;
+            cell.PhotoTatolCount = expectedCount;
 
             if (_photoCounter > cell.PhotoTatolCount)
             {
@@ -140,7 +282,7 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
-        /// 侧面 6 张按 PhotoIndex 1..6 拼 2 列 3 行。缺张留黑。
+        /// 侧面按本件张数拼图；原六张配方继续使用 2 列 3 行。缺张留黑。
         /// </summary>
         private unsafe CImage GetMergeImage2x2(List<Cell> cells)
         {
@@ -161,8 +303,9 @@ namespace WH.DetectSystem.Models
                 return null;
             }
 
-            int cols = 2;
-            int rows = (this.PhotoTotalCount + cols - 1) / cols;
+            int count = cells[0].PhotoTatolCount > 0 ? cells[0].PhotoTatolCount : cells.Count;
+            int cols = GetXinGearMosaicColumns(count);
+            int rows = (count + cols - 1) / cols;
             int dstW = tileW * cols;
             int dstH = tileH * rows;
             int dstStride = dstW * bytesPerPixel;
@@ -171,7 +314,7 @@ namespace WH.DetectSystem.Models
             try
             {
                 new Span<byte>((void*)dstPtr, dstSize).Clear();
-                for (int photo = 1; photo <= this.PhotoTotalCount; photo++)
+                for (int photo = 1; photo <= count; photo++)
                 {
                     Cell srcCell = null;
                     for (int i = 0; i < cells.Count; i++)
@@ -253,59 +396,107 @@ namespace WH.DetectSystem.Models
             return new SRegion(src.regionInfo, pts);
         }
 
-        /// <summary>
-        /// 仅新兴：按 PhotoIndex 把图内框平移到 2 列 3 行。
-        /// </summary>
-        private void OffsetXinGearCellDetectionsTo2x2(List<Cell> cells)
+        private static List<SRegion> CreateXinGearOffsetRegions(Cell source, CellDetection detection)
         {
-            if (cells == null)
+            List<SRegion> regions = new List<SRegion>();
+            if (source == null || detection?.regionOut == null)
             {
-                return;
+                return regions;
             }
-            foreach (Cell src in cells)
+            int idx = Math.Max(0, source.PhotoIndex - 1);
+            int cols = GetXinGearMosaicColumns(source.PhotoTatolCount);
+            int w = source.Image?.ImageWidth ?? 0;
+            int h = source.Image?.ImageHeight ?? 0;
+            double dx = (idx % cols) * w;
+            double dy = (idx / cols) * h;
+            foreach (SRegion region in detection.regionOut)
             {
-                int idx = src.PhotoIndex - 1;
-                if (idx < 0)
-                {
-                    idx = 0;
-                }
-                int col = idx % 2;
-                int row = idx / 2;
-                int w = src.Image?.ImageWidth ?? 0;
-                int h = src.Image?.ImageHeight ?? 0;
-                double dx = col * w;
-                double dy = row * h;
-                if ((dx == 0 && dy == 0) || src.AlgorithmOut == null)
-                {
-                    continue;
-                }
-                foreach (CellDetection det in src.AlgorithmOut)
-                {
-                    if (det.regionOut == null)
-                    {
-                        continue;
-                    }
-                    List<SRegion> regions = new List<SRegion>();
-                    foreach (SRegion region in det.regionOut)
-                    {
-                        regions.Add(OffsetSRegion(region, dx, dy));
-                    }
-                    det.regionOut = regions;
-                }
+                regions.Add(OffsetSRegion(region, dx, dy));
             }
+            return regions;
         }
 
         /// <summary>
-        /// 页2 六格：原图 + 图内框。CurView 晚到时用 _lastXinGearShotCell 补画。
+        /// 仅为合并 Cell 创建拼图坐标副本，不修改逐张 Cell 的局部坐标。
+        /// </summary>
+        private static List<CellDetection> CreateXinGearMergedAlgorithmOut(List<Cell> cells)
+        {
+            if (cells == null)
+            {
+                return new List<CellDetection>();
+            }
+            return cells
+                .Where(source => source?.AlgorithmOut != null)
+                .SelectMany(source => source.AlgorithmOut.Select(detection => (source, detection)))
+                .GroupBy(item => item.detection.RecipeDefectName)
+                .Select(group => new CellDetection
+                {
+                    RecipeDefectName = group.Key,
+                    regionOut = group.SelectMany(item =>
+                        CreateXinGearOffsetRegions(item.source, item.detection)).ToList(),
+                    Category = group.First().detection.Category,
+                    Value = group.SelectMany(item => item.detection.Value).ToList(),
+                    Type = group.First().detection.Type,
+                    Index = group.Max(item => item.detection.Index),
+                    ShowInView = group.Max(item => item.detection.ShowInView)
+                })
+                .ToList();
+        }
+
+        /// <summary>
+        /// 新兴侧面逐张预览：算法每完成一张就按 PhotoIndex 刷新一格，不等待整件 Merge。
+        /// 这里只负责显示；整件 Filter/PLC/存图仍在收齐后沿用公共 Merge 流程。
+        /// </summary>
+        private void RefreshXinGearCurrentShotTiles(IReadOnlyList<Cell> currentCells)
+        {
+            if (!UseXinGearProgressiveShotDisplay || currentCells == null || currentCells.Count == 0)
+            {
+                return;
+            }
+
+            Cell latest = currentCells[currentCells.Count - 1];
+            if (!ShouldDisplayXinGearCell(latest))
+            {
+                return;
+            }
+            // 新 ID 已在取图线程绑定后，迟到的旧件算法结果不得恢复上一件画面。
+            if (!string.Equals(latest.ID, _lastBoundProductId, StringComparison.Ordinal))
+            {
+                return;
+            }
+            if (!string.Equals(_xinGearLiveProductId, latest.ID, StringComparison.Ordinal))
+            {
+                _xinGearLiveShotCells.Clear();
+                _xinGearLiveProductId = latest.ID;
+                _xinGearFilterPreviewCell = null;
+            }
+
+            foreach (Cell shotCell in currentCells.OrderBy(c => c.CreateTime))
+            {
+                if (shotCell.PhotoIndex >= 1 && shotCell.PhotoIndex <= PhotoTotalCount)
+                {
+                    // 同一张号重复到达时保留最新算法结果。
+                    _xinGearLiveShotCells[shotCell.PhotoIndex] = shotCell;
+                }
+            }
+
+            foreach (XinGearShotTileVM tileVm in ShotTiles)
+            {
+                _xinGearLiveShotCells.TryGetValue(tileVm.PhotoIndex, out Cell shotCell);
+                DrawXinGearLiveShotTile(tileVm, shotCell);
+            }
+        }
+        /// <summary>
+        /// 兼容最终结果手动回显；逐张运行流程不调用此入口。
         /// </summary>
         public void RefreshXinGearShotTiles(Cell cell)
         {
-            _lastXinGearShotCell = cell;
+            if (!ShouldDisplayXinGearCell(cell)) return;
             foreach (XinGearShotTileVM tileVm in ShotTiles)
             {
                 DrawXinGearShotTile(tileVm, cell);
             }
-            ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex);
+            ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex, cell);
         }
 
         private void DrawXinGearShotTile(XinGearShotTileVM tileVm, Cell cell)
@@ -326,36 +517,59 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
-            // ToBitmapSource 不拷像素；必须 Clone 再给六格，否则下一张 Predict 读已释放内存。
+
+            int w = tileImg?.ImageWidth ?? 0;
+            int h = tileImg?.ImageHeight ?? 0;
+            int idx = Math.Max(0, tileVm.PhotoIndex - 1);
+            int cols = GetXinGearMosaicColumns(cell?.PhotoTatolCount ?? PhotoTotalCount);
+            double dx = (idx % cols) * w;
+            double dy = (idx / cols) * h;
+            DrawXinGearShotTileCore(tileVm, tileImg, cell, dx, dy);
+        }
+
+        private void DrawXinGearLiveShotTile(XinGearShotTileVM tileVm, Cell shotCell)
+        {
+            DrawXinGearShotTileCore(tileVm, shotCell?.Image, shotCell, 0, 0);
+        }
+
+        private void DrawXinGearShotTileCore(
+            XinGearShotTileVM tileVm,
+            CImage tileImg,
+            Cell detectionCell,
+            double dx,
+            double dy)
+        {
+            if (tileVm == null)
+            {
+                return;
+            }
+
+            // 空格必须保持真正空白，不能在残留底图上绘制 OK。
             if (tileImg == null)
             {
-                tileVm.ModelImage = null;
+                ClearXinGearShotTile(tileVm);
+                return;
             }
-            else
+            // ToBitmapSource 不拷像素；Clone 后由 UI 独立持有，避免原 Cell 后续释放影响分格。
+            BitmapSource raw = tileImg.ToBitmapSource();
+            if (raw == null)
             {
-                BitmapSource raw = tileImg.ToBitmapSource();
-                tileVm.ModelImage = raw == null ? null : raw.Clone();
+                ClearXinGearShotTile(tileVm);
+                return;
             }
+            tileVm.ModelImage = raw.Clone();
             if (tileVm.CurView == null)
             {
                 return;
             }
             tileVm.CurView.Clear(false);
 
-            int w = tileImg != null ? tileImg.ImageWidth : 0;
-            int h = tileImg != null ? tileImg.ImageHeight : 0;
-            int idx = tileVm.PhotoIndex - 1;
-            if (idx < 0)
-            {
-                idx = 0;
-            }
-            double dx = (idx % 2) * w;
-            double dy = (idx / 2) * h;
-
+            int w = tileImg?.ImageWidth ?? 0;
+            int h = tileImg?.ImageHeight ?? 0;
             string cornerName = null;
-            if (cell?.AlgorithmOut != null && w > 0 && h > 0)
+            if (detectionCell?.AlgorithmOut != null && w > 0 && h > 0)
             {
-                foreach (CellDetection det in cell.AlgorithmOut)
+                foreach (CellDetection det in detectionCell.AlgorithmOut)
                 {
                     if (det?.regionOut == null)
                     {
@@ -375,12 +589,15 @@ namespace WH.DetectSystem.Models
                     }
                 }
             }
+
             tileVm.CurView.SetFontSize(25);
             tileVm.CurView.SetFontWeight(System.Windows.FontWeights.Bold);
-            if (!string.IsNullOrEmpty(cornerName) && cell?.Quality != null)
+            if (!string.IsNullOrEmpty(cornerName))
             {
-                tileVm.CurView.SetFontBrush(cell.Quality.ShowColor.Brush);
-                tileVm.CurView.WinDrawText(cell.Quality.Name + ":" + cornerName, AlignmentX.Right, AlignmentY.Top, false);
+                Brush resultBrush = detectionCell?.Quality?.ShowColor.Brush ?? Brushes.Red;
+                string resultName = detectionCell?.Quality?.Name ?? "NG";
+                tileVm.CurView.SetFontBrush(resultBrush);
+                tileVm.CurView.WinDrawText(resultName + ":" + cornerName, AlignmentX.Right, AlignmentY.Top, false);
             }
             else
             {
@@ -388,37 +605,35 @@ namespace WH.DetectSystem.Models
                 tileVm.CurView.WinDrawText("OK", AlignmentX.Right, AlignmentY.Top, false);
             }
 
-            if (cell?.AlgorithmOut != null && w > 0 && h > 0)
+            if (detectionCell?.AlgorithmOut != null && w > 0 && h > 0)
             {
                 tileVm.CurView.SetPen(Brushes.Red);
                 tileVm.CurView.SetFontBrush(Brushes.Red);
                 tileVm.CurView.SetFontSize(15);
                 tileVm.CurView.SetFontWeight(System.Windows.FontWeights.Normal);
-                foreach (CellDetection det in cell.AlgorithmOut)
+                foreach (CellDetection det in detectionCell.AlgorithmOut)
                 {
                     if (det?.regionOut == null)
                     {
                         continue;
                     }
-                    for (int i = 0; i < det.regionOut.Count; i++)
+                    foreach (SRegion region in det.regionOut)
                     {
-                        if (!XinGearRegionInMosaicTile(det.regionOut[i], dx, dy, w, h))
+                        if (!XinGearRegionInMosaicTile(region, dx, dy, w, h))
                         {
                             continue;
                         }
-                        SRegion local = OffsetSRegion(det.regionOut[i], -dx, -dy);
+                        SRegion local = OffsetSRegion(region, -dx, -dy);
                         tileVm.CurView.ImgDrawRegion(local.points, false);
-                        string name = det.RecipeDefectName;
-                        if (!string.IsNullOrEmpty(name))
+                        if (!string.IsNullOrEmpty(det.RecipeDefectName))
                         {
-                            tileVm.CurView.ImgDrawText(name, local.GetBottomRight(), false);
+                            tileVm.CurView.ImgDrawText(det.RecipeDefectName, local.GetBottomRight(), false);
                         }
                     }
                 }
             }
             tileVm.CurView.Invalidate();
         }
-
 
         int _xinGearFilterPreviewPhotoIndex = 1;
 
@@ -438,9 +653,13 @@ namespace WH.DetectSystem.Models
             }
             if (sourceCell != null)
             {
-                _lastXinGearShotCell = sourceCell;
+                if (!ShouldDisplayXinGearCell(sourceCell))
+                {
+                    return;
+                }
+                _xinGearFilterPreviewCell = sourceCell;
             }
-            Cell sliceCell = sourceCell ?? _lastXinGearShotCell;
+            Cell sliceCell = sourceCell ?? _xinGearFilterPreviewCell;
             // 禁止 FilterExute 做预览。检测区 Result/数字只按选中格覆盖，整件判定已在 FilterExute(newCell)。
             ResetXinGearFilterResultDisplay();
             List<CellDetection> sliced = SliceXinGearAlgorithmOutToPhoto(sliceCell, photoIndex);
@@ -563,8 +782,9 @@ namespace WH.DetectSystem.Models
             {
                 idx = 0;
             }
-            double dx = (idx % 2) * w;
-            double dy = (idx / 2) * h;
+            int cols = GetXinGearMosaicColumns(cell?.PhotoTatolCount ?? PhotoTotalCount);
+            double dx = (idx % cols) * w;
+            double dy = (idx / cols) * h;
             foreach (CellDetection det in cell.AlgorithmOut)
             {
                 if (det?.regionOut == null)

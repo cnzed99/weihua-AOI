@@ -23,6 +23,10 @@
             <TextBlock Margin="15,0,0,0" Text="齿数" VerticalAlignment="Center" FontSize="22" Foreground="White"/>
             <TextBlock Margin="5" Text="{Binding ToothCount}" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
         </UniformGrid>
+        <UniformGrid Rows="1" Columns="2">
+            <TextBlock Margin="15,0,0,0" Text="侧面拍照张数" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+            <TextBlock Margin="5" Text="{Binding SidePhotoCount}" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+        </UniformGrid>
         <TextBlock Margin="15,8,15,0"
                    Foreground="OrangeRed"
                    TextWrapping="Wrap"

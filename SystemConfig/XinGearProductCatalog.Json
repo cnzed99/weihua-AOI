@@ -1,0 +1,8 @@
+{
+  "Models": [
+    { "Id": "A", "ToothCount": 15, "SidePhotoCount": 15 },
+    { "Id": "B", "ToothCount": 18, "SidePhotoCount": 18 },
+    { "Id": "C", "ToothCount": 20, "SidePhotoCount": 20 },
+    { "Id": "D", "ToothCount": 22, "SidePhotoCount": 22 }
+  ]
+}

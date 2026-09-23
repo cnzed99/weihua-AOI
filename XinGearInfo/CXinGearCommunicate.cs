@@ -296,6 +296,43 @@ namespace XinGearInfo
             }
         }
 
+        /// <summary>打开工程时确认三路张数均已写入；无 PLC 的离线运行可继续。</summary>
+        public static bool TrySendRecipePhotoCount(int sideCount, out string error)
+        {
+            error = null;
+            if (com == null) return true;
+            return TrySendPhotoCount("PhotoCount_Side", sideCount, out error);
+                //&& TrySendPhotoCount("PhotoCount_Top", 1, out error)
+                //&& TrySendPhotoCount("PhotoCount_Bottom", 1, out error);
+        }
+
+        /// <summary>运行中换型号，只改侧面张数。PLC 在每件开始时锁定该值。</summary>
+        public static bool TrySendSidePhotoCount(int count, out string error)
+        {
+            error = null;
+            if (com == null) return true;
+            return TrySendPhotoCount("PhotoCount_Side", count, out error);
+        }
+
+        static bool TrySendPhotoCount(string pointName, int count, out string error)
+        {
+            error = null;
+            if (count <= 0 || Points == null || !Points.TryGetPoint(pointName, out XinGearPointDef def)
+                || def == null || !def.Enabled || def.Address < 0 || def.Address > ushort.MaxValue)
+            {
+                error = "张数点位无效: " + pointName;
+                return false;
+            }
+            lock (_protocolLock)
+            {
+                if (com == null || !com.TryWriteSingleRegisterInt32((ushort)def.Address, count))
+                {
+                    error = "PLC 张数写入失败: " + pointName + "=" + count;
+                    return false;
+                }
+            }
+            return true;
+        }
         static void TryWriteProcessPhotoCount(Dictionary<string, int> byName, string processName, string pointName, int fallback)
         {
             int count = fallback;
