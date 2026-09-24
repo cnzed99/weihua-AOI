@@ -479,6 +479,14 @@ namespace WH.RunCell
                 }
             }
             ZipperImages.Clear();
+            if (XinGearImages != null)
+            {
+                foreach ((CImage img, int photoIndex, DateTime t, TimeSpan cost) image in XinGearImages)
+                {
+                    image.img?.Dispose();
+                }
+                XinGearImages.Clear();
+            }
             if (ZipperPullPartImg != null)
             {
                 ZipperPullPartImg.Dispose();
@@ -583,6 +591,16 @@ namespace WH.RunCell
             foreach ((CImage, int, DateTime, TimeSpan) img in ZipperImages)
             {
                 cell.ZipperImages.Add(((CImage)img.Item1.Clone(), img.Item2, img.Item3, img.Item4));
+            }
+            cell.XinGearImages = new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>();
+            if (XinGearImages != null)
+            {
+                foreach ((CImage img, int photoIndex, DateTime t, TimeSpan cost) image in XinGearImages)
+                {
+                    cell.XinGearImages.Add(
+                        ((CImage)image.img?.Clone(), image.photoIndex, image.t, image.cost)
+                    );
+                }
             }
             cell.SaveBigImagesIndex = new List<int>(this.SaveBigImagesIndex);
             cell.SaveCutImagesIndex = new List<(int, int)>(this.SaveCutImagesIndex);

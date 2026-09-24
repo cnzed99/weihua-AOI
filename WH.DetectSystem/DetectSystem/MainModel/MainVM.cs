@@ -140,6 +140,10 @@ namespace WH.DetectSystem.Models
             UnhookProcessSubWindowCollection(oldValue);
             HookProcessSubWindowCollection(newValue);
             NotifyProcessSubWindowDisplay();
+            if (ProcessGroup != null)
+            {
+                RegisterXinGearBottomAlgorithmConfig();
+            }
         }
 
         public void AttachProcessSubWindowNotifications()
@@ -263,6 +267,7 @@ namespace WH.DetectSystem.Models
 
             this.ProcessGroup = processGroup;
             AttachProcessSubWindowNotifications();
+            RegisterXinGearBottomAlgorithmConfig();
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
@@ -832,7 +837,16 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest)
                             {
-                                MaociAlgorParamConfig.MaociExcute(cell);
+                                // 新兴单组工程按 PhotoIndex 选择齿顶/齿底算法；其他产线保持原算法实例。
+                                if (COpenProjectLine.IsXinGear)
+                                {
+                                    CAlgorithmParamBase xinGearAlgorithm = GetXinGearAlgorithmForCell(cell);
+                                    xinGearAlgorithm?.MaociExcute(cell);
+                                }
+                                else
+                                {
+                                    MaociAlgorParamConfig.MaociExcute(cell);
+                                }
                                 // 【方案7.1-注释】离线评测：合并前按张过滤记账；拉链不进。
                                 TryRecordOfflineSampleEval(cell);
                             }
@@ -844,6 +858,11 @@ namespace WH.DetectSystem.Models
                         }
                         catch (Exception ex)
                         {
+                            if (COpenProjectLine.IsXinGear)
+                            {
+                                cell.Skipthis = true;
+                                cell.IsOK = false;
+                            }
                             await m_InfoChannel.Writer.WriteAsync(
                             new PrintMsg("算法执行出错：" + ex.Message, LOG.LOG_ERROR));
                         }
@@ -855,26 +874,38 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest) //运行
                             {
-                                //算法线程清旧 ID 残图（取图线程不得操作 MergeCells）
-                                List<Cell> staleIdCells = MergeCells.FindAll(c => c.ID != cell.ID);
-                                if (staleIdCells.Count > 0)
+                                if (COpenProjectLine.IsXinGear && !ShouldAcceptXinGearResultCell(cell))
                                 {
-                                    SysLog.Warn($"{Name}-残图清台：新ID:{cell.ID}，清除旧ID残图{staleIdCells.Count}张");
-                                    for (int i = 0; i < staleIdCells.Count; i++)
+                                    SysLog.Warn($"{Name}-拒绝迟到算法结果：CellID={cell.ID},CurrentID={_lastBoundProductId},PhotoIndex={cell.PhotoIndex}");
+                                    cell.Dispose();
+                                    continue;
+                                }
+                                if (UseXinGearCombinedFaceDisplay)
+                                {
+                                    EvaluateXinGearCombinedFaceCell(cell);
+                                }
+                                List<Cell> currentCells = CollectCurrentProductCells(cell);
+                                if (UseXinGearCombinedFaceDisplay)
+                                {
+                                    RefreshXinGearCombinedFaceDisplay(cell);
+                                }
+                                if (UseXinGearProgressiveShotDisplay)
+                                {
+                                    if (CMainModelsModelVM.Dispatcher != null)
                                     {
-                                        SaveOtherOldImage(staleIdCells[i]);
-                                        MergeCells.Remove(staleIdCells[i]);
+                                        await CMainModelsModelVM.Dispatcher.BeginInvoke(
+                                            () => RefreshXinGearCurrentShotTiles(currentCells));
+                                    }
+                                    else
+                                    {
+                                        RefreshXinGearCurrentShotTiles(currentCells);
                                     }
                                 }
-                                MergeCells.Add(cell);
-                                SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
-                                List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
-                                SysLog.Info($"{Name}-当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
-                                if (currentCells.Count >= cell.PhotoTatolCount)
+                                if (HasCompleteCurrentProduct(currentCells, cell.PhotoTatolCount))
                                 {
                                     // sss = 0;
                                     SysLog.Info($"{Name}-满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
-                                    List<Cell> orderCell = currentCells.OrderBy(c => c.CreateTime).ToList();
+                                    List<Cell> orderCell = GetOrderedCellsForMerge(currentCells);
                                     Cell newCell = GetMergeCells(orderCell);
                                     if (currentCells.Count > 1)
                                     {
@@ -890,14 +921,30 @@ namespace WH.DetectSystem.Models
                                     SysLog.Info($"{Name}-准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                     MergeCells.RemoveAll(c => c.ID == newCell.ID);
                                     SysLog.Info($"{Name}-已移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
-                                    newCell.Quality = MaociQualityConfig.GetBest();
-                                    if (!newCell.Skipthis)
-                                        MaociFilterConfig.FilterExute(newCell);
+                                    if (UseXinGearCombinedFaceDisplay)
+                                    {
+                                        ApplyXinGearCombinedFaceJudgement(newCell, orderCell);
+                                    }
+                                    else if (UseXinGearProgressiveShotDisplay)
+                                    {
+                                        EvaluateXinGearSideCell(newCell);
+                                    }
                                     else
                                     {
-                                        SetBadCell(newCell);
+                                        newCell.Quality = MaociQualityConfig.GetBest();
+                                        if (!newCell.Skipthis)
+                                            MaociFilterConfig.FilterExute(newCell);
+                                        else
+                                        {
+                                            SetBadCell(newCell);
+                                        }
                                     }
-                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2])
+                                    if (UseXinGearProgressiveShotDisplay)
+                                    {
+                                        PublishXinGearSideResult(newCell);
+                                    }
+                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2]
+                                        && ShouldDisplayXinGearCell(newCell))
                                     {
                                         // 整件 FilterExute 只服务 cell.IsOK/产量；检测区立刻按选中格覆盖，避免其它张把面板冲掉。
                                         ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex, newCell);
@@ -962,9 +1009,13 @@ namespace WH.DetectSystem.Models
                                                 CellOut.Cell.ID,
                                                 CellOut.Cell.IsOK ? CrankResult.OK : CrankResult.NG);
                                         }
-                                        else if (COpenProjectLine.IsXinGear) 
+                                        else if (COpenProjectLine.IsXinGear)
                                         {
-                                            SendXinGearGroupResult(CellOut);
+                                            if (!UseXinGearThreeResultAggregation)
+                                            {
+                                                SendLegacyXinGearGroupResult(CellOut);
+                                            }
+                                            // 新兴单组工程由齿顶/齿底/侧面三结果齐套器发送，禁止重复回写。
                                         }
 
 
@@ -1137,10 +1188,12 @@ namespace WH.DetectSystem.Models
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
                                 {
-                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2])
+                                    // 单组新兴的齿顶/齿底已按 PhotoIndex 逐张显示；合并图暂不覆盖原图。
+                                    if (UseXinGearCombinedFaceDisplay)
                                     {
-                                        RefreshXinGearShotTiles(cell);
+                                        return;
                                     }
+                                    // 新兴侧面分格只由逐张流程维护；合并结果不得回灌覆盖。
                                     if (CurView != null && LastView != null)
                                     {
                                         CurView.Clear(false);
@@ -1462,11 +1515,12 @@ namespace WH.DetectSystem.Models
                             && (
                                 SaveImageVM.Param.SaveImageEnable
                                 || SaveImageVM.Param.PiantScreenEnable
+                                || (COpenProjectLine.IsXinGear && SystemSettings.OfflineSave)
                             ) && !isAutomaticTest
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();
-                            if (!m_SaveImageChannel.Writer.TryWrite(copy))
+                             if (!m_SaveImageChannel.Writer.TryWrite(copy))
                             {
                                 copy.Dispose();
                             }
@@ -1660,6 +1714,67 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
+        /// 公共收集步骤：清理上一件残图、加入当前张并返回同件缓存。
+        /// 其他产线继续复用原 Merge 流程；新兴只在此结果上增加逐格预览。
+        /// </summary>
+        private List<Cell> CollectCurrentProductCells(Cell cell)
+        {
+            List<Cell> staleIdCells = MergeCells.FindAll(c => c.ID != cell.ID);
+            if (staleIdCells.Count > 0)
+            {
+                SysLog.Warn($"{Name}-残图清台：新ID:{cell.ID}，清除旧ID残图{staleIdCells.Count}张");
+                for (int i = 0; i < staleIdCells.Count; i++)
+                {
+                    SaveOtherOldImage(staleIdCells[i]);
+                    MergeCells.Remove(staleIdCells[i]);
+                }
+            }
+
+            MergeCells.Add(cell);
+            SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
+            List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
+            SysLog.Info($"{Name}-当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
+            return currentCells;
+        }
+
+        /// <summary>
+        /// 其他产线保持原 Count>=N 语义；新兴侧面必须集齐 1..N 唯一张号，避免重复张提前触发。
+        /// </summary>
+        private bool HasCompleteCurrentProduct(List<Cell> currentCells, int expectedCount)
+        {
+            if (!UseXinGearProgressiveShotDisplay && !UseXinGearCombinedFaceDisplay)
+            {
+                return currentCells.Count >= expectedCount;
+            }
+            if (expectedCount <= 0)
+            {
+                return currentCells.Count > 0;
+            }
+
+            HashSet<int> photoIndexes = currentCells
+                .Where(c => c.PhotoIndex >= 1 && c.PhotoIndex <= expectedCount)
+                .Select(c => c.PhotoIndex)
+                .ToHashSet();
+            return photoIndexes.Count == expectedCount;
+        }
+
+        /// <summary>
+        /// 新兴按张号稳定合并；其他项目保留原创建时间顺序。
+        /// </summary>
+        private List<Cell> GetOrderedCellsForMerge(List<Cell> currentCells)
+        {
+            if (!UseXinGearProgressiveShotDisplay && !UseXinGearCombinedFaceDisplay)
+            {
+                return currentCells.OrderBy(c => c.CreateTime).ToList();
+            }
+
+            return currentCells
+                .GroupBy(c => c.PhotoIndex)
+                .Select(group => group.OrderByDescending(c => c.CreateTime).First())
+                .OrderBy(c => c.PhotoIndex)
+                .ToList();
+        }
+        /// <summary>
         /// 将多个Cells合并成一个新的Cell
         /// </summary>
         /// <param name="cells"></param>
@@ -1668,6 +1783,11 @@ namespace WH.DetectSystem.Models
         {
             if (cells.Count == 1) //单个的直接返回 20240429 鲍赞宝
             {
+                if (COpenProjectLine.IsXinGear && Name == "侧面")
+                {
+                    cells[0].XinGearImages = CopyXinGearImagesFromCells(cells);
+                    cells[0].MergedPanorama = (CImage)cells[0].Image.Clone();
+                }
                 return cells[0];
             }
             else
@@ -1675,28 +1795,35 @@ namespace WH.DetectSystem.Models
                 Cell newCell = cells[cells.Count - 1].CloneExecptImg();
                 // 合并IsOK逻辑：只要有一个为false则整体为false
                 newCell.IsOK = !cells.Any(c => !c.IsOK);
+                if (COpenProjectLine.IsXinGear)
+                {
+                    newCell.Skipthis = cells.Any(c => c.Skipthis || c.FrameLoss);
+                    newCell.FrameLoss = cells.Any(c => c.FrameLoss);
+                }
 
-                //合并前落下分张图内框；再把本制程 N>1 的框平移到 2x3，供存图拼图。
+                // 新兴只在合并副本上换算拼图坐标，逐张 Cell 始终保留局部坐标。
                 if (COpenProjectLine.IsXinGear)
                 {
                     newCell.XinGearImages = CopyXinGearImagesFromCells(cells);
-                    OffsetXinGearCellDetectionsTo2x2(cells);
+                    newCell.AlgorithmOut = CreateXinGearMergedAlgorithmOut(cells);
                 }
-
-                // 按RecipeDefectName合并AlgorithmOut
-                newCell.AlgorithmOut = cells
-                       .SelectMany(c => c.AlgorithmOut)  // 展平所有AlgorithmOut
-                       .GroupBy(cd => cd.RecipeDefectName) // 按名称分组
-                       .Select(g => new CellDetection
-                       {
-                           RecipeDefectName = g.Key,
-                           regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
-                           Category = g.FirstOrDefault()?.Category ?? Category.区域,
-                           Value = g.SelectMany(cd => cd.Value).ToList(),
-                           Type = g.FirstOrDefault()?.Type ?? "",
-                           Index = g.Max(cd => cd.Index), // 取最大Index
-                           ShowInView = g.Max(cd => cd.ShowInView)
-                       }).ToList();
+                else
+                {
+                    // 按RecipeDefectName合并AlgorithmOut
+                    newCell.AlgorithmOut = cells
+                           .SelectMany(c => c.AlgorithmOut)
+                           .GroupBy(cd => cd.RecipeDefectName)
+                           .Select(g => new CellDetection
+                           {
+                               RecipeDefectName = g.Key,
+                               regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
+                               Category = g.FirstOrDefault()?.Category ?? Category.区域,
+                               Value = g.SelectMany(cd => cd.Value).ToList(),
+                               Type = g.FirstOrDefault()?.Type ?? "",
+                               Index = g.Max(cd => cd.Index),
+                               ShowInView = g.Max(cd => cd.ShowInView)
+                           }).ToList();
+                }
                 for (int i = 0; i < cells.Count; i++)
                 {
                     newCell.DrawEdges.AddRange(cells[i].DrawEdges);
@@ -2004,6 +2131,7 @@ namespace WH.DetectSystem.Models
                 MaociAlgorParamConfig,
                 MaociAlgorParamConfig.token
             );
+            UpdateXinGearBottomAlgorithmIdentity();
             if (AppConfig.HasMarkConfig())
             {
                 MarkConfig.token.ProGuid = GUID;
@@ -2023,6 +2151,16 @@ namespace WH.DetectSystem.Models
         public void UpdateName()
         {
             MaociAlgorParamConfig.PrcessName = Name;
+            if (XinGearBottomAlgorParamConfig != null)
+            {
+                XinGearBottomAlgorParamConfig.PrcessName =
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName;
+            }
+            if (XinGearBottomFilterConfig != null)
+            {
+                XinGearBottomFilterConfig.PrcessName =
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName;
+            }
             MaociFilterConfig.PrcessName = Name;
             MaociAlarmSetConfig.PrcessName = Name;
             if (MarkConfig is not null)

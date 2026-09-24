@@ -7,10 +7,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AlgorithmDll;
+using CommunityToolkit.Mvvm.Messaging;
 using XinGearInfo;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem.ViewModels;
+using WH.Entity.CommonLib;
 using SDFilter;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
@@ -31,6 +34,7 @@ namespace WH.DetectSystem.Models
         private int _switchAfterXinGearId;
         private readonly Dictionary<int, Cell> _xinGearLiveShotCells = new Dictionary<int, Cell>();
         private string _xinGearLiveProductId;
+        private bool _xinGearBottomFilterInitialized;
 
         public int XinGearShotColumns => Math.Min(PhotoTotalCount,
             Math.Max(3, (int)Math.Ceiling(Math.Sqrt(PhotoTotalCount * 1.5))));
@@ -40,6 +44,445 @@ namespace WH.DetectSystem.Models
 
         private bool UseXinGearProgressiveShotDisplay =>
             COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2];
+
+        private bool UseXinGearCombinedFaceDisplay =>
+            COpenProjectLine.IsXinGear && COpenProjectLine.IsXinGearCombinedFaceProcess(this);
+
+        private bool UseXinGearThreeResultAggregation =>
+            COpenProjectLine.IsXinGear
+            && ProcessGroup?.CMainModels?.Any(COpenProjectLine.IsXinGearCombinedFaceProcess) == true;
+
+        private void EnsureXinGearBottomAlgorithmConfig()
+        {
+            if (!UseXinGearCombinedFaceDisplay)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(XinGearBottomAlgorithm))
+            {
+                XinGearBottomAlgorithm = Algorithm;
+            }
+            if (XinGearBottomAlgorParamConfig != null)
+            {
+                string loadedPlugin = XinGearBottomAlgorParamConfig.GetType().Assembly.GetName().Name;
+                if (!string.Equals(loadedPlugin, XinGearBottomAlgorithm, StringComparison.Ordinal))
+                {
+                    WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomAlgorParamConfig);
+                    if (XinGearBottomFilterConfig != null)
+                    {
+                        WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomFilterConfig);
+                    }
+                    XinGearBottomAlgorParamConfig = null;
+                    XinGearBottomFilterConfig = null;
+                    _xinGearBottomFilterInitialized = false;
+                    SysLog.Info($"{Name}-齿底算法切换：{loadedPlugin} -> {XinGearBottomAlgorithm}");
+                }
+            }
+            if (XinGearBottomAlgorParamConfig == null)
+            {
+                if (CAlgorithmManagement.AlgorithmHeper == null
+                    || !CAlgorithmManagement.AlgorithmHeper.TryGetValue(XinGearBottomAlgorithm, out IAlgorithm plugin))
+                {
+                    SysLog.Warn($"{Name}-齿底算法插件不存在：{XinGearBottomAlgorithm}");
+                    return;
+                }
+
+                XinGearBottomAlgorParamConfig = plugin.CreateNewAlgorithm(
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName);
+                SysLog.Info($"{Name}-创建齿底算法：{XinGearBottomAlgorithm}");
+            }
+            if (XinGearBottomFilterConfig == null)
+            {
+                XinGearBottomFilterConfig = new CFilterConfig(
+                    XinGearBottomAlgorParamConfig.DefectSpecies);
+                _xinGearBottomFilterInitialized = false;
+                SysLog.Info($"{Name}-创建独立齿底筛选配置");
+            }
+
+            UpdateXinGearBottomAlgorithmIdentity();
+            InitializeXinGearBottomFilterRuntime();
+        }
+
+        private void UpdateXinGearBottomAlgorithmIdentity()
+        {
+            if (XinGearBottomAlgorParamConfig == null)
+            {
+                return;
+            }
+
+            XinGearBottomAlgorParamConfig.PrcessName =
+                COpenProjectLine.XinGearCombinedFaceSubWindowName;
+            Token bottomAlgorithmToken = new Token(GUID, "AlgorithmDll.XinGearBottom");
+            ConfigModifyObservableBase.UpdateToken(
+                XinGearBottomAlgorParamConfig,
+                bottomAlgorithmToken);
+
+            if (XinGearBottomFilterConfig != null)
+            {
+                XinGearBottomFilterConfig.PrcessName =
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName;
+                Token bottomFilterToken = new Token(GUID, "SDFilter.XinGearBottom");
+                ConfigModifyObservableBase.UpdateToken(
+                    XinGearBottomFilterConfig,
+                    bottomFilterToken);
+            }
+        }
+
+        private void InitializeXinGearBottomFilterRuntime()
+        {
+            if (XinGearBottomFilterConfig == null
+                || ProcessGroup == null
+                || MaociQualityConfig == null)
+            {
+                return;
+            }
+            if (!_xinGearBottomFilterInitialized)
+            {
+                XinGearBottomFilterConfig.SetSDFilterVM(MaociQualityConfig);
+                _xinGearBottomFilterInitialized = true;
+            }
+            List<CFilterConfig> processFilters = new List<CFilterConfig>
+            {
+                MaociFilterConfig,
+                XinGearBottomFilterConfig
+            };
+            AlarmSetVM.SetFilter(processFilters);
+            MaociDefectsProduce.SetFilter(processFilters);
+        }
+
+        private void RegisterXinGearBottomAlgorithmConfig()
+        {
+            EnsureXinGearBottomAlgorithmConfig();
+            if (XinGearBottomAlgorParamConfig == null || XinGearBottomFilterConfig == null)
+            {
+                return;
+            }
+
+            WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomAlgorParamConfig);
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                XinGearBottomAlgorParamConfig,
+                XinGearBottomAlgorParamConfig.token);
+            WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomFilterConfig);
+            WeakReferenceMessenger.Default.Register<OperateMessage, Token>(
+                XinGearBottomFilterConfig,
+                XinGearBottomFilterConfig.token);
+
+            InitializeXinGearBottomFilterRuntime();
+        }
+
+        internal void UnregisterXinGearBottomAlgorithmConfig()
+        {
+            if (XinGearBottomAlgorParamConfig != null)
+            {
+                WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomAlgorParamConfig);
+            }
+            if (XinGearBottomFilterConfig != null)
+            {
+                WeakReferenceMessenger.Default.UnregisterAll(XinGearBottomFilterConfig);
+            }
+        }
+
+        private CAlgorithmParamBase GetXinGearAlgorithmForCell(Cell cell)
+        {
+            if (UseXinGearCombinedFaceDisplay && cell?.PhotoIndex == 2)
+            {
+                EnsureXinGearBottomAlgorithmConfig();
+                if (XinGearBottomAlgorParamConfig != null)
+                {
+                    return XinGearBottomAlgorParamConfig;
+                }
+                cell.Skipthis = true;
+                SysLog.Warn($"{Name}-齿底算法不可用，PhotoIndex=2 标记本件异常，禁止回退齿顶算法");
+                return null;
+            }
+            return MaociAlgorParamConfig;
+        }
+
+        private CFilterConfig GetXinGearFilterForCell(Cell cell)
+        {
+            if (UseXinGearCombinedFaceDisplay && cell?.PhotoIndex == 2)
+            {
+                EnsureXinGearBottomAlgorithmConfig();
+                return XinGearBottomFilterConfig;
+            }
+            return MaociFilterConfig;
+        }
+
+        private bool ShouldAcceptXinGearResultCell(Cell cell)
+        {
+            return !COpenProjectLine.IsXinGear
+                || !IsStart
+                || cell?.IsPreBound == true
+                || string.Equals(cell?.ID, _lastBoundProductId, StringComparison.Ordinal);
+        }
+
+        private void EvaluateXinGearCombinedFaceCell(Cell cell)
+        {
+            if (!UseXinGearCombinedFaceDisplay || cell == null)
+            {
+                return;
+            }
+
+            cell.Quality = MaociQualityConfig.GetBest();
+            CFilterConfig filter = GetXinGearFilterForCell(cell);
+            if (cell.Skipthis || filter == null)
+            {
+                cell.Skipthis = true;
+                SetBadCell(cell);
+            }
+            else
+            {
+                try
+                {
+                    filter.FilterExute(cell);
+                }
+                catch (Exception ex)
+                {
+                    cell.Skipthis = true;
+                    SetBadCell(cell);
+                    SysLog.Error($"{Name}-PhotoIndex={cell.PhotoIndex}筛选失败，按NG处理：{ex.Message}");
+                }
+            }
+
+            XinGearInspectionPart part = cell.PhotoIndex == 1
+                ? XinGearInspectionPart.Top
+                : XinGearInspectionPart.Bottom;
+            PublishXinGearInspectionResult(cell.ID, part, cell.IsOK && !cell.Skipthis);
+        }
+
+        private void ApplyXinGearCombinedFaceJudgement(Cell mergedCell, List<Cell> sourceCells)
+        {
+            mergedCell.Skipthis = sourceCells.Any(source => source.Skipthis || source.FrameLoss);
+            mergedCell.IsOK = sourceCells.All(source => source.IsOK && !source.Skipthis);
+            mergedCell.Quality = MaociQualityConfig.GetBest();
+            foreach (Cell source in sourceCells)
+            {
+                if (source.Quality != null
+                    && (mergedCell.Quality == null
+                        || source.Quality.Priority > mergedCell.Quality.Priority))
+                {
+                    mergedCell.Quality = source.Quality;
+                }
+                foreach (CellDetection detection in source.Detections)
+                {
+                    mergedCell.Detections.Add(detection);
+                }
+            }
+            mergedCell.Detection = mergedCell.Detections.FirstOrDefault(
+                detection => detection != null && !detection.Result)
+                ?? mergedCell.Detections.FirstOrDefault();
+        }
+
+        private void EvaluateXinGearSideCell(Cell cell)
+        {
+            if (!UseXinGearProgressiveShotDisplay || cell == null)
+            {
+                return;
+            }
+            cell.Quality = MaociQualityConfig.GetBest();
+            if (cell.Skipthis)
+            {
+                SetBadCell(cell);
+                return;
+            }
+            try
+            {
+                MaociFilterConfig.FilterExute(cell);
+            }
+            catch (Exception ex)
+            {
+                cell.Skipthis = true;
+                SetBadCell(cell);
+                SysLog.Error($"{Name}-侧面整件筛选失败，按NG处理：{ex.Message}");
+            }
+        }
+
+        private void PublishXinGearSideResult(Cell cell)
+        {
+            if (!UseXinGearProgressiveShotDisplay || cell == null)
+            {
+                return;
+            }
+            PublishXinGearInspectionResult(
+                cell.ID,
+                XinGearInspectionPart.Side,
+                cell.IsOK && !cell.Skipthis);
+        }
+
+        private void PublishXinGearInspectionResult(
+            string productId,
+            XinGearInspectionPart part,
+            bool isOK)
+        {
+            if (!UseXinGearThreeResultAggregation
+                || !IsStart
+                || !int.TryParse(productId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedId)
+                || parsedId <= 0)
+            {
+                return;
+            }
+
+            if (ProcessGroup.TryAddXinGearInspectionResult(
+                productId,
+                part,
+                isOK,
+                out XinGearInspectionSummary summary))
+            {
+                SysLog.Info(
+                    $"新兴三结果齐套 ID={productId},齿顶={summary.TopOK},齿底={summary.BottomOK},侧面={summary.SideOK},最终={summary.FinalOK}");
+                SendXinGearInspectionSummary(productId, summary);
+            }
+        }
+        private void ClearXinGearCombinedFaceDisplay(string productID)
+        {
+            if (!UseXinGearCombinedFaceDisplay)
+            {
+                return;
+            }
+
+            Action clearAction = () =>
+            {
+                ModelImage = null;
+                ZipperPullImage = null;
+                if (CurView != null)
+                {
+                    CurView.UpdateImg(null);
+                    CurView.Clear();
+                }
+                if (LastView != null)
+                {
+                    LastView.UpdateImg(null);
+                    LastView.Clear();
+                }
+                SysLog.Info($"{Name}-新产品{productID}清空齿顶/齿底显示");
+            };
+
+            var dispatcher = CMainModelsModelVM.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                clearAction();
+            }
+            else
+            {
+                dispatcher.Invoke(clearAction);
+            }
+        }
+
+        private void DrawXinGearCombinedFaceResult(ImageView view, Cell cell)
+        {
+            if (view == null || cell == null)
+            {
+                return;
+            }
+
+            view.Clear(false);
+            bool isOK = cell.IsOK && !cell.Skipthis;
+            CellDetection primaryDefect = cell.Detection
+                ?? cell.Detections?.FirstOrDefault(detection => detection != null && !detection.Result);
+
+            view.SetFontSize(25);
+            view.SetFontWeight(System.Windows.FontWeights.Bold);
+            if (isOK)
+            {
+                view.SetFontBrush(MaociQualityConfig?.GetBest()?.ShowColor.Brush ?? Brushes.Lime);
+                view.WinDrawText("OK", AlignmentX.Right, AlignmentY.Top, false);
+            }
+            else
+            {
+                string resultName = cell.Quality?.Name ?? "NG";
+                string defectName = primaryDefect?.RecipeDefectName;
+                string resultText = string.IsNullOrWhiteSpace(defectName)
+                    ? resultName
+                    : resultName + ":" + defectName;
+                view.SetFontBrush(cell.Quality?.ShowColor.Brush ?? Brushes.Red);
+                view.WinDrawText(resultText, AlignmentX.Right, AlignmentY.Top, false);
+            }
+
+            if (cell.Detections != null)
+            {
+                view.SetPen(Brushes.Red);
+                view.SetFontBrush(Brushes.Red);
+                view.SetFontSize(15);
+                view.SetFontWeight(System.Windows.FontWeights.Normal);
+                foreach (CellDetection detection in cell.Detections)
+                {
+                    if (detection == null
+                        || detection.Result
+                        || detection.Category != Category.区域
+                        || detection.regionOut == null)
+                    {
+                        continue;
+                    }
+                    foreach (SRegion region in detection.regionOut)
+                    {
+                        if (region.points == null)
+                        {
+                            continue;
+                        }
+                        view.ImgDrawRegion(region.points, false);
+                        if (!string.IsNullOrWhiteSpace(detection.RecipeDefectName))
+                        {
+                            view.ImgDrawText(
+                                detection.RecipeDefectName,
+                                region.GetBottomRight(),
+                                false);
+                        }
+                    }
+                }
+            }
+            view.Invalidate();
+        }
+
+        private void RefreshXinGearCombinedFaceDisplay(Cell cell)
+        {
+            if (!UseXinGearCombinedFaceDisplay || cell?.Image == null)
+            {
+                return;
+            }
+            if (IsStart && !string.Equals(cell.ID, _lastBoundProductId, StringComparison.Ordinal))
+            {
+                SysLog.Warn($"{Name}-拒绝旧件显示：CellID={cell.ID},CurrentID={_lastBoundProductId},PhotoIndex={cell.PhotoIndex}");
+                return;
+            }
+            if (cell.PhotoIndex != 1 && cell.PhotoIndex != 2)
+            {
+                return;
+            }
+
+            BitmapSource bitmapSource = cell.Image.ToBitmapSource();
+            Action displayAction = () =>
+            {
+                if (cell.PhotoIndex == 1)
+                {
+                    ModelImage = bitmapSource;
+                    CurView?.UpdateImg(bitmapSource);
+                    DrawXinGearCombinedFaceResult(CurView, cell);
+                    ZipperPullImage = null;
+                    if (LastView != null)
+                    {
+                        LastView.UpdateImg(null);
+                        LastView.Clear();
+                    }
+                }
+                else
+                {
+                    ZipperPullImage = bitmapSource;
+                    LastView?.UpdateImg(bitmapSource);
+                    DrawXinGearCombinedFaceResult(LastView, cell);
+                }
+            };
+
+            var dispatcher = CMainModelsModelVM.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                displayAction();
+            }
+            else
+            {
+                dispatcher.BeginInvoke(displayAction);
+            }
+        }
 
         public void InitializeXinGearPhotoCount(int count)
         {
@@ -240,6 +683,7 @@ namespace WH.DetectSystem.Models
                 _photoCounter = 0;
                 _lastBoundProductId = productID;
                 ResetXinGearShotTiles(productID, expectedCount, false);
+                ClearXinGearCombinedFaceDisplay(productID);
             }
 
             _photoCounter++;
@@ -825,12 +1269,22 @@ namespace WH.DetectSystem.Models
             return false;
         }
 
-        private void SendXinGearGroupResult(CCellPro CellOut)
+        private void SendLegacyXinGearGroupResult(CCellPro cellOut)
         {
             CXinGearCommunicate.SendGroupResult(
                 ProcessGroup.Name,
-                CellOut.Cell.ID,
-                CellOut.Cell.IsOK ? XinGearResult.OK : XinGearResult.NG);
+                cellOut.Cell.ID,
+                cellOut.Cell.IsOK ? XinGearResult.OK : XinGearResult.NG);
+        }
+
+        private void SendXinGearInspectionSummary(
+            string productId,
+            XinGearInspectionSummary summary)
+        {
+            CXinGearCommunicate.SendPointResult(
+                "Result_G2",
+                productId,
+                summary.FinalOK ? XinGearResult.OK : XinGearResult.NG);
         }
     }
 }

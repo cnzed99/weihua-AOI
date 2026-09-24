@@ -29,6 +29,28 @@ using ZipperInfo;
 
 namespace WH.DetectSystem.Models
 {
+    internal enum XinGearInspectionPart
+    {
+        Top,
+        Bottom,
+        Side
+    }
+
+    internal readonly struct XinGearInspectionSummary
+    {
+        public XinGearInspectionSummary(bool topOK, bool bottomOK, bool sideOK)
+        {
+            TopOK = topOK;
+            BottomOK = bottomOK;
+            SideOK = sideOK;
+        }
+
+        public bool TopOK { get; }
+        public bool BottomOK { get; }
+        public bool SideOK { get; }
+        public bool FinalOK => TopOK && BottomOK && SideOK;
+    }
+
     /// <summary>
     /// 2024.9.3 李焕彬
     /// 制程组
@@ -91,24 +113,26 @@ namespace WH.DetectSystem.Models
         public void Init()
         {
             MaociQualityConfig.token.ProGuid = GUID;
+            ResetXinGearInspectionResults();
             foreach (var item in CMainModels)
             {
                 item.Init(this);
             }
+            List<CFilterConfig> allFilters = GetAllProcessFilters();
             //2024.9.5 李焕彬 制程组缺陷统计初始化需要放在制程初始化后
             CDefectsDataVM.DefectsProduce = MaociDefectsProduce;
             CDefectsDataVM.DefectsProduce.SetQuality(MaociQualityConfig);
             CDefectsDataVM.DefectsProduce.SetFilter(
-                this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
+                allFilters
             );
             CDefectsOneFlowDataVM.DefectsProduce = MaociDefectsOneFlowProduce;
             CDefectsOneFlowDataVM.DefectsProduce.SetQuality(MaociQualityConfig);
             CDefectsOneFlowDataVM.DefectsProduce.SetFilter(
-                this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
+                allFilters
             );
             AlarmSetVM.CAlarmSet = AlarmSetConfig;
             AlarmSetVM.Reset();
-            AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
+            AlarmSetVM.SetFilter(allFilters);
             AlarmSetVM.SetQuality(MaociQualityConfig);
 
             MySqlVM.MysqlExecute.Clone(MysqlBLL);
@@ -152,6 +176,14 @@ namespace WH.DetectSystem.Models
             MaociQualityConfig.PrcessName = Name;
         }
 
+        private List<CFilterConfig> GetAllProcessFilters()
+        {
+            return CMainModels
+                .SelectMany(item => new[] { item.MaociFilterConfig, item.XinGearBottomFilterConfig })
+                .Where(filter => filter != null)
+                .ToList();
+        }
+
         /// <summary>
         /// 2024.9.2 李焕彬
         /// 增加制程（制程已经存在）
@@ -161,10 +193,11 @@ namespace WH.DetectSystem.Models
         {
             model.ProcessGroup = this;
             CMainModels.Add(model);
+            List<CFilterConfig> allFilters = GetAllProcessFilters();
             CDefectsDataVM.DefectsProduce.SetFilter(
-                this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
+                allFilters
             );
-            AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
+            AlarmSetVM.SetFilter(allFilters);
         }
 
         /// <summary>
@@ -177,10 +210,11 @@ namespace WH.DetectSystem.Models
             if (CMainModels.Contains(mainVM))
             {
                 CMainModels.Remove(mainVM);
+                List<CFilterConfig> allFilters = GetAllProcessFilters();
                 CDefectsDataVM.DefectsProduce.SetFilter(
-                    this.CMainModels.Select(o => o.MaociFilterConfig).ToList()
+                    allFilters
                 );
-                AlarmSetVM.SetFilter(this.CMainModels.Select(o => o.MaociFilterConfig).ToList());
+                AlarmSetVM.SetFilter(allFilters);
             }
         }
 
@@ -204,6 +238,84 @@ namespace WH.DetectSystem.Models
         /// 汇总结果lock用
         /// </summary>
         object objLock = new object();
+        readonly Dictionary<string, XinGearInspectionState> _xinGearInspectionStates =
+            new Dictionary<string, XinGearInspectionState>();
+        readonly HashSet<string> _xinGearCompletedProductIds = new HashSet<string>();
+        readonly Queue<string> _xinGearCompletedProductIdOrder = new Queue<string>();
+
+        sealed class XinGearInspectionState
+        {
+            public bool? TopOK { get; set; }
+            public bool? BottomOK { get; set; }
+            public bool? SideOK { get; set; }
+        }
+
+        void ResetXinGearInspectionResults()
+        {
+            lock (objLock)
+            {
+                _xinGearInspectionStates.Clear();
+                _xinGearCompletedProductIds.Clear();
+                _xinGearCompletedProductIdOrder.Clear();
+            }
+        }
+
+        internal bool TryAddXinGearInspectionResult(
+            string productId,
+            XinGearInspectionPart part,
+            bool isOK,
+            out XinGearInspectionSummary summary)
+        {
+            summary = default;
+            if (string.IsNullOrWhiteSpace(productId))
+            {
+                return false;
+            }
+
+            lock (objLock)
+            {
+                if (_xinGearCompletedProductIds.Contains(productId))
+                {
+                    return false;
+                }
+                if (!_xinGearInspectionStates.TryGetValue(productId, out XinGearInspectionState state))
+                {
+                    state = new XinGearInspectionState();
+                    _xinGearInspectionStates[productId] = state;
+                }
+
+                switch (part)
+                {
+                    case XinGearInspectionPart.Top:
+                        state.TopOK = (state.TopOK ?? true) && isOK;
+                        break;
+                    case XinGearInspectionPart.Bottom:
+                        state.BottomOK = (state.BottomOK ?? true) && isOK;
+                        break;
+                    case XinGearInspectionPart.Side:
+                        state.SideOK = (state.SideOK ?? true) && isOK;
+                        break;
+                }
+
+                if (!state.TopOK.HasValue || !state.BottomOK.HasValue || !state.SideOK.HasValue)
+                {
+                    return false;
+                }
+
+                summary = new XinGearInspectionSummary(
+                    state.TopOK.Value,
+                    state.BottomOK.Value,
+                    state.SideOK.Value);
+                _xinGearInspectionStates.Remove(productId);
+                _xinGearCompletedProductIds.Add(productId);
+                _xinGearCompletedProductIdOrder.Enqueue(productId);
+                while (_xinGearCompletedProductIdOrder.Count > 200)
+                {
+                    _xinGearCompletedProductIds.Remove(_xinGearCompletedProductIdOrder.Dequeue());
+                }
+                return true;
+            }
+        }
 
         /// <summary>
         /// 2024.9.6 李焕彬

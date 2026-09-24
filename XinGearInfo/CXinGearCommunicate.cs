@@ -185,48 +185,62 @@ namespace XinGearInfo
         /// </summary>
         public static void SendGroupResult(string groupName, string id, XinGearResult result)
         {
+            if (Points == null || Points.GroupResults == null)
+            {
+                TryLogWarn("组结果点位未加载，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                return;
+            }
+            if (string.IsNullOrEmpty(groupName)
+                || !Points.GroupResults.TryGetValue(groupName, out string pointName)
+                || string.IsNullOrEmpty(pointName))
+            {
+                TryLogWarn("未找到制程组结果映射，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                return;
+            }
+            SendPointResult(pointName, id, result);
+        }
+
+        /// <summary>
+        /// 按逻辑点位名回写结果；新兴单组工程最终结果固定使用 Result_G2，地址仍由JSON决定。
+        /// </summary>
+        public static void SendPointResult(string pointName, string id, XinGearResult result)
+        {
             if (com == null)
             {
-                TryLogWarn("无PLC，跳过组结果回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                TryLogWarn("无PLC，跳过结果回写 point=" + pointName + " id=" + id + " result=" + result);
                 return;
             }
 
             try
             {
-                if (Points == null || Points.GroupResults == null)
+                if (Points == null
+                    || string.IsNullOrWhiteSpace(pointName)
+                    || !Points.TryGetPoint(pointName, out XinGearPointDef def)
+                    || def == null)
                 {
-                    TryLogWarn("组结果点位未加载，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                    TryLogWarn("未找到结果点位定义，跳过回写 point=" + pointName + " id=" + id + " result=" + result);
                     return;
                 }
-
-                if (string.IsNullOrEmpty(groupName)
-                    || !Points.GroupResults.TryGetValue(groupName, out string pointName)
-                    || string.IsNullOrEmpty(pointName))
+                if (!def.Enabled)
                 {
-                    TryLogWarn("未找到制程组结果映射，跳过回写 groupName=" + groupName + " id=" + id + " result=" + result);
+                    TryLogWarn("结果点位未启用，跳过回写 point=" + pointName + " id=" + id);
                     return;
                 }
-
-                if (!Points.TryGetPoint(pointName, out XinGearPointDef def) || def == null)
-                {
-                    TryLogWarn("未找到组结果点位定义，跳过回写 groupName=" + groupName + " point=" + pointName + " id=" + id + " result=" + result);
-                    return;
-                }
-
                 if (def.Address < 0 || def.Address > ushort.MaxValue)
                 {
-                    TryLogWarn("组结果点位地址无效，跳过回写 groupName=" + groupName + " point=" + pointName + " addr=" + def.Address);
+                    TryLogWarn("结果点位地址无效，跳过回写 point=" + pointName + " addr=" + def.Address);
                     return;
                 }
 
                 WriteHoldingInt32Locked((ushort)def.Address, (int)result);
+                TryLogInfo("新兴盘齿 结果回写成功 point=" + pointName + " addr=" + def.Address
+                    + " id=" + id + " result=" + result);
             }
             catch (Exception ex)
             {
-                TryLogWarn("组结果回写失败 groupName=" + groupName + " id=" + id + " result=" + result + " " + ex.Message);
+                TryLogWarn("结果回写失败 point=" + pointName + " id=" + id + " result=" + result + " " + ex.Message);
             }
         }
-
         /// <summary>
         /// F3：心跳写 HeartBeat 点位为 1。com==null 直接返回。走协议锁。
         /// </summary>
