@@ -194,14 +194,42 @@ namespace AlgorithmYoloBase
             }
         }
 
-        public DetResult ImageInferDet(IVisionModel WH, Mat img)
+        //public DetResult ImageInferDet(IVisionModel WH, Mat img)
+        //{
+        //    if (WH != null)
+        //    {
+        //        return WH.Predict(img) as DetResult;
+        //    }
+
+        //    return null;
+        //}
+        public DetResult ImageInferDet(IVisionModel model, Mat img)
         {
-            if (WH != null)
+            if (model == null || img == null || img.Empty())
+                return null;
+
+            using Mat input = new Mat();
+
+            switch (img.Channels())
             {
-                return WH.Predict(img) as DetResult;
+                case 1:
+                    Cv2.CvtColor(img, input, ColorConversionCodes.GRAY2BGR);
+                    break;
+
+                case 3:
+                    img.CopyTo(input);
+                    break;
+
+                case 4:
+                    Cv2.CvtColor(img, input, ColorConversionCodes.BGRA2BGR);
+                    break;
+
+                default:
+                    throw new InvalidOperationException(
+                        $"不支持的输入图像类型：{img.Type()}，Channels={img.Channels()}");
             }
 
-            return null;
+            return model.Predict(input) as DetResult;
         }
 
         public virtual Mat GetMatImage(Cell cell, CParamBase param)
