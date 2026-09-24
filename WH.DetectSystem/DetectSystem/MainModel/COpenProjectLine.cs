@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WH.DetectSystem.Models;
 
 namespace WH.DetectSystem.DetectSystem.MainModel
 {
@@ -37,6 +38,20 @@ namespace WH.DetectSystem.DetectSystem.MainModel
         {
             "齿底", "齿顶", "侧面",
         };
+
+        // 新兴临时单组工程：齿顶制程的副图用于显示同相机的第二张齿底图。
+        public const string XinGearCombinedFaceProcessName = "齿顶";
+        public const string XinGearCombinedFaceSubWindowName = "齿底";
+
+        public static bool IsXinGearCombinedFaceProcess(CMainModel model)
+        {
+            return model != null
+                && string.Equals(model.Name, XinGearCombinedFaceProcessName, StringComparison.Ordinal)
+                && model.ProcessSubWindows != null
+                && model.ProcessSubWindows.Any(item => item != null
+                    && item.Enabled
+                    && string.Equals(item.DisplayName, XinGearCombinedFaceSubWindowName, StringComparison.Ordinal));
+        }
 
         public static readonly HashSet<string> ZipperAlgorithmNames = new HashSet<string>(StringComparer.Ordinal)
         {

@@ -150,6 +150,12 @@ namespace 断面毛刺检测软件
                             Growl.Warning("正在对焦中，不能启动！");
                             return;
                         }
+                        if (CMainList.StartStop && COpenProjectLine.IsXinGear && !CMainList.TryEnsureXinGearRecipeReady())
+                        {
+                            CMainList.StartStop = false;
+                            Growl.Warning("新兴拍照张数下发失败，检测未启动");
+                            return;
+                        }
                         //即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
                         //IsGear 读盘齿 JSON；IsCrank 读曲轴 JSON；拉链不走此校验
                         if (CMainList.StartStop && (COpenProjectLine.IsGear || COpenProjectLine.IsCrank || COpenProjectLine.IsXinGear) && !TryValidateProcessGroupResultMapping())
@@ -176,7 +182,7 @@ namespace 断面毛刺检测软件
                 //面板只创建一次，Visibility 由 ApplyOpenProjectLineUi 按工程切换
                 zipperInfoShow.DataContext = new ZipperInfoVM();
                 gearProductShow.DataContext = new GearProductVM();
-                xinGearProductShow.DataContext = new XinGearProductVM();
+                xinGearProductShow.DataContext = new XinGearProductVM(CMainList);
                 ApplyOpenProjectLineUi();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
@@ -696,7 +702,7 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                if (!string.Equals(CMainList.ProjPath, header, StringComparison.OrdinalIgnoreCase))
+                if (!CMainList.LastOpenSucceeded || !string.Equals(CMainList.ProjPath, header, StringComparison.OrdinalIgnoreCase))
                 {
                     progress.Report("Loaded!");
                     return;
@@ -716,7 +722,7 @@ namespace 断面毛刺检测软件
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.Loaded = true;
                 }
-                CMainList.IsStart = true;
+                CMainList.IsStart = !COpenProjectLine.IsXinGear || CMainList.XinGearRecipeReady;
                 CMainList.StartStop = CMainList.IsStart;
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);

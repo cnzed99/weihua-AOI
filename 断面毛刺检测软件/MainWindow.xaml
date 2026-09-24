@@ -271,7 +271,7 @@
                 FontSize="16"
                 SelectedIndex="0"
                 Style="{DynamicResource TabControlBaseStyle}">
-                <hc:TabItem Header="齿底 / 齿顶" Padding="20,8" Margin="0,0,16,0">
+                <hc:TabItem Header="{Binding XinGearShotFaceHeader}" Padding="20,8" Margin="0,0,16,0">
                     <ListBox
                         Padding="0"
                         hc:BorderElement.CornerRadius="0"
@@ -294,7 +294,7 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Columns="2" />
+                                <UniformGrid Columns="{Binding DataContext.XinGearShotFaceColumns, RelativeSource={RelativeSource AncestorType=ListBox}}" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>
@@ -318,8 +318,6 @@
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                 <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                 <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
-                                <Setter Property="Grid.Row" Value="{Binding GridRow}" />
-                                <Setter Property="Grid.Column" Value="{Binding GridCol}" />
                                 <Style.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="DarkTurquoise" />
@@ -329,17 +327,7 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                </Grid>
+                                <UniformGrid Columns="{Binding DataContext.XinGearSideProcess.XinGearShotColumns, RelativeSource={RelativeSource AncestorType=ListBox}}" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>

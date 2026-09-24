@@ -164,6 +164,21 @@ namespace WH.DetectSystem.Models
         public CAlgorithmParamBase MaociAlgorParamConfig { get; set; }
 
         /// <summary>
+        /// 新兴单组工程的齿底副图算法。为空时运行时按主算法插件创建。
+        /// </summary>
+        [JsonProperty]
+        public string XinGearBottomAlgorithm { get; set; }
+
+        [JsonProperty(Order = 2)]
+        public CAlgorithmParamBase XinGearBottomAlgorParamConfig { get; set; }
+
+        /// <summary>
+        /// 新兴单组工程的齿底副图筛选配置，与齿顶筛选互相独立。
+        /// </summary>
+        [JsonProperty]
+        public CFilterConfig XinGearBottomFilterConfig { get; set; }
+
+        /// <summary>
         /// 20240706 TCG
         /// 检测设置
         /// </summary>

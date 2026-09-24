@@ -47,6 +47,7 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
+using XinGearInfo;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -56,6 +57,8 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.4 李焕彬
         /// UI线程调度器，MainWindow
         /// </summary>
+        public bool LastOpenSucceeded { get; private set; }
+        public bool XinGearRecipeReady { get; private set; }
         public static Dispatcher Dispatcher { get; set; }
 
         [ObservableProperty]
@@ -474,6 +477,8 @@ namespace WH.DetectSystem.ViewModels
         public async Task OpenProj(IProgress<string> progress, string header)
         {
             IsLoading = true;
+            LastOpenSucceeded = false;
+            XinGearRecipeReady = false;
             //WeakReferenceMessenger.Default.Reset();
             #region 打开工程
             try
@@ -491,6 +496,20 @@ namespace WH.DetectSystem.ViewModels
                     Growl.Warning(conflictMsg);
                     SysLog.Error(conflictMsg);
                     return;
+                }
+                CXinGearProductModel selectedXinModel = null;
+                if (lineKind == OpenProjectLineKind.XinGear)
+                {
+                    try
+                    {
+                        selectedXinModel = CXinGearProductCatalog.Load().FindSelectedModel();
+                    }
+                    catch (Exception ex)
+                    {
+                        Growl.Warning(ex.Message);
+                        SysLog.Error(ex.Message);
+                        return;
+                    }
                 }
                 DetachCurrentLine();
                 ProjPath = header;
@@ -516,8 +535,23 @@ namespace WH.DetectSystem.ViewModels
                 }
                 if (COpenProjectLine.IsXinGear)
                 {
-                    CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+                    foreach (var vm in CMainVMs.Where(vm => vm.Name == "齿底" || vm.Name == "齿顶"))
+                    {
+                        vm.PhotoTotalCount = COpenProjectLine.IsXinGearCombinedFaceProcess(vm) ? 2 : 1;
+                    }
+                    CMainModel side = XinGearSideProcess;
+                    if (side == null || selectedXinModel == null)
+                    {
+                        Growl.Warning("新兴侧面制程或型号缺失，检测未启动");
+                    }
+                    else
+                    {
+                        side.InitializeXinGearPhotoCount(selectedXinModel.EffectiveSidePhotoCount);
+                        XinGearRecipeReady = CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+                        if (!XinGearRecipeReady) Growl.Warning("新兴拍照张数下发失败，检测未启动");
+                    }
                 }
+                else XinGearRecipeReady = true;
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -531,6 +565,7 @@ namespace WH.DetectSystem.ViewModels
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
                 await longtimefunc(progress);
+                LastOpenSucceeded = true;
             }
             catch (Exception ex)
             {
@@ -539,10 +574,37 @@ namespace WH.DetectSystem.ViewModels
             #endregion
         }
 
-        //开工程成功后按制程 Name 收集 PhotoTotalCount，写一次配方张数
-        /// <summary>
-        /// 卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。
-        /// </summary>
+        /// <summary>切换型号：PLC 先确认张数，当前 ID 保持原拍照配方。</summary>
+        public bool TryChangeXinGearModel(CXinGearProductModel model, out string error)
+        {
+            error = null;
+            if (!COpenProjectLine.IsXinGear) return true;
+            CMainModel side = XinGearSideProcess;
+            if (side == null || model == null || model.EffectiveSidePhotoCount <= 0)
+            {
+                error = "新兴侧面制程或型号张数无效";
+                return false;
+            }
+            bool wrote = XinGearRecipeReady
+                ? CXinGearCommunicate.TrySendSidePhotoCount(model.EffectiveSidePhotoCount, out error)
+                : CXinGearCommunicate.TrySendRecipePhotoCount(model.EffectiveSidePhotoCount, out error);
+            if (!wrote) return false;
+            XinGearRecipeReady = true;
+            bool defer = IsStart && CXinGearCommunicate.com != null;
+            side.QueueXinGearPhotoCount(model.EffectiveSidePhotoCount,
+                CXinGearCommunicate.GetProductID(), defer);
+            SelectedXinGearShotTile = side.ShotTiles.FirstOrDefault();
+            return true;
+        }
+        /// <summary>手动启动前重试尚未确认的三路 PLC 张数。</summary>
+        public bool TryEnsureXinGearRecipeReady()
+        {
+            if (!COpenProjectLine.IsXinGear || XinGearRecipeReady) return true;
+            XinGearRecipeReady = CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+            return XinGearRecipeReady;
+        }
+
+        /// <summary>卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。</summary>
         void DetachCurrentLine()
         {
             CGearLineHost.Detach();
@@ -678,10 +740,29 @@ namespace WH.DetectSystem.ViewModels
         /// <summary>
         /// 拍摄分页页1：齿底、齿顶。
         /// </summary>
+        private CMainModel XinGearCombinedFaceProcess =>
+            CMainVMs.FirstOrDefault(COpenProjectLine.IsXinGearCombinedFaceProcess);
+
+        public bool UseXinGearCombinedFaceLayout => XinGearCombinedFaceProcess != null;
+
+        public int XinGearShotFaceColumns => UseXinGearCombinedFaceLayout ? 1 : 2;
+
+        public string XinGearShotFaceHeader => UseXinGearCombinedFaceLayout
+            ? COpenProjectLine.XinGearCombinedFaceProcessName + " / "
+                + COpenProjectLine.XinGearCombinedFaceSubWindowName
+            : COpenProjectLine.XinGearFixedProcessNames[0] + " / "
+                + COpenProjectLine.XinGearFixedProcessNames[1];
+
         public IReadOnlyList<CMainModel> XinGearShotFaceProcesses
         {
             get
             {
+                CMainModel combined = XinGearCombinedFaceProcess;
+                if (combined != null)
+                {
+                    return new List<CMainModel> { combined };
+                }
+
                 List<CMainModel> list = new List<CMainModel>();
                 foreach (string name in COpenProjectLine.XinGearFixedProcessNames.Take(2))
                 {
@@ -759,6 +840,7 @@ namespace WH.DetectSystem.ViewModels
                 if (mainVMs.FirstOrDefault(o => o == mainVM) == null)
                 {
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlgorParamConfig);
+                    mainVM.UnregisterXinGearBottomAlgorithmConfig();
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociFilterConfig);
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlarmSetConfig);
                     if (mainVM.MarkConfig != null)
@@ -778,6 +860,9 @@ namespace WH.DetectSystem.ViewModels
             OnPropertyChanged(nameof(UseGearFixedLayout));
             OnPropertyChanged(nameof(UseCrankFixedLayout)); 
             OnPropertyChanged(nameof(IsXinGear));
+            OnPropertyChanged(nameof(UseXinGearCombinedFaceLayout));
+            OnPropertyChanged(nameof(XinGearShotFaceColumns));
+            OnPropertyChanged(nameof(XinGearShotFaceHeader));
             OnPropertyChanged(nameof(XinGearShotFaceProcesses));
             OnPropertyChanged(nameof(XinGearSideProcess));
         }
