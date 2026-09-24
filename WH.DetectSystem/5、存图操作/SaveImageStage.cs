@@ -107,9 +107,11 @@ namespace WH.DetectSystem._5_存图操作
                 string downMassPath;
                 string pullPath;
                 string fourCutPath;
+                bool isXinGearOffline = COpenProjectLine.IsXinGear && systemSettings.OfflineSave;
                 saveImageConfig.GetSavePath(
                     cell,
                     systemSettings.NowShift,
+                    isXinGearOffline,
                     out classPath,
                     out cropPath,
                     out cropName,
@@ -118,7 +120,7 @@ namespace WH.DetectSystem._5_存图操作
                     out pullPath,
                     out fourCutPath
                 );
-                if (!cell.IsOK || saveImageConfig.OKScreenShot)
+                if (!isXinGearOffline && (!cell.IsOK || saveImageConfig.OKScreenShot))
                 {
                     if (saveImageConfig.PiantScreenEnable)
                     {
@@ -221,7 +223,13 @@ namespace WH.DetectSystem._5_存图操作
                         OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
                     }
                 }
-                if (saveImageConfig.SaveImageEnable) //开启存原图
+                bool savedXinGearOfflineImages = false;
+                if (isXinGearOffline)
+                {
+                    SaveXinGearOfflineImages(cell, classPath, saveImageConfig.SaveImageFormat);
+                    savedXinGearOfflineImages = true;
+                }
+                if (saveImageConfig.SaveImageEnable && !savedXinGearOfflineImages) //开启存原图
                 {
                     string fileName = classPath;
                     if (Directory.Exists(Directory.GetParent(fileName).FullName))
@@ -656,6 +664,7 @@ namespace WH.DetectSystem._5_存图操作
             this CSaveImageConfig saveImageConfig,
             Cell cell,
             string nowShift,
+            bool useFlatResultDirectory,
             out string classPath,
             out string cropPath,
             out string cropName,
@@ -766,7 +775,7 @@ namespace WH.DetectSystem._5_存图操作
                     {
                         classPath = classPath + "\\NG";
                         cropPath = classPath;
-                        if (saveImageConfig.SavebyDefectName)
+                        if (!useFlatResultDirectory && saveImageConfig.SavebyDefectName)
                         {
                             if (!(cell.Detection is null))
                             {
@@ -782,7 +791,10 @@ namespace WH.DetectSystem._5_存图操作
                     }
                     //if (saveImageConfig.SavebyID)
                     //{
-                    classPath = classPath + "\\" + cell.ID;
+                    if (!useFlatResultDirectory)
+                    {
+                        classPath = classPath + "\\" + cell.ID;
+                    }
                     cropPath = classPath;
                     //}
 
@@ -822,10 +834,99 @@ namespace WH.DetectSystem._5_存图操作
         }
 
         /// <summary>
+        /// 新兴盘齿离线检测按单张结果直接保存到班次下的 OK/NG 目录。
+        /// </summary>
+        private static void SaveXinGearOfflineImages(Cell cell, string filepath, string format)
+        {
+            if (cell == null || string.IsNullOrWhiteSpace(filepath))
+            {
+                return;
+            }
+
+            string resultDirectory = Path.GetDirectoryName(filepath);
+            string shiftDirectory = string.IsNullOrEmpty(resultDirectory)
+                ? null
+                : Path.GetDirectoryName(resultDirectory);
+            if (string.IsNullOrEmpty(shiftDirectory))
+            {
+                return;
+            }
+
+            string extension = Path.GetExtension(filepath);
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = format.StartsWith(".") ? format : "." + format;
+            }
+
+            List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> images =
+                cell.XinGearImages != null && cell.XinGearImages.Count > 0
+                    ? cell.XinGearImages
+                    : new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>
+                    {
+                        (cell.Image, cell.PhotoIndex > 0 ? cell.PhotoIndex : 1, cell.CreateTime, cell.RecipeTime)
+                    };
+
+            bool hasLocalizedNg = HasLocalizedXinGearNg(cell);
+            foreach ((CImage img, int photoIndex, DateTime t, TimeSpan cost) image in images)
+            {
+                if (image.img == null)
+                {
+                    continue;
+                }
+
+                bool isOk = hasLocalizedNg
+                    ? !HasXinGearNgInImage(cell, image.photoIndex, image.img.ImageWidth, image.img.ImageHeight)
+                    : cell.IsOK;
+                string resultName = isOk ? "OK" : "NG";
+                string targetDirectory = Path.Combine(shiftDirectory, resultName);
+                Directory.CreateDirectory(targetDirectory);
+
+                string createTime = string.Format("{0:HHmmssfff}", image.t);
+                string fileName = $"{cell.ID}_{image.photoIndex}_{resultName}_{createTime}_{image.cost.TotalMilliseconds:F0}{extension}";
+                WriteImage(image.img, Path.Combine(targetDirectory, fileName), format);
+            }
+        }
+
+        private static bool HasLocalizedXinGearNg(Cell cell)
+        {
+            return cell.Detections != null
+                && cell.Detections.Any(detection =>
+                    detection != null
+                    && !detection.Result
+                    && detection.regionOut != null
+                    && detection.regionOut.Any(region => region.points != null && region.points.Count > 0));
+        }
+
+        private static bool HasXinGearNgInImage(Cell cell, int photoIndex, int width, int height)
+        {
+            if (cell.Detections == null || width <= 0 || height <= 0)
+            {
+                return false;
+            }
+
+            int columns = cell.Image != null && cell.Image.ImageWidth >= width
+                ? Math.Max(1, cell.Image.ImageWidth / width)
+                : 1;
+            int index = Math.Max(0, photoIndex - 1);
+            double left = (index % columns) * width;
+            double top = (index / columns) * height;
+            double right = left + width;
+            double bottom = top + height;
+
+            return cell.Detections.Any(detection =>
+                detection != null
+                && !detection.Result
+                && detection.regionOut != null
+                && detection.regionOut.Any(region =>
+                    region.points != null
+                    && region.points.Any(point =>
+                        point.X >= left && point.X < right && point.Y >= top && point.Y < bottom)));
+        }
+        /// <summary>
         /// 2025.6.5 鲍赞宝
         /// 保存图片
         /// </summary>
-        /// <param name="bitImage">图片</param>
+        /// <param name="cell">检测对象</param>
         /// <param name="filepath">存图路径</param>
         /// <param name="format">图片格式</param>
         private static void WriteImage(Cell cell, string filepath, string format)
