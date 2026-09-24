@@ -9,6 +9,7 @@ using OpenCvSharp.Extensions;
 using SaveImageManage;
 using SDFilter;
 using WH.DetectSystem.Models;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.Entity.DiskSpace;
 using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
@@ -106,9 +107,11 @@ namespace WH.DetectSystem._5_存图操作
                 string downMassPath;
                 string pullPath;
                 string fourCutPath;
+                bool isXinGearOffline = COpenProjectLine.IsXinGear && systemSettings.OfflineSave;
                 saveImageConfig.GetSavePath(
                     cell,
                     systemSettings.NowShift,
+                    isXinGearOffline,
                     out classPath,
                     out cropPath,
                     out cropName,
@@ -117,7 +120,7 @@ namespace WH.DetectSystem._5_存图操作
                     out pullPath,
                     out fourCutPath
                 );
-                if (!cell.IsOK || saveImageConfig.OKScreenShot)
+                if (!isXinGearOffline && (!cell.IsOK || saveImageConfig.OKScreenShot))
                 {
                     if (saveImageConfig.PiantScreenEnable)
                     {
@@ -129,94 +132,104 @@ namespace WH.DetectSystem._5_存图操作
                         );
                     }
                 }
-                if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
+                //四分割/上下止/拉头仅拉链写入
+                if (COpenProjectLine.IsZipper)
                 {
-                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                    if (saveImageConfig.SaveFourCutEnable && cell.FourCutMatImg != null)
                     {
-                        int index = fourCutPath.IndexOf('.');
-                        string fourpath = fourCutPath.Insert(index, $"_{i}");
-                        // SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
-                        OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i].Item3);
-
-                        if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
+                        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                         {
-                            string spltstr;
-                            if (cell.FourCutMatImg[i].Item1 >= 100)
+                            int index = fourCutPath.IndexOf('.');
+                            string fourpath = fourCutPath.Insert(index, $"_{i}");
+                            // SaveMatRgb2Bgr(fourpath, cell.FourCutMatImg[i]);
+                            OpenCvSharp.Cv2.ImWrite(fourpath, cell.FourCutMatImg[i].Item3);
+
+                            if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                             {
-                                spltstr = "NG低曝";
-                            }
-                            else
-                            {
-                                spltstr = "NG高曝";
-                            }
-                            string smfourpath = fourpath.Replace("FourCutImg", spltstr);
-                            string[] splfour = smfourpath.Split(spltstr);
-                            if (splfour.Length > 0)
-                            {
-                                string dir = $"{splfour[0]}\\{spltstr}";
-                                if (!Directory.Exists(dir))
+                                string spltstr;
+                                if (cell.FourCutMatImg[i].Item1 >= 100)
                                 {
-                                    Directory.CreateDirectory(dir);
+                                    spltstr = "NG低曝";
                                 }
-                                OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                else
+                                {
+                                    spltstr = "NG高曝";
+                                }
+                                string smfourpath = fourpath.Replace("FourCutImg", spltstr);
+                                string[] splfour = smfourpath.Split(spltstr);
+                                if (splfour.Length > 0)
+                                {
+                                    string dir = $"{splfour[0]}\\{spltstr}";
+                                    if (!Directory.Exists(dir))
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+                                    OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                }
                             }
                         }
                     }
-                }
-                if (cell.FourCutMatImg != null)
-                {
-                    for (int i = 0; i < cell.FourCutMatImg.Count; i++)
+                    if (cell.FourCutMatImg != null)
                     {
-                        int index = fourCutPath.IndexOf('.');
-                        string fourpath = fourCutPath.Insert(index, $"_{i}");
-                        if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
+                        for (int i = 0; i < cell.FourCutMatImg.Count; i++)
                         {
-                            string spltstr;
-                            if (cell.FourCutMatImg[i].Item1 >= 100)
+                            int index = fourCutPath.IndexOf('.');
+                            string fourpath = fourCutPath.Insert(index, $"_{i}");
+                            if (cell.SaveCutImagesIndex.Contains((cell.FourCutMatImg[i].Item1, cell.FourCutMatImg[i].Item2)))
                             {
-                                spltstr = "NG低曝";
-                            }
-                            else
-                            {
-                                spltstr = "NG高曝";
-                            }
-                            string smfourpath = fourpath.Replace("FourCutImg", spltstr);
-                            string[] splfour = smfourpath.Split(spltstr);
-                            if (splfour.Length > 0)
-                            {
-                                string dir = $"{splfour[0]}\\{spltstr}";
-                                if (!Directory.Exists(dir))
+                                string spltstr;
+                                if (cell.FourCutMatImg[i].Item1 >= 100)
                                 {
-                                    Directory.CreateDirectory(dir);
+                                    spltstr = "NG低曝";
                                 }
-                                OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                else
+                                {
+                                    spltstr = "NG高曝";
+                                }
+                                string smfourpath = fourpath.Replace("FourCutImg", spltstr);
+                                string[] splfour = smfourpath.Split(spltstr);
+                                if (splfour.Length > 0)
+                                {
+                                    string dir = $"{splfour[0]}\\{spltstr}";
+                                    if (!Directory.Exists(dir))
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+                                    OpenCvSharp.Cv2.ImWrite(smfourpath, cell.FourCutMatImg[i].Item3);
+                                }
                             }
                         }
                     }
-                }
 
-                if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
-                {
-                    for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                    if (saveImageConfig.SaveUpMassEnable && cell.UpMassMatImg != null)
                     {
-                        int index = upMassPath.IndexOf('.');
-                        string uppath = upMassPath.Insert(index, $"_{i}");
-                        // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
-                        OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                        for (int i = 0; i < cell.UpMassMatImg.Count; i++)
+                        {
+                            int index = upMassPath.IndexOf('.');
+                            string uppath = upMassPath.Insert(index, $"_{i}");
+                            // SaveMatRgb2Bgr(uppath, cell.UpMassMatImg[i]);
+                            OpenCvSharp.Cv2.ImWrite(uppath, cell.UpMassMatImg[i]);
+                        }
+                    }
+                    if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                    {
+                        // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
+                        OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                    }
+                    if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
+                    {
+                        // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
+                        // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
+                        OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
                     }
                 }
-                if (saveImageConfig.SaveDownMassEnable && cell.DownMassMatImg != null)
+                bool savedXinGearOfflineImages = false;
+                if (isXinGearOffline)
                 {
-                    // SaveMatRgb2Bgr(downMassPath, cell.DownMassMatImg);
-                    OpenCvSharp.Cv2.ImWrite(downMassPath, cell.DownMassMatImg);
+                    SaveXinGearOfflineImages(cell, classPath, saveImageConfig.SaveImageFormat);
+                    savedXinGearOfflineImages = true;
                 }
-                if (saveImageConfig.SavePullEnable && cell.ZipperPullPartImg != null)
-                {
-                    // WriteImage(cell.ZipperPullPartImg, pullPath, saveImageConfig.SaveImageFormat);
-                    // SaveMatRgb2Bgr( pullPath, cell.ZipperPullPartImg);
-                    OpenCvSharp.Cv2.ImWrite(pullPath, cell.ZipperPullPartImg);
-                }
-                if (saveImageConfig.SaveImageEnable) //开启存原图
+                if (saveImageConfig.SaveImageEnable && !savedXinGearOfflineImages) //开启存原图
                 {
                     string fileName = classPath;
                     if (Directory.Exists(Directory.GetParent(fileName).FullName))
@@ -305,6 +318,14 @@ namespace WH.DetectSystem._5_存图操作
             bool showAllDefect
         )
         {
+            //拉链=ChangleImgae，盘齿=MergedPanorama
+            CImage overlayImg = null;
+            if (COpenProjectLine.IsZipper)
+                overlayImg = cell.ChangleImgae;
+            else if (COpenProjectLine.IsGear)
+                overlayImg = cell.MergedPanorama;
+            else if (COpenProjectLine.IsXinGear)
+                overlayImg = cell.MergedPanorama;
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
             drawingContext.DrawImage(
@@ -314,16 +335,16 @@ namespace WH.DetectSystem._5_存图操作
             DrawingVisual drawingVisua2 = null;
             DrawingContext drawingContext2 = null;
             BitmapSource bitmapSource = null;
-            if (cell.ChangleImgae != null)
+            if (overlayImg != null)
             {
                 //bitmapSource = MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
-                bitmapSource = cell.ChangleImgae.ToBitmapSource();
+                bitmapSource = overlayImg.ToBitmapSource();
                 if (bitmapSource != null)
                 {
                     drawingVisua2 = new DrawingVisual();
                     drawingContext2 = drawingVisua2.RenderOpen();
                     drawingContext2.DrawImage(bitmapSource,
-                        new Rect(0, 0, cell.ChangleImgae.ImageWidth, cell.ChangleImgae.ImageHeight)
+                        new Rect(0, 0, overlayImg.ImageWidth, overlayImg.ImageHeight)
                     );
                     foreach (var edge in cell.DrawEdges)
                     {
@@ -424,7 +445,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             else
                             {
-                                if (cell.ChangleImgae != null && drawingContext2 != null)
+                                if (overlayImg != null && drawingContext2 != null)
                                 {
                                     DrawPoints(drawingContext2, detection.regionOut[i].points, penDraw);
                                     DrawText(drawingContext2,
@@ -432,7 +453,7 @@ namespace WH.DetectSystem._5_存图操作
                                             detection.regionOut[i].GetBottomRight(),
                                            // defectFilter.ShowColor.Brush,
                                            Brushes.Red,
-                                            (int)(cell.ChangleImgae.ImageHeight / 10.0)
+                                            (int)(overlayImg.ImageHeight / 10.0)
                                         );
                                 }
 
@@ -469,7 +490,7 @@ namespace WH.DetectSystem._5_存图操作
                             }
                             else
                             {
-                                if (cell.ChangleImgae != null && drawingContext2 != null)
+                                if (overlayImg != null && drawingContext2 != null)
                                 {
                                     DrawPoints(drawingContext, cell.Detection.regionOut[i].points, penDraw);
                                     DrawText(drawingContext,
@@ -477,7 +498,7 @@ namespace WH.DetectSystem._5_存图操作
                                            cell.Detection.regionOut[i].GetBottomRight(),
                                           // defectFilter.ShowColor.Brush,
                                           Brushes.Red,
-                                          (int)(cell.ChangleImgae.ImageHeight / 10)
+                                          (int)(overlayImg.ImageHeight / 10)
                                        );
 
                                 }
@@ -504,11 +525,11 @@ namespace WH.DetectSystem._5_存图操作
             renderTargetBitmap.Freeze();
 
             RenderTargetBitmap renderTargetBitmap2 = null;
-            if (cell.ChangleImgae != null && drawingContext2 != null)
+            if (overlayImg != null && drawingContext2 != null)
             {
                 drawingContext2.Close();
                 renderTargetBitmap2 =
-                   new(cell.ChangleImgae.ImageWidth, cell.ChangleImgae.ImageHeight, 96, 96, PixelFormats.Default);
+                   new(overlayImg.ImageWidth, overlayImg.ImageHeight, 96, 96, PixelFormats.Default);
                 renderTargetBitmap2.Render(drawingVisua2);
                 renderTargetBitmap2.Freeze();
             }
@@ -643,6 +664,7 @@ namespace WH.DetectSystem._5_存图操作
             this CSaveImageConfig saveImageConfig,
             Cell cell,
             string nowShift,
+            bool useFlatResultDirectory,
             out string classPath,
             out string cropPath,
             out string cropName,
@@ -705,34 +727,45 @@ namespace WH.DetectSystem._5_存图操作
                     //        classPath = classPath + "\\" + cell.CamName;
                     //    }
                     //}
-                    string dirstr = $"{classPath}\\截图";
-                    upmassPath = $"{dirstr}\\UpMassImg";
-                    if (!Directory.Exists(upmassPath))
+                    //仅拉链创建拉头/上下止/四分割目录
+                    if (COpenProjectLine.IsZipper)
                     {
-                        Directory.CreateDirectory(upmassPath);
-                    }
-                    upmassPath = $"{upmassPath}{filename}";
+                        string dirstr = $"{classPath}\\截图";
+                        upmassPath = $"{dirstr}\\UpMassImg";
+                        if (!Directory.Exists(upmassPath))
+                        {
+                            Directory.CreateDirectory(upmassPath);
+                        }
+                        upmassPath = $"{upmassPath}{filename}";
 
-                    downmassPath = $"{dirstr}\\DownMassImg";
-                    if (!Directory.Exists(downmassPath))
-                    {
-                        Directory.CreateDirectory(downmassPath);
-                    }
-                    downmassPath = $"{downmassPath}{filename}";
+                        downmassPath = $"{dirstr}\\DownMassImg";
+                        if (!Directory.Exists(downmassPath))
+                        {
+                            Directory.CreateDirectory(downmassPath);
+                        }
+                        downmassPath = $"{downmassPath}{filename}";
 
-                    pullPath = $"{dirstr}\\PullImg";
-                    if (!Directory.Exists(pullPath))
-                    {
-                        Directory.CreateDirectory(pullPath);
-                    }
-                    pullPath = $"{pullPath}{filename}";
+                        pullPath = $"{dirstr}\\PullImg";
+                        if (!Directory.Exists(pullPath))
+                        {
+                            Directory.CreateDirectory(pullPath);
+                        }
+                        pullPath = $"{pullPath}{filename}";
 
-                    fourCutPath = $"{dirstr}\\FourCutImg";
-                    if (!Directory.Exists(pullPath))
-                    {
-                        Directory.CreateDirectory(fourCutPath);
+                        fourCutPath = $"{dirstr}\\FourCutImg";
+                        if (!Directory.Exists(pullPath))
+                        {
+                            Directory.CreateDirectory(fourCutPath);
+                        }
+                        fourCutPath = $"{fourCutPath}{filename}";
                     }
-                    fourCutPath = $"{fourCutPath}{filename}";
+                    else
+                    {
+                        upmassPath = string.Empty;
+                        downmassPath = string.Empty;
+                        pullPath = string.Empty;
+                        fourCutPath = string.Empty;
+                    }
 
                     if (cell.IsOK)
                     {
@@ -742,7 +775,7 @@ namespace WH.DetectSystem._5_存图操作
                     {
                         classPath = classPath + "\\NG";
                         cropPath = classPath;
-                        if (saveImageConfig.SavebyDefectName)
+                        if (!useFlatResultDirectory && saveImageConfig.SavebyDefectName)
                         {
                             if (!(cell.Detection is null))
                             {
@@ -758,7 +791,10 @@ namespace WH.DetectSystem._5_存图操作
                     }
                     //if (saveImageConfig.SavebyID)
                     //{
-                    classPath = classPath + "\\" + cell.ID;
+                    if (!useFlatResultDirectory)
+                    {
+                        classPath = classPath + "\\" + cell.ID;
+                    }
                     cropPath = classPath;
                     //}
 
@@ -798,17 +834,107 @@ namespace WH.DetectSystem._5_存图操作
         }
 
         /// <summary>
+        /// 新兴盘齿离线检测按单张结果直接保存到班次下的 OK/NG 目录。
+        /// </summary>
+        private static void SaveXinGearOfflineImages(Cell cell, string filepath, string format)
+        {
+            if (cell == null || string.IsNullOrWhiteSpace(filepath))
+            {
+                return;
+            }
+
+            string resultDirectory = Path.GetDirectoryName(filepath);
+            string shiftDirectory = string.IsNullOrEmpty(resultDirectory)
+                ? null
+                : Path.GetDirectoryName(resultDirectory);
+            if (string.IsNullOrEmpty(shiftDirectory))
+            {
+                return;
+            }
+
+            string extension = Path.GetExtension(filepath);
+            if (string.IsNullOrEmpty(extension))
+            {
+                extension = format.StartsWith(".") ? format : "." + format;
+            }
+
+            List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)> images =
+                cell.XinGearImages != null && cell.XinGearImages.Count > 0
+                    ? cell.XinGearImages
+                    : new List<(CImage img, int photoIndex, DateTime t, TimeSpan cost)>
+                    {
+                        (cell.Image, cell.PhotoIndex > 0 ? cell.PhotoIndex : 1, cell.CreateTime, cell.RecipeTime)
+                    };
+
+            bool hasLocalizedNg = HasLocalizedXinGearNg(cell);
+            foreach ((CImage img, int photoIndex, DateTime t, TimeSpan cost) image in images)
+            {
+                if (image.img == null)
+                {
+                    continue;
+                }
+
+                bool isOk = hasLocalizedNg
+                    ? !HasXinGearNgInImage(cell, image.photoIndex, image.img.ImageWidth, image.img.ImageHeight)
+                    : cell.IsOK;
+                string resultName = isOk ? "OK" : "NG";
+                string targetDirectory = Path.Combine(shiftDirectory, resultName);
+                Directory.CreateDirectory(targetDirectory);
+
+                string createTime = string.Format("{0:HHmmssfff}", image.t);
+                string fileName = $"{cell.ID}_{image.photoIndex}_{resultName}_{createTime}_{image.cost.TotalMilliseconds:F0}{extension}";
+                WriteImage(image.img, Path.Combine(targetDirectory, fileName), format);
+            }
+        }
+
+        private static bool HasLocalizedXinGearNg(Cell cell)
+        {
+            return cell.Detections != null
+                && cell.Detections.Any(detection =>
+                    detection != null
+                    && !detection.Result
+                    && detection.regionOut != null
+                    && detection.regionOut.Any(region => region.points != null && region.points.Count > 0));
+        }
+
+        private static bool HasXinGearNgInImage(Cell cell, int photoIndex, int width, int height)
+        {
+            if (cell.Detections == null || width <= 0 || height <= 0)
+            {
+                return false;
+            }
+
+            int columns = cell.Image != null && cell.Image.ImageWidth >= width
+                ? Math.Max(1, cell.Image.ImageWidth / width)
+                : 1;
+            int index = Math.Max(0, photoIndex - 1);
+            double left = (index % columns) * width;
+            double top = (index / columns) * height;
+            double right = left + width;
+            double bottom = top + height;
+
+            return cell.Detections.Any(detection =>
+                detection != null
+                && !detection.Result
+                && detection.regionOut != null
+                && detection.regionOut.Any(region =>
+                    region.points != null
+                    && region.points.Any(point =>
+                        point.X >= left && point.X < right && point.Y >= top && point.Y < bottom)));
+        }
+        /// <summary>
         /// 2025.6.5 鲍赞宝
         /// 保存图片
         /// </summary>
-        /// <param name="bitImage">图片</param>
+        /// <param name="cell">检测对象</param>
         /// <param name="filepath">存图路径</param>
         /// <param name="format">图片格式</param>
         private static void WriteImage(Cell cell, string filepath, string format)
         {
             if (cell != null)
             {
-                if (cell.ZipperImages.Count > 1)
+                //存图按打开工程选列表
+                if (COpenProjectLine.IsZipper && cell.ZipperImages != null && cell.ZipperImages.Count > 1)
                 {
                     string[] filenames = filepath.Split('.');
                     if (filenames.Length >= 2)
@@ -858,6 +984,58 @@ namespace WH.DetectSystem._5_存图操作
 
                         }
 
+                    }
+                }
+                else if (COpenProjectLine.IsGear && cell.GearImages != null && cell.GearImages.Count > 1)
+                {
+                    //盘齿分张只写 GearImages，不拷 SaveBigImagesIndex 大图
+                    string[] filenames = filepath.Split('.');
+                    if (filenames.Length >= 2)
+                    {
+                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.GearImages)
+                        {
+                            string[] namesplits = filenames[0].Split('_');
+                            if (namesplits.Length >= 2)
+                            {
+                                namesplits[1] = img.Item2.ToString();
+                                filenames[0] = string.Join("_", namesplits);
+                                string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                                string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                                {
+                                    BitmapEncoder encoder = GetEncoder(format);
+                                    encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                    encoder.Save(stream);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (COpenProjectLine.IsXinGear && cell.XinGearImages != null && cell.XinGearImages.Count > 1)
+                {
+                    // 新兴分张只写 XinGearImages，不拷 SaveBigImagesIndex 大图
+                    string[] filenames = filepath.Split('.');
+                    if (filenames.Length >= 2)
+                    {
+                        foreach ((CImage, int, DateTime, TimeSpan) img in cell.XinGearImages)
+                        {
+                            string[] namesplits = filenames[0].Split('_');
+                            if (namesplits.Length >= 2)
+                            {
+                                namesplits[1] = img.Item2.ToString();
+                                filenames[0] = string.Join("_", namesplits);
+                                string createtime = string.Format("{0:HHmmssfff}", img.Item3);
+                                string filename = $"{filenames[0]}_{createtime}_{img.Item4.TotalMilliseconds.ToString("F0")}.{filenames[1]}";
+
+                                using (FileStream stream = new FileStream(filename, FileMode.Create))
+                                {
+                                    BitmapEncoder encoder = GetEncoder(format);
+                                    encoder.Frames.Add(BitmapFrame.Create(img.Item1.ToBitmapSource()));
+                                    encoder.Save(stream);
+                                }
+                            }
+                        }
                     }
                 }
                 else

@@ -34,6 +34,7 @@
                 x:Key="BoolToBrushConverterText"
                 FalseValue="Red"
                 TrueValue="{DynamicResource InfoBrush}" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -85,20 +86,23 @@
                                                                 <TextBlock Grid.Column="0" Text="{Binding Name}" />
                                                                 <TextBlock
                                                                     Grid.Column="2"
-                                                                    Text="{Binding ResultList[0].Value, StringFormat={}{0:F2}}"
+                                                                    Text="{Binding HeaderDisplayValue, StringFormat={}{0:F2}}"
                                                                     TextAlignment="Center" />
                                                                 <TextBlock
                                                                     Grid.Column="3"
                                                                     Text="{Binding ResultList[0].Feature.Unit, Mode=OneWay}"
-                                                                    TextAlignment="Center" />
+                                                                    TextAlignment="Center"
+                                                                    Visibility="{Binding ShowPairedHeaderValue, Converter={StaticResource BoolToVis}}" />
                                                                 <TextBlock
                                                                     Grid.Column="4"
                                                                     Text="{Binding ResultList[1].Value, StringFormat={}{0:F2}}"
-                                                                    TextAlignment="Center" />
+                                                                    TextAlignment="Center"
+                                                                    Visibility="{Binding ShowPairedHeaderValue, Converter={StaticResource BoolToVis}}" />
                                                                 <TextBlock
                                                                     Grid.Column="5"
                                                                     Text="{Binding ResultList[1].Feature.Unit, Mode=OneWay}"
-                                                                    TextAlignment="Left" />
+                                                                    TextAlignment="Left"
+                                                                    Visibility="{Binding ShowPairedHeaderValue, Converter={StaticResource BoolToVis}}" />
                                                             </Grid>
                                                         </Expander.Header>
                                                         <Border

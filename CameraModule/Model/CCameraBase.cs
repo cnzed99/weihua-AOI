@@ -75,6 +75,8 @@ namespace CameraModule
         /// </summary>
         public CCameraParameterBase Setting { get; set; }
 
+        protected string OpenFailureReason { get; set; }
+
         public CCameraBase()
         {
         }
@@ -479,6 +481,7 @@ namespace CameraModule
         /// <returns>true成功，false失败</returns>
         public bool InitializeCamera()
         {
+            OpenFailureReason = null;
             try
             {
                 if (OpenCamera())
@@ -498,10 +501,13 @@ namespace CameraModule
 
                     return true;
                 }
-                CCameraManagement.CamLogger.Error(
-                    Properties.Resources.ErrorInit3 + Setting.SerialNumber
-                );
-                Growl.Error(Properties.Resources.ErrorInit3 + Setting.SerialNumber);
+                string message = Properties.Resources.ErrorInit3 + Setting.SerialNumber;
+                if (!string.IsNullOrWhiteSpace(OpenFailureReason))
+                {
+                    message += ": " + OpenFailureReason;
+                }
+                CCameraManagement.CamLogger.Error(message);
+                Growl.Error(message);
             }
             catch (Exception ex)
             {

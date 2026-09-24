@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Channels;
@@ -9,6 +11,7 @@ using AlgorithmDll;
 using Autofac;
 using CameraModule;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.Messaging;
 using FocusControl;
 using HandyControl.Controls;
@@ -22,6 +25,7 @@ using SaveImageManage;
 using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.ViewModels;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.DetectSystem._4_报警处理;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
@@ -30,6 +34,8 @@ using WH.Entity.LogRecord;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
 using ZipperInfo;
+using CrankInfo;
+using XinGearInfo;
 using System.Runtime.InteropServices;
 using System.IO;
 
@@ -110,6 +116,98 @@ namespace WH.DetectSystem.Models
             get => ProcessGroup?.MaociQualityConfig;
         }
 
+        [JsonIgnore]
+        public bool HasProcessSubWindow =>
+            ProcessSubWindows != null && ProcessSubWindows.Any(o => o.Enabled);
+
+        [JsonIgnore]
+        public string ProcessSubWindowTitle
+        {
+            get
+            {
+                var item = ProcessSubWindows?.FirstOrDefault(o => o.Enabled);
+                if (item == null || string.IsNullOrWhiteSpace(item.DisplayName))
+                    return ProcessSubWindowList.DefaultTitle;
+                return item.DisplayName;
+            }
+        }
+
+        partial void OnProcessSubWindowsChanged(
+            ObservableCollection<CProcessSubWindowItem> oldValue,
+            ObservableCollection<CProcessSubWindowItem> newValue
+        )
+        {
+            UnhookProcessSubWindowCollection(oldValue);
+            HookProcessSubWindowCollection(newValue);
+            NotifyProcessSubWindowDisplay();
+            if (ProcessGroup != null)
+            {
+                RegisterXinGearBottomAlgorithmConfig();
+            }
+        }
+
+        public void AttachProcessSubWindowNotifications()
+        {
+            UnhookProcessSubWindowCollection(ProcessSubWindows);
+            HookProcessSubWindowCollection(ProcessSubWindows);
+            NotifyProcessSubWindowDisplay();
+        }
+
+        void NotifyProcessSubWindowDisplay()
+        {
+            OnPropertyChanged(nameof(HasProcessSubWindow));
+            OnPropertyChanged(nameof(ProcessSubWindowTitle));
+        }
+
+        void HookProcessSubWindowCollection(ObservableCollection<CProcessSubWindowItem> col)
+        {
+            if (col == null)
+                return;
+            col.CollectionChanged += ProcessSubWindows_CollectionChanged;
+            foreach (var item in col)
+            {
+                item.PropertyChanged += ProcessSubWindowItem_PropertyChanged;
+            }
+        }
+
+        void UnhookProcessSubWindowCollection(ObservableCollection<CProcessSubWindowItem> col)
+        {
+            if (col == null)
+                return;
+            col.CollectionChanged -= ProcessSubWindows_CollectionChanged;
+            foreach (var item in col)
+            {
+                item.PropertyChanged -= ProcessSubWindowItem_PropertyChanged;
+            }
+        }
+
+        void ProcessSubWindows_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (CProcessSubWindowItem item in e.OldItems)
+                    item.PropertyChanged -= ProcessSubWindowItem_PropertyChanged;
+            }
+            if (e.NewItems != null)
+            {
+                foreach (CProcessSubWindowItem item in e.NewItems)
+                    item.PropertyChanged += ProcessSubWindowItem_PropertyChanged;
+            }
+            NotifyProcessSubWindowDisplay();
+        }
+
+        void ProcessSubWindowItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (
+                string.IsNullOrEmpty(e.PropertyName)
+                || e.PropertyName == nameof(CProcessSubWindowItem.Enabled)
+                || e.PropertyName == nameof(CProcessSubWindowItem.DisplayName)
+            )
+            {
+                NotifyProcessSubWindowDisplay();
+            }
+        }
+
         /// <summary>
         /// 20240707 TCG
         /// 初始化当前制程，分配过滤、等级、算法配置对象，注册参数修改消息
@@ -168,6 +266,8 @@ namespace WH.DetectSystem.Models
             //};
 
             this.ProcessGroup = processGroup;
+            AttachProcessSubWindowNotifications();
+            RegisterXinGearBottomAlgorithmConfig();
             if (
                 !string.IsNullOrEmpty(CameraSerial)
                 && CCameraManagement.CamParamDict.ContainsKey(CameraSerial)
@@ -201,8 +301,10 @@ namespace WH.DetectSystem.Models
                     FocusConfig,
                     FocusConfig.token
                 );
-            CZipperAutomaticAlgorithm.Instance.TestFinshEven += TestFinshTodo;
-            // CZipperAutomaticAlgorithm.ZipperInfoChangeEven += InfoChangeFunc;
+            if (COpenProjectLine.IsZipper)
+            {
+                SubscribeZipperAutoFinish();
+            }
             InitTask();
             UpdateVMLoginPerson(CLoginViewModel.SloinPerson);
             //using (var ms = new MemoryStream(Properties.Resources.黑背景))
@@ -277,6 +379,28 @@ namespace WH.DetectSystem.Models
             this.Algorithm = algorithm;
             this.Focus = focus;
             this.CameraSerial = cameraSerial;
+
+            if (string.Equals(algorithm, COpenProjectLine.PlaneGearAlgorithmName, StringComparison.Ordinal))
+            {
+                // 新兴盘齿建制程按插件写默认 N：空工程 Kind 仍是 None，不能等 IsXinGear。侧面 6，其余 1。
+                this.PhotoTotalCount = name switch
+                {
+                    "侧面" => 6,
+                    _ => 1,
+                };
+            }
+            else if (string.Equals(algorithm, COpenProjectLine.GearAlgorithmName, StringComparison.Ordinal))
+            {
+                //富川盘齿按制程名写入默认张数 N：内孔=6；上轴侧面/下轴侧面=10；整轴侧面=14；其余（下端面/上齿面/上端面等）=1
+                this.PhotoTotalCount = name switch
+                {
+                    "内孔" => 6,
+                    "上轴侧面" => 10,
+                    "下轴侧面" => 10,
+                    "整轴侧面" => 14,
+                    _ => 1,
+                };
+            }
             this.MaociAlgorParamConfig = CAlgorithmManagement
                 .AlgorithmHeper[Algorithm]
                 .CreateNewAlgorithm(name);
@@ -291,161 +415,6 @@ namespace WH.DetectSystem.Models
             this.UpdateName();
             Init(processGroup);
         }
-
-        private void TestFinshTodo(bool finsh)
-        {
-
-            if (CZipperAutomaticAlgorithm.Instance.TestFinsh)
-            {
-                foreach (var cell in MergeCells)
-                {
-                    SaveOtherOldImage(cell);
-                }
-                MergeCells.Clear();
-                UpdatDetSet();
-                ////UpdatWhiteZipperParam(); //白色拉链加严处理 20260424 鲍赞宝 弃用
-                //if (this.Name == "正面")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //            UpdateLogo("左相机");
-                //            Updatepull("左相机");
-                //            UpdatepullSegArea("左相机");
-                //        }
-
-
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //            UpdateLogo("右相机");
-                //            Updatepull("右相机");
-                //            UpdatepullSegArea("右相机");
-                //        }
-
-                //    }
-                //}
-                //if (this.Name == "反面")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "右相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //            UpdateLogo("右相机");
-                //            Updatepull("右相机");
-                //            UpdatepullSegArea("右相机");
-                //        }
-
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "左相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //            UpdateLogo("左相机");
-                //            Updatepull("左相机");
-                //            UpdatepullSegArea("左相机");
-                //        }
-
-                //    }
-                //}
-                //if (this.Name == "正面内")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //}
-                //if (this.Name == "正面外")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //}
-                //if (this.Name == "反面内")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下内相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上内相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //}
-                //if (this.Name == "反面外")
-                //{
-                //    if (CZipperAutomaticAlgorithm.ZipperInfo.ZipperSliderType == PULLTYPE.正穿)
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "下外相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        var camDic = CCameraManagement.CamParamDict.Values.FirstOrDefault(c => c.Name == "上外相机");
-                //        if (camDic != null)
-                //        {
-                //            UpdateCam(camDic.SerialNumber);
-                //        }
-                //    }
-                //}
-            }
-            if (!finsh)
-            {
-                IsAutomaticTest = false;
-            }
-        }
-
-        //private void InfoChangeFunc()
-        //{
-        //    TestFinshTodo(true);
-        //}
 
         #region 时间相关
 
@@ -590,6 +559,12 @@ namespace WH.DetectSystem.Models
             get { return isAutomaticTest; }
             set
             {
+                // 学料标志仅拉链工程可置 true
+                if (!COpenProjectLine.IsZipper)
+                {
+                    isAutomaticTest = false;
+                    return;
+                }
                 isAutomaticTest = value;
             }
         }
@@ -691,6 +666,7 @@ namespace WH.DetectSystem.Models
         {
             return filter.IsReversal;
         }
+
         /// <summary>
         /// 拉链自动识别算法
         /// </summary>
@@ -743,68 +719,65 @@ namespace WH.DetectSystem.Models
                 {
                     try
                     {
-                        if (IsStart && !isAutomaticTest) //自动运行
+                        if (cell.IsPreBound)
                         {
                             IDisRight = true;
-                            int productID = -1;
-                            if (Name == "正面" || Name == "反面")
+                        }
+                        else if (IsStart && !isAutomaticTest) //自动运行
+                        {
+                            //拉链三分支绑 ID；盘齿 GetProductID + 上齿面转发
+                            if (COpenProjectLine.IsZipper)
                             {
-                                CZipperCommunicate.GetID(out productID);
-                                m_WaitIDChannel.Reader.TryRead(out ZipperID zipperID);
-                                if (zipperID.ProductID > 0)
+                                if (TryConsumeZipperCaptureReject(cell, ref IDisRight))
                                 {
-                                    bool bnext = zipperID.ProductID < productID;
-                                    while (bnext && zipperID.ProductID > 0)
-                                    {
-                                        m_WaitIDChannel.Reader.TryRead(out zipperID);
-                                        bnext = zipperID.ProductID < productID;
-                                        if (bnext)
-                                        {
-                                            SysLog.Info($"{Name}-变化的产品ID:{zipperID.ProductID}小于当前{productID}，抛弃{zipperID.ProductID}-{zipperID.PhotoID}");
-                                            continue;
-                                        }
-                                    }
-                                    cell.ID = zipperID.ProductID.ToString();
-                                    cell.PhotoIndex = zipperID.PhotoID;
-                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},图片ID:{zipperID.PhotoID}");
-                                }
-                                else
-                                {
-                                    IDisRight = false;
-                                    SysLog.Info($"{Name}-接收到产品ID:{zipperID.ProductID},抛弃");
-                                    cell.Dispose();
+                                    continue;
                                 }
                             }
-                            else if (Name == "上止") //上止
+                            else if (COpenProjectLine.IsGear)
+                            {
+                                if (TryConsumeGearFormalCapture(cell, ref IDisRight))
+                                {
+                                    continue;
+                                }
+                            }
+                            else if (COpenProjectLine.IsCrank)
+                            {
+                                int crankProductId = CCrankCommunicate.GetProductID();
+                                if (crankProductId > 0)
+                                {
+                                    cell.ID = crankProductId.ToString();
+                                }
+                                IDisRight = true;
+                            }
+                            else if (COpenProjectLine.IsXinGear)
+                            {
+                                if (TryConsumeXinGearFormalCapture(cell, ref IDisRight))
+                                {
+                                    continue;
+                                }
+                            }
+                            else
                             {
                                 IDisRight = true;
-                                cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
-                                cell.PhotoIndex = 1;
-                                cell.PhotoTatolCount = 1;
                             }
-                            else //拉头拉片
-                            {
-                                CZipperCommunicate.GetID2(out productID);
-                                if (productID != -1)
-                                {
-                                    IDisRight = true;
-                                    cell.ID = productID.ToString();
-                                    cell.PhotoIndex = 1;
-                                    cell.PhotoTatolCount = 1;
-                                }
-
-                            }
-
                         }
                         else
                         {
+                            //离线上齿面用文件名已写入的 PhotoIndex 当 k（无相机时 IsStart=false 走本分支）
+                            if (COpenProjectLine.IsGear && TryConsumeGearOfflineToothTop(cell))
+                            {
+                                continue;
+                            }
                             IDisRight = true;
                             if (cell.ImageFile == "") //手动调试
                             {
                                 cell.ID = (ProcessGroup.MaociDefectsProduce.Total + 1).ToString();
                                 cell.PhotoIndex = 1;
-                                cell.PhotoTatolCount = 1;
+                                //离线/手动张数改读制程配置 PhotoTotalCount
+                                // 原： cell.PhotoTatolCount = 1;
+                                cell.PhotoTatolCount = this.PhotoTotalCount;
                             }
+                            //改动A：OffLineTestCtrl 已写 ID/PhotoIndex/PhotoTatolCount 且 ImageFile 非空时透传，不覆盖
                         }
 
                         // cell.EncoderPos = MarkCtrlVM?.GetEncoderCount() ?? 0;
@@ -854,68 +827,42 @@ namespace WH.DetectSystem.Models
                     try
                     {
                         cell.Stopwatch.Restart();
-                        if (IsStart && !isAutomaticTest) //自动运行
+                        if (COpenProjectLine.IsZipper)
                         {
-                            cell.ZipperPullerCX = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCX;
-                            cell.ZipperPullerCY = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperPullerCY;
-                            cell.PullOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.OrgContours;
-                            cell.PullHoldOrgContours = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.HoleOrgContours;
-                            cell.PullsOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH; //拉片
-                            cell.PullsOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS;
-                            cell.PullsOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanV;
-                            cell.PullerOrgHvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH; //拉头
-                            cell.PullerOrgSvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS;
-                            cell.PullerOrgVvalue = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanV;
-                            cell.ModelID_Pull = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Pull;
-                            cell.ModelID_Logo = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ModelID_Logo;
-                            cell.PullModelRow = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelRow;
-                            cell.PullModelCol = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullModelCol;
-                            cell.BackRectangle = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.BackRectangle;
-                            cell.PullSegOrgArea = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullSegOrgArea;
-                            cell.UpMass_1_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanH;
-                            cell.UpMass_1_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanS;
-                            cell.UpMass_1_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_1_MeanV;
-                            cell.UpMass_2_MeanH = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanH;
-                            cell.UpMass_2_MeanS = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanS;
-                            cell.UpMass_2_MeanV = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.UpMass_2_MeanV;
-                            int photoTotalCount = 0;
-                            if (Name != "正面" && Name != "反面")
-                            {
-                                photoTotalCount = 1;
-                            }
-                            else
-                            {
-                                photoTotalCount = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.ZipperImagesCount * 2;
-                            }
-                            cell.PhotoTatolCount = photoTotalCount;
+                            CopyZipperInfoOntoCell(cell, IsStart && !isAutomaticTest);
                         }
-                        cell.PullMaterlsType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType.ToString();
-                        cell.DownStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperDownMassType.ToString();
-                        cell.UpStopMassType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperUpMassType.ToString();
-                        cell.BoltDiretion = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData?.BoltDiretion.ToString();
-                        cell.ZipperLogoType = CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType;
                         cell.ProjName = Name;
                         cell.ProjGuid = GUID;
                         try
                         {
                             if (!isAutomaticTest)
                             {
-                                //if (!CZipperAutomaticAlgorithm.AutoSettingPosFinsh && IsStart) //自动调整拉链位置
-                                //{
-                                //    // ZipperAutomaticAlgorithm.AutoSettingTriggerPos(cell);
-                                //    CZipperAutomaticAlgorithm.Instance.AutoSettingTriggerPos(cell);
-                                //}
-                                MaociAlgorParamConfig.MaociExcute(cell);
+                                // 新兴单组工程按 PhotoIndex 选择齿顶/齿底算法；其他产线保持原算法实例。
+                                if (COpenProjectLine.IsXinGear)
+                                {
+                                    CAlgorithmParamBase xinGearAlgorithm = GetXinGearAlgorithmForCell(cell);
+                                    xinGearAlgorithm?.MaociExcute(cell);
+                                }
+                                else
+                                {
+                                    MaociAlgorParamConfig.MaociExcute(cell);
+                                }
+                                // 【方案7.1-注释】离线评测：合并前按张过滤记账；拉链不进。
+                                TryRecordOfflineSampleEval(cell);
                             }
-                            else
+                            else if (COpenProjectLine.IsZipper)
                             {
-                                // ZipperAutomaticAlgorithm.ZipperAutomaticAlgorithmRun(cell);
                                 CZipperAutomaticAlgorithm.Instance.ZipperAutomaticAlgorithmRun(cell);
                             }
 
                         }
                         catch (Exception ex)
                         {
+                            if (COpenProjectLine.IsXinGear)
+                            {
+                                cell.Skipthis = true;
+                                cell.IsOK = false;
+                            }
                             await m_InfoChannel.Writer.WriteAsync(
                             new PrintMsg("算法执行出错：" + ex.Message, LOG.LOG_ERROR));
                         }
@@ -927,33 +874,80 @@ namespace WH.DetectSystem.Models
                         {
                             if (!isAutomaticTest) //运行
                             {
-                                MergeCells.Add(cell);
-                                SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
-                                List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
-                                SysLog.Info($"{Name}-当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
-                                if (currentCells.Count >= cell.PhotoTatolCount)
+                                if (COpenProjectLine.IsXinGear && !ShouldAcceptXinGearResultCell(cell))
+                                {
+                                    SysLog.Warn($"{Name}-拒绝迟到算法结果：CellID={cell.ID},CurrentID={_lastBoundProductId},PhotoIndex={cell.PhotoIndex}");
+                                    cell.Dispose();
+                                    continue;
+                                }
+                                if (UseXinGearCombinedFaceDisplay)
+                                {
+                                    EvaluateXinGearCombinedFaceCell(cell);
+                                }
+                                List<Cell> currentCells = CollectCurrentProductCells(cell);
+                                if (UseXinGearCombinedFaceDisplay)
+                                {
+                                    RefreshXinGearCombinedFaceDisplay(cell);
+                                }
+                                if (UseXinGearProgressiveShotDisplay)
+                                {
+                                    if (CMainModelsModelVM.Dispatcher != null)
+                                    {
+                                        await CMainModelsModelVM.Dispatcher.BeginInvoke(
+                                            () => RefreshXinGearCurrentShotTiles(currentCells));
+                                    }
+                                    else
+                                    {
+                                        RefreshXinGearCurrentShotTiles(currentCells);
+                                    }
+                                }
+                                if (HasCompleteCurrentProduct(currentCells, cell.PhotoTatolCount))
                                 {
                                     // sss = 0;
                                     SysLog.Info($"{Name}-满足{currentCells.Count}>={cell.PhotoTatolCount}条件,准备合并");
-                                    List<Cell> orderCell = currentCells.OrderBy(c => c.CreateTime).ToList();
+                                    List<Cell> orderCell = GetOrderedCellsForMerge(currentCells);
                                     Cell newCell = GetMergeCells(orderCell);
                                     if (currentCells.Count > 1)
                                     {
-                                        for (int i = 0; i < currentCells.Count; i++)
+                                        if (COpenProjectLine.IsZipper)
                                         {
-                                            newCell.ZipperImages.Add((currentCells[i].Image, currentCells[i].PhotoIndex,
-                                                currentCells[i].CreateTime, currentCells[i].RecipeTime));
+                                            AppendZipperMergedStationImages(newCell, currentCells);
+                                        }
+                                        else if (COpenProjectLine.IsGear)
+                                        {
+                                            AppendGearMergedStationImages(newCell, currentCells);
                                         }
                                     }
                                     SysLog.Info($"{Name}-准备移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
                                     MergeCells.RemoveAll(c => c.ID == newCell.ID);
                                     SysLog.Info($"{Name}-已移除所有{newCell.ID},当前MergeCells里共有{MergeCells.Count}");
-                                    newCell.Quality = MaociQualityConfig.GetBest();
-                                    if (!newCell.Skipthis)
-                                        MaociFilterConfig.FilterExute(newCell);
+                                    if (UseXinGearCombinedFaceDisplay)
+                                    {
+                                        ApplyXinGearCombinedFaceJudgement(newCell, orderCell);
+                                    }
+                                    else if (UseXinGearProgressiveShotDisplay)
+                                    {
+                                        EvaluateXinGearSideCell(newCell);
+                                    }
                                     else
                                     {
-                                        SetBadCell(newCell);
+                                        newCell.Quality = MaociQualityConfig.GetBest();
+                                        if (!newCell.Skipthis)
+                                            MaociFilterConfig.FilterExute(newCell);
+                                        else
+                                        {
+                                            SetBadCell(newCell);
+                                        }
+                                    }
+                                    if (UseXinGearProgressiveShotDisplay)
+                                    {
+                                        PublishXinGearSideResult(newCell);
+                                    }
+                                    if (COpenProjectLine.IsXinGear && Name == COpenProjectLine.XinGearFixedProcessNames[2]
+                                        && ShouldDisplayXinGearCell(newCell))
+                                    {
+                                        // 整件 FilterExute 只服务 cell.IsOK/产量；检测区立刻按选中格覆盖，避免其它张把面板冲掉。
+                                        ApplyXinGearShotTileFilterPreview(_xinGearFilterPreviewPhotoIndex, newCell);
                                     }
                                     newCell.FilterTime = new TimeSpan(newCell.Stopwatch.ElapsedTicks);
                                     newCell.Stopwatch.Stop();
@@ -1000,48 +994,30 @@ namespace WH.DetectSystem.Models
                                         ProcessGroup.MaociDefectsOneFlowProduce.Excute(CellOut.Cell);
                                         ProcessGroup.AlarmSetConfig.Excute(CellOut.Cell);
                                        // ProcessGroup.MaociQualityConfig.Excute(CellOut.Cell);
-                                        if (CellOut.Cell.IsOK && CellOut.Cell.ID != "0")
+                                        if (COpenProjectLine.IsZipper)
                                         {
-                                            if (Name == "正面" || Name == "反面")
-                                            {
-                                                CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
-                                            else if (Name == "上止")
-                                            {
-                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
-                                            else
-                                            {
-                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.OK);
-                                            }
-
-
+                                            SendZipperProcessResult(CellOut);
                                         }
-                                        else
+                                        else if (COpenProjectLine.IsGear)
                                         {
-                                            if (Name == "正面" || Name == "反面")
-                                            {
-                                                if (CellOut.Cell.Detection.DefectFilter.Name.Contains("大接头") || CellOut.Cell.Detection.DefectFilter.Name.Contains("大破损")
-                                                 || CellOut.Cell.Detection.DefectFilter.Name.Contains("大起毛"))
-                                                {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG); 
-                                                }
-                                                else
-                                                {
-                                                    CZipperCommunicate.SendResult(CellOut.Cell.ID, ZIPPERESULT.NG2);
-                                                }
-                                            }
-                                            else if (Name == "上止")
-                                            {
-                                                CZipperCommunicate.SendResult3(CellOut.Cell.ID, ZIPPERESULT.NG);
-
-                                            }
-                                            else
-                                            {
-                                                CZipperCommunicate.SendResult2(CellOut.Cell.ID, ZIPPERESULT.NG);
-                                            }
-
+                                            SendGearGroupResult(CellOut);
                                         }
+                                        else if (COpenProjectLine.IsCrank) 
+                                        {
+                                            CCrankCommunicate.SendGroupResult(
+                                                ProcessGroup.Name,
+                                                CellOut.Cell.ID,
+                                                CellOut.Cell.IsOK ? CrankResult.OK : CrankResult.NG);
+                                        }
+                                        else if (COpenProjectLine.IsXinGear)
+                                        {
+                                            if (!UseXinGearThreeResultAggregation)
+                                            {
+                                                SendLegacyXinGearGroupResult(CellOut);
+                                            }
+                                            // 新兴单组工程由齿顶/齿底/侧面三结果齐套器发送，禁止重复回写。
+                                        }
+
 
                                         if (!m_dataBaseChannel.Writer.TryWrite(CellOut.Cell))
                                         {
@@ -1200,11 +1176,24 @@ namespace WH.DetectSystem.Models
                             try
                             {
                                 BitmapSource bitmapSource = cell.Image?.ToBitmapSource();
-                                BitmapSource zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                                //副图：拉链=ChangleImgae，盘齿=MergedPanorama，None=不绑产线字段
+                                BitmapSource zipperPullimg = null;
+                                if (COpenProjectLine.IsZipper)
+                                    zipperPullimg = cell.ChangleImgae?.ToBitmapSource();//MatConverter.Mat2BitmapSource(cell.ZipperPullPartImg);
+                                else if (COpenProjectLine.IsGear)
+                                    zipperPullimg = cell.MergedPanorama?.ToBitmapSource();
+                                else if (COpenProjectLine.IsXinGear)
+                                    zipperPullimg = cell.MergedPanorama?.ToBitmapSource();
                                 ImageView drawView;
 
                                 await CMainModelsModelVM.Dispatcher.BeginInvoke(() =>
                                 {
+                                    // 单组新兴的齿顶/齿底已按 PhotoIndex 逐张显示；合并图暂不覆盖原图。
+                                    if (UseXinGearCombinedFaceDisplay)
+                                    {
+                                        return;
+                                    }
+                                    // 新兴侧面分格只由逐张流程维护；合并结果不得回灌覆盖。
                                     if (CurView != null && LastView != null)
                                     {
                                         CurView.Clear(false);
@@ -1526,11 +1515,12 @@ namespace WH.DetectSystem.Models
                             && (
                                 SaveImageVM.Param.SaveImageEnable
                                 || SaveImageVM.Param.PiantScreenEnable
+                                || (COpenProjectLine.IsXinGear && SystemSettings.OfflineSave)
                             ) && !isAutomaticTest
                         ) //Clone 比较耗时 只有在开启存图时才复制Cell
                         {
                             Cell copy = cell.Clone();
-                            if (!m_SaveImageChannel.Writer.TryWrite(copy))
+                             if (!m_SaveImageChannel.Writer.TryWrite(copy))
                             {
                                 copy.Dispose();
                             }
@@ -1724,6 +1714,67 @@ namespace WH.DetectSystem.Models
         }
 
         /// <summary>
+        /// 公共收集步骤：清理上一件残图、加入当前张并返回同件缓存。
+        /// 其他产线继续复用原 Merge 流程；新兴只在此结果上增加逐格预览。
+        /// </summary>
+        private List<Cell> CollectCurrentProductCells(Cell cell)
+        {
+            List<Cell> staleIdCells = MergeCells.FindAll(c => c.ID != cell.ID);
+            if (staleIdCells.Count > 0)
+            {
+                SysLog.Warn($"{Name}-残图清台：新ID:{cell.ID}，清除旧ID残图{staleIdCells.Count}张");
+                for (int i = 0; i < staleIdCells.Count; i++)
+                {
+                    SaveOtherOldImage(staleIdCells[i]);
+                    MergeCells.Remove(staleIdCells[i]);
+                }
+            }
+
+            MergeCells.Add(cell);
+            SysLog.Info($"{Name}-添加cell到MergeCells->产品ID:{cell.ID},图片编号:{cell.PhotoIndex},当前MergeCells数量:{MergeCells.Count}");
+            List<Cell> currentCells = MergeCells.FindAll(c => c.ID == cell.ID);
+            SysLog.Info($"{Name}-当前MergeCells里{cell.ID}的数量:{currentCells.Count}");
+            return currentCells;
+        }
+
+        /// <summary>
+        /// 其他产线保持原 Count>=N 语义；新兴侧面必须集齐 1..N 唯一张号，避免重复张提前触发。
+        /// </summary>
+        private bool HasCompleteCurrentProduct(List<Cell> currentCells, int expectedCount)
+        {
+            if (!UseXinGearProgressiveShotDisplay && !UseXinGearCombinedFaceDisplay)
+            {
+                return currentCells.Count >= expectedCount;
+            }
+            if (expectedCount <= 0)
+            {
+                return currentCells.Count > 0;
+            }
+
+            HashSet<int> photoIndexes = currentCells
+                .Where(c => c.PhotoIndex >= 1 && c.PhotoIndex <= expectedCount)
+                .Select(c => c.PhotoIndex)
+                .ToHashSet();
+            return photoIndexes.Count == expectedCount;
+        }
+
+        /// <summary>
+        /// 新兴按张号稳定合并；其他项目保留原创建时间顺序。
+        /// </summary>
+        private List<Cell> GetOrderedCellsForMerge(List<Cell> currentCells)
+        {
+            if (!UseXinGearProgressiveShotDisplay && !UseXinGearCombinedFaceDisplay)
+            {
+                return currentCells.OrderBy(c => c.CreateTime).ToList();
+            }
+
+            return currentCells
+                .GroupBy(c => c.PhotoIndex)
+                .Select(group => group.OrderByDescending(c => c.CreateTime).First())
+                .OrderBy(c => c.PhotoIndex)
+                .ToList();
+        }
+        /// <summary>
         /// 将多个Cells合并成一个新的Cell
         /// </summary>
         /// <param name="cells"></param>
@@ -1732,6 +1783,11 @@ namespace WH.DetectSystem.Models
         {
             if (cells.Count == 1) //单个的直接返回 20240429 鲍赞宝
             {
+                if (COpenProjectLine.IsXinGear && Name == "侧面")
+                {
+                    cells[0].XinGearImages = CopyXinGearImagesFromCells(cells);
+                    cells[0].MergedPanorama = (CImage)cells[0].Image.Clone();
+                }
                 return cells[0];
             }
             else
@@ -1739,64 +1795,71 @@ namespace WH.DetectSystem.Models
                 Cell newCell = cells[cells.Count - 1].CloneExecptImg();
                 // 合并IsOK逻辑：只要有一个为false则整体为false
                 newCell.IsOK = !cells.Any(c => !c.IsOK);
+                if (COpenProjectLine.IsXinGear)
+                {
+                    newCell.Skipthis = cells.Any(c => c.Skipthis || c.FrameLoss);
+                    newCell.FrameLoss = cells.Any(c => c.FrameLoss);
+                }
 
-                // 按RecipeDefectName合并AlgorithmOut
-                newCell.AlgorithmOut = cells
-                       .SelectMany(c => c.AlgorithmOut)  // 展平所有AlgorithmOut
-                       .GroupBy(cd => cd.RecipeDefectName) // 按名称分组
-                       .Select(g => new CellDetection
-                       {
-                           RecipeDefectName = g.Key,
-                           regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
-                           Category = g.FirstOrDefault()?.Category ?? Category.区域,
-                           Value = g.SelectMany(cd => cd.Value).ToList(),
-                           Type = g.FirstOrDefault()?.Type ?? "",
-                           Index = g.Max(cd => cd.Index), // 取最大Index
-                           ShowInView = g.Max(cd => cd.ShowInView)
-                       }).ToList();
+                // 新兴只在合并副本上换算拼图坐标，逐张 Cell 始终保留局部坐标。
+                if (COpenProjectLine.IsXinGear)
+                {
+                    newCell.XinGearImages = CopyXinGearImagesFromCells(cells);
+                    newCell.AlgorithmOut = CreateXinGearMergedAlgorithmOut(cells);
+                }
+                else
+                {
+                    // 按RecipeDefectName合并AlgorithmOut
+                    newCell.AlgorithmOut = cells
+                           .SelectMany(c => c.AlgorithmOut)
+                           .GroupBy(cd => cd.RecipeDefectName)
+                           .Select(g => new CellDetection
+                           {
+                               RecipeDefectName = g.Key,
+                               regionOut = g.SelectMany(cd => cd.regionOut).ToList(),
+                               Category = g.FirstOrDefault()?.Category ?? Category.区域,
+                               Value = g.SelectMany(cd => cd.Value).ToList(),
+                               Type = g.FirstOrDefault()?.Type ?? "",
+                               Index = g.Max(cd => cd.Index),
+                               ShowInView = g.Max(cd => cd.ShowInView)
+                           }).ToList();
+                }
                 for (int i = 0; i < cells.Count; i++)
                 {
                     newCell.DrawEdges.AddRange(cells[i].DrawEdges);
-                    if (cells[i].ZipperPullPartImg != null)
+                    if (COpenProjectLine.IsZipper)
                     {
-                        newCell.ZipperPullPartImg = cells[i].ZipperPullPartImg;
+                        CopyZipperMergeSideFields(newCell, cells[i]);
+                        newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
+                        newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                     }
-                    if (cells[i].UpMassMatImg != null && cells[i].UpMassMatImg.Count > 0)
-                    {
-                        for (int j = 0; j < cells[i].UpMassMatImg.Count; j++)
-                        {
-                            newCell.UpMassMatImg.Add(cells[i].UpMassMatImg[j]);
-                        }
-                    }
-
-                    if (cells[i].FourCutMatImg != null && cells[i].FourCutMatImg.Count > 0)
-                    {
-                        for (int j = 0; j < cells[i].FourCutMatImg.Count; j++)
-                        {
-                            newCell.FourCutMatImg.Add(cells[i].FourCutMatImg[j]);
-                        }
-                    }
-                    if (cells[i].DownMassMatImg != null)
-                    {
-                        newCell.DownMassMatImg = cells[i].DownMassMatImg;
-                    }
-                    newCell.SaveBigImagesIndex.AddRange(cells[i].SaveBigImagesIndex);
-                    newCell.SaveCutImagesIndex.AddRange(cells[i].SaveCutImagesIndex);
                 }
 
-                newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList(); //去掉重复项
-                newCell.SaveCutImagesIndex = newCell.SaveCutImagesIndex.Distinct().ToList();
+                //大图/四分割索引仅拉链合并拷贝
+                if (COpenProjectLine.IsZipper)
+                {
+                    newCell.SaveBigImagesIndex = newCell.SaveBigImagesIndex.Distinct().ToList();
+                    newCell.SaveCutImagesIndex = newCell.SaveCutImagesIndex.Distinct().ToList();
+                }
                 List<CImage> img = GetCImage(cells);
                 if (img?.Count > 0)
                 {
-                    if (img.Count == 1)
+                    //合并显示：拉链 ChangleImgae，盘齿 MergedPanorama，None 只赋 Image
+                    if (COpenProjectLine.IsZipper)
                     {
-                        newCell.Image = img[0];
+                        ApplyZipperMergedDisplay(newCell, img);
+                    }
+                    else if (COpenProjectLine.IsGear)
+                    {
+                        ApplyGearMergedDisplay(newCell, img);
+                    }
+                    else if (COpenProjectLine.IsXinGear)
+                    {
+                        ApplyXinGearMergedDisplay(newCell, img);
                     }
                     else
                     {
                         newCell.Image = img[0];
-                        newCell.ChangleImgae = img[1];
                     }
                 }
                 return newCell;
@@ -1821,22 +1884,25 @@ namespace WH.DetectSystem.Models
             }
             else
             {
-                // 将图片按 PhotoIndex 分为两组：PhotoIndex < 100 为一组，PhotoIndex >= 100 为一组（主体图片）
-                List<Cell> lowIndexGroup = cells.Where(c => c.PhotoIndex >= 100).ToList();
-                List<Cell> highIndexGroup = cells.Where(c => c.PhotoIndex < 100).ToList();
-                lowIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                highIndexGroup.Sort((a, b) => a.PhotoIndex.CompareTo(b.PhotoIndex));
-                if (lowIndexGroup.Count > 0)
+                //按打开工程选合并图
+                if (COpenProjectLine.IsZipper)
                 {
-                    CImage lowimage = GetMergeImage(lowIndexGroup);
-                    cImages.Add(lowimage);
+                    return CollectZipperCImages(cells);
                 }
-                if (highIndexGroup.Count > 0)
+                if (COpenProjectLine.IsGear)
                 {
-                    CImage heightimage = GetMergeImage(highIndexGroup);
-                    cImages.Add(heightimage);
+                    return CollectGearCImages(cells);
                 }
-                return cImages;
+                if (COpenProjectLine.IsXinGear)
+                {
+                    return CollectXinGearCImages(cells);
+                }
+                CImage noneMerged = GetMergeImage(cells);
+                if (noneMerged == null)
+                {
+                    return null;
+                }
+                return new List<CImage> { noneMerged };
 
 
             }
@@ -1950,610 +2016,6 @@ namespace WH.DetectSystem.Models
         }
 
 
-        private void UpdatWhiteZipperParam()
-        {
-            #region 布带脏污
-            RecipeDefect dirtyDetNames = this.MaociFilterConfig["拉链"]["布带脏污"];
-            if (dirtyDetNames != null)
-            {
-                foreach (var df in dirtyDetNames.DefectFilters)
-                {
-                    foreach (var fl in df.FilterList)
-                    {
-                        foreach (var se in fl.SelectList)
-                        {
-                            foreach (var pa in se.SelectParams)
-                            {
-                                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 30;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 35;
-                                    }
-
-                                }
-                                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 180;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 280;
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-
-            #endregion
-            #region 点脏污
-            RecipeDefect pointDetNames = this.MaociFilterConfig["拉链"]["点脏污"];
-            if (pointDetNames != null)
-            {
-                foreach (var df in pointDetNames.DefectFilters)
-                {
-                    foreach (var fl in df.FilterList)
-                    {
-                        foreach (var se in fl.SelectList)
-                        {
-                            foreach (var pa in se.SelectParams)
-                            {
-                                if (pa.Character.ZhName == "数量" || pa.Character.EnName == "Count")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 2;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 3;
-                                    }
-                                }
-                                if (pa.Character.ZhName == "分数" || pa.Character.EnName == "Score")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 30;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 35;
-                                    }
-
-                                }
-                                if (pa.Character.ZhName == "面积" || pa.Character.EnName == "Area")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.WhiteZippers)
-                                    {
-                                        pa.Min = 130;
-                                    }
-                                    else
-                                    {
-                                        pa.Min = 280;
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-
-            #endregion
-        }
-        /// <summary>
-        /// 更新缺陷配置
-        /// </summary>
-        /// <param name="leftorright"></param>
-        private void UpdatDetSet()
-        {
-            if (this.Name == "正面" || this.Name == "反面")
-            {
-                RecipeDefect zipperDetNames = this.MaociFilterConfig["方块插销"]["SAB"];
-                if (zipperDetNames != null)
-                {
-                    foreach (var df in zipperDetNames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.LockHaveSAB == HAVESAB.有SAB)
-                            {
-                                fl.FilterSelectEnable = true;
-                            }
-                            else
-                            {
-                                fl.FilterSelectEnable = false;
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            if (this.Name == "拉头")
-            {
-                RecipeDefect zipperDetNames = this.MaociFilterConfig["拉头拉片"]["SAB"];
-                if (zipperDetNames != null)
-                {
-                    foreach (var df in zipperDetNames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerHaveSAB == HAVESAB.有SAB)
-                            {
-                                // fl.FilterSelectEnable = true;
-                                fl.IsReversal = true;
-                            }
-                            else
-                            {
-                                // fl.FilterSelectEnable = false;
-                                fl.IsReversal = true;
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            if (this.Name == "拉片")
-            {
-                SpeciesFilter pullsdetName = this.MaociFilterConfig["拉头拉片"];
-                foreach (var detname in pullsdetName.RecipeDefects)
-                {
-                    if (detname.Name != "拉片外形")
-                    {
-                        foreach (var df in detname.DefectFilters)
-                        {
-                            foreach (var fl in df.FilterList)
-                            {
-
-                                if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.AutoData.PullsHaveFilm == PULLSHAVEFILM.有膜)
-                                {
-                                    fl.FilterSelectEnable = false;
-                                }
-                                else
-                                {
-                                    fl.FilterSelectEnable = true;
-                                }
-
-                                // fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
-                            }
-                        }
-                    }
-
-                }
-
-            }
-
-            //foreach (var detname in zipperDetNames.RecipeDefects)
-            //{
-            //    if (detname.Name.Contains("正面上止") || detname.Name.Contains("反面上止"))
-            //    {
-            //        foreach (var df in detname.DefectFilters)
-            //        {
-            //            foreach (var fl in df.FilterList)
-            //            {
-            //                if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperUpMassType.ToString())
-            //                {
-            //                    fl.FilterSelectEnable = false;
-            //                }
-            //                else
-            //                {
-            //                    fl.FilterSelectEnable = true;
-            //                }
-
-            //            }
-            //        }
-            //    }
-
-            //    if (detname.Name.Contains("正面下止") || detname.Name.Contains("反面下止"))
-            //    {
-            //        foreach (var df in detname.DefectFilters)
-            //        {
-            //            foreach (var fl in df.FilterList)
-            //            {
-            //                if ("无" == CZipperAutomaticAlgorithm.ZipperInfo.ZipperDownMassType.ToString())
-            //                {
-            //                    fl.FilterSelectEnable = false;
-            //                }
-            //                else
-            //                {
-            //                    fl.FilterSelectEnable = true;
-            //                }
-
-            //            }
-            //        }
-            //    }
-
-            //}
-        }
-        /// <summary>
-        /// 更新拉头配置
-        /// </summary>
-        /// <param name="leftorright"></param>
-        private void Updatepull(string leftorright)
-        {
-            if (leftorright == "左相机")
-            {
-                RecipeDefect pullnames = this.MaociFilterConfig["LOGO"]["拉头"];
-                if (pullnames != null)
-                {
-                    foreach (var df in pullnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = false;
-                        }
-                    }
-                }
-                RecipeDefect pullernames = this.MaociFilterConfig["LOGO"]["拉片"];
-                if (pullernames != null)
-                {
-                    foreach (var df in pullernames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                RecipeDefect pullnames = this.MaociFilterConfig["LOGO"]["拉头"];
-                if (pullnames != null)
-                {
-                    foreach (var df in pullnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = true;
-                        }
-                    }
-                }
-                RecipeDefect pullernames = this.MaociFilterConfig["LOGO"]["拉片"];
-                if (pullernames != null)
-                {
-                    foreach (var df in pullernames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = false;
-                        }
-                    }
-                }
-            }
-        }
-        private void UpdatepullSegArea(string leftorright)
-        {
-            if (leftorright == "左相机")
-            {
-                RecipeDefect pullsegnames = this.MaociFilterConfig["拉头拉片"]["拉片外形"];
-                if (pullsegnames != null)
-                {
-                    foreach (var df in pullsegnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = true; //
-                        }
-                    }
-                }
-                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头色差1"];
-                if (pullHnames != null)
-                {
-                    foreach (var df in pullHnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            foreach (var se in fl.SelectList)
-                            {
-                                foreach (var pa in se.SelectParams)
-                                {
-                                    if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
-                                    {
-                                        if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                        {
-
-                                            double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH - 20; //烤漆拉片H
-                                            if (diff <= 0)
-                                            {
-                                                diff = 0;
-                                            }
-                                            pa.Min = diff;
-                                            pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH + 22;
-                                        }
-                                        else
-                                        {
-                                            double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH - 22; //包胶拉片H
-                                            if (diff <= 0)
-                                            {
-                                                diff = 0;
-                                            }
-                                            pa.Min = diff;
-                                            pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanH + 25;
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头色差2"];
-                if (pullSnames != null)
-                {
-                    foreach (var df in pullSnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            foreach (var se in fl.SelectList)
-                            {
-                                foreach (var pa in se.SelectParams)
-                                {
-                                    if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
-                                    {
-                                        if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                        {
-                                            double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS - 15; //烤漆拉片S
-                                            if (diff <= 0)
-                                            {
-                                                diff = 0;
-                                            }
-                                            pa.Min = diff;
-                                            pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS + 22;
-                                        }
-                                        else
-                                        {
-                                            double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS - 23; //包胶拉片S
-                                            if (diff <= 0)
-                                            {
-                                                diff = 0;
-                                            }
-                                            pa.Min = diff;
-                                            pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullsMeanS + 28;
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-            else
-            {
-                RecipeDefect pullsegnames = this.MaociFilterConfig["拉头拉片"]["拉片外形"]; ;
-                if (pullsegnames != null)
-                {
-                    foreach (var df in pullsegnames.DefectFilters)
-                    {
-                        foreach (var fl in df.FilterList)
-                        {
-                            fl.FilterSelectEnable = false;
-                        }
-                    }
-                }
-                RecipeDefect pullHnames = this.MaociFilterConfig["拉头拉片"]["拉头色差1"];
-                foreach (var df in pullHnames.DefectFilters)
-                {
-                    foreach (var fl in df.FilterList)
-                    {
-                        foreach (var se in fl.SelectList)
-                        {
-                            foreach (var pa in se.SelectParams)
-                            {
-                                if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                    {
-                                        double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH - 15; //烤漆拉头H
-                                        if (diff <= 0)
-                                        {
-                                            diff = 0;
-                                        }
-                                        pa.Min = diff;
-                                        pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH + 18;
-                                    }
-                                    else
-                                    {
-                                        double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH - 20; //金属拉头H
-                                        if (diff <= 0)
-                                        {
-                                            diff = 0;
-                                        }
-                                        pa.Min = diff;
-                                        pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanH + 25;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                RecipeDefect pullSnames = this.MaociFilterConfig["拉头拉片"]["拉头色差2"];
-                foreach (var df in pullSnames.DefectFilters)
-                {
-                    foreach (var fl in df.FilterList)
-                    {
-                        foreach (var se in fl.SelectList)
-                        {
-                            foreach (var pa in se.SelectParams)
-                            {
-                                if (pa.Character.ZhName == "值" || pa.Character.EnName == "Value")
-                                {
-                                    if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.PullMaterlsType == PULLMATERIALSTYPE.烤漆)
-                                    {
-                                        double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS - 12; //烤漆拉头S
-                                        if (diff <= 0)
-                                        {
-                                            diff = 0;
-                                        }
-                                        pa.Min = diff;
-                                        pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS + 15;
-                                    }
-                                    else
-                                    {
-                                        double diff = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS - 15; //金属拉头S
-                                        if (diff <= 0)
-                                        {
-                                            diff = 0;
-                                        }
-                                        pa.Min = diff;
-                                        pa.Max = CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.PullerMeanS + 25;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-            }
-
-
-        }
-
-        /// <summary>
-        /// 更新Logo配置
-        /// </summary>
-        private void UpdateLogo(string leftorright)
-        {
-            if (leftorright == "左相机") //拍拉片
-            {
-                SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
-                if ("无LOGO" == CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType)
-                {
-                    foreach (var logoname in logonames.RecipeDefects)
-                    {
-                        if (!logoname.Name.Contains("拉"))
-                        {
-                            foreach (var df in logoname.DefectFilters)
-                            {
-                                foreach (var fl in df.FilterList)
-                                {
-                                    fl.FilterSelectEnable = true;
-                                    fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var logoname in logonames.RecipeDefects)
-                    {
-                        if (!logoname.Name.Contains("拉"))
-                        {
-                            if (logoname.Name == CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType)
-                            {
-                                foreach (var df in logoname.DefectFilters)
-                                {
-
-                                    foreach (var fl in df.FilterList)
-                                    {
-                                        fl.FilterSelectEnable = true;
-                                        if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.FindLogoSider == 3)
-                                        {
-                                            fl.IsReversal = false;//当有LOGO时，如果检测到LOGO 和正确的LOGO一致时，需要取反为OK
-                                        }
-                                        else
-                                        {
-                                            fl.IsReversal = true;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (var df in logoname.DefectFilters)
-                                {
-
-                                    foreach (var fl in df.FilterList)
-                                    {
-                                        fl.FilterSelectEnable = true;
-                                        fl.IsReversal = false; //
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else  //拍拉头
-            {
-                SpeciesFilter logonames = this.MaociFilterConfig["LOGO"];
-                if ("无LOGO" == CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType)
-                {
-                    foreach (var logoname in logonames.RecipeDefects)
-                    {
-                        if (!logoname.Name.Contains("拉"))
-                        {
-                            foreach (var df in logoname.DefectFilters)
-                            {
-                                foreach (var fl in df.FilterList)
-                                {
-                                    fl.FilterSelectEnable = true;
-                                    fl.IsReversal = false; //当没有LOGO时，如果检测到LOGO 说明是混拉头了
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var logoname in logonames.RecipeDefects)
-                    {
-                        if (!logoname.Name.Contains("拉"))
-                        {
-                            if (logoname.Name == CZipperAutomaticAlgorithm.Instance.ZipperInfo.ZipperLogoType)
-                            {
-                                foreach (var df in logoname.DefectFilters)
-                                {
-                                    foreach (var fl in df.FilterList)
-                                    {
-
-                                        if (CZipperAutomaticAlgorithm.Instance.ZipperInfo.TempData1.FindLogoSider == 3)
-                                        {
-                                            fl.FilterSelectEnable = true;
-                                            fl.IsReversal = true;//
-                                        }
-                                        else
-                                        {
-                                            fl.FilterSelectEnable = false;
-                                            fl.IsReversal = false;//
-                                        }
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (var df in logoname.DefectFilters)
-                                {
-                                    foreach (var fl in df.FilterList)
-                                    {
-                                        fl.FilterSelectEnable = true;
-                                        fl.IsReversal = false; //当有LOGO时，如果检测到别的LOGO ，不能取反，需要检出
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         /// <summary>
         /// 2024.9.2 李焕彬
         /// 更新相机序列号
@@ -2669,6 +2131,7 @@ namespace WH.DetectSystem.Models
                 MaociAlgorParamConfig,
                 MaociAlgorParamConfig.token
             );
+            UpdateXinGearBottomAlgorithmIdentity();
             if (AppConfig.HasMarkConfig())
             {
                 MarkConfig.token.ProGuid = GUID;
@@ -2688,6 +2151,16 @@ namespace WH.DetectSystem.Models
         public void UpdateName()
         {
             MaociAlgorParamConfig.PrcessName = Name;
+            if (XinGearBottomAlgorParamConfig != null)
+            {
+                XinGearBottomAlgorParamConfig.PrcessName =
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName;
+            }
+            if (XinGearBottomFilterConfig != null)
+            {
+                XinGearBottomFilterConfig.PrcessName =
+                    COpenProjectLine.XinGearCombinedFaceSubWindowName;
+            }
             MaociFilterConfig.PrcessName = Name;
             MaociAlarmSetConfig.PrcessName = Name;
             if (MarkConfig is not null)

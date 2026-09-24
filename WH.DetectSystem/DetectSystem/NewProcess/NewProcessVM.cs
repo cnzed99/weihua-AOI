@@ -100,6 +100,12 @@ namespace WH.DetectSystem.ViewModels
         [ObservableProperty]
         ObservableCollection<string> cams = new();
 
+        /// <summary>
+        /// 制程副窗列表（弹窗编辑，确定后写入 CMainModel）
+        /// </summary>
+        [ObservableProperty]
+        ObservableCollection<CProcessSubWindowItem> processSubWindows = new();
+
         public CNewProcessVM(CMainModelsModelVM mainModelVM)
         {
             this.MainModelVM = mainModelVM;
@@ -115,6 +121,7 @@ namespace WH.DetectSystem.ViewModels
                 }
             }
             Cams.Add("无相机-无相机");
+            ProcessSubWindows = ProcessSubWindowList.CreateEditorList(null);
         }
 
         /// <summary>
@@ -149,6 +156,11 @@ namespace WH.DetectSystem.ViewModels
                 this.CameraSerial.Split('-')[0],
                 GroupVM
             );
+            if (ProcessSubWindowList.FillBlankEnabledDisplayNames(ProcessSubWindows))
+            {
+                Growl.Warning(Properties.Resources.EmptySubWindowName);
+            }
+            model.ProcessSubWindows = ProcessSubWindowList.CopyForStore(ProcessSubWindows);
             GroupVM?.AddProcess(model);
             MainModelVM.UpdateMainVMs();
             WeakReferenceMessenger.Default.Send<CloseWindowMessage>(

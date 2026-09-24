@@ -447,7 +447,7 @@ namespace ZipperTestAlgorihm
         {
             if (Directory.Exists(Dirpath))
             {
-                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model", "*.Gmodel" };
+                string[] searchPatterns = { "*.onnx", "*.engine", "*.pt", "*.xml", "*.model" };
                 var files = searchPatterns
                 .SelectMany(pattern => Directory.GetFiles(Dirpath, pattern))
                 .ToList();
@@ -1287,6 +1287,8 @@ namespace ZipperTestAlgorihm
         [OnDeserialized]
         private async void LoadModel(StreamingContext context)
         {
+            //类别名为空 = 算法未配置 = 跳过模型加载。拉链工程 ReadNames 已填充类别名，不改变拉链行为。
+            if (Common_names == null) return;
             CParam param = AlgorParams.FirstOrDefault() as CParam;
             if (param != null)
             {
@@ -1313,7 +1315,7 @@ namespace ZipperTestAlgorihm
                     }
 
                     EngineType engineType;
-                    if (HasDedicatedGraphicsCard()) //有显卡
+                    if (!HasDedicatedGraphicsCard()) //有显卡
                     {
                         engineType = EngineType.TensorRT;
                     }

@@ -21,6 +21,14 @@ namespace ZipperInfo
 
         static object lockobj = new object();
         public static CModbusCommPart com;
+
+        /// <summary>
+        /// 换工程时清空业务 com，不断开底层通讯。
+        /// </summary>
+        public static void Detach()
+        {
+            com = null;
+        }
         /// <summary>
         /// 获取拉链的ID信息 2025-5-29 鲍赞宝
         /// </summary>

@@ -34,6 +34,10 @@ using SaveImageManage;
 using SDFilter;
 using WH.Controls;
 using WH.DetectSystem.DetectSystem.MainModel;
+using WH.DetectSystem.DetectSystem.ZipperLine;
+using WH.DetectSystem.DetectSystem.GearLine;
+using WH.DetectSystem.DetectSystem.CrankLine;
+using WH.DetectSystem.DetectSystem.XinGearLine;
 using WH.DetectSystem.Models;
 using WH.DetectSystem._5_存图操作;
 using WH.Entity;
@@ -43,8 +47,7 @@ using WH.Entity.LogRecord;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using WH.RunCell;
-using ZipperInfo;
-using Modbus;
+using XinGearInfo;
 
 namespace WH.DetectSystem.ViewModels
 {
@@ -54,6 +57,8 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.4 李焕彬
         /// UI线程调度器，MainWindow
         /// </summary>
+        public bool LastOpenSucceeded { get; private set; }
+        public bool XinGearRecipeReady { get; private set; }
         public static Dispatcher Dispatcher { get; set; }
 
         [ObservableProperty]
@@ -395,8 +400,6 @@ namespace WH.DetectSystem.ViewModels
                     {
                         Growl.Error(Properties.Resources.通讯连接失败);
                     }
-                 
-                    CZipperCommunicate.com= CCommunicationManagement.CommDic.Values.FirstOrDefault() as CModbusCommPart;
                 }
                 catch (Exception ex)
                 {
@@ -457,7 +460,7 @@ namespace WH.DetectSystem.ViewModels
                 }
                 #endregion
                 #region 读取拉链信息
-                CZipperAutomaticAlgorithm.Instance.ZipperInfo= CZipperAutomaticAlgorithm.LoadParameter();
+                //LoadParameter 改到拉链 OpenProj，启动欢迎页不读拉链 JSON/形状模板
                // ZipperInfo = CZipperAutomaticAlgorithm.ZipperInfo;
                 #endregion
             });
@@ -474,14 +477,48 @@ namespace WH.DetectSystem.ViewModels
         public async Task OpenProj(IProgress<string> progress, string header)
         {
             IsLoading = true;
+            LastOpenSucceeded = false;
+            XinGearRecipeReady = false;
             //WeakReferenceMessenger.Default.Reset();
             #region 打开工程
             try
             {
                 progress.Report(Properties.Resources.正在打开);
+                CMainModelsModel loaded = ConfigAPI.Load<CMainModelsModel>(header);
+                if (loaded == null || loaded.CProcessGroups == null)
+                {
+                    Growl.Warning("工程文件无效或无法读取，已中止打开。");
+                    SysLog.Error("OpenProj Load 失败: " + header);
+                    return;
+                }
+                if (!COpenProjectLine.TryRecognize(loaded, out OpenProjectLineKind lineKind, out string conflictMsg))
+                {
+                    Growl.Warning(conflictMsg);
+                    SysLog.Error(conflictMsg);
+                    return;
+                }
+                CXinGearProductModel selectedXinModel = null;
+                if (lineKind == OpenProjectLineKind.XinGear)
+                {
+                    try
+                    {
+                        selectedXinModel = CXinGearProductCatalog.Load().FindSelectedModel();
+                    }
+                    catch (Exception ex)
+                    {
+                        Growl.Warning(ex.Message);
+                        SysLog.Error(ex.Message);
+                        return;
+                    }
+                }
+                DetachCurrentLine();
                 ProjPath = header;
                 RemoveAllProcessGroup();
-                CMainMModel = ConfigAPI.Load<CMainModelsModel>(header);
+                CMainMModel = loaded;
+                COpenProjectLine.Kind = lineKind;
+                AttachCurrentLine();
+                SysLog.Info("OpenProjectLine=" + lineKind);
+                Growl.Info("OpenProjectLine=" + lineKind);
                 foreach (var group in CMainMModel.CProcessGroups)
                 {
                     group.Init();
@@ -491,6 +528,30 @@ namespace WH.DetectSystem.ViewModels
                     );
                 }
                 UpdateMainVMs();
+                //配方张数下发
+                if (COpenProjectLine.IsGear)
+                {
+                    CGearLineHost.SendLoadedRecipePhotoAndFocus(CMainVMs, SysLog);
+                }
+                if (COpenProjectLine.IsXinGear)
+                {
+                    foreach (var vm in CMainVMs.Where(vm => vm.Name == "齿底" || vm.Name == "齿顶"))
+                    {
+                        vm.PhotoTotalCount = COpenProjectLine.IsXinGearCombinedFaceProcess(vm) ? 2 : 1;
+                    }
+                    CMainModel side = XinGearSideProcess;
+                    if (side == null || selectedXinModel == null)
+                    {
+                        Growl.Warning("新兴侧面制程或型号缺失，检测未启动");
+                    }
+                    else
+                    {
+                        side.InitializeXinGearPhotoCount(selectedXinModel.EffectiveSidePhotoCount);
+                        XinGearRecipeReady = CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+                        if (!XinGearRecipeReady) Growl.Warning("新兴拍照张数下发失败，检测未启动");
+                    }
+                }
+                else XinGearRecipeReady = true;
                 SystemSettings.RecentProjs.Remove(header);
                 SystemSettings.RecentProjs.Insert(0, header);
                 progress.Report(Properties.Resources.正在更新项目列表);
@@ -503,14 +564,78 @@ namespace WH.DetectSystem.ViewModels
                 {
                     SystemSettings.RecentProjs.RemoveAt(SystemSettings.RecentProjs.Count - 1);
                 }
-                CZipperAutomaticAlgorithm.Instance.IniAutomaticAlgorithm();
                 await longtimefunc(progress);
+                LastOpenSucceeded = true;
             }
             catch (Exception ex)
             {
                 SysLog.Error(ex.Message);
             }
             #endregion
+        }
+
+        /// <summary>切换型号：PLC 先确认张数，当前 ID 保持原拍照配方。</summary>
+        public bool TryChangeXinGearModel(CXinGearProductModel model, out string error)
+        {
+            error = null;
+            if (!COpenProjectLine.IsXinGear) return true;
+            CMainModel side = XinGearSideProcess;
+            if (side == null || model == null || model.EffectiveSidePhotoCount <= 0)
+            {
+                error = "新兴侧面制程或型号张数无效";
+                return false;
+            }
+            bool wrote = XinGearRecipeReady
+                ? CXinGearCommunicate.TrySendSidePhotoCount(model.EffectiveSidePhotoCount, out error)
+                : CXinGearCommunicate.TrySendRecipePhotoCount(model.EffectiveSidePhotoCount, out error);
+            if (!wrote) return false;
+            XinGearRecipeReady = true;
+            bool defer = IsStart && CXinGearCommunicate.com != null;
+            side.QueueXinGearPhotoCount(model.EffectiveSidePhotoCount,
+                CXinGearCommunicate.GetProductID(), defer);
+            SelectedXinGearShotTile = side.ShotTiles.FirstOrDefault();
+            return true;
+        }
+        /// <summary>手动启动前重试尚未确认的三路 PLC 张数。</summary>
+        public bool TryEnsureXinGearRecipeReady()
+        {
+            if (!COpenProjectLine.IsXinGear || XinGearRecipeReady) return true;
+            XinGearRecipeReady = CXinGearLineHost.SendLoadedRecipePhotoCount(CMainVMs, SysLog);
+            return XinGearRecipeReady;
+        }
+
+        /// <summary>卸上一产线业务包，Kind 置 None。底层 Modbus 连接保持。</summary>
+        void DetachCurrentLine()
+        {
+            CGearLineHost.Detach();
+            CZipperLineHost.Detach(CMainMModel?.CProcessGroups);
+            CCrankLineHost.Detach();
+            CXinGearLineHost.Detach(); 
+            COpenProjectLine.Kind = OpenProjectLineKind.None;
+            OnPropertyChanged(nameof(IsXinGear));
+        }
+
+        /// <summary>
+        /// 按已提交的 Kind 挂业务 com。拉链工程在此 IniAutomaticAlgorithm。
+        /// </summary>
+        void AttachCurrentLine()
+        {
+            if (COpenProjectLine.IsGear)
+            {
+                CGearLineHost.Attach();
+            }
+            else if (COpenProjectLine.IsZipper)
+            {
+                CZipperLineHost.Attach(Dispatcher, SysLog);
+            }
+            else if (COpenProjectLine.IsCrank)
+            {
+                CCrankLineHost.Attach();
+            }
+            else if (COpenProjectLine.IsXinGear) 
+            {
+                CXinGearLineHost.Attach();
+            }
         }
 
         async Task longtimefunc(IProgress<string> progress)
@@ -597,6 +722,109 @@ namespace WH.DetectSystem.ViewModels
         /// 2024.9.2 李焕彬
         /// 更新多制程视图模型
         /// </summary>
+        //无分页固定布局判定：7 个盘齿制程名全部命中才用固定 4x3 模板，否则回通用 UniformGrid
+        public bool UseGearFixedLayout =>
+            CMainVMs.Count == COpenProjectLine.GearFixedProcessNames.Length
+            && COpenProjectLine.GearFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
+
+        // 六名全中且数量=6 才套曲轴格；不替代 IsCrank；不写入 GearFixedProcessNames
+        public bool UseCrankFixedLayout =>
+            CMainVMs.Count == COpenProjectLine.CrankFixedProcessNames.Length
+            && COpenProjectLine.CrankFixedProcessNames.All(p => CMainVMs.Any(m => m.Name == p));
+
+        /// <summary>
+        /// 当前打开工程是新兴盘齿则主视图固定拍摄分页。不替代协议挂接以外的 IsXinGear 判断。
+        /// </summary>
+        public bool IsXinGear => COpenProjectLine.IsXinGear;
+
+        /// <summary>
+        /// 拍摄分页页1：齿底、齿顶。
+        /// </summary>
+        private CMainModel XinGearCombinedFaceProcess =>
+            CMainVMs.FirstOrDefault(COpenProjectLine.IsXinGearCombinedFaceProcess);
+
+        public bool UseXinGearCombinedFaceLayout => XinGearCombinedFaceProcess != null;
+
+        public int XinGearShotFaceColumns => UseXinGearCombinedFaceLayout ? 1 : 2;
+
+        public string XinGearShotFaceHeader => UseXinGearCombinedFaceLayout
+            ? COpenProjectLine.XinGearCombinedFaceProcessName + " / "
+                + COpenProjectLine.XinGearCombinedFaceSubWindowName
+            : COpenProjectLine.XinGearFixedProcessNames[0] + " / "
+                + COpenProjectLine.XinGearFixedProcessNames[1];
+
+        public IReadOnlyList<CMainModel> XinGearShotFaceProcesses
+        {
+            get
+            {
+                CMainModel combined = XinGearCombinedFaceProcess;
+                if (combined != null)
+                {
+                    return new List<CMainModel> { combined };
+                }
+
+                List<CMainModel> list = new List<CMainModel>();
+                foreach (string name in COpenProjectLine.XinGearFixedProcessNames.Take(2))
+                {
+                    CMainModel item = CMainVMs.FirstOrDefault(m => m.Name == name);
+                    if (item != null)
+                    {
+                        list.Add(item);
+                    }
+                }
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 绑定这一个侧面制程的 6 张分图，禁止拆成多个制程。
+        /// </summary>
+        public CMainModel XinGearSideProcess =>
+            CMainVMs.FirstOrDefault(m => m.Name == COpenProjectLine.XinGearFixedProcessNames[2]);
+
+        /// <summary>
+        /// 选中后 SelectedProcess 仍是侧面。
+        /// </summary>
+        [ObservableProperty]
+        XinGearShotTileVM selectedXinGearShotTile;
+
+        partial void OnSelectedXinGearShotTileChanged(XinGearShotTileVM value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+            CMainModel side = XinGearSideProcess;
+            if (side == null)
+            {
+                return;
+            }
+            SelectedProcess = side;
+            side.ApplyXinGearShotTileFilterPreview(value.PhotoIndex);
+        }
+
+        /// <summary>
+        /// 点侧面页：SelectedProcess 仍是侧面。
+        /// </summary>
+        [RelayCommand]
+        public void SelectXinGearSide()
+        {
+            CMainModel side = XinGearSideProcess;
+            if (side == null)
+            {
+                return;
+            }
+            SelectedProcess = side;
+            if (SelectedXinGearShotTile == null || !side.ShotTiles.Contains(SelectedXinGearShotTile))
+            {
+                SelectedXinGearShotTile = side.ShotTiles.FirstOrDefault();
+            }
+            else
+            {
+                side.ApplyXinGearShotTileFilterPreview(SelectedXinGearShotTile.PhotoIndex);
+            }
+        }
+
         public void UpdateMainVMs()
         {
             ObservableCollection<CMainModel> mainVMs = new ObservableCollection<CMainModel>();
@@ -612,6 +840,7 @@ namespace WH.DetectSystem.ViewModels
                 if (mainVMs.FirstOrDefault(o => o == mainVM) == null)
                 {
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlgorParamConfig);
+                    mainVM.UnregisterXinGearBottomAlgorithmConfig();
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociFilterConfig);
                     WeakReferenceMessenger.Default.UnregisterAll(mainVM.MaociAlarmSetConfig);
                     if (mainVM.MarkConfig != null)
@@ -626,7 +855,16 @@ namespace WH.DetectSystem.ViewModels
                 }
             }
             SelectedProcess = mainVMs.FirstOrDefault();
+            SelectedXinGearShotTile = null;
             CMainVMs = mainVMs;
+            OnPropertyChanged(nameof(UseGearFixedLayout));
+            OnPropertyChanged(nameof(UseCrankFixedLayout)); 
+            OnPropertyChanged(nameof(IsXinGear));
+            OnPropertyChanged(nameof(UseXinGearCombinedFaceLayout));
+            OnPropertyChanged(nameof(XinGearShotFaceColumns));
+            OnPropertyChanged(nameof(XinGearShotFaceHeader));
+            OnPropertyChanged(nameof(XinGearShotFaceProcesses));
+            OnPropertyChanged(nameof(XinGearSideProcess));
         }
 
         /// <summary>
@@ -666,6 +904,10 @@ namespace WH.DetectSystem.ViewModels
         /// </summary>
         public void RemoveAllProcessGroup()
         {
+            if (CMainMModel?.CProcessGroups == null)
+            {
+                return;
+            }
             foreach (var item in CMainMModel.CProcessGroups)
             {
                 WeakReferenceMessenger.Default.UnregisterAll(item.MaociQualityConfig);

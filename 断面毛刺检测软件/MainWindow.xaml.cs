@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -28,13 +28,19 @@ using WH.Controls;
 using WH.DetectSystem;
 using WH.DetectSystem.Models;
 using WH.DetectSystem.ViewModels;
+using WH.DetectSystem.DetectSystem.MainModel;
 using WH.Entity.CommonLib;
 using WH.Entity.LogRecord;
 using WH.Entity.Progress;
 using WH.LightControl;
 using WH.RecipeCellRootBase;
 using ZipperInfo;
+using GearInfo;
+using CrankInfo;
+using XinGearInfo;
 using 断面毛刺检测软件.Views;
+using 断面毛刺检测软件.Views.GearProduct;
+using 断面毛刺检测软件.Views.XinGearProduct;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace 断面毛刺检测软件
@@ -50,12 +56,16 @@ namespace 断面毛刺检测软件
         private CLogRec SysLog;
         private CLogRec OperateLog;
         private System.Timers.Timer Hearttimer; //心跳发送
+        private bool _zipperTestFinshHooked;
 
         #region 初始化 加载
+
+        partial void InitOfflineDebug();
 
         public MainWindow()
         {
             InitializeComponent();
+            InitOfflineDebug();
             AddAssemblyPath();
             CMainList = App.Container.Resolve<CMainModelsModelVM>();
             CMainModelsModelVM.Dispatcher = this.Dispatcher;
@@ -140,6 +150,19 @@ namespace 断面毛刺检测软件
                             Growl.Warning("正在对焦中，不能启动！");
                             return;
                         }
+                        if (CMainList.StartStop && COpenProjectLine.IsXinGear && !CMainList.TryEnsureXinGearRecipeReady())
+                        {
+                            CMainList.StartStop = false;
+                            Growl.Warning("新兴拍照张数下发失败，检测未启动");
+                            return;
+                        }
+                        //即将启动时校验所有制程组名都能在 GroupResults 中找到；缺映射不启动。无 PLC 只要 JSON 正常仍允许启动。
+                        //IsGear 读盘齿 JSON；IsCrank 读曲轴 JSON；拉链不走此校验
+                        if (CMainList.StartStop && (COpenProjectLine.IsGear || COpenProjectLine.IsCrank || COpenProjectLine.IsXinGear) && !TryValidateProcessGroupResultMapping())
+                        {
+                            CMainList.StartStop = false;
+                            return;
+                        }
                         if (CMainList.IsStart == CMainList.StartStop)
                             return;
                         CMainList.IsStart = CMainList.StartStop;
@@ -156,8 +179,11 @@ namespace 断面毛刺检测软件
                 this.IsEnabled = false;
 
                 await CMainList.LoadAsync(progress);
-                // CLinghtManagement.LoadLightParams();
+                //面板只创建一次，Visibility 由 ApplyOpenProjectLineUi 按工程切换
                 zipperInfoShow.DataContext = new ZipperInfoVM();
+                gearProductShow.DataContext = new GearProductVM();
+                xinGearProductShow.DataContext = new XinGearProductVM(CMainList);
+                ApplyOpenProjectLineUi();
                 if (CMainList.SystemSettings.IsEnglish)
                 {
                     var languageCode = "en-US";
@@ -169,15 +195,22 @@ namespace 断面毛刺检测软件
                     LanguageManager.CLanguageManager.ChangeLanguage(new CultureInfo(languageCode));
                 }
                 ((IProgress<string>)progress).Report("Loaded!");
+                // 原： WelComePage welComePage = new WelComePage(
+                // 原：     CMainList.SystemSettings.RecentProjs.ToList(),
+                // 原：     "拉链智能视觉检测软件"
+                // 原： );
+                //新标题（原拉链标题见上方注释块）
+                //欢迎页用中性名，不写死盘齿/拉链/曲轴；HandyControl 左上角 Title 仍保持空
                 WelComePage welComePage = new WelComePage(
                     CMainList.SystemSettings.RecentProjs.ToList(),
-                    "拉链智能视觉检测软件"
+                    "视觉检测软件"
                 );
                 welComePage.useraction = async (c) => await userActionFun(c);
-                Hearttimer = new System.Timers.Timer(1000); //2026.7.25 鲍赞宝
-                Hearttimer.Elapsed += (sender, e) => 
+                //拉链心跳仅 IsZipper 且已启动时写 42638；盘齿走 CGearCommunicate 定时器
+                Hearttimer = new System.Timers.Timer(1000);
+                Hearttimer.Elapsed += (sender, e) =>
                 {
-                    if (CMainList.IsStart)
+                    if (COpenProjectLine.IsZipper && CMainList.IsStart)
                     {
                         CZipperCommunicate.SendHeartBeat();
                     }
@@ -193,6 +226,203 @@ namespace 断面毛刺检测软件
             finally
             {
                 ((IProgress<string>)progress).Report("Loaded!");
+            }
+        }
+
+        /// <summary>
+        /// 按当前打开工程切换右侧面板、换料按钮、拉链完成事件
+        /// </summary>
+        void ApplyOpenProjectLineUi()
+        {
+            //曲轴不显示拉链信息栏/盘齿换料；Visibility 仍只跟 IsZipper/IsGear
+            if (zipperInfoBorder != null)
+            {
+                zipperInfoBorder.Visibility = COpenProjectLine.IsZipper ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (gearProductBorder != null)
+            {
+                gearProductBorder.Visibility = COpenProjectLine.IsGear ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (xinGearProductBorder != null)
+            {
+                xinGearProductBorder.Visibility = COpenProjectLine.IsXinGear ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (Btn_TestStart != null)
+            {
+                Btn_TestStart.Visibility = COpenProjectLine.IsZipper ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (COpenProjectLine.IsZipper)
+            {
+                if (!_zipperTestFinshHooked)
+                {
+                    CZipperAutomaticAlgorithm.Instance.TestFinshEven += ClearProduceData;
+                    _zipperTestFinshHooked = true;
+                }
+            }
+            else if (_zipperTestFinshHooked)
+            {
+                CZipperAutomaticAlgorithm.Instance.TestFinshEven -= ClearProduceData;
+                _zipperTestFinshHooked = false;
+            }
+        }
+        /// <summary>
+        /// 启动前校验工程所有制程组名都能在已加载的 GroupResults 中找到。点位未加载或缺映射返回 false。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateProcessGroupResultMapping()
+        {
+            //校验点位 JSON；拉链不走此校验
+            if (COpenProjectLine.IsXinGear)
+            {
+                return TryValidateXinGearProcessGroupResultMapping();
+            }
+            if (COpenProjectLine.IsCrank)
+            {
+                return TryValidateCrankProcessGroupResultMapping();
+            }
+            if (!COpenProjectLine.IsGear)
+            {
+                return true;
+            }
+            try
+            {
+                bool pointsReady = CGearCommunicate.Points != null
+                    && CGearCommunicate.Points.GroupResults != null
+                    && CGearCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CGearCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CGearCommunicate.Points != null
+                        && CGearCommunicate.Points.GroupResults != null
+                        && CGearCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\GearProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CGearCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 点位表校验-启动前校验新兴工程组名都能在 XinGearProtocolPoints.json 的 GroupResults 中找到。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateXinGearProcessGroupResultMapping()
+        {
+            try
+            {
+                bool pointsReady = CXinGearCommunicate.Points != null
+                    && CXinGearCommunicate.Points.GroupResults != null
+                    && CXinGearCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CXinGearCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CXinGearCommunicate.Points != null
+                        && CXinGearCommunicate.Points.GroupResults != null
+                        && CXinGearCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\XinGearProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CXinGearCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 点位表校验-启动前校验工程组名都能在 对应.json 的 GroupResults 中找到。
+        /// JSON 正常时无 PLC 仍允许启动。
+        /// </summary>
+        private bool TryValidateCrankProcessGroupResultMapping()
+        {
+            try
+            {
+                bool pointsReady = CCrankCommunicate.Points != null
+                    && CCrankCommunicate.Points.GroupResults != null
+                    && CCrankCommunicate.Points.GroupResults.Count > 0;
+                if (!pointsReady)
+                {
+                    CCrankCommunicate.TryLoadProtocolPoints();
+                    pointsReady = CCrankCommunicate.Points != null
+                        && CCrankCommunicate.Points.GroupResults != null
+                        && CCrankCommunicate.Points.GroupResults.Count > 0;
+                }
+                if (!pointsReady)
+                {
+                    Growl.Warning("组结果点位未加载，无法启动。请检查运行目录 SystemConfig\\CrankProtocolPoints.json。");
+                    return false;
+                }
+
+                if (CMainList == null || CMainList.CMainMModel == null || CMainList.CMainMModel.CProcessGroups == null)
+                {
+                    Growl.Warning("工程制程组未加载，无法启动。");
+                    return false;
+                }
+
+                foreach (var group in CMainList.CMainMModel.CProcessGroups)
+                {
+                    string groupName = group == null ? null : group.Name;
+                    if (string.IsNullOrEmpty(groupName) || !CCrankCommunicate.Points.GroupResults.ContainsKey(groupName))
+                    {
+                        string showName = string.IsNullOrEmpty(groupName) ? "(空)" : groupName;
+                        Growl.Warning("制程组「" + showName + "」在点位表 GroupResults 中没有映射，无法启动。请核对组名是否为「制程组1」/「制程组2」。");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Growl.Warning("组结果点位校验失败，无法启动。\r\n" + ex.Message);
+                return false;
             }
         }
 
@@ -472,13 +702,27 @@ namespace 断面毛刺检测软件
                 WeakReferenceMessenger.Default.UnregisterAll(this);
                 WeakReferenceMessenger.Default.Register<AlarmPopMessage>(this);
                 await CMainList.OpenProj(progress, header);
-                CZipperAutomaticAlgorithm.Instance.TestFinshEven += ClearProduceData;
-                if (CMainList.CMainMModel.CProcessGroups.Count > 0 && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0)
+                if (!CMainList.LastOpenSucceeded || !string.Equals(CMainList.ProjPath, header, StringComparison.OrdinalIgnoreCase))
+                {
+                    progress.Report("Loaded!");
+                    return;
+                }
+                if (COpenProjectLine.IsXinGear
+                    && xinGearProductShow.DataContext is XinGearProductVM xinGearProductVM)
+                {
+                    xinGearProductVM.ReloadFromCatalog();
+                }
+                ApplyOpenProjectLineUi();
+                if (CMainList.CMainMModel?.CProcessGroups != null
+                    && CMainList.CMainMModel.CProcessGroups.Count > 0
+                    && CMainList.CMainMModel.CProcessGroups[0]?.CMainModels != null
+                    && CMainList.CMainMModel.CProcessGroups[0].CMainModels.Count > 0
+                    && CMainList.CMainMModel.CProcessGroups[0].CMainModels[0]?.SystemSettings != null)
                 {
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.ClearProduceEvent += ClearProduceData;
                     CMainList.CMainMModel.CProcessGroups[0].CMainModels[0].SystemSettings.Loaded = true;
                 }
-                CMainList.IsStart = true;
+                CMainList.IsStart = !COpenProjectLine.IsXinGear || CMainList.XinGearRecipeReady;
                 CMainList.StartStop = CMainList.IsStart;
                 Growl.Success(Properties.Resources.OpenProj + "\r\n" + CMainList.ProjPath);
                 OperateLog.Info(Properties.Resources.OpenProj + "\r\n" + header);
@@ -940,21 +1184,19 @@ namespace 断面毛刺检测软件
         #region 自动换料
         private void AutoMatic_Click(object sender, RoutedEventArgs e)
         {
+            if (!COpenProjectLine.IsZipper)
+            {
+                return;
+            }
             try
             {
-                //bool state = CZipperCommunicate.GetDeviceState();
-                //if (state)
-                //{
-                //    Growl.Warning("设备当前处于<一周切>状态，请切换到<手动模式>或<自动模式>");
-                //    return;
-                //}
                 CZipperAutomaticAlgorithm.Instance.Dispatcher = this.Dispatcher;
-                AutoFinshWindow autoFinshWindow;// = new AutoFinshWindow();
+                AutoFinshWindow autoFinshWindow;
                 ProgressBarWindow progressBarWindow = new ProgressBarWindow();
                 ZipperAutomaticWindow AutomaticWindow = App
                 .Container.Resolve<Lazy<ZipperAutomaticWindow>>()
                 .Value;
-                CZipperAutomaticVM automaticVM = new CZipperAutomaticVM();//CPublicServices.Container.Resolve<CZipperAutomaticVM>();
+                CZipperAutomaticVM automaticVM = new CZipperAutomaticVM();
                 AutomaticWindow.DataContext = automaticVM;
                 automaticVM.StartAutoTestEven = (b) =>
                 {
@@ -973,7 +1215,6 @@ namespace 断面毛刺检测软件
                             progressBarWindow?.Close();
                         });
                     };
-                    // progressBarWindow.Closed += ProgressBarWindow_Closed;
                     if (b)
                     {
                         progressBarWindow.ShowDialog();
@@ -987,20 +1228,17 @@ namespace 断面毛刺检测软件
                             autoFinshWindow.Activate();
                             zipperInfoShow.DataContext = zipperInfoVM;
                         }
-
                     }
-
                 };
                 AutomaticWindow.Show();
                 AutomaticWindow.Activate();
-                //OperateLog.Info(Properties.Resources.ImageSave);
             }
             catch (Exception ex)
             {
-                Growl.Error(ex.Message+"\r\n"+ex.StackTrace);
+                Growl.Error(ex.Message + "\r\n" + ex.StackTrace);
             }
-         
         }
+
         private void AutoFinshWindow_Closed(object sender, EventArgs e)
         {
             this.Dispatcher?.Invoke(() =>
@@ -1011,7 +1249,6 @@ namespace 断面毛刺检测软件
                 }
                 CZipperAutomaticAlgorithm.Instance.onWichStage = 0;
             });
-
         }
         #endregion
     }

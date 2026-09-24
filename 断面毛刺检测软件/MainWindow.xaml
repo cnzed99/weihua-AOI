@@ -23,6 +23,8 @@
     xmlns:viewmodels="clr-namespace:WH.DetectSystem.ViewModels;assembly=WH.DetectSystem"
     xmlns:wh="http://whzn.com/rjkf/2024/xaml"
     xmlns:zipper="clr-namespace:ZipperInfo;assembly=ZipperInfo"
+    xmlns:gear="clr-namespace:断面毛刺检测软件.Views.GearProduct"
+    xmlns:xinGearProduct="clr-namespace:断面毛刺检测软件.Views.XinGearProduct"
     Title=""
     Width="1400"
     Height="850"
@@ -63,6 +65,299 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--制程格共用模板；分页/无分页视窗共用-->
+        <DataTemplate x:Key="ProcessCellTemplate">
+            <!--原 Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}"；无分页没有 TabControl 祖先，改绑 Window-->
+            <Grid Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+                <Grid.ContextMenu>
+                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
+                        <MenuItem
+                            Click="ProcessEdit_Click"
+                            Header="{Binding [Edit], Source={x:Static local:CLang.Instance}}"
+                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
+                            Tag="{Binding SelectedProcess}" />
+                        <MenuItem
+                            Command="{Binding RemoveProcessCommand}"
+                            Header="{Binding [Del], Source={x:Static local:CLang.Instance}}"
+                            IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
+                    </ContextMenu>
+                </Grid.ContextMenu>
+
+                <Grid>
+                    <Grid.Resources>
+                        <!--格内绑本制程；ColumnDefinition 不在可视树，用 CBindingProxy（不再绑系统设置）-->
+                        <wh:CBindingProxy x:Key="ProcessCellProxy" Data="{Binding}" />
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <!--<ColumnDefinition Width="4*"/>-->
+                        <ColumnDefinition Width="1*"/>
+                        <!--原 <ColumnDefinition/> 默认 1*（与主图对半，拉链布带布局）。不要用 Auto（副图会变成窄条）。关=Width 0，开=1*；绑本制程 HasProcessSubWindow-->
+                        <ColumnDefinition>
+                            <ColumnDefinition.Style>
+                                <Style TargetType="ColumnDefinition">
+                                    <Setter Property="Width" Value="0"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Data.HasProcessSubWindow, Source={StaticResource ProcessCellProxy}}" Value="True">
+                                            <Setter Property="Width" Value="1*"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ColumnDefinition.Style>
+                        </ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderBrush="{Binding ModelBrush}"
+                        BorderThickness="1">
+                        <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}"
+                            ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
+                    </Border>
+
+                    <!--恢复制程格副图列；Visibility 绑该制程 HasProcessSubWindow，不再绑系统设置-->
+                    <Border Grid.Column="1"
+                        Background="{DynamicResource RegionBrush}"
+                        BorderBrush="{Binding ModelBrush}"
+                        BorderThickness="1"
+                        Visibility="{Binding HasProcessSubWindow, Converter={StaticResource Boolean2VisibilityConverter}}">
+                        <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
+                            ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
+                    </Border>
+                    <!--原标注「布带」，盘齿界面改为绑定自定义名 ProcessSubWindowTitle
+                    <TextBlock Text="布带" FontSize="18" Grid.Column="1" 
+                              Margin="10,5"
+                             HorizontalAlignment="Left" 
+                             VerticalAlignment="Top"/>
+                    -->
+                    <TextBlock Text="{Binding ProcessSubWindowTitle}" FontSize="18" Grid.Column="1"
+                        Margin="10,5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Visibility="{Binding HasProcessSubWindow, Converter={StaticResource Boolean2VisibilityConverter}}"/>
+                </Grid>
+                <TextBlock
+                    Margin="10,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Foreground="Red"
+                    Style="{StaticResource TextBlockDefault}"
+                    Text="{Binding FocusCtrlVM.InfoAlarm}" />
+                <TextBlock Text="{Binding Name}" FontSize="18"
+                    Margin="10,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource TextBlockDefault}" />
+            </Grid>
+        </DataTemplate>
+        <!--原 Grid.Row=0 的 hc:TabControl 原样迁入；ItemsSource 仍 CProcessGroups，页内 ListBox 仍 CMainModels-->
+        <DataTemplate x:Key="TabProcessImageViewTemplate">
+            <hc:TabControl
+                FontSize="16"
+                SelectedIndex="0"
+                Style="{DynamicResource TabControlBaseStyle}"
+                ItemsSource="{Binding CMainMModel.CProcessGroups}">
+                <hc:TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </hc:TabControl.ItemTemplate>
+                <hc:TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ListBox
+                            Padding="0"
+                            hc:BorderElement.CornerRadius="0"
+                            ItemsSource="{Binding CMainModels}"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            SelectedItem="{Binding DataContext.SelectedProcess, RelativeSource={RelativeSource AncestorType=Grid}}"
+                            ItemTemplate="{StaticResource ProcessCellTemplate}">
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="2" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                    <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="DarkTurquoise" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </DataTemplate>
+                </hc:TabControl.ContentTemplate>
+            </hc:TabControl>
+        </DataTemplate>
+        <!--无分页：ItemsSource=CMainVMs 铺全部制程；格模板复用 ProcessCellTemplate-->
+        <DataTemplate x:Key="FlatProcessImageViewTemplate">
+            <ListBox
+                Padding="0"
+                hc:BorderElement.CornerRadius="0"
+                ItemsSource="{Binding CMainVMs}"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                SelectedItem="{Binding SelectedProcess}"
+                ItemTemplate="{StaticResource ProcessCellTemplate}">
+                <ListBox.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="2" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="DarkTurquoise" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </DataTemplate>
+        <!--盘齿固定 4x3 七格模板：仅 7 制程名全命中(UseGearFixedLayout)时使用；否则回 FlatProcessImageViewTemplate 通用 UniformGrid-->
+        <DataTemplate x:Key="GearFixedProcessViewTemplate">
+            <ListBox
+                Padding="0"
+                hc:BorderElement.CornerRadius="0"
+                ItemsSource="{Binding CMainVMs}"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                SelectedItem="{Binding SelectedProcess}"
+                ItemTemplate="{StaticResource ProcessCellTemplate}">
+                <ListBox.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="2" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                        <Setter Property="Grid.Row" Value="{Binding GridRow}" />
+                        <Setter Property="Grid.Column" Value="{Binding GridCol}" />
+                        <Setter Property="Grid.ColumnSpan" Value="{Binding GridColSpan}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="DarkTurquoise" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </DataTemplate>
+        <!--两页签：齿底/齿顶；侧面 6 张 2行3列。禁止 ItemsSource=CProcessGroups。-->
+        <DataTemplate x:Key="XinGearShotPageViewTemplate">
+            <hc:TabControl
+                FontSize="16"
+                SelectedIndex="0"
+                Style="{DynamicResource TabControlBaseStyle}">
+                <hc:TabItem Header="{Binding XinGearShotFaceHeader}" Padding="20,8" Margin="0,0,16,0">
+                    <ListBox
+                        Padding="0"
+                        hc:BorderElement.CornerRadius="0"
+                        ItemsSource="{Binding XinGearShotFaceProcesses}"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        SelectedItem="{Binding SelectedProcess}"
+                        ItemTemplate="{StaticResource ProcessCellTemplate}">
+                        <ListBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="DarkTurquoise" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding DataContext.XinGearShotFaceColumns, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </hc:TabItem>
+                <hc:TabItem Header="侧面" Padding="20,8" Margin="0,0,16,0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding SelectXinGearSideCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <!--页2 ListBox 选格；SelectedItem 是 ShotTile，不是 SelectedProcess。-->
+                    <ListBox
+                        Padding="0"
+                        hc:BorderElement.CornerRadius="0"
+                        ItemsSource="{Binding XinGearSideProcess.ShotTiles}"
+                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        SelectedItem="{Binding SelectedXinGearShotTile}">
+                        <ListBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="2" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="DarkTurquoise" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding DataContext.XinGearSideProcess.XinGearShotColumns, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="2"
+                                    Background="{DynamicResource RegionBrush}"
+                                    BorderBrush="LightGray"
+                                    BorderThickness="1">
+                                    <Grid>
+                                        <wh:ImageView
+                                            ClearButtonVisibility="Collapsed"
+                                            LabelVisibility="Visible"
+                                            Operator="{Binding CurView, Mode=OneWayToSource}"
+                                            Source="{Binding ModelImage}" />
+                                        <TextBlock
+                                            Margin="10,10"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            FontSize="18"
+                                            Style="{StaticResource TextBlockDefault}"
+                                            Text="{Binding Title}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </hc:TabItem>
+            </hc:TabControl>
+        </DataTemplate>
     </hc:Window.Resources>
     <!--  菜单栏  -->
     <hc:Window.NonClientAreaContent>
@@ -301,12 +596,12 @@
         </Grid.RowDefinitions>
         <!--  次菜单栏  -->
         <DockPanel Grid.Row="0">
-            <StackPanel Width="150" HorizontalAlignment="Left">
-                <Image
+            <StackPanel Width="10" HorizontalAlignment="Left">
+                <!--<Image
                     Margin="5"
                     HorizontalAlignment="Left" 
                     Source="/Resources/汇通.png"/>
-                <TextBlock HorizontalAlignment="Center" Text="{Binding version, StringFormat='{}Version:{0}'}" />
+                <TextBlock HorizontalAlignment="Center" Text="{Binding version, StringFormat='{}Version:{0}'}" />-->
             </StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -409,17 +704,19 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <!--  打开测试页面按钮  -->
 
+                    <!--换料识别仅拉链工程显示，默认折叠-->
                     <Button Style="{DynamicResource CircleButton}"
                              Grid.Column="2"
                              Margin="10,0"
                             x:Name="Btn_TestStart"
                               Click="AutoMatic_Click"
-                            Content="换料识别" 
-                            FontSize="15" 
-                            Foreground="White"  
-                            Width="70" Height="70" 
-                            Background="Orange" 
-                            FontFamily="Microsoft YaHei"/>
+                            Content="换料识别"
+                            FontSize="15"
+                            Foreground="White"
+                            Width="70" Height="70"
+                            Background="Orange"
+                            FontFamily="Microsoft YaHei"
+                            Visibility="Collapsed"/>
 
                     <ToggleButton
                         Width="70"
@@ -469,6 +766,31 @@
                                 Text="{Binding [AllStart], Source={x:Static local:CLang.Instance}}" />
                         </Border>
                     </ToggleButton>
+                    <!--  Debug 快捷登录（Release 下保持 Collapsed）  -->
+                    <ToggleButton
+                        x:Name="Btn_OfflineDebug"
+                        Width="70"
+                        Height="70"
+                        Margin="10,0"
+                        Click="Btn_OfflineDebug_Click"
+                        FontSize="8"
+                        Style="{DynamicResource ToggleButtonFlip}"
+                        Visibility="Collapsed">
+                        <hc:StatusSwitchElement.CheckedElement>
+                            <Border Margin="-2" Background="{DynamicResource DangerBrush}">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Text="注销" />
+                            </Border>
+                        </hc:StatusSwitchElement.CheckedElement>
+                        <Border Margin="-2" Background="Orange">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="离线调试" />
+                            </Border>
+                        </ToggleButton>
 
                 </StackPanel>
             </Grid>
@@ -534,106 +856,44 @@
 
                 <Grid>
                     <Grid.RowDefinitions >
-                        <RowDefinition Height="1.2*"/>
+                        <RowDefinition Height="2*"/> <!--图像区抬高，七格更清晰-->
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <!--  图像视窗  -->
-                    <!-- 制程组分页显示 -->
-                    <hc:TabControl Grid.Row="0"   SelectedIndex="0" FontSize="16"
-                         Style="{DynamicResource TabControlBaseStyle}" ItemsSource="{Binding CMainMModel.CProcessGroups}">
-                        <hc:TabControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </hc:TabControl.ItemTemplate>
-
-                        <hc:TabControl.ContentTemplate>
-                            <DataTemplate>
-                                <ListBox
-                                  Padding="0"
-                                  hc:BorderElement.CornerRadius="0"
-                                  ItemsSource="{Binding CMainModels}" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                  SelectedItem="{Binding DataContext.SelectedProcess, RelativeSource={RelativeSource AncestorType=Grid}}">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style BasedOn="{StaticResource ListBoxItemBaseStyle}" TargetType="ListBoxItem">
-                                            <Setter Property="Padding" Value="2" />
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                            <Setter Property="hc:BorderElement.CornerRadius" Value="0" />
-                                            <Style.Triggers>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="DarkTurquoise" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=ItemsSource.Count, Converter={StaticResource ColumnCountConverter}}" />
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType=hc:TabControl}, Path=DataContext}">
-                                                <Grid.ContextMenu>
-                                                    <ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-                                                        <MenuItem
-                                      Click="ProcessEdit_Click"
-                                      Header="{Binding [Edit], Source={x:Static local:CLang.Instance}}"
-                                      IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}"
-                                      Tag="{Binding SelectedProcess}" />
-                                                        <MenuItem
-                                      Command="{Binding RemoveProcessCommand}"
-                                      Header="{Binding [Del], Source={x:Static local:CLang.Instance}}"
-                                      IsEnabled="{Binding IsEngineer, Source={x:Static wh:CLoginViewModel.SloinPerson}}" />
-                                                    </ContextMenu>
-                                                </Grid.ContextMenu>
-
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions >
-                                                        <!--<ColumnDefinition Width="4*"/>-->
-                                                        <ColumnDefinition Width="1*"/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0"
-                                       Background="{DynamicResource RegionBrush}"
-                                       BorderBrush="{Binding ModelBrush}"
-                                       BorderThickness="1">
-                                                        <wh:ImageView Operator="{Binding CurView, Mode=OneWayToSource}" Source="{Binding ModelImage}"
-                                                    ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
-                                                    </Border>
-
-                                                    <Border Grid.Column="1"
-                                      Background="{DynamicResource RegionBrush}"
-                                      BorderBrush="{Binding ModelBrush}"
-                                      BorderThickness="1">
-                                                        <wh:ImageView  Operator="{Binding LastView, Mode=OneWayToSource}"  Source="{Binding ZipperPullImage}"
-                                                     ClearButtonVisibility="Collapsed" LabelVisibility="Visible"/>
-                                                    </Border>
-                                                    <TextBlock Text="布带" FontSize="18" Grid.Column="1" 
-                                              Margin="10,5"
-                                             HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"/>
-                                                </Grid>
-                                                <TextBlock
-                                                  Margin="10,5"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Bottom"
-                                                  Foreground="Red"
-                                                  Style="{StaticResource TextBlockDefault}"
-                                                  Text="{Binding FocusCtrlVM.InfoAlarm}" />
-                                                <TextBlock Text="{Binding Name}" FontSize="18"
-                                                  Margin="10,10"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Top"
-                                                  Style="{StaticResource TextBlockDefault}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </DataTemplate>
-                        </hc:TabControl.ContentTemplate>
-                    </hc:TabControl>
+                    <!--原 hc:TabControl 已迁入 TabProcessImageViewTemplate。ContentControl 按 ShowTabControl 切换模板，禁止两套 Visibility 叠放（会抢 CurView/LastView）-->
+                    <ContentControl Grid.Row="0">
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <Setter Property="Content" Value="{Binding}"/>
+                                <Setter Property="ContentTemplate" Value="{StaticResource FlatProcessImageViewTemplate}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SystemSettings.ShowTabControl}" Value="True">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource TabProcessImageViewTemplate}"/>
+                                    </DataTrigger>
+                                    <!--盘齿七格固定模板；非盘齿回 Flat UniformGrid；分页优先-->
+                                    <!--无分页才套固定格（MultiDataTrigger），避免与 Tab 抢赋值；曲轴与盘齿共用同一份 4×3 模板-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SystemSettings.ShowTabControl}" Value="False"/>
+                                            <Condition Binding="{Binding UseGearFixedLayout}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SystemSettings.ShowTabControl}" Value="False"/>
+                                            <Condition Binding="{Binding UseCrankFixedLayout}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="ContentTemplate" Value="{StaticResource GearFixedProcessViewTemplate}"/>
+                                    </MultiDataTrigger>
+                                    <!--新兴工程固定拍摄分页，盖过组 Tab / 无分页。盘齿/曲轴 Trigger 语义不动。-->
+                                    <DataTrigger Binding="{Binding IsXinGear}" Value="True">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource XinGearShotPageViewTemplate}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
 
                         <!--  下边设置栏  -->
                     <Grid Grid.Row="1">
@@ -711,8 +971,15 @@
 
                             </hc:TabControl>
                         </Border>
-                        <Border Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1">
-                            <zipper:ZipperInfoUserControl Name="zipperInfoShow"/>
+                        <!--右侧拉链/其他面板同列，按 OpenProjectLine Visibility 二选一-->
+                        <Border x:Name="zipperInfoBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
+                            <zipper:ZipperInfoUserControl x:Name="zipperInfoShow"/>
+                        </Border>
+                        <Border x:Name="gearProductBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
+                            <gear:GearProductUserControl x:Name="gearProductShow"/>
+                        </Border>
+                        <Border x:Name="xinGearProductBorder" Grid.Column="1" BorderThickness="2" BorderBrush="LightGray" Margin="1" Visibility="Collapsed">
+                            <xinGearProduct:XinGearProductUserControl x:Name="xinGearProductShow"/>
                         </Border>
 
                     </Grid>

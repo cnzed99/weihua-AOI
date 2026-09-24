@@ -1,0 +1,26 @@
+{
+  "CurrentModelId": "C100-17",
+  "Models": [
+    {
+      "Id": "SQ150",
+      "Name": "SQ150 初级主动齿",
+      "LengthMm": 55.5,
+      "WidthMm": 55.5,
+      "HeightMm": 27.5
+    },
+    {
+      "Id": "C100-17",
+      "Name": "C100-17 初级主动齿",
+      "LengthMm": 75.0,
+      "WidthMm": 75.0,
+      "HeightMm": 83.0
+    },
+    {
+      "Id": "4699303086",
+      "Name": "4699303086 行星齿轮",
+      "LengthMm": 41.5,
+      "WidthMm": 41.5,
+      "HeightMm": 17.5
+    }
+  ]
+}

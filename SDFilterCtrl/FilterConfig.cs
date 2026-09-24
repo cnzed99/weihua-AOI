@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -71,6 +72,13 @@ namespace SDFilter
                             rd.DefectFilters[0].ResultList[0].Feature = CFeacture.FeactureArea;
                             rd.DefectFilters[0].ResultList[1].Feature = CFeacture.FeactureScore;
                         }
+                        else if (recipe.Category == Category.值)
+                        {
+                            int rows = recipe.ValueRowCount < 1 ? 1 : recipe.ValueRowCount;
+                            rd.ValueRowCount = rows;
+                            rd.DefectFilters[0].ValueRowCount = rows;
+                            EnsureValueFeatureResultRows(rd.DefectFilters[0], rows);
+                        }
                         speciesFilter.RecipeDefects.Add(rd);
                     }
                     SpFilters.Add(speciesFilter);
@@ -78,6 +86,143 @@ namespace SDFilter
                 SpeciesFilters = SpFilters;
             }
 
+        }
+
+        /// <summary>
+        /// 值类「数值」行数。行数已够则不动集合（禁止 Clear）。增删在 UI 线程，避免展开区绑空。
+        /// </summary>
+        public static void EnsureValueFeatureResultRows(DefectFilter defectFilter, int valueRowCount)
+        {
+            if (valueRowCount < 1)
+            {
+                valueRowCount = 1;
+            }
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                dispatcher.Invoke(() => EnsureValueFeatureResultRowsCore(defectFilter, valueRowCount));
+                return;
+            }
+            EnsureValueFeatureResultRowsCore(defectFilter, valueRowCount);
+        }
+
+        static void EnsureValueFeatureResultRowsCore(DefectFilter defectFilter, int valueRowCount)
+        {
+            if (defectFilter?.ResultList == null)
+            {
+                return;
+            }
+            defectFilter.ValueRowCount = valueRowCount;
+            int valueRows = CountValueRows(defectFilter);
+            if (valueRows == valueRowCount)
+            {
+                return;
+            }
+            if (valueRows > valueRowCount)
+            {
+                for (int i = defectFilter.ResultList.Count - 1; i >= 0 && valueRows > valueRowCount; i--)
+                {
+                    if (defectFilter.ResultList[i].Feature == CFeacture.FeactureValue)
+                    {
+                        defectFilter.ResultList.RemoveAt(i);
+                        valueRows--;
+                    }
+                }
+                return;
+            }
+            while (valueRows < valueRowCount)
+            {
+                defectFilter.ResultList.Add(new FilterResult(CFeacture.FeactureValue));
+                valueRows++;
+            }
+        }
+
+        public static int CountValueRows(DefectFilter defectFilter)
+        {
+            int n = 0;
+            if (defectFilter?.ResultList == null)
+            {
+                return 0;
+            }
+            for (int i = 0; i < defectFilter.ResultList.Count; i++)
+            {
+                if (defectFilter.ResultList[i].Feature == CFeacture.FeactureValue)
+                {
+                    n++;
+                }
+            }
+            return n;
+        }
+
+        /// <summary>
+        /// Value 多值按下标写入「数值」行；单值取 Max。不增删集合。
+        /// </summary>
+        public static void FillValueFeatureResultRows(DefectFilter defectFilter, List<float> values)
+        {
+            if (defectFilter?.ResultList == null)
+            {
+                return;
+            }
+            if (values == null)
+            {
+                values = new List<float>();
+            }
+            int listed = values.Count;
+            int valueIndex = 0;
+            double max = listed > 0 ? values[0] : 0;
+            for (int i = 1; i < listed; i++)
+            {
+                if (values[i] > max)
+                {
+                    max = values[i];
+                }
+            }
+            foreach (var item in defectFilter.ResultList)
+            {
+                if (item.Feature == CFeacture.FeactureCount)
+                {
+                    item.Value = listed;
+                }
+                else if (listed > 1 && item.Feature == CFeacture.FeactureValue)
+                {
+                    item.Value = valueIndex < listed ? values[valueIndex] : -1;
+                    valueIndex++;
+                }
+                else
+                {
+                    item.Value = listed > 0 ? max : 0;
+                }
+            }
+            RefreshHeaderDisplayValue(defectFilter);
+        }
+
+        /// <summary>
+        /// 折叠头栏：多行「数值」取最大；否则第一行（拉链面积等）。
+        /// </summary>
+        public static void RefreshHeaderDisplayValue(DefectFilter defectFilter)
+        {
+            if (defectFilter?.ResultList == null || defectFilter.ResultList.Count == 0)
+            {
+                if (defectFilter != null)
+                {
+                    defectFilter.HeaderDisplayValue = 0;
+                }
+                return;
+            }
+            int valueRows = 0;
+            double max = double.NegativeInfinity;
+            foreach (var item in defectFilter.ResultList)
+            {
+                if (item.Feature == CFeacture.FeactureValue)
+                {
+                    valueRows++;
+                    if (item.Value > max)
+                    {
+                        max = item.Value;
+                    }
+                }
+            }
+            defectFilter.HeaderDisplayValue = valueRows > 1 ? max : defectFilter.ResultList[0].Value;
         }
 
         public void SetSDFilterVM(CQualityConfig qualityConfig)
@@ -505,6 +650,11 @@ namespace SDFilter
         public Category Category { get; set; }
 
         /// <summary>
+        /// 值类检测区「数值」行数。默认 1；插件配方可写大于 1。
+        /// </summary>
+        public int ValueRowCount { get; set; } = 1;
+
+        /// <summary>
         /// 2024.7.4 李焕彬
         /// 缺陷列表
         /// </summary>
@@ -618,6 +768,37 @@ namespace SDFilter
         [ObservableProperty]
         [property: JsonIgnore]
         private bool isSelected;
+
+        /// <summary>
+        /// 值类「数值」行数，新建工程时由配方写入，随工程保存。
+        /// </summary>
+        [property: IgnoreModifyLog]
+        public int ValueRowCount { get; set; } = 1;
+
+        /// <summary>
+        /// 折叠头栏显示值：多行「数值」为最大，否则第一行。
+        /// </summary>
+        [property: JsonIgnore]
+        [property: IgnoreModifyLog]
+        [ObservableProperty]
+        private double headerDisplayValue;
+
+        /// <summary>
+        /// 折叠头栏第二列：仅当两行特征不同（面积|分数）时显示。
+        /// </summary>
+        [JsonIgnore]
+        [IgnoreModifyLog]
+        public bool ShowPairedHeaderValue
+        {
+            get
+            {
+                if (ResultList == null || ResultList.Count < 2)
+                {
+                    return false;
+                }
+                return ResultList[0].Feature != ResultList[1].Feature;
+            }
+        }
 
         /// <summary>
         /// 2024.7.4 李焕彬
